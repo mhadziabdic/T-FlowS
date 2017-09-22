@@ -5,7 +5,7 @@ chan
 
 #---------------------------------------------
 # Type of problem (CHANNEL, PIPE, HOT or OTHER)
-# Multile entry possible eg. CHANNEL HOT
+# Multiple entry is possible eg. CHANNEL HOT
 #---------------------------------------------
 CHANNEL HOT
 
@@ -18,7 +18,7 @@ CHANNEL HOT
 #---------------------------------------------
 
 #---------------------------------------------
-# In case of domain rotation (ROUGH==YES) one 
+# In case of domain rotation (ROT==YES) one 
 # needs to enter angular velocity vector omega_x,  
 # omega_y and omega_z
 # Eg.
@@ -27,10 +27,9 @@ CHANNEL HOT
 
 #---------------------------------------------
 # In case with roughness (ROUGH==YES) one needs
-# to enter gravity vector gx, gy, gz and 
-# temperature difference. 
+# to enter roughness parameter Zo 
 # Eg.
-# 0.0 0.0 -0.001 10.0 
+# 0.000025
 #---------------------------------------------
 
 #---------------------------------------------
@@ -63,7 +62,6 @@ skip
 0.5 0.5 0.01
 0.5 0.5 0.1
 0.5 0.5 0.2
-#0.5 0.5 0.5
 
 #---------------------------------------------
 # Coordinates for defining the monitoring 
@@ -124,13 +122,13 @@ ZETA
 #100
 
 #---------------------------------------------
-# algorythm for pressure-velocity copuling         
+# algorithm for pressure-velocity coupling         
 #---------------------------------------------
 SIMPLE 
 
 
 #---------------------------------------------
-# URF for velocitys
+# URF for velocity
 #---------------------------------------------
 0.4
 
@@ -152,7 +150,7 @@ SIMPLE
 
 #---------------------------------------------
 # Time integration scheme (LIN or PAR)
-# PAR should be used for all unstady cases.
+# PAR should be used for all unsteady cases.
 #---------------------------------------------
 lin
 
@@ -284,14 +282,14 @@ skip
 #---------------------------------------------
 # Writing the result in GMV format 
 # (NAME or SKIP)
-# This is obsolete option.
+# This option is obsolete.
 #---------------------------------------------
 #skip 
 
 #---------------------------------------------
 # Writing the result in Fluent format
 # (NAME or SKIP)
-# This is obsolete option.
+# This obsolete option is obsolete.
 #---------------------------------------------
 #skip
 

@@ -80,20 +80,20 @@ skip
 # ZETA        - zeta-f model with compound wall treatment
 # LES DYN     - LES with dynamics Smagorinsky SGS model
 # LES SMAG Cs - LES with Smagorinsky model, 
-#               Cs is Smag. constant usually its value is around 0.1 
+#               Cs is Smag. constant. Usually its value is around 0.1 
 # LES WALE    - WALE sgs model 
 # LES MIX     - mix sgs model 
 # DNS 
 # EBM         - RSM with integration up to the wall  
-# EBM HYB     - RSM with integration up to the wall and turbulent 
-#               diffusion modelled by eddy viscosity approach where Cmu
-#               is computed from stresses. It much more stable in 
+# EBM HYB     - RSM with integration up to the wall. Turbulent 
+#               diffusion is modelled by eddy viscosity approach where Cmu
+#               is computed from stresses. It is much more stable in the 
 #               beginning of computation than standard definition. 
 # HJ          - RSM with integration up to the wall
-# HJ  HYB     - RSM with integration up to the wall and turbulent 
-#               diffusion modelled by eddy viscosity approach where Cmu
-#               is computed from stresses. It much more stable in 
-#               beginning of computation than standard definition. 
+# HJ  HYB     - RSM with integration up to the wall. Turbulent 
+#               diffusion is modelled by eddy viscosity approach where Cmu
+#               is computed from stresses. It is much more stable in 
+#               the beginning of computation than standard definition. 
 # HYB_ZETA    - hybrid RANS/LES model with zeta-f model  
 # HYB_PITM    - hybrid RANS/LES model with k-eps model  
 # K_EPS_VV    - Durbin original model.  

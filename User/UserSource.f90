@@ -48,17 +48,15 @@
 !  Qflux is calculated in CalBou
  
 
-  
   if(JET == YES.or.BACKSTEP==YES.or.OTHER==YES) return
-
-  if(CHANNEL==YES) then
+  
+  if(CHANNEL==YES.and.PER_BC==YES) then
     do c=1,NC
-!      b(c)=b(c) -  2.0*3.14* Tflux * U % n(c) / (FLUXoX(material(c))) * volume(c)
-
-     b(c) = b(c) -   1.0* Tflux * U % n(c) / (FLUXoX(material(c))) * volume(c)
+      b(c) = b(c) -   1.0* Tflux * U % n(c) / (FLUXoX(material(c))) * volume(c)
 !     b(c) = b(c) -   2.0*1.0* Tflux * U % n(c) / (FLUXoX(material(c))) * volume(c)
+!     b(c)=b(c) -  2.0*3.14* Tflux * U % n(c) / (FLUXoX(material(c))) * volume(c)
     end do
-  else if(PIPE == YES) then
+  else if(PIPE == YES.and.PER_BC==YES) then
     do c=1,NC
       b(c)=b(c) -  2.0*3.1415926*0.005*W % n(c) / ( FLUXoZ(1) + TINY ) * volume(c)
     end do

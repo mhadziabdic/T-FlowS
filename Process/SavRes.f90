@@ -66,7 +66,7 @@
 !---- 60 REAL parameters --------------------------------------
   write(9)     0.0,    0.0,    0.0,     xp,     yp,     zp  
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0     
-  write(9)   ReTau,   Tref,    Cs0,    0.0,    0.0,    0.0
+  write(9)   ReTau,   Tref,    Cs0,   Tinf,    0.0,    0.0
   write(9)      dt,   Time,  Kflow,    0.0,    0.0,    0.0
   write(9)   U%URF,  P%URF,   URFC, SIMTol, U%Stol,    0.0 
   write(9) PP%Stol,  T%URF, T%STol,  Tflux,    0.0,    0.0

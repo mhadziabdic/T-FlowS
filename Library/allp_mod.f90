@@ -18,9 +18,13 @@ MODULE allp_mod
     OUTFLOW  =    3,             & ! boundary condition
     SYMMETRY =    4,             & ! boundary condition
     CONVECT  =    5,             & ! boundary condition
-    PRESSURE = 2312,             & ! boundary condition
+    PRESSURE = 2312,             & ! boundary condition 
     PERIODIC = 2313,             & ! boundary condition
-    BUFFER   = 2311,             & ! boundary condition
+    BUFFER   = 2311,             & ! boundary condition 
+                                   ! BUFFER CANNOT BE 11 AS THIS 
+                                   ! MAKES PROBLEM IF CASE HAS MORE THAN 10 BOUNDARY
+                                   ! CONDITIONS. 11th BOUNDARY CONDITION IS CONFUSED
+                                   ! FOR BUFFER IN CASE BUFFER = 11. 
     WALLFL   =    6                ! boundary condition
 
   INTEGER, PARAMETER ::          & 

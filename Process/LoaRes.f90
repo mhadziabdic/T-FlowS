@@ -66,7 +66,7 @@
 !---- 60 REAL parameters --------------------------------------
   read(9)     r_1,    r_2,    r_3,     xp,     yp,     zp  
   read(9)     r_1,    r_2,    r_3,    r_4,    r_4,    r_6             
-  read(9)   ReTau,   Tref,    Cs0,    r_4,    r_4,    r_6 
+  read(9)   ReTau,   Tref,    Cs0,   Tinf,    r_4,    r_6 
   read(9)      dt,   Time,  Kflow,    r_4,    r_5,    r_6 
   read(9)   U%URF,  P%URF,   URFC, SIMTol, U%Stol,    r_6 
   read(9) PP%Stol,  T%URF, T%STol,  Tflux,    r_5,    r_6   

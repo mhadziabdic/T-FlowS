@@ -42,6 +42,7 @@
         T % n(c)  = T % init(material(c)) 
         T % o(c)  = T % init(material(c)) 
         T % oo(c) = T % init(material(c)) 
+        Tinf      = T % init(material(c))
       end if 
       if(SIMULA==EBM.or.SIMULA==HJ) then
         uu % n(c)  = uu % init(material(c))

@@ -121,7 +121,7 @@ endif
 	    CalcVISt_EBM.f90 SourcesEBM.f90 CalcSGS_hybrid.f90 UserCutLines_annulus.f90\
             UserCutLines_Horiz_RANS.f90 SourcesHJ.f90 UserPlainGen_Tecplot.f90 UserBackstep.f90\
             UserCutLines_Y_dir.f90 UserBackstep_Y.f90 UserCutLines_jet.f90 UserCutLines_Point_Cart.f90\
-            UserCutLines_RB_conv.f90\
+            UserCutLines_RB_conv.f90 UserCalc_Nu.f90\
             LoaRes_Ini.f90 
 
 #....C sources

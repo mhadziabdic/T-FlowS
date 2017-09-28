@@ -242,7 +242,7 @@ MODULE pro_mod
 !     Area of the cross section     !
 !-----------------------------------!
   REAL,ALLOCATABLE :: AreaX(:), AreaY(:), AreaZ(:)           
-  REAL :: Area, Tflux, Qflux, Xmax, Ymax, Zmax, Tref           
+  REAL :: Area, Tflux, Qflux, Xmax, Ymax, Zmax, Tref, Tinf           
 
 !------------------------------!
 !     Algorythm parameters     !

@@ -69,6 +69,7 @@
     read(inp(ts(1):te(1)),*) dum1
     if( inp(ts(2):te(2)) == 'INFLOW') then 
       typBou(n)=INFLOW
+      PER_BC = NO
     else if( inp(ts(2):te(2)) == 'WALL') then 
       typBou(n)=WALL
     else if( inp(ts(2):te(2)) == 'OUTFLOW') then 

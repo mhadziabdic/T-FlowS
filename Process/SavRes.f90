@@ -55,7 +55,7 @@
   write(9)       Cm,        0,        0,        0,        0,        0
   write(9)    ALGOR,    INERT,   CONVEC,    CROSS,   DIFFUS,   SIMULA
   write(9)   POSPRO,  CHANNEL,     TEST,    OTHER,      HOT,        0
-  write(9)    BLEND,      HYB,        0,     MODE,     PIPE,        0
+  write(9)    BLEND,      HYB,   PER_BC,     MODE,     PIPE,        0
   write(9)        0,        0,        0,        0,        0,        0
   write(9)        0,        0,        0,        0,        0,        0
   write(9)        0,        0,        0,        0,        0,        0

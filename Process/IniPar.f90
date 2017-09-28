@@ -97,6 +97,7 @@
   XHOM   = NO
   YHOM   = NO
   ZHOM   = NO
+  PER_BC = YES
 
 !----- Under relaxation factors
   U % URF      = 1.0

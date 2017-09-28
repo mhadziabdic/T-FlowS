@@ -55,7 +55,7 @@
   read(9)       Cm,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)    ALGOR,    INERT,   CONVEC,    CROSS,   DIFFUS,   SIMULA
   read(9)   POSPRO,  CHANNEL,     TEST,    OTHER,      HOT,      i_6
-  read(9)    BLEND,      HYB,      i_3,     MODE,     PIPE,      i_6
+  read(9)    BLEND,      HYB,   PER_BC,     MODE,     PIPE,      i_6
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6

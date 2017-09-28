@@ -163,7 +163,7 @@
     write(9,'(A20)') '        </DataArray>'
   end if 
 
-  if(SIMULA == LES) then
+  if(SIMULA == LES.or.SIMULA==K_EPS.or.SIMULA==ZETA) then
     write(9,'(A99)') '        <DataArray type="Float32" Name="viscosity ratio" format="ascii">'
     do c=1,NCsub
       write(9,*) VISt(c)/VISc
@@ -404,6 +404,7 @@ call wait
       end if
     end if
     if(SIMULA == K_EPS.or.SIMULA==ZETA) then
+      write(112,*) '        <PDataArray type="Float32" Name="Viscosity ratio"/>'
       write(112,*) '        <PDataArray type="Float32" Name="TKE"/>'
       write(112,*) '        <PDataArray type="Float32" Name="EPS"/>'
       if(BUOY==YES) write(112,*) '        <PDataArray type="Float32" Name="tt"/>'

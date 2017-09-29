@@ -5,28 +5,28 @@
 ! the results in the homogeneous direction directions.            
 ! The results are writen in files name_res.dat and name_res_plus.dat
 !----------------------------------------------------------------------!
-    USE all_mod
-    USE allp_mod
-    USE les_mod
-    USE pro_mod
-    USE par_mod
-    USE rans_mod
+  USE all_mod
+  USE allp_mod
+  USE les_mod
+  USE pro_mod
+  USE par_mod
+  USE rans_mod
 !----------------------------------------------------------------------!
-    IMPLICIT NONE
+  IMPLICIT NONE
 !-----------------------------[Parameters]-----------------------------!
-    REAL :: Ufric, Wall_near
+  REAL :: Ufric, Wall_near, Dwall
 !------------------------------[Calling]-------------------------------!
-    INTERFACE
-      LOGICAL FUNCTION Approx(A,B,tol)
-        REAL           :: A,B
-        REAL, OPTIONAL :: tol
-      END FUNCTION Approx
-    END INTERFACE
+  INTERFACE
+    LOGICAL FUNCTION Approx(A,B,tol)
+      REAL           :: A,B
+      REAL, OPTIONAL :: tol
+    END FUNCTION Approx
+  END INTERFACE
 !-------------------------------[Locals]-------------------------------!
-    INTEGER             :: Nprob, pl, c, i, count, kk, s, c1, c2
-    CHARACTER           :: namCoo*80, namPro*80, answer*80, namRes*80
-    CHARACTER           :: namRes_plus*80
-    REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), &
+  INTEGER             :: Nprob, pl, c, i, count, kk, s, c1, c2
+  CHARACTER           :: namCoo*80, namPro*80, answer*80, namRes*80
+  CHARACTER           :: namRes_plus*80
+  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), &
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
@@ -36,42 +36,42 @@
                                  var_3(:), Wall_p(:), Rad_1(:), &
                                  var_4(:), var_5(:), var_6(:), &
                                  Ufric_p(:)
-    INTEGER,ALLOCATABLE :: Np(:), Ncount(:), Ncount2(:)
-    REAL                :: R, Urad_mean, Utan_mean, dummy, Lscale, R_max, Rad_2
-    REAL    :: qx, qy, qz, Nx, Ny, Nz, Stot
-    LOGICAL :: there
+  INTEGER,ALLOCATABLE :: Np(:), Ncount(:), Ncount2(:)
+  REAL                :: R, Urad_mean, Utan_mean, dummy, Lscale, R_max, Rad_2
+  REAL    :: qx, qy, qz, Nx, Ny, Nz, Stot
+  LOGICAL :: there
 !--------------------------------[CVS]---------------------------------!
 !  $Id: UserCutLines_Nu.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $
 !  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCutLines_Nu.f90,v $
 !======================================================================!
 
-    INQUIRE( FILE='Stream_coord.dat', EXIST=THERE ) 
-    if(.NOT.THERE) then
-      if(this < 2) write(*,*) "==================================================================="
-      if(this < 2) write(*,*) "In order to extract Nusselt number profile in asci file"
-      if(this < 2) write(*,*) "You have to create an ascii file with cell-faces coordinates "
-      if(this < 2) write(*,*) "in streamwise direction named Stream_coord.dat."
-      if(this < 2) write(*,*) "The file format should be as follows:"
-      if(this < 2) write(*,*) "10  ! number of cells + 1"
-      if(this < 2) write(*,*) "0.0"
-      if(this < 2) write(*,*) "0.1"
-      if(this < 2) write(*,*) "0.2"
-      if(this < 2) write(*,*) "... "
-      if(this < 2) write(*,*) "==================================================================="
-      return
-    end if
+  INQUIRE( FILE='Stream_coord.dat', EXIST=THERE ) 
+  if(.NOT.THERE) then
+    if(this < 2) write(*,*) "==================================================================="
+    if(this < 2) write(*,*) "In order to extract Nusselt number profile in asci file"
+    if(this < 2) write(*,*) "You have to create an ascii file with cell-faces coordinates "
+    if(this < 2) write(*,*) "in streamwise direction named Stream_coord.dat."
+    if(this < 2) write(*,*) "The file format should be as follows:"
+    if(this < 2) write(*,*) "10  ! number of cells + 1"
+    if(this < 2) write(*,*) "0.0"
+    if(this < 2) write(*,*) "0.1"
+    if(this < 2) write(*,*) "0.2"
+    if(this < 2) write(*,*) "... "
+    if(this < 2) write(*,*) "==================================================================="
+    return
+  end if
 
-    open(9, FILE='Stream_coord.dat')
+  open(9, FILE='Stream_coord.dat')
 !---- write the number of searching intervals 
-    read(9,*) Nprob
-    allocate(z_p(Nprob*2))
-    allocate(ind(Nprob*2))
+  read(9,*) Nprob
+  allocate(z_p(Nprob*2))
+  allocate(ind(Nprob*2))
 
 !---- read the intervals positions
-    do pl=1,Nprob
-      read(9,*) z_p(pl) 
-    end do
-    close(9)
+  do pl=1,Nprob
+    read(9,*) z_p(pl) 
+  end do
+  close(9)
 
   allocate(Np(Nprob));     Np=0
   allocate(Ump(Nprob));    Ump=0.0
@@ -88,43 +88,59 @@
   allocate(Rad_1(Nprob));  Rad_1=0.0
   allocate(Ncount(Nprob)); Ncount=0
   allocate(Ncount2(Nprob)); Ncount2=0
+  allocate(Tmp(Nprob));   Tmp=0.0
 
   call GraPhi(T % n, 3, Uz,.TRUE.)
 
   count = 0
 
-    if(HOT==YES) then
-      allocate(Tmp(Nprob));   Tmp=0.0
-    end if  
-
 !+++++++++++++++++++++++++++++!
 !     average the results     !
 !+++++++++++++++++++++++++++++!
-   do i = 1, Nprob
-      Rad_1(i) = abs(z_p(i))
-    end do
+  do i = 1, Nprob
+    Rad_1(i) = abs(z_p(i))
+  end do
 
-    do i = 1, Nprob-1
-      do s=1,NS
-        c1=SideC(1,s)
-        c2=SideC(2,s)
-        if(c2 < 0) then
-          if(TypeBC(c2).eq.WALLFL.or.TypeBC(c2).eq.WALL) then
+  if(JET==YES.or.PIPE==YES) then
+    Lscale = 2.0
+  else if(BACKSTEP==YES) then
+    Lscale = 0.038
+  else if(CHANNEL==YES) then
+    Lscale = 1.0
+  end if
+
+  Dwall = 0.0
+  do c = 1, NC
+    if(WallDs(c) > Dwall) then
+      Dwall = WallDs(c) 
+      Tinf  = T % n(c)
+    end if
+  end do
+
+  do i = 1, Nprob-1
+    do s=1,NS
+      c1=SideC(1,s)
+      c2=SideC(2,s)
+      if(c2 < 0) then
+        if(TypeBC(c2).eq.WALLFL.or.TypeBC(c2).eq.WALL) then
+          if(T%q(c2) > 1.0e-6) then
             if(JET==YES) then
               Rad_2 = (xc(c1)*xc(c1) + yc(c1)*yc(c1))**0.5 + tiny
             else if(CHANNEL == YES.or.BACKSTEP==YES) then
-              Rad_2 = xc(c1)
-            else if(PIPE == YES) then
+             Rad_2 = xc(c1)
+           else if(PIPE == YES) then
               Rad_2 = (xc(c1)*xc(c1) + yc(c1)*yc(c1))**0.5 + tiny
             else
               Rad_2 = xc(c1)
             end if
             if(Rad_2 < Rad_1(i+1) .and. Rad_2 > Rad_1(i).and.zc(c1) < 0.5) then
-!              R           = (xc(c1)*xc(c1) + yc(c1)*yc(c1))**0.5 + tiny
               Rad_mp(i)= Rad_mp(i) + Rad_2
               if(JET==YES.or.PIPE==YES) then
-                Ump(i)   = Ump(i) + U % n(c1) * xc(c1) / R  + V % n(c1) * yc(c1) / R
-                Vmp(i)   = Vmp(i) + (-U % n(c1) * yc(c1) / R  + V % n(c1) * xc(c1) / R)
+                R        = (xc(c1)*xc(c1) + yc(c1)*yc(c1))**0.5 + tiny
+                Ump(i)   = Ump(i) + U % n(c1) * xc(c1) / R  +&
+                           V % n(c1) * yc(c1) / R
+                Vmp(i)   = Vmp(i) + (-U % n(c1) * yc(c1) / R  +&
+                           V % n(c1) * xc(c1) / R)
                 Wmp(i)   = Wmp(i) + W % n(c1)
               else if(CHANNEL==YES.or.BACKSTEP==YES) then
                 Ump(i)   = Ump(i) + U % n(c1) 
@@ -134,16 +150,19 @@
               Tmp(i)   = Tmp(i) + T%n(c2) !+ 0.2*WallDs(c1)/CONwall(c1) !T % n(c1)
               var_1(i) = var_1(i) + WallDs(c1)
               var_2(i) = var_2(i) + T % q(c2)
-              var_3(i) = var_3(i) + (Cmu**0.25*Kin%n(c1)**0.5) !sqrt(U % n(c1)**2 + V % n(c1)**2 + W % n(c1)**2)
-              var_4(i) = var_4(i) + Kin %n(c1)
-              var_5(i) = var_5(i) + Eps%n(c1)
-!              var_6(i) = var_6(i) + v_2%n(c1)
+              var_3(i) = var_3(i) + T % n(c1)
+              var_4(i) = var_4(i) + sqrt(U % n(c1)*U % n(c1)+&
+                         V % n(c1)*V % n(c1)+W % n(c1)*W % n(c1))
+!             var_4(i) = var_4(i) + Kin %n(c1)
+!             var_5(i) = var_5(i) + Eps%n(c1)
+!             var_6(i) = var_6(i) + v_2%n(c1)
               Ncount(i)= Ncount(i) + 1
             end if
           end if
         end if
-      end do
+      end if
     end do
+  end do
 !---- average over all processors
   do pl=1, Nprob
     call IGlSum(Ncount(pl))
@@ -166,35 +185,35 @@
     count =  count + Ncount(pl)
   end do
 
-    do i = 1, Nprob
-      if(Ncount(i) /= 0) then
-        Wmp(i)    =  Wmp(i)/Ncount(i)
-        Vmp(i)    =  Vmp(i)/Ncount(i)
-        Ump(i)    =  Ump(i)/Ncount(i)
-        Tmp(i)    =  Tmp(i)/Ncount(i)
-        var_1(i)  =  var_1(i)/Ncount(i)
-        var_2(i)  =  var_2(i)/Ncount(i)
-        var_3(i)  =  var_3(i)/Ncount(i)
-        var_4(i)  =  var_4(i)/Ncount(i)
-        var_5(i)  =  var_5(i)/Ncount(i)
-        var_6(i)  =  var_6(i)/Ncount(i)
-        Rad_mp(i) =  Rad_mp(i)/Ncount(i)
-      end if
-    end do
-    call wait
+  do i = 1, Nprob
+    if(Ncount(i) /= 0) then
+      Wmp(i)    =  Wmp(i)/Ncount(i)
+      Vmp(i)    =  Vmp(i)/Ncount(i)
+      Ump(i)    =  Ump(i)/Ncount(i)
+      Tmp(i)    =  Tmp(i)/Ncount(i)
+      var_1(i)  =  var_1(i)/Ncount(i)
+      var_2(i)  =  var_2(i)/Ncount(i)
+      var_3(i)  =  var_3(i)/Ncount(i)
+      var_4(i)  =  var_4(i)/Ncount(i)
+      var_5(i)  =  var_5(i)/Ncount(i)
+      var_6(i)  =  var_6(i)/Ncount(i)
+      Rad_mp(i) =  Rad_mp(i)/Ncount(i)
+    end if
+  end do
+  call wait
 
-    open(3,FILE='Nusselt_Twall.dat')
-    do i = 1, Nprob
-      if(Ncount(i) /= 0) then
-        write(3,'(11E15.7,I6)') Rad_mp(i)/2.0, var_2(i)/(CONc(material(1))*(Tmp(i)-Tinf)), &
-                            (abs((Ump(i)*VISc/var_1(i))))**0.5, &
-                            (abs((Ump(i)*var_1(i))/VISc))**0.5, var_2(i), &
-                            var_3(i), var_2(i)*var_1(i)/VISc, Tmp(i),  &
-                            var_4(i),var_5(i),var_6(i),& 
-                            Ncount(i)
-      end if
-    end do
-    close(3)
+  open(3,FILE='Nusselt_Twall.dat')
+  write(3,'(A37)') 'x, Nu, Tau_wall, y_plus, Twall, T(c1)'
+  do i = 1, Nprob
+    if(Ncount(i) /= 0) then
+      write(3,'(6E15.7,I6)') Rad_mp(i)/2.0, &
+      Lscale*var_2(i)/(CONc(material(1))*(Tmp(i)-Tinf)), &
+      (abs((var_4(i)*VISc/var_1(i)))), &
+      (abs((var_4(i)*var_1(i))/VISc))**0.5, Tmp(i), var_3(i), &
+      Ncount(i)
+    end if
+  end do
+  close(3)
 
   deallocate(Np)
   deallocate(Ump)
@@ -216,8 +235,6 @@
     deallocate(Tmp)
   end if
 
-  if(this < 2) write(*,*)'Finished with Nusselt file'
-
-
-
-  END SUBROUTINE UserCalc_Nu
+  if(this < 2) write(*,*)'Finished with UserCalc_Nu'
+  
+END SUBROUTINE UserCalc_Nu

@@ -87,7 +87,7 @@
       use all_mod
       use pro_mod
       implicit none
-       character, OPTIONAL :: namAut*(*)
+       character, optional :: namAut*(*)
     end  subroutine ProSav  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine DatSav(namAut)  
@@ -95,7 +95,7 @@
       use all_mod
       use pro_mod
       implicit none
-      character, OPTIONAL :: namAut*(*)
+      character, optional :: namAut*(*)
     end subroutine DatSav  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine SavRes(namAut)  
@@ -103,7 +103,7 @@
       use all_mod
       use pro_mod
       implicit none
-      character, OPTIONAL :: namAut*(*)
+      character, optional :: namAut*(*)
     end subroutine SavRes  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine UserProbe2D(namAut)
@@ -111,7 +111,7 @@
       use all_mod
       use pro_mod
       implicit none
-      character, OPTIONAL :: namAut*(*)
+      character, optional :: namAut*(*)
     end subroutine UserProbe2D
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine CalcShear(Ui, Vi, Wi, She)

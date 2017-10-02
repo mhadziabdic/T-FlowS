@@ -21,7 +21,7 @@
   interface
     logical function Approx(A,B,tol)
       real           :: A,B
-      real, OPTIONAL :: tol
+      real, optional :: tol
     end function Approx
   end interface 
 !-------------------------------[Locals]-------------------------------!
@@ -37,7 +37,7 @@
                                  var_4(:), var_5(:)  
   integer,allocatable :: Np(:), Ncount(:)
   real                :: R, Urad_mean, Utan_mean, R1, R2, Urad, Utan, pi, lnum
-  character, OPTIONAL :: namAut*(*)
+  character, optional :: namAut*(*)
   logical             :: THERE
 !======================================================================!
     pi = 3.141592

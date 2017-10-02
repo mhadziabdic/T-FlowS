@@ -19,14 +19,14 @@
     interface
       logical function Approx(A,B,tol)
         real           :: A,B
-        real, OPTIONAL :: tol
+        real, optional :: tol
       end function Approx
     end interface 
 !-------------------------------[Locals]-------------------------------!
     integer             :: Nprob, pl, c, i, count, kk
     character           :: namCoo*80, namPro*80, answer*80, namRes*80
     character           :: namRes_plus*80
-    character, OPTIONAL :: namAut*(*)
+    character, optional :: namAut*(*)
     real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &

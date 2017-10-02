@@ -15,7 +15,7 @@
     logical function Approx(A,B,tol)
       implicit none
       real          :: A,B 
-      real,OPTIONAL :: tol
+      real,optional :: tol
     end function Approx   
   end interface 
 !-------------------------------[Locals]-------------------------------!

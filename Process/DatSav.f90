@@ -15,7 +15,7 @@
   integer             :: c,  c2,  n, s, Nadd
   integer             :: Nfac(10), NtotFac
   character           :: answer*80, namOut*80, namTem*80
-  character, OPTIONAL :: namAut*(*)
+  character, optional :: namAut*(*)
   real                :: R, RR
 !======================================================================!
 !   See also: number                                                   !

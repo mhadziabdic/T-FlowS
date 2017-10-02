@@ -20,7 +20,7 @@
   interface
     logical function Approx(A,B,tol)
       real           :: A,B
-      real, OPTIONAL :: tol
+      real, optional :: tol
     end function Approx
   end interface 
 !-------------------------------[Locals]-------------------------------!
@@ -36,7 +36,7 @@
                                  VISt_mp(:),VIS_mp(:), T_mp(:),  &
                                  Pk_mp(:), PHI(:)
   integer,allocatable :: Np(:), order(:) 
-  character, OPTIONAL :: namAut*(*)            
+  character, optional :: namAut*(*)            
 !======================================================================!
 
   if(PRESENT(namAut)) then

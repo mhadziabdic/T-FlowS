@@ -14,7 +14,7 @@
 !-------------------------------[Locals]-------------------------------!
   integer             :: c, s, m
   character           :: namOut*80, answer*80
-  character, OPTIONAL :: namAut*(*)
+  character, optional :: namAut*(*)
 !======================================================================!
 
   if(PRESENT(namAut)) then

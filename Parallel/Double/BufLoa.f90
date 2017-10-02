@@ -12,9 +12,6 @@
   INTEGER   :: c, dummy 
   INTEGER   :: sub, subo, NNsub,NCsub,NSsub,NBCsub,NBFsub
   CHARACTER :: nameIn*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: BufLoa.f90,v 1.1 2014/11/24 11:39:27 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Double/BufLoa.f90,v $             
 !======================================================================!
 !  Each subdomain needs two buffers: a send buffer and a receive buffer.
 !  A receive buffer will be stored as aditional boundary cells for each
@@ -64,8 +61,8 @@
       NBBe(sub) = NBBs(sub) - NBBe(sub) + 1
 
       do c=NBBs(sub),NBBe(sub),-1
-	call ReadC(9,inp,tn,ts,te)
-	read(inp,*) dummy, BufInd(c) 
+        call ReadC(9,inp,tn,ts,te)
+        read(inp,*) dummy, BufInd(c) 
       end do 
     else
       NBBs(sub) = NBBe(sub-1)-1  ! just to become "sloppy" 

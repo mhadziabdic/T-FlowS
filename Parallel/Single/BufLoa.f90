@@ -12,9 +12,6 @@
   INTEGER   :: c, dummy 
   INTEGER   :: sub, subo, NNsub,NCsub,NSsub,NBCsub,NBFsub
   CHARACTER :: nameIn*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: BufLoa.f90,v 1.1 2014/11/24 11:39:07 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Single/BufLoa.f90,v $             
 !======================================================================!
 !  Each subdomain needs two buffers: a send buffer and a receive buffer.
 !  A receive buffer will be stored as aditional boundary cells for each

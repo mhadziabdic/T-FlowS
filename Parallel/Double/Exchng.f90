@@ -16,17 +16,14 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c1, c2, sub, rtag, stag, length, error
   INTEGER :: status(MPI_STATUS_SIZE)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Exchng.f90,v 1.1 2014/11/24 11:39:27 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Double/Exchng.f90,v $  
 !======================================================================!
 
 !///// fill the buffers with new values
   do sub=1,NPro
     if( NBBe(sub)  <=  NBBs(sub) ) then  
       do c2=NBBs(sub),NBBe(sub),-1
-	c1 = BufInd(c2)
-	PHI(c2) = PHI(c1)
+        c1 = BufInd(c2)
+        PHI(c2) = PHI(c1)
       end do
     end if
   end do   
@@ -42,19 +39,19 @@
 !===============================================
       call MPI_SENDRECV_REPLACE & 
 !-------------------------------------+---------
-	     (PHI(NBBe(sub)),   & ! buffer  
-	      length,           & ! length   
-	      MPI_DOUBLE_PRECISION,       & ! datatype  
+             (PHI(NBBe(sub)),   & ! buffer  
+              length,           & ! length   
+              MPI_DOUBLE_PRECISION,       & ! datatype  
 !-------------------------------------+---------
-	      (sub-1),          & ! dest,      
-	      stag,             & ! sendtag,    
+              (sub-1),          & ! dest,      
+              stag,             & ! sendtag,    
 !-------------------------------------+---------
-	      (sub-1),          & ! source,      
-	      rtag,             & ! recvtag,      
+              (sub-1),          & ! source,      
+              rtag,             & ! recvtag,      
 !-------------------------------------+---------
-	      MPI_COMM_WORLD,   &
-	      status,           &
-	      error) 
+              MPI_COMM_WORLD,   &
+              status,           &
+              error) 
 !===============================================
 
     end if  !  NBBe(sub)  /=  NBBs(sub)

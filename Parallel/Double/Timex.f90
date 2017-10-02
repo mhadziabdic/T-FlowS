@@ -6,9 +6,6 @@
   IMPLICIT NONE
 !-----------------------------[Parameters]-----------------------------!
   REAL :: time
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Timex.f90,v 1.1 2014/11/24 11:39:27 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Double/Timex.f90,v $  
 !======================================================================!
 
   !call timef(time)

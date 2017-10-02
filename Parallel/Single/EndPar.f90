@@ -8,9 +8,6 @@
   INCLUDE 'mpif.h'
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: ERROR
-!--------------------------------[CVS]---------------------------------!
-!  $Id: EndPar.f90,v 1.1 2014/11/24 11:39:07 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Single/EndPar.f90,v $  
 !======================================================================!
 
   call MPI_FINALIZE(ERROR)

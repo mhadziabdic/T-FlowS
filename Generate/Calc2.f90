@@ -12,8 +12,8 @@
   logical rrun     
 !------------------------------[Calling]-------------------------------!
   real :: tetvol        
-  real :: dist       
-  real :: dist2       
+  real :: Distance       
+  real :: Distance_Squared       
 !-------------------------------[Locals]-------------------------------!
   integer :: c, c1, c2, m, n, s, c_1, c_2
   integer :: WallMark
@@ -392,7 +392,7 @@
     xTc=xc(c1)
     yTc=yc(c1)
     zTc=zc(c1)
-    dsc1=dist(xTc,yTc,zTc,xsp(s), ysp(s), zsp(s)) 
+    dsc1=Distance(xTc,yTc,zTc,xsp(s), ysp(s), zsp(s)) 
     volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),            &
 	       xt(1),yt(1),zt(1),xt(2),yt(2),zt(2),xTc,yTc,zTc)
     volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),            &
@@ -412,7 +412,7 @@
       xTc=xc(c2)+Dx(s)
       yTc=yc(c2)+Dy(s)
       zTc=zc(c2)+Dz(s)
-      dsc2=dist(xTc,yTc,zTc,xsp(s), ysp(s), zsp(s)) 
+      dsc2=Distance(xTc,yTc,zTc,xsp(s), ysp(s), zsp(s)) 
       volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),           &
 		 xt(1),yt(1),zt(1),xt(2),yt(2),zt(2),xTc,yTc,zTc)
       volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),           &
@@ -465,11 +465,11 @@
         if(c_2 < 0) then
           if(BCmark(c_2) <= WallMark) then
             WallDs(c1)=min(WallDs(c1), &
-            dist2(xc(c1),yc(c1),zc(c1),xsp(s),ysp(s),zsp(s)))
+            Distance_Squared(xc(c1),yc(c1),zc(c1),xsp(s),ysp(s),zsp(s)))
           end if
 !        else if(material(c_1) /= material(c_2) ) then
 !          WallDs(c1)=min(WallDs(c1), &
-!          dist2(xc(c1),yc(c1),zc(c1),xsp(s),ysp(s),zsp(s)))
+!          Distance_Squared(xc(c1),yc(c1),zc(c1),xsp(s),ysp(s),zsp(s)))
         end if 
       end do
     end do
@@ -524,13 +524,13 @@
     xc1=xc(c1)
     yc1=yc(c1)
     zc1=zc(c1)
-    dsc1=dist(xc1,yc1,zc1,xsp(s), ysp(s), zsp(s))
+    dsc1=Distance(xc1,yc1,zc1,xsp(s), ysp(s), zsp(s))
 
 !----- second cell (pls. check if xsi=xc on the boundary)
     xc2=xc(c2)+Dx(s)
     yc2=yc(c2)+Dy(s)
     zc2=zc(c2)+Dz(s)
-    dsc2=dist(xc2,yc2,zc2,xsp(s), ysp(s), zsp(s))
+    dsc2=Distance(xc2,yc2,zc2,xsp(s), ysp(s), zsp(s))
 
 !----- interpolation factor
     f(s) = dsc2 / (dsc1+dsc2)   ! not checked

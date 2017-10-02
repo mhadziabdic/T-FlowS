@@ -14,7 +14,7 @@
 !-----------------------------[Parameters]-----------------------------!
   logical   :: restar
 !------------------------------[Calling]-------------------------------!
-  real      :: Dist
+  real      :: Distance
 !-------------------------------[Locals]-------------------------------!
   integer   :: i, j, l, m
   real      :: Mres(MAXP), MresT, dummy
@@ -59,10 +59,10 @@
   do j=1,Nmon
     Mres(j)=HUGE
     do i=1,NC
-      if(dist(xm(j),ym(j),zm(j),  &
+      if(Distance(xm(j),ym(j),zm(j),  &
               xc(i),yc(i),zc(i))  < Mres(j)) then
         Cm(j)=i
-        Mres(j)=dist(xm(j),ym(j),zm(j),xc(i),yc(i),zc(i))
+        Mres(j)=Distance(xm(j),ym(j),zm(j),xc(i),yc(i),zc(i))
       end if
     end do
     MresT=Mres(j)

@@ -9,35 +9,35 @@
 !----------------------------------------------------------------------!
   implicit none
 !----------------------------------------------------------------------!
-  INTERFACE
+  interface
     logical function Approx(A,B,tol)
       implicit none
       real          :: A,B
-      real,OPTIONAL :: tol
+      real,optional :: tol
     end function Approx
-  end INTERFACE
+  end interface
 !------------------------------[Calling]-------------------------------!
   real    :: Dist       
   real    :: Dist2       
   real    :: Tol
 !-------------------------------[Locals]-------------------------------!
-  integer                      :: c, c1, c2, n, s, ss, cc2, c_max, NNN, hh, mm
-  integer                      :: c11, c12, c21, c22, s1, s2,       &
-                                  BouCen,                           &
-                                  TypePer, Nper, NumberSides, dir, OPT
-  integer                      :: WallMark, rot_dir, dir_face
-  real                         :: xt(4), yt(4), zt(4), angle_face
-  real                         :: xs2,ys2,zs2, x_a, y_a, z_a, x_b, y_b, z_b
-  real                         :: x_c, y_c, z_c, Det
-  real                         :: ABi, ABj, ABk, ACi, ACj, ACk, Pi, Pj, Pk
-  real                         :: dsc1, dsc2, PerMin, PerMax
-  real                         :: t, SurTot, angle 
-  real                         :: xc1, yc1, zc1, xc2, yc2, zc2 
-  real                         :: MaxDis, TotVol, MinVol, MaxVol, Max_Coor, Min_Coor
-  real                         :: xmin, xmax, ymin, ymax, zmin, zmax 
-  DOUBLE PRECISION,allocatable :: xnr(:), ynr(:), znr(:), xspr(:), yspr(:), zspr(:)
-  DOUBLE PRECISION,allocatable :: BCoor(:), phi_face(:)
-  integer,allocatable          :: BFace(:)
+  integer             :: c, c1, c2, n, s, ss, cc2, c_max, NNN, hh, mm
+  integer             :: c11, c12, c21, c22, s1, s2,       &
+                         BouCen,                           &
+                         TypePer, Nper, NumberSides, dir, OPT
+  integer             :: WallMark, rot_dir, dir_face
+  real                :: xt(4), yt(4), zt(4), angle_face
+  real                :: xs2,ys2,zs2, x_a, y_a, z_a, x_b, y_b, z_b
+  real                :: x_c, y_c, z_c, Det
+  real                :: ABi, ABj, ABk, ACi, ACj, ACk, Pi, Pj, Pk
+  real                :: dsc1, dsc2, PerMin, PerMax
+  real                :: t, SurTot, angle 
+  real                :: xc1, yc1, zc1, xc2, yc2, zc2 
+  real                :: MaxDis, TotVol, MinVol, MaxVol, Max_Coor, Min_Coor
+  real                :: xmin, xmax, ymin, ymax, zmin, zmax 
+  real,allocatable    :: xnr(:), ynr(:), znr(:), xspr(:), yspr(:), zspr(:)
+  real,allocatable    :: BCoor(:), phi_face(:)
+  integer,allocatable :: BFace(:)
 !======================================================================!
 !
 !                                n3 

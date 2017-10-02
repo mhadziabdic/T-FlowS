@@ -9,7 +9,7 @@
 !----------------------------------------------------------------------! 
   implicit none
 !------------------------------[Calling]-------------------------------!
-  real :: Dist
+  real :: Distance
 !-----------------------------[Parameters]-----------------------------!
   integer :: NSsh0 ! if 0, shadow will not be drawn 
 !-------------------------------[Locals]-------------------------------!
@@ -160,7 +160,7 @@
 
   do s=1,NS+NSsh0
     indx(s) = s
-    work(s)  = dist(xk,yk,zk,xsp(s),ysp(s),zsp(s))
+    work(s)  = Distance(xk,yk,zk,xsp(s),ysp(s),zsp(s))
   end do
   call RISort(work,indx,NS+NSsh0,-2)
 

@@ -36,15 +36,15 @@ MODULE allp_mod
 
 !----- Unknown type
   TYPE Unknown          
-    real,POINTER :: n(:)                ! new value
-    real,POINTER :: o(:), oo(:)         ! old and older then old
-    real,POINTER :: C(:), Co(:), Coo(:) ! convective fluxes
-    real,POINTER :: Do(:), Doo(:)       ! difussive fluxes
-    real,POINTER :: X(:), Xo(:), Xoo(:) ! surfce sources  
-    real,POINTER :: mean(:)             ! long time average
-    real,POINTER :: filt(:)             ! long time average
-    real,POINTER :: q(:)                ! flux of a variable
-    real,POINTER :: fluc(:) 
+    real,pointer :: n(:)                ! new value
+    real,pointer :: o(:), oo(:)         ! old and older then old
+    real,pointer :: C(:), Co(:), Coo(:) ! convective fluxes
+    real,pointer :: Do(:), Doo(:)       ! difussive fluxes
+    real,pointer :: X(:), Xo(:), Xoo(:) ! surfce sources  
+    real,pointer :: mean(:)             ! long time average
+    real,pointer :: filt(:)             ! long time average
+    real,pointer :: q(:)                ! flux of a variable
+    real,pointer :: fluc(:) 
     real         :: URF                 ! under relaxation factor
     real         :: Stol                ! solver tolerance
     real         :: bound(128)          ! boundary values

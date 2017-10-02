@@ -10,7 +10,7 @@
 !----------------------------------------------------------------------!
   implicit none
 !------------------------------[Calling]-------------------------------!
-  real :: Dist
+  real :: Distance
 !-------------------------------[Locals]-------------------------------!
   integer             :: n, s, s0, c1, c2
   integer             :: xmaxb, xminb, ymaxb, yminb, xlegend
@@ -159,10 +159,10 @@
     c1 = SideC(1,s)
     c2 = SideC(2,s)
     indx(s) = s
-    work(s) = dist(xk,yk,zk,                              &
-                   f(s)*xc(c1)+(1.-f(s))*(xc(c2)+Dx(s)),  &
-                   f(s)*yc(c1)+(1.-f(s))*(yc(c2)+Dy(s)),  &
-                   f(s)*zc(c1)+(1.-f(s))*(zc(c2)+Dz(s)) )
+    work(s) = Distance(xk,yk,zk,                              &
+                       f(s)*xc(c1)+(1.-f(s))*(xc(c2)+Dx(s)),  &
+                       f(s)*yc(c1)+(1.-f(s))*(yc(c2)+Dy(s)),  &
+                       f(s)*zc(c1)+(1.-f(s))*(zc(c2)+Dz(s)) )
   end do
   call RISort(work,indx,NS,-2)
 

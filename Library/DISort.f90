@@ -3,9 +3,9 @@
 !----------------------------------------------------------------------*
 ! Sorts double array X and make same interchanges in integer arr. Y.   *
 !----------------------------------------------------------------------*
-      DIMENSION        IL(21),IU(21)
-      DOUBLE PRECISION X(N),T, TT
-      integer          Y(N),TY,TTY
+      dimension :: IL(21),IU(21)
+      real      :: X(N),T, TT
+      integer   :: Y(N),TY,TTY
 !======================================================================*
 
 !***FIRST EXECUTABLE STATEMENT RISORT

@@ -13,7 +13,7 @@
 !-----------------------------[Parameters]-----------------------------!
   logical       :: in_out
 !------------------------------[Calling]-------------------------------!
-  real          :: Dist
+  real          :: Distance
 !-------------------------------[Locals]-------------------------------!
   integer       :: c, n, dum1, NB, NP, Ninit, m, c1, c2, s 
   character*80  :: namBou, namPro(128), dir
@@ -393,18 +393,18 @@
             Mres = HUGE
             do s=1,NP
               if(dir=="XPL") then
-                if(dist(x1(s),x2(s),0.0,yc(c),zc(c),0.0) < Mres) then
-                  Mres = dist(x1(s),x2(s),0.0,yc(c),zc(c),0.0)
+                if(Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0) < Mres) then
+                  Mres = Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0)
                   c1 = s
                 end if
               else if(dir=="YPL") then
-                if(dist(x1(s),x2(s),0.0,xc(c),zc(c),0.0) < Mres) then
-                  Mres = dist(x1(s),x2(s),0.0,xc(c),zc(c),0.0)
+                if(Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0) < Mres) then
+                  Mres = Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0)
                   c1 = s
                 end if
               else if(dir=="ZPL") then
-                if(dist(x1(s),x2(s),0.0,xc(c),yc(c),0.0) < Mres) then
-                  Mres = dist(x1(s),x2(s),0.0,xc(c),yc(c),0.0)
+                if(Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0) < Mres) then
+                  Mres = Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0)
                   c1 = s
                 end if
               end if

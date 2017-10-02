@@ -16,9 +16,6 @@
   INTEGER             :: c, i 
   CHARACTER           :: namOut*80, answer*80, namTem*80
   CHARACTER, OPTIONAL :: namAut*(*)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ProSav.f90,v 1.2 2017/08/31 22:04:09 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/ProSav.f90,v $  
 !======================================================================!
 
 !---- store the name

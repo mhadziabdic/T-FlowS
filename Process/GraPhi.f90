@@ -16,9 +16,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: s, c, c1, c2
   REAL    :: DPHI1, DPHI2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GraPhi.f90,v 1.2 2017/08/31 21:54:23 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/GraPhi.f90,v $   
 !======================================================================!
 
 !  return

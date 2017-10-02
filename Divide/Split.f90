@@ -18,9 +18,6 @@
   INTEGER   :: c, ic, j
   INTEGER   :: Nfiled
   REAL      :: xmax,ymax,zmax,xmin,ymin,zmin, delx,dely,delz,dxyz 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Split.f90,v 1.1 2014/11/24 11:32:32 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Divide/Split.f90,v $    
 !======================================================================!
 ! TESTING TESTING TESTING
 !--------------------------------------------! 

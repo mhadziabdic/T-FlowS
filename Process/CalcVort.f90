@@ -16,9 +16,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c, i 
   REAL    :: Sii, Sjk
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcVort.f90,v 1.2 2017/08/31 21:48:56 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcVort.f90,v $  
 !======================================================================!
 
   call Exchng(U % n)

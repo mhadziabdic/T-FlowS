@@ -11,11 +11,7 @@
   USE rans_mod
 !----------------------------------------------------------------------!
   IMPLICIT NONE
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UnkAloc.f90,v 1.5 2017/08/31 21:55:57 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/UnkAloc.f90,v $  
 !======================================================================!
-
 
   allocate (U % n(-NbC:NC)); U % n=0.
   allocate (V % n(-NbC:NC)); V % n=0.

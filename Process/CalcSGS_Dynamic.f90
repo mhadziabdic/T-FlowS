@@ -20,9 +20,6 @@
   REAL              :: MinC, MaxC, Cplus_avr, Cminus_avr
   REAL              :: fun
 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcSGS_Dynamic.f90,v 1.2 2017/08/31 21:37:33 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcSGS_Dynamic.f90,v $  
 !======================================================================!
 !                                                                      !
 !  C is derived from:    Lij_res = Lij_mod                             !

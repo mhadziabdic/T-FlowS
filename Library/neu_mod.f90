@@ -2,12 +2,6 @@
   MODULE neu_mod
 !----------------------------------------------------------------------!
   IMPLICIT NONE
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcsglo1,rcsglo2
-  data rcsglo1/                                                      &
-  '$Id: neu_mod.h90,v 1.3 2000/06/10 08:00:03 bojan Exp $'/ 
-  data rcsglo2/                                                      &
-  '$Source: /home/muhamed/.CVSROOT/T-Rex/Library/neu_mod.h90,v $'/
 !======================================================================!
 
 !---- number of boundary sections

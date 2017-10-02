@@ -32,9 +32,6 @@
   INTEGER  :: prec,  niter                   !  preconditioning
   REAL     :: tol                            !  tolerance
   REAL     :: IniRes, FinRes                 !  residual
-!--------------------------------[CVS]---------------------------------!
-!  $Id: BiCG.f90,v 1.2 2017/08/31 21:28:33 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/BiCG.f90,v $  
 !======================================================================!
 
 !+++++++++++++++++++++++++!

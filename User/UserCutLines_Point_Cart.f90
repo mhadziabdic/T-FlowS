@@ -30,9 +30,6 @@
                                  var_4(:), var_5(:), R_p(:)  
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
   REAL                :: R, Urad_n, Utan_n, R1, R2, Urad, Utan, dummy 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCutLines_Point_Cart.f90,v 1.1 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCutLines_Point_Cart.f90,v $  
 !======================================================================!
 
   open(9, FILE='Point_positions.dat')

@@ -18,9 +18,6 @@
   INTEGER :: var ! 1 -> U,  2 -> V,  3 -> W 
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserZero.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserZero.f90,v $    
 !======================================================================!
 
   if(var == 3) then  ! only for W velocity component

@@ -39,9 +39,6 @@
   REAL                :: R, Urad_mean, Utan_mean, R1, R2, Urad, Utan, pi, lnum
   CHARACTER, OPTIONAL :: namAut*(*)
   LOGICAL             :: THERE
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCutLines_jet.f90,v 1.1 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCutLines_jet.f90,v $  
 !======================================================================!
     pi = 3.141592
     Uaver = 1.14

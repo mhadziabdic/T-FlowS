@@ -18,9 +18,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c, seed(1)
   REAL    :: randn
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserPerturb.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserPerturb.f90,v $  
 !======================================================================!
 !   See also: Uplus, URms, VRms, WRms, perturb                         !
 !----------------------------------------------------------------------!
@@ -39,33 +36,33 @@
                 + Wtau(material(c))**2 )
 
     U % n(c)  = U % n(c)   + 2.0*(0.5-randn) *                  &
-	     fac * Uta * UserURms(1.0-abs(zc(c)))
+             fac * Uta * UserURms(1.0-abs(zc(c)))
     call random_number(randn)
     U % o(c)  = U % o(c)  + 2.0*(0.5-randn) *                   &
-	     fac * Uta * UserURms(1.0-abs(zc(c)))
+             fac * Uta * UserURms(1.0-abs(zc(c)))
     call random_number(randn)
     U % oo(c) = U % oo(c) + 2.0*(0.5-randn) *                   &
-	     fac * Uta * UserURms(1.0-abs(zc(c)))
+             fac * Uta * UserURms(1.0-abs(zc(c)))
 
     call random_number(randn)
     V % n(c)  = V % n(c)   + 2.0*(0.5-randn) *                  &
-	     fac * Uta * UserVRms(1.0-abs(zc(c)))
+             fac * Uta * UserVRms(1.0-abs(zc(c)))
     call random_number(randn)
     V % o(c)  = V % o(c)  + 2.0*(0.5-randn) *                   &
-	     fac * Uta * UserVRms(1.0-abs(zc(c)))
+             fac * Uta * UserVRms(1.0-abs(zc(c)))
     call random_number(randn)
     V % oo(c) = V % oo(c) + 2.0*(0.5-randn) *                   &
-	     fac * Uta * UserVRms(1.0-abs(zc(c)))
+             fac * Uta * UserVRms(1.0-abs(zc(c)))
 
     call random_number(randn)
     W % n(c)  = W % n(c)   + 2.0*(0.5-randn) *                  &
-	     fac * Uta * UserWRms(1.0-abs(zc(c)))
+             fac * Uta * UserWRms(1.0-abs(zc(c)))
     call random_number(randn)
     W % o(c)  = W % o(c)  + 2.0*(0.5-randn) *                   &
-	     fac * Uta * UserWRms(1.0-abs(zc(c)))
+             fac * Uta * UserWRms(1.0-abs(zc(c)))
     call random_number(randn)
     W % oo(c) = W % oo(c) + 2.0*(0.5-randn) *                   &
-	     fac * Uta * UserWRms(1.0-abs(zc(c)))
+             fac * Uta * UserWRms(1.0-abs(zc(c)))
 
 !->>> write(*,*) U(c), V(c), W(c)
 

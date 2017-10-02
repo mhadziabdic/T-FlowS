@@ -33,9 +33,8 @@
   REAL    :: Stot, lf, UtauL, Uff
   REAL    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus
   REAL    :: frictionv(NC)
-
-
 !======================================================================!
+
   namTem = name
   storename = namAut
 !<<<<<<<<<<<<<<<<<<<<<<<<<!

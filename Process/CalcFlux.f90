@@ -12,9 +12,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c1, c2, s, m
   REAL    :: xc1, yc1, zc1, xc2, yc2, zc2
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcFlux.f90,v 1.2 2017/08/31 21:32:52 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcFlux.f90,v $  
 !======================================================================!
 
   do m=1,Nmat

@@ -25,9 +25,6 @@
   REAL          :: fj ! flow oriented interpolation factor
   REAL          :: gD, gU, alfa, beta1, beta2 
   REAL          :: Phij, PhiU, PhiUstar, rj, sign, GammaC, Beta
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ConvScheme.f90,v 1.2 2017/08/31 21:51:32 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/ConvScheme.f90,v $  
 !======================================================================!
 !
 !               Flux > 0

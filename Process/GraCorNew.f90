@@ -39,9 +39,6 @@
   REAL    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
   REAL    :: f1, f2, PHIs
   REAL    :: L1, L2, D1, D2
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GraCorNew.f90,v 1.2 2017/08/31 21:54:23 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/GraCorNew.f90,v $   
 !======================================================================!
 
   do s=1,NS

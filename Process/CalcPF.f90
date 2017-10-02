@@ -14,9 +14,6 @@
   REAL    :: error
   REAL    :: Us, Vs, Ws, DENs
   REAL    :: A12
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcPF.f90,v 1.2 2017/08/31 21:34:19 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcPF.f90,v $  
 !----------------------------------------------------------------------!
 !     
 !  The form of equations which I am solving:    

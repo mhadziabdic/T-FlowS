@@ -11,9 +11,6 @@
   IMPLICIT NONE
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c1, c2, s
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcConvect.f90,v 1.2 2017/08/31 21:31:56 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcConvect.f90,v $  
 !======================================================================!
 
   call CalcFlux   

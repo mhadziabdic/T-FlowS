@@ -36,9 +36,6 @@
                                  Kin_mp(:), Eps_mp(:), v_2_mp(:), f22_mp(:), &
                                  var1(:), var2(:)
   INTEGER,ALLOCATABLE :: Np(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D_kv2f.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D_kv2f.f90,v $  
 !======================================================================!
 
 !  if(this  < 2)  & 

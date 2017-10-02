@@ -14,9 +14,6 @@
   INTEGER   :: sub,subo,NNsub,NCsub,NSsub,NBCsub,NBFsub,NCSsub,NCFsub
   CHARACTER :: namOut*80
   INTEGER,ALLOCATABLE :: SideCell(:,:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Number.f90,v 1.1 2014/11/24 11:32:32 muhamed Exp $'/
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Divide/Number.f90,v $'/ 
 !======================================================================!
 !  Each subdomain needs two buffers: a send buffer and a receive buffer.
 !  A receive buffer will be stored as aditional boundary cells for each

@@ -25,9 +25,6 @@
   REAL    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, uiujn, Ce11, uu_nn 
   REAL    :: Diss_wall, Diss_hom, r13, r23
   REAL,ALLOCATABLE :: Diss1(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourcesEBM.f90,v 1.2 2017/08/31 22:35:56 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourcesEBM.f90,v $  
 !======================================================================!
 
 

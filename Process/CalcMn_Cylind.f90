@@ -15,9 +15,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c, n
   REAL    :: Urad_mean, Utan_mean, R, Urad, Utan
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcMn_Cylind.f90,v 1.2 2017/08/31 21:33:56 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcMn_Cylind.f90,v $   
 !======================================================================!
 
   n=n1-n0

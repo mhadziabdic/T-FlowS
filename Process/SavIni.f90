@@ -15,12 +15,6 @@
   INTEGER   ::  c, Nvar, var, c1, c2, s, SC, nn
   TYPE(Unknown) :: PHI
   CHARACTER :: namOut*80, answer*80, ext*4
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: SavIni.f90,v 1.2 2017/08/31 22:07:17 mhadziabdic Exp $'/
-  data rcs2/                                                        &
-  '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SavIni.f90,v $'/
 !======================================================================!
 
 !---- store the name

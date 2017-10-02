@@ -6,10 +6,6 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!..RCS/CVS ident
-! $Id: con_mod.h90,v 1.1 2000/05/30 20:33:56 bojan Exp $
-! $Source: /home/muhamed/.CVSROOT/T-Rex/Library/con_mod.h90,v $
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 MODULE con_mod
 
   IMPLICIT NONE

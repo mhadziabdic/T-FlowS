@@ -25,12 +25,6 @@
   REAL   ,ALLOCATABLE :: SideCoor(:) 
   INTEGER,ALLOCATABLE :: SideCell(:), Starts(:), Ends(:) 
   REAL                :: VeryBig
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: FindSides.f90,v 1.14 2004/06/24 14:08:22 muhamed Exp $'/ 
-  data rcs2/                                                        &
-  '$Source: /home/muhamed/.CVSROOT/T-Rex/Neu2Trex/FindSides.f90,v $'/
 !======================================================================!
 
   VeryBig = max(NN,NC)

@@ -5,9 +5,6 @@
 !----------------------------------------------------------------------*
       DIMENSION IL(21),IU(21)
       INTEGER X(N),Y(N),T,TT,TY,TTY
-!--------------------------------[CVS]---------------------------------*
-!      $Id: ISort.f90,v 1.2 2002/10/30 16:29:33 niceno Exp $  
-!      $Source: /home/muhamed/.CVSROOT/T-Rex/Library/ISort.f90,v $  
 !======================================================================*
 ! NIST Guide to Available Math Software.                               *
 ! Source for module ISORT from package CMLIB.                          *

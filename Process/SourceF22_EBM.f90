@@ -15,9 +15,6 @@
   REAL    Sor11,  f22hg
 !=============================================
   REAL    A0
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourceF22_EBM.f90,v 1.2 2017/08/31 22:32:29 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourceF22_EBM.f90,v $    
 !----------------------------------------------------------------------!
 !                                                                      !
 !  The form of source terms are :                                      ! 

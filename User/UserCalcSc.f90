@@ -31,9 +31,6 @@
   REAL    :: CONeff1, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
   REAL    :: CONeff2, FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
   REAL    :: Stot, PHIs1, PHIs2
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCalcSc.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCalcSc.f90,v $  
 !----------------------------------------------------------------------!
 !     
 !  The form of equations which are solved:    

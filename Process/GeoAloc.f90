@@ -10,9 +10,6 @@
   USE par_mod
 !----------------------------------------------------------------------!
   IMPLICIT NONE
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GeoAloc.f90,v 1.2 2017/08/31 21:57:29 mhadziabdic Exp $
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/GeoAloc.f90,v $
 !======================================================================!
 
 !----- variables defined in all.h90:

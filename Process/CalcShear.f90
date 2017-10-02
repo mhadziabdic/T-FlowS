@@ -19,9 +19,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c, i
   REAL    :: Sii, Sjk 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcShear.f90,v 1.2 2017/08/31 21:40:15 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcShear.f90,v $  
 !======================================================================!
 
   call Exchng(Ui)

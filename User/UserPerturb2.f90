@@ -17,9 +17,6 @@
   INTEGER :: c, seed(1), q
   REAL    :: randn
   integer, allocatable :: a(:) 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserPerturb2.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserPerturb2.f90,v $  
 !======================================================================!
 
   call random_seed(size=q)

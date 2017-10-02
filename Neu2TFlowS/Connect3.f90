@@ -44,9 +44,6 @@
   REAL,PARAMETER :: one3rd = 0.3333333
   REAL,PARAMETER :: two3rd = 0.6666666
   CHARACTER*80 :: Answer
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Connect3.f90,v 1.2 2002/10/30 16:29:38 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Neu2Trex/Connect3.f90,v $   
 !======================================================================!
 
   Ncopy = 0

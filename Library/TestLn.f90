@@ -15,9 +15,6 @@
   INTEGER   :: n,c,c1,c2,s 
   INTEGER   :: NSsubNonPer, NSsubPer
   CHARACTER :: namOut*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: TestLn.f90,v 1.12 2002/10/30 16:29:33 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/TestLn.f90,v $  
 !======================================================================!
 
 !<<<<<<<<<<<<<<<<<<<<<<<<<!

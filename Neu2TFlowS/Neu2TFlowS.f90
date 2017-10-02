@@ -8,12 +8,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c, n, s
   INTEGER             :: i, typ, cnt
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: Neu2TFlowS.f90,v 1.15 2004/06/24 14:09:07 muhamed Exp $'/ 
-  data rcs2/                                                        &
-  '$Source: /home/muhamed/.CVSROOT/TFlowS/Neu2TFlowS/Neu2TFlowS.f90,v $'/
 !======================================================================!
 
   call logo

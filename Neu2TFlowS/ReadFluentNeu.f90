@@ -16,12 +16,6 @@
   INTEGER             :: i, j, dum1, dum2, dum3
   INTEGER,ALLOCATABLE :: temp(:)
   INTEGER             :: c, dir, type
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: ReadFluentNeu.f90,v 1.14 2005/01/25 12:45:44 muhamed Exp $'/ 
-  data rcs2/                                                        &
-  '$Source: /home/muhamed/.CVSROOT/T-Rex/Neu2Trex/ReadFluentNeu.f90,v $'/
 !======================================================================!
 
   write(*,*) 'Enter the Fluent''s (*.NEU) file name (without ext.):'

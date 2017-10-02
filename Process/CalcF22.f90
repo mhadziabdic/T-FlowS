@@ -22,10 +22,6 @@
   REAL    :: A0, A12, A21
   REAL    :: error
   REAL    :: dPHIdxS, dPHIdyS, dPHIdzS
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcF22.f90,v 1.2 2017/08/31 21:32:22 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcF22.f90,v $    
-!----------------------------------------------------------------------!
 !======================================================================! 
 !  The form of equations which are solved:
 !

@@ -57,9 +57,6 @@
   
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
   REAL                :: R, Urad_mean, Utan_mean, NF, vol1, Tfric, Twall, Twall_p, FFF, dummy
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCutLines_budgets_cylind.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCutLines_budgets_cylind.f90,v $  
 !======================================================================!
 
 

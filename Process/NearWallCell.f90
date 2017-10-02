@@ -15,13 +15,6 @@
   INTEGER          :: k,  c, nearest  
   REAL             :: DISTnew, DISTold
   REAL             :: Dist
-
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: NearWallCell.f90,v 1.2 2017/08/31 21:57:29 mhadziabdic Exp $'/
-  data rcs2/                                                        &
-  '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/NearWallCell.f90,v $'/
 !======================================================================!  
 
 !--------------------------------------------------------------------------------!

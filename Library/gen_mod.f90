@@ -4,10 +4,6 @@
 !       for the mesh generator        !
 !                                     !
 !+++++++++++++++++++++++++++++++++++++!
-!..RCS/CVS ident
-! $Id: gen_mod.h90,v 1.8 2000/03/22 21:10:47 bojan Exp $
-! $Source: /home/muhamed/.CVSROOT/T-Rex/Library/gen_mod.h90,v $ 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 MODULE gen_mod
 
   USE allp_mod
@@ -18,7 +14,7 @@ MODULE gen_mod
   REAL,ALLOCATABLE :: walln(:)             ! node distance from the wall 
   INTEGER,ALLOCATABLE :: SideN(:,:)        ! numb, n1, n2, n3, n4
   INTEGER,ALLOCATABLE :: SideCc(:,:)
-						
+                                                
   INTEGER,ALLOCATABLE :: CellC(:,:)        ! cell's neighbours
   INTEGER,ALLOCATABLE :: CellN(:,:)        ! cell nodes
 
@@ -49,12 +45,12 @@ MODULE gen_mod
   INTEGER :: Siter(MAXP)   
 
   INTEGER :: BlkPnt(MAXP,0:8),  & ! 0 for orientation                
-	     BlkRes(MAXP,6),    & ! NI,NJ,NK,NI*NJ*NK,NNo,NVo       
-	     BlkFac(MAXP,6,4),  &                                    
-	     BlFaLa(MAXP),      &                                   
-	     Bound(MAXP,8),     &                                  
-	     Period(MAXP,8),    &                                 
-	     Copy(MAXP,0:8)
+             BlkRes(MAXP,6),    & ! NI,NJ,NK,NI*NJ*NK,NNo,NVo       
+             BlkFac(MAXP,6,4),  &                                    
+             BlFaLa(MAXP),      &                                   
+             Bound(MAXP,8),     &                                  
+             Period(MAXP,8),    &                                 
+             Copy(MAXP,0:8)
 
   INTEGER :: LinPnt(MAXL,2), LinRes(MAXL)
   INTEGER :: Nbloc, NP, Nline, Nsurf, Nboun, Nperi

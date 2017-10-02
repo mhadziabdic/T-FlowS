@@ -33,12 +33,6 @@
 !---- Variables for ReadC:
   CHARACTER  :: namCoo*80, ext*4, answer*80, answer_hot*80
   CHARACTER*80 :: namAut
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: LoaIni.f90,v 1.2 2017/08/31 21:59:16 mhadziabdic Exp $'/
-  data rcs2/                                                        &
-  '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/LoaIni.f90,v $'/
 !======================================================================!  
 
   call ReadC(7,inp,tn,ts,te)

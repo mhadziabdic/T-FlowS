@@ -39,10 +39,8 @@
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
   REAL                :: R, Urad_mean, Utan_mean, NF, vol1
   REAL                :: Tfric, Twall, Twall_p, FFF, dummy, tan1
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D_pipe_LES.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D_pipe_LES.f90,v $  
 !======================================================================!
+
 !>>>>>>>>>>>>>>>>>>>>>>!
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!

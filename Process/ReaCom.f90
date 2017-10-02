@@ -20,9 +20,6 @@
   REAL      :: Mres(MAXP), MresT, dummy
   REAL      :: xm(MAXP), ym(MAXP), zm(MAXP)
   CHARACTER :: answer*80, nammon*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ReaCom.f90,v 1.3 2017/09/06 06:16:14 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/ReaCom.f90,v $  
 !======================================================================!
 
   call Wait   

@@ -32,9 +32,6 @@
                                  Var_4(:), Var_5(:)  
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
   REAL                :: R, Urad_n, Utan_n, R1, R2, Urad, Utan 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserBackstep.f90,v 1.1 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserBackstep.f90,v $  
 !======================================================================!
 
 !  open(9, FILE='Vert_positions.dat')

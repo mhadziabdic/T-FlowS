@@ -15,9 +15,6 @@
   INTEGER             :: c, s, m
   CHARACTER           :: namOut*80, answer*80
   CHARACTER, OPTIONAL :: namAut*(*)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SavRes.f90,v 1.4 2017/09/06 13:13:27 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SavRes.f90,v $  
 !======================================================================!
 
   if(PRESENT(namAut)) then

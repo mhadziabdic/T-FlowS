@@ -30,9 +30,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: s, c, c1, c2, j, i
   REAL    :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
-!--------------------------------[CVS]---------------------------------!
-! '$Id: SourceEpsKEps.f90,v 1.2 2017/08/31 22:32:06 mhadziabdic Exp $' 
-! '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourceEpsKEps.f90,v $' 
 !======================================================================!
 
   if(MODE == HRe) then

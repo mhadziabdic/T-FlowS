@@ -18,9 +18,6 @@
   REAL    CONeff, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
   REAL            FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
   REAL    Stot, PHIs
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserPotent.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserPotent.f90,v $  
 !======================================================================!
 
   do n=1,Acol(NC+1) ! to je broj nonzero + 1

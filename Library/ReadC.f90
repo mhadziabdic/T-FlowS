@@ -9,9 +9,6 @@
   INTEGER   :: un, tn, ts(300), te(300)
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: i
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ReadC.f90,v 1.5 2002/10/30 16:29:33 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/ReadC.f90,v $            
 !======================================================================!
 !   A comment is each line which begins with one of the following      !
 !   characters: ! # $ % / & [ ] { } : @ < > * (Quite a lot, huh ?)     !

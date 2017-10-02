@@ -37,12 +37,7 @@
                                  var_4(:), var_5(:)  
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
   REAL                :: R, Urad_mean, Utan_mean, R1, R2, Urad, Utan
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D_jet.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D_jet.f90,v $  
 !======================================================================!
-
-
 
   do k = 0, 8
 

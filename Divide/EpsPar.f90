@@ -17,15 +17,12 @@
   CHARACTER           :: namEps*80, answer*80
   REAL                :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin
   REAL                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,        &
-	                 xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade,     &
-	                 xp1,yp1,xp2,yp2,xp3,yp3,xp4,yp4 
+                         xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade,     &
+                         xp1,yp1,xp2,yp2,xp3,yp3,xp4,yp4 
   REAL                :: red(MAXPRO), green(MAXPRO), blue(MAXPRO)
   INTEGER,ALLOCATABLE :: indx(:)
   REAL,ALLOCATABLE    :: work(:) 
   INTEGER             :: ix1, ix2, iy1, iy2, boxsize
-!--------------------------------[CVS]---------------------------------!
-!  $Id: EpsPar.f90,v 1.1 2014/11/24 11:32:32 muhamed Exp $    
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Divide/EpsPar.f90,v $    
 !======================================================================!
 
 !---- allocate the memory
@@ -132,7 +129,7 @@
   write(9, '(A24)') '%!PS-Adobe-2.0 EPSF-1.2 '
   write(9, '(A24)') '%% Created by:  T-Rex %%'
   write(9, '(A15,4I7)') '%%BoundingBox: ',                          &
-			xminb-2,yminb-2,xmaxb+2+xlegend,ymaxb+2 
+                        xminb-2,yminb-2,xmaxb+2+xlegend,ymaxb+2 
   write(9, '(A24)') '% Abrevations:          '
   write(9, '(A24)') '/cp   {closepath}    def'
   write(9, '(A24)') '/f    {fill}         def'
@@ -200,25 +197,25 @@
       z4 = z(SideN(s,4))
 
       if(xk  < 0.0 .and. yk  > 0.0) then
-	xp1=-x1*sin(alfa)-y1*sin(beta)
-	xp2=-x2*sin(alfa)-y2*sin(beta)
-	xp3=-x3*sin(alfa)-y3*sin(beta)
-	xp4=-x4*sin(alfa)-y4*sin(beta)
+        xp1=-x1*sin(alfa)-y1*sin(beta)
+        xp2=-x2*sin(alfa)-y2*sin(beta)
+        xp3=-x3*sin(alfa)-y3*sin(beta)
+        xp4=-x4*sin(alfa)-y4*sin(beta)
       else if(xk  > 0.0 .and. yk  < 0.0) then
-	xp1=x1*sin(alfa)+y1*sin(beta)
-	xp2=x2*sin(alfa)+y2*sin(beta)
-	xp3=x3*sin(alfa)+y3*sin(beta)
-	xp4=x4*sin(alfa)+y4*sin(beta)
+        xp1=x1*sin(alfa)+y1*sin(beta)
+        xp2=x2*sin(alfa)+y2*sin(beta)
+        xp3=x3*sin(alfa)+y3*sin(beta)
+        xp4=x4*sin(alfa)+y4*sin(beta)
       else if(xk  > 0.0 .and. yk  > 0.0) then 
-	xp1=-x1*sin(alfa)+y1*sin(beta)
-	xp2=-x2*sin(alfa)+y2*sin(beta)
-	xp3=-x3*sin(alfa)+y3*sin(beta)
-	xp4=-x4*sin(alfa)+y4*sin(beta)
+        xp1=-x1*sin(alfa)+y1*sin(beta)
+        xp2=-x2*sin(alfa)+y2*sin(beta)
+        xp3=-x3*sin(alfa)+y3*sin(beta)
+        xp4=-x4*sin(alfa)+y4*sin(beta)
       else
-	xp1=x1*sin(alfa)-y1*sin(beta)
-	xp2=x2*sin(alfa)-y2*sin(beta)
-	xp3=x3*sin(alfa)-y3*sin(beta)
-	xp4=x4*sin(alfa)-y4*sin(beta)
+        xp1=x1*sin(alfa)-y1*sin(beta)
+        xp2=x2*sin(alfa)-y2*sin(beta)
+        xp3=x3*sin(alfa)-y3*sin(beta)
+        xp4=x4*sin(alfa)-y4*sin(beta)
       end if
 
       yp1=(-x1*cos(alfa)-y1*cos(beta))*cos(gama) + z1*sin(gama)
@@ -228,27 +225,27 @@
 
       if(SideN(s,0) == 4)                                             &
       write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')       &
-		'gs np 0 slw ',                                       &
-		int(sclf*xp1),int(sclf*yp1), ' m ',                   & 
-		int(sclf*xp2),int(sclf*yp2), ' l ',                   &
-		int(sclf*xp3),int(sclf*yp3), ' l ',                   &
-		int(sclf*xp4),int(sclf*yp4), ' l ',                   &
-		' cp gs ',                                            &
-		red(proces(NewC(c1))),                                &
-		green(proces(NewC(c1))),                              &
-		blue(proces(NewC(c1))),                               &
+                'gs np 0 slw ',                                       &
+                int(sclf*xp1),int(sclf*yp1), ' m ',                   & 
+                int(sclf*xp2),int(sclf*yp2), ' l ',                   &
+                int(sclf*xp3),int(sclf*yp3), ' l ',                   &
+                int(sclf*xp4),int(sclf*yp4), ' l ',                   &
+                ' cp gs ',                                            &
+                red(proces(NewC(c1))),                                &
+                green(proces(NewC(c1))),                              &
+                blue(proces(NewC(c1))),                               &
                 ' srgb f gr s gr'
 
       if(SideN(s,0) == 3)                                             &
       write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')              &
-		'gs np 0 slw ',                                       &
-		int(sclf*xp1),int(sclf*yp1), ' m ',                   & 
-		int(sclf*xp2),int(sclf*yp2), ' l ',                   &
-		int(sclf*xp3),int(sclf*yp3), ' l ',                   &
-		' cp gs ',                                            &
-		red(proces(NewC(c1))),                                &
-		green(proces(NewC(c1))),                              &
-		blue(proces(NewC(c1))),                               &
+                'gs np 0 slw ',                                       &
+                int(sclf*xp1),int(sclf*yp1), ' m ',                   & 
+                int(sclf*xp2),int(sclf*yp2), ' l ',                   &
+                int(sclf*xp3),int(sclf*yp3), ' l ',                   &
+                ' cp gs ',                                            &
+                red(proces(NewC(c1))),                                &
+                green(proces(NewC(c1))),                              &
+                blue(proces(NewC(c1))),                               &
                 ' srgb f gr s gr'
     end if
 

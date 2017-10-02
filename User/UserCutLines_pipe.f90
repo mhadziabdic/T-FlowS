@@ -38,9 +38,6 @@
     INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
     REAL                :: R, Urad_mean, Utan_mean, dummy, Lscale, R_max
     REAL                :: b11, b22, b12, b21
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCutLines_pipe.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCutLines_pipe.f90,v $  
 !======================================================================!
 
     namPro = name

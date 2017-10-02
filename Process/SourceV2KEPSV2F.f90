@@ -17,10 +17,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c, Nstep
   INTEGER :: s, c1, c2,j     
-
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourceV2KEPSV2F.f90,v 1.2 2014/12/08 08:16:48 muhamed Exp $  
-!  $Source: /home/IUS/mhadziabdic/Dropbox/CVSROOT/T-FlowS-CVS/Process/SourceV2KEPSV2F.f90,v $  
 !======================================================================!
 
 

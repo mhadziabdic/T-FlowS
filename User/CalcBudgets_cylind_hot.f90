@@ -50,10 +50,6 @@
   REAL,ALLOCATABLE :: PD_uu(:), PD_vv(:), PD_ww(:) 
   REAL,ALLOCATABLE :: PD_uv(:), PD_uw(:), PD_vw(:) 
   REAL,ALLOCATABLE :: PD_ut(:), PD_vt(:), PD_wt(:) 
-
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcBudgets_cylind_hot.f90,v 1.2 2017/08/31 21:31:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcBudgets_cylind_hot.f90,v $   
 !======================================================================!
 !   It is obsolete and should be replaced with a newer one.            !
 !   See also: Processor                                                !

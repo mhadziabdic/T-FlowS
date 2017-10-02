@@ -5,9 +5,6 @@
 !----------------------------------------------------------------------!
 !-----------------------------[Parameters]-----------------------------!
   INTEGER :: r
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Rnd.f90,v 1.4 2002/10/30 16:29:33 niceno Exp $
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/Rnd.f90,v $
 !======================================================================!
 !   Input parameter r must be 0, otherwise it was not working.         !
 !   One of authors of TFlowS (B. Niceno) found it somewhere on         !

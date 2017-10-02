@@ -36,9 +36,6 @@
                                  var_1(:), var_2(:), var_3(:), Rad_1(:), Rad_mp(:)
     INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
     REAL                :: R, Urad_mean, Utan_mean, dummy
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D_pipe.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D_pipe.f90,v $  
 !======================================================================!
 
     namPro = name

@@ -13,9 +13,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER      :: c, n, s
   CHARACTER*80 :: dummy, nameIn
-!--------------------------------[CVS]---------------------------------!
-!  $Id: DivLoa.f90,v 1.1 2014/11/24 11:32:32 muhamed Exp $   
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Divide/DivLoa.f90,v $     
 !======================================================================!
 
   write(*,'(A41)') '# Input problem name: (without extension)'

@@ -6,10 +6,6 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!..RCS/CVS ident
-! $Id: all_mod.h90,v 1.8 2002/10/31 11:26:48 niceno Exp $
-! $Source: /home/muhamed/.CVSROOT/T-Rex/Library/all_mod.h90,v $
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 !   Note: cell_n, parent, A_row, A_col, A_dia, side_c, side_cc, 
 !         sideAij, are for all grids
 !======================================================================!

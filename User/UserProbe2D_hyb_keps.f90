@@ -37,9 +37,6 @@
                                  Pk_mp(:), PHI(:)
   INTEGER,ALLOCATABLE :: Np(:), order(:) 
   CHARACTER, OPTIONAL :: namAut*(*)            
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe2D_hyb_keps.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe2D_hyb_keps.f90,v $  
 !======================================================================!
   if(PRESENT(namAut)) then
     write(*,*) namAut

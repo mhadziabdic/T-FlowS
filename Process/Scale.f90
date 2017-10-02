@@ -17,9 +17,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER c 
   REAL T1, T2, L1, L2, L3, T3
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Scale.f90,v 1.2 2017/08/31 22:09:09 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/Scale.f90,v $              
 !======================================================================!
 
   if(SIMULA==K_EPS_VV) then

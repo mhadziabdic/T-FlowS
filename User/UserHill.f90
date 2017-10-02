@@ -34,9 +34,6 @@
                                  uTp(:), vTp(:), wTp(:)
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
   REAL                :: R, dummy, R1, R2
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserHill.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserHill.f90,v $  
 !======================================================================!
 
 

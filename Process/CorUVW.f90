@@ -14,9 +14,6 @@
   REAL      :: CFLmax(256), PeMax(256)
   REAL      :: CFLs, PeS
   REAL      :: Pdrop, FluxM
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CorUVW.f90,v 1.2 2017/08/31 21:51:09 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CorUVW.f90,v $  
 !======================================================================!
 
 !--------------------------------------------!

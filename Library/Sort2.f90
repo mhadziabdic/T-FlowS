@@ -1,4 +1,3 @@
- 
 !***************************************************************
 !*          Sorting an array with the Shell method             *
 !* ----------------------------------------------------------- *
@@ -19,7 +18,6 @@ real    A(MAX_VALUE)     !Table to be sorted
   return
 
 END
-
 
 !*****************************************************
 !* Sorts an array ARR of length N in ascending order *
@@ -67,4 +65,3 @@ real ARR(N)
 END
 
 !end of file sort2.f90
-

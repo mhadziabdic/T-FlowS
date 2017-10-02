@@ -12,9 +12,6 @@
   REAL    :: PHI(-NbC:NC) 
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c1, c2, s
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalMinMax.f90,v 1.2 2017/08/31 21:50:44 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalMinMax.f90,v $  
 !======================================================================!
 
   PHImax = PHI 

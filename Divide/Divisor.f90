@@ -25,9 +25,6 @@
   INTEGER          :: i, j
   CHARACTER        :: answer*8
   REAL             :: start, finish
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Divisor.f90,v 1.1 2014/11/24 11:32:32 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Divide/Divisor.f90,v $  
 !======================================================================!
   call cpu_time(start)
 !---- Test the precision

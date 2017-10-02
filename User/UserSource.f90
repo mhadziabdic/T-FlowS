@@ -13,9 +13,6 @@
   IMPLICIT NONE
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserSource.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserSource.f90,v $    
 !----------------------------------------------------------------------!
 ! Description:                                                         !
 ! ~~~~~~~~~~~~                                                         !

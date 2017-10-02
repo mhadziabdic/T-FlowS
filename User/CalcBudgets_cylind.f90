@@ -44,10 +44,6 @@
   REAL,ALLOCATABLE :: PD_uu(:), PD_vv(:), PD_ww(:) 
   REAL,ALLOCATABLE :: PD_uv(:), PD_uw(:), PD_vw(:) 
   REAL,ALLOCATABLE :: uu_sgs(:), vv_sgs(:), ww_sgs(:), uv_sgs(:), uw_sgs(:), vw_sgs(:)
-
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcBudgets_cylind.f90,v 1.2 2017/08/31 21:31:26 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcBudgets_cylind.f90,v $   
 !======================================================================!
 
   new = n1 - n0

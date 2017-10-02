@@ -16,9 +16,6 @@
   REAL     :: x(-NB:N), r1(N)             !  [A]{x}={r1}
 !-------------------------------[Locals]-------------------------------!
   INTEGER  :: i,j,k,sub
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Resid.f90,v 1.3 2017/09/06 13:14:24 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/Resid.f90,v $  
 !======================================================================!
 
 !+++++++++++++++++++++++++!
@@ -35,8 +32,8 @@
   do sub=1,Npro
     if(NBBe(sub)  <=  NBBs(sub)) then
       do k=NBBs(sub),NBBe(sub),-1
-	i=BufInd(k)
-	r1(i) = r1(i) - Ab(k)*x(k)
+        i=BufInd(k)
+        r1(i) = r1(i) - Ab(k)*x(k)
       end do
     end if
   end do

@@ -17,9 +17,6 @@
   CHARACTER           :: answer*80, namOut*80, namTem*80
   CHARACTER, OPTIONAL :: namAut*(*)
   REAL                :: R, RR
-!--------------------------------[CVS]---------------------------------!
-!  $Id: DatSav.f90,v 1.2 2017/08/31 21:52:49 mhadziabdic Exp $
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/DatSav.f90,v $           
 !======================================================================!
 !   See also: number                                                   !
 !----------------------------------------------------------------------!

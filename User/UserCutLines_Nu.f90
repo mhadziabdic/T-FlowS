@@ -40,9 +40,6 @@
     REAL                :: R, Urad_mean, Utan_mean, dummy, Lscale, R_max, Rad_2
     REAL    :: qx, qy, qz, Nx, Ny, Nz, Stot
     LOGICAL :: there
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCutLines_Nu.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCutLines_Nu.f90,v $
 !======================================================================!
 
     INQUIRE( FILE='rad_coordinate.dat', EXIST=THERE ) 

@@ -18,9 +18,6 @@
   REAL    :: Xrat, Fv1, Fv2, Fw, SS, DistV, ProdV, R, GG, Dif
   REAL    :: dist
   REAL    :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourceVisSpalart.f90,v 1.2 2017/08/31 22:36:10 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourceVisSpalart.f90,v $  
 !======================================================================!
 
   if(SIMULA == SPA_ALL) then

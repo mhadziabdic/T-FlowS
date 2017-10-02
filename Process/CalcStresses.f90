@@ -27,9 +27,6 @@
   REAL    :: dPHIdxS, dPHIdyS, dPHIdzS
   REAL    :: VIStS, TDiff_im, TDiff_ex, TDiff_coef, TDiffx, TDiffy,TDiffz
   REAL    :: uuS, vvS, wwS, uvS, uwS, vwS
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcStresses.f90,v 1.3 2017/08/31 21:41:58 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcStresses.f90,v $    
 !----------------------------------------------------------------------!
 !                                                                      ! 
 !  The form of equations which are solved:                             !   

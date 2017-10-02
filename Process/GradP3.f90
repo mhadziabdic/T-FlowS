@@ -18,11 +18,8 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: s, c, c1, c2
   REAL    :: PHI_s, xs, ys, zs 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GradP3.f90,v 1.2 2017/08/31 21:54:23 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/GradP3.f90,v $      
 !======================================================================!
-						 
+ 
   call Exchng(PHI)
 
   Ps = 0.0

@@ -16,9 +16,6 @@
   REAL    :: error
   REAL    :: SMDPN
   REAL    :: dPxi, dPyi, dPzi
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcPS.f90,v 1.2 2017/08/31 21:34:40 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcPS.f90,v $    
 !----------------------------------------------------------------------!
 !     
 !  The form of equations which I am solving:    

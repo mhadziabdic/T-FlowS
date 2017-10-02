@@ -16,9 +16,6 @@
   CHARACTER           :: namOut*80
   INTEGER,ALLOCATABLE :: iwork(:,:)
   REAL,ALLOCATABLE    :: work(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GeoSav.f90,v 1.20 2002/10/31 11:26:48 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/GeoSav.f90,v $            
 !======================================================================!
 !   The files NAME.cns and NAME.geo should merge into one file in some !
 !   of the future releases.                                            !

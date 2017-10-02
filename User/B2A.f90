@@ -30,12 +30,6 @@
   INTEGER      c, s
   CHARACTER*80 nameIn
   CHARACTER*80 namOut
-!--------------------------------[CVS]---------------------------------*
-  character*80 rcs1,rcs2
-  data rcs1/ &
-  '$Id: B2A.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $'/
-  data rcs2/ &
-  '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/B2A.f90,v $'/
 !======================================================================*
 
   write(*,*) '# Input the problem name:'

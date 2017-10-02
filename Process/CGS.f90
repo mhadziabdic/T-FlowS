@@ -32,9 +32,6 @@
   INTEGER  :: prec,  Niter               !  preconditioning
   REAL     :: tol                        !  tolerance
   REAL     :: IniRes, FinRes             !  residual
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CGS.f90,v 1.2 2017/08/31 21:50:20 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CGS.f90,v $  
 !======================================================================!
 	   
 !->>>

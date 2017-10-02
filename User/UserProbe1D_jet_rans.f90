@@ -38,9 +38,6 @@
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
   REAL                :: R, Urad_mean, Utan_mean, R1, R2, Urad, Utan, pi
   CHARACTER, OPTIONAL :: namAut*(*)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D_jet_rans.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D_jet_rans.f90,v $  
 !======================================================================!
     pi = 3.141592
 !    call Scale()

@@ -23,9 +23,6 @@
   REAL    :: lf, Gblend, Ustar, Ck, yPlus, Uplus, Pk_turb, Pk_vis
   REAL    :: EBF, EBF1
   REAL    :: ALPHA1, Lrans, Lsgs
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourceKinKEPSV2F.f90,v 1.4 2017/08/31 22:31:18 mhadziabdic Exp $  
-!  $UserKDSource: /home/muhamed/.CVSROOT/T-Rex/Pro/KSource.f90,v $  
 !======================================================================! 
 
 !===================!

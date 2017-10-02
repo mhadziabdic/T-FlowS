@@ -23,9 +23,6 @@
   REAL    :: Stot, lf, UtauL, Uff 
   REAL    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus 
   REAL    :: fun
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcSGS_hybrid.f90,v 1.2 2017/08/31 21:38:53 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcSGS_hybrid.f90,v $  
 !======================================================================!
 
   

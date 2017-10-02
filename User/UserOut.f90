@@ -16,9 +16,6 @@
   REAL    :: Stot
   REAL    :: AreaCross, AreaLowWall, AreaHighWall
   REAL    :: Tbulk, TlowWall, ThighWall
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserOut.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserOut.f90,v $  
 !======================================================================!
 
 !==============================!

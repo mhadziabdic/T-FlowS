@@ -15,9 +15,6 @@
   REAL      :: PHI(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
   INTEGER   :: N, s, c, c1, c2, Nfac(10), NtotFac
-!--------------------------------[CVS]---------------------------------!
-!  $Id: DatSavSc.f90,v 1.2 2017/08/31 21:53:05 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/DatSavSc.f90,v $             
 !======================================================================!
 !----------------!
 !     inside     !

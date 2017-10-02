@@ -14,9 +14,6 @@
   INTEGER :: c, c1, c2, s
   REAL    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2
   REAL    :: Jac, Ginv(6)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcG.f90,v 1.2 2017/08/31 21:33:42 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcG.f90,v $  
 !======================================================================!
 
 !+++++++++++++++++++++++++++++++++++++++++!

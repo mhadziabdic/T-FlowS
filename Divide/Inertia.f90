@@ -16,9 +16,6 @@
   INTEGER :: i, NCloc
   REAL    :: xm, ym, zm
   REAL    :: Im(3,3), d(3), v(3,3), d_max(3)    
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Inertia.f90,v 1.1 2014/11/24 11:32:32 muhamed Exp $    
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Divide/Inertia.f90,v $     
 !======================================================================!
 
   xm=0.0

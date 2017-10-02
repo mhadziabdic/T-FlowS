@@ -38,9 +38,6 @@
                                  v2p(:), fp(:) 
     INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
     REAL                :: R, Urad_mean, Utan_mean, dummy, Lscale, Twall, EBF
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCutLines_channel.f90,v 1.3 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCutLines_channel.f90,v $  
 !======================================================================!
 
     namPro = name

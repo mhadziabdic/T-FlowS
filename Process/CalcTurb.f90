@@ -24,9 +24,6 @@
   REAL    :: error
   REAL    :: VISeff
   REAL    :: dPHIdxS, dPHIdyS, dPHIdzS
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcTurb.f90,v 1.4 2017/08/31 21:43:00 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcTurb.f90,v $    
 !----------------------------------------------------------------------!
 !                                                                      ! 
 !  The form of equations which are solved:                             !   

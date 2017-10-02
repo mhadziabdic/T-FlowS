@@ -17,10 +17,6 @@
   REAL    :: S11, S22, S33, S12, S13, S23, S21, S31, S32
   REAL    :: S11d, S22d, S33d, S12d, S13d, S23d, S21d, S31d, S32d
   REAL    :: V11, V22, V33, V12, V13, V23, V21, V31, V32
- 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcWALE.f90,v 1.2 2017/08/31 21:49:05 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcWALE.f90,v $  
 !======================================================================!
 
 !===================!

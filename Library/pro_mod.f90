@@ -6,10 +6,6 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!..RCS/CVS ident
-! $Id: pro_mod.h90,v 1.43 2005/01/25 12:38:34 muhamed Exp $
-! $Source: /home/muhamed/.CVSROOT/T-Rex/Library/pro_mod.h90,v $
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 MODULE pro_mod
 
   USE allp_mod
@@ -23,8 +19,8 @@ MODULE pro_mod
   REAL,ALLOCATABLE    :: Aval(:)
   REAL,ALLOCATABLE    :: Asave(:)
   INTEGER,ALLOCATABLE :: Arow(:),  &
-			 Acol(:),  &
-			 Adia(:)  
+                         Acol(:),  &
+                         Adia(:)  
   INTEGER,ALLOCATABLE :: SidAij(:,:)     
 
 !----- Used in Dynamic Smgaorinsky model ----------------------------!

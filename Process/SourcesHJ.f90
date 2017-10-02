@@ -41,9 +41,6 @@
   REAL    :: duv_dx,duv_dy,duv_dz,duw_dx,duw_dy,duw_dz,dvw_dx,dvw_dy,dvw_dz
   REAL    :: dUdx, dUdy, dUdz, dVdx, dVdy, dVdz, dWdx, dWdy, dWdz 
   REAL,ALLOCATABLE :: Diss1(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourcesHJ.f90,v 1.4 2017/08/31 22:39:10 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourcesHJ.f90,v $  
 !======================================================================!
 
   allocate (Diss1(1:NC)); Diss1 = 0.0

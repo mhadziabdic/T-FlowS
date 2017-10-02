@@ -31,9 +31,6 @@
                                  Tmp(:) 
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
   REAL                :: R, dummy, Nu, Umag, H, Utau_p
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserHill_Nu.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserHill_Nu.f90,v $  
 !======================================================================!
 
 

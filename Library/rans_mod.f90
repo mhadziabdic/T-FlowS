@@ -6,10 +6,6 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!..RCS/CVS ident
-! $Id: rans_mod.h90,v 1.5 2005/01/25 12:38:53 muhamed Exp $
-! $Source: /home/muhamed/.CVSROOT/T-Rex/Library/rans_mod.h90,v $
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 
 MODULE rans_mod
 

@@ -13,9 +13,6 @@
   INTEGER :: c1, c2, s
   REAL    :: qx, qy, qz, Nx, Ny, Nz, Stot, CONeff, EBF, Yplus
   REAL    :: Prmol, beta, Prturb, Uplus
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalBou.f90,v 1.2 2017/08/31 21:30:28 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalBou.f90,v $  
 !======================================================================!
 
   Area  = 0.0

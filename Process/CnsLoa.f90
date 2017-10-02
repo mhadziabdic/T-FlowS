@@ -16,9 +16,6 @@
   INTEGER      :: c, s, it
   CHARACTER*80 :: nameIn
   CHARACTER*8  :: answer
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CnsLoa.f90,v 1.3 2017/09/06 06:16:01 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CnsLoa.f90,v $  
 !======================================================================!
 
   if(this < 2) write(*,*) '# Input problem name:'

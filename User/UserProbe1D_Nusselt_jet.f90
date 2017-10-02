@@ -54,9 +54,6 @@
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:), Ncount1(:), Ncount2(:), Ncount3(:)
   INTEGER,ALLOCATABLE :: Ncount4(:), Ncount5(:), Ncount6(:), Ncount7(:)
   REAL                :: R, Urad_n, Utan_n
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D_Nusselt_jet.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D_Nusselt_jet.f90,v $  
 !======================================================================!
 
 

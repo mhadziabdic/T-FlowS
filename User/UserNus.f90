@@ -38,9 +38,6 @@
                                  v2p(:), fp(:) 
     INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
     REAL                :: R, Urad_mean, Utan_mean, dummy, Lscale
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserNus.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserNus.f90,v $  
 !======================================================================!
 
     write(*,*) 'tu sam'

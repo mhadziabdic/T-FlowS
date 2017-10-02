@@ -17,9 +17,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c, c1, c2, s
   REAL    :: CK, Yplus, Fmu, Ret, yStar, Cmu_mod                                        
-!--------------------------------[CVS]---------------------------------!
-! '$Id: CalcVISt_EBM.f90,v 1.2 2017/08/31 21:43:29 mhadziabdic Exp $'
-! '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcVISt_EBM.f90,v $'
 !======================================================================!
 
   Ret   = 0.0

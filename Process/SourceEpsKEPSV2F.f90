@@ -19,9 +19,6 @@
   REAL    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret, Ck, EBF
   REAL    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, EpsWall, EpsHom
   REAL    :: BL_EPS, Pro, Pk_turb, Pk_vis, Yplus
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourceEpsKEPSV2F.f90,v 1.3 2017/08/31 22:31:18 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourceEpsKEPSV2F.f90,v $  
 !======================================================================!
 
 

@@ -13,9 +13,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER   :: c,  c1,  c2,  n, s, Nfac, NtotFac 
   CHARACTER :: namOut*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CasSav.f90,v 1.19 2005/01/25 12:41:08 muhamed Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/CasSav.f90,v $             
 !======================================================================!
 !   See also: number                                                   !
 !   NSsub holds (has to hold) NS + NSsh                                !

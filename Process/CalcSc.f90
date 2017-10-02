@@ -29,9 +29,6 @@
   REAL    :: CONeff2, FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
   REAL    :: Stot, PHIs, CAPs, Prt1, Prt2
   REAL    :: dPHIdxS, dPHIdyS, dPHIdzS, Corr, TDC
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcSc.f90,v 1.2 2017/08/31 21:37:09 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcSc.f90,v $  
 !----------------------------------------------------------------------!
 !     
 !  The form of equations which are solved:    

@@ -15,10 +15,6 @@
   INTEGER :: c, c1, c2, s
   REAL    :: UnorSq, Unor, UtotSq, Cmu1, beta, Prmol, Prturb
   REAL    :: lf, Gblend, Ustar, Ck, yPlus, Uplus, EBF
-
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcVISt_KEPSV2F.f90,v 1.3 2017/08/31 21:48:07 mhadziabdic Exp $
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcVISt_KEPSV2F.f90,v $
 !======================================================================!
 
   call Scale()

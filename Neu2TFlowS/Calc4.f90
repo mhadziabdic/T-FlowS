@@ -38,12 +38,6 @@
   DOUBLE PRECISION,ALLOCATABLE :: xnr(:), ynr(:), znr(:), xspr(:), yspr(:), zspr(:)
   DOUBLE PRECISION,ALLOCATABLE :: BCoor(:), phi_face(:)
   INTEGER,ALLOCATABLE          :: BFace(:)
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: Calc4.f90,v 1.28 2005/01/25 12:46:22 muhamed Exp $'/
-  data rcs2/                                                        &
-  '$Source: /home/muhamed/.CVSROOT/T-Rex/Neu2Trex/Calc4.f90,v $'/
 !======================================================================!
 !
 !                                n3 

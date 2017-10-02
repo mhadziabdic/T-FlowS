@@ -36,9 +36,6 @@
                                  VISt_mp(:),VIS_mp(:), T_mp(:),  &
                                  Pk_mp(:), PHI(:)
   INTEGER,ALLOCATABLE :: Np(:), order(:) 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe2D.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe2D.f90,v $  
 !======================================================================!
 
 !---- save the name

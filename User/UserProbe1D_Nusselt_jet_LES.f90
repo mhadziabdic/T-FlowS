@@ -53,9 +53,6 @@
                                   
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:), Ncount2(:)
   REAL                :: R, Urad_mean, Utan_mean
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D_Nusselt_jet_LES.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D_Nusselt_jet_LES.f90,v $  
 !======================================================================!
 
 

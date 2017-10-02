@@ -19,9 +19,6 @@
   CHARACTER :: nameIn*80, answer*80
   REAL      :: version
   REAL      :: r_1, r_2, r_3, r_4, r_5, r_6
-!--------------------------------[CVS]---------------------------------!
-!  $Id: LoaRes.f90,v 1.5 2017/09/06 13:13:08 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/LoaRes.f90,v $  
 !======================================================================!
 
   if(this  < 2) &              

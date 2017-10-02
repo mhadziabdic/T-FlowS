@@ -13,9 +13,6 @@
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c, n 
   REAL    :: Xrat, Fv1, lf, Cs 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcVISt_SPA_ALL.f90,v 1.2 2017/08/31 21:48:36 mhadziabdic Exp $
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcVISt_SPA_ALL.f90,v $
 !======================================================================!
 
   if(SIMULA == DES_SPA) then

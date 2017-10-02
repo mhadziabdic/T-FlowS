@@ -29,9 +29,6 @@
                                  uvp(:), uwp(:), vwp(:), tke(:), nu(:)
   INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
   REAL                :: dummy
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserDiffuser.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserDiffuser.f90,v $  
 !======================================================================!
 
     call GraPhi(U % n, 1, Ux,.TRUE.)    ! dU/dx

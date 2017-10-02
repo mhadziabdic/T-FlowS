@@ -15,9 +15,6 @@
   IMPLICIT NONE
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: s, c, c1, c2, NumBad
-!--------------------------------[CVS]---------------------------------!
-!  $Id: FindBad.f90,v 1.2 2017/08/31 21:53:38 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/FindBad.f90,v $      
 !======================================================================!
 
   BadForG = .FALSE. 

@@ -31,9 +31,6 @@
   REAL    :: error
   REAL    :: VISeff, VIStS, Fstress 
   REAL    :: dUidiS,dUidjS,dUidkS,dUjdiS,dUkdiS
-!--------------------------------[CVS]---------------------------------!
-!  $Id: NewUVW.f90,v 1.2 2017/08/31 22:02:55 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/NewUVW.f90,v $    
 !----------------------------------------------------------------------!
 !
 !  Stress tensor on the face s:

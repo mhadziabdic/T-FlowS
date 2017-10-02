@@ -6,11 +6,6 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!..RCS/CVS ident
-! $Id: les_mod.h90,v 1.13 2005/01/25 12:38:19 muhamed Exp $
-! $Source: /home/muhamed/.CVSROOT/T-Rex/Library/les_mod.h90,v $
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-
 MODULE les_mod
 
   USE allp_mod

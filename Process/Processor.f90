@@ -49,7 +49,7 @@
   INTERFACE
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     SUBROUTINE NewUVW(var, Ui, dUidi, dUidj, dUidk,  &
-		      Si, Sj, Sk, Di, Dj, Dk, Pi, dUjdi, dUkdi) 
+                      Si, Sj, Sk, Di, Dj, Dk, Pi, dUjdi, dUkdi) 
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       USE all_mod
       USE pro_mod
@@ -124,10 +124,6 @@
       REAL          :: She(-NbC:NC)
     END SUBROUTINE CalcShear
   END INTERFACE
-
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Processor.f90,v 1.2 2017/08/31 22:05:07 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/Processor.f90,v $  
 !======================================================================!
 
   call cpu_time(start)

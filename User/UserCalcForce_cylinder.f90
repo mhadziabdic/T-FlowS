@@ -20,9 +20,6 @@
     CHARACTER           :: path*39 
     REAL                :: Fpx1,Fpy1,Fvx1,Fvy1,Fvz1, FtotalX, FtotalY 
     REAL                :: Fpx2,Fpy2,Fvx2,Fvy2,Fvz2
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCalcForce_cylinder.f90,v 1.1 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCalcForce_cylinder.f90,v $  
 !======================================================================!
 
 ! Fpx, Fpy, Fpz=0, rho*(Fvx, Fvy, Fvz) - pressure and viscous forces acting on a cylinder

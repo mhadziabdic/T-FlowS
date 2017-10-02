@@ -16,9 +16,6 @@
   CHARACTER :: namEps*80
   REAL      :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin, z0, fc
   REAL      :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,xin(4),yin(4) 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: EpsSav.f90,v 1.8 2002/10/30 16:29:31 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/EpsSav.f90,v $            
 !======================================================================!
 !   Note: singnificantly improved. Keep the old version allways at     !
 !         hand.                                                        !

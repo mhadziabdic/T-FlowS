@@ -28,9 +28,6 @@
   REAL      :: Icut(NC),  Ucl(NC),  Vcl(NC),  Wcl(NC),  Tcl(NC),       &
                Kin_cl(NC), Eps_cl(NC),  V_2_cl(NC),  F22_cl(NC),       &
                Pk_cl(NC),  UiUj_cl(NC), UiUk_cl(NC), VISt_cl(NC)
-!--------------------------------[CVS]---------------------------------!
-!  '$Id: CutLine.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $'/
-!  '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/CutLine.f90,v $'/
 !======================================================================!
 
 

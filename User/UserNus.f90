@@ -17,12 +17,12 @@
     real :: y(-NbC:NC)
     real :: Ufric, Wall_near 
 !------------------------------[Calling]-------------------------------!
-    INTERFACE
+    interface
       logical function Approx(A,B,tol)
         real           :: A,B
         real, OPTIONAL :: tol
       end function Approx
-    end INTERFACE 
+    end interface 
 !-------------------------------[Locals]-------------------------------!
     integer             :: Nprob, pl, c, i, count
     character           :: namCoo*80, namPro*80, answer*80, namRes*80

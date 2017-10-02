@@ -17,12 +17,12 @@
 !-----------------------------[Parameters]-----------------------------!
   real :: y(-NbC:NC)
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
+  interface
     logical function Approx(A,B,tol)
       real           :: A,B
       real, OPTIONAL :: tol
     end function Approx
-  end INTERFACE 
+  end interface 
 !-------------------------------[Locals]-------------------------------!
   integer             :: Nprob, pl, c, dummy
   character           :: namCoo*80, namPro*80, answer*80

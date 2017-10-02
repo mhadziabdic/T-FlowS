@@ -15,12 +15,12 @@
   implicit none
 !-----------------------------[Parameters]-----------------------------!
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
+  interface
     logical function Approx(A,B,tol)
       real           :: A,B
       real, OPTIONAL :: tol
     end function Approx
-  end INTERFACE 
+  end interface 
 !-------------------------------[Locals]-------------------------------!
   integer             :: Nprob, pl, c, i, count, k, c1, c2, s, j
   character           :: namCoo*80, namPro*80, answer*80, JetIn*31, namOut*80

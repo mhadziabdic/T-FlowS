@@ -16,12 +16,12 @@
   real          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
 
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
+  interface
     logical function Approx(A,B,tol)
       real           :: A,B
       real, OPTIONAL :: tol
     end function Approx
-  end INTERFACE
+  end interface
 !-------------------------------[Locals]-------------------------------! 
   integer :: n,c,s,c1,c2,niter,miter,mat
   real    :: A0, A12, A21, error, VISeff

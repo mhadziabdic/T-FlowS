@@ -46,7 +46,7 @@
   character        :: namSav*10
   logical          :: restar, multiple 
 !-----------------------------[Interface]------------------------------!
-  INTERFACE
+  interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine NewUVW(var, Ui, dUidi, dUidj, dUidk,  &
                       Si, Sj, Sk, Di, Dj, Dk, Pi, dUjdi, dUkdi) 
@@ -123,7 +123,7 @@
       real          :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
       real          :: She(-NbC:NC)
     end subroutine CalcShear
-  end INTERFACE
+  end interface
 !======================================================================!
 
   call cpu_time(start)

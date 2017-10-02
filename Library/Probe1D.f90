@@ -10,12 +10,12 @@
 !-----------------------------[Parameters]-----------------------------!
   logical :: isit
 !------------------------------[Calling]-------------------------------! 
-  INTERFACE
+  interface
     logical function Approx(A,B,tol)
       real           :: A,B
       real, OPTIONAL :: tol
     end function Approx
-  end INTERFACE
+  end interface
 !-------------------------------[Locals]-------------------------------!
   integer   :: Nprob, p, c
   real      :: zp(1000)

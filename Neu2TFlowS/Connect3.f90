@@ -29,12 +29,12 @@
 !----------------------------------------------------------------------!
   implicit none
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
+  interface
     logical function Approx(A,B,tol)
       real          :: A,B
       real,OPTIONAL :: tol
     end function Approx
-  end INTERFACE
+  end interface
 !-------------------------------[Locals]-------------------------------!
   integer      :: i, c1, c11, c12, c21, c22, s1, s2
   integer      :: CopyMarker,  x_copy, y_copy, z_copy

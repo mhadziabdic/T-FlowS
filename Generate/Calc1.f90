@@ -11,13 +11,13 @@
 !------------------------------[Calling]-------------------------------!
   integer :: IsLine
 !-----------------------------[Interface]------------------------------!
-  INTERFACE 
+  interface 
     logical function Approx(A,B,tol)
       implicit none
       real          :: A,B 
       real,OPTIONAL :: tol
     end function Approx   
-  end INTERFACE 
+  end interface 
 !-------------------------------[Locals]-------------------------------!
   integer :: b, bl, i, j, k, n, c, ig
   integer :: l, l1, l2

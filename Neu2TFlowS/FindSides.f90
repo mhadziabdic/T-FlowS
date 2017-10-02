@@ -9,13 +9,13 @@
 !----------------------------------------------------------------------!
   implicit none
 !----------------------------------------------------------------------!
-  INTERFACE
+  interface
     logical function Approx(A,B,tol)
       implicit none
       real          :: A,B
       real,OPTIONAL :: tol
     end function Approx
-  end INTERFACE
+  end interface
 !-------------------------------[Locals]-------------------------------!
   integer             :: c, c1, c2, n1, n2, n3, n4
   integer             :: Nmatch, j, MatchNodes(-1:8) 

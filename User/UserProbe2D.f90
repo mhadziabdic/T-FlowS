@@ -17,12 +17,12 @@
 !----------------------------------------------------------------------!
   implicit none
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
+  interface
     logical function Approx(A,B,tol)
       real           :: A,B
       real, OPTIONAL :: tol
     end function Approx
-  end INTERFACE 
+  end interface 
 !-------------------------------[Locals]-------------------------------!
   integer             :: pl, c, dummy, K, Npoints
   character           :: namCoo*80, answer*80

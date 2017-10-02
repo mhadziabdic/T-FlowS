@@ -17,9 +17,15 @@
   vpath %.f90 $(INC_SRCDIRSH) 
   vpath %.c $(INC_SRCDIRSH) 
 
-#-------------------------
-  PROGRAM = RUN
-#-------------------------
+#---------------------------
+# Default target is cluster
+#---------------------------
+TARGET = cluster
+
+#----------------------
+# Default program name
+#----------------------
+PROGRAM = RUN
 
 #=============================
 #....Fortran compiler & linker
@@ -153,8 +159,8 @@
             FinLin.f90    IsTwin.f90    IniGen.f90    TopSys.f90    \
             FinSur.f90    Laplac.f90    Smooth.f90    WchNod.f90    \
             CopyBC.f90    Probe1D.f90   CouMat.f90    ToUppr.f90    \
-            Dist.f90      TestLn.f90    ReadC.f90     SSort.f90     \
-            GenSav.f90    GeoSav.f90    Dist2.f90     ISort.f90     \
+            Distance.f90  TestLn.f90    ReadC.f90     SSort.f90     \
+            GenSav.f90    GeoSav.f90    Distance_Squared.f90  ISort.f90     \
             ToUppr.f90    NamFil.f90    Approx.f90    EpsWho.f90    \
             RISort.f90    AA.f90        Probe2D.f90   Probe1D_nodes_gen.f90 Sort2.f90
   FSRCS  := $(sort $(FSRCS0))

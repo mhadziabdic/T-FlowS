@@ -5,7 +5,7 @@
 #                |    |     |    |   \ |        \ /     \   
 #                |____|     |____|_  //_______  //___/\  \  
 #                                  \/         \/       \_/  
-#                             Divisor Makefile
+#                           Neu2T-FlowS Makefile
 #----------------------------------------------------------------------#
 #  You must have enviroment variable TARGET set to specific platform.
 #  In csh you can do do it by inserting the line:
@@ -18,8 +18,13 @@
   vpath %.c $(INC_SRCDIRSH)
   vpath %.f90 $(INC_SRCDIRSH)
 
+#---------------------------
+# Default target is cluster
+#---------------------------
+TARGET = cluster
+
 #-------------------------
-  PROGRAM = RUN 
+PROGRAM = RUN 
 #-------------------------
 
 #=============================

@@ -13,7 +13,9 @@
 #  where [machine is: gnu, cluster, intel, ....
 #----------------------------------------------------------------------#
 
-# default target is cluster
+#---------------------------
+# Default target is cluster
+#---------------------------
 TARGET = cluster
 
 STATIC_LIBS =
@@ -106,7 +108,7 @@ endif
             CalcPF.f90      IniVar.f90      SavRes.f90      SourceKinKEps.f90 \
             CalcPS.f90      LoaRes.f90      CalcG.f90       SourceEpsKEps.f90 \
             ModOut.f90      NewUVW.f90      CalcShear.f90   DatSav.f90      \
-            Dist.f90        CalcTurb.f90    ReadC.f90       GeoAloc.f90     \
+            Distance.f90    CalcTurb.f90    ReadC.f90       GeoAloc.f90     \
             ToUppr.f90      Rnd.f90         GeoLoa.f90      ISort.f90       \
             Prec1.f90	    NamFil.f90      GradP3.f90      UnkAloc.f90     \
             StaPar.f90      EndPar.f90      BufLoa.f90      Exchng.f90      \
@@ -126,7 +128,7 @@ endif
             CalcVISt_SPA_ALL.f90 CalcVort.f90 RNSort.f90 RISort.f90\
             CalcSGS_Dynamic.f90  NearWallCell.f90 LoaIni.f90 SavIni.f90\
             CalcMn_Cylind.f90 UserCutLines_channel.f90 SSort.f90\
-            UserCutLines_pipe.f90 UserCutLines_Nu.f90 DistR.f90 CalcWALE.f90\
+            UserCutLines_pipe.f90 UserCutLines_Nu.f90 CalcWALE.f90\
             UserDiffuser.f90 UserProbe1D_Nusselt_jet.f90 UserProbe1D_jet_rans.f90\
             SavParView.f90 CalcStresses.f90\
 	    CalcVISt_EBM.f90 SourcesEBM.f90 CalcSGS_hybrid.f90 UserCutLines_annulus.f90\

@@ -12,9 +12,6 @@
   INTEGER :: c, n
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: i, j
-!--------------------------------[CVS]---------------------------------!
-!  $Id: WchNod.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/WchNod.f90,v $  
 !======================================================================!
 
   WchNod=0
@@ -34,7 +31,7 @@
   do j=1,TwinN(n,0)
     do i=1,8
       if( CellN(c,i)  ==  TwinN(n,j)) then
-	goto 10
+        goto 10
       end if 
     end do     
   end do

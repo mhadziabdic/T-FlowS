@@ -24,9 +24,6 @@
   INTEGER :: is, js, ks, ie, je, ke, face 
   INTEGER :: NI, NJ, NK, CI, CJ, CK
   INTEGER :: trans(3,2)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Calc1.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/Calc1.f90,v $  
 !======================================================================!
 
   do n=1,MAXN

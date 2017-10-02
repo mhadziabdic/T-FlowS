@@ -74,9 +74,6 @@
   IMPLICIT NONE
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: c,s,n
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Generator.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/Generator.f90,v $  
 !======================================================================!
 
 !---- Test the precision

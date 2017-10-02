@@ -10,9 +10,6 @@
   IMPLICIT NONE
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: i, j, k, numb, nonz, stencw
-!--------------------------------[CVS]---------------------------------!
-!  $Id: PrintG.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/PrintG.f90,v $  
 !======================================================================!
 
   write(*,*) '==============='
@@ -46,7 +43,7 @@
     do i=1,NC
       stencw=0
       do k=1,24
-	if( CellC(i,k)  > 0 ) stencw=stencw+1
+        if( CellC(i,k)  > 0 ) stencw=stencw+1
       end do
       if(stencw  ==  j) numb=numb+1
     end do

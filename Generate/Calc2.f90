@@ -26,9 +26,6 @@
   REAL    :: xmin, xmax, ymin, ymax, zmin, zmax
   INTEGER :: f4n(6,4)
   INTEGER :: f3n(4,3)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Calc2.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/Calc2.f90,v $  
 !======================================================================!
 !
 !                                n3 

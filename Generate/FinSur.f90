@@ -12,9 +12,6 @@
   INTEGER :: n1, n2, n3, n4, block, face
 !-------------------------------[Locals]-------------------------------!
   INTEGER :: b, fc, p1, p2, p3, p4
-!--------------------------------[CVS]---------------------------------!
-!  $Id: FinSur.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/FinSur.f90,v $   
 !======================================================================!
 
   do b=1,Nbloc
@@ -24,9 +21,9 @@
       p3=BlkFac(b, fc, 3)
       p4=BlkFac(b, fc, 4) 
       if( ((p1 == n1).and.(p3 == n3)) .or.  &
-	  ((p1 == n4).and.(p3 == n2)) .or.  &
-	  ((p1 == n3).and.(p3 == n1)) .or.  &
-	  ((p1 == n2).and.(p3 == n4)) ) goto 1
+          ((p1 == n4).and.(p3 == n2)) .or.  &
+          ((p1 == n3).and.(p3 == n1)) .or.  &
+          ((p1 == n2).and.(p3 == n4)) ) goto 1
     end do     
   end do 
 

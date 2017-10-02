@@ -13,6 +13,7 @@
 #  where [machine is: gnu, cluster, intel, ....
 #----------------------------------------------------------------------#
 
+# default target is cluster
 TARGET = cluster
 
 STATIC_LIBS =
@@ -25,17 +26,18 @@ DOBJ  = ./obj/
 DMOD  = ./mod/
 
 ifeq ($(PRECISION),single)
-	INCLUDE_DIRS = ../Parallel/Single
+  INCLUDE_DIRS = ../Parallel/Single
 else
-	INCLUDE_DIRS = ../Parallel/Double
+  INCLUDE_DIRS = ../Parallel/Double
 endif
 
-ifeq ($(FORCE),seq)
-	INCLUDE_DIRS = ../Sequential
+ifeq ($(FORCE),sequential)
+  INCLUDE_DIRS = ../Sequential
 endif
 
 vpath %.f90 ../Library/ ../User ./  $(INCLUDE_DIRS) # source .f90 files search pattern
 vpath %.c   ../Library/ ../User ./  $(INCLUDE_DIRS) # source .c   files search pattern
+
 #-------------------------
 PROGRAM = RUN
 #-------------------------
@@ -45,34 +47,43 @@ PROGRAM = RUN
 #-----------------------------
 
 ifeq ($(TARGET),gnu)
-	FC     = mpif90
-	FL     = $(FC)
-	ifeq ($(DEBUG),yes)
-		FCOPTS = -g -O0 -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -ffree-line-length-none -fbacktrace -fmax-errors=0 -Wall -Wno-array-temporaries -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wconversion-extra -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wextra -Wuninitialized -fcheck=all -fmodule-private -fimplicit-none -ffpe-trap=invalid,overflow -fbacktrace -fdump-core -finit-real=nan #-fno-range-check  ,precision,denormal,underflow -std=f2003 -fall-intrinsics
-	else
-		FCOPTS =    -O3 -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -ffree-line-length-none
-	endif 
-	FLOPTS =    
+  FC = mpif90
+  ifeq ($(FORCE),sequential)
+    FC = gfortran
+  endif
+  FL = $(FC)
+  ifeq ($(DEBUG),yes)
+    FCOPTS = -g -O0 -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -ffree-line-length-none -fbacktrace -fmax-errors=0 -Wall -Wno-array-temporaries -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wconversion-extra -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wextra -Wuninitialized -fcheck=all -fmodule-private -fimplicit-none -ffpe-trap=invalid,overflow -fbacktrace -fdump-core -finit-real=nan #-fno-range-check  ,precision,denormal,underflow -std=f2003 -fall-intrinsics
+  else
+    FCOPTS =    -O3 -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -ffree-line-length-none
+  endif 
+  FLOPTS =    
 endif
 
 ifeq ($(TARGET),intel)
-	FC     = mpiifort
-	FL     = $(FC)
-	ifeq ($(DEBUG),yes)
-		FCOPTS = -g -O0 -module $(DMOD) -r8 -traceback -warn all -check all -debug all -extend-source 132 -fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -traceback -gen-interfaces -std03 -ipo -inline all -ipo-jobs4 -vec-report1
-	else
-		FCOPTS =    -O3 -module $(DMOD) -r8
-	endif 
-	FLOPTS =    
+  FC = mpif90
+  ifeq ($(FORCE),sequential)
+    FC = ifort
+  endif
+  FL = $(FC)
+  ifeq ($(DEBUG),yes)
+    FCOPTS = -g -O0 -module $(DMOD) -r8 -traceback -warn all -check all -debug all -extend-source 132 -fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -traceback -gen-interfaces -std03 -ipo -inline all -ipo-jobs4 -vec-report1
+  else
+    FCOPTS =    -O3 -module $(DMOD) -r8
+  endif 
+  FLOPTS =    
 endif
 
 ifeq ($(TARGET),cluster)
   FC     = mpif90
+  ifeq ($(FORCE),sequential)
+    FC = gfortran
+  endif
   FL     = $(FC)
   ifeq ($(PRECISION),single)
-    FCOPTS =  -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -O3  -I /usr/lib64/mpi/gcc/openmpi/include/
+    FCOPTS = -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -O3 -I /usr/lib64/mpi/gcc/openmpi/include/
   else
-    FCOPTS = -J$(DMOD) -fdefault-real-8 -fdefault-double-8  -O3  -I /usr/lib64/mpi/gcc/openmpi/include/
+    FCOPTS = -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -O3 -I /usr/lib64/mpi/gcc/openmpi/include/
   endif
   FLOPTS = #-L/home/muhamed/Downloads/openmpi-1.8.3/ompi/include  
 endif

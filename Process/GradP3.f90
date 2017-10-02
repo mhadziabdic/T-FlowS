@@ -1,23 +1,23 @@
 !======================================================================!
-  SUBROUTINE GradP3(PHI, PHI_x, PHI_y, PHI_z)
+  subroutine GradP3(PHI, PHI_x, PHI_y, PHI_z)
 !----------------------------------------------------------------------!
 ! Calculates gradient of generic variable PHI. PHI may stand either    !
 ! for pressure (P) or pressure corrections (PP). This procedure also   !
 ! handles different materials.                                         ! 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: PHI(-NbC:NC),                                             &
+  real :: PHI(-NbC:NC),                                             &
           PHI_x(-NbC:NC),                                           &
           PHI_y(-NbC:NC),                                           &
           PHI_z(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2
-  REAL    :: PHI_s, xs, ys, zs 
+  integer :: s, c, c1, c2
+  real    :: PHI_s, xs, ys, zs 
 !======================================================================!
  
   call Exchng(PHI)
@@ -146,4 +146,4 @@
   call Exchng(PHI_y)
   call Exchng(PHI_z)
 
-  END SUBROUTINE GradP3
+  end subroutine GradP3

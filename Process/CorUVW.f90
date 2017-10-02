@@ -1,19 +1,19 @@
 !======================================================================!
-  REAL FUNCTION CorUVW()
+  real function CorUVW()
 !----------------------------------------------------------------------!
 !   Corrects the velocities, and mass fluxes on the cell faces.        !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use les_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c, c1, c2, s, m
-  REAL      :: CFLmax(256), PeMax(256)
-  REAL      :: CFLs, PeS
-  REAL      :: Pdrop, FluxM
+  integer   :: c, c1, c2, s, m
+  real      :: CFLmax(256), PeMax(256)
+  real      :: CFLs, PeS
+  real      :: Pdrop, FluxM
 !======================================================================!
 
 !--------------------------------------------!
@@ -163,4 +163,4 @@
 
   CorUVW = errmax ! /(velmax+TINY)
 
-  END FUNCTION CorUVW 
+  end function CorUVW 

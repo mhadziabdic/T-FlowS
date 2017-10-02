@@ -1,24 +1,24 @@
 !======================================================================!
-  SUBROUTINE LoaRes(restart)
+  subroutine LoaRes(restart)
 !----------------------------------------------------------------------!
 ! Reads restart files NAME.restart                                                  !
 ! ~~~~~~                                                               ! 
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL   :: restart 
+  logical   :: restart 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c, s, m
-  INTEGER   :: i_1, i_2, i_3, i_4, i_5, i_6
-  CHARACTER :: nameIn*80, answer*80
-  REAL      :: version
-  REAL      :: r_1, r_2, r_3, r_4, r_5, r_6
+  integer   :: c, s, m
+  integer   :: i_1, i_2, i_3, i_4, i_5, i_6
+  character :: nameIn*80, answer*80
+  real      :: version
+  real      :: r_1, r_2, r_3, r_4, r_5, r_6
 !======================================================================!
 
   if(this  < 2) &              
@@ -47,7 +47,7 @@
 !---- version
   read(9) version ! version
 
-!---- 60 INTEGER parameters ----------------------------------------
+!---- 60 integer parameters ----------------------------------------
   read(9)      i_1,      NbC,       NC,       NS,     Ndtt,    Nstat
   read(9)       Cm,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)    ALGOR,    INERT,   CONVEC,    CROSS,   DIFFUS,   SIMULA
@@ -60,7 +60,7 @@
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
 !-------------------------------------------------------------------
 
-!---- 60 REAL parameters --------------------------------------
+!---- 60 real parameters --------------------------------------
   read(9)     r_1,    r_2,    r_3,     xp,     yp,     zp  
   read(9)     r_1,    r_2,    r_3,    r_4,    r_4,    r_6             
   read(9)   ReTau,   Tref,    Cs0,   Tinf,    r_4,    r_6 
@@ -313,4 +313,4 @@
 !---- restore the name
   name = answer 
 
-  END SUBROUTINE LoaRes 
+  end subroutine LoaRes 

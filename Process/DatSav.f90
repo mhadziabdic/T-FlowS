@@ -1,22 +1,22 @@
 !======================================================================!
-  SUBROUTINE DatSav(namAut)
+  subroutine DatSav(namAut)
 !----------------------------------------------------------------------!
 ! Writes: NAME.dat                                                     !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use par_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: c,  c2,  n, s, Nadd
-  INTEGER             :: Nfac(10), NtotFac
-  CHARACTER           :: answer*80, namOut*80, namTem*80
-  CHARACTER, OPTIONAL :: namAut*(*)
-  REAL                :: R, RR
+  integer             :: c,  c2,  n, s, Nadd
+  integer             :: Nfac(10), NtotFac
+  character           :: answer*80, namOut*80, namTem*80
+  character, OPTIONAL :: namAut*(*)
+  real                :: R, RR
 !======================================================================!
 !   See also: number                                                   !
 !----------------------------------------------------------------------!
@@ -278,4 +278,4 @@
 !---- restore the name
   name = namTem  
 
-  END SUBROUTINE DatSav
+  end subroutine DatSav

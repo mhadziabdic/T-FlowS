@@ -1,16 +1,16 @@
 !======================================================================!
-  SUBROUTINE ForAPF 
+  subroutine ForAPF 
 !----------------------------------------------------------------------!
 !   Forms the pressure system matrix for the fractional step method.   !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  REAL    :: A12
-  INTEGER :: c, c1, c2, s 
+  real    :: A12
+  integer :: c, c1, c2, s 
 !======================================================================!
 
   do c=1,Acol(NC+1) ! to je broj nonzero + 1
@@ -44,4 +44,4 @@
 
     end do ! through sides
 
-  END SUBROUTINE ForAPF
+  end subroutine ForAPF

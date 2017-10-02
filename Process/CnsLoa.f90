@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE CnsLoa
+  subroutine CnsLoa
 !----------------------------------------------------------------------!
 ! Reads NAME.cns and first part of T-FlowS.cmn                         !
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE sol_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use sol_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER      :: c, s, it
-  CHARACTER*80 :: nameIn
-  CHARACTER*8  :: answer
+  integer      :: c, s, it
+  character*80 :: nameIn
+  character*8  :: answer
 !======================================================================!
 
   if(this < 2) write(*,*) '# Input problem name:'
@@ -142,4 +142,4 @@
     read(inp,*) grav_x, grav_y, grav_z, Tref
   end if
 
-  END SUBROUTINE CnsLoa
+  end subroutine CnsLoa

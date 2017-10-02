@@ -1,25 +1,25 @@
 !======================================================================!
-  SUBROUTINE ReaCom(restar) 
+  subroutine ReaCom(restar) 
 !----------------------------------------------------------------------!
 !   Reads second part of T-FlowS.cmn file.                             ! 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL   :: restar
+  logical   :: restar
 !------------------------------[Calling]-------------------------------!
-  REAL      :: Dist
+  real      :: Dist
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: i, j, l, m
-  REAL      :: Mres(MAXP), MresT, dummy
-  REAL      :: xm(MAXP), ym(MAXP), zm(MAXP)
-  CHARACTER :: answer*80, nammon*80
+  integer   :: i, j, l, m
+  real      :: Mres(MAXP), MresT, dummy
+  real      :: xm(MAXP), ym(MAXP), zm(MAXP)
+  character :: answer*80, nammon*80
 !======================================================================!
 
   call Wait   
@@ -709,5 +709,5 @@
 
   RETURN
 
-  END SUBROUTINE ReaCom
+  end subroutine ReaCom
 

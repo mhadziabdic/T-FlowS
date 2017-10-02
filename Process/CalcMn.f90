@@ -1,19 +1,19 @@
 !======================================================================!
-  SUBROUTINE CalcMn(n0, n1)   
+  subroutine CalcMn(n0, n1)   
 !----------------------------------------------------------------------!
 !   Calculates time averaged velocity and velocity fluctuations.       !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: n0, n1
+  integer :: n0, n1
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, n
+  integer :: c, n
 !======================================================================!
 
   n=n1-n0
@@ -64,4 +64,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalcMn
+  end subroutine CalcMn

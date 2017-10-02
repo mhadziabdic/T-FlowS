@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE CalcVISt_EBM() 
+  subroutine CalcVISt_EBM() 
 !----------------------------------------------------------------------!
 !   Computes the turbulent viscosity for RSM models (EBM and HJ).      !
 !   If hybrid option is used turbulent diffusivity is modeled by VISt.
@@ -7,16 +7,16 @@
 !   stability of computation.
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, s
-  REAL    :: CK, Yplus, Fmu, Ret, yStar, Cmu_mod                                        
+  integer :: c, c1, c2, s
+  real    :: CK, Yplus, Fmu, Ret, yStar, Cmu_mod                                        
 !======================================================================!
 
   Ret   = 0.0
@@ -38,4 +38,4 @@
   call Exchng(VISt)  
   RETURN
 
-  END SUBROUTINE CalcVISt_EBM 
+  end subroutine CalcVISt_EBM 

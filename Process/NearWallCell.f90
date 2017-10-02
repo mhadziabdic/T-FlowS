@@ -1,20 +1,20 @@
 !======================================================================!
-  SUBROUTINE NearWallCell()
+  subroutine NearWallCell()
 !----------------------------------------------------------------------!
 ! The subroutine links interior cells to the closes wall cell. This is
 ! needed for Standard Smagorinsky SGS model used in LES.  
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER          :: k,  c, nearest  
-  REAL             :: DISTnew, DISTold
-  REAL             :: Dist
+  integer          :: k,  c, nearest  
+  real             :: DISTnew, DISTold
+  real             :: Dist
 !======================================================================!  
 
 !--------------------------------------------------------------------------------!
@@ -44,5 +44,5 @@
 
   if(this < 2) write(*,*) '# Searching finished'
 
-  END SUBROUTINE NearWallCell
+  end subroutine NearWallCell
 

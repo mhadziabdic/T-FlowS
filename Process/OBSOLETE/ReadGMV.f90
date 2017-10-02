@@ -1,27 +1,27 @@
 !======================================================================!
-  SUBROUTINE ReadGMV(GMVfile)
+  subroutine ReadGMV(GMVfile)
 !----------------------------------------------------------------------!
 ! Purpose: Reads NAME.gmv file to initialize variables                 !
 ! ~~~~~~~~                                                             !
 !-----------------------------[Modules]--------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !---------------------------[Parameters]-------------------------------!
-  CHARACTER :: GMVfile*20
+  character :: GMVfile*20
 !----------------------------[Calling]---------------------------------!
-  REAL      :: Dist
+  real      :: Dist
 !-----------------------------[Locals]---------------------------------!
-  CHARACTER :: answer*20
-  INTEGER   :: i, j, c, s, c1,c2
-  INTEGER   :: CellNumb, Nnodes, CellNodes, Node(10)
-  REAL      :: Mres, T1, T2, L1, L2        !,dummy
-  REAL,ALLOCATABLE :: Xnode(:), Ynode(:), Znode(:)
-  REAL,ALLOCATABLE :: Xcent(:), Ycent(:), Zcent(:),     &
+  character :: answer*20
+  integer   :: i, j, c, s, c1,c2
+  integer   :: CellNumb, Nnodes, CellNodes, Node(10)
+  real      :: Mres, T1, T2, L1, L2        !,dummy
+  real,allocatable :: Xnode(:), Ynode(:), Znode(:)
+  real,allocatable :: Xcent(:), Ycent(:), Zcent(:),     &
                       Ucent(:), Vcent(:), Wcent(:),     &
                       Pcent(:), Tcent(:), Kcent(:),     &
                       Ecent(:), Pkcent(:), VVcent(:),   &
@@ -463,5 +463,5 @@
 6 CONTINUE
 
   RETURN
-  END SUBROUTINE ReadGMV
+  end subroutine ReadGMV
 !======================================================================!

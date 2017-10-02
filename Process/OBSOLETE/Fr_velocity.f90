@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE Fr_velocity()
+  subroutine Fr_velocity()
 !----------------------------------------------------------------------!
 !  Purpose:                                                            !
 !  Calculate Yplus in the near wall cells in order to perform swiching !
@@ -8,14 +8,14 @@
 !  Authors: Muhamed Hadziabdic and Bojan Niceno                        !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER c1,c2, s 
-  REAL :: UtotSq, Unor, UnorSq, Utan
+  integer c1,c2, s 
+  real :: UtotSq, Unor, UnorSq, Utan
 !--------------------------------[CVS]---------------------------------!
 !  $Id: Fr_velocity.f90,v 1.2 2017/08/31 21:53:38 mhadziabdic Exp $
 !  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/Fr_velocity.f90,v $
@@ -51,4 +51,4 @@
   call Exchng(VISt)
 
   RETURN 
-  END SUBROUTINE Fr_velocity
+  end subroutine Fr_velocity

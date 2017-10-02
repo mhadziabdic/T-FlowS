@@ -1,38 +1,38 @@
 !======================================================================!
-  SUBROUTINE LoaIni()
+  subroutine LoaIni()
 !----------------------------------------------------------------------!
 ! This version of LoaIni is optimised for very large meshes
 ! Program SUB_INI needs to be used to create files needed by this
 ! subroutine 
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER          :: j, k,  c, nearest, var, Nvar, c1, c2, s 
-  INTEGER          :: NCold  
+  integer          :: j, k,  c, nearest, var, Nvar, c1, c2, s 
+  integer          :: NCold  
   TYPE(Unknown)    :: PHI
-  REAL,ALLOCATABLE :: Xold(:),Yold(:),Zold(:)
-  REAL,ALLOCATABLE :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v_2old(:), f22old(:)
-  REAL,ALLOCATABLE :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v_2Cold(:), f22Cold(:)
-  REAL,ALLOCATABLE :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v_2Coold(:), f22Coold(:)
-  REAL,ALLOCATABLE :: Uoold(:),Voold(:),Woold(:),Toold(:), Koold(:), Eoold(:), v_2oold(:), f22oold(:)
-  REAL,ALLOCATABLE :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v_2Doold(:), f22Doold(:)
-  REAL,ALLOCATABLE :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v_2Xold(:), f22Xold(:)
-  REAL,ALLOCATABLE :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v_2Xoold(:), f22Xoold(:)
-  REAL,ALLOCATABLE :: Pold(:)
-  REAL,ALLOCATABLE :: PPold(:)
-  REAL,ALLOCATABLE :: Pxold(:),Pyold(:),Pzold(:)
-  REAL             :: DISTnew, DISTold
-  REAL             :: Dist, Us, Ws, Vs, R, Rnew, Rold, DistR
+  real,allocatable :: Xold(:),Yold(:),Zold(:)
+  real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v_2old(:), f22old(:)
+  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v_2Cold(:), f22Cold(:)
+  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v_2Coold(:), f22Coold(:)
+  real,allocatable :: Uoold(:),Voold(:),Woold(:),Toold(:), Koold(:), Eoold(:), v_2oold(:), f22oold(:)
+  real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v_2Doold(:), f22Doold(:)
+  real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v_2Xold(:), f22Xold(:)
+  real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v_2Xoold(:), f22Xoold(:)
+  real,allocatable :: Pold(:)
+  real,allocatable :: PPold(:)
+  real,allocatable :: Pxold(:),Pyold(:),Pzold(:)
+  real             :: DISTnew, DISTold
+  real             :: Dist, Us, Ws, Vs, R, Rnew, Rold, DistR
 
 !---- Variables for ReadC:
-  CHARACTER  :: namCoo*80, ext*4, answer*80, answer_hot*80
-  CHARACTER*80 :: namAut
+  character  :: namCoo*80, ext*4, answer*80, answer_hot*80
+  character*80 :: namAut
 !======================================================================!  
 
   call ReadC(7,inp,tn,ts,te)
@@ -339,5 +339,5 @@
   !---- restore the name
   name = answer
 
-  END SUBROUTINE LoaIni
+  end subroutine LoaIni
 

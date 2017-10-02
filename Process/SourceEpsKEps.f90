@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourceEpsKeps
+  subroutine SourceEpsKeps
 !----------------------------------------------------------------------!
 !   Computes the source terms in the Eps transport equation,           !
 !   wall shear stress (wall function approuch)                         !
@@ -21,15 +21,15 @@
 !                                                                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2, j, i
-  REAL    :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
+  integer :: s, c, c1, c2, j, i
+  real    :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
 !======================================================================!
 
   if(MODE == HRe) then
@@ -157,5 +157,5 @@
   end if        ! end if mode = stan
 
   return
-  END SUBROUTINE SourceEpsKeps   
+  end subroutine SourceEpsKeps   
 

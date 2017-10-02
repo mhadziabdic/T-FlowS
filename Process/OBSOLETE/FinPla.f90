@@ -1,20 +1,20 @@
 !======================================================================!
-  SUBROUTINE FinPla
+  subroutine FinPla
 !----------------------------------------------------------------------!
 !   Creates the file for postprocessing with Tecpot.                   !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c1, c2, s, Ncp
-  REAL      :: xc1,xc2,yc1,yc2,zc1,zc2,f1,f2,x0,y0,z0
-  REAL      :: v_X, v_Y, v_U, v_V, v_W, v_P 
-  CHARACTER :: namOut*80, namTem*80, dir
+  integer   :: c1, c2, s, Ncp
+  real      :: xc1,xc2,yc1,yc2,zc1,zc2,f1,f2,x0,y0,z0
+  real      :: v_X, v_Y, v_U, v_V, v_W, v_P 
+  character :: namOut*80, namTem*80, dir
 !--------------------------------[CVS]---------------------------------!
 !  $Id: FinPla.f90,v 1.2 2017/08/31 21:53:38 mhadziabdic Exp $  
 !  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/FinPla.f90,v $  
@@ -144,4 +144,4 @@
 
   goto 1
 
-  END SUBROUTINE FinPla
+  end subroutine FinPla

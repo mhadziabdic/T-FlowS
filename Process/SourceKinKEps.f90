@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourceKinKeps
+  subroutine SourceKinKeps
 !----------------------------------------------------------------------!
 !   Computes the source terms in Kin transport equation.               !
 !                                                                      !
@@ -8,15 +8,15 @@
 !   Authors: Muhamed Hadziabdic and Bojan Niceno                       ! 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, s 
-  REAL    :: UtotSq, Unor, UnorSq, Utan, R
+  integer :: c, c1, c2, s 
+  real    :: UtotSq, Unor, UnorSq, Utan, R
 !======================================================================!
 
 !--------------------------------------------------
@@ -121,4 +121,4 @@
   call Exchng(Kin % n)
 
   RETURN
-  END SUBROUTINE SourceKinKeps
+  end subroutine SourceKinKeps

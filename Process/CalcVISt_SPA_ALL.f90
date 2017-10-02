@@ -1,18 +1,18 @@
 !======================================================================!
-  SUBROUTINE CalcVISt_SPA_ALL(n) 
+  subroutine CalcVISt_SPA_ALL(n) 
 !----------------------------------------------------------------------!
 !   Computes the turbulent viscosity for RANS models.                  !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, n 
-  REAL    :: Xrat, Fv1, lf, Cs 
+  integer :: c, n 
+  real    :: Xrat, Fv1, lf, Cs 
 !======================================================================!
 
   if(SIMULA == DES_SPA) then
@@ -35,4 +35,4 @@
 
   RETURN
 
-  END SUBROUTINE CalcVISt_SPA_ALL
+  end subroutine CalcVISt_SPA_ALL

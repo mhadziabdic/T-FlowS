@@ -1,34 +1,34 @@
 !======================================================================!
-  SUBROUTINE CalcSc(var, PHI, dPHIdx, dPHIdy, dPHIdz)
+  subroutine CalcSc(var, PHI, dPHIdx, dPHIdy, dPHIdz)
 !----------------------------------------------------------------------!
 !  Purpose: Solve transport equation for scalar (temperature)          !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Parameters]---------------------------!
-  INTEGER       :: var
+  integer       :: var
   TYPE(Unknown) :: PHI
-  REAL          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
+  real          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
 
 !------------------------------[Calling]-------------------------------!
   INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, OPTIONAL :: tol
+    end function Approx
+  end INTERFACE
 !-------------------------------[Locals]-------------------------------! 
-  INTEGER :: n,c,s,c1,c2,niter,miter,mat
-  REAL    :: A0, A12, A21, error, VISeff
-  REAL    :: CONeff1, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
-  REAL    :: CONeff2, FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
-  REAL    :: Stot, PHIs, CAPs, Prt1, Prt2
-  REAL    :: dPHIdxS, dPHIdyS, dPHIdzS, Corr, TDC
+  integer :: n,c,s,c1,c2,niter,miter,mat
+  real    :: A0, A12, A21, error, VISeff
+  real    :: CONeff1, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
+  real    :: CONeff2, FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
+  real    :: Stot, PHIs, CAPs, Prt1, Prt2
+  real    :: dPHIdxS, dPHIdyS, dPHIdzS, Corr, TDC
 !----------------------------------------------------------------------!
 !     
 !  The form of equations which are solved:    
@@ -572,4 +572,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalcSc
+  end subroutine CalcSc

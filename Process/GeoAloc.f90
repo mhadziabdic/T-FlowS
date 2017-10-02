@@ -1,15 +1,15 @@
 !======================================================================!
-  SUBROUTINE GeoAloc
+  subroutine GeoAloc
 !----------------------------------------------------------------------!
 ! Alocates memory for geometrical quantities.                          !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE sol_mod
-  USE les_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use sol_mod
+  use les_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !======================================================================!
 
 !----- variables defined in all.h90:
@@ -70,4 +70,4 @@
 !??????????????????????????????????????????!
 ! Do something !  
 
-  END SUBROUTINE GeoAloc
+  end subroutine GeoAloc

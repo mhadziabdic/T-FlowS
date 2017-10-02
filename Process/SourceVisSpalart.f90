@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourceVisSpalart(dPHIdx,dPHIdy,dPHIdz)
+  subroutine SourceVisSpalart(dPHIdx,dPHIdy,dPHIdz)
 !----------------------------------------------------------------------!
 !   Computes the source terms in VIS transport equation.               !
 !   model : spa-all                                                    !
@@ -7,17 +7,17 @@
 !   Authors: Muhamed Hadziabdic and Bojan Niceno                       ! 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c 
-  REAL    :: Xrat, Fv1, Fv2, Fw, SS, DistV, ProdV, R, GG, Dif
-  REAL    :: dist
-  REAL    :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
+  integer :: c 
+  real    :: Xrat, Fv1, Fv2, Fw, SS, DistV, ProdV, R, GG, Dif
+  real    :: dist
+  real    :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
 !======================================================================!
 
   if(SIMULA == SPA_ALL) then
@@ -80,4 +80,4 @@
   end if
 
   RETURN
-  END SUBROUTINE SourceVisSpalart
+  end subroutine SourceVisSpalart

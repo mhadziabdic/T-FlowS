@@ -1,20 +1,20 @@
 !======================================================================!
-  SUBROUTINE SavIni()
+  subroutine SavIni()
 !----------------------------------------------------------------------!
 !   
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   ::  c, Nvar, var, c1, c2, s, SC, nn
+  integer   ::  c, Nvar, var, c1, c2, s, SC, nn
   TYPE(Unknown) :: PHI
-  CHARACTER :: namOut*80, answer*80, ext*4
+  character :: namOut*80, answer*80, ext*4
 !======================================================================!
 
 !---- store the name
@@ -150,4 +150,4 @@
 
   name = answer 
 
-  END SUBROUTINE SavIni
+  end subroutine SavIni

@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE CalcVISt_Keps() 
+  subroutine CalcVISt_Keps() 
 !----------------------------------------------------------------------!
 !   Computes the turbulent viscosity for RANS models.                  !
 !                                                                      !
@@ -22,16 +22,16 @@
 !                                                                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, s
-  REAL    :: CK, Yplus, Fmu, Ret, yStar, Prturb, EBF, Prmol, beta                                        
+  integer :: c, c1, c2, s
+  real    :: CK, Yplus, Fmu, Ret, yStar, Prturb, EBF, Prmol, beta                                        
 !======================================================================!
 
 !======================================================================!
@@ -115,4 +115,4 @@
   call Exchng(VISt)  
   RETURN
 
-  END SUBROUTINE CalcVISt_Keps 
+  end subroutine CalcVISt_Keps 

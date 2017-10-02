@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE Scale()
+  subroutine Scale()
 !----------------------------------------------------------------------!
 !  Purpose:                                                            !
 !  Calculates time scale and leght scale in manner to avoid singularity!
@@ -8,15 +8,15 @@
 !  Authors: Muhamed Hadziabdic 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER c 
-  REAL T1, T2, L1, L2, L3, T3
+  integer c 
+  real T1, T2, L1, L2, L3, T3
 !======================================================================!
 
   if(SIMULA==K_EPS_VV) then
@@ -73,4 +73,4 @@
   end if
 
    RETURN
-   END SUBROUTINE Scale
+   end subroutine Scale

@@ -1,13 +1,13 @@
 !======================================================================!
-  SUBROUTINE CalcSGS()
+  subroutine CalcSGS()
 !----------------------------------------------------------------------!
 !   Calculates SGS stresses and turbulent viscosity for LES.           !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
 ! near(c) is the number of corresponding cell on the nearest wall.
 ! In case that, in parallel executions, the subdomain does not have 
@@ -15,14 +15,14 @@
 ! near(c) is calculated in NearWallCells.f90, only ones in the beginig
 ! of a simulation.
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, s, c1, c2 
-  REAL    :: Nx, Ny, Nz
-  REAL    :: Cs, R
-  REAL    :: Stot, lf, UtauL, Uff 
-  REAL    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus 
-  REAL    :: fun
+  integer :: c, s, c1, c2 
+  real    :: Nx, Ny, Nz
+  real    :: Cs, R
+  real    :: Stot, lf, UtauL, Uff 
+  real    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus 
+  real    :: fun
 !======================================================================!
 
   
@@ -152,4 +152,4 @@
   call Exchng(VISt)
   call Exchng(VISwall)
 
-  END SUBROUTINE CalcSGS
+  end subroutine CalcSGS

@@ -1,19 +1,19 @@
 !======================================================================!
-  SUBROUTINE CalcPF
+  subroutine CalcPF
 !----------------------------------------------------------------------!
 !   Forms and solves pressure equation for the fractional step method. !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2, niter
-  REAL    :: Pmax, Pmin
-  REAL    :: error
-  REAL    :: Us, Vs, Ws, DENs
-  REAL    :: A12
+  integer :: s, c, c1, c2, niter
+  real    :: Pmax, Pmin
+  real    :: error
+  real    :: Us, Vs, Ws, DENs
+  real    :: A12
 !----------------------------------------------------------------------!
 !     
 !  The form of equations which I am solving:    
@@ -222,4 +222,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalcPF
+  end subroutine CalcPF

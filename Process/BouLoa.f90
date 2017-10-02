@@ -1,27 +1,27 @@
 !======================================================================!
-  SUBROUTINE BouLoa(in_out)
+  subroutine BouLoa(in_out)
 !----------------------------------------------------------------------!
 ! Reads: NAME.b                                                        !
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL       :: in_out
+  logical       :: in_out
 !------------------------------[Calling]-------------------------------!
-  REAL          :: Dist
+  real          :: Dist
 !-------------------------------[Locals]-------------------------------!
-  INTEGER       :: c, n, dum1, NB, NP, Ninit, m, c1, c2, s 
-  CHARACTER*80  :: namBou, namPro(128), dir
-  INTEGER       :: typBou(128)
-  REAL          :: xyz(10024)
-  REAL          :: wi
-  REAL          :: x1(55555), x2(55555), Mres
-  LOGICAL       :: here
+  integer       :: c, n, dum1, NB, NP, Ninit, m, c1, c2, s 
+  character*80  :: namBou, namPro(128), dir
+  integer       :: typBou(128)
+  real          :: xyz(10024)
+  real          :: wi
+  real          :: x1(55555), x2(55555), Mres
+  logical       :: here
 !======================================================================!
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
@@ -579,4 +579,4 @@
 
   RETURN 
 
-  END SUBROUTINE BouLoa
+  end subroutine BouLoa

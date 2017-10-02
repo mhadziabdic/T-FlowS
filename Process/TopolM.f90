@@ -1,18 +1,18 @@
 !======================================================================!
-  SUBROUTINE TopolM 
+  subroutine TopolM 
 !----------------------------------------------------------------------!
 !   Determines the topology of the system matrix.                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: c, s, j, n
-  INTEGER             :: c1, c2
-  INTEGER,ALLOCATABLE :: stencw(:)
+  integer             :: c, s, j, n
+  integer             :: c1, c2
+  integer,allocatable :: stencw(:)
 !======================================================================!
 !   Relies only on SideC structure. Try to keep it that way.
 !----------------------------------------------------------------------!
@@ -95,4 +95,4 @@
 
   RETURN
 
-  END SUBROUTINE TopolM
+  end subroutine TopolM

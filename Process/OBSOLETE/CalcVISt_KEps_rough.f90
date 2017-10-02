@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE CalcVISt_Keps_rough() 
+  subroutine CalcVISt_Keps_rough() 
 !----------------------------------------------------------------------!
 !   Computes the turbulent viscosity for RANS models.                  !
 !                                                                      !
@@ -22,16 +22,16 @@
 !                                                                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, s
-  REAL    :: CK, Yplus, Fmu, Ret, yStar                                        
+  integer :: c, c1, c2, s
+  real    :: CK, Yplus, Fmu, Ret, yStar                                        
 !--------------------------------[CVS]---------------------------------!
 ! '$Id: CalcVISt_KEps_rough.f90,v 1.1 2017/08/31 22:35:25 mhadziabdic Exp $'
 ! '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcVISt_KEps_rough.f90,v $'
@@ -101,4 +101,4 @@
 
   RETURN
 
-  END SUBROUTINE CalcVISt_Keps_rough 
+  end subroutine CalcVISt_Keps_rough 

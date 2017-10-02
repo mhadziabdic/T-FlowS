@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE Resid(N, NB, NONZ, A, Acol,Arow,Ab,x,r1) 
+  subroutine Resid(N, NB, NONZ, A, Acol,Arow,Ab,x,r1) 
 !----------------------------------------------------------------------!
 !   Calculates residuals.                                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE par_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER  :: N, NB, NONZ      
+  integer  :: N, NB, NONZ      
 
-  REAL     :: A(NONZ),Ab(-NB:-1)
-  INTEGER  :: Acol(N+1)
-  INTEGER  :: Arow(NONZ)
-  REAL     :: x(-NB:N), r1(N)             !  [A]{x}={r1}
+  real     :: A(NONZ),Ab(-NB:-1)
+  integer  :: Acol(N+1)
+  integer  :: Arow(NONZ)
+  real     :: x(-NB:N), r1(N)             !  [A]{x}={r1}
 !-------------------------------[Locals]-------------------------------!
-  INTEGER  :: i,j,k,sub
+  integer  :: i,j,k,sub
 !======================================================================!
 
 !+++++++++++++++++++++++++!
@@ -38,4 +38,4 @@
     end if
   end do
 
-  END SUBROUTINE Resid
+  end subroutine Resid

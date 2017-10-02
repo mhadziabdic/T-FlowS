@@ -1,27 +1,27 @@
 !======================================================================!
-  SUBROUTINE CalcF22(var, PHI,             &
+  subroutine CalcF22(var, PHI,             &
                       dPHIdx, dPHIdy, dPHIdz)
 !----------------------------------------------------------------------!
 ! Discretizes and solves eliptic relaxation equations for f22          !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER       :: var
+  integer       :: var
   TYPE(Unknown) :: PHI
-  REAL          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
+  real          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2, niter, miter
-  REAL    :: Fex, Fim 
-  REAL    :: A0, A12, A21
-  REAL    :: error
-  REAL    :: dPHIdxS, dPHIdyS, dPHIdzS
+  integer :: s, c, c1, c2, niter, miter
+  real    :: Fex, Fim 
+  real    :: A0, A12, A21
+  real    :: error
+  real    :: dPHIdxS, dPHIdyS, dPHIdzS
 !======================================================================! 
 !  The form of equations which are solved:
 !
@@ -268,4 +268,4 @@
 
   RETURN
 
-  END SUBROUTINE CalcF22
+  end subroutine CalcF22

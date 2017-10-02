@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE GraCorNew(PHI, PHI_x, PHI_y, PHI_z)
+  subroutine GraCorNew(PHI, PHI_x, PHI_y, PHI_z)
 !----------------------------------------------------------------------!
 ! Calculates gradient in the cells adjencent to material interface     !
 ! boundaries. Assumes that "tentative" gradients are just calculated   !
@@ -24,21 +24,21 @@
 ! Further, it will probably not work on periodic boundaries.           !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE sol_mod  ! needed for p1 and p2 arrays
+  use all_mod
+  use pro_mod
+  use sol_mod  ! needed for p1 and p2 arrays
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: PHI(-NbC:NC),    &
+  real :: PHI(-NbC:NC),    &
           PHI_x(-NbC:NC),  &
           PHI_y(-NbC:NC),  &
           PHI_z(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c1, c2
-  REAL    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
-  REAL    :: f1, f2, PHIs
-  REAL    :: L1, L2, D1, D2
+  integer :: s, c1, c2
+  real    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
+  real    :: f1, f2, PHIs
+  real    :: L1, L2, D1, D2
 !======================================================================!
 
   do s=1,NS
@@ -144,4 +144,4 @@
   call Exchng(PHI_y)
   call Exchng(PHI_z)
 
-  END SUBROUTINE GraCorNew
+  end subroutine GraCorNew

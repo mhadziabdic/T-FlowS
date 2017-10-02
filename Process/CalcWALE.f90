@@ -1,22 +1,22 @@
 !======================================================================!
-  SUBROUTINE CalcWALE()
+  subroutine CalcWALE()
 !----------------------------------------------------------------------!
 !  Compute SGS viscosity for LES by using WALE model.  
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL    :: SijdSijd(-NbC:NC), She(-NbC:NC), Vor(-NbC:NC)
+  real    :: SijdSijd(-NbC:NC), She(-NbC:NC), Vor(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, i
-  REAL    :: S11, S22, S33, S12, S13, S23, S21, S31, S32
-  REAL    :: S11d, S22d, S33d, S12d, S13d, S23d, S21d, S31d, S32d
-  REAL    :: V11, V22, V33, V12, V13, V23, V21, V31, V32
+  integer :: c, i
+  real    :: S11, S22, S33, S12, S13, S23, S21, S31, S32
+  real    :: S11d, S22d, S33d, S12d, S13d, S23d, S21d, S31d, S32d
+  real    :: V11, V22, V33, V12, V13, V23, V21, V31, V32
 !======================================================================!
 
 !===================!
@@ -65,4 +65,4 @@
                sqrt(sqrt(abs(SijdSijd(c)*SijdSijd(c)*SijdSijd(c)*SijdSijd(c)*SijdSijd(c)))) + tiny)
   end do 
 
-  END SUBROUTINE CalcWALE
+  end subroutine CalcWALE

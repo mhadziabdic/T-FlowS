@@ -1,32 +1,32 @@
 !=====================================================================!
-  SUBROUTINE CalcStresses(var, PHI,             &
+  subroutine CalcStresses(var, PHI,             &
                       dPHIdx, dPHIdy, dPHIdz)
 !----------------------------------------------------------------------!
 ! Discretizes and solves transport equation for Re stresses for RSM.
 ! EBM and HJ are calling this subroutine.  
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER       :: var
+  integer       :: var
   TYPE(Unknown) :: PHI
-  REAL          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
+  real          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2, niter, miter, mat
-  REAL    :: Fex, Fim, TDiffS, VIStur 
-  REAL    :: PHIs
-  REAL    :: A0, A12, A21
-  REAL    :: error
-  REAL    :: VISeff
-  REAL    :: dPHIdxS, dPHIdyS, dPHIdzS
-  REAL    :: VIStS, TDiff_im, TDiff_ex, TDiff_coef, TDiffx, TDiffy,TDiffz
-  REAL    :: uuS, vvS, wwS, uvS, uwS, vwS
+  integer :: s, c, c1, c2, niter, miter, mat
+  real    :: Fex, Fim, TDiffS, VIStur 
+  real    :: PHIs
+  real    :: A0, A12, A21
+  real    :: error
+  real    :: VISeff
+  real    :: dPHIdxS, dPHIdyS, dPHIdzS
+  real    :: VIStS, TDiff_im, TDiff_ex, TDiff_coef, TDiffx, TDiffy,TDiffz
+  real    :: uuS, vvS, wwS, uvS, uwS, vwS
 !----------------------------------------------------------------------!
 !                                                                      ! 
 !  The form of equations which are solved:                             !   
@@ -545,4 +545,4 @@
 
   RETURN
 
-  END SUBROUTINE CalcStresses
+  end subroutine CalcStresses

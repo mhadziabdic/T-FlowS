@@ -1,28 +1,28 @@
 !======================================================================!
-  SUBROUTINE Prec1(N,NONZ,A,Acol,Arow,Adia,D,prec) 
+  subroutine Prec1(N,NONZ,A,Acol,Arow,Adia,D,prec) 
 !----------------------------------------------------------------------!
 !   Solves the linear systems of equations by a precond. CG Method.    !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE par_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER  :: N, NONZ      
+  integer  :: N, NONZ      
 
-  REAL     :: A(NONZ)
-  INTEGER  :: Acol(N),Adia(N)
-  INTEGER  :: Arow(NONZ)
-  REAL     :: D(N) 
+  real     :: A(NONZ)
+  integer  :: Acol(N),Adia(N)
+  integer  :: Arow(NONZ)
+  real     :: D(N) 
 
-  INTEGER  :: prec
+  integer  :: prec
 !-------------------------------[Locals]-------------------------------!
-  REAL     :: sum1
-  INTEGER  :: i, j, k
+  real     :: sum1
+  integer  :: i, j, k
 !======================================================================!
                  
 !->>>
-!      INTEGER c 
+!      integer c 
 !      do c=1,N
 !        write(*,*) 'Cell: ', c
 !        write(*,*) 'Width: ', Acol(c+1)-Acol(c)
@@ -63,4 +63,4 @@
     end do
   end if 
 
-  END SUBROUTINE Prec1
+  end subroutine Prec1

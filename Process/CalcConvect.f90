@@ -1,16 +1,16 @@
 !======================================================================!
-  SUBROUTINE CalcConvect
+  subroutine CalcConvect
 !----------------------------------------------------------------------!
 !   Extrapoloate variables on the boundaries where needed              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, s
+  integer :: c1, c2, s
 !======================================================================!
 
   call CalcFlux   
@@ -57,4 +57,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalcConvect
+  end subroutine CalcConvect

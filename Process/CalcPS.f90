@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE CalcPS
+  subroutine CalcPS
 !----------------------------------------------------------------------!
 !   Forms and solves pressure equation for the S.I.M.P.L.E. method.    !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2, niter
-  REAL    :: Us, Vs, Ws, DENs, A12      
-  REAL    :: Pmax, Pmin
-  REAL    :: error
-  REAL    :: SMDPN
-  REAL    :: dPxi, dPyi, dPzi
+  integer :: s, c, c1, c2, niter
+  real    :: Us, Vs, Ws, DENs, A12      
+  real    :: Pmax, Pmin
+  real    :: error
+  real    :: SMDPN
+  real    :: dPxi, dPyi, dPzi
 !----------------------------------------------------------------------!
 !     
 !  The form of equations which I am solving:    
@@ -247,4 +247,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalcPS
+  end subroutine CalcPS

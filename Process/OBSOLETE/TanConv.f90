@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE TanConv(Var, Cell, Convection)
+  subroutine TanConv(Var, Cell, Convection)
 !----------------------------------------------------------------------!
 !   Calculates tangential momentum convective term for AnalyticWF      !
 !----------------------------------------------------------------------!
@@ -19,17 +19,17 @@
 !
 !
 !-----------------------------[Modules]--------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !----------------------------[Parameters]------------------------------!
-  INTEGER :: Var, Cell
-  REAL    :: Convection
+  integer :: Var, Cell
+  real    :: Convection
 !------------------------------[Locals]--------------------------------!
-  INTEGER :: j, s, c1, c2, c
-  REAL    :: DENs, Us, Vs, Ws, MFluxS, PhiTanS, Stot
+  integer :: j, s, c1, c2, c
+  real    :: DENs, Us, Vs, Ws, MFluxS, PhiTanS, Stot
 !--------------------------------[CVS]---------------------------------!
 !  $Id: TanConv.f90,v 1.1 2017/09/06 06:17:30 mhadziabdic Exp $
 !  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/TanConv.f90,v $
@@ -153,4 +153,4 @@
 
 
   RETURN 
-  END SUBROUTINE TanConv
+  end subroutine TanConv

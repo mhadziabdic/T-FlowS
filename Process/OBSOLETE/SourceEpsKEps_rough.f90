@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourceEpsKeps_rough
+  subroutine SourceEpsKeps_rough
 !----------------------------------------------------------------------!
 !   Computes the source terms in the Eps transport equation,           !
 !   wall shear stress (wall function approuch)                         !
@@ -21,15 +21,15 @@
 !                                                                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2, j, i
-  REAL    :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
+  integer :: s, c, c1, c2, j, i
+  real    :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
 !--------------------------------[CVS]---------------------------------!
 ! '$Id: SourceEpsKEps_rough.f90,v 1.1 2017/08/31 22:35:25 mhadziabdic Exp $' 
 ! '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourceEpsKEps_rough.f90,v $' 
@@ -157,5 +157,5 @@
 
   return
 
-  END SUBROUTINE SourceEpsKeps_rough   
+  end subroutine SourceEpsKeps_rough   
 

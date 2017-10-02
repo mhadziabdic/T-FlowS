@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE FindBad()
+  subroutine FindBad()
 !----------------------------------------------------------------------!
 ! Searches for cells which are "bad" for calculation of pressure       !
 ! gradients.                                                           !
@@ -8,13 +8,13 @@
 ! boundary and two in the domain.                                      ! 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2, NumBad
+  integer :: s, c, c1, c2, NumBad
 !======================================================================!
 
   BadForG = .FALSE. 
@@ -44,4 +44,4 @@
   if(THIS < 2) write(*,*) '# There are ', NumBad, &
                           ' bad cells for gradients.'
 
-  END SUBROUTINE FindBad
+  end subroutine FindBad

@@ -1,16 +1,16 @@
 !======================================================================!
-  SUBROUTINE TestU()
+  subroutine TestU()
 !----------------------------------------------------------------------!
 !   Discretizes and solves momentum conservation equations             !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: n,c,s,c1,c2,niter
-  REAL    :: VISeff,FUex,FUim,PHIxS,PHIyS,PHIzS,A0,A12,A21,error
+  integer :: n,c,s,c1,c2,niter
+  real    :: VISeff,FUex,FUim,PHIxS,PHIyS,PHIzS,A0,A12,A21,error
 !--------------------------------[CVS]---------------------------------!
 !  $Id: TestU.f90,v 1.2 2017/08/31 21:57:29 mhadziabdic Exp $  
 !  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/TestU.f90,v $      
@@ -253,4 +253,4 @@
     write(LineRes(77:80), '(I4)')      niter                                                              
   endif
 
-  END SUBROUTINE TestU
+  end subroutine TestU

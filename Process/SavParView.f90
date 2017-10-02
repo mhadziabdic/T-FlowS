@@ -1,38 +1,38 @@
 !======================================================================!
-  SUBROUTINE SavParView(sub, NCsub, namAut, n0, n1)
+  subroutine SavParView(sub, NCsub, namAut, n0, n1)
 !----------------------------------------------------------------------!
 ! Reads: NAME.gmv and generates NAME.vti Paraview XML output file      !
 ! ~~~~~~~                                                              ! 
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE par_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use par_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER ::  NCsub, sub, n0, n1
-  CHARACTER :: storename*80, namTem*80, namXML*80
-  CHARACTER :: namAut*(*)
+  integer ::  NCsub, sub, n0, n1
+  character :: storename*80, namTem*80, namXML*80
+  character :: namAut*(*)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c,  c1,  c2,  n, s, contauai
-  CHARACTER :: namOut*80, Line*300, stringadummy*100, nameIn*80
-  REAL,ALLOCATABLE :: x(:), y(:), z(:)    ! self evident
-  INTEGER,ALLOCATABLE :: connessione(:,:) ! connection
-  INTEGER :: celleconnessione
-  INTEGER :: NNsub, NmaterBC, NNsub_new, NCsub_new
-  INTEGER :: off_set_connection
-  INTEGER :: i
-  REAL,ALLOCATABLE :: vettore (:)         !local vector for postprox
-  REAL,ALLOCATABLE :: vettore2 (:)        !local vector for postprox
-  REAL,ALLOCATABLE :: vettore3 (:)        !local vector for postprox
-  REAL    :: Nx, Ny, Nz
-  REAL    :: Cs, R, Cmu_mod
-  REAL    :: Stot, lf, UtauL, Uff
-  REAL    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus
-  REAL    :: frictionv(NC)
+  integer   :: c,  c1,  c2,  n, s, contauai
+  character :: namOut*80, Line*300, stringadummy*100, nameIn*80
+  real,allocatable :: x(:), y(:), z(:)    ! self evident
+  integer,allocatable :: connessione(:,:) ! connection
+  integer :: celleconnessione
+  integer :: NNsub, NmaterBC, NNsub_new, NCsub_new
+  integer :: off_set_connection
+  integer :: i
+  real,allocatable :: vettore (:)         !local vector for postprox
+  real,allocatable :: vettore2 (:)        !local vector for postprox
+  real,allocatable :: vettore3 (:)        !local vector for postprox
+  real    :: Nx, Ny, Nz
+  real    :: Cs, R, Cmu_mod
+  real    :: Stot, lf, UtauL, Uff
+  real    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus
+  real    :: frictionv(NC)
 !======================================================================!
 
   namTem = name
@@ -441,4 +441,4 @@ call wait
 
   return
 
-  END SUBROUTINE SavParView
+  end subroutine SavParView

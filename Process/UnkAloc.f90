@@ -1,16 +1,16 @@
 !======================================================================!
-  SUBROUTINE UnkAloc
+  subroutine UnkAloc
 !----------------------------------------------------------------------!
 ! Allocates memory for variables. It is called either from LoaRes      !
 ! or from Processor.                                                   !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !======================================================================!
 
   allocate (U % n(-NbC:NC)); U % n=0.
@@ -689,4 +689,4 @@
 !??????????????????????????????????????????!
 ! Do something !  
 
-  END SUBROUTINE UnkAloc
+  end subroutine UnkAloc

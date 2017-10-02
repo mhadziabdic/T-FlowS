@@ -1,19 +1,19 @@
 !======================================================================!
-  SUBROUTINE CalcG(Boundary)
+  subroutine CalcG(Boundary)
 !----------------------------------------------------------------------!
 !   Calculates gradient matrix.                                        !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL :: Boundary
+  logical :: Boundary
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, s
-  REAL    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2
-  REAL    :: Jac, Ginv(6)
+  integer :: c, c1, c2, s
+  real    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2
+  real    :: Jac, Ginv(6)
 !======================================================================!
 
 !+++++++++++++++++++++++++++++++++++++++++!
@@ -117,4 +117,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalcG
+  end subroutine CalcG

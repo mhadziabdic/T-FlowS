@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE CalcVort()
+  subroutine CalcVort()
 !----------------------------------------------------------------------!
 !  Computes the magnitude of the vorticity                             !
 !----------------------------------------------------------------------!
@@ -7,15 +7,15 @@
 !  Sij = 1/2 ( dUi/dXj - dUj/dXi )                                     !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, i 
-  REAL    :: Sii, Sjk
+  integer :: c, i 
+  real    :: Sii, Sjk
 !======================================================================!
 
   call Exchng(U % n)
@@ -62,4 +62,4 @@
   do c = 1, NC
     Vort(c) = sqrt(abs(2.0 * Vort(c)))
   end do
-  END SUBROUTINE CalcVort
+  end subroutine CalcVort

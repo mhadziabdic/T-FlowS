@@ -1,13 +1,15 @@
 !======================================================================!
-  real function DistR(rA,zA,rB,zB)
+  real function Distance_Squared(x_a, y_a, z_a, x_b, y_b, z_b)
 !----------------------------------------------------------------------!
-!  Calculates distance between two points.                             !
+!  Calculates squared distance between two points in three-dimensions. !
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Parameters]-----------------------------!
-  real :: rA,zA,rB,zB
+  real :: x_a, y_a, z_a, x_b, y_b, z_b
 !======================================================================!
 
-  DistR=sqrt( (rA-rB)*(rA-rB) + (zA-zB)*(zA-zB) )
+  Distance_Squared = (x_a-x_b)*(x_a-x_b) &
+                   + (y_a-y_b)*(y_a-y_b) &
+                   + (z_a-z_b)*(z_a-z_b)
 
-  end function DistR
+  end function Distance_Squared

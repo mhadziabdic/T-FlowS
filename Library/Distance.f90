@@ -1,13 +1,15 @@
 !======================================================================!
-  real function Dist2(xA,yA,zA,xB,yB,zB)
+  real function Distance(x_a, y_a, z_a, x_b, y_b, z_b)
 !----------------------------------------------------------------------!
-!  Calculates distance between two points.                             !
+!  Calculates distance between two points in three-dimensional space.  !
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Parameters]-----------------------------!
-  real :: xA,yA,zA,xB,yB,zB
+  real :: x_a, y_a, z_a, x_b, y_b, z_b
 !======================================================================!
 
-  Dist2=(xA-xB)*(xA-xB) + (yA-yB)*(yA-yB) + (zA-zB)*(zA-zB)
+  Distance = sqrt(   (x_a-x_b)*(x_a-x_b) &
+                   + (y_a-y_b)*(y_a-y_b) &
+                   + (z_a-z_b)*(z_a-z_b) )
 
-  end function Dist2
+  end function Distance

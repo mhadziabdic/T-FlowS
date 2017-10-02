@@ -1,5 +1,5 @@
 !======================================================================!
-INCLUDE '../Library/allp_mod.f90'
-INCLUDE '../Library/all_mod.f90'
-INCLUDE '../Library/gen_mod.f90'
-INCLUDE '../Library/par_mod.f90'
+include '../Library/allp_mod.f90'
+include '../Library/all_mod.f90'
+include '../Library/gen_mod.f90'
+include '../Library/par_mod.f90'

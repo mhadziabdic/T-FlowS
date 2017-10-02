@@ -1,19 +1,19 @@
 !======================================================================!
-  SUBROUTINE Number
+  subroutine Number
 !----------------------------------------------------------------------!
 !   Number the cells in each subdomain for subsequent separate saving. !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod 
-  USE par_mod
+  use all_mod
+  use gen_mod 
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: b, c, n, s, c1, c2
-  INTEGER   :: sub,subo,NNsub,NCsub,NSsub,NBCsub,NBFsub,NCSsub,NCFsub
-  CHARACTER :: namOut*80
-  INTEGER,ALLOCATABLE :: SideCell(:,:)
+  integer   :: b, c, n, s, c1, c2
+  integer   :: sub,subo,NNsub,NCsub,NSsub,NBCsub,NBFsub,NCSsub,NCFsub
+  character :: namOut*80
+  integer,allocatable :: SideCell(:,:)
 !======================================================================!
 !  Each subdomain needs two buffers: a send buffer and a receive buffer.
 !  A receive buffer will be stored as aditional boundary cells for each
@@ -301,4 +301,4 @@
 
   call EpsPar
 
-  END SUBROUTINE Number
+  end subroutine Number

@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE UserPerturb2(fac,n, Dom)
+  subroutine UserPerturb2(fac,n, Dom)
 !----------------------------------------------------------------------!
 !   Perturbs the flow field for any flow.                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use par_mod
+  use les_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  INTEGER :: n, Dom
-  REAL    :: fac
+  integer :: n, Dom
+  real    :: fac
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, seed(1), q
-  REAL    :: randn
+  integer :: c, seed(1), q
+  real    :: randn
   integer, allocatable :: a(:) 
 !======================================================================!
 
@@ -52,4 +52,4 @@
   end do
 
 
-  END SUBROUTINE UserPerturb2
+  end subroutine UserPerturb2

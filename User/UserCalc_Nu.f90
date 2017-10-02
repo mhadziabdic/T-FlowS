@@ -1,32 +1,32 @@
 !======================================================================!
-  SUBROUTINE UserCalc_Nu()     
+  subroutine UserCalc_Nu()     
 !----------------------------------------------------------------------!
 ! This program reads name.1D file created by NEU or GEN and averages    
 ! the results in the homogeneous direction directions.            
 ! The results are writen in files name_res.dat and name_res_plus.dat
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: Ufric, Wall_near, Dwall
+  real :: Ufric, Wall_near, Dwall
 !------------------------------[Calling]-------------------------------!
   INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, OPTIONAL :: tol
+    end function Approx
+  end INTERFACE
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: Nprob, pl, c, i, count, kk, s, c1, c2
-  CHARACTER           :: namCoo*80, namPro*80, answer*80, namRes*80
-  CHARACTER           :: namRes_plus*80
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), &
+  integer             :: Nprob, pl, c, i, count, kk, s, c1, c2
+  character           :: namCoo*80, namPro*80, answer*80, namRes*80
+  character           :: namRes_plus*80
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), &
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
@@ -36,10 +36,10 @@
                                  var_3(:), Wall_p(:), Rad_1(:), &
                                  var_4(:), var_5(:), var_6(:), &
                                  Ufric_p(:)
-  INTEGER,ALLOCATABLE :: Np(:), Ncount(:), Ncount2(:)
-  REAL                :: R, Urad_mean, Utan_mean, dummy, Lscale, R_max, Rad_2
-  REAL    :: qx, qy, qz, Nx, Ny, Nz, Stot
-  LOGICAL :: there
+  integer,allocatable :: Np(:), Ncount(:), Ncount2(:)
+  real                :: R, Urad_mean, Utan_mean, dummy, Lscale, R_max, Rad_2
+  real    :: qx, qy, qz, Nx, Ny, Nz, Stot
+  logical :: there
 !======================================================================!
 
   INQUIRE( FILE='Stream_coord.dat', EXIST=THERE ) 
@@ -234,4 +234,4 @@
 
   if(this < 2) write(*,*)'Finished with UserCalc_Nu'
   
-END SUBROUTINE UserCalc_Nu
+end subroutine UserCalc_Nu

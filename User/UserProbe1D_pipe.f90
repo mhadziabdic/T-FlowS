@@ -1,41 +1,41 @@
 !======================================================================!
-  SUBROUTINE UserProbe1D_pipe() 
+  subroutine UserProbe1D_pipe() 
 !----------------------------------------------------------------------!
 ! Reads the "pipe_rad.1D" file created by yourself and averages the    !
 ! results in the homogeneous azimutal direction and axial direction.   !
 ! The values of Umean, Vmean, Wmean, uu, vv, ww, uv, uw and vw are     !
 ! writen  into file "pipe_mean.dat" and "pipe_mean_plus.dat".          !
 !----------------------------------------------------------------------!
-    USE all_mod
-    USE allp_mod
-    USE les_mod
-    USE pro_mod
-    USE par_mod
-    USE rans_mod
+    use all_mod
+    use allp_mod
+    use les_mod
+    use pro_mod
+    use par_mod
+    use rans_mod
 !----------------------------------------------------------------------!
-    IMPLICIT NONE
+    implicit none
 !-----------------------------[Parameters]-----------------------------!
-    REAL :: y(-NbC:NC)
-    REAL :: Rad_2, Ufric 
+    real :: y(-NbC:NC)
+    real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
     INTERFACE
-      LOGICAL FUNCTION Approx(A,B,tol)
-        REAL           :: A,B
-        REAL, OPTIONAL :: tol
-      END FUNCTION Approx
-    END INTERFACE 
+      logical function Approx(A,B,tol)
+        real           :: A,B
+        real, OPTIONAL :: tol
+      end function Approx
+    end INTERFACE 
 !-------------------------------[Locals]-------------------------------!
-    INTEGER             :: Nprob, pl, c, i, count
-    CHARACTER           :: namCoo*80, namPro*80, answer*80
-    REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+    integer             :: Nprob, pl, c, i, count
+    character           :: namCoo*80, namPro*80, answer*80
+    real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
                                  uTp(:), vTp(:), wTp(:), &
                                  Ksgsp(:),               & 
                                  var_1(:), var_2(:), var_3(:), Rad_1(:), Rad_mp(:)
-    INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
-    REAL                :: R, Urad_mean, Utan_mean, dummy
+    integer,allocatable :: Np(:), Ncount(:)
+    real                :: R, Urad_mean, Utan_mean, dummy
 !======================================================================!
 
     namPro = name
@@ -262,4 +262,4 @@
       deallocate(vTp)
       deallocate(wTp)
     end if
-  END SUBROUTINE UserProbe1D_pipe
+  end subroutine UserProbe1D_pipe

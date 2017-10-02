@@ -1,14 +1,14 @@
 !======================================================================!
-  SUBROUTINE INSort(X,indx,N)
+  subroutine INSort(X,indx,N)
 !----------------------------------------------------------------------!
 !   Sorts int. array X according to indx.                              !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: N,X(N),indx(N)
+  integer :: N,X(N),indx(N)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: i
-  INTEGER,ALLOCATABLE :: work(:)
+  integer             :: i
+  integer,allocatable :: work(:)
 !======================================================================!
 
   allocate(work(N)); work=0
@@ -23,4 +23,4 @@
 
   deallocate(work)
 
-  END SUBROUTINE INSort
+  end subroutine INSort

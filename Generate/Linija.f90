@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE Linija(b, w, is,js,ks,ie,je,ke)
+  subroutine Linija(b, w, is,js,ks,ie,je,ke)
 !----------------------------------------------------------------------!
 !   Places the nodes on the line defined with local block position     !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: b, is,js,ks,ie,je,ke
-  REAL    :: w
+  integer :: b, is,js,ks,ie,je,ke
+  real    :: w
 !------------------------------[Calling]-------------------------------!
-  REAL :: atanh
+  real :: atanh
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: N, NI, NJ, NK, i, j, k, node, case
-  REAL    :: x0, y0, z0, delx, dely, delz, t, dt, ddt, pr, xi
+  integer :: N, NI, NJ, NK, i, j, k, node, case
+  real    :: x0, y0, z0, delx, dely, delz, t, dt, ddt, pr, xi
 !======================================================================!
 
   NI=BlkRes(b,1)
@@ -162,4 +162,4 @@
 
   endif
 
-  END SUBROUTINE Linija
+  end subroutine Linija

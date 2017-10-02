@@ -8,9 +8,9 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 MODULE allp_mod
 
-  IMPLICIT NONE
+  implicit none
 
-  INTEGER, PARAMETER ::          & 
+  integer, parameter ::          & 
     MAXP =   200, MAXL = 1000,   &
     MAXPRO   = 1024,             & ! max. n. of processors    
     INFLOW   =    1,             & ! boundary condition       
@@ -27,30 +27,30 @@ MODULE allp_mod
                                    ! FOR BUFFER IN CASE BUFFER = 11. 
     WALLFL   =    6                ! boundary condition
 
-  INTEGER, PARAMETER ::          & 
+  integer, parameter ::          & 
     FLUID    =    7,             & ! material state: fluid
     SOLID    =    8                ! material state: solid
 
-  REAL, PARAMETER ::  & 
+  real, parameter ::  & 
     HUGE=1.e+30, TINY=1.e-64
 
 !----- Unknown type
   TYPE Unknown          
-    REAL,POINTER :: n(:)                ! new value
-    REAL,POINTER :: o(:), oo(:)         ! old and older then old
-    REAL,POINTER :: C(:), Co(:), Coo(:) ! convective fluxes
-    REAL,POINTER :: Do(:), Doo(:)       ! difussive fluxes
-    REAL,POINTER :: X(:), Xo(:), Xoo(:) ! surfce sources  
-    REAL,POINTER :: mean(:)             ! long time average
-    REAL,POINTER :: filt(:)             ! long time average
-    REAL,POINTER :: q(:)                ! flux of a variable
-    REAL,POINTER :: fluc(:) 
-    REAL         :: URF                 ! under relaxation factor
-    REAL         :: Stol                ! solver tolerance
-    REAL         :: bound(128)          ! boundary values
-    REAL         :: init(128)           ! initial values
-    REAL         :: pro(11024)           ! inlfow profile
-    REAL         :: Sigma               ! sigma
-  END TYPE Unknown
+    real,POINTER :: n(:)                ! new value
+    real,POINTER :: o(:), oo(:)         ! old and older then old
+    real,POINTER :: C(:), Co(:), Coo(:) ! convective fluxes
+    real,POINTER :: Do(:), Doo(:)       ! difussive fluxes
+    real,POINTER :: X(:), Xo(:), Xoo(:) ! surfce sources  
+    real,POINTER :: mean(:)             ! long time average
+    real,POINTER :: filt(:)             ! long time average
+    real,POINTER :: q(:)                ! flux of a variable
+    real,POINTER :: fluc(:) 
+    real         :: URF                 ! under relaxation factor
+    real         :: Stol                ! solver tolerance
+    real         :: bound(128)          ! boundary values
+    real         :: init(128)           ! initial values
+    real         :: pro(11024)           ! inlfow profile
+    real         :: Sigma               ! sigma
+  end TYPE Unknown
 
-END MODULE 
+end MODULE 

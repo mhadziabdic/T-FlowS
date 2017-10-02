@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE Exchng(PHI) 
+  subroutine Exchng(PHI) 
 !----------------------------------------------------------------------!
 !   Exchanges the values between the processors.                       !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE par_mod
-  USE pro_mod
+  use all_mod
+  use par_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Include]-------------------------------!
-  INCLUDE 'mpif.h'
+  include 'mpif.h'
 !-----------------------------[Parameters]-----------------------------!
-  REAL    :: PHI(-NbC:NC)
+  real    :: PHI(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, sub, rtag, stag, length, error
-  INTEGER :: status(MPI_STATUS_SIZE)
+  integer :: c1, c2, sub, rtag, stag, length, error
+  integer :: status(MPI_STATUS_SIZE)
 !======================================================================!
 
 !///// fill the buffers with new values
@@ -57,4 +57,4 @@
     end if  !  NBBe(sub)  /=  NBBs(sub)
   end do
 
-  END SUBROUTINE Exchng
+  end subroutine Exchng

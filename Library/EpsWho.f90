@@ -1,29 +1,29 @@
 !======================================================================!
-  SUBROUTINE EpsWho(NSsh0)
+  subroutine EpsWho(NSsh0)
 !----------------------------------------------------------------------!
 !   Saves the whole grid in encapsulated postscript.                   !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  REAL :: Dist
+  real :: Dist
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: NSsh0 ! if 0, shadow will not be drawn 
+  integer :: NSsh0 ! if 0, shadow will not be drawn 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: n, s, s0, c1, c2
-  INTEGER             :: xmaxb, xminb, ymaxb, yminb, xlegend
-  CHARACTER           :: namEps*80, answer*80, colour*80
-  REAL                :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin
-  REAL                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,    &
+  integer             :: n, s, s0, c1, c2
+  integer             :: xmaxb, xminb, ymaxb, yminb, xlegend
+  character           :: namEps*80, answer*80, colour*80
+  real                :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin
+  real                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,    &
                          xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade, &
                          xp1,yp1,xp2,yp2,xp3,yp3,xp4,yp4 
-  INTEGER,ALLOCATABLE :: indx(:)
-  REAL,ALLOCATABLE    :: work(:)
-  REAL                :: red(10), green(10), blue(10)
-  INTEGER             :: ix1, ix2, iy1, iy2, boxsize, BCcount(0:11)
+  integer,allocatable :: indx(:)
+  real,allocatable    :: work(:)
+  real                :: red(10), green(10), blue(10)
+  integer             :: ix1, ix2, iy1, iy2, boxsize, BCcount(0:11)
 !======================================================================!
 
 !---- allocate the memory
@@ -327,4 +327,4 @@
   deallocate(indx)
   deallocate(work)
 
-  END SUBROUTINE EpsWho
+  end subroutine EpsWho

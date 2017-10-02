@@ -1,11 +1,11 @@
 !======================================================================!
-  REAL FUNCTION TetVol(xA,yA,zA,xB,yB,zB,xC,yC,zC,xD,yD,zD)
+  real function TetVol(xA,yA,zA,xB,yB,zB,xC,yC,zC,xD,yD,zD)
 !----------------------------------------------------------------------!
 !   Returns the volume of tethraedra spanned with A, B, C and D.       !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: xA,yA,zA,xB,yB,zB,xC,yC,zC,xD,yD,zD
+  real :: xA,yA,zA,xB,yB,zB,xC,yC,zC,xD,yD,zD
 !======================================================================!
 !                                                                      !
 !   The order of nodes (A,B,C and D) DOES matters.                     !
@@ -24,4 +24,4 @@
            ((xC-xA)*(zB-zA)-(xB-xA)*(zC-zA))*(yD-yA) +              &
            ((xB-xA)*(yC-yA)-(xC-xA)*(yB-yA))*(zD-zA) )/6.0
 
-  END FUNCTION TetVol
+  end function TetVol

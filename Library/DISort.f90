@@ -1,11 +1,11 @@
 !======================================================================*
-      SUBROUTINE DISort(X,Y,N,KFLAG)
+      subroutine DISort(X,Y,N,KFLAG)
 !----------------------------------------------------------------------*
 ! Sorts double array X and make same interchanges in integer arr. Y.   *
 !----------------------------------------------------------------------*
       DIMENSION        IL(21),IU(21)
       DOUBLE PRECISION X(N),T, TT
-      INTEGER          Y(N),TY,TTY
+      integer          Y(N),TY,TTY
 !======================================================================*
 
 !***FIRST EXECUTABLE STATEMENT RISORT
@@ -214,4 +214,4 @@
       X(I) = -X(I)
   310 CONTINUE
       RETURN
-      END SUBROUTINE
+      end subroutine

@@ -1,20 +1,20 @@
 !======================================================================!
-  SUBROUTINE UserGraPhi(PHI, i, PHIi)
+  subroutine UserGraPhi(PHI, i, PHIi)
 !----------------------------------------------------------------------!
 ! Calculates gradient of generic variable PHI by a least squares       !
 ! method.                                                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: i
-  REAL    :: PHI(-NbC:NC), PHIi(-NbC:NC)  
+  integer :: i
+  real    :: PHI(-NbC:NC), PHIi(-NbC:NC)  
 !-------------------------------[Locals]-------------------------------!
-  INTEGER s, c, c1, c2
-  REAL    DPHI1, DPHI2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
+  integer s, c, c1, c2
+  real    DPHI1, DPHI2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
 !======================================================================!
 
 !  return
@@ -180,4 +180,4 @@
 
   call Exchng(PHIi)
 
-  END SUBROUTINE UserGraPhi
+  end subroutine UserGraPhi

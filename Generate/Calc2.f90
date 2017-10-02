@@ -1,31 +1,31 @@
 !======================================================================!
-  SUBROUTINE Calc2(rrun)
+  subroutine Calc2(rrun)
 !----------------------------------------------------------------------!
 !   Calculates geometrical quantities of the grid.                     !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL rrun     
+  logical rrun     
 !------------------------------[Calling]-------------------------------!
-  REAL :: tetvol        
-  REAL :: dist       
-  REAL :: dist2       
+  real :: tetvol        
+  real :: dist       
+  real :: dist2       
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, m, n, s, c_1, c_2
-  INTEGER :: WallMark
-  REAL    :: xt(4), yt(4), zt(4)
-  REAL    :: xTc, yTc, zTc       ! temporary cell coordinates 
-  REAL    :: xs2,ys2,zs2
-  REAL    :: dsc1, dsc2          !  for the interpolation factors
-  REAL    :: t, SurTot , maxdis
-  REAL    :: xc1, yc1, zc1, xc2, yc2, zc2 
-  REAL    :: xmin, xmax, ymin, ymax, zmin, zmax
-  INTEGER :: f4n(6,4)
-  INTEGER :: f3n(4,3)
+  integer :: c, c1, c2, m, n, s, c_1, c_2
+  integer :: WallMark
+  real    :: xt(4), yt(4), zt(4)
+  real    :: xTc, yTc, zTc       ! temporary cell coordinates 
+  real    :: xs2,ys2,zs2
+  real    :: dsc1, dsc2          !  for the interpolation factors
+  real    :: t, SurTot , maxdis
+  real    :: xc1, yc1, zc1, xc2, yc2, zc2 
+  real    :: xmin, xmax, ymin, ymax, zmin, zmax
+  integer :: f4n(6,4)
+  integer :: f3n(4,3)
 !======================================================================!
 !
 !                                n3 
@@ -105,12 +105,12 @@
 !                           rx*Sx + ry*Sy + rz*Sz
 !  
 !----------------------------------------------------------------------!
-  DATA    f4n / 1, 1, 2, 4, 3, 5,                                   &
+  data    f4n / 1, 1, 2, 4, 3, 5,                                   &
 		2, 5, 6, 8, 7, 7,                                   &
 		4, 6, 8, 7, 5, 8,                                   &
 		3, 2, 4, 3, 1, 6  /
 
-  DATA    f3n / 1,  1,  2,  3,                                      &
+  data    f3n / 1,  1,  2,  3,                                      &
 		2,  4,  4,  4,                                      &
 		3,  2,  3,  1 /
 
@@ -537,4 +537,4 @@
   end do 
   end if 
 
-  END SUBROUTINE Calc2
+  end subroutine Calc2

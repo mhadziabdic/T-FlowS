@@ -1,25 +1,25 @@
 !======================================================================!
-  SUBROUTINE CopyBC
+  subroutine CopyBC
 !----------------------------------------------------------------------!
 !   Solve the cell connectivity for copy boundary conditions.          !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i, j, n, p, Ncop                ! counters
-  INTEGER :: b1, b2                          ! block 1 and 2
-  INTEGER :: f1, f2                          ! faces of block 1 and 2
-  INTEGER :: n11,n12,n13,n14,n21,n22,n23,n24 ! global node numbers
-  INTEGER :: p11,p12,p13,p14,p21,p22,p23,p24 ! global node numbers
-  INTEGER :: l11,l12,l13,l14,l21,l22,l23,l24 ! local  node numbers
-  INTEGER :: i1, j1, i2, j2, k1, k2          ! directions in blocks
-  INTEGER :: ig, jg, NIG, NJG                ! generic plane 
-  INTEGER :: CI1, CJ1, CK1, CI2, CJ2, CK2    ! resolution of blocks
-  INTEGER :: c1, c2                          ! cells from block 1, 2
-  INTEGER :: trans1(3,3), trans2(3,3)
+  integer :: i, j, n, p, Ncop                ! counters
+  integer :: b1, b2                          ! block 1 and 2
+  integer :: f1, f2                          ! faces of block 1 and 2
+  integer :: n11,n12,n13,n14,n21,n22,n23,n24 ! global node numbers
+  integer :: p11,p12,p13,p14,p21,p22,p23,p24 ! global node numbers
+  integer :: l11,l12,l13,l14,l21,l22,l23,l24 ! local  node numbers
+  integer :: i1, j1, i2, j2, k1, k2          ! directions in blocks
+  integer :: ig, jg, NIG, NJG                ! generic plane 
+  integer :: CI1, CJ1, CK1, CI2, CJ2, CK2    ! resolution of blocks
+  integer :: c1, c2                          ! cells from block 1, 2
+  integer :: trans1(3,3), trans2(3,3)
 !======================================================================!
 
 !---------------------------------------------------------!
@@ -250,4 +250,4 @@
 
   Ncopy = Ncop
 
-  END SUBROUTINE CopyBC   
+  end subroutine CopyBC   

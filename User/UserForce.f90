@@ -1,19 +1,19 @@
 !======================================================================!
-  SUBROUTINE UserForce(var) 
+  subroutine UserForce(var) 
 !----------------------------------------------------------------------!
 !   Discretizes and solves momentum conservation equations             !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: var ! 1 -> U,  2 -> V,  3 -> W 
+  integer :: var ! 1 -> U,  2 -> V,  3 -> W 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c
-  REAL    :: buoyTemp, grav
+  integer :: c
+  real    :: buoyTemp, grav
 !----------------------------------------------------------------------!
 ! Description:                                                         !
 ! ~~~~~~~~~~~~                                                         !
@@ -44,4 +44,4 @@
     b(c) = b(c) - buoyTemp
   end do
 
-  END SUBROUTINE UserForce
+  end subroutine UserForce

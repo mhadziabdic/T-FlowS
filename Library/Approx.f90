@@ -1,14 +1,14 @@
 !======================================================================!
-  LOGICAL FUNCTION Approx(A,B,tol)
+  logical function Approx(A,B,tol)
 !----------------------------------------------------------------------!
 !   Returns true if A~B, false otherwise.                              !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL          :: A,B 
-  REAL,OPTIONAL :: tol
+  real          :: A,B 
+  real,OPTIONAL :: tol
 !-------------------------------[Locals]-------------------------------!
-  REAL :: tolerance
+  real :: tolerance
 !======================================================================!
 
   if( .not. present(tol) ) then
@@ -23,4 +23,4 @@
     approx = .FALSE.
   end if
 
-  END FUNCTION Approx
+  end function Approx

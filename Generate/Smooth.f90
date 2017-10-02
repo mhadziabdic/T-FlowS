@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE Smooth
+  subroutine Smooth
 !----------------------------------------------------------------------!
 !   Smooths the grid lines by a Laplacian-like algorythm.              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: c, n, i,j,k,m
-  REAL                :: xTnew, yTnew, zTnew    ! temporary new values
-  REAL                :: xmax, ymax, zmax, xmin, ymin, zmin 
-  REAL                :: x1,y1,z1,x8,y8,z8 
-  INTEGER             :: regio
-  REAL,ALLOCATABLE    :: xnew(:), ynew(:), znew(:) ! new values
-  INTEGER,ALLOCATABLE :: NodeN(:,:)
+  integer             :: c, n, i,j,k,m
+  real                :: xTnew, yTnew, zTnew    ! temporary new values
+  real                :: xmax, ymax, zmax, xmin, ymin, zmin 
+  real                :: x1,y1,z1,x8,y8,z8 
+  integer             :: regio
+  real,allocatable    :: xnew(:), ynew(:), znew(:) ! new values
+  integer,allocatable :: NodeN(:,:)
 !======================================================================!
 
 !---- allocate memory for additional arrays
@@ -168,4 +168,4 @@
   deallocate(znew)
   deallocate(NodeN)
 
-  END SUBROUTINE Smooth
+  end subroutine Smooth

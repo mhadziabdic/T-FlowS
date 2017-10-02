@@ -1,49 +1,49 @@
 !======================================================================!
-  SUBROUTINE CalcBudgets_cylind(n0,n1)  
+  subroutine CalcBudgets_cylind(n0,n1)  
 !----------------------------------------------------------------------!
 !   Calculates time averaged velocity and velocity fluctuations.       !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: n0, n1, n2
+  integer :: n0, n1, n2
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, s, c, n, new, i 
-  REAL    :: VolDom, Lf, Lmix, Esgs, vol1
-  REAL    :: Utan, Urad, Utan_mean, Urad_mean, R, Flux_mean, Us, Vs, Ws   
-  REAL    :: Fim1, Fex1, Fim2, Fex2, Fim3, Fex3, Fim4, Fex4, Fim5, Fex5, Fim6, Fex6
-  REAL    :: Fim7, Fex7, Fim8, Fex8, Fim9, Fex9, Fim10, Fex10 
-  REAL    :: uu_s, vv_s, ww_s, uv_s, uw_s, vw_s, A0, R2, R1, PHIs1, PHIs2,PHIs3 
-  REAL    :: B1, B2, CONc_s
+  integer :: c1, c2, s, c, n, new, i 
+  real    :: VolDom, Lf, Lmix, Esgs, vol1
+  real    :: Utan, Urad, Utan_mean, Urad_mean, R, Flux_mean, Us, Vs, Ws   
+  real    :: Fim1, Fex1, Fim2, Fex2, Fim3, Fex3, Fim4, Fex4, Fim5, Fex5, Fim6, Fex6
+  real    :: Fim7, Fex7, Fim8, Fex8, Fim9, Fex9, Fim10, Fex10 
+  real    :: uu_s, vv_s, ww_s, uv_s, uw_s, vw_s, A0, R2, R1, PHIs1, PHIs2,PHIs3 
+  real    :: B1, B2, CONc_s
 
-  REAL    :: G1r, G1t, G2r, G2t, G3r, G3t, G4r, G4t, G5r, G5t 
-  REAL    :: G6r, G6t, G7r, G7t, G8r, G8t, G9r, G9t, Gr, Gt 
-  REAL    :: Gz, G1z, G2z, G3z, G4z, G5z, G6z, G7z, G8z, G9z
-  REAL    :: G10r, G10t, G10z
+  real    :: G1r, G1t, G2r, G2t, G3r, G3t, G4r, G4t, G5r, G5t 
+  real    :: G6r, G6t, G7r, G7t, G8r, G8t, G9r, G9t, Gr, Gt 
+  real    :: Gz, G1z, G2z, G3z, G4z, G5z, G6z, G7z, G8z, G9z
+  real    :: G10r, G10t, G10z
 
-  REAL,ALLOCATABLE :: Puu(:), Pvv(:), Pww(:), Puv(:), Puw(:), Pvw(:)
-  REAL,ALLOCATABLE :: dUdr(:), dUdt(:), dUdz(:)
-  REAL,ALLOCATABLE :: dVdr(:), dVdt(:), dVdz(:)
-  REAL,ALLOCATABLE :: dWdr(:), dWdt(:), dWdz(:) 
-  REAL,ALLOCATABLE :: Diss_uu(:), Diss_vv(:), Diss_ww(:), Diss_sgs(:) 
-  REAL,ALLOCATABLE :: Diss_uv(:), Diss_uw(:), Diss_vw(:) 
-  REAL,ALLOCATABLE :: C_uu(:), C_vv(:), C_ww(:) 
-  REAL,ALLOCATABLE :: C_uv(:), C_uw(:), C_vw(:) 
-  REAL,ALLOCATABLE :: Difv_uu(:), Difv_vv(:), Difv_ww(:) 
-  REAL,ALLOCATABLE :: Difv_uv(:), Difv_uw(:), Difv_vw(:) 
-  REAL,ALLOCATABLE :: Dift_uu(:), Dift_vv(:), Dift_ww(:) 
-  REAL,ALLOCATABLE :: Dift_uv(:), Dift_uw(:), Dift_vw(:) 
-  REAL,ALLOCATABLE :: R_uu(:), R_vv(:), R_ww(:) 
-  REAL,ALLOCATABLE :: R_uv(:), R_uw(:), R_vw(:) 
-  REAL,ALLOCATABLE :: PD_uu(:), PD_vv(:), PD_ww(:) 
-  REAL,ALLOCATABLE :: PD_uv(:), PD_uw(:), PD_vw(:) 
-  REAL,ALLOCATABLE :: uu_sgs(:), vv_sgs(:), ww_sgs(:), uv_sgs(:), uw_sgs(:), vw_sgs(:)
+  real,allocatable :: Puu(:), Pvv(:), Pww(:), Puv(:), Puw(:), Pvw(:)
+  real,allocatable :: dUdr(:), dUdt(:), dUdz(:)
+  real,allocatable :: dVdr(:), dVdt(:), dVdz(:)
+  real,allocatable :: dWdr(:), dWdt(:), dWdz(:) 
+  real,allocatable :: Diss_uu(:), Diss_vv(:), Diss_ww(:), Diss_sgs(:) 
+  real,allocatable :: Diss_uv(:), Diss_uw(:), Diss_vw(:) 
+  real,allocatable :: C_uu(:), C_vv(:), C_ww(:) 
+  real,allocatable :: C_uv(:), C_uw(:), C_vw(:) 
+  real,allocatable :: Difv_uu(:), Difv_vv(:), Difv_ww(:) 
+  real,allocatable :: Difv_uv(:), Difv_uw(:), Difv_vw(:) 
+  real,allocatable :: Dift_uu(:), Dift_vv(:), Dift_ww(:) 
+  real,allocatable :: Dift_uv(:), Dift_uw(:), Dift_vw(:) 
+  real,allocatable :: R_uu(:), R_vv(:), R_ww(:) 
+  real,allocatable :: R_uv(:), R_uw(:), R_vw(:) 
+  real,allocatable :: PD_uu(:), PD_vv(:), PD_ww(:) 
+  real,allocatable :: PD_uv(:), PD_uw(:), PD_vw(:) 
+  real,allocatable :: uu_sgs(:), vv_sgs(:), ww_sgs(:), uv_sgs(:), uw_sgs(:), vw_sgs(:)
 !======================================================================!
 
   new = n1 - n0
@@ -839,4 +839,4 @@ if(mod(n1,1) == 0) then   !CHANGED
   deallocate (vw_sgs)
   RETURN 
 
-  END SUBROUTINE CalcBudgets_cylind
+  end subroutine CalcBudgets_cylind

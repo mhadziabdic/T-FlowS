@@ -8,13 +8,13 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
 MODULE par_mod
 
-  USE allp_mod
+  use allp_mod
 
-  IMPLICIT NONE
+  implicit none
 
-  INTEGER :: Nsub, subNC(MAXPRO), NBBs(0:MAXPRO), NBBe(0:MAXPRO),   &
+  integer :: Nsub, subNC(MAXPRO), NBBs(0:MAXPRO), NBBe(0:MAXPRO),   &
              this, NPro
-  INTEGER,ALLOCATABLE :: proces(:), BuSeIn(:), BuReIn(:), &
+  integer,allocatable :: proces(:), BuSeIn(:), BuReIn(:), &
                          BufInd(:), BufPos(:) 
 
-END MODULE
+end MODULE

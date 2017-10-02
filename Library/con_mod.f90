@@ -8,10 +8,10 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 MODULE con_mod
 
-  IMPLICIT NONE
+  implicit none
 
-  CHARACTER :: name1*80, name2*80 
+  character :: name1*80, name2*80 
 
-  INTEGER   :: NN_1, NN_2, NC1, NC2, NS1, NS2, NbC1, NbC2, NSsh1, NSsh2
+  integer   :: NN_1, NN_2, NC1, NC2, NS1, NS2, NbC1, NbC2, NSsh1, NSsh2
 
-END MODULE
+end MODULE

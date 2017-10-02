@@ -1,16 +1,16 @@
 !======================================================================!
-  SUBROUTINE GeoLoa
+  subroutine GeoLoa
 !----------------------------------------------------------------------!
 ! Reads:  NAME.geo                                                     !
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE par_mod  ! needs to know THIS
+  use all_mod
+  use par_mod  ! needs to know THIS
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER      :: c, s
-  CHARACTER*80 :: nameIn  
+  integer      :: c, s
+  character*80 :: nameIn  
 !======================================================================!
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
@@ -63,4 +63,4 @@
 !->>>	write(*,'(3F10.5)') Sx(s),Sy(s),Sz(s)  
 !->>> end do
 
-  END SUBROUTINE GeoLoa
+  end subroutine GeoLoa

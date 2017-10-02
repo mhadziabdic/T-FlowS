@@ -1,27 +1,27 @@
 !======================================================================!
-  SUBROUTINE Probe1D_nodes_gen
+  subroutine Probe1D_nodes_gen
 !----------------------------------------------------------------------!
 ! This program finds the coordinate of nodes in non-homogeneous  
 ! direction and write them in file name.1D
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL :: isit
+  logical :: isit
 !------------------------------[Calling]-------------------------------! 
   INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, OPTIONAL :: tol
+    end function Approx
+  end INTERFACE
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: Nprob, p, c, n
-  REAL      :: N_p(10000)
-  CHARACTER :: namPro*80
-  CHARACTER :: answer*80
+  integer   :: Nprob, p, c, n
+  real      :: N_p(10000)
+  character :: namPro*80
+  character :: answer*80
 !======================================================================!
 
   write(*,*) '==========================================='
@@ -95,4 +95,4 @@
 
   close(9)
 
-  END SUBROUTINE Probe1D_nodes_gen
+  end subroutine Probe1D_nodes_gen

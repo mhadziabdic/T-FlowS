@@ -1,10 +1,10 @@
 !======================================================================*
-      SUBROUTINE ISORT(X,Y,N,KFLAG)
+      subroutine ISORT(X,Y,N,KFLAG)
 !----------------------------------------------------------------------*
 !   Sorts int. array X and makes the same changes in int. array Y.     *
 !----------------------------------------------------------------------*
       DIMENSION IL(21),IU(21)
-      INTEGER X(N),Y(N),T,TT,TY,TTY
+      integer X(N),Y(N),T,TT,TY,TTY
 !======================================================================*
 ! NIST Guide to Available Math Software.                               *
 ! Source for module ISORT from package CMLIB.                          *
@@ -57,7 +57,7 @@
 !                 ALGORITHM FOR SORTING WITH MINIMAL STORAGE, CACM,
 !                 VOL. 12, NO. 3, 1969, PP. 185-187.
 !***ROUTINES CALLED  XERROR
-!***END PROLOGUE  ISORT
+!***end PROLOGUE  ISORT
 !----------------------------------------------------------------------*
 !***FIRST EXECUTABLE STATEMENT  ISORT
       NN = N
@@ -66,7 +66,7 @@
       RETURN
    10 KK = IABS(KFLAG)
       IF ((KK.EQ.1).OR.(KK.EQ.2)) GO TO 15
-      WRITE(*,*) 'ISORT: THE SORT CONTROL PARAMETER, K, WAS NOT 2, 1, -1, OR -2.'
+      WRITE(*,*) 'ISORT: THE SORT CONTROL parameter, K, WAS NOT 2, 1, -1, OR -2.'
       RETURN
 !
 ! ALTER ARRAY X TO GET DECREASING ORDER IF NEEDED
@@ -267,4 +267,4 @@
       X(I) = -X(I)
   310 CONTINUE
       RETURN
-      END SUBROUTINE
+      end subroutine

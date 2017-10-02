@@ -1,33 +1,33 @@
 !======================================================================!
-  SUBROUTINE UserProbe1D_kv2f(namAut) 
+  subroutine UserProbe1D_kv2f(namAut) 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
 ! the values of Umean, Vmean, Wmean, uu, vv, ww, uv, uw and vw and     !
 ! writes them into file ".1Dr".                                        !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: y(-NbC:NC)
+  real :: y(-NbC:NC)
 !------------------------------[Calling]-------------------------------!
   INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE 
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, OPTIONAL :: tol
+    end function Approx
+  end INTERFACE 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: Nprob, pl, c, dummy
-  CHARACTER           :: namCoo*80, namPro*80, answer*80
-  CHARACTER, OPTIONAL :: namAut*(*)
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+  integer             :: Nprob, pl, c, dummy
+  character           :: namCoo*80, namPro*80, answer*80
+  character, OPTIONAL :: namAut*(*)
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
@@ -35,7 +35,7 @@
                                  Ksgsp(:), VISt_m(:), VISt_m1(:) ,VISt_m2(:),&
                                  Kin_mp(:), Eps_mp(:), v_2_mp(:), f22_mp(:), &
                                  var1(:), var2(:)
-  INTEGER,ALLOCATABLE :: Np(:)
+  integer,allocatable :: Np(:)
 !======================================================================!
 
 !  if(this  < 2)  & 
@@ -291,4 +291,4 @@
     deallocate(vTp)
     deallocate(wTp)
   end if
-  END SUBROUTINE UserProbe1D_kv2f
+  end subroutine UserProbe1D_kv2f

@@ -1,13 +1,13 @@
 !======================================================================!
-  REAL FUNCTION DistR(rA,zA,rB,zB)
+  real function DistR(rA,zA,rB,zB)
 !----------------------------------------------------------------------!
 !  Calculates distance between two points.                             !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: rA,zA,rB,zB
+  real :: rA,zA,rB,zB
 !======================================================================!
 
   DistR=sqrt( (rA-rB)*(rA-rB) + (zA-zB)*(zA-zB) )
 
-  END FUNCTION DistR
+  end function DistR

@@ -1,4 +1,4 @@
-SUBROUTINE LOGO()
+subroutine LOGO()
  
   write(*,*) "#==================================================="
   write(*,*) "#                                              "
@@ -18,4 +18,4 @@ SUBROUTINE LOGO()
   write(*,*) "#                                              "
   write(*,*) "#---------------------------------------------------"
  
-END SUBROUTINE LOGO
+end subroutine LOGO

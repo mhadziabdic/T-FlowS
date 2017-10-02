@@ -9,9 +9,9 @@
 
 MODULE rans_mod
 
-  USE allp_mod
+  use allp_mod
 
-  IMPLICIT NONE
+  implicit none
 
 !----- Turbulence models variables
   TYPE(Unknown) :: KIN
@@ -28,73 +28,73 @@ MODULE rans_mod
   TYPE(Unknown) :: vw
  
 !----- Constants for the k-eps model:
-  REAL :: Ce1, Ce2, Ce3, Cmu, Cmu25, Cmu75, kappa, Elog, Zo
+  real :: Ce1, Ce2, Ce3, Cmu, Cmu25, Cmu75, kappa, Elog, Zo
  
 !----- Constants for the k-eps-v2f model:
-  REAL :: CmuD, Cl, Ct, alpha, Cni, cf1, cf2, cf3, Cf_1, Cf_2
-  REAL :: Lim
-  REAL :: g1, g1_star, g2, g3, g3_star, g4, g5 
+  real :: CmuD, Cl, Ct, alpha, Cni, cf1, cf2, cf3, Cf_1, Cf_2
+  real :: Lim
+  real :: g1, g1_star, g2, g3, g3_star, g4, g5 
 
 !----- Constants for the Spalart-Allmaras model:
-  REAL :: Cb1, Cb2, SIGMAv, Cw1, Cw2, Cw3, Cvis1
+  real :: Cb1, Cb2, SIGMAv, Cw1, Cw2, Cw3, Cvis1
 
 !----- Vorticity
-  REAL,ALLOCATABLE :: Vort(:), VortMean(:)
+  real,allocatable :: Vort(:), VortMean(:)
 
 !----- Turbulent viscosity
-  REAL,ALLOCATABLE :: VISt(:), CmuS(:)
+  real,allocatable :: VISt(:), CmuS(:)
  
 !----- Turbulent conductivity
-  REAL,ALLOCATABLE :: CONt(:)
+  real,allocatable :: CONt(:)
  
 !----- Lenght and Time Scales
-  REAL,ALLOCATABLE :: Lsc(:)
-  REAL,ALLOCATABLE :: Tsc(:)   
+  real,allocatable :: Lsc(:)
+  real,allocatable :: Tsc(:)   
 
 !----- Production of turbulent kinetic energy
-  REAL,ALLOCATABLE :: Pk(:)
+  real,allocatable :: Pk(:)
 !----- Buoyancy production
-  REAL,ALLOCATABLE :: Gbuoy(:)
-  REAL,ALLOCATABLE :: buoyBeta(:)
-  REAL,ALLOCATABLE :: Pbuoy(:)
+  real,allocatable :: Gbuoy(:)
+  real,allocatable :: buoyBeta(:)
+  real,allocatable :: Pbuoy(:)
  
 !----- Non-dimensional distance
-  REAL,ALLOCATABLE :: Ynd(:)
+  real,allocatable :: Ynd(:)
  
 !----- Friction velocity
-  REAL,ALLOCATABLE :: Uf(:)
-  REAL,ALLOCATABLE :: Ufmean(:)
+  real,allocatable :: Uf(:)
+  real,allocatable :: Ufmean(:)
 
 !----- Gravity
-  REAL :: grav_x, grav_y, grav_z
+  real :: grav_x, grav_y, grav_z
 
 !----- Wall viscosity (wall function approuch)
-  REAL,ALLOCATABLE :: VISwall(:)
-  REAL,ALLOCATABLE :: CONwall(:)
+  real,allocatable :: VISwall(:)
+  real,allocatable :: CONwall(:)
 
-!  REAL,ALLOCATABLE :: AA(:)
-!  REAL,ALLOCATABLE :: EE(:)
-  REAL,ALLOCATABLE :: Fs(:)
-!  REAL,ALLOCATABLE :: Feps(:)
+!  real,allocatable :: AA(:)
+!  real,allocatable :: EE(:)
+  real,allocatable :: Fs(:)
+!  real,allocatable :: Feps(:)
 
-  REAL,ALLOCATABLE :: nn1(:)
-  REAL,ALLOCATABLE :: nn2(:)
-  REAL,ALLOCATABLE :: nn3(:)
+  real,allocatable :: nn1(:)
+  real,allocatable :: nn2(:)
+  real,allocatable :: nn3(:)
 
-  REAL,ALLOCATABLE :: Bud1(:)
-  REAL,ALLOCATABLE :: Bud2(:)
-  REAL,ALLOCATABLE :: Bud3(:)
-  REAL,ALLOCATABLE :: Bud4(:)
-  REAL,ALLOCATABLE :: Bud5(:)
-  REAL,ALLOCATABLE :: Bud6(:)
-  REAL,ALLOCATABLE :: Bud7(:)
-  REAL,ALLOCATABLE :: Bud8(:)
-  REAL,ALLOCATABLE :: Bud9(:)
+  real,allocatable :: Bud1(:)
+  real,allocatable :: Bud2(:)
+  real,allocatable :: Bud3(:)
+  real,allocatable :: Bud4(:)
+  real,allocatable :: Bud5(:)
+  real,allocatable :: Bud6(:)
+  real,allocatable :: Bud7(:)
+  real,allocatable :: Bud8(:)
+  real,allocatable :: Bud9(:)
  
-  REAL,ALLOCATABLE :: uu_star(:)
-  REAL,ALLOCATABLE :: vv_star(:)
-  REAL,ALLOCATABLE :: ww_star(:)
-  REAL,ALLOCATABLE :: uv_star(:)
-  REAL,ALLOCATABLE :: uw_star(:)
-  REAL,ALLOCATABLE :: vw_star(:)
-END MODULE 
+  real,allocatable :: uu_star(:)
+  real,allocatable :: vv_star(:)
+  real,allocatable :: ww_star(:)
+  real,allocatable :: uv_star(:)
+  real,allocatable :: uw_star(:)
+  real,allocatable :: vw_star(:)
+end MODULE 

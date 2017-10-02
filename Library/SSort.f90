@@ -1,5 +1,5 @@
-      SUBROUTINE SSORT (X, IY, N, KFLAG)
-      IMPLICIT NONE
+      subroutine SSORT (X, IY, N, KFLAG)
+      implicit none
 !
 !    Example of a Selection Sort   Using a Fortran 90 Intrinsic Function
 !
@@ -21,15 +21,15 @@
 !***REVISION HISTORY  (YYMMDD!
 !   950310  DATE WRITTEN
 !   John Mahaffy
-!***END PROLOGUE  SSORT
+!***end PROLOGUE  SSORT
 !     .. Scalar Arguments ..
-      INTEGER KFLAG, N
+      integer KFLAG, N
 !     .. Array Arguments ..  -----NOTE the 2 new ways of declaring array size
-      REAL X(1:N)
-      INTEGER IY(N)
+      real X(1:N)
+      integer IY(N)
 !     .. Local Scalars ..
-      REAL TEMP
-      INTEGER I, ISWAP(1), ITEMP, ISWAP1
+      real TEMP
+      integer I, ISWAP(1), ITEMP, ISWAP1
 !     .. External Subroutines ..
 !     None
 !     .. Intrinsic Functions ..
@@ -56,4 +56,4 @@
          ENDIF
   200 CONTINUE
       RETURN
-      END
+      end

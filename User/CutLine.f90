@@ -1,31 +1,31 @@
 !======================================================================!
-  SUBROUTINE CutLine(namAut)
+  subroutine CutLine(namAut)
 !----------------------------------------------------------------------!
 !  Purpose: Writes values of variables in cutlines aligned with coord. !
 !           axes for arbitrary mesh.                                   !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  CHARACTER, OPTIONAL :: namAut*(*)
+  character, OPTIONAL :: namAut*(*)
 !------------------------------[Calling]-------------------------------!
-  REAL      :: Dist
+  real      :: Dist
 !-------------------------------[Locals]-------------------------------!
-  CHARACTER :: answer*140,  ReadLine1*140, XYZ*5
-  LOGICAL   :: Hscale, Here(NC)
-  INTEGER   :: s, c1, c2, Ncl, Cln, cp, j, l, Nwc, UC, DC, dir
-  INTEGER   :: Xdir, Ydir, Zdir, RealM, BulkM, UtauM, PlusM, CLnorm
-  REAL      :: Jcut, Kcut, Weight
-  REAL      :: Ic(-NbC:NC), Jc(-NbC:NC), Kc(-NbC:NC)
-  REAL      :: u_tau, u_tau1, u_tau2, Re_tau, Re_h, BulkVel, Yplus, TauWall
-  REAL      :: Unorm, Hnorm, Tnorm, viscos, Flog, Qflux, Tinf, Twall
-  REAL      :: Icut(NC),  Ucl(NC),  Vcl(NC),  Wcl(NC),  Tcl(NC),       &
+  character :: answer*140,  ReadLine1*140, XYZ*5
+  logical   :: Hscale, Here(NC)
+  integer   :: s, c1, c2, Ncl, Cln, cp, j, l, Nwc, UC, DC, dir
+  integer   :: Xdir, Ydir, Zdir, RealM, BulkM, UtauM, PlusM, CLnorm
+  real      :: Jcut, Kcut, Weight
+  real      :: Ic(-NbC:NC), Jc(-NbC:NC), Kc(-NbC:NC)
+  real      :: u_tau, u_tau1, u_tau2, Re_tau, Re_h, BulkVel, Yplus, TauWall
+  real      :: Unorm, Hnorm, Tnorm, viscos, Flog, Qflux, Tinf, Twall
+  real      :: Icut(NC),  Ucl(NC),  Vcl(NC),  Wcl(NC),  Tcl(NC),       &
                Kin_cl(NC), Eps_cl(NC),  V_2_cl(NC),  F22_cl(NC),       &
                Pk_cl(NC),  UiUj_cl(NC), UiUk_cl(NC), VISt_cl(NC)
 !======================================================================!
@@ -106,7 +106,7 @@
 !--normalization mode
     read(inp(ts(4):te(4)),'(A8)') answer
     call ToUppr(answer)
-    if(answer == 'REAL') then 
+    if(answer == 'real') then 
       CLnorm = RealM
       if(tn == 5) then
         read(inp(ts(5):te(5)),*) Hnorm
@@ -135,10 +135,10 @@
       RETURN
     end if
 
-!--REAL normalization for DNS
+!--real normalization for DNS
     if(SIMULA==DNS) then
       CLnorm = RealM
-      write(*,*) '@CutLine: DNS - Normalization mode set to REAL!'
+      write(*,*) '@CutLine: DNS - Normalization mode set to real!'
     end if
 
 !--opening file
@@ -492,4 +492,4 @@
 
 
   RETURN
-  END SUBROUTINE CutLine
+  end subroutine CutLine

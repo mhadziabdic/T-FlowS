@@ -1,43 +1,43 @@
 !======================================================================!
-  SUBROUTINE Calc4()
+  subroutine Calc4()
 !----------------------------------------------------------------------!
 !   Calculates geometrical quantities of the grid.                     !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod 
-  USE gen_mod 
+  use all_mod 
+  use gen_mod 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !----------------------------------------------------------------------!
   INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      IMPLICIT NONE
-      REAL          :: A,B
-      REAL,OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE
+    logical function Approx(A,B,tol)
+      implicit none
+      real          :: A,B
+      real,OPTIONAL :: tol
+    end function Approx
+  end INTERFACE
 !------------------------------[Calling]-------------------------------!
-  REAL    :: Dist       
-  REAL    :: Dist2       
-  REAL    :: Tol
+  real    :: Dist       
+  real    :: Dist2       
+  real    :: Tol
 !-------------------------------[Locals]-------------------------------!
-  INTEGER                      :: c, c1, c2, n, s, ss, cc2, c_max, NNN, hh, mm
-  INTEGER                      :: c11, c12, c21, c22, s1, s2,       &
+  integer                      :: c, c1, c2, n, s, ss, cc2, c_max, NNN, hh, mm
+  integer                      :: c11, c12, c21, c22, s1, s2,       &
                                   BouCen,                           &
                                   TypePer, Nper, NumberSides, dir, OPT
-  INTEGER                      :: WallMark, rot_dir, dir_face
-  REAL                         :: xt(4), yt(4), zt(4), angle_face
-  REAL                         :: xs2,ys2,zs2, x_a, y_a, z_a, x_b, y_b, z_b
-  REAL                         :: x_c, y_c, z_c, Det
-  REAL                         :: ABi, ABj, ABk, ACi, ACj, ACk, Pi, Pj, Pk
-  REAL                         :: dsc1, dsc2, PerMin, PerMax
-  REAL                         :: t, SurTot, angle 
-  REAL                         :: xc1, yc1, zc1, xc2, yc2, zc2 
-  REAL                         :: MaxDis, TotVol, MinVol, MaxVol, Max_Coor, Min_Coor
-  REAL                         :: xmin, xmax, ymin, ymax, zmin, zmax 
-  DOUBLE PRECISION,ALLOCATABLE :: xnr(:), ynr(:), znr(:), xspr(:), yspr(:), zspr(:)
-  DOUBLE PRECISION,ALLOCATABLE :: BCoor(:), phi_face(:)
-  INTEGER,ALLOCATABLE          :: BFace(:)
+  integer                      :: WallMark, rot_dir, dir_face
+  real                         :: xt(4), yt(4), zt(4), angle_face
+  real                         :: xs2,ys2,zs2, x_a, y_a, z_a, x_b, y_b, z_b
+  real                         :: x_c, y_c, z_c, Det
+  real                         :: ABi, ABj, ABk, ACi, ACj, ACk, Pi, Pj, Pk
+  real                         :: dsc1, dsc2, PerMin, PerMax
+  real                         :: t, SurTot, angle 
+  real                         :: xc1, yc1, zc1, xc2, yc2, zc2 
+  real                         :: MaxDis, TotVol, MinVol, MaxVol, Max_Coor, Min_Coor
+  real                         :: xmin, xmax, ymin, ymax, zmin, zmax 
+  DOUBLE PRECISION,allocatable :: xnr(:), ynr(:), znr(:), xspr(:), yspr(:), zspr(:)
+  DOUBLE PRECISION,allocatable :: BCoor(:), phi_face(:)
+  integer,allocatable          :: BFace(:)
 !======================================================================!
 !
 !                                n3 
@@ -902,4 +902,4 @@
 3 write(*,*) 'Horror ! Negative volume between cells ', c1, ' and ', c2
   stop
 
-  END SUBROUTINE Calc4
+  end subroutine Calc4

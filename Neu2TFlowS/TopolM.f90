@@ -1,17 +1,17 @@
 !======================================================================!
-  SUBROUTINE TopolM         
+  subroutine TopolM         
 !----------------------------------------------------------------------!
 ! Determines the topology of the emesh.                                 !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod 
-  USE gen_mod 
-  USE neu_mod 
+  use all_mod 
+  use gen_mod 
+  use neu_mod 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: i, j, NbounCells, cnt, typ
-  CHARACTER :: nameOut*130
+  integer   :: i, j, NbounCells, cnt, typ
+  character :: nameOut*130
 !======================================================================!
 
 !----------------------------------------------------------------------!
@@ -169,4 +169,4 @@
   end do
   write(*,*) 'Boundary cells: ', NBc
 
-  END SUBROUTINE TopolM     
+  end subroutine TopolM     

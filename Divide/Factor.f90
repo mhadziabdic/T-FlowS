@@ -1,15 +1,15 @@
 !======================================================================!
-  SUBROUTINE Factor(i, number, factrs)
+  subroutine Factor(i, number, factrs)
 !----------------------------------------------------------------------!
 !   Splits the number into it's primal factors. ( 30 = 5 x 3 x 2 )     !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: number, factrs(128)
+  integer :: number, factrs(128)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i, j, primes(15)
+  integer :: i, j, primes(15)
 !======================================================================!
-  DATA primes /47,43,41,37,31,29,23,19,17,13,11, 7, 5, 3, 2/   
+  data primes /47,43,41,37,31,29,23,19,17,13,11, 7, 5, 3, 2/   
 !----------------------------------------------------------------------!
 !   For example if factor is called with number = 30 it will split it  !
 !   into 5,3 and 2, and make the following output:                     !
@@ -29,4 +29,4 @@
 
   end do
 
-  END SUBROUTINE Factor
+  end subroutine Factor

@@ -1,16 +1,16 @@
 !======================================================================!
-  SUBROUTINE Mark
+  subroutine Mark
 !----------------------------------------------------------------------!
 !   Mark the region of the domain for local refinement.                !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, lev, regio, n1, n2, n3, n4, n5, n6, n7, n8
-  REAL    :: x1, y1, z1, x8, y8, z8, x0, y0, z0
+  integer :: c, lev, regio, n1, n2, n3, n4, n5, n6, n7, n8
+  real    :: x1, y1, z1, x8, y8, z8, x0, y0, z0
 !======================================================================!
 
   do c=-MAXB,MAXN
@@ -70,4 +70,4 @@
 
   end do  ! =-> lev
 
-  END SUBROUTINE Mark
+  end subroutine Mark

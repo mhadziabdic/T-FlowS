@@ -1,18 +1,18 @@
 !======================================================================!
-  SUBROUTINE DivLoa
+  subroutine DivLoa
 !----------------------------------------------------------------------!
 ! Reads:  NAME.cns, NAME.gmv                                           !
 ! ~~~~~~                                                               !                                                                           
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod 
-  USE div_mod
-  USE par_mod
+  use all_mod
+  use gen_mod 
+  use div_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER      :: c, n, s
-  CHARACTER*80 :: dummy, nameIn
+  integer      :: c, n, s
+  character*80 :: dummy, nameIn
 !======================================================================!
 
   write(*,'(A41)') '# Input problem name: (without extension)'
@@ -192,4 +192,4 @@
 !??????????????????????????????????????????!
 ! Do something ! 
 
-  END SUBROUTINE DivLoa
+  end subroutine DivLoa

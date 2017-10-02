@@ -1,13 +1,13 @@
 !======================================================================!
-  REAL FUNCTION Dist2(xA,yA,zA,xB,yB,zB)
+  real function Dist2(xA,yA,zA,xB,yB,zB)
 !----------------------------------------------------------------------!
 !  Calculates distance between two points.                             !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: xA,yA,zA,xB,yB,zB
+  real :: xA,yA,zA,xB,yB,zB
 !======================================================================!
 
   Dist2=(xA-xB)*(xA-xB) + (yA-yB)*(yA-yB) + (zA-zB)*(zA-zB)
 
-  END FUNCTION Dist2
+  end function Dist2

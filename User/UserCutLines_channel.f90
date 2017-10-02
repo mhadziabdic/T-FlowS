@@ -1,33 +1,33 @@
 !======================================================================!
-  SUBROUTINE UserCutLines_channel(y) 
+  subroutine UserCutLines_channel(y) 
 !----------------------------------------------------------------------!
 ! This program reads name.1D file created by NEU or GEN and averages    
 ! the results in the homogeneous directions. 
 ! The results are writen in files name_res.dat and name_res_plus.dat
 !----------------------------------------------------------------------!
-    USE all_mod
-    USE allp_mod
-    USE les_mod
-    USE pro_mod
-    USE par_mod
-    USE rans_mod
+    use all_mod
+    use allp_mod
+    use les_mod
+    use pro_mod
+    use par_mod
+    use rans_mod
 !----------------------------------------------------------------------!
-    IMPLICIT NONE
+    implicit none
 !-----------------------------[Parameters]-----------------------------!
-    REAL :: y(-NbC:NC)
-    REAL :: Ufric, Wall_near 
+    real :: y(-NbC:NC)
+    real :: Ufric, Wall_near 
 !------------------------------[Calling]-------------------------------!
     INTERFACE
-      LOGICAL FUNCTION Approx(A,B,tol)
-        REAL           :: A,B
-        REAL, OPTIONAL :: tol
-      END FUNCTION Approx
-    END INTERFACE 
+      logical function Approx(A,B,tol)
+        real           :: A,B
+        real, OPTIONAL :: tol
+      end function Approx
+    end INTERFACE 
 !-------------------------------[Locals]-------------------------------!
-    INTEGER             :: Nprob, pl, c, i, count, s, c1, c2
-    CHARACTER           :: namCoo*80, namPro*80, answer*80, namRes*80
-    CHARACTER           :: namRes_plus*80
-    REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+    integer             :: Nprob, pl, c, i, count, s, c1, c2
+    character           :: namCoo*80, namPro*80, answer*80, namRes*80
+    character           :: namRes_plus*80
+    real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
@@ -36,8 +36,8 @@
                                  VIStp(:), var_2(:), var_3(:), &
                                  Wall_p(:), Ufric_p(:), Kinp(:), Epsp(:), &
                                  v2p(:), fp(:) 
-    INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
-    REAL                :: R, Urad_mean, Utan_mean, dummy, Lscale, Twall, EBF
+    integer,allocatable :: Np(:), Ncount(:)
+    real                :: R, Urad_mean, Utan_mean, dummy, Lscale, Twall, EBF
 !======================================================================!
 
     namPro = name
@@ -845,4 +845,4 @@
       deallocate(vTp)
       deallocate(wTp)
     end if
-  END SUBROUTINE UserCutLines_channel
+  end subroutine UserCutLines_channel

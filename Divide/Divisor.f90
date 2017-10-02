@@ -12,19 +12,19 @@
 !   Divides the domain in equaly balanced subdomains.                  !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod 
-  USE div_mod
-  USE par_mod
+  use all_mod
+  use gen_mod 
+  use div_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER          :: Nsubto              ! total number of subdomains
-  INTEGER          :: Ndiv                ! total number of divisions
-  INTEGER          :: chunks(128)
-  INTEGER          :: i, j
-  CHARACTER        :: answer*8
-  REAL             :: start, finish
+  integer          :: Nsubto              ! total number of subdomains
+  integer          :: Ndiv                ! total number of divisions
+  integer          :: chunks(128)
+  integer          :: i, j
+  character        :: answer*8
+  real             :: start, finish
 !======================================================================!
   call cpu_time(start)
 !---- Test the precision
@@ -110,4 +110,4 @@
   call cpu_time(finish)
   print '("Time = ",f14.3," seconds.")',finish-start
 
-  END PROGRAM Divisor
+  end PROGRAM Divisor

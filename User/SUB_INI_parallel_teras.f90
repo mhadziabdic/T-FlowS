@@ -7,48 +7,48 @@
 !  The LoaIni.f90 reads these files and interpolate the previous solution
 !  into new mesh.
 !----------------------------------------------------------------------*
-      IMPLICIT NONE
+      implicit none
 !======================================================================*
 
-  REAL,ALLOCATABLE :: xc(:),yc(:),zc(:)
-  REAL,ALLOCATABLE :: Sx(:),Sy(:),Sz(:)
-  REAL,ALLOCATABLE :: volume(:)            ! cell's volume
-  REAL,ALLOCATABLE :: delta(:)             ! delta (max(dx,dy,dz))
-  REAL,ALLOCATABLE :: Dx(:),Dy(:),Dz(:)
-  REAL,ALLOCATABLE :: xsp(:),ysp(:),zsp(:) ! face coordinates
-  REAL,ALLOCATABLE :: WallDs(:), f(:)
-  REAL             :: Xmax, Xmin, Ymin, Ymax, Zmin, Zmax
+  real,allocatable :: xc(:),yc(:),zc(:)
+  real,allocatable :: Sx(:),Sy(:),Sz(:)
+  real,allocatable :: volume(:)            ! cell's volume
+  real,allocatable :: delta(:)             ! delta (max(dx,dy,dz))
+  real,allocatable :: Dx(:),Dy(:),Dz(:)
+  real,allocatable :: xsp(:),ysp(:),zsp(:) ! face coordinates
+  real,allocatable :: WallDs(:), f(:)
+  real             :: Xmax, Xmin, Ymin, Ymax, Zmin, Zmax
 
-  INTEGER   :: NC, NS, ND, NN                    ! num. of nodes and cells
-  INTEGER   :: NbC, Ncopy, NSsh, Nmat
+  integer   :: NC, NS, ND, NN                    ! num. of nodes and cells
+  integer   :: NbC, Ncopy, NSsh, Nmat
 
-  INTEGER,ALLOCATABLE :: material(:)     ! material markers
-  INTEGER,ALLOCATABLE :: SideC(:,:)      !  c0, c1, c2
+  integer,allocatable :: material(:)     ! material markers
+  integer,allocatable :: SideC(:,:)      !  c0, c1, c2
 
-  INTEGER,ALLOCATABLE :: TypeBC(:)       ! type of boundary condition
+  integer,allocatable :: TypeBC(:)       ! type of boundary condition
 
-  INTEGER,ALLOCATABLE :: CopyC(:)        !  might be shorter
-  INTEGER,ALLOCATABLE :: CopyS(:,:)      !  similar to SideC
+  integer,allocatable :: CopyC(:)        !  might be shorter
+  integer,allocatable :: CopyS(:,:)      !  similar to SideC
 
-  INTEGER          :: i, l1, n, IND
-  INTEGER          :: j, k,  c, nearest, var, Nvar, c1, c2, s
-  INTEGER          :: NCold
-  CHARACTER*80 nameIn
-  CHARACTER*80 namOut, namSav
-  REAL,ALLOCATABLE :: Xold(:),Yold(:),Zold(:)
-  REAL,ALLOCATABLE :: Uold(:),Vold(:),Wold(:),Told(:)
-  REAL,ALLOCATABLE :: UCold(:),VCold(:),WCold(:),TCold(:)
-  REAL,ALLOCATABLE :: UCoold(:),VCoold(:),WCoold(:),TCoold(:)
-  REAL,ALLOCATABLE :: Uoold(:),Voold(:),Woold(:),Toold(:)
-  REAL,ALLOCATABLE :: UDoold(:),VDoold(:),WDoold(:),TDoold(:)
-  REAL,ALLOCATABLE :: UXold(:),VXold(:),WXold(:),TXold(:)
-  REAL,ALLOCATABLE :: UXoold(:),VXoold(:),WXoold(:),TXoold(:)
-  REAL,ALLOCATABLE :: Pold(:)
-  REAL,ALLOCATABLE :: PPold(:)
-  REAL,ALLOCATABLE :: Pxold(:),Pyold(:),Pzold(:)
+  integer          :: i, l1, n, IND
+  integer          :: j, k,  c, nearest, var, Nvar, c1, c2, s
+  integer          :: NCold
+  character*80 nameIn
+  character*80 namOut, namSav
+  real,allocatable :: Xold(:),Yold(:),Zold(:)
+  real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:)
+  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:)
+  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:)
+  real,allocatable :: Uoold(:),Voold(:),Woold(:),Toold(:)
+  real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:)
+  real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:)
+  real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:)
+  real,allocatable :: Pold(:)
+  real,allocatable :: PPold(:)
+  real,allocatable :: Pxold(:),Pyold(:),Pzold(:)
 !---- Variables for ReadC:
-  CHARACTER  :: namU*38, namV*38, namW*38, naOut*38, naIn*80, namFin*80
-  CHARACTER  :: answer*80, NameOut*80, namP*38, namT*38, name*80
+  character  :: namU*38, namV*38, namW*38, naOut*38, naIn*80, namFin*80
+  character  :: answer*80, NameOut*80, namP*38, namT*38, name*80
 !----------------------------------------------------------------------!
 ! The answer name is case dependent
 !----------------------------------------------------------------------!
@@ -542,5 +542,5 @@
   deallocate(Pyold)
   deallocate(Pzold)
 
-  END PROGRAM
+  end PROGRAM
 

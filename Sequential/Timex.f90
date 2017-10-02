@@ -1,13 +1,13 @@
 !======================================================================!
-  SUBROUTINE Timex(time) 
+  subroutine Timex(time) 
 !----------------------------------------------------------------------!
 !   Dummy function.                                                    !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: time
+  real :: time
 !======================================================================!
 
 ! call cpu_time(time) This is Fortran 95 feature.
 
-  END SUBROUTINE Timex
+  end subroutine Timex

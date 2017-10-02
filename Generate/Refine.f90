@@ -1,26 +1,26 @@
 !======================================================================!
-  SUBROUTINE Refine(lev)
+  subroutine Refine(lev)
 !----------------------------------------------------------------------!
 !   Refine the marked cells.                                           !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: lev 
+  integer :: lev 
 !------------------------------[Calling]-------------------------------!
-  LOGICAL :: IsTwin
-  INTEGER :: WchNod
+  logical :: IsTwin
+  integer :: WchNod
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, NCold, c1, c2, c3, c4, c5, c6
-  INTEGER :: cr1, cr2, cr3, cr4, cr5, cr6, cr7, cr8
-  INTEGER :: n, NNold, n1, n2, n3, n4, n5, n6, n7, n8
-  INTEGER :: n12,n13,n24,n34,n15,n26,n37,n48,n56,n57,n68,n78
-  INTEGER :: nF1, nF2, nF3, nF4, nF5, nF6, n0
-  INTEGER :: del   ! number of deleted nodes 
-  INTEGER :: nA, nA0, nA1, nA2, nB, nB0, nB1, nB2
+  integer :: c, NCold, c1, c2, c3, c4, c5, c6
+  integer :: cr1, cr2, cr3, cr4, cr5, cr6, cr7, cr8
+  integer :: n, NNold, n1, n2, n3, n4, n5, n6, n7, n8
+  integer :: n12,n13,n24,n34,n15,n26,n37,n48,n56,n57,n68,n78
+  integer :: nF1, nF2, nF3, nF4, nF5, nF6, n0
+  integer :: del   ! number of deleted nodes 
+  integer :: nA, nA0, nA1, nA2, nB, nB0, nB1, nB2
 !======================================================================!
 !                                                                      !
 !                               c6      c3                             !
@@ -907,4 +907,4 @@
 
   write(*,*) 'Number of cells after the renumeration: ', NC 
 
-  END SUBROUTINE Refine
+  end subroutine Refine

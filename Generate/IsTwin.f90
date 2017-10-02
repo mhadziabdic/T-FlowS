@@ -1,17 +1,17 @@
 !======================================================================!
-  LOGICAL FUNCTION IsTwin(n1, n2) 
+  logical function IsTwin(n1, n2) 
 !----------------------------------------------------------------------!
 !   Checks if the nodes are twins, i.e. are they shared on periodicity !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: n1, n2
+  integer :: n1, n2
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: n, check
+  integer :: n, check
 !======================================================================!
 
   check=0
@@ -35,4 +35,4 @@
     stop
   endif
 
-  END FUNCTION IsTwin
+  end function IsTwin

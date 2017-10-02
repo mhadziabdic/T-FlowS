@@ -1,23 +1,23 @@
 !======================================================================!
-  SUBROUTINE UserPotent(PHI,                   &
+  subroutine UserPotent(PHI,                   &
                         XPHI,                  &
                         dPHIdx,  dPHIdy,   dPHIdz)
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Parameters]---------------------------!
   TYPE(Unknown) :: PHI
-  REAL XPHI(NC)
-  REAL dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
+  real XPHI(NC)
+  real dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER n,c,s,c1,c2,niter,miter
-  REAL    A0,A12,A21,error
-  REAL    CONeff, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
-  REAL            FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
-  REAL    Stot, PHIs
+  integer n,c,s,c1,c2,niter,miter
+  real    A0,A12,A21,error
+  real    CONeff, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
+  real            FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
+  real    Stot, PHIs
 !======================================================================!
 
   do n=1,Acol(NC+1) ! to je broj nonzero + 1
@@ -187,4 +187,4 @@
 
   call Exchng(PHI % n)
 
-  END SUBROUTINE
+  end subroutine

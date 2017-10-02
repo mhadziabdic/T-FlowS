@@ -1,14 +1,14 @@
 !======================================================================!
-  SUBROUTINE Read9Ln(string, tn, ts, te) 
+  subroutine Read9Ln(string, tn, ts, te) 
 !----------------------------------------------------------------------!
 ! Reads a line from a file (unit 9) and parses it.                     ! 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  CHARACTER :: string*300
-  INTEGER   :: tn, ts(300), te(300)
+  character :: string*300
+  integer   :: tn, ts(300), te(300)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i
+  integer :: i
 !======================================================================!
 
   read(9,'(A300)') string
@@ -29,4 +29,4 @@
     end if
   end do
 
-  END SUBROUTINE Read9Ln
+  end subroutine Read9Ln

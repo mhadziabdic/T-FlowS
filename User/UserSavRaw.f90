@@ -1,18 +1,18 @@
 !======================================================================!
-  SUBROUTINE UserSavRaw
+  subroutine UserSavRaw
 !----------------------------------------------------------------------!
 ! Writes: NAME.rawdata                                                 !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c, NCtot
-  CHARACTER :: namOut*80
+  integer   :: c, NCtot
+  character :: namOut*80
 !======================================================================!
 
 !------------------------------!
@@ -37,4 +37,4 @@
 
   close(9)
 
-  END SUBROUTINE UserSavRaw
+  end subroutine UserSavRaw

@@ -1,33 +1,33 @@
 !======================================================================!
-  SUBROUTINE UserCutLines_budgets_cylind_HOT() 
+  subroutine UserCutLines_budgets_cylind_HOT() 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
 ! the values of Umean, Vmean, Wmean, uu, vv, ww, uv, uw and vw and     !
 ! writes them into file ".1Dr".                                        !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: y(-NbC:NC)
-  REAL :: Rad_2, Ufric , R_max
+  real :: y(-NbC:NC)
+  real :: Rad_2, Ufric , R_max
 !------------------------------[Calling]-------------------------------!
   INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE 
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, OPTIONAL :: tol
+    end function Approx
+  end INTERFACE 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: Nprob, pl, c, i, count, Ncount_wall
-  CHARACTER           :: namCoo*80, namPro*80, answer*80
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+  integer             :: Nprob, pl, c, i, count, Ncount_wall
+  character           :: namCoo*80, namPro*80, answer*80
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                          uup(:), vvp(:), wwp(:), &
                          uvp(:), uwp(:), vwp(:), &
                          uuup(:), uuvp(:), uuwp(:), &
@@ -55,8 +55,8 @@
                          Cut(:), Cvt(:), Cwt(:), Ctt(:), Ufric_p(:)
     
   
-  INTEGER,ALLOCATABLE :: Np(:), Ncount(:), int(:)
-  REAL                :: R, Urad_mean, Utan_mean, NF, vol1, Tfric, Twall, Twall_p, FFF, dummy
+  integer,allocatable :: Np(:), Ncount(:), int(:)
+  real                :: R, Urad_mean, Utan_mean, NF, vol1, Tfric, Twall, Twall_p, FFF, dummy
 !======================================================================!
 
 
@@ -856,4 +856,4 @@
     deallocate(vTp)
     deallocate(wTp)
   end if
-  END SUBROUTINE UserCutLines_budgets_cylind_HOT
+  end subroutine UserCutLines_budgets_cylind_HOT

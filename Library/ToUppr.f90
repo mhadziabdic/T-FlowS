@@ -1,13 +1,13 @@
 !======================================================================!
-  SUBROUTINE ToUppr(string)
+  subroutine ToUppr(string)
 !----------------------------------------------------------------------!
 !   Transforms string to uppercase.                                    !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  CHARACTER*(*) :: string  
+  character*(*) :: string  
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i, value
+  integer :: i, value
 !======================================================================!
 
   do i=1,len_trim(string)
@@ -17,4 +17,4 @@
     end if
   end do
 
-  END SUBROUTINE ToUppr
+  end subroutine ToUppr

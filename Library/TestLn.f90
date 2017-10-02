@@ -1,20 +1,20 @@
 !======================================================================!
-  SUBROUTINE TestLn(sub, NNsub, NCsub, NSsub, NBCsub, NBFsub) 
+  subroutine TestLn(sub, NNsub, NCsub, NSsub, NBCsub, NBFsub) 
 !----------------------------------------------------------------------!
 !   Creates the file "test.link.gmv" to check the cell connections.    !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod 
-  USE gen_mod 
-  USE par_mod 
+  use all_mod 
+  use gen_mod 
+  use par_mod 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: sub, NNsub, NCsub, NSsub, NBCsub, NBFsub
+  integer :: sub, NNsub, NCsub, NSsub, NBCsub, NBFsub
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: n,c,c1,c2,s 
-  INTEGER   :: NSsubNonPer, NSsubPer
-  CHARACTER :: namOut*80
+  integer   :: n,c,c1,c2,s 
+  integer   :: NSsubNonPer, NSsubPer
+  character :: namOut*80
 !======================================================================!
 
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
@@ -219,4 +219,4 @@
   write(9,'(A6)') 'endgmv'            !  end the GMV file
   close(9)
 
-  END SUBROUTINE TestLn
+  end subroutine TestLn

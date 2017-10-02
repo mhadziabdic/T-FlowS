@@ -1,10 +1,10 @@
 !======================================================================!
-  REAL FUNCTION Rnd (r)
+  real function Rnd (r)
 !----------------------------------------------------------------------!
 !   Computes random double precision number in the range 0.0-1.0.      !
 !----------------------------------------------------------------------!
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: r
+  integer :: r
 !======================================================================!
 !   Input parameter r must be 0, otherwise it was not working.         !
 !   One of authors of TFlowS (B. Niceno) found it somewhere on         !
@@ -33,4 +33,4 @@
   ix1 = (ix1-ix0)/2048
   go to 1
 
-  END FUNCTION Rnd
+  end function Rnd

@@ -1,18 +1,18 @@
 !======================================================================!
-  SUBROUTINE UserSource() 
+  subroutine UserSource() 
 !----------------------------------------------------------------------!
 !   This subroutine extracts the heat in case when periodic boundaries !
 !   are used in order to keep energy balans                            !
 !   This source is part of the convection                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c
+  integer :: c
 !----------------------------------------------------------------------!
 ! Description:                                                         !
 ! ~~~~~~~~~~~~                                                         !
@@ -61,4 +61,4 @@
 
   return
 
-  END SUBROUTINE UserSource
+  end subroutine UserSource

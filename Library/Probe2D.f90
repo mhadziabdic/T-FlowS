@@ -1,24 +1,24 @@
 !======================================================================!
-  SUBROUTINE Probe2D 
+  subroutine Probe2D 
 !----------------------------------------------------------------------!
 ! Finds coordinates of all the planes for the channel flow.            !
 ! It assumes that homogeneous directions of the flow are x and y.      !
 !----------------------------------------------------------------------!
-  USE all_mod
+  use all_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------! 
   INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, OPTIONAL :: tol
+    end function Approx
+  end INTERFACE
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: Nprob, p, c
-  REAL      :: yp(20000), zp(20000)
-  CHARACTER :: namPro*80
-  CHARACTER :: answer*80
+  integer   :: Nprob, p, c
+  real      :: yp(20000), zp(20000)
+  character :: namPro*80
+  character :: answer*80
 !======================================================================!
 
   write(*,*) '==============================='
@@ -86,4 +86,4 @@
 
   close(9)
 
-  END SUBROUTINE Probe2D
+  end subroutine Probe2D

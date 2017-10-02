@@ -1,23 +1,23 @@
 !======================================================================!
-  SUBROUTINE Laplac(b,i,j,k,wx16,wx24,wx35,                         &
+  subroutine Laplac(b,i,j,k,wx16,wx24,wx35,                         &
                             wy16,wy24,wy35,                         &
                             wz16,wz24,wz35)
 !----------------------------------------------------------------------!
 !   Places the nodes inside the block using Laplace-like function      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: b, i, j, k
-  REAL    :: wx16, wx24, wx35, wy16, wy24, wy35, wz16, wz24, wz35 
+  integer :: b, i, j, k
+  real    :: wx16, wx24, wx35, wy16, wy24, wy35, wz16, wz24, wz35 
 !-------------------------------[Locals]-------------------------------!
-  REAL    :: xt(8), yt(8), zt(8)
-  INTEGER :: NI, NJ, NK, n, n1, n2, n3, n4, n5, n6
-  REAL    :: xf1, yf1, zf1, xf2, yf2, zf2, xf3, yf3, zf3 
-  REAL    :: xf4, yf4, zf4, xf5, yf5, zf5, xf6, yf6, zf6
+  real    :: xt(8), yt(8), zt(8)
+  integer :: NI, NJ, NK, n, n1, n2, n3, n4, n5, n6
+  real    :: xf1, yf1, zf1, xf2, yf2, zf2, xf3, yf3, zf3 
+  real    :: xf4, yf4, zf4, xf5, yf5, zf5, xf6, yf6, zf6
 !======================================================================!
 
   NI=BlkRes(b,1)
@@ -138,4 +138,4 @@
          + ( zf3*(NJ-j) + zf5*(j-1) ) * wz35 / (NJ-1) 
   end if
 
-  END SUBROUTINE Laplac
+  end subroutine Laplac

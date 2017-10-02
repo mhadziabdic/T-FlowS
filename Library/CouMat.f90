@@ -1,14 +1,14 @@
 !======================================================================!
-  SUBROUTINE CouMat()
+  subroutine CouMat()
 !----------------------------------------------------------------------!
 ! Purpose: Counts all the materials in the grid.                       !
 ! ~~~~~~~~                                                             !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
+  use all_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c 
+  integer :: c 
 !======================================================================!
 
   Mater = .FALSE.
@@ -23,4 +23,4 @@
 
   write(*,*) 'Number of materials: ', Nmat
  
-  END SUBROUTINE CouMat
+  end subroutine CouMat

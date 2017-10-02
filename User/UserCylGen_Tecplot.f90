@@ -1,26 +1,26 @@
 !======================================================================!
-  SUBROUTINE UserCylGen_Tecplot(n)
+  subroutine UserCylGen_Tecplot(n)
 !----------------------------------------------------------------------!
 !----------------------------------------------------------------------!
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !-----------------------------[Parameters]-----------------------------!
-    INTEGER :: n
-    REAL    :: x1_dis, x0_dis, y1_dis, y0_dis, z1_dis, z0_dis
-    REAL    :: TauWup, TauWdown, r23, TKE, Cmu_mod, Pk_tmp, Cs_mod, Cs_prime
-    REAL    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, R, UtanX, TKE_mean
-    REAL    :: a11, a22, a33, a12, a13, a21, a31, a23, a32, a_mn_a_mn
-    REAL    :: u11, u22, u33, u12, u13, u21, u31, u23, u32
-    REAL    :: S11, S22, S33, S12, S13, S21, S31, S23, S32, a_lk_s_lk
+    integer :: n
+    real    :: x1_dis, x0_dis, y1_dis, y0_dis, z1_dis, z0_dis
+    real    :: TauWup, TauWdown, r23, TKE, Cmu_mod, Pk_tmp, Cs_mod, Cs_prime
+    real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, R, UtanX, TKE_mean
+    real    :: a11, a22, a33, a12, a13, a21, a31, a23, a32, a_mn_a_mn
+    real    :: u11, u22, u33, u12, u13, u21, u31, u23, u32
+    real    :: S11, S22, S33, S12, S13, S21, S31, S23, S32, a_lk_s_lk
 !-------------------------------[Locals]-------------------------------!
-    INTEGER             :: c, s, c1, c2
-    CHARACTER*24        :: inflowfile
-    CHARACTER*80        :: namout
-    CHARACTER*39        :: path
+    integer             :: c, s, c1, c2
+    character*24        :: inflowfile
+    character*80        :: namout
+    character*39        :: path
 !======================================================================!
 !  open(9, FILE='Slice2.dat')
 !  if(this < 2) write(*,*) '# Now reading the file: Slice.dat '
@@ -56,4 +56,4 @@
     close(9)
     close(500+this)
 
-  END SUBROUTINE UserCylGen_Tecplot
+  end subroutine UserCylGen_Tecplot

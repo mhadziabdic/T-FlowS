@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE EpsSav(xg,yg,zg,sidegDx,sidegDy,dir)
+  subroutine EpsSav(xg,yg,zg,sidegDx,sidegDy,dir)
 !----------------------------------------------------------------------!
 ! Writes: Grid in encapsulated postscript format.                      !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL      :: xg(MAXN),yg(MAXN),zg(MAXN),sidegDx(MAXS),sidegDy(MAXS)
-  CHARACTER :: dir
+  real      :: xg(MAXN),yg(MAXN),zg(MAXN),sidegDx(MAXS),sidegDy(MAXS)
+  character :: dir
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: s, c1, c2, count, lw
-  CHARACTER :: namEps*80
-  REAL      :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin, z0, fc
-  REAL      :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,xin(4),yin(4) 
+  integer   :: s, c1, c2, count, lw
+  character :: namEps*80
+  real      :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin, z0, fc
+  real      :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,xin(4),yin(4) 
 !======================================================================!
 !   Note: singnificantly improved. Keep the old version allways at     !
 !         hand.                                                        !
@@ -189,4 +189,4 @@
 
   close(9)
 
-  END SUBROUTINE EpsSav
+  end subroutine EpsSav

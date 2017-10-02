@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE Connect3 
+  subroutine Connect3 
 !----------------------------------------------------------------------!
 ! Connects two problem domains, one with periodic streamwise boundary  !
 ! conditions and another with inflow-outflow.                          !
@@ -24,26 +24,26 @@
 !     streamwise direction.                                            !
 !                                                                      !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod 
+  use all_mod
+  use gen_mod 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
   INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL          :: A,B
-      REAL,OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE
+    logical function Approx(A,B,tol)
+      real          :: A,B
+      real,OPTIONAL :: tol
+    end function Approx
+  end INTERFACE
 !-------------------------------[Locals]-------------------------------!
-  INTEGER      :: i, c1, c11, c12, c21, c22, s1, s2
-  INTEGER      :: CopyMarker,  x_copy, y_copy, z_copy
-  REAL         :: xc_12, xc_22
-  REAL         :: yc_12, yc_22
-  REAL         :: zc_12, zc_22
-  REAL,PARAMETER :: one3rd = 0.3333333
-  REAL,PARAMETER :: two3rd = 0.6666666
-  CHARACTER*80 :: Answer
+  integer      :: i, c1, c11, c12, c21, c22, s1, s2
+  integer      :: CopyMarker,  x_copy, y_copy, z_copy
+  real         :: xc_12, xc_22
+  real         :: yc_12, yc_22
+  real         :: zc_12, zc_22
+  real,parameter :: one3rd = 0.3333333
+  real,parameter :: two3rd = 0.6666666
+  character*80 :: Answer
 !======================================================================!
 
   Ncopy = 0
@@ -216,4 +216,4 @@
 
   goto 1
 
-  END SUBROUTINE Connect3
+  end subroutine Connect3

@@ -1,24 +1,24 @@
 !======================================================================!
-  SUBROUTINE TopSys(rrun) 
+  subroutine TopSys(rrun) 
 !----------------------------------------------------------------------!
 !   Determines the topology of the cells, faces and boundary cells.    !
 !----------------------------------------------------------------------!
 ! Uses: CellC                                                          !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL :: rrun
+  logical :: rrun
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, s, i
-  INTEGER :: c1, c2, m, pass
-  INTEGER :: FaceN(6,4)
+  integer :: c, s, i
+  integer :: c1, c2, m, pass
+  integer :: FaceN(6,4)
 !======================================================================!
 
-  DATA    FaceN / 1, 1, 2, 4, 3, 5,                                 &
+  data    FaceN / 1, 1, 2, 4, 3, 5,                                 &
                   2, 5, 6, 8, 7, 7,                                 &
                   4, 6, 8, 7, 5, 8,                                 &
                   3, 2, 4, 3, 1, 6  /
@@ -176,4 +176,4 @@
     stop
   end if 
 
-  END SUBROUTINE TopSys
+  end subroutine TopSys

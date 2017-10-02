@@ -1,8 +1,8 @@
-  SUBROUTINE Jacobi(a,n,np,d,v,nrot) 
-  IMPLICIT NONE
-  INTEGER n,np,nrot,NMAX 
-  REAL a(np,np),d(np),v(np,np) 
-  PARAMETER (NMAX=500) 
+  subroutine Jacobi(a,n,np,d,v,nrot) 
+  implicit none
+  integer n,np,nrot,NMAX 
+  real a(np,np),d(np),v(np,np) 
+  parameter (NMAX=500) 
 ! Computes all eigenvalues and eigenvectors of a real symmetric matrix a, 
 ! which is of size n by n, stored in a physical np by np array. On output, 
 ! elements of a above the diagonal are destroyed. d returns the eigenvalues 
@@ -10,8 +10,8 @@
 ! physical dimensions as a, whose columns contain, on output, the normalized 
 ! eigenvectors of a. nrot returns the number of Jacobi rotations that were 
 ! required. 
-  INTEGER i,ip,iq,j 
-  REAL c,g,h,s,sm,t,tau,theta,tresh,b(NMAX),z(NMAX) 
+  integer i,ip,iq,j 
+  real c,g,h,s,sm,t,tau,theta,tresh,b(NMAX),z(NMAX) 
 
   do ip=1,n     ! Initialize to the identity matrix. 
     do iq=1,n 
@@ -109,4 +109,4 @@
 
   return 
 
-  END SUBROUTINE Jacobi
+  end subroutine Jacobi

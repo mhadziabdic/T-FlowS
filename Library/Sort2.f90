@@ -7,7 +7,7 @@
 !*       University Press, 1986".                              *
 !* ----------------------------------------------------------- *
 !***************************************************************
-SUBROUTINE SORT2(A, MAX_VALUE, N)
+subroutine SORT2(A, MAX_VALUE, N)
 
 integer N, MAX_VALUE 
 real    A(MAX_VALUE)     !Table to be sorted
@@ -17,7 +17,7 @@ real    A(MAX_VALUE)     !Table to be sorted
 
   return
 
-END
+end
 
 !*****************************************************
 !* Sorts an array ARR of length N in ascending order *
@@ -32,7 +32,7 @@ END
 !* NOTE: The Shell method is a N^3/2 routine and can *
 !*       be used for relatively large arrays.        *                             *
 !*****************************************************         
-SUBROUTINE SHELL(N,ARR)
+subroutine SHELL(N,ARR)
 parameter(ALN2I=1./0.69314718,TINY=1.E-5)
   real ARR(N)
   LOGNB2=INT(ALOG(FLOAT(N))*ALN2I+TINY)
@@ -53,15 +53,15 @@ parameter(ALN2I=1./0.69314718,TINY=1.E-5)
     end do
   end do
   return
-END
+end
 
 !write table of size N to standard output
-SUBROUTINE TWRIT(N,ARR)
+subroutine TWRIT(N,ARR)
 real ARR(N)
   print *,' '
   WRITE(*,10) (ARR(I),I=1,N)
   return
 10 FORMAT(10F6.1)
-END
+end
 
 !end of file sort2.f90

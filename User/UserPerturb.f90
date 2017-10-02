@@ -1,23 +1,23 @@
 !======================================================================!
-  SUBROUTINE UserPerturb(fac,n)
+  subroutine UserPerturb(fac,n)
 !----------------------------------------------------------------------!
 !   Perturbs the flow field for the channel flow.                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: n
-  REAL    :: fac
+  integer :: n
+  real    :: fac
 !------------------------------[Calling]-------------------------------!
-  REAL    :: Uta, UserURms, UserVRms, UserWRms
+  real    :: Uta, UserURms, UserVRms, UserWRms
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, seed(1)
-  REAL    :: randn
+  integer :: c, seed(1)
+  real    :: randn
 !======================================================================!
 !   See also: Uplus, URms, VRms, WRms, perturb                         !
 !----------------------------------------------------------------------!
@@ -70,4 +70,4 @@
 
   end do
 
-  END SUBROUTINE UserPerturb
+  end subroutine UserPerturb

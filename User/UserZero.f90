@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE UserZero(var) 
+  subroutine UserZero(var) 
 !----------------------------------------------------------------------!
 ! Description:                                                         !
 ! ~~~~~~~~~~~~                                                         !
@@ -10,14 +10,14 @@
 ! ~~~~~                                                                !
 !   It should be used with zero.* problem in Test directory.           !  
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: var ! 1 -> U,  2 -> V,  3 -> W 
+  integer :: var ! 1 -> U,  2 -> V,  3 -> W 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c
+  integer :: c
 !======================================================================!
 
   if(var == 3) then  ! only for W velocity component
@@ -26,4 +26,4 @@
     end do
   end if
 
-  END SUBROUTINE UserZero
+  end subroutine UserZero

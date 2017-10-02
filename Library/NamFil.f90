@@ -1,19 +1,19 @@
 !======================================================================!
-  SUBROUTINE NamFil(sub, namOut, ext, lext)
+  subroutine NamFil(sub, namOut, ext, lext)
 !----------------------------------------------------------------------!
 !   Creates the file name depending on the subdomain and file type.    !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
+  use all_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER       :: sub, lext
-  CHARACTER*(*) :: ext
-  CHARACTER*(*) :: namOut
+  integer       :: sub, lext
+  character*(*) :: ext
+  character*(*) :: namOut
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c
-  CHARACTER :: numb*4
+  integer   :: c
+  character :: numb*4
 !======================================================================!
 
   namOut = name
@@ -30,4 +30,4 @@
     namOut(len_trim(name)+6:len_trim(name)+6+lext-1) = ext(1:lext) 
   end if 
 
-  END SUBROUTINE NamFil
+  end subroutine NamFil

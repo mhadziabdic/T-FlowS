@@ -1,15 +1,15 @@
 !======================================================================!
-  SUBROUTINE PrintG 
+  subroutine PrintG 
 !----------------------------------------------------------------------!
 !   Prints some statistical data about the grid on the standard output !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i, j, k, numb, nonz, stencw
+  integer :: i, j, k, numb, nonz, stencw
 !======================================================================!
 
   write(*,*) '==============='
@@ -32,7 +32,7 @@
   end do
 
   write(*,*) '  number of non zero matrix entries:', nonz
-  write(*,*) '  average stencil size:', REAL(nonz)/REAL(NC)
+  write(*,*) '  average stencil size:', real(nonz)/real(NC)
   write(*,*) '  max number of nodes and cells:',   MAXN
   write(*,*) '  max number of boundary cells:',    MAXB
   write(*,*) '----------------------------------'
@@ -63,4 +63,4 @@
     endif 
   end do
 
-  END SUBROUTINE PrintG
+  end subroutine PrintG

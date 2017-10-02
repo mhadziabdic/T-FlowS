@@ -8,14 +8,14 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 MODULE div_mod
 
-  IMPLICIT NONE
+  implicit none
 
-  INTEGER,ALLOCATABLE :: ix(:), iy(:), iz(:), iin(:)
-  REAL,ALLOCATABLE    :: criter(:) 
+  integer,allocatable :: ix(:), iy(:), iz(:), iin(:)
+  real,allocatable    :: criter(:) 
 
 !------------!
 ! Parameters !
 !------------!
-  INTEGER :: ALGOR, COORDINATE, INERTIAL
+  integer :: ALGOR, COORDINATE, INERTIAL
 
-END MODULE
+end MODULE

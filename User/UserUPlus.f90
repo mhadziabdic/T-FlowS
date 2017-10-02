@@ -1,12 +1,12 @@
 !======================================================================!
-  REAL FUNCTION UserUPlus(y)
+  real function UserUPlus(y)
 !----------------------------------------------------------------------!
 ! Prescribes initial velocity profile for channel flow at ReTau=180    !
 ! This function gives centerline velocity: Uc = 18.0412006             !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: y
+  real :: y
 !======================================================================!
 !   Wall is at y=0, and centerline at y=1                              !
 !----------------------------------------------------------------------!
@@ -18,4 +18,4 @@
    +3.999634e+003  * y**3  -  1.297551e+003  * y**2                 &
    +2.125647e+002  * y**1  -  1.353124e-001
 
-  END FUNCTION UserUPlus
+  end function UserUPlus

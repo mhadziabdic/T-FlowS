@@ -1,13 +1,13 @@
 !======================================================================!
   PROGRAM Neu2TFlowS 
 !------------------------------[Modules]-------------------------------!
-  USE all_mod 
-  USE gen_mod 
+  use all_mod 
+  use gen_mod 
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, n, s
-  INTEGER             :: i, typ, cnt
+  integer :: c, n, s
+  integer             :: i, typ, cnt
 !======================================================================!
 
   call logo
@@ -69,4 +69,4 @@
 !    write(*,*) 'Hamo, type ', typ, ' has ', cnt, ' cells'
 !  end do
 
-  END PROGRAM Neu2TFlowS 
+  end PROGRAM Neu2TFlowS 

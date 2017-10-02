@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE UserIniChannel
+  subroutine UserIniChannel
 !----------------------------------------------------------------------!
 !   Calculate mass fluxes through whole domain.                        !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use par_mod
+  use les_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, s, m, step
-  REAL    :: xc1, yc1, zc1, xc2, yc2, zc2
-  REAL    :: Stot
-  REAL    :: AreaCross, AreaLowWall, AreaHighWall
-  REAL    :: Tbulk, TlowWall, ThighWall
+  integer :: c1, c2, s, m, step
+  real    :: xc1, yc1, zc1, xc2, yc2, zc2
+  real    :: Stot
+  real    :: AreaCross, AreaLowWall, AreaHighWall
+  real    :: Tbulk, TlowWall, ThighWall
 !======================================================================!
 
     do c=1,NC
@@ -25,4 +25,4 @@
  
 
 
-  END SUBROUTINE UserIniChannel
+  end subroutine UserIniChannel

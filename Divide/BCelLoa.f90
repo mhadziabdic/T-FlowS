@@ -1,18 +1,18 @@
 !======================================================================!
-  SUBROUTINE BCelLoa
+  subroutine BCelLoa
 !----------------------------------------------------------------------!
 ! Reads:  NAME.faces.gmv  NAME.shadow.gmv                              !
 ! ~~~~~~                                                               !                                                                           
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod 
-  USE div_mod
-  USE par_mod
+  use all_mod
+  use gen_mod 
+  use div_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER      :: c1, c2, n, s, dum1
-  CHARACTER*80 :: dummy, nameIn
+  integer      :: c1, c2, n, s, dum1
+  character*80 :: dummy, nameIn
 !======================================================================!
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
@@ -88,4 +88,4 @@
 
   close(9)
 
-  END SUBROUTINE BCelLoa
+  end subroutine BCelLoa

@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE Inertia(sub) 
+  subroutine Inertia(sub) 
 !----------------------------------------------------------------------!
 !                                                                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod 
-  USE div_mod
-  USE par_mod
+  use all_mod
+  use gen_mod 
+  use div_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: sub                           ! subdomain 
+  integer :: sub                           ! subdomain 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i, NCloc
-  REAL    :: xm, ym, zm
-  REAL    :: Im(3,3), d(3), v(3,3), d_max(3)    
+  integer :: i, NCloc
+  real    :: xm, ym, zm
+  real    :: Im(3,3), d(3), v(3,3), d_max(3)    
 !======================================================================!
 
   xm=0.0
@@ -83,4 +83,4 @@
 
   return
 
-  END SUBROUTINE Inertia
+  end subroutine Inertia

@@ -1,11 +1,11 @@
 !======================================================================!
-  REAL FUNCTION Atanh(x)
+  real function Atanh(x)
 !----------------------------------------------------------------------!
 !   Calculates inverse of hyperbolic tangens.                          !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: x
+  real :: x
 !======================================================================!
   if(x  > 1.0) then
     write(*,*) 'Error message from atanh: bad argument'
@@ -14,4 +14,4 @@
 
   atanh=log( sqrt( (1.0+x)/(1.0-x) ) )
 
-  END FUNCTION Atanh
+  end function Atanh

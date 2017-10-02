@@ -11,43 +11,43 @@
 !======================================================================!
 MODULE all_mod
 
-  IMPLICIT NONE
+  implicit none
 
-  REAL,ALLOCATABLE :: xc(:),yc(:),zc(:) 
-  REAL,ALLOCATABLE :: Sx(:),Sy(:),Sz(:)
-  REAL,ALLOCATABLE :: volume(:)            ! cell's volume
-  REAL,ALLOCATABLE :: delta(:)             ! delta (max(dx,dy,dz))
-  REAL,ALLOCATABLE :: a1(:)                ! scotti
-  REAL,ALLOCATABLE :: a2(:)                ! scotti
-  REAL,ALLOCATABLE :: Dx(:),Dy(:),Dz(:)
-  REAL,ALLOCATABLE :: xsp(:),ysp(:),zsp(:) ! face coordinates    
-  REAL,ALLOCATABLE :: WallDs(:), f(:)
+  real,allocatable :: xc(:),yc(:),zc(:) 
+  real,allocatable :: Sx(:),Sy(:),Sz(:)
+  real,allocatable :: volume(:)            ! cell's volume
+  real,allocatable :: delta(:)             ! delta (max(dx,dy,dz))
+  real,allocatable :: a1(:)                ! scotti
+  real,allocatable :: a2(:)                ! scotti
+  real,allocatable :: Dx(:),Dy(:),Dz(:)
+  real,allocatable :: xsp(:),ysp(:),zsp(:) ! face coordinates    
+  real,allocatable :: WallDs(:), f(:)
 
-  CHARACTER :: name*80
-  CHARACTER :: inp*300
-  INTEGER   :: tn, ts(300), te(300)
+  character :: name*80
+  character :: inp*300
+  integer   :: tn, ts(300), te(300)
 
-  INTEGER   :: NC, NS                    ! num. of nodes and cells 
-  INTEGER   :: NbC
-  INTEGER   :: MNBS
-  INTEGER   :: NRL
-  INTEGER   :: Ncopy
-  INTEGER   :: Nmat                      ! number of materials
-  LOGICAL   :: Mater(1024)               ! is the material present ?
+  integer   :: NC, NS                    ! num. of nodes and cells 
+  integer   :: NbC
+  integer   :: MNBS
+  integer   :: NRL
+  integer   :: Ncopy
+  integer   :: Nmat                      ! number of materials
+  logical   :: Mater(1024)               ! is the material present ?
 
-  INTEGER,ALLOCATABLE :: material(:)     ! material markers
-  INTEGER,ALLOCATABLE :: SideC(:,:)      !  c0, c1, c2
+  integer,allocatable :: material(:)     ! material markers
+  integer,allocatable :: SideC(:,:)      !  c0, c1, c2
 
-  INTEGER,ALLOCATABLE :: TypeBC(:)       ! type of boundary condition
-  INTEGER,ALLOCATABLE :: bcmark(:)
+  integer,allocatable :: TypeBC(:)       ! type of boundary condition
+  integer,allocatable :: bcmark(:)
 
-  INTEGER,ALLOCATABLE :: CopyC(:)        !  might be shorter
-  INTEGER,ALLOCATABLE :: CopyS(:,:)      !  similar to SideC 
+  integer,allocatable :: CopyC(:)        !  might be shorter
+  integer,allocatable :: CopyS(:,:)      !  similar to SideC 
 
-  INTEGER,ALLOCATABLE :: SideC1C2(:,:)   !  similar to SideC 
+  integer,allocatable :: SideC1C2(:,:)   !  similar to SideC 
 
-  REAL, ALLOCATABLE   :: Dxsp(:,:)       !  similar to SideC 
-  REAL, ALLOCATABLE   :: Dysp(:,:)       !  similar to SideC 
-  REAL, ALLOCATABLE   :: Dzsp(:,:)       !  similar to SideC 
+  real, allocatable   :: Dxsp(:,:)       !  similar to SideC 
+  real, allocatable   :: Dysp(:,:)       !  similar to SideC 
+  real, allocatable   :: Dzsp(:,:)       !  similar to SideC 
 
-END MODULE 
+end MODULE 

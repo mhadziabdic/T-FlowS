@@ -1,16 +1,16 @@
 !======================================================================!
-  SUBROUTINE IGlSum(PHI) 
+  subroutine IGlSum(PHI) 
 !----------------------------------------------------------------------!
 !   Estimates global summ among all processors.                        !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Include]-------------------------------!
-  INCLUDE 'mpif.h'
+  include 'mpif.h'
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: PHI
+  integer :: PHI
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: PHInew
-  INTEGER :: error
+  integer :: PHInew
+  integer :: error
 !======================================================================!
 
 !================================================
@@ -27,4 +27,4 @@
 
   PHI = PHInew
 
-  END SUBROUTINE IGlSum
+  end subroutine IGlSum

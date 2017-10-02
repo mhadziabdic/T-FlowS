@@ -1,28 +1,28 @@
 !======================================================================!
-  SUBROUTINE GenLoa
+  subroutine GenLoa
 !----------------------------------------------------------------------!
 ! Reads: NAME.d                                                        !
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
-  USE par_mod
+  use all_mod
+  use gen_mod
+  use par_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  REAL :: TetVol   
+  real :: TetVol   
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: b, i, l, s, fc, n, n1,n2,n3,n4
-  INTEGER   :: NSchck, NNchck
-  INTEGER   :: NI, NJ, NK
-  INTEGER   :: dum
-  CHARACTER :: namDom*80
-  CHARACTER :: answer*12 
-  REAL      :: xt(8), yt(8), zt(8)
+  integer   :: b, i, l, s, fc, n, n1,n2,n3,n4
+  integer   :: NSchck, NNchck
+  integer   :: NI, NJ, NK
+  integer   :: dum
+  character :: namDom*80
+  character :: answer*12 
+  real      :: xt(8), yt(8), zt(8)
 
-  INTEGER   :: FaceN(6,4)
+  integer   :: FaceN(6,4)
 !======================================================================!
-  DATA      FaceN / 1, 1, 2, 4, 3, 5,                               &
+  data      FaceN / 1, 1, 2, 4, 3, 5,                               &
                     2, 5, 6, 8, 7, 7,                               &
                     4, 6, 8, 7, 5, 8,                               &
                     3, 2, 4, 3, 1, 6  /
@@ -451,4 +451,4 @@
 
   close(9)
 
-  END SUBROUTINE GenLoa
+  end subroutine GenLoa

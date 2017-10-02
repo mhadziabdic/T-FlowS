@@ -1,15 +1,15 @@
 !======================================================================!
-  SUBROUTINE RNSort(X,indx,N)
+  subroutine RNSort(X,indx,N)
 !----------------------------------------------------------------------!
 !   Sorts real array X according to indx.                              !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: N,indx(N)
-  REAL    :: X(N)
+  integer :: N,indx(N)
+  real    :: X(N)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER          :: i
-  REAL,ALLOCATABLE :: work(:)
+  integer          :: i
+  real,allocatable :: work(:)
 !======================================================================!
 
   allocate(work(N)); work=0
@@ -24,4 +24,4 @@
 
   deallocate(work)
 
-  END SUBROUTINE RNSort
+  end subroutine RNSort

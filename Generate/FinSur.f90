@@ -1,17 +1,17 @@
 !======================================================================!
-  SUBROUTINE FinSur(n1, n2, n3, n4, block, face) 
+  subroutine FinSur(n1, n2, n3, n4, block, face) 
 !----------------------------------------------------------------------!
 !   Searches for a block where the surface defined by n1,n2,n3,n4 is.  !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: n1, n2, n3, n4, block, face
+  integer :: n1, n2, n3, n4, block, face
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: b, fc, p1, p2, p3, p4
+  integer :: b, fc, p1, p2, p3, p4
 !======================================================================!
 
   do b=1,Nbloc
@@ -36,4 +36,4 @@
 1 block=b
   face =fc
 
-  END SUBROUTINE FinSur
+  end subroutine FinSur

@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE GeoSav(sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub)
+  subroutine GeoSav(sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub)
 !----------------------------------------------------------------------!
 ! Writes: NAME.cns, NAME.geo                                           !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
-  USE par_mod
+  use all_mod
+  use gen_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub
+  integer :: sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: b, c, s, c1, c2, count, var, subo 
-  CHARACTER           :: namOut*80
-  INTEGER,ALLOCATABLE :: iwork(:,:)
-  REAL,ALLOCATABLE    :: work(:)
+  integer             :: b, c, s, c1, c2, count, var, subo 
+  character           :: namOut*80
+  integer,allocatable :: iwork(:,:)
+  real,allocatable    :: work(:)
 !======================================================================!
 !   The files NAME.cns and NAME.geo should merge into one file in some !
 !   of the future releases.                                            !
@@ -308,4 +308,4 @@
   deallocate (iwork)
   deallocate (work)
 
-  END SUBROUTINE GeoSav
+  end subroutine GeoSav

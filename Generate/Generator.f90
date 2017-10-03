@@ -68,15 +68,12 @@
 !   Block structured mesh generation and unstructured cell refinement. *
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c,s,n
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Generator.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/Generator.f90,v $  
+  integer :: c,s,n
 !======================================================================!
 
 !---- Test the precision
@@ -143,4 +140,4 @@
 !---- write something on the screen
   call PrintG
 
-  END PROGRAM Generator 
+  end PROGRAM Generator 

@@ -1,30 +1,27 @@
 !======================================================================!
-  SUBROUTINE TopSys(rrun) 
+  subroutine TopSys(rrun) 
 !----------------------------------------------------------------------!
 !   Determines the topology of the cells, faces and boundary cells.    !
 !----------------------------------------------------------------------!
 ! Uses: CellC                                                          !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL :: rrun
+  logical :: rrun
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, s, i
-  INTEGER :: c1, c2, m, pass
-  INTEGER :: FaceN(6,4)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: TopSys.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/TopSys.f90,v $  
+  integer :: c, s, i
+  integer :: c1, c2, m, pass
+  integer :: FaceN(6,4)
 !======================================================================!
 
-  DATA    FaceN / 1, 1, 2, 4, 3, 5,                                 &
-		  2, 5, 6, 8, 7, 7,                                 &
-		  4, 6, 8, 7, 5, 8,                                 &
-		  3, 2, 4, 3, 1, 6  /
+  data    FaceN / 1, 1, 2, 4, 3, 5,                                 &
+                  2, 5, 6, 8, 7, 7,                                 &
+                  4, 6, 8, 7, 5, 8,                                 &
+                  3, 2, 4, 3, 1, 6  /
 
   write(*,*) 'Now determining the topology. This may take a while !'
 
@@ -37,13 +34,13 @@
   do c=1,NC
     do m=1,24   ! neighbour cells
       if(CellC(c,m)  < 0) then
-	NbC   = NbC + 1
+        NbC   = NbC + 1
 
 !----- remember the boundary marker, take positive value for marker
-	BCmark(-NbC) =  -CellC(c,m)  
+        BCmark(-NbC) =  -CellC(c,m)  
 
 !----- put new boundary cell into place  
-	CellC(c,m)  = -NbC
+        CellC(c,m)  = -NbC
 
 !----- material marker
         material(-NbC) = material(c)
@@ -74,34 +71,34 @@
 !----- which is c2 neighbour of c1 and vice versa
         do c=1,24
           if(CellC(c1,c) == c2) then 
-	    SideCc(NS,1)=c
-	  end if
+            SideCc(NS,1)=c
+          end if
 
-	  if(c2  > 0) then
-	    if(CellC(c2,c) == c1) then 
-	      SideCc(NS,2)=c
-	    end if 
-	  end if
-	end do
+          if(c2  > 0) then
+            if(CellC(c2,c) == c1) then 
+              SideCc(NS,2)=c
+            end if 
+          end if
+        end do
 !----- nodes of a side NS
-	if(c2  > 0) then
-	  if(level(c2)  > level(c1)) then
-	    SideN(NS,1) = CellN( c2, FaceN(SideCc(NS,2),4) )
-	    SideN(NS,2) = CellN( c2, FaceN(SideCc(NS,2),3) )
-	    SideN(NS,3) = CellN( c2, FaceN(SideCc(NS,2),2) )
-	    SideN(NS,4) = CellN( c2, FaceN(SideCc(NS,2),1) )
-  	  else
-	    SideN(NS,1) = CellN( c1, FaceN(m,1) )
-	    SideN(NS,2) = CellN( c1, FaceN(m,2) )
-	    SideN(NS,3) = CellN( c1, FaceN(m,3) )
-	    SideN(NS,4) = CellN( c1, FaceN(m,4) )
-	  end if
-	else
-	  SideN(NS,1) = CellN( c1, FaceN(m,1) )
-	  SideN(NS,2) = CellN( c1, FaceN(m,2) )
-	  SideN(NS,3) = CellN( c1, FaceN(m,3) )
-	  SideN(NS,4) = CellN( c1, FaceN(m,4) )
-	end if 
+        if(c2  > 0) then
+          if(level(c2)  > level(c1)) then
+            SideN(NS,1) = CellN( c2, FaceN(SideCc(NS,2),4) )
+            SideN(NS,2) = CellN( c2, FaceN(SideCc(NS,2),3) )
+            SideN(NS,3) = CellN( c2, FaceN(SideCc(NS,2),2) )
+            SideN(NS,4) = CellN( c2, FaceN(SideCc(NS,2),1) )
+            else
+            SideN(NS,1) = CellN( c1, FaceN(m,1) )
+            SideN(NS,2) = CellN( c1, FaceN(m,2) )
+            SideN(NS,3) = CellN( c1, FaceN(m,3) )
+            SideN(NS,4) = CellN( c1, FaceN(m,4) )
+          end if
+        else
+          SideN(NS,1) = CellN( c1, FaceN(m,1) )
+          SideN(NS,2) = CellN( c1, FaceN(m,2) )
+          SideN(NS,3) = CellN( c1, FaceN(m,3) )
+          SideN(NS,4) = CellN( c1, FaceN(m,4) )
+        end if 
 
       end if
     end do   ! m
@@ -117,10 +114,10 @@
   do c=1,NC
     do m=1,24   ! neighbour cells
       if(CellC(c,m)  < 0) then
-	NbC   = NbC + 1
+        NbC   = NbC + 1
 
 !----- restore the boundary marker, take positive value for marker
-	CellC(c,m)  = -BCmark(-NbC)
+        CellC(c,m)  = -BCmark(-NbC)
       end if 
     end do
   end do 
@@ -136,15 +133,15 @@
     c2=SideC(2,s)
     if(c2  < 0) then
       do i=1,6
-	if(CellC(c1,i)  ==  c2) then
-	  if(i == 1) SideC(0,s) = CellC(c1,6)
-	  if(i == 2) SideC(0,s) = CellC(c1,4)
-	  if(i == 3) SideC(0,s) = CellC(c1,5)
-	  if(i == 4) SideC(0,s) = CellC(c1,2)
-	  if(i == 5) SideC(0,s) = CellC(c1,3)
-	  if(i == 6) SideC(0,s) = CellC(c1,1)
+        if(CellC(c1,i)  ==  c2) then
+          if(i == 1) SideC(0,s) = CellC(c1,6)
+          if(i == 2) SideC(0,s) = CellC(c1,4)
+          if(i == 3) SideC(0,s) = CellC(c1,5)
+          if(i == 4) SideC(0,s) = CellC(c1,2)
+          if(i == 5) SideC(0,s) = CellC(c1,3)
+          if(i == 6) SideC(0,s) = CellC(c1,1)
 !>>>>>              write(*,*) 'c0=', SideC(0,s)
-	end if
+        end if
       end do
     end if
   end do 
@@ -156,7 +153,7 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2  < 0 .and. CopyC(c1) /= 0   &
-	       .and. BCmark(c2) == Copy(1,0)) then
+               .and. BCmark(c2) == Copy(1,0)) then
       CopyC(c2) = CopyC(c1)
 !>>>>>    CopyC(c1) = 0
 !>>>>>    write(*,*) 'Copy', CopyC(c2), ' to ', c2
@@ -179,4 +176,4 @@
     stop
   end if 
 
-  END SUBROUTINE TopSys
+  end subroutine TopSys

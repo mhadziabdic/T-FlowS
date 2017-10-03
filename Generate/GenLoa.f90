@@ -1,34 +1,31 @@
 !======================================================================!
-  SUBROUTINE GenLoa
+  subroutine GenLoa
 !----------------------------------------------------------------------!
 ! Reads: NAME.d                                                        !
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
-  USE par_mod
+  use all_mod
+  use gen_mod
+  use par_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  REAL :: TetVol   
+  real :: TetVol   
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: b, i, l, s, fc, n, n1,n2,n3,n4
-  INTEGER   :: NSchck, NNchck
-  INTEGER   :: NI, NJ, NK
-  INTEGER   :: dum
-  CHARACTER :: namDom*80
-  CHARACTER :: answer*12 
-  REAL      :: xt(8), yt(8), zt(8)
+  integer   :: b, i, l, s, fc, n, n1,n2,n3,n4
+  integer   :: NSchck, NNchck
+  integer   :: NI, NJ, NK
+  integer   :: dum
+  character :: namDom*80
+  character :: answer*12 
+  real      :: xt(8), yt(8), zt(8)
 
-  INTEGER   :: FaceN(6,4)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GenLoa.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/GenLoa.f90,v $  
+  integer   :: FaceN(6,4)
 !======================================================================!
-  DATA      FaceN / 1, 1, 2, 4, 3, 5,                               &
-		    2, 5, 6, 8, 7, 7,                               &
-		    4, 6, 8, 7, 5, 8,                               &
-		    3, 2, 4, 3, 1, 6  /
+  data      FaceN / 1, 1, 2, 4, 3, 5,                               &
+                    2, 5, 6, 8, 7, 7,                               &
+                    4, 6, 8, 7, 5, 8,                               &
+                    3, 2, 4, 3, 1, 6  /
 !----------------------------------------------------------------------!
 
   write(6,'(A41)') '# Input problem name: (without extension)'
@@ -159,16 +156,16 @@
 
     call ReadC(9,inp,tn,ts,te)
     read(inp(ts(2):te(4)),*)  &  ! NI, NJ, NK  for a block
-	 BlkRes(b, 1), BlkRes(b, 2), BlkRes(b, 3) 
+         BlkRes(b, 1), BlkRes(b, 2), BlkRes(b, 3) 
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)  &            ! Block weights 
-	 BlkWgt(b,1),BlkWgt(b,2),BlkWgt(b,3)
+         BlkWgt(b,1),BlkWgt(b,2),BlkWgt(b,3)
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)                       &
-	 BlkPnt(b, 1), BlkPnt(b, 2),  &
-	 BlkPnt(b, 3), BlkPnt(b, 4),  &
-	 BlkPnt(b, 5), BlkPnt(b, 6),  &
-	 BlkPnt(b, 7), BlkPnt(b, 8)
+         BlkPnt(b, 1), BlkPnt(b, 2),  &
+         BlkPnt(b, 3), BlkPnt(b, 4),  &
+         BlkPnt(b, 5), BlkPnt(b, 6),  &
+         BlkPnt(b, 7), BlkPnt(b, 8)
 
 !-------------------------------!
 !     Check if the block is     ! 
@@ -182,7 +179,7 @@
     end do
 
     if(tetvol( xt(2),yt(2),zt(2), xt(5),yt(5),zt(5),  &
-	       xt(3),yt(3),zt(3), xt(1),yt(1),zt(1) )  < 0) then
+               xt(3),yt(3),zt(3), xt(1),yt(1),zt(1) )  < 0) then
       BlkPnt(b,0)=-1            !  It's nor properly oriented
       call swapi(BlkPnt(b,2),BlkPnt(b,3))
       call swapi(BlkPnt(b,6),BlkPnt(b,7))
@@ -201,7 +198,7 @@
   do b=1,Nbloc
     do fc=1,6
       do n=1,4
-	BlkFac(b, fc, n)=BlkPnt(b, FaceN(fc,n))
+        BlkFac(b, fc, n)=BlkPnt(b, FaceN(fc,n))
       end do
     end do
   end do
@@ -233,10 +230,10 @@
 !----- zadana tocka po tocka
     if(dum  > 0) then
       do n=1,LinRes(l)
-	call ReadC(9,inp,tn,ts,te)
-	read(inp(ts(2):te(4)),*) xl(l,n), yl(l,n), zl(l,n)
+        call ReadC(9,inp,tn,ts,te)
+        read(inp(ts(2):te(4)),*) xl(l,n), yl(l,n), zl(l,n)
 !->>>
-	write(6,*)  xl(l,n), yl(l,n), zl(l,n)
+        write(6,*)  xl(l,n), yl(l,n), zl(l,n)
       end do
 !----- zadan tezinski faktor
     else
@@ -327,8 +324,8 @@
     call ReadC(9,inp,tn,ts,te)
     if(tn == 7) then
       read(inp,*)  dum,                         &  
-	   Bound(n,1), Bound(n,2), Bound(n,3),  &  ! is, js, ks 
-	   Bound(n,4), Bound(n,5), Bound(n,6)      ! ie, je, ke
+           Bound(n,1), Bound(n,2), Bound(n,3),  &  ! is, js, ks 
+           Bound(n,4), Bound(n,5), Bound(n,6)      ! ie, je, ke
     else if(tn == 2) then
       read(inp(ts(1):te(1)),*)       dum           
       read(inp(ts(2):te(2)),'(A4)')  BndFac(n)
@@ -336,8 +333,8 @@
     end if
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)       &  
-	 Bound(n,7),  &  ! block,  
-	 Bound(n,8)      ! mark         
+         Bound(n,7),  &  ! block,  
+         Bound(n,8)      ! mark         
   if( BlkPnt(Bound(n,7),0) == -1 ) then
     call swapi( Bound(n,1),Bound(n,2) )
     call swapi( Bound(n,4),Bound(n,5) )
@@ -392,20 +389,20 @@
       read(inp(ts(3):te(3)),*) answer
       call ToUppr(answer)
       if(answer == 'RECTANGLE') then
-	Fregio(l,n,0) = RECTAN
+        Fregio(l,n,0) = RECTAN
       elseif(answer == 'ELIPSOID') then
-	Fregio(l,n,0) = ELIPSO 
+        Fregio(l,n,0) = ELIPSO 
       elseif(answer == 'PLANE') then
-	Fregio(l,n,0) = PLANE
+        Fregio(l,n,0) = PLANE
       else
-	write(*,*) 'Error in input file: ', answer 
-	stop
+        write(*,*) 'Error in input file: ', answer 
+        stop
       endif 
 
       call ReadC(9,inp,tn,ts,te)
       read(inp,*)                                                   &
-		  Fregio(l,n,1),Fregio(l,n,2),Fregio(l,n,3),        &
-		  Fregio(l,n,4),Fregio(l,n,5),Fregio(l,n,6)   
+                  Fregio(l,n,1),Fregio(l,n,2),Fregio(l,n,3),        &
+                  Fregio(l,n,4),Fregio(l,n,5),Fregio(l,n,6)   
     end do
   end do
 
@@ -448,10 +445,10 @@
     read(inp,*) Siter(n), Srelax(n)
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)                                                     &
-		Sregio(n,1),Sregio(n,2),Sregio(n,3),                &
-		Sregio(n,4),Sregio(n,5),Sregio(n,6)   
+                Sregio(n,1),Sregio(n,2),Sregio(n,3),                &
+                Sregio(n,4),Sregio(n,5),Sregio(n,6)   
   end do
 
   close(9)
 
-  END SUBROUTINE GenLoa
+  end subroutine GenLoa

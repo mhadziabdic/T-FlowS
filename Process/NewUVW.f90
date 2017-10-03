@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE NewUVW(var, Ui,                                &
+  subroutine NewUVW(var, Ui,                                &
                 dUidi, dUidj, dUidk,                            &
                 Si, Sj, Sk,                                     &
                 Di, Dj, Dk,                                     &
@@ -8,32 +8,29 @@
 !   Discretizes and solves momentum conservation equations             !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER       :: var
+  integer       :: var
   TYPE(Unknown) :: Ui
-  REAL          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
-  REAL          :: Si(NS), Sj(NS), Sk(NS) 
-  REAL          :: Di(NS), Dj(NS), Dk(NS) 
-  REAL          :: Pi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
-  REAL          :: uuS, vvS, wwS, uvS, uwS, vwS
+  real          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
+  real          :: Si(NS), Sj(NS), Sk(NS) 
+  real          :: Di(NS), Dj(NS), Dk(NS) 
+  real          :: Pi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
+  real          :: uuS, vvS, wwS, uvS, uwS, vwS
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2, niter, miter, mat
-  REAL    :: Fex, Fim 
-  REAL    :: Uis
-  REAL    :: A0, A12, A21
-  REAL    :: error
-  REAL    :: VISeff, VIStS, Fstress 
-  REAL    :: dUidiS,dUidjS,dUidkS,dUjdiS,dUkdiS
-!--------------------------------[CVS]---------------------------------!
-!  $Id: NewUVW.f90,v 1.2 2017/08/31 22:02:55 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/NewUVW.f90,v $    
+  integer :: s, c, c1, c2, niter, miter, mat
+  real    :: Fex, Fim 
+  real    :: Uis
+  real    :: A0, A12, A21
+  real    :: error
+  real    :: VISeff, VIStS, Fstress 
+  real    :: dUidiS,dUidjS,dUidkS,dUjdiS,dUkdiS
 !----------------------------------------------------------------------!
 !
 !  Stress tensor on the face s:
@@ -597,4 +594,4 @@
 
   call Exchng(Ui % n)
 
-  END SUBROUTINE NewUVW
+  end subroutine NewUVW

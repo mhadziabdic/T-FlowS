@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourceEpsKEPSV2F()
+  subroutine SourceEpsKEPSV2F()
 !-----------------------------------------------------------------------!
 ! Purpose:                                                              !
 ! Calculates source terms in equation of dissipation of turbulent energy! 
@@ -8,20 +8,17 @@
 ! Authors: Muhamed Hadziabdic 
 !-----------------------------------------------------------------------!
 !------------------------------[Modules]--------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
+  use les_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, s, c1, c2,j	 
-  REAL    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret, Ck, EBF
-  REAL    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, EpsWall, EpsHom
-  REAL    :: BL_EPS, Pro, Pk_turb, Pk_vis, Yplus
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourceEpsKEPSV2F.f90,v 1.3 2017/08/31 22:31:18 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourceEpsKEPSV2F.f90,v $  
+  integer :: c, s, c1, c2,j	 
+  real    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret, Ck, EBF
+  real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, EpsWall, EpsHom
+  real    :: BL_EPS, Pro, Pk_turb, Pk_vis, Yplus
 !======================================================================!
 
 
@@ -120,4 +117,4 @@
   end if 
 
   RETURN
-  END SUBROUTINE SourceEpsKEPSV2F 
+  end subroutine SourceEpsKEPSV2F 

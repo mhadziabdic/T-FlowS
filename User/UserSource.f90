@@ -1,21 +1,18 @@
 !======================================================================!
-  SUBROUTINE UserSource() 
+  subroutine UserSource() 
 !----------------------------------------------------------------------!
 !   This subroutine extracts the heat in case when periodic boundaries !
 !   are used in order to keep energy balans                            !
 !   This source is part of the convection                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserSource.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserSource.f90,v $    
+  integer :: c
 !----------------------------------------------------------------------!
 ! Description:                                                         !
 ! ~~~~~~~~~~~~                                                         !
@@ -64,4 +61,4 @@
 
   return
 
-  END SUBROUTINE UserSource
+  end subroutine UserSource

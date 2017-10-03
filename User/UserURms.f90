@@ -1,14 +1,11 @@
 !======================================================================!
-  REAL FUNCTION UserURms(y)
+  real function UserURms(y)
 !----------------------------------------------------------------------!
 !   Prescribes mean streamwise velocity fluctuations for the channel.  !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: y
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserURms.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserURms.f90,v $  
+  real :: y
 !======================================================================!
 !   Wall is at y=0, and centerline at y=1                              !
 !----------------------------------------------------------------------!
@@ -20,4 +17,4 @@
    +6.078162e+003  * y**3  -  1.039484e+003  * y**2                 &
    +8.685630e+001  * y**1  -  6.519220e-002
 
-  END FUNCTION
+  end function

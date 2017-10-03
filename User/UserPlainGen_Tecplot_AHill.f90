@@ -1,23 +1,23 @@
 !======================================================================!
-  SUBROUTINE UserPlainGen_Tecplot_AHill(n)
+  subroutine UserPlainGen_Tecplot_AHill(n)
 !----------------------------------------------------------------------!
 !----------------------------------------------------------------------!
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !-----------------------------[Parameters]-----------------------------!
-    INTEGER             :: n
-    REAL                :: x1_dis, x0_dis, y1_dis, y0_dis, z1_dis, z0_dis
-    REAL                :: TauWup, TauWdown
-    REAL    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, R, UtanX
+    integer             :: n
+    real                :: x1_dis, x0_dis, y1_dis, y0_dis, z1_dis, z0_dis
+    real                :: TauWup, TauWdown
+    real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, R, UtanX
 !-------------------------------[Locals]-------------------------------!
-    INTEGER             :: c, s, c1, c2
-    CHARACTER*24        :: inflowfile
-    CHARACTER*80        :: namout
-    CHARACTER*39        :: path
+    integer             :: c, s, c1, c2
+    character*24        :: inflowfile
+    character*80        :: namout
+    character*39        :: path
 !======================================================================!
    TauWdown = 0.0
    TauWup   = 0.0 
@@ -141,4 +141,4 @@
 !      write(19,*) n, TauWdown, TauWup 
 !    end if
 
-  END SUBROUTINE UserPlainGen_Tecplot_AHill
+  end subroutine UserPlainGen_Tecplot_AHill

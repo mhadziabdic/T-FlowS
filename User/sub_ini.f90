@@ -7,43 +7,43 @@
 !  The LoaIni.f90 reads these files and interpolate the previous solution
 !  into new mesh.
 !----------------------------------------------------------------------*
-      IMPLICIT NONE
+      implicit none
 !======================================================================*
 
-  REAL,ALLOCATABLE :: xc(:),yc(:),zc(:)
-  REAL,ALLOCATABLE :: Sx(:),Sy(:),Sz(:)
-  REAL,ALLOCATABLE :: volume(:)            ! cell's volume
-  REAL,ALLOCATABLE :: delta(:)             ! delta (max(dx,dy,dz))
-  REAL,ALLOCATABLE :: Dx(:),Dy(:),Dz(:)
-  REAL,ALLOCATABLE :: xsp(:),ysp(:),zsp(:) ! face coordinates
-  REAL,ALLOCATABLE :: WallDs(:), f(:)
-  REAL             :: Xmax, Xmin, Ymin, Ymax, Zmin, Zmax
+  real,allocatable :: xc(:),yc(:),zc(:)
+  real,allocatable :: Sx(:),Sy(:),Sz(:)
+  real,allocatable :: volume(:)            ! cell's volume
+  real,allocatable :: delta(:)             ! delta (max(dx,dy,dz))
+  real,allocatable :: Dx(:),Dy(:),Dz(:)
+  real,allocatable :: xsp(:),ysp(:),zsp(:) ! face coordinates
+  real,allocatable :: WallDs(:), f(:)
+  real             :: Xmax, Xmin, Ymin, Ymax, Zmin, Zmax
 
-  INTEGER   :: NC, NS, ND, NN                    ! num. of nodes and cells
-  INTEGER   :: NbC, NSsh, Nmat
+  integer   :: NC, NS, ND, NN                    ! num. of nodes and cells
+  integer   :: NbC, NSsh, Nmat
 
-  INTEGER,ALLOCATABLE :: material(:)     ! material markers
-  INTEGER,ALLOCATABLE :: SideC(:,:)      !  c0, c1, c2
+  integer,allocatable :: material(:)     ! material markers
+  integer,allocatable :: SideC(:,:)      !  c0, c1, c2
 
-  INTEGER          :: l1, n, IND
-  INTEGER          :: j, k, c, c1, c2, s
-  INTEGER          :: NCold
-  CHARACTER*80     :: nameIn
-  CHARACTER*80     :: namSav
-  REAL,ALLOCATABLE :: Xold(:),Yold(:),Zold(:)
-  REAL,ALLOCATABLE :: Uold(:),Vold(:),Wold(:),Told(:)
-  REAL,ALLOCATABLE :: UCold(:),VCold(:),WCold(:),TCold(:)
-  REAL,ALLOCATABLE :: UCoold(:),VCoold(:),WCoold(:),TCoold(:)
-  REAL,ALLOCATABLE :: Uoold(:),Voold(:),Woold(:),Toold(:)
-  REAL,ALLOCATABLE :: UDoold(:),VDoold(:),WDoold(:),TDoold(:)
-  REAL,ALLOCATABLE :: UXold(:),VXold(:),WXold(:),TXold(:)
-  REAL,ALLOCATABLE :: UXoold(:),VXoold(:),WXoold(:),TXoold(:)
-  REAL,ALLOCATABLE :: Pold(:) 
-  REAL,ALLOCATABLE :: PPold(:)
-  REAL,ALLOCATABLE :: Pxold(:),Pyold(:),Pzold(:)
+  integer          :: l1, n, IND
+  integer          :: j, k, c, c1, c2, s
+  integer          :: NCold
+  character*80     :: nameIn
+  character*80     :: namSav
+  real,allocatable :: Xold(:),Yold(:),Zold(:)
+  real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:)
+  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:)
+  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:)
+  real,allocatable :: Uoold(:),Voold(:),Woold(:),Toold(:)
+  real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:)
+  real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:)
+  real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:)
+  real,allocatable :: Pold(:) 
+  real,allocatable :: PPold(:)
+  real,allocatable :: Pxold(:),Pyold(:),Pzold(:)
 !---- Variables for ReadC:
-  CHARACTER  :: namU*80, namV*80, namW*80, naOut*80, naIn*80, namFin*80
-  CHARACTER  :: answer*80, nameOut*80, namP*80, namT*80, name*80
+  character  :: namU*80, namV*80, namW*80, naOut*80, naIn*80, namFin*80
+  character  :: answer*80, nameOut*80, namP*80, namT*80, name*80
 !----------------------------------------------------------------------!
 ! The answer name is case dependent
 !----------------------------------------------------------------------!
@@ -393,28 +393,25 @@
   deallocate(Pyold)
   deallocate(Pzold)
 
-  END PROGRAM
+  end PROGRAM
 
 !======================================================================!
-  SUBROUTINE NamFil(name, namOut, ext, lext)
+  subroutine NamFil(name, namOut, ext, lext)
 !----------------------------------------------------------------------!
 !   Creates the file name depending on the subdomain and file type.    !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-!  USE all_mod
+!  use all_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER       :: sub, lext
-  CHARACTER*(*) :: ext
-  CHARACTER*(*) :: namOut
-  CHARACTER     :: name*80
+  integer       :: sub, lext
+  character*(*) :: ext
+  character*(*) :: namOut
+  character     :: name*80
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c
-  CHARACTER :: numb*4
-!--------------------------------[CVS]---------------------------------!
-!  $Id: sub_ini.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/sub_ini.f90,v $
+  integer   :: c
+  character :: numb*4
 !======================================================================!
 
   namOut = name
@@ -431,7 +428,7 @@
 !    namOut(len_trim(name)+6:len_trim(name)+6+lext-1) = ext(1:lext)
 !  end if
 
-  END SUBROUTINE NamFil
+  end subroutine NamFil
 
 
 

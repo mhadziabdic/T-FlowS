@@ -1,26 +1,20 @@
 !======================================================================!
-  SUBROUTINE SavIni()
+  subroutine SavIni()
 !----------------------------------------------------------------------!
 !   
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   ::  c, Nvar, var, c1, c2, s, SC, nn
+  integer   ::  c, Nvar, var, c1, c2, s, SC, nn
   TYPE(Unknown) :: PHI
-  CHARACTER :: namOut*80, answer*80, ext*4
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: SavIni.f90,v 1.2 2017/08/31 22:07:17 mhadziabdic Exp $'/
-  data rcs2/                                                        &
-  '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SavIni.f90,v $'/
+  character :: namOut*80, answer*80, ext*4
 !======================================================================!
 
 !---- store the name
@@ -156,4 +150,4 @@
 
   name = answer 
 
-  END SUBROUTINE SavIni
+  end subroutine SavIni

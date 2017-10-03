@@ -6,20 +6,16 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!..RCS/CVS ident
-! $Id: div_mod.h90,v 1.4 2001/02/19 15:20:03 niceno Exp $
-! $Source: /home/muhamed/.CVSROOT/T-Rex/Library/div_mod.h90,v $
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 MODULE div_mod
 
-  IMPLICIT NONE
+  implicit none
 
-  INTEGER,ALLOCATABLE :: ix(:), iy(:), iz(:), iin(:)
-  REAL,ALLOCATABLE    :: criter(:) 
+  integer,allocatable :: ix(:), iy(:), iz(:), iin(:)
+  real,allocatable    :: criter(:) 
 
 !------------!
 ! Parameters !
 !------------!
-  INTEGER :: ALGOR, COORDINATE, INERTIAL
+  integer :: ALGOR, COORDINATE, INERTIAL
 
-END MODULE
+end MODULE

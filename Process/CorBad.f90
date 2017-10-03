@@ -1,22 +1,19 @@
 !======================================================================!
-  SUBROUTINE CorBad(PHIi)
+  subroutine CorBad(PHIi)
 !----------------------------------------------------------------------!
 !   Corrects the pressure gradients in the cells where they cannot     !
 !   be computed, the so called "bad" cells.                            !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use les_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: PHIi(-NbC:NC)
+  real :: PHIi(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, s
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CorBad.f90,v 1.2 2017/08/31 21:50:31 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CorBad.f90,v $  
+  integer :: c, c1, c2, s
 !======================================================================!
 
   do c=1,NC
@@ -37,4 +34,4 @@
 
   call Exchng(PHIi)
 
-  END SUBROUTINE CorBad 
+  end subroutine CorBad 

@@ -1,21 +1,18 @@
 !======================================================================!
-  SUBROUTINE UserSavRaw
+  subroutine UserSavRaw
 !----------------------------------------------------------------------!
 ! Writes: NAME.rawdata                                                 !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c, NCtot
-  CHARACTER :: namOut*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserSavRaw.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserSavRaw.f90,v $  
+  integer   :: c, NCtot
+  character :: namOut*80
 !======================================================================!
 
 !------------------------------!
@@ -40,4 +37,4 @@
 
   close(9)
 
-  END SUBROUTINE UserSavRaw
+  end subroutine UserSavRaw

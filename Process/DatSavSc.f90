@@ -1,23 +1,20 @@
 !======================================================================!
-  SUBROUTINE DatSavSc(namSc, idSc, PHI)
+  subroutine DatSavSc(namSc, idSc, PHI)
 !----------------------------------------------------------------------!
 ! Writes: NAME.dat                                                     !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER   :: idSc
-  CHARACTER :: namSc*(*)
-  REAL      :: PHI(-NbC:NC)
+  integer   :: idSc
+  character :: namSc*(*)
+  real      :: PHI(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: N, s, c, c1, c2, Nfac(10), NtotFac
-!--------------------------------[CVS]---------------------------------!
-!  $Id: DatSavSc.f90,v 1.2 2017/08/31 21:53:05 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/DatSavSc.f90,v $             
+  integer   :: N, s, c, c1, c2, Nfac(10), NtotFac
 !======================================================================!
 !----------------!
 !     inside     !
@@ -67,4 +64,4 @@
 
   end do   ! n -> boundary condition types
 
-  END SUBROUTINE DatSavSc
+  end subroutine DatSavSc

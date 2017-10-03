@@ -1,36 +1,36 @@
 !======================================================================!
-  SUBROUTINE Average1D(y)   
+  subroutine Average1D(y)   
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the points defined by coordinates in it and then          !
 ! distributes teh result back to cells.                                !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: y(-NbC:NC)
+  real :: y(-NbC:NC)
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE 
+  interface
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, optional :: tol
+    end function Approx
+  end interface 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: Nprob, pl, c, dummy
-  CHARACTER           :: namCoo*80, namPro*80, answer*80
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+  integer             :: Nprob, pl, c, dummy
+  character           :: namCoo*80, namPro*80, answer*80
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
                                  uTp(:), vTp(:), wTp(:), &
                                  Ksgsp(:)
-  INTEGER,ALLOCATABLE :: Np(:), AveragePoint(:)
+  integer,allocatable :: Np(:), AveragePoint(:)
 !--------------------------------[CVS]---------------------------------!
 !  $Id: Average1D.f90,v 1.2 2017/08/31 21:27:57 mhadziabdic Exp $  
 !  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/Average1D.f90,v $  
@@ -205,4 +205,4 @@
   end if
   deallocate(AveragePoint)
 
-  END SUBROUTINE Average1D  
+  end subroutine Average1D  

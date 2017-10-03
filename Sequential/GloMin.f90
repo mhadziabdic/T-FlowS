@@ -1,14 +1,11 @@
 !======================================================================!
-  SUBROUTINE GloMin(PHI) 
+  subroutine GloMin(PHI) 
 !----------------------------------------------------------------------!
 !   Dummy function.                                                    !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: PHI
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GloMin.f90,v 1.1 2014/11/24 11:36:22 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Sequential/GloMin.f90,v $  
+  real :: PHI
 !======================================================================!
 
-  END SUBROUTINE GloMin
+  end subroutine GloMin

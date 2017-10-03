@@ -1,31 +1,28 @@
 !======================================================================!
-  SUBROUTINE Prec1(N,NONZ,A,Acol,Arow,Adia,D,prec) 
+  subroutine Prec1(N,NONZ,A,Acol,Arow,Adia,D,prec) 
 !----------------------------------------------------------------------!
 !   Solves the linear systems of equations by a precond. CG Method.    !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE par_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER  :: N, NONZ      
+  integer  :: N, NONZ      
 
-  REAL     :: A(NONZ)
-  INTEGER  :: Acol(N),Adia(N)
-  INTEGER  :: Arow(NONZ)
-  REAL     :: D(N) 
+  real     :: A(NONZ)
+  integer  :: Acol(N),Adia(N)
+  integer  :: Arow(NONZ)
+  real     :: D(N) 
 
-  INTEGER  :: prec
+  integer  :: prec
 !-------------------------------[Locals]-------------------------------!
-  REAL     :: sum1
-  INTEGER  :: i, j, k
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Prec1.f90,v 1.2 2017/08/31 21:56:47 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/Prec1.f90,v $  
+  real     :: sum1
+  integer  :: i, j, k
 !======================================================================!
-		 
+                 
 !->>>
-!      INTEGER c 
+!      integer c 
 !      do c=1,N
 !        write(*,*) 'Cell: ', c
 !        write(*,*) 'Width: ', Acol(c+1)-Acol(c)
@@ -52,8 +49,8 @@
     do i=1,N
       sum1=A(Adia(i))          
       do j=Acol(i), Adia(i)-1         ! only lower traingular
-	k=Arow(j)                    
-	sum1= sum1- D(k) * A(j)*A(j)  
+        k=Arow(j)                    
+        sum1= sum1- D(k) * A(j)*A(j)  
       end do
       D(i) = 1.0 / sum1                 ! BUG ?
     end do
@@ -66,4 +63,4 @@
     end do
   end if 
 
-  END SUBROUTINE Prec1
+  end subroutine Prec1

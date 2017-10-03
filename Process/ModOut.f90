@@ -1,19 +1,16 @@
 !======================================================================!
-  SUBROUTINE ModOut 
+  subroutine ModOut 
 !----------------------------------------------------------------------!
 !   Modifies the fluxes at outflow boundaries to conserve the mass.    ! 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: m, s, c1, c2
-  REAL    :: fac(256) 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ModOut.f90,v 1.2 2017/08/31 22:04:09 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/ModOut.f90,v $  
+  integer :: m, s, c1, c2
+  real    :: fac(256) 
 !======================================================================!
 
 !------------------------------------------!
@@ -104,4 +101,4 @@
     end do
   end do
 
-  END SUBROUTINE ModOut
+  end subroutine ModOut

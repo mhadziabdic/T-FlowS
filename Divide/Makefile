@@ -18,8 +18,13 @@
   vpath %.c $(INC_SRCDIRSH)
   vpath %.f90 $(INC_SRCDIRSH)
 
+#---------------------------
+# Default target is cluster
+#---------------------------
+TARGET = cluster
+
 #-------------------------
-  PROGRAM = RUN
+PROGRAM = RUN
 #-------------------------
 
 #=============================
@@ -69,7 +74,7 @@
 #-------------------
   FSRCS0 := Divisor.f90                                             \
             DivLoa.f90   Factor.f90   Number.f90   CasSav.f90       \
-            IniDiv.f90   Split.f90    RISort.f90   Dist.f90         \
+            IniDiv.f90   Split.f90    RISort.f90   Distance.f90     \
             ReadC.f90    EpsPar.f90   GenSav.f90   ComSav.f90       \
             GeoLoa.f90   GeoSav.f90   TestLn.f90   NamFil.f90       \
             INSort.f90   BCelLoa.f90  ToUppr.f90   AA.f90           \

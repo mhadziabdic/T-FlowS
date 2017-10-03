@@ -1,33 +1,33 @@
 !======================================================================!
-  SUBROUTINE UserCutLines_annulus(namAut) 
+  subroutine UserCutLines_annulus(namAut) 
 !----------------------------------------------------------------------!
 ! This program reads name.1D file created by NEU or GEN and averages    
 ! the results in the homogeneous direction directions.            
 ! The results are writen in files name_res.dat and name_res_plus.dat
 !----------------------------------------------------------------------!
-    USE all_mod
-    USE allp_mod
-    USE les_mod
-    USE pro_mod
-    USE par_mod
-    USE rans_mod
+    use all_mod
+    use allp_mod
+    use les_mod
+    use pro_mod
+    use par_mod
+    use rans_mod
 !----------------------------------------------------------------------!
-    IMPLICIT NONE
+    implicit none
 !-----------------------------[Parameters]-----------------------------!
-    REAL :: Ufric, Wall_near 
+    real :: Ufric, Wall_near 
 !------------------------------[Calling]-------------------------------!
-    INTERFACE
-      LOGICAL FUNCTION Approx(A,B,tol)
-        REAL           :: A,B
-        REAL, OPTIONAL :: tol
-      END FUNCTION Approx
-    END INTERFACE 
+    interface
+      logical function Approx(A,B,tol)
+        real           :: A,B
+        real, optional :: tol
+      end function Approx
+    end interface 
 !-------------------------------[Locals]-------------------------------!
-    INTEGER             :: Nprob, pl, c, i, count, kk
-    CHARACTER           :: namCoo*80, namPro*80, answer*80, namRes*80
-    CHARACTER           :: namRes_plus*80
-    CHARACTER, OPTIONAL :: namAut*(*)
-    REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+    integer             :: Nprob, pl, c, i, count, kk
+    character           :: namCoo*80, namPro*80, answer*80, namRes*80
+    character           :: namRes_plus*80
+    character, optional :: namAut*(*)
+    real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
@@ -37,12 +37,9 @@
                                  var_3(:), Wall_p(:), var_4(:),&
                                  Ufric_p(:), var_5(:), var_6(:),&
                                  var_7(:), var_8(:), var_9(:)
-    INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
-    REAL                :: R, Urad_mean, Utan_mean, dummy, Lscale, R_max
-    REAL                :: b11, b22, b12, b21, Vwall
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCutLines_annulus.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCutLines_annulus.f90,v $  
+    integer,allocatable :: Np(:), Ncount(:)
+    real                :: R, Urad_mean, Utan_mean, dummy, Lscale, R_max
+    real                :: b11, b22, b12, b21, Vwall
 !======================================================================!
   if(PRESENT(namAut)) then
 !---- save the name
@@ -401,4 +398,4 @@
       deallocate(vTp)
       deallocate(wTp)
     end if
-  END SUBROUTINE UserCutLines_annulus
+  end subroutine UserCutLines_annulus

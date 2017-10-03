@@ -1,30 +1,27 @@
 !======================================================================!
-  SUBROUTINE StaPar
+  subroutine StaPar
 !----------------------------------------------------------------------!
 !   Initializes parallel execution.                                    !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE par_mod 
+  use par_mod 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Include]-------------------------------!
-  INCLUDE 'mpif.h'
+  include 'mpif.h'
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: error
-!--------------------------------[CVS]---------------------------------!
-!  $Id: StaPar.f90,v 1.1 2014/11/24 11:39:07 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Single/StaPar.f90,v $  
+  integer :: error
 !======================================================================!
 
   CALL MPI_INIT(ERROR)
 
   CALL MPI_COMM_SIZE(MPI_COMM_WORLD,                                &
-		     NPro,                                          &
-		     error) 
+                     NPro,                                          &
+                     error) 
 
   CALL MPI_COMM_RANK(MPI_COMM_WORLD,                                &
-		     this,                                          &
-		     error)
+                     this,                                          &
+                     error)
 
   this=this+1
 
@@ -33,4 +30,4 @@
     this = 0
   endif
 
-  END SUBROUTINE StaPar
+  end subroutine StaPar

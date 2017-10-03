@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE ConvScheme(Phis, s,                            &
+  subroutine ConvScheme(Phis, s,                            &
                         Phi,                                &
                         dPhidi, dPhidj, dPhidk, Di, Dj, Dk, &
                         blenda) 
@@ -9,25 +9,22 @@
 ! Basara's and Przulj's AIAA paper.                                    !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL          :: Phis
-  INTEGER       :: s
-  REAL          :: Phi(-NbC:NC)
-  REAL          :: dPhidi(-NbC:NC), dPhidj(-NbC:NC), dPhidk(-NbC:NC)
-  REAL          :: Di(NS),          Dj(NS),          Dk(NS)
-  INTEGER       :: blenda
+  real          :: Phis
+  integer       :: s
+  real          :: Phi(-NbC:NC)
+  real          :: dPhidi(-NbC:NC), dPhidj(-NbC:NC), dPhidk(-NbC:NC)
+  real          :: Di(NS),          Dj(NS),          Dk(NS)
+  integer       :: blenda
 !-------------------------------[Locals]-------------------------------!
-  INTEGER       :: c1, c2, C, D
-  REAL          :: fj ! flow oriented interpolation factor
-  REAL          :: gD, gU, alfa, beta1, beta2 
-  REAL          :: Phij, PhiU, PhiUstar, rj, sign, GammaC, Beta
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ConvScheme.f90,v 1.2 2017/08/31 21:51:32 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/ConvScheme.f90,v $  
+  integer       :: c1, c2, C, D
+  real          :: fj ! flow oriented interpolation factor
+  real          :: gD, gU, alfa, beta1, beta2 
+  real          :: Phij, PhiU, PhiUstar, rj, sign, GammaC, Beta
 !======================================================================!
 !
 !               Flux > 0
@@ -136,4 +133,4 @@
 
   RETURN 
 
-  END SUBROUTINE ConvScheme
+  end subroutine ConvScheme

@@ -1,20 +1,17 @@
 !======================================================================!
-  SUBROUTINE BufLoa 
+  subroutine BufLoa 
 !----------------------------------------------------------------------!
 ! Reads: NAME.buf                                                      !
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE par_mod
+  use all_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c, dummy 
-  INTEGER   :: sub, subo, NNsub,NCsub,NSsub,NBCsub,NBFsub
-  CHARACTER :: nameIn*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: BufLoa.f90,v 1.1 2014/11/24 11:39:07 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Single/BufLoa.f90,v $             
+  integer   :: c, dummy 
+  integer   :: sub, subo, NNsub,NCsub,NSsub,NBCsub,NBFsub
+  character :: nameIn*80
 !======================================================================!
 !  Each subdomain needs two buffers: a send buffer and a receive buffer.
 !  A receive buffer will be stored as aditional boundary cells for each
@@ -92,4 +89,4 @@
 !->>>    write(*,'(A2,I2,3I7)') 'PE',this, sub, NBBs(sub), NBBe(sub)
 !->>>  end do   ! through subdomains
 
-  END SUBROUTINE BufLoa
+  end subroutine BufLoa

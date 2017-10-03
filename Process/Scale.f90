@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE Scale()
+  subroutine Scale()
 !----------------------------------------------------------------------!
 !  Purpose:                                                            !
 !  Calculates time scale and leght scale in manner to avoid singularity!
@@ -8,18 +8,15 @@
 !  Authors: Muhamed Hadziabdic 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER c 
-  REAL T1, T2, L1, L2, L3, T3
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Scale.f90,v 1.2 2017/08/31 22:09:09 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/Scale.f90,v $              
+  integer c 
+  real T1, T2, L1, L2, L3, T3
 !======================================================================!
 
   if(SIMULA==K_EPS_VV) then
@@ -76,4 +73,4 @@
   end if
 
    RETURN
-   END SUBROUTINE Scale
+   end subroutine Scale

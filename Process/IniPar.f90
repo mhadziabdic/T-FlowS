@@ -1,19 +1,16 @@
 !======================================================================!
-  SUBROUTINE IniPar 
+  subroutine IniPar 
 !----------------------------------------------------------------------!
 !   Initialize various solver parameters.                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i
-!--------------------------------[CVS]---------------------------------!
-!  $Id: IniPar.f90,v 1.2 2017/08/31 21:58:13 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/IniPar.f90,v $  
+  integer :: i
 !======================================================================!
 
 !-------------------------------!
@@ -128,4 +125,4 @@
     Cm(i) = 1
   end do
 
-  END SUBROUTINE IniPar
+  end subroutine IniPar

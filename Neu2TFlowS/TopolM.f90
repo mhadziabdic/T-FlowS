@@ -1,23 +1,17 @@
 !======================================================================!
-  SUBROUTINE TopolM         
+  subroutine TopolM         
 !----------------------------------------------------------------------!
 ! Determines the topology of the emesh.                                 !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod 
-  USE gen_mod 
-  USE neu_mod 
+  use all_mod 
+  use gen_mod 
+  use neu_mod 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: i, j, NbounCells, cnt, typ
-  CHARACTER :: nameOut*130
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: TopolM.f90,v 1.5 2004/06/24 14:09:45 muhamed Exp $'/ 
-  data rcs2/                                                        &
-  '$Source: /home/muhamed/.CVSROOT/T-Rex/Neu2Trex/TopolM.f90,v $'/
+  integer   :: i, j, NbounCells, cnt, typ
+  character :: nameOut*130
 !======================================================================!
 
 !----------------------------------------------------------------------!
@@ -175,4 +169,4 @@
   end do
   write(*,*) 'Boundary cells: ', NBc
 
-  END SUBROUTINE TopolM     
+  end subroutine TopolM     

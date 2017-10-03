@@ -1,14 +1,11 @@
 !======================================================================!
-  REAL FUNCTION UserWRms(y)
+  real function UserWRms(y)
 !----------------------------------------------------------------------!
 !   Prescribes mean normal velocity fluctuations for the channel.      !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: y
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserWRms.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserWRms.f90,v $  
+  real :: y
 !======================================================================!
 !   Wall is at y=0, and centerline at y=1                              !
 !----------------------------------------------------------------------!
@@ -20,4 +17,4 @@
    -6.326466e+002  * y**3  +  5.750007e+001  * y**2                 &
    +3.613158e+000  * y**1  -  1.078184e-002
 
-  END FUNCTION UserWRms
+  end function UserWRms

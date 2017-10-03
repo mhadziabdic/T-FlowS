@@ -1,32 +1,29 @@
 !======================================================================!
-  SUBROUTINE FinLin(n1, n2, res) 
+  subroutine FinLin(n1, n2, res) 
 !----------------------------------------------------------------------!
 !   Searches for a smallest block where the line defined by n1-n2 is.  !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: n1, n2, res
+  integer :: n1, n2, res
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: b, l1, l2
-!--------------------------------[CVS]---------------------------------!
-!  $Id: FinLin.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/FinLin.f90,v $  
+  integer :: b, l1, l2
 !======================================================================!
 
   do b=1,Nbloc
     do l1=1,8
       do l2=1,8
-	if( (BlkPnt(b,l1) == n1) .and. &
-	    (BlkPnt(b,l2) == n2) ) then
-	  if( iabs(l2-l1) == 1 ) res=BlkRes(b,1) 
-	  if( iabs(l2-l1) == 2 ) res=BlkRes(b,2) 
-	  if( iabs(l2-l1) == 4 ) res=BlkRes(b,3) 
-	  goto 1
-	end if 
+        if( (BlkPnt(b,l1) == n1) .and. &
+            (BlkPnt(b,l2) == n2) ) then
+          if( iabs(l2-l1) == 1 ) res=BlkRes(b,1) 
+          if( iabs(l2-l1) == 2 ) res=BlkRes(b,2) 
+          if( iabs(l2-l1) == 4 ) res=BlkRes(b,3) 
+          goto 1
+        end if 
       end do
     end do     
   end do 
@@ -39,4 +36,4 @@
 
 1 return
 
-  END SUBROUTINE FinLin
+  end subroutine FinLin

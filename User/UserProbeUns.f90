@@ -1,34 +1,31 @@
 !======================================================================!
-  SUBROUTINE UserProbeUns
+  subroutine UserProbeUns
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
 ! the values of Umean, Vmean, Wmean, uu, vv, ww, uv, uw and vw and     !
 ! writes them into file ".1Dr".                                        !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   Nprob, pl, s, c1, c2, dummy
-  CHARACTER namCoo*80, namPro*80, answer*80
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+  integer   Nprob, pl, s, c1, c2, dummy
+  character namCoo*80, namPro*80, answer*80
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                          uup(:), vvp(:), wwp(:),         &
                          uvp(:), uwp(:), vwp(:),         &
                          Ksgsp(:)
-  REAL                :: f1, f2, zc1, zc2
-  REAL                :: Um_p, Vm_p, Wm_p, &
+  real                :: f1, f2, zc1, zc2
+  real                :: Um_p, Vm_p, Wm_p, &
                          uu_p, vv_p, ww_p, &
                          uv_p, uw_p, vw_p, &
                          Ksgs_p  
-  INTEGER,ALLOCATABLE :: Np(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbeUns.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbeUns.f90,v $  
+  integer,allocatable :: Np(:)
 !======================================================================!
 
   if(this  < 2)  & 
@@ -202,4 +199,4 @@
   deallocate(vwp)
   deallocate(Ksgsp)
 
-  END SUBROUTINE UserProbeUns
+  end subroutine UserProbeUns

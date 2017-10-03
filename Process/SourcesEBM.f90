@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourcesEBM(var)
+  subroutine SourcesEBM(var)
 !----------------------------------------------------------------------!
 ! Purpose:                                                             !
 ! Calculate source terms for transport equations for Re stresses and   !
@@ -7,27 +7,24 @@
 ! Authors: Muhamed Hadziabdic 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
+  use les_mod
 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, s, c1, c2, i, var
-  REAL    :: Prod, Diss, PHI_hom, PHI_wall, mag, PHI_tot, Esor
-  REAL    :: a11, a22, a33, a12, a13, a21, a31, a23, a32
-  REAL    :: b11, b22, b33, b12, b13, b21, b31, b23, b32
-  REAL    :: S11, S22, S33, S12, S13, S21, S31, S23, S32
-  REAL    :: V11, V22, V33, V12, V13, V21, V31, V23, V32
-  REAL    :: Uxx, Uyy, Uzz, Uxy, Uxz, Uyz, Uzy, Uzx, Uyx               
-  REAL    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, uiujn, Ce11, uu_nn 
-  REAL    :: Diss_wall, Diss_hom, r13, r23
-  REAL,ALLOCATABLE :: Diss1(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourcesEBM.f90,v 1.2 2017/08/31 22:35:56 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourcesEBM.f90,v $  
+  integer :: c, s, c1, c2, i, var
+  real    :: Prod, Diss, PHI_hom, PHI_wall, mag, PHI_tot, Esor
+  real    :: a11, a22, a33, a12, a13, a21, a31, a23, a32
+  real    :: b11, b22, b33, b12, b13, b21, b31, b23, b32
+  real    :: S11, S22, S33, S12, S13, S21, S31, S23, S32
+  real    :: V11, V22, V33, V12, V13, V21, V31, V23, V32
+  real    :: Uxx, Uyy, Uzz, Uxy, Uxz, Uyz, Uzy, Uzx, Uyx               
+  real    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, uiujn, Ce11, uu_nn 
+  real    :: Diss_wall, Diss_hom, r13, r23
+  real,allocatable :: Diss1(:)
 !======================================================================!
 
 
@@ -288,4 +285,4 @@
     end do
   end if
   RETURN
-  END SUBROUTINE SourcesEBM   
+  end subroutine SourcesEBM   

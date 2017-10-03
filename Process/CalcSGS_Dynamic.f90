@@ -1,28 +1,25 @@
 !======================================================================!
-  SUBROUTINE CalcSGS_Dynamic()
+  subroutine CalcSGS_Dynamic()
 !----------------------------------------------------------------------!
 !   Calculates Smagorinsky constant with dynamic procedure             !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER           :: c, j, cj, m, n 
-  REAL              :: Ua, Va, Wa, UUa, VVa, WWa, UVa, UWa, VWa, DE
-  REAL              :: M11a, M22a, M33a, M12a, M13a, M23a      
-  REAL              :: L11, L22, L33, L12, L13, L23      
-  REAL              :: M11, M22, M33, M12, M13, M23      
-  REAL              :: MdotM, LdotM, Lg, Lf 
-  REAL              :: MinC, MaxC, Cplus_avr, Cminus_avr
-  REAL              :: fun
+  integer           :: c, j, cj, m, n 
+  real              :: Ua, Va, Wa, UUa, VVa, WWa, UVa, UWa, VWa, DE
+  real              :: M11a, M22a, M33a, M12a, M13a, M23a      
+  real              :: L11, L22, L33, L12, L13, L23      
+  real              :: M11, M22, M33, M12, M13, M23      
+  real              :: MdotM, LdotM, Lg, Lf 
+  real              :: MinC, MaxC, Cplus_avr, Cminus_avr
+  real              :: fun
 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcSGS_Dynamic.f90,v 1.2 2017/08/31 21:37:33 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcSGS_Dynamic.f90,v $  
 !======================================================================!
 !                                                                      !
 !  C is derived from:    Lij_res = Lij_mod                             !
@@ -204,4 +201,4 @@
   end do
 
   return
-  END SUBROUTINE CalcSGS_Dynamic
+  end subroutine CalcSGS_Dynamic

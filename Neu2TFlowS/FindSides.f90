@@ -1,36 +1,30 @@
 !======================================================================!
-  SUBROUTINE FindSides
+  subroutine FindSides
 !----------------------------------------------------------------------!
 !  Creates the "SideC structure"                                       !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod 
-  USE neu_mod 
-  USE gen_mod 
+  use all_mod 
+  use neu_mod 
+  use gen_mod 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !----------------------------------------------------------------------!
-  INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      IMPLICIT NONE
-      REAL          :: A,B
-      REAL,OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE
+  interface
+    logical function Approx(A,B,tol)
+      implicit none
+      real          :: A,B
+      real,optional :: tol
+    end function Approx
+  end interface
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: c, c1, c2, n1, n2, n3, n4
-  INTEGER             :: Nmatch, j, MatchNodes(-1:8) 
-  INTEGER             :: i1, i2, Nuber
-  INTEGER             :: Broj
-  INTEGER             :: fn(6,4)
-  REAL   ,ALLOCATABLE :: SideCoor(:) 
-  INTEGER,ALLOCATABLE :: SideCell(:), Starts(:), Ends(:) 
-  REAL                :: VeryBig
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: FindSides.f90,v 1.14 2004/06/24 14:08:22 muhamed Exp $'/ 
-  data rcs2/                                                        &
-  '$Source: /home/muhamed/.CVSROOT/T-Rex/Neu2Trex/FindSides.f90,v $'/
+  integer             :: c, c1, c2, n1, n2, n3, n4
+  integer             :: Nmatch, j, MatchNodes(-1:8) 
+  integer             :: i1, i2, Nuber
+  integer             :: Broj
+  integer             :: fn(6,4)
+  real   ,allocatable :: SideCoor(:) 
+  integer,allocatable :: SideCell(:), Starts(:), Ends(:) 
+  real                :: VeryBig
 !======================================================================!
 
   VeryBig = max(NN,NC)
@@ -147,4 +141,4 @@
 
   write(*,'(A30,I9,Z9)') 'FindSides: Number of sides: ', NS, NS
 
-  END SUBROUTINE FindSides
+  end subroutine FindSides

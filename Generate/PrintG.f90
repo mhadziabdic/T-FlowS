@@ -1,18 +1,15 @@
 !======================================================================!
-  SUBROUTINE PrintG 
+  subroutine PrintG 
 !----------------------------------------------------------------------!
 !   Prints some statistical data about the grid on the standard output !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i, j, k, numb, nonz, stencw
-!--------------------------------[CVS]---------------------------------!
-!  $Id: PrintG.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/PrintG.f90,v $  
+  integer :: i, j, k, numb, nonz, stencw
 !======================================================================!
 
   write(*,*) '==============='
@@ -35,7 +32,7 @@
   end do
 
   write(*,*) '  number of non zero matrix entries:', nonz
-  write(*,*) '  average stencil size:', REAL(nonz)/REAL(NC)
+  write(*,*) '  average stencil size:', real(nonz)/real(NC)
   write(*,*) '  max number of nodes and cells:',   MAXN
   write(*,*) '  max number of boundary cells:',    MAXB
   write(*,*) '----------------------------------'
@@ -46,7 +43,7 @@
     do i=1,NC
       stencw=0
       do k=1,24
-	if( CellC(i,k)  > 0 ) stencw=stencw+1
+        if( CellC(i,k)  > 0 ) stencw=stencw+1
       end do
       if(stencw  ==  j) numb=numb+1
     end do
@@ -66,4 +63,4 @@
     endif 
   end do
 
-  END SUBROUTINE PrintG
+  end subroutine PrintG

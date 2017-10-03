@@ -3,39 +3,33 @@
 !----------------------------------------------------------------------*
 !  Converts ascii files NAME.geo and NAME.cns to binary.              *
 !----------------------------------------------------------------------*
-      IMPLICIT NONE
+      implicit none
 !======================================================================*
 
-  REAL,ALLOCATABLE :: xc(:),yc(:),zc(:)
-  REAL,ALLOCATABLE :: Sx(:),Sy(:),Sz(:)
-  REAL,ALLOCATABLE :: volume(:)            ! cell's volume
-  REAL,ALLOCATABLE :: delta(:)             ! delta (max(dx,dy,dz))
-  REAL,ALLOCATABLE :: Dx(:),Dy(:),Dz(:)
-  REAL,ALLOCATABLE :: xsp(:),ysp(:),zsp(:) ! face coordinates
-  REAL,ALLOCATABLE :: WallDs(:), f(:)
+  real,allocatable :: xc(:),yc(:),zc(:)
+  real,allocatable :: Sx(:),Sy(:),Sz(:)
+  real,allocatable :: volume(:)            ! cell's volume
+  real,allocatable :: delta(:)             ! delta (max(dx,dy,dz))
+  real,allocatable :: Dx(:),Dy(:),Dz(:)
+  real,allocatable :: xsp(:),ysp(:),zsp(:) ! face coordinates
+  real,allocatable :: WallDs(:), f(:)
 
-  CHARACTER :: name*80
+  character :: name*80
 
-  INTEGER   :: NC, NS                    ! num. of nodes and cells
-  INTEGER   :: NbC, Ncopy, NSsh, Nmat
+  integer   :: NC, NS                    ! num. of nodes and cells
+  integer   :: NbC, Ncopy, NSsh, Nmat
 
-  INTEGER,ALLOCATABLE :: material(:)     ! material markers
-  INTEGER,ALLOCATABLE :: SideC(:,:)      !  c0, c1, c2
+  integer,allocatable :: material(:)     ! material markers
+  integer,allocatable :: SideC(:,:)      !  c0, c1, c2
 
-  INTEGER,ALLOCATABLE :: TypeBC(:)       ! type of boundary condition
+  integer,allocatable :: TypeBC(:)       ! type of boundary condition
 
-  INTEGER,ALLOCATABLE :: CopyC(:)        !  might be shorter
-  INTEGER,ALLOCATABLE :: CopyS(:,:)      !  similar to SideC
+  integer,allocatable :: CopyC(:)        !  might be shorter
+  integer,allocatable :: CopyS(:,:)      !  similar to SideC
 
-  INTEGER      c, s
-  CHARACTER*80 nameIn
-  CHARACTER*80 namOut
-!--------------------------------[CVS]---------------------------------*
-  character*80 rcs1,rcs2
-  data rcs1/ &
-  '$Id: A2B.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $'/
-  data rcs2/ &
-  '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/A2B.f90,v $'/
+  integer      c, s
+  character*80 nameIn
+  character*80 namOut
 !======================================================================*
 
   write(*,*) '# Input the problem name:'
@@ -196,4 +190,4 @@
 
   close(9) 
 
-  END PROGRAM
+  end PROGRAM

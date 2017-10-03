@@ -1,26 +1,26 @@
 !======================================================================!
-  SUBROUTINE UserBackstep() 
+  subroutine UserBackstep() 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
 ! the values of Un, Vn, Wn, uu, vv, ww, uv, uw and vw and     !
 ! writes them into file ".1Dr".                                        !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-!  REAL :: y(-NbC:NC)
-  REAL :: Rad_2, Ufric 
+!  real :: y(-NbC:NC)
+  real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
-  INTEGER             :: Nprob, pl, c, dummy, i, count, k, c1, c2, s, N_hor
-  CHARACTER           :: namCoo*80, namPro*80, answer*80, JetIn*14, namOut*80
-  REAL,ALLOCATABLE    :: r1_p(:), r2_p(:), z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+  integer             :: Nprob, pl, c, dummy, i, count, k, c1, c2, s, N_hor
+  character           :: namCoo*80, namPro*80, answer*80, JetIn*14, namOut*80
+  real,allocatable    :: r1_p(:), r2_p(:), z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  uum(:), vvm(:), wwm(:), &
@@ -30,11 +30,8 @@
                                  Ksgsp(:),               & 
                                  Var_1(:), Var_2(:), Var_3(:), Rad_mp(:), &
                                  Var_4(:), Var_5(:)  
-  INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
-  REAL                :: R, Urad_n, Utan_n, R1, R2, Urad, Utan 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserBackstep.f90,v 1.1 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserBackstep.f90,v $  
+  integer,allocatable :: Np(:), Ncount(:)
+  real                :: R, Urad_n, Utan_n, R1, R2, Urad, Utan 
 !======================================================================!
 
 !  open(9, FILE='Vert_positions.dat')
@@ -271,4 +268,4 @@
 
   if(this < 2) write(*,*) 'Finished with UserCutLines_X_dir'
 
-  END SUBROUTINE UserBackstep 
+  end subroutine UserBackstep 

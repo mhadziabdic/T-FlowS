@@ -1,26 +1,21 @@
 !======================================================================!
-  SUBROUTINE IniVar 
+  subroutine IniVar 
 !----------------------------------------------------------------------!
 !   Initialize dependent variables                                     !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  REAL    :: UserUPlus, Uta, Stot
+  real    :: UserUPlus, Uta, Stot
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, m, s, n
-  INTEGER :: N1, N2, N3, N4, N5, N6
-!--------------------------------[CVS]---------------------------------!
-!  $Id: IniVar.f90,v 1.2 2017/08/31 21:58:49 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/IniVar.f90,v $     
-!----------------------------------------------------------------------!
-!                                                                      !
+  integer :: c, c1, c2, m, s, n
+  integer :: N1, N2, N3, N4, N5, N6
 !======================================================================!
   Area  = 0.0
   Uaver = 0.0
@@ -102,6 +97,7 @@
       P % n(c)    = 0.25*(cos(2*xc(c)) + cos(2*yc(c)))
     end do
   end if
+
 !=====================================!
 !        Calculate the inflow         !
 !     and initializes the Flux(s)     ! 
@@ -170,4 +166,4 @@
 
   RETURN
 
-  END SUBROUTINE IniVar
+  end subroutine IniVar

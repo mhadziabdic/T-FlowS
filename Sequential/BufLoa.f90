@@ -1,14 +1,11 @@
 !======================================================================!
-  SUBROUTINE BufLoa 
+  subroutine BufLoa 
 !----------------------------------------------------------------------!
 !   Dummy function.                                                    !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
-!--------------------------------[CVS]---------------------------------!
-!  $Id: BufLoa.f90,v 1.1 2014/11/24 11:36:22 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Sequential/BufLoa.f90,v $  
+  implicit none
 !======================================================================!
 
   RETURN
 
-  END SUBROUTINE BufLoa
+  end subroutine BufLoa

@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE CalcShear(Ui, Vi, Wi, She)
+  subroutine CalcShear(Ui, Vi, Wi, She)
 !----------------------------------------------------------------------!
 !  Computes the magnitude of the shear stress.                         !
 !----------------------------------------------------------------------!
@@ -7,21 +7,18 @@
 !  Sij = 1/2 ( dUi/dXj + dUj/dXi )                                     !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL          :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
-  REAL          :: She(-NbC:NC)
+  real          :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
+  real          :: She(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, i
-  REAL    :: Sii, Sjk 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcShear.f90,v 1.2 2017/08/31 21:40:15 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcShear.f90,v $  
+  integer :: c, i
+  real    :: Sii, Sjk 
 !======================================================================!
 
   call Exchng(Ui)
@@ -58,4 +55,4 @@
   She = sqrt(2.0 * She)
   Vort = sqrt(2.0*abs(Vort))
 
-  END SUBROUTINE CalcShear
+  end subroutine CalcShear

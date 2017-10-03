@@ -1,23 +1,20 @@
 !======================================================================!
-  SUBROUTINE SavRes(namAut)
+  subroutine SavRes(namAut)
 !----------------------------------------------------------------------!
 ! Writes restart files. NAME.restart                                                 !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: c, s, m
-  CHARACTER           :: namOut*80, answer*80
-  CHARACTER, OPTIONAL :: namAut*(*)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SavRes.f90,v 1.4 2017/09/06 13:13:27 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SavRes.f90,v $  
+  integer             :: c, s, m
+  character           :: namOut*80, answer*80
+  character, optional :: namAut*(*)
 !======================================================================!
 
   if(PRESENT(namAut)) then
@@ -50,7 +47,7 @@
 !---- version
   write(9) 0.0  ! version
 
-!---- 60 INTEGER parameters -----------------------------------------
+!---- 60 integer parameters -----------------------------------------
   write(9)        0,      NbC,       NC,       NS,     Ndtt,    Nstat
   write(9)       Cm,        0,        0,        0,        0,        0
   write(9)    ALGOR,    INERT,   CONVEC,    CROSS,   DIFFUS,   SIMULA
@@ -63,7 +60,7 @@
   write(9)        0,        0,        0,        0,        0,        0
 !--------------------------------------------------------------------
 
-!---- 60 REAL parameters --------------------------------------
+!---- 60 real parameters --------------------------------------
   write(9)     0.0,    0.0,    0.0,     xp,     yp,     zp  
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0     
   write(9)   ReTau,   Tref,    Cs0,   Tinf,    0.0,    0.0
@@ -312,4 +309,4 @@
 !---- restore the name
   name = answer 
 
-  END SUBROUTINE SavRes 
+  end subroutine SavRes 

@@ -1,24 +1,21 @@
 !======================================================================!
-  SUBROUTINE ProSav(namAut)
+  subroutine ProSav(namAut)
 !----------------------------------------------------------------------!
 ! Writes: NAME.r.gmv   
 ! The subrotine write results in GMV format.                           !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: c, i 
-  CHARACTER           :: namOut*80, answer*80, namTem*80
-  CHARACTER, OPTIONAL :: namAut*(*)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ProSav.f90,v 1.2 2017/08/31 22:04:09 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/ProSav.f90,v $  
+  integer             :: c, i 
+  character           :: namOut*80, answer*80, namTem*80
+  character, optional :: namAut*(*)
 !======================================================================!
 
 !---- store the name
@@ -269,4 +266,4 @@
 !---- restore the name
    name = namTem
 
-   END SUBROUTINE ProSav
+   end subroutine ProSav

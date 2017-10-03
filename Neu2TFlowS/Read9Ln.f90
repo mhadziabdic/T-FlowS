@@ -1,20 +1,14 @@
 !======================================================================!
-  SUBROUTINE Read9Ln(string, tn, ts, te) 
+  subroutine Read9Ln(string, tn, ts, te) 
 !----------------------------------------------------------------------!
 ! Reads a line from a file (unit 9) and parses it.                     ! 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  CHARACTER :: string*300
-  INTEGER   :: tn, ts(300), te(300)
+  character :: string*300
+  integer   :: tn, ts(300), te(300)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: Read9Ln.f90,v 1.4 2004/06/24 14:09:23 muhamed Exp $'/ 
-  data rcs2/                                                        &
-  '$Source: /home/muhamed/.CVSROOT/T-Rex/Neu2Trex/Read9Ln.f90,v $'/
+  integer :: i
 !======================================================================!
 
   read(9,'(A300)') string
@@ -35,4 +29,4 @@
     end if
   end do
 
-  END SUBROUTINE Read9Ln
+  end subroutine Read9Ln

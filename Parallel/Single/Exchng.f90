@@ -1,32 +1,29 @@
 !======================================================================!
-  SUBROUTINE Exchng(PHI) 
+  subroutine Exchng(PHI) 
 !----------------------------------------------------------------------!
 !   Exchanges the values between the processors.                       !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE par_mod
-  USE pro_mod
+  use all_mod
+  use par_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Include]-------------------------------!
-  INCLUDE 'mpif.h'
+  include 'mpif.h'
 !-----------------------------[Parameters]-----------------------------!
-  REAL    :: PHI(-NbC:NC)
+  real    :: PHI(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, sub, rtag, stag, length, error
-  INTEGER :: status(MPI_STATUS_SIZE)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Exchng.f90,v 1.1 2014/11/24 11:39:07 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Single/Exchng.f90,v $  
+  integer :: c1, c2, sub, rtag, stag, length, error
+  integer :: status(MPI_STATUS_SIZE)
 !======================================================================!
 
 !///// fill the buffers with new values
   do sub=1,NPro
     if( NBBe(sub)  <=  NBBs(sub) ) then  
       do c2=NBBs(sub),NBBe(sub),-1
-	c1 = BufInd(c2)
-	PHI(c2) = PHI(c1)
+        c1 = BufInd(c2)
+        PHI(c2) = PHI(c1)
       end do
     end if
   end do   
@@ -42,22 +39,22 @@
 !===============================================
       call MPI_SENDRECV_REPLACE & 
 !-------------------------------------+---------
-	     (PHI(NBBe(sub)),   & ! buffer  
-	      length,           & ! length   
-	      MPI_REAL,         & ! datatype  
+             (PHI(NBBe(sub)),   & ! buffer  
+              length,           & ! length   
+              MPI_REAL,         & ! datatype  
 !-------------------------------------+---------
-	      (sub-1),          & ! dest,      
-	      stag,             & ! sendtag,    
+              (sub-1),          & ! dest,      
+              stag,             & ! sendtag,    
 !-------------------------------------+---------
-	      (sub-1),          & ! source,      
-	      rtag,             & ! recvtag,      
+              (sub-1),          & ! source,      
+              rtag,             & ! recvtag,      
 !-------------------------------------+---------
-	      MPI_COMM_WORLD,   &
-	      status,           &
-	      error) 
+              MPI_COMM_WORLD,   &
+              status,           &
+              error) 
 !===============================================
 
     end if  !  NBBe(sub)  /=  NBBs(sub)
   end do
 
-  END SUBROUTINE Exchng
+  end subroutine Exchng

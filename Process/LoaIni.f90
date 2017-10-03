@@ -1,44 +1,40 @@
 !======================================================================!
-  SUBROUTINE LoaIni()
+  subroutine LoaIni()
 !----------------------------------------------------------------------!
 ! This version of LoaIni is optimised for very large meshes
 ! Program SUB_INI needs to be used to create files needed by this
 ! subroutine 
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
+!------------------------------[Calling]-------------------------------!
+  real             :: Distance
 !-------------------------------[Locals]-------------------------------!
-  INTEGER          :: j, k,  c, nearest, var, Nvar, c1, c2, s 
-  INTEGER          :: NCold  
+  integer          :: j, k,  c, nearest_cell, var, Nvar, c1, c2, s 
+  integer          :: NCold  
   TYPE(Unknown)    :: PHI
-  REAL,ALLOCATABLE :: Xold(:),Yold(:),Zold(:)
-  REAL,ALLOCATABLE :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v_2old(:), f22old(:)
-  REAL,ALLOCATABLE :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v_2Cold(:), f22Cold(:)
-  REAL,ALLOCATABLE :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v_2Coold(:), f22Coold(:)
-  REAL,ALLOCATABLE :: Uoold(:),Voold(:),Woold(:),Toold(:), Koold(:), Eoold(:), v_2oold(:), f22oold(:)
-  REAL,ALLOCATABLE :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v_2Doold(:), f22Doold(:)
-  REAL,ALLOCATABLE :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v_2Xold(:), f22Xold(:)
-  REAL,ALLOCATABLE :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v_2Xoold(:), f22Xoold(:)
-  REAL,ALLOCATABLE :: Pold(:)
-  REAL,ALLOCATABLE :: PPold(:)
-  REAL,ALLOCATABLE :: Pxold(:),Pyold(:),Pzold(:)
-  REAL             :: DISTnew, DISTold
-  REAL             :: Dist, Us, Ws, Vs, R, Rnew, Rold, DistR
+  real,allocatable :: Xold(:),Yold(:),Zold(:)
+  real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v_2old(:), f22old(:)
+  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v_2Cold(:), f22Cold(:)
+  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v_2Coold(:), f22Coold(:)
+  real,allocatable :: Uoold(:),Voold(:),Woold(:),Toold(:), Koold(:), Eoold(:), v_2oold(:), f22oold(:)
+  real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v_2Doold(:), f22Doold(:)
+  real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v_2Xold(:), f22Xold(:)
+  real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v_2Xoold(:), f22Xoold(:)
+  real,allocatable :: Pold(:)
+  real,allocatable :: PPold(:)
+  real,allocatable :: Pxold(:),Pyold(:),Pzold(:)
+  real             :: Us, Ws, Vs, R, Rnew, Rold
+  real             :: new_distance, old_distance
 
 !---- Variables for ReadC:
-  CHARACTER  :: namCoo*80, ext*4, answer*80, answer_hot*80
-  CHARACTER*80 :: namAut
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: LoaIni.f90,v 1.2 2017/08/31 21:59:16 mhadziabdic Exp $'/
-  data rcs2/                                                        &
-  '$Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/LoaIni.f90,v $'/
+  character  :: namCoo*80, ext*4, answer*80, answer_hot*80
+  character*80 :: namAut
 !======================================================================!  
 
   call ReadC(7,inp,tn,ts,te)
@@ -193,41 +189,41 @@
   close(5)
   if(this < 2) write(*,*) 'LoaInI: finished with reading the files'
 
-  nearest = 0
+  nearest_cell = 0
   near = 0
-  DISTold = HUGE
+  old_distance = HUGE
     do c = 1, NC
       if(this < 2) then
         if(mod(c,20000) == 0) write(*,*) (100.*c/(1.*NC)), '% complete...'  
       end if
-      DISTold = HUGE
+      old_distance = HUGE
       do k = 1, j
-        if(Dist(Xold(k),Yold(k),Zold(k),xc(c),yc(c),zc(c)) < DISTold) then
-          DISTold = Dist(Xold(k),Yold(k),Zold(k),xc(c),yc(c),zc(c))       
-          nearest =  k
+        if(Distance(Xold(k),Yold(k),Zold(k),xc(c),yc(c),zc(c)) < old_distance) then
+          old_distance = Distance(Xold(k),Yold(k),Zold(k),xc(c),yc(c),zc(c))       
+          nearest_cell =  k
         end if 
       end do  
-      U % n(c)  = Uold(nearest) 
-      U % o(c)  = Uoold(nearest) 
-      U % C(c)  = UCold(nearest) 
-      U % Co(c) = UCoold(nearest) 
-      U % Do(c) = UDoold(nearest) 
-      U % X(c)  = UXold(nearest) 
-      U % Xo(c) = UXoold(nearest) 
-      V % n(c)  = Vold(nearest) 
-      V % o(c)  = Voold(nearest) 
-      V % C(c)  = VCold(nearest) 
-      V % Co(c) = VCoold(nearest) 
-      V % Do(c) = VDoold(nearest) 
-      V % X(c)  = VXold(nearest) 
-      V % Xo(c) = VXoold(nearest) 
-      W % n(c)  = Wold(nearest) 
-      W % o(c)  = Woold(nearest) 
-      W % C(c)  = WCold(nearest) 
-      W % Co(c) = WCoold(nearest) 
-      W % Do(c) = WDoold(nearest) 
-      W % X(c)  = WXold(nearest) 
-      W % Xo(c) = WXoold(nearest) 
+      U % n(c)  = Uold(nearest_cell) 
+      U % o(c)  = Uoold(nearest_cell) 
+      U % C(c)  = UCold(nearest_cell) 
+      U % Co(c) = UCoold(nearest_cell) 
+      U % Do(c) = UDoold(nearest_cell) 
+      U % X(c)  = UXold(nearest_cell) 
+      U % Xo(c) = UXoold(nearest_cell) 
+      V % n(c)  = Vold(nearest_cell) 
+      V % o(c)  = Voold(nearest_cell) 
+      V % C(c)  = VCold(nearest_cell) 
+      V % Co(c) = VCoold(nearest_cell) 
+      V % Do(c) = VDoold(nearest_cell) 
+      V % X(c)  = VXold(nearest_cell) 
+      V % Xo(c) = VXoold(nearest_cell) 
+      W % n(c)  = Wold(nearest_cell) 
+      W % o(c)  = Woold(nearest_cell) 
+      W % C(c)  = WCold(nearest_cell) 
+      W % Co(c) = WCoold(nearest_cell) 
+      W % Do(c) = WDoold(nearest_cell) 
+      W % X(c)  = WXold(nearest_cell) 
+      W % Xo(c) = WXoold(nearest_cell) 
       if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==K_EPS) then
         Kin % n(c)  = Kold(near(c)) 
         Kin % o(c)  = Koold(near(c)) 
@@ -345,5 +341,5 @@
   !---- restore the name
   name = answer
 
-  END SUBROUTINE LoaIni
+  end subroutine LoaIni
 

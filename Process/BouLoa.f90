@@ -1,30 +1,27 @@
 !======================================================================!
-  SUBROUTINE BouLoa(in_out)
+  subroutine BouLoa(in_out)
 !----------------------------------------------------------------------!
 ! Reads: NAME.b                                                        !
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL       :: in_out
+  logical       :: in_out
 !------------------------------[Calling]-------------------------------!
-  REAL          :: Dist
+  real          :: Distance
 !-------------------------------[Locals]-------------------------------!
-  INTEGER       :: c, n, dum1, NB, NP, Ninit, m, c1, c2, s 
-  CHARACTER*80  :: namBou, namPro(128), dir
-  INTEGER       :: typBou(128)
-  REAL          :: xyz(10024)
-  REAL          :: wi
-  REAL          :: x1(55555), x2(55555), Mres
-  LOGICAL       :: here
-!--------------------------------[CVS]---------------------------------!
-!  $Id: BouLoa.f90,v 1.2 2017/08/31 21:29:06 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/BouLoa.f90,v $  
+  integer       :: c, n, dum1, NB, NP, Ninit, m, c1, c2, s 
+  character*80  :: namBou, namPro(128), dir
+  integer       :: typBou(128)
+  real          :: xyz(10024)
+  real          :: wi
+  real          :: x1(55555), x2(55555), Mres
+  logical       :: here
 !======================================================================!
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
@@ -396,18 +393,18 @@
             Mres = HUGE
             do s=1,NP
               if(dir=="XPL") then
-                if(dist(x1(s),x2(s),0.0,yc(c),zc(c),0.0) < Mres) then
-                  Mres = dist(x1(s),x2(s),0.0,yc(c),zc(c),0.0)
+                if(Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0) < Mres) then
+                  Mres = Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0)
                   c1 = s
                 end if
               else if(dir=="YPL") then
-                if(dist(x1(s),x2(s),0.0,xc(c),zc(c),0.0) < Mres) then
-                  Mres = dist(x1(s),x2(s),0.0,xc(c),zc(c),0.0)
+                if(Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0) < Mres) then
+                  Mres = Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0)
                   c1 = s
                 end if
               else if(dir=="ZPL") then
-                if(dist(x1(s),x2(s),0.0,xc(c),yc(c),0.0) < Mres) then
-                  Mres = dist(x1(s),x2(s),0.0,xc(c),yc(c),0.0)
+                if(Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0) < Mres) then
+                  Mres = Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0)
                   c1 = s
                 end if
               end if
@@ -582,4 +579,4 @@
 
   RETURN 
 
-  END SUBROUTINE BouLoa
+  end subroutine BouLoa

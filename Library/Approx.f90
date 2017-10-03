@@ -1,17 +1,14 @@
 !======================================================================!
-  LOGICAL FUNCTION Approx(A,B,tol)
+  logical function Approx(A,B,tol)
 !----------------------------------------------------------------------!
 !   Returns true if A~B, false otherwise.                              !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL          :: A,B 
-  REAL,OPTIONAL :: tol
+  real          :: A,B 
+  real,optional :: tol
 !-------------------------------[Locals]-------------------------------!
-  REAL :: tolerance
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Approx.f90,v 1.4 2002/10/30 16:29:31 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/Approx.f90,v $  
+  real :: tolerance
 !======================================================================!
 
   if( .not. present(tol) ) then
@@ -26,4 +23,4 @@
     approx = .FALSE.
   end if
 
-  END FUNCTION Approx
+  end function Approx

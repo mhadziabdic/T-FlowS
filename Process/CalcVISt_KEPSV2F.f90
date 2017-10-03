@@ -1,24 +1,20 @@
 !======================================================================!
-  SUBROUTINE CalcVISt_KepsV2F() 
+  subroutine CalcVISt_KepsV2F() 
 !----------------------------------------------------------------------!
 !   Computes the turbulent viscosity for RANS models.                  !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, s
-  REAL    :: UnorSq, Unor, UtotSq, Cmu1, beta, Prmol, Prturb
-  REAL    :: lf, Gblend, Ustar, Ck, yPlus, Uplus, EBF
-
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcVISt_KEPSV2F.f90,v 1.3 2017/08/31 21:48:07 mhadziabdic Exp $
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcVISt_KEPSV2F.f90,v $
+  integer :: c, c1, c2, s
+  real    :: UnorSq, Unor, UtotSq, Cmu1, beta, Prmol, Prturb
+  real    :: lf, Gblend, Ustar, Ck, yPlus, Uplus, EBF
 !======================================================================!
 
   call Scale()
@@ -91,4 +87,4 @@
   call Exchng(VISwall)  
   RETURN
 
-  END SUBROUTINE CalcVISt_KepsV2F  
+  end subroutine CalcVISt_KepsV2F  

@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourcesHJ(var)
+  subroutine SourcesHJ(var)
 !----------------------------------------------------------------------!
 ! Purpose:                                                             !
 ! Calculate source terms for transport equations for Re stresses and   !
@@ -7,43 +7,40 @@
 ! Authors: Muhamed Hadziabdic                                          !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
+  use les_mod
 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, s, c1, c2, i, var,icont
-  REAL    :: Prod, Diss, VAR_hom, VAR_wall, mag, VAR_tot, Esor
-  REAL    :: a11, a22, a33, a12, a13, a21, a31, a23, a32
-  REAL    :: n1,n2,n3,AA2,AA3,AA,Ret,ff2,fd,FF1,CC,C1W,C2W,fw,uu_nn
-  REAL    :: e11,e12,e13,e21,e22,e23,e31,e32,e33
-  REAL    :: Eps11,Eps12,Eps13,Eps21,Eps22,Eps23,Eps31,Eps32,Eps33
-  REAL    :: VAR_211,VAR_212,VAR_213,VAR_222,VAR_223,VAR_233,phi2_nn
-  REAL    :: VAR_hm1,VAR_wal1,VAR_wal2, Feps, CC1P
-  REAL    :: fss,e11w,e12w,e13w,e22w,e23w,e33w,E2,E3,EE,CC1,CC2
-  REAL    :: Uxx, Uyy, Uzz, Uxy, Uxz, Uyz, Uyx, Uzx, Uzy
-  REAL    :: Vxx, Vyy, Vzz, Vxy, Vxz, Vyz
-  REAL    :: Wxx, Wyy, Wzz, Wxy, Wxz, Wyz
-  REAL    :: Diss_wall, Diss_hom, r13, r23, T1, T2
-  REAL    :: S11, S22, S33, S12, S13, S21, S31, S23, S32
-  REAL    :: V11, V22, V33, V12, V13, V21, V31, V23, V32
-  REAL    :: CC3, CC4, CC5, a_lk_s_lk, PHI_hom, a_mn_a_mn
-  REAL    :: VAR1w_11, VAR1w_22, VAR1w_33, VAR1w_12, VAR1w_13, VAR1w_23
-  REAL    :: VAR2w_11, VAR2w_22, VAR2w_33, VAR2w_12, VAR2w_13, VAR2w_23
-  REAL    :: VAR1_11, VAR1_22, VAR1_33, VAR1_12, VAR1_13, VAR1_23
-  REAL    :: VAR2_11, VAR2_22, VAR2_33, VAR2_12, VAR2_13, VAR2_23
-  REAL    :: VARip2_11,VARip2_22,VARip2_33,VARip2_12,VARip2_13,VARip2_23
-  REAL    :: P11, P22, P33, P12, P13, P23, Eps1, Eps2
-  REAL    :: duu_dx,duu_dy,duu_dz,dvv_dx,dvv_dy,dvv_dz,dww_dx,dww_dy,dww_dz
-  REAL    :: duv_dx,duv_dy,duv_dz,duw_dx,duw_dy,duw_dz,dvw_dx,dvw_dy,dvw_dz
-  REAL    :: dUdx, dUdy, dUdz, dVdx, dVdy, dVdz, dWdx, dWdy, dWdz 
-  REAL,ALLOCATABLE :: Diss1(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourcesHJ.f90,v 1.4 2017/08/31 22:39:10 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourcesHJ.f90,v $  
+  integer :: c, s, c1, c2, i, var,icont
+  real    :: Prod, Diss, VAR_hom, VAR_wall, mag, VAR_tot, Esor
+  real    :: a11, a22, a33, a12, a13, a21, a31, a23, a32
+  real    :: n1,n2,n3,AA2,AA3,AA,Ret,ff2,fd,FF1,CC,C1W,C2W,fw,uu_nn
+  real    :: e11,e12,e13,e21,e22,e23,e31,e32,e33
+  real    :: Eps11,Eps12,Eps13,Eps21,Eps22,Eps23,Eps31,Eps32,Eps33
+  real    :: VAR_211,VAR_212,VAR_213,VAR_222,VAR_223,VAR_233,phi2_nn
+  real    :: VAR_hm1,VAR_wal1,VAR_wal2, Feps, CC1P
+  real    :: fss,e11w,e12w,e13w,e22w,e23w,e33w,E2,E3,EE,CC1,CC2
+  real    :: Uxx, Uyy, Uzz, Uxy, Uxz, Uyz, Uyx, Uzx, Uzy
+  real    :: Vxx, Vyy, Vzz, Vxy, Vxz, Vyz
+  real    :: Wxx, Wyy, Wzz, Wxy, Wxz, Wyz
+  real    :: Diss_wall, Diss_hom, r13, r23, T1, T2
+  real    :: S11, S22, S33, S12, S13, S21, S31, S23, S32
+  real    :: V11, V22, V33, V12, V13, V21, V31, V23, V32
+  real    :: CC3, CC4, CC5, a_lk_s_lk, PHI_hom, a_mn_a_mn
+  real    :: VAR1w_11, VAR1w_22, VAR1w_33, VAR1w_12, VAR1w_13, VAR1w_23
+  real    :: VAR2w_11, VAR2w_22, VAR2w_33, VAR2w_12, VAR2w_13, VAR2w_23
+  real    :: VAR1_11, VAR1_22, VAR1_33, VAR1_12, VAR1_13, VAR1_23
+  real    :: VAR2_11, VAR2_22, VAR2_33, VAR2_12, VAR2_13, VAR2_23
+  real    :: VARip2_11,VARip2_22,VARip2_33,VARip2_12,VARip2_13,VARip2_23
+  real    :: P11, P22, P33, P12, P13, P23, Eps1, Eps2
+  real    :: duu_dx,duu_dy,duu_dz,dvv_dx,dvv_dy,dvv_dz,dww_dx,dww_dy,dww_dz
+  real    :: duv_dx,duv_dy,duv_dz,duw_dx,duw_dy,duw_dz,dvw_dx,dvw_dy,dvw_dz
+  real    :: dUdx, dUdy, dUdz, dVdx, dVdy, dVdz, dWdx, dWdy, dWdz 
+  real,allocatable :: Diss1(:)
 !======================================================================!
 
   allocate (Diss1(1:NC)); Diss1 = 0.0
@@ -555,6 +552,6 @@
   end if
   deallocate (Diss1)
   RETURN
-  END SUBROUTINE SourcesHJ   
+  end subroutine SourcesHJ   
 
 

@@ -1,18 +1,15 @@
 !======================================================================!
-  SUBROUTINE GeoAloc
+  subroutine GeoAloc
 !----------------------------------------------------------------------!
 ! Alocates memory for geometrical quantities.                          !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE sol_mod
-  USE les_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use sol_mod
+  use les_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GeoAloc.f90,v 1.2 2017/08/31 21:57:29 mhadziabdic Exp $
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/GeoAloc.f90,v $
+  implicit none
 !======================================================================!
 
 !----- variables defined in all.h90:
@@ -73,4 +70,4 @@
 !??????????????????????????????????????????!
 ! Do something !  
 
-  END SUBROUTINE GeoAloc
+  end subroutine GeoAloc

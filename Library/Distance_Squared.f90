@@ -1,17 +1,15 @@
 !======================================================================!
-  subroutine SwapR(a,b) 
+  real function Distance_Squared(x_a, y_a, z_a, x_b, y_b, z_b)
 !----------------------------------------------------------------------!
-!   Swaps two double precision reals.                                  !
+!  Calculates squared distance between two points in three-dimensions. !
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Parameters]-----------------------------!
-  real :: a,b
-!-------------------------------[Locals]-------------------------------!
-  real :: t
+  real :: x_a, y_a, z_a, x_b, y_b, z_b
 !======================================================================!
 
-  t=a
-  a=b
-  b=t
+  Distance_Squared = (x_a-x_b)*(x_a-x_b) &
+                   + (y_a-y_b)*(y_a-y_b) &
+                   + (z_a-z_b)*(z_a-z_b)
 
-  end subroutine SwapR
+  end function Distance_Squared

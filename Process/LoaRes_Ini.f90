@@ -1,26 +1,23 @@
 !======================================================================!
-  SUBROUTINE LoaRes_Ini
+  subroutine LoaRes_Ini
 !----------------------------------------------------------------------!
 ! Reads: NAME.restart                                                  !
 ! ~~~~~~                                                               ! 
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c, s, m
-  INTEGER   :: i_1, i_2, i_3, i_4, i_5, i_6
-  CHARACTER :: nameIn*80, answer*80
-  REAL      :: version
-  REAL      :: r_1, r_2, r_3, r_4, r_5, r_6
-!--------------------------------[CVS]---------------------------------!
-!  $Id: LoaRes_Ini.f90,v 1.1 2017/08/31 22:37:34 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/LoaRes_Ini.f90,v $  
+  integer   :: c, s, m
+  integer   :: i_1, i_2, i_3, i_4, i_5, i_6
+  character :: nameIn*80, answer*80
+  real      :: version
+  real      :: r_1, r_2, r_3, r_4, r_5, r_6
 !======================================================================!
 
   if(this  < 2) &              
@@ -92,7 +89,7 @@
 !---- version
   read(9) version ! version
 
-!---- 60 INTEGER parameters ----------------------------------------
+!---- 60 integer parameters ----------------------------------------
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
@@ -105,7 +102,7 @@
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
 !-------------------------------------------------------------------
 
-!---- 60 REAL parameters --------------------------------------
+!---- 60 real parameters --------------------------------------
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6
@@ -308,4 +305,4 @@
 
   write(*,*) 'Leaving LoaRes_Ini.f90'
 
-  END SUBROUTINE LoaRes_Ini 
+  end subroutine LoaRes_Ini 

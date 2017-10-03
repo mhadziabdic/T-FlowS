@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE bicg(N, NB, NONZ, A, Acol,Arow,Adia,Ab,x,r1,           &
+  subroutine bicg(N, NB, NONZ, A, Acol,Arow,Adia,Ab,x,r1,           &
 		  prec,niter,tol,                                   &
 		  IniRes,FinRes)
 !----------------------------------------------------------------------!
@@ -17,24 +17,21 @@
 !   (incomplete Cholesky preconditioning)                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE sol_mod
-  USE par_mod
+  use sol_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER  :: N, NB, NONZ
+  integer  :: N, NB, NONZ
 
-  REAL     :: A(NONZ), Ab(-NB:-1)
-  INTEGER  :: Acol(N+1),Adia(N)
-  INTEGER  :: Arow(NONZ)
-  REAL     :: x(-NB:N), r1(N)                !  [A]{x}={r1}
+  real     :: A(NONZ), Ab(-NB:-1)
+  integer  :: Acol(N+1),Adia(N)
+  integer  :: Arow(NONZ)
+  real     :: x(-NB:N), r1(N)                !  [A]{x}={r1}
 
-  INTEGER  :: prec,  niter                   !  preconditioning
-  REAL     :: tol                            !  tolerance
-  REAL     :: IniRes, FinRes                 !  residual
-!--------------------------------[CVS]---------------------------------!
-!  $Id: BiCG.f90,v 1.2 2017/08/31 21:28:33 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/BiCG.f90,v $  
+  integer  :: prec,  niter                   !  preconditioning
+  real     :: tol                            !  tolerance
+  real     :: IniRes, FinRes                 !  residual
 !======================================================================!
 
 !+++++++++++++++++++++++++!
@@ -255,4 +252,4 @@
 
   RETURN 
 
-  END SUBROUTINE bicg
+  end subroutine bicg

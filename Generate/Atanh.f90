@@ -1,14 +1,11 @@
 !======================================================================!
-  REAL FUNCTION Atanh(x)
+  real function Atanh(x)
 !----------------------------------------------------------------------!
 !   Calculates inverse of hyperbolic tangens.                          !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: x
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Atanh.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/Atanh.f90,v $  
+  real :: x
 !======================================================================!
   if(x  > 1.0) then
     write(*,*) 'Error message from atanh: bad argument'
@@ -17,4 +14,4 @@
 
   atanh=log( sqrt( (1.0+x)/(1.0-x) ) )
 
-  END FUNCTION Atanh
+  end function Atanh

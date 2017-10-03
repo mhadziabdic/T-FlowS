@@ -6,83 +6,79 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!..RCS/CVS ident
-! $Id: pro_mod.h90,v 1.43 2005/01/25 12:38:34 muhamed Exp $
-! $Source: /home/muhamed/.CVSROOT/T-Rex/Library/pro_mod.h90,v $
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 MODULE pro_mod
 
-  USE allp_mod
+  use allp_mod
 
-  IMPLICIT NONE
+  implicit none
 
 !----- Right hand side for velocity and pressure equations 
-  REAL,ALLOCATABLE :: b(:)
+  real,allocatable :: b(:)
 
 !----- System matrix for velocity and pressure correction
-  REAL,ALLOCATABLE    :: Aval(:)
-  REAL,ALLOCATABLE    :: Asave(:)
-  INTEGER,ALLOCATABLE :: Arow(:),  &
-			 Acol(:),  &
-			 Adia(:)  
-  INTEGER,ALLOCATABLE :: SidAij(:,:)     
+  real,allocatable    :: Aval(:)
+  real,allocatable    :: Asave(:)
+  integer,allocatable :: Arow(:),  &
+                         Acol(:),  &
+                         Adia(:)  
+  integer,allocatable :: SidAij(:,:)     
 
 !----- Used in Dynamic Smgaorinsky model ----------------------------!
-  REAL,ALLOCATABLE    :: Aval_dif(:)
+  real,allocatable    :: Aval_dif(:)
 !--------------------------------------------------------------------!
 
 !----- Parts of the matrix for boundary conditions. 
-  REAL,ALLOCATABLE :: Abou(:)  
+  real,allocatable :: Abou(:)  
 
 !----- Correlation points
-  REAL :: R11_1, R11_2, R11_3, R11_4, R11_5
-  REAL :: R11_6, R11_7, R11_8, R11_9, R11_10
-  REAL :: A11_1, A11_2, A11_3, A11_4, A11_5
-  REAL :: A11_6, A11_7, A11_8, A11_9, A11_10
+  real :: R11_1, R11_2, R11_3, R11_4, R11_5
+  real :: R11_6, R11_7, R11_8, R11_9, R11_10
+  real :: A11_1, A11_2, A11_3, A11_4, A11_5
+  real :: A11_6, A11_7, A11_8, A11_9, A11_10
 
 
 !----- Velocity derivativeses dP/dx .... 
-  REAL,ALLOCATABLE :: Ux(:), Uy(:), Uz(:)
-  REAL,ALLOCATABLE :: Vx(:), Vy(:), Vz(:)
-  REAL,ALLOCATABLE :: Wx(:), Wy(:), Wz(:)
+  real,allocatable :: Ux(:), Uy(:), Uz(:)
+  real,allocatable :: Vx(:), Vy(:), Vz(:)
+  real,allocatable :: Wx(:), Wy(:), Wz(:)
 
 !----- Pressure derivativeses dP/dx .... 
-  REAL,ALLOCATABLE :: Px(:), Py(:), Pz(:)
+  real,allocatable :: Px(:), Py(:), Pz(:)
 
-  REAL,ALLOCATABLE :: Kx(:)
+  real,allocatable :: Kx(:)
 
 !----- Pressure at the cell faces  
-  REAL,ALLOCATABLE :: Ps(:)
+  real,allocatable :: Ps(:)
 
-  REAL,ALLOCATABLE :: VAR1x(:),   VAR1y(:),   VAR1z(:)
-  REAL,ALLOCATABLE :: VAR2x(:),   VAR2y(:),   VAR2z(:)
-  REAL,ALLOCATABLE :: VAR3x(:),   VAR3y(:),   VAR3z(:)
-  REAL,ALLOCATABLE :: VAR4x(:),   VAR4y(:),   VAR4z(:)
-  REAL,ALLOCATABLE :: VAR5x(:),   VAR5y(:),   VAR5z(:)
-  REAL,ALLOCATABLE :: VAR6x(:),   VAR6y(:),   VAR6z(:)
-  REAL,ALLOCATABLE :: VAR7x(:),   VAR7y(:),   VAR7z(:)
-  REAL,ALLOCATABLE :: VAR8x(:),   VAR8y(:),   VAR8z(:)
-  REAL,ALLOCATABLE :: VAR9x(:),   VAR9y(:),   VAR9z(:)
-  REAL,ALLOCATABLE :: VAR10x(:),  VAR10y(:),  VAR10z(:)
-  REAL,ALLOCATABLE :: VAR11x(:),  VAR11y(:),  VAR11z(:)
-  REAL,ALLOCATABLE :: VAR12x(:),  VAR12y(:),  VAR12z(:)
-  REAL,ALLOCATABLE :: PHI1x(:),   PHI1y(:),   PHI1z(:)
-  REAL,ALLOCATABLE :: PHI2x(:),   PHI2y(:),   PHI2z(:)
-  REAL,ALLOCATABLE :: PHI3x(:),   PHI3y(:),   PHI3z(:)
-  REAL,ALLOCATABLE :: PHI4x(:),   PHI4y(:),   PHI4z(:)
-  REAL,ALLOCATABLE :: PHI5x(:),   PHI5y(:),   PHI5z(:)
-  REAL,ALLOCATABLE :: PHI6x(:),   PHI6y(:),   PHI6z(:)
-  REAL,ALLOCATABLE :: PHI7x(:),   PHI7y(:),   PHI7z(:)
-  REAL,ALLOCATABLE :: PHI8x(:),   PHI8y(:),   PHI8z(:)
-  REAL,ALLOCATABLE :: PHI9x(:),   PHI9y(:),   PHI9z(:)
-  REAL,ALLOCATABLE :: PHI10x(:),  PHI10y(:),  PHI10z(:)
-  REAL,ALLOCATABLE :: PHI11x(:),  PHI11y(:),  PHI11z(:)
+  real,allocatable :: VAR1x(:),   VAR1y(:),   VAR1z(:)
+  real,allocatable :: VAR2x(:),   VAR2y(:),   VAR2z(:)
+  real,allocatable :: VAR3x(:),   VAR3y(:),   VAR3z(:)
+  real,allocatable :: VAR4x(:),   VAR4y(:),   VAR4z(:)
+  real,allocatable :: VAR5x(:),   VAR5y(:),   VAR5z(:)
+  real,allocatable :: VAR6x(:),   VAR6y(:),   VAR6z(:)
+  real,allocatable :: VAR7x(:),   VAR7y(:),   VAR7z(:)
+  real,allocatable :: VAR8x(:),   VAR8y(:),   VAR8z(:)
+  real,allocatable :: VAR9x(:),   VAR9y(:),   VAR9z(:)
+  real,allocatable :: VAR10x(:),  VAR10y(:),  VAR10z(:)
+  real,allocatable :: VAR11x(:),  VAR11y(:),  VAR11z(:)
+  real,allocatable :: VAR12x(:),  VAR12y(:),  VAR12z(:)
+  real,allocatable :: PHI1x(:),   PHI1y(:),   PHI1z(:)
+  real,allocatable :: PHI2x(:),   PHI2y(:),   PHI2z(:)
+  real,allocatable :: PHI3x(:),   PHI3y(:),   PHI3z(:)
+  real,allocatable :: PHI4x(:),   PHI4y(:),   PHI4z(:)
+  real,allocatable :: PHI5x(:),   PHI5y(:),   PHI5z(:)
+  real,allocatable :: PHI6x(:),   PHI6y(:),   PHI6z(:)
+  real,allocatable :: PHI7x(:),   PHI7y(:),   PHI7z(:)
+  real,allocatable :: PHI8x(:),   PHI8y(:),   PHI8z(:)
+  real,allocatable :: PHI9x(:),   PHI9y(:),   PHI9z(:)
+  real,allocatable :: PHI10x(:),  PHI10y(:),  PHI10z(:)
+  real,allocatable :: PHI11x(:),  PHI11y(:),  PHI11z(:)
 
-  REAL,ALLOCATABLE :: PHIx(:),   PHIy(:),   PHIz(:)
-  REAL,ALLOCATABLE :: PHIside(:)
+  real,allocatable :: PHIx(:),   PHIy(:),   PHIz(:)
+  real,allocatable :: PHIside(:)
 
 !----- For convective schemes
-  REAL,ALLOCATABLE :: PHImax(:), PHImin(:) 
+  real,allocatable :: PHImax(:), PHImin(:) 
 
 !----- Velocity components
   TYPE(Unknown) :: U
@@ -114,162 +110,162 @@ MODULE pro_mod
   TYPE(Unknown) :: PP_r
 
 !----- Turbulent viscosity
-  REAL,ALLOCATABLE :: VISt_sgs(:)
-  REAL,ALLOCATABLE :: VISt_eff(:)
-  REAL,ALLOCATABLE :: Ptt(:)
+  real,allocatable :: VISt_sgs(:)
+  real,allocatable :: VISt_eff(:)
+  real,allocatable :: Ptt(:)
 
 !----- Reynolds stresses
   TYPE(Unknown) :: uu_r, vv_r, ww_r, uv_r, uw_r, vw_r
 
 !----- Mass fluxes throught cell faces
-  REAL,ALLOCATABLE :: Flux_r(:), Alfa_lim(:)
+  real,allocatable :: Flux_r(:), Alfa_lim(:)
 
 !----- Mass fluxes throught the whole domain
-  REAL,ALLOCATABLE :: FLUXx_r(:),  FLUXy_r(:),  FLUXz_r(:)
+  real,allocatable :: FLUXx_r(:),  FLUXy_r(:),  FLUXz_r(:)
 !=====================================================================!
  
 !------------------------------!
 !     Algorythm parameters     !
 !------------------------------!
-  INTEGER :: K_EPS
-  INTEGER :: K_EPS_VV   
-  INTEGER :: HRe  
-  INTEGER :: MODE   
-  INTEGER :: LRe    
-  INTEGER :: SPA_ALL
-  INTEGER :: DES_SPA
-  INTEGER :: J_L    
-  INTEGER :: NAG     
-  INTEGER :: S_L_Y   
-  INTEGER :: WOLF   
-  INTEGER :: ZETA   
-  INTEGER :: HYB_ZETA   
-  INTEGER :: HYB_PITM   
-  INTEGER :: RNG   
-  INTEGER :: SMAG
-  INTEGER :: DYN 
-  INTEGER :: WALE
-  INTEGER :: MIX  
-  INTEGER :: ZPANS  
-  INTEGER :: ZETAM  
-  INTEGER :: EBM
-  INTEGER :: HYB
-  INTEGER :: HJ
-  INTEGER :: WF
-  INTEGER :: STAN
-  INTEGER :: BUOY
+  integer :: K_EPS
+  integer :: K_EPS_VV   
+  integer :: HRe  
+  integer :: MODE   
+  integer :: LRe    
+  integer :: SPA_ALL
+  integer :: DES_SPA
+  integer :: J_L    
+  integer :: NAG     
+  integer :: S_L_Y   
+  integer :: WOLF   
+  integer :: ZETA   
+  integer :: HYB_ZETA   
+  integer :: HYB_PITM   
+  integer :: RNG   
+  integer :: SMAG
+  integer :: DYN 
+  integer :: WALE
+  integer :: MIX  
+  integer :: ZPANS  
+  integer :: ZETAM  
+  integer :: EBM
+  integer :: HYB
+  integer :: HJ
+  integer :: WF
+  integer :: STAN
+  integer :: BUOY
 
 !----- Mass fluxes throught cell faces
-  REAL,ALLOCATABLE :: Flux(:) 
+  real,allocatable :: Flux(:) 
 
 !---- Geometrical staff 
-  REAL,ALLOCATABLE :: Scoef(:)
-  REAL,ALLOCATABLE :: G(:,:) 
-  REAL,ALLOCATABLE :: fF(:)   ! weight factors for the fluid phase
+  real,allocatable :: Scoef(:)
+  real,allocatable :: G(:,:) 
+  real,allocatable :: fF(:)   ! weight factors for the fluid phase
 
-  INTEGER,ALLOCATABLE :: CellFace(:,:)
-  INTEGER,ALLOCATABLE :: WallFace(:)
+  integer,allocatable :: CellFace(:,:)
+  integer,allocatable :: WallFace(:)
 
-  LOGICAL,ALLOCATABLE :: IsNearWall(:)
-  LOGICAL,ALLOCATABLE :: IsNearPeri(:)
-  LOGICAL,ALLOCATABLE :: IsNearWall_2(:)
-  LOGICAL,ALLOCATABLE :: IsNearWall_3(:)
-  LOGICAL,ALLOCATABLE :: IsNearInflow(:)
-  LOGICAL,ALLOCATABLE :: ConvZone1(:)
+  logical,allocatable :: IsNearWall(:)
+  logical,allocatable :: IsNearPeri(:)
+  logical,allocatable :: IsNearWall_2(:)
+  logical,allocatable :: IsNearWall_3(:)
+  logical,allocatable :: IsNearInflow(:)
+  logical,allocatable :: ConvZone1(:)
 
 !---- Cells which are bad for calculation of gradients
-  LOGICAL,ALLOCATABLE :: BadForG(:)
-  INTEGER,ALLOCATABLE :: NumGood(:),   & 
+  logical,allocatable :: BadForG(:)
+  integer,allocatable :: NumGood(:),   & 
                          NumNeig(:)
 
 !----- Mass fluxes throught the whole domain
-  REAL,ALLOCATABLE :: MassIn(:), MasOut(:) 
-  REAL,ALLOCATABLE :: FLUXx(:),  FLUXy(:),  FLUXz(:)
-  REAL,ALLOCATABLE :: FLUXoX(:), FLUXoY(:), FLUXoZ(:) 
-  REAL,ALLOCATABLE :: Ubulk(:),  Vbulk(:),  Wbulk(:)
+  real,allocatable :: MassIn(:), MasOut(:) 
+  real,allocatable :: FLUXx(:),  FLUXy(:),  FLUXz(:)
+  real,allocatable :: FLUXoX(:), FLUXoY(:), FLUXoZ(:) 
+  real,allocatable :: Ubulk(:),  Vbulk(:),  Wbulk(:)
 
 !----- Viscosity, Density, Conductivity
-  INTEGER :: StateMat(100)
-  INTEGER :: SimulMat(100)
-  REAL    :: VISc, DENc(100), CONc(100), CAPc(100)
+  integer :: StateMat(100)
+  integer :: SimulMat(100)
+  real    :: VISc, DENc(100), CONc(100), CAPc(100)
 
 !---- Average velocity 
-  REAL    :: Uaver
+  real    :: Uaver
 
 !---- angular velocity 
-  REAL    :: omegaX, omegaY, omegaZ, omega
+  real    :: omegaX, omegaY, omegaZ, omega
 
 !---- turbulent prandtl number 
-  REAL    :: Prt, Numax
+  real    :: Prt, Numax
 
 
 !---- Time step and total time
-  REAL    :: dt, Time
+  real    :: dt, Time
 
 !---- Maarten - Thickness of boundary layer
-  REAL    :: Delta_m
+  real    :: Delta_m
 
 !----- Constants needed for UserProbe2d (cut lines)
-  REAL      :: x_o, y_o, Href
-  INTEGER   :: Ncuts
-  CHARACTER :: namCut*80
+  real      :: x_o, y_o, Href
+  integer   :: Ncuts
+  character :: namCut*80
 
 !---- Integer variable needed for interpolation of
 !---- results between different meshes tranfer (LoaIni)
-  INTEGER          :: NClast, N_sign, eqn
-  INTEGER,ALLOCATABLE :: near(:)
-  INTEGER,ALLOCATABLE :: near_2(:)
-  INTEGER,ALLOCATABLE :: near_3(:)
-  INTEGER,ALLOCATABLE :: connect(:)
-  INTEGER,ALLOCATABLE :: connect2(:)
+  integer          :: NClast, N_sign, eqn
+  integer,allocatable :: near(:)
+  integer,allocatable :: near_2(:)
+  integer,allocatable :: near_3(:)
+  integer,allocatable :: connect(:)
+  integer,allocatable :: connect2(:)
 
 !----- Residuals                
-  REAL    :: errmax, res(100)  
+  real    :: errmax, res(100)  
 
 !----- Monitoring planes for each material (domain)
-  REAL,ALLOCATABLE :: xp(:), yp(:), zp(:)
+  real,allocatable :: xp(:), yp(:), zp(:)
 
 !---------------------------!
 !     Solver parameters     !
 !---------------------------!
-  REAL    :: URFC(100), SIMTol, URFC_Tur(100), URFC_Tem(100)
-  REAL    :: TRFC(100)
+  real    :: URFC(100), SIMTol, URFC_Tur(100), URFC_Tem(100)
+  real    :: TRFC(100)
 
 !----- Under-relaxation parameter for turbulent quantity
-  REAL    :: URFT, Alfa_fin1, Alfa_fin2
+  real    :: URFT, Alfa_fin1, Alfa_fin2
 
 !-----------------------------------!
 !     Area of the cross section     !
 !-----------------------------------!
-  REAL,ALLOCATABLE :: AreaX(:), AreaY(:), AreaZ(:)           
-  REAL :: Area, Tflux, Qflux, Xmax, Ymax, Zmax, Tref, Tinf           
+  real,allocatable :: AreaX(:), AreaY(:), AreaZ(:)           
+  real :: Area, Tflux, Qflux, Xmax, Ymax, Zmax, Tref, Tinf           
 
 !------------------------------!
 !     Algorythm parameters     !
 !------------------------------!
-  INTEGER :: INERT,    CONVEC,    CROSS,    DIFFUS 
-  INTEGER :: LIN,      PAR,       AB,       CN,       FI
-  INTEGER :: ALGOR,    SIMPLE,    FRACT
-  INTEGER :: SIMULA,   DNS,       LES 
-  INTEGER :: POSPRO,   AVS,       GMV
-  INTEGER :: CHANNEL,  TEST,      OTHER,    HOT, HOTini, PIPE, JET, ROT, TGV, BUDG, URANS 
-  INTEGER :: BACKSTEP, AHILL, RB_CONV
-  INTEGER :: ROUGH, PER_BC 
-  INTEGER :: SGDH, GGDH, BS
-  INTEGER :: SHAKE(100),    BLEND(100),BLEND_TUR(100), BLEND_TEM(100), YES,      NO
-  INTEGER :: SHAKE_PER(100),SHAKE_INT(100)
-  INTEGER :: PREC 
-  INTEGER :: CDS,      QUICK,    LUDS,     MINMOD,   SMART,    AVL_SMART, &
+  integer :: INERT,    CONVEC,    CROSS,    DIFFUS 
+  integer :: LIN,      PAR,       AB,       CN,       FI
+  integer :: ALGOR,    SIMPLE,    FRACT
+  integer :: SIMULA,   DNS,       LES 
+  integer :: POSPRO,   AVS,       GMV
+  integer :: CHANNEL,  TEST,      OTHER,    HOT, HOTini, PIPE, JET, ROT, TGV, BUDG, URANS 
+  integer :: BACKSTEP, AHILL, RB_CONV
+  integer :: ROUGH, PER_BC 
+  integer :: SGDH, GGDH, BS
+  integer :: SHAKE(100),    BLEND(100),BLEND_TUR(100), BLEND_TEM(100), YES,      NO
+  integer :: SHAKE_PER(100),SHAKE_INT(100)
+  integer :: PREC 
+  integer :: CDS,      QUICK,    LUDS,     MINMOD,   SMART,    AVL_SMART, &
              SUPERBEE, GAMMA, RES_INI 
-  INTEGER :: XHOM,     YHOM,     ZHOM
+  integer :: XHOM,     YHOM,     ZHOM
 
-  INTEGER,PARAMETER :: MAXM=100 
-  INTEGER :: Cm(MAXM), Nmon
-  REAL    :: NOM(MAXM), DEN(MAXM), R11(MAXM), U_f(MAXM)
+  integer,parameter :: MAXM=100 
+  integer :: Cm(MAXM), Nmon
+  real    :: NOM(MAXM), DEN(MAXM), R11(MAXM), U_f(MAXM)
 
-  INTEGER :: Ndt, Ndtt, Nstat, Nini, ini, Ndyn, Nstat2, NewSta, NK, Nbudg 
+  integer :: Ndt, Ndtt, Nstat, Nini, ini, Ndyn, Nstat2, NewSta, NK, Nbudg 
 
-  INTEGER :: NONZERO
+  integer :: NONZERO
 
 !---------------------------------------------------------------------------!
 ! LineMon:   1:  6 -> Time step 
@@ -282,16 +278,16 @@ MODULE pro_mod
 !          115:126 -> Pe
 !          127:138 -> Kin.en.           
 !---------------------------------------------------------------------------!
-  CHARACTER*138 :: LinMon0 ! everything that goes on the screen
-  CHARACTER*138 :: LinMon1 ! everything that goes on the screen
-  CHARACTER*138 :: LinMon2 ! everything that goes on the screen
-  CHARACTER*138 :: LinMon3 ! everything that goes on the screen
-  CHARACTER*138 :: LinMon4 ! everything that goes on the screen
-  CHARACTER*138 :: LinMon5 ! everything that goes on the screen
-  CHARACTER*138 :: LinMon6 ! everything that goes on the screen
-  CHARACTER*138 :: LinMon7 ! everything that goes on the screen
-  CHARACTER*138 :: LinMon8 ! everything that goes on the screen
-  CHARACTER*138 :: LinMon9 ! everything that goes on the screen
+  character*138 :: LinMon0 ! everything that goes on the screen
+  character*138 :: LinMon1 ! everything that goes on the screen
+  character*138 :: LinMon2 ! everything that goes on the screen
+  character*138 :: LinMon3 ! everything that goes on the screen
+  character*138 :: LinMon4 ! everything that goes on the screen
+  character*138 :: LinMon5 ! everything that goes on the screen
+  character*138 :: LinMon6 ! everything that goes on the screen
+  character*138 :: LinMon7 ! everything that goes on the screen
+  character*138 :: LinMon8 ! everything that goes on the screen
+  character*138 :: LinMon9 ! everything that goes on the screen
 !---------------------------------------------------------------------------!
 ! LineRes:   1:  1 -> #
 ! ~~~~~~~~   2:  4 -> ini
@@ -307,6 +303,6 @@ MODULE pro_mod
 !           89: 92 -> iter P
 !           93: 96 -> iter T
 !---------------------------------------------------------------------------!
-  CHARACTER*100 :: LineRes              ! everything that goes on the screen
-  CHARACTER :: namIni(128)*80
-END MODULE
+  character*100 :: LineRes              ! everything that goes on the screen
+  character :: namIni(128)*80
+end MODULE

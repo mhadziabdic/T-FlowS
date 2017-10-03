@@ -1,23 +1,20 @@
 !======================================================================!
-  SUBROUTINE CalcMn_Cylind(n0, n1)   
+  subroutine CalcMn_Cylind(n0, n1)   
 !----------------------------------------------------------------------!
 !   Calculates time averaged velocity and velocity fluctuations.       !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: n0, n1
+  integer :: n0, n1
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, n
-  REAL    :: Urad_mean, Utan_mean, R, Urad, Utan
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcMn_Cylind.f90,v 1.2 2017/08/31 21:33:56 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcMn_Cylind.f90,v $   
+  integer :: c, n
+  real    :: Urad_mean, Utan_mean, R, Urad, Utan
 !======================================================================!
 
   n=n1-n0
@@ -120,4 +117,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalcMn_Cylind
+  end subroutine CalcMn_Cylind

@@ -1,21 +1,18 @@
 !======================================================================!
-  SUBROUTINE CalBou
+  subroutine CalBou
 !----------------------------------------------------------------------!
 !   Extrapoloate variables on the boundaries where needed              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, s
-  REAL    :: qx, qy, qz, Nx, Ny, Nz, Stot, CONeff, EBF, Yplus
-  REAL    :: Prmol, beta, Prturb, Uplus
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalBou.f90,v 1.2 2017/08/31 21:30:28 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalBou.f90,v $  
+  integer :: c1, c2, s
+  real    :: qx, qy, qz, Nx, Ny, Nz, Stot, CONeff, EBF, Yplus
+  real    :: Prmol, beta, Prturb, Uplus
 !======================================================================!
 
   Area  = 0.0
@@ -221,4 +218,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalBou
+  end subroutine CalBou

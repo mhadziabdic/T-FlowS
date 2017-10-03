@@ -1,19 +1,13 @@
 !======================================================================!
   PROGRAM Neu2TFlowS 
 !------------------------------[Modules]-------------------------------!
-  USE all_mod 
-  USE gen_mod 
+  use all_mod 
+  use gen_mod 
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, n, s
-  INTEGER             :: i, typ, cnt
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: Neu2TFlowS.f90,v 1.15 2004/06/24 14:09:07 muhamed Exp $'/ 
-  data rcs2/                                                        &
-  '$Source: /home/muhamed/.CVSROOT/TFlowS/Neu2TFlowS/Neu2TFlowS.f90,v $'/
+  integer :: c, n, s
+  integer             :: i, typ, cnt
 !======================================================================!
 
   call logo
@@ -75,4 +69,4 @@
 !    write(*,*) 'Hamo, type ', typ, ' has ', cnt, ' cells'
 !  end do
 
-  END PROGRAM Neu2TFlowS 
+  end PROGRAM Neu2TFlowS 

@@ -1,27 +1,21 @@
 !======================================================================!
-  SUBROUTINE ReadFluentNeu() 
+  subroutine ReadFluentNeu() 
 !----------------------------------------------------------------------!
 ! Reads the Fluents (Gambits) neutral file format.                     !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod 
-  USE gen_mod 
-  USE neu_mod 
-  USE par_mod 
+  use all_mod 
+  use gen_mod 
+  use neu_mod 
+  use par_mod 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  CHARACTER           :: Line*300
-  CHARACTER           :: nameIn*130
-  INTEGER             :: i, j, dum1, dum2, dum3
-  INTEGER,ALLOCATABLE :: temp(:)
-  INTEGER             :: c, dir, type
-!--------------------------------[CVS]---------------------------------!
-  character*80 rcs1,rcs2
-  data rcs1/                                                        &
-  '$Id: ReadFluentNeu.f90,v 1.14 2005/01/25 12:45:44 muhamed Exp $'/ 
-  data rcs2/                                                        &
-  '$Source: /home/muhamed/.CVSROOT/T-Rex/Neu2Trex/ReadFluentNeu.f90,v $'/
+  character           :: Line*300
+  character           :: nameIn*130
+  integer             :: i, j, dum1, dum2, dum3
+  integer,allocatable :: temp(:)
+  integer             :: c, dir, type
 !======================================================================!
 
   write(*,*) 'Enter the Fluent''s (*.NEU) file name (without ext.):'
@@ -176,4 +170,4 @@
 
   close(9)
 
-  END SUBROUTINE ReadFluentNeu
+  end subroutine ReadFluentNeu

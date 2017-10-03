@@ -1,28 +1,25 @@
 !======================================================================!
-  SUBROUTINE UserCalcForce_cylinder(k) 
+  subroutine UserCalcForce_cylinder(k) 
 !----------------------------------------------------------------------!
 ! This program reads name.1D file created by NEU or GEN and averages    
 ! the results in the homogeneous direction directions.            
 ! The results are writen in files name_res.dat and name_res_plus.dat
 !----------------------------------------------------------------------!
-    USE all_mod
-    USE allp_mod
-    USE les_mod
-    USE pro_mod
-    USE par_mod
-    USE rans_mod
+    use all_mod
+    use allp_mod
+    use les_mod
+    use pro_mod
+    use par_mod
+    use rans_mod
 !----------------------------------------------------------------------!
-    IMPLICIT NONE
+    implicit none
 !-----------------------------[Parameters]-----------------------------!
-    REAL :: Ufric, Wall_near 
+    real :: Ufric, Wall_near 
 !-------------------------------[Locals]-------------------------------!
-    INTEGER             :: s, c1, c2, k
-    CHARACTER           :: path*39 
-    REAL                :: Fpx1,Fpy1,Fvx1,Fvy1,Fvz1, FtotalX, FtotalY 
-    REAL                :: Fpx2,Fpy2,Fvx2,Fvy2,Fvz2
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCalcForce_cylinder.f90,v 1.1 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCalcForce_cylinder.f90,v $  
+    integer             :: s, c1, c2, k
+    character           :: path*39 
+    real                :: Fpx1,Fpy1,Fvx1,Fvy1,Fvz1, FtotalX, FtotalY 
+    real                :: Fpx2,Fpy2,Fvx2,Fvy2,Fvz2
 !======================================================================!
 
 ! Fpx, Fpy, Fpz=0, rho*(Fvx, Fvy, Fvz) - pressure and viscous forces acting on a cylinder
@@ -159,4 +156,4 @@
 
    close(19)
 
-  END SUBROUTINE UserCalcForce_cylinder
+  end subroutine UserCalcForce_cylinder

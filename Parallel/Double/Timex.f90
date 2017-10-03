@@ -1,16 +1,13 @@
 !======================================================================!
-  SUBROUTINE Timex(time) 
+  subroutine Timex(time) 
 !----------------------------------------------------------------------!
 !   Calls timef(time) on the Cray T3E.                                 !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: time
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Timex.f90,v 1.1 2014/11/24 11:39:27 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Double/Timex.f90,v $  
+  real :: time
 !======================================================================!
 
   !call timef(time)
 
-  END SUBROUTINE Timex
+  end subroutine Timex

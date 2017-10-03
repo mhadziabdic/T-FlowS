@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourceKinKEPSV2F()
+  subroutine SourceKinKEPSV2F()
 !----------------------------------------------------------------------!
 
 !------------------------------[Modules]-------------------------------!
@@ -11,21 +11,18 @@
 !   Authors: Muhamed Hadziabdic
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, s
-  REAL    :: Utan, UnorSq, Unor, UtotSq, dely, Stot
-  REAL    :: lf, Gblend, Ustar, Ck, yPlus, Uplus, Pk_turb, Pk_vis
-  REAL    :: EBF, EBF1
-  REAL    :: ALPHA1, Lrans, Lsgs
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourceKinKEPSV2F.f90,v 1.4 2017/08/31 22:31:18 mhadziabdic Exp $  
-!  $UserKDSource: /home/muhamed/.CVSROOT/T-Rex/Pro/KSource.f90,v $  
+  integer :: c, c1, c2, s
+  real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot
+  real    :: lf, Gblend, Ustar, Ck, yPlus, Uplus, Pk_turb, Pk_vis
+  real    :: EBF, EBF1
+  real    :: ALPHA1, Lrans, Lsgs
 !======================================================================! 
 
 !===================!
@@ -139,4 +136,4 @@
 
   RETURN
  
-  END SUBROUTINE SourceKinKEPSV2F 
+  end subroutine SourceKinKEPSV2F 

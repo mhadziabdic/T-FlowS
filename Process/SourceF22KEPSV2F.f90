@@ -1,23 +1,20 @@
 !=====================================================================!
-  SUBROUTINE SourceF22KEPSV2F()
+  subroutine SourceF22KEPSV2F()
 !---------------------------------------------------------------------!
 !  Calculate source terms in eliptic relaxation  equation             !
 !  for vi2 and imposing  boundary condition for f22                   !
 !---------------------------------------------------------------------!
 !------------------------------[Moules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER s, c, c1, c2, j
-  REAL    Sor11,  f22hg
+  integer s, c, c1, c2, j
+  real    Sor11,  f22hg
 !=============================================
-  REAL    A0
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourceF22KEPSV2F.f90,v 1.3 2017/08/31 22:31:18 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourceF22KEPSV2F.f90,v $    
+  real    A0
 !----------------------------------------------------------------------!
 !                                                                      !
 !  The form of source terms are :                                      ! 
@@ -113,4 +110,4 @@
    end do
  end if 
  RETURN
- END SUBROUTINE  SourceF22KEPSV2F
+ end subroutine  SourceF22KEPSV2F

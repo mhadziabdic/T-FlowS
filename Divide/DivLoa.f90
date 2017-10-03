@@ -1,21 +1,18 @@
 !======================================================================!
-  SUBROUTINE DivLoa
+  subroutine DivLoa
 !----------------------------------------------------------------------!
 ! Reads:  NAME.cns, NAME.gmv                                           !
 ! ~~~~~~                                                               !                                                                           
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod 
-  USE div_mod
-  USE par_mod
+  use all_mod
+  use gen_mod 
+  use div_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER      :: c, n, s
-  CHARACTER*80 :: dummy, nameIn
-!--------------------------------[CVS]---------------------------------!
-!  $Id: DivLoa.f90,v 1.1 2014/11/24 11:32:32 muhamed Exp $   
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Divide/DivLoa.f90,v $     
+  integer      :: c, n, s
+  character*80 :: dummy, nameIn
 !======================================================================!
 
   write(*,'(A41)') '# Input problem name: (without extension)'
@@ -195,4 +192,4 @@
 !??????????????????????????????????????????!
 ! Do something ! 
 
-  END SUBROUTINE DivLoa
+  end subroutine DivLoa

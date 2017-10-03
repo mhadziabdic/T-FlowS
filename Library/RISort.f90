@@ -1,14 +1,11 @@
 !======================================================================*
-      SUBROUTINE RISort(X,Y,N,KFLAG)
+      subroutine RISort(X,Y,N,KFLAG)
 !----------------------------------------------------------------------*
 ! Sorts real array X and make same interchanges in integer array Y.    *
 !----------------------------------------------------------------------*
       DIMENSION IL(21),IU(21)
-      REAL    X(N),T, TT
-      INTEGER Y(N),TY,TTY
-!--------------------------------[CVS]---------------------------------*
-!      $Id: RISort.f90,v 1.3 2002/10/30 16:29:33 niceno Exp $  
-!      $Source: /home/muhamed/.CVSROOT/T-Rex/Library/RISort.f90,v $  
+      real    X(N),T, TT
+      integer Y(N),TY,TTY
 !======================================================================*
 !***FIRST EXECUTABLE STATEMENT RISORT
       NN = N
@@ -216,4 +213,4 @@
       X(I) = -X(I)
   310 CONTINUE
       RETURN
-      END SUBROUTINE
+      end subroutine

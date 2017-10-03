@@ -1,20 +1,17 @@
 !======================================================================!
-  SUBROUTINE FinSur(n1, n2, n3, n4, block, face) 
+  subroutine FinSur(n1, n2, n3, n4, block, face) 
 !----------------------------------------------------------------------!
 !   Searches for a block where the surface defined by n1,n2,n3,n4 is.  !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: n1, n2, n3, n4, block, face
+  integer :: n1, n2, n3, n4, block, face
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: b, fc, p1, p2, p3, p4
-!--------------------------------[CVS]---------------------------------!
-!  $Id: FinSur.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/FinSur.f90,v $   
+  integer :: b, fc, p1, p2, p3, p4
 !======================================================================!
 
   do b=1,Nbloc
@@ -24,9 +21,9 @@
       p3=BlkFac(b, fc, 3)
       p4=BlkFac(b, fc, 4) 
       if( ((p1 == n1).and.(p3 == n3)) .or.  &
-	  ((p1 == n4).and.(p3 == n2)) .or.  &
-	  ((p1 == n3).and.(p3 == n1)) .or.  &
-	  ((p1 == n2).and.(p3 == n4)) ) goto 1
+          ((p1 == n4).and.(p3 == n2)) .or.  &
+          ((p1 == n3).and.(p3 == n1)) .or.  &
+          ((p1 == n2).and.(p3 == n4)) ) goto 1
     end do     
   end do 
 
@@ -39,4 +36,4 @@
 1 block=b
   face =fc
 
-  END SUBROUTINE FinSur
+  end subroutine FinSur

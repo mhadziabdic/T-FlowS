@@ -1,32 +1,29 @@
 !======================================================================!
-  SUBROUTINE EpsWho(NSsh0)
+  subroutine EpsWho(NSsh0)
 !----------------------------------------------------------------------!
 !   Saves the whole grid in encapsulated postscript.                   !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  REAL :: Dist
+  real :: Distance
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: NSsh0 ! if 0, shadow will not be drawn 
+  integer :: NSsh0 ! if 0, shadow will not be drawn 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: n, s, s0, c1, c2
-  INTEGER             :: xmaxb, xminb, ymaxb, yminb, xlegend
-  CHARACTER           :: namEps*80, answer*80, colour*80
-  REAL                :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin
-  REAL                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,    &
-	                 xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade, &
-	                 xp1,yp1,xp2,yp2,xp3,yp3,xp4,yp4 
-  INTEGER,ALLOCATABLE :: indx(:)
-  REAL,ALLOCATABLE    :: work(:)
-  REAL                :: red(10), green(10), blue(10)
-  INTEGER             :: ix1, ix2, iy1, iy2, boxsize, BCcount(0:11)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: EpsWho.f90,v 1.13 2002/10/30 16:29:32 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/EpsWho.f90,v $  
+  integer             :: n, s, s0, c1, c2
+  integer             :: xmaxb, xminb, ymaxb, yminb, xlegend
+  character           :: namEps*80, answer*80, colour*80
+  real                :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin
+  real                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,    &
+                         xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade, &
+                         xp1,yp1,xp2,yp2,xp3,yp3,xp4,yp4 
+  integer,allocatable :: indx(:)
+  real,allocatable    :: work(:)
+  real                :: red(10), green(10), blue(10)
+  integer             :: ix1, ix2, iy1, iy2, boxsize, BCcount(0:11)
 !======================================================================!
 
 !---- allocate the memory
@@ -135,7 +132,7 @@
   write(9, '(A24)') '%!PS-Adobe-2.0 EPSF-1.2 '
   write(9, '(A24)') '%% Created by:  TFlowS %%'
   write(9, '(A15,4I7)') '%%BoundingBox: ',                          &
-			xminb-2,yminb-2,xmaxb+2+xlegend,ymaxb+2 
+                        xminb-2,yminb-2,xmaxb+2+xlegend,ymaxb+2 
   write(9, '(A24)') '% Abrevations:          '
   write(9, '(A24)') '/cp   {closepath}    def'
   write(9, '(A24)') '/f    {fill}         def'
@@ -163,7 +160,7 @@
 
   do s=1,NS+NSsh0
     indx(s) = s
-    work(s)  = dist(xk,yk,zk,xsp(s),ysp(s),zsp(s))
+    work(s)  = Distance(xk,yk,zk,xsp(s),ysp(s),zsp(s))
   end do
   call RISort(work,indx,NS+NSsh0,-2)
 
@@ -199,25 +196,25 @@
       z4 = z(SideN(s,4))
 
       if(xk  < 0.0 .and. yk  > 0.0) then
-	xp1=-x1*sin(alfa)-y1*sin(beta)
-	xp2=-x2*sin(alfa)-y2*sin(beta)
-	xp3=-x3*sin(alfa)-y3*sin(beta)
-	xp4=-x4*sin(alfa)-y4*sin(beta)
+        xp1=-x1*sin(alfa)-y1*sin(beta)
+        xp2=-x2*sin(alfa)-y2*sin(beta)
+        xp3=-x3*sin(alfa)-y3*sin(beta)
+        xp4=-x4*sin(alfa)-y4*sin(beta)
       else if(xk  > 0.0 .and. yk  < 0.0) then
-	xp1=x1*sin(alfa)+y1*sin(beta)
-	xp2=x2*sin(alfa)+y2*sin(beta)
-	xp3=x3*sin(alfa)+y3*sin(beta)
-	xp4=x4*sin(alfa)+y4*sin(beta)
+        xp1=x1*sin(alfa)+y1*sin(beta)
+        xp2=x2*sin(alfa)+y2*sin(beta)
+        xp3=x3*sin(alfa)+y3*sin(beta)
+        xp4=x4*sin(alfa)+y4*sin(beta)
       else if(xk  > 0.0 .and. yk  > 0.0) then 
-	xp1=-x1*sin(alfa)+y1*sin(beta)
-	xp2=-x2*sin(alfa)+y2*sin(beta)
-	xp3=-x3*sin(alfa)+y3*sin(beta)
-	xp4=-x4*sin(alfa)+y4*sin(beta)
+        xp1=-x1*sin(alfa)+y1*sin(beta)
+        xp2=-x2*sin(alfa)+y2*sin(beta)
+        xp3=-x3*sin(alfa)+y3*sin(beta)
+        xp4=-x4*sin(alfa)+y4*sin(beta)
       else
-	xp1=x1*sin(alfa)-y1*sin(beta)
-	xp2=x2*sin(alfa)-y2*sin(beta)
-	xp3=x3*sin(alfa)-y3*sin(beta)
-	xp4=x4*sin(alfa)-y4*sin(beta)
+        xp1=x1*sin(alfa)-y1*sin(beta)
+        xp2=x2*sin(alfa)-y2*sin(beta)
+        xp3=x3*sin(alfa)-y3*sin(beta)
+        xp4=x4*sin(alfa)-y4*sin(beta)
       end if
 
       yp1=(-x1*cos(alfa)-y1*cos(beta))*cos(gama) + z1*sin(gama)
@@ -229,61 +226,61 @@
         if(colour(1:1) == 'G') then
           if(SideN(s,0) == 4)                                       &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A9,F4.2,A15)')  &
-	   	    'gs np 0 slw ',                                 &
-		    int(sclf*xp1),int(sclf*yp1), ' m ',             &
-		    int(sclf*xp2),int(sclf*yp2), ' l ',             &
-		    int(sclf*xp3),int(sclf*yp3), ' l ',             &
-		    int(sclf*xp4),int(sclf*yp4), ' l ',             &
-		    ' cp   gs ',shade,' sg f gr   s gr'
+                       'gs np 0 slw ',                                 &
+                    int(sclf*xp1),int(sclf*yp1), ' m ',             &
+                    int(sclf*xp2),int(sclf*yp2), ' l ',             &
+                    int(sclf*xp3),int(sclf*yp3), ' l ',             &
+                    int(sclf*xp4),int(sclf*yp4), ' l ',             &
+                    ' cp   gs ',shade,' sg f gr   s gr'
           if(SideN(s,0) == 3)                                       &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A9,F4.2,A15)')         &
-	  	    'gs np 0 slw ',                                 &
-		    int(sclf*xp1),int(sclf*yp1), ' m ',             &
-		    int(sclf*xp2),int(sclf*yp2), ' l ',             &
-		    int(sclf*xp3),int(sclf*yp3), ' l ',             &
-		    ' cp   gs ',shade,' sg f gr   s gr'
+                      'gs np 0 slw ',                                 &
+                    int(sclf*xp1),int(sclf*yp1), ' m ',             &
+                    int(sclf*xp2),int(sclf*yp2), ' l ',             &
+                    int(sclf*xp3),int(sclf*yp3), ' l ',             &
+                    ' cp   gs ',shade,' sg f gr   s gr'
         else
           if(SideN(s,0) == 4)                                       &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)') &
-	  	    'gs np 0 slw ',                                 &
-		    int(sclf*xp1),int(sclf*yp1), ' m ',             & 
-		    int(sclf*xp2),int(sclf*yp2), ' l ',             &
-		    int(sclf*xp3),int(sclf*yp3), ' l ',             &
-		    int(sclf*xp4),int(sclf*yp4), ' l ',             &
-		    ' cp gs ',                                      &
-		    red(BCmark(c2)),                                &
-		    green(BCmark(c2)),                              &
-		    blue(BCmark(c2)),                               &
+                      'gs np 0 slw ',                                 &
+                    int(sclf*xp1),int(sclf*yp1), ' m ',             & 
+                    int(sclf*xp2),int(sclf*yp2), ' l ',             &
+                    int(sclf*xp3),int(sclf*yp3), ' l ',             &
+                    int(sclf*xp4),int(sclf*yp4), ' l ',             &
+                    ' cp gs ',                                      &
+                    red(BCmark(c2)),                                &
+                    green(BCmark(c2)),                              &
+                    blue(BCmark(c2)),                               &
                     ' srgb f gr s gr'
 
           if(SideN(s,0) == 3)                                       &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')        &
-		    'gs np 0 slw ',                                 &
-		    int(sclf*xp1),int(sclf*yp1), ' m ',             & 
-		    int(sclf*xp2),int(sclf*yp2), ' l ',             &
-		    int(sclf*xp3),int(sclf*yp3), ' l ',             &
-		    ' cp gs ',                                      &
-		    red(BCmark(c2)),                                &
-		    green(BCmark(c2)),                              &
-		    blue(BCmark(c2)),                               &
+                    'gs np 0 slw ',                                 &
+                    int(sclf*xp1),int(sclf*yp1), ' m ',             & 
+                    int(sclf*xp2),int(sclf*yp2), ' l ',             &
+                    int(sclf*xp3),int(sclf*yp3), ' l ',             &
+                    ' cp gs ',                                      &
+                    red(BCmark(c2)),                                &
+                    green(BCmark(c2)),                              &
+                    blue(BCmark(c2)),                               &
                     ' srgb f gr s gr'
         end if ! colour
       else if(s > NS) then
         if(SideN(s,0) == 4) then
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A9)')           &
-	    	    'gs np 0 slw ',                                 &
-		    int(sclf*xp1),int(sclf*yp1), ' m ',             &
-		    int(sclf*xp2),int(sclf*yp2), ' l ',             &
-		    int(sclf*xp3),int(sclf*yp3), ' l ',             &
-		    int(sclf*xp4),int(sclf*yp4), ' l ',             &
-		    ' cp s gr '
+                        'gs np 0 slw ',                                 &
+                    int(sclf*xp1),int(sclf*yp1), ' m ',             &
+                    int(sclf*xp2),int(sclf*yp2), ' l ',             &
+                    int(sclf*xp3),int(sclf*yp3), ' l ',             &
+                    int(sclf*xp4),int(sclf*yp4), ' l ',             &
+                    ' cp s gr '
         else if(SideN(s,0) == 3) then
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A9)')           &
-	  	    'gs np 0 slw ',                          &
-		    int(sclf*xp1),int(sclf*yp1), ' m ',      &
-		    int(sclf*xp2),int(sclf*yp2), ' l ',      &
-		    int(sclf*xp3),int(sclf*yp3), ' l ',      &
-		    ' cp s gr '
+                      'gs np 0 slw ',                          &
+                    int(sclf*xp1),int(sclf*yp1), ' m ',      &
+                    int(sclf*xp2),int(sclf*yp2), ' l ',      &
+                    int(sclf*xp3),int(sclf*yp3), ' l ',      &
+                    ' cp s gr '
         end if
       end if
     end if
@@ -330,4 +327,4 @@
   deallocate(indx)
   deallocate(work)
 
-  END SUBROUTINE EpsWho
+  end subroutine EpsWho

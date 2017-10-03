@@ -1,37 +1,34 @@
 !======================================================================!
-  SUBROUTINE UserDiffuser() 
+  subroutine UserDiffuser() 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
 ! the values of Umean, Vmean, Wmean, uu, vv, ww, uv, uw and vw and     !
 ! writes them into file ".1Dr".                                        !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE pro_mod
-  USE rans_mod
-  USE par_mod
+  use all_mod
+  use allp_mod
+  use pro_mod
+  use rans_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE 
+  interface
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, optional :: tol
+    end function Approx
+  end interface 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: Nprob, pl, c, i, count, k, c1, c2, s, j
-  CHARACTER           :: namCoo*80, namPro*80, answer*80, JetIn*31, namOut*80
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), xc_p(:), yc_p(:), zc_p(:), & 
+  integer             :: Nprob, pl, c, i, count, k, c1, c2, s, j
+  character           :: namCoo*80, namPro*80, answer*80, JetIn*31, namOut*80
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), xc_p(:), yc_p(:), zc_p(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), tke(:), nu(:)
-  INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
-  REAL                :: dummy
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserDiffuser.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserDiffuser.f90,v $  
+  integer,allocatable :: Np(:), Ncount(:)
+  real                :: dummy
 !======================================================================!
 
     call GraPhi(U % n, 1, Ux,.TRUE.)    ! dU/dx
@@ -419,4 +416,4 @@
 
   if(this < 2) write(*,*) 'Finished with UserDiffuser '
 
-  END SUBROUTINE UserDiffuser
+  end subroutine UserDiffuser

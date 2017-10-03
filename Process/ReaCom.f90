@@ -1,28 +1,25 @@
 !======================================================================!
-  SUBROUTINE ReaCom(restar) 
+  subroutine ReaCom(restar) 
 !----------------------------------------------------------------------!
 !   Reads second part of T-FlowS.cmn file.                             ! 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL   :: restar
+  logical   :: restar
 !------------------------------[Calling]-------------------------------!
-  REAL      :: Dist
+  real      :: Distance
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: i, j, l, m
-  REAL      :: Mres(MAXP), MresT, dummy
-  REAL      :: xm(MAXP), ym(MAXP), zm(MAXP)
-  CHARACTER :: answer*80, nammon*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ReaCom.f90,v 1.3 2017/09/06 06:16:14 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/ReaCom.f90,v $  
+  integer   :: i, j, l, m
+  real      :: Mres(MAXP), MresT, dummy
+  real      :: xm(MAXP), ym(MAXP), zm(MAXP)
+  character :: answer*80, nammon*80
 !======================================================================!
 
   call Wait   
@@ -62,10 +59,10 @@
   do j=1,Nmon
     Mres(j)=HUGE
     do i=1,NC
-      if(dist(xm(j),ym(j),zm(j),  &
+      if(Distance(xm(j),ym(j),zm(j),  &
               xc(i),yc(i),zc(i))  < Mres(j)) then
         Cm(j)=i
-        Mres(j)=dist(xm(j),ym(j),zm(j),xc(i),yc(i),zc(i))
+        Mres(j)=Distance(xm(j),ym(j),zm(j),xc(i),yc(i),zc(i))
       end if
     end do
     MresT=Mres(j)
@@ -712,5 +709,5 @@
 
   RETURN
 
-  END SUBROUTINE ReaCom
+  end subroutine ReaCom
 

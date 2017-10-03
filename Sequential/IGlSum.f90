@@ -1,14 +1,11 @@
 !======================================================================!
-  SUBROUTINE IGlSum(PHI) 
+  subroutine IGlSum(PHI) 
 !----------------------------------------------------------------------!
 !   Dummy function.                                                    !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: PHI
-!--------------------------------[CVS]---------------------------------!
-!  $Id: IGlSum.f90,v 1.1 2014/11/24 11:36:22 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Sequential/IGlSum.f90,v $  
+  integer :: PHI
 !======================================================================!
 
-  END SUBROUTINE IGlSum
+  end subroutine IGlSum

@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourceKinKEPSV2F_rough()
+  subroutine SourceKinKEPSV2F_rough()
 !----------------------------------------------------------------------!
 
 !------------------------------[Modules]-------------------------------!
@@ -12,16 +12,16 @@
 !   Authors: Muhamed Hadziabdic and Bojan Niceno                       !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, c1, c2, s
-  REAL    :: Utan, UnorSq, Unor, UtotSq, dely, Stot
-  REAL    :: lf, Gblend, Ustar, Ck, yPlus, Uplus
+  integer :: c, c1, c2, s
+  real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot
+  real    :: lf, Gblend, Ustar, Ck, yPlus, Uplus
 !--------------------------------[CVS]---------------------------------!
 !  $Id: SourceKinKEPSV2F_rough.f90,v 1.1 2017/08/31 22:35:25 mhadziabdic Exp $  
 !  $UserKDSource: /home/muhamed/.CVSROOT/T-Rex/Pro/KSource.f90,v $  
@@ -111,4 +111,4 @@
 
   RETURN
  
-  END SUBROUTINE SourceKinKEPSV2F_rough 
+  end subroutine SourceKinKEPSV2F_rough 

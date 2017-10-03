@@ -1,19 +1,16 @@
 !======================================================================!
-  SUBROUTINE GeoLoa
+  subroutine GeoLoa
 !----------------------------------------------------------------------!
 ! Reads:  NAME.geo                                                     !
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE par_mod  ! needs to know THIS
+  use all_mod
+  use par_mod  ! needs to know THIS
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER      :: c, s
-  CHARACTER*80 :: nameIn  
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GeoLoa.f90,v 1.9 2002/10/31 11:26:48 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/GeoLoa.f90,v $   
+  integer      :: c, s
+  character*80 :: nameIn  
 !======================================================================!
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
@@ -66,4 +63,4 @@
 !->>>	write(*,'(3F10.5)') Sx(s),Sy(s),Sz(s)  
 !->>> end do
 
-  END SUBROUTINE GeoLoa
+  end subroutine GeoLoa

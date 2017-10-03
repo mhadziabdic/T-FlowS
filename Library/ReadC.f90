@@ -1,17 +1,14 @@
 !======================================================================!
-  SUBROUTINE ReadC(un, string, tn, ts, te) 
+  subroutine ReadC(un, string, tn, ts, te) 
 !----------------------------------------------------------------------!
 !   Reads a line from a file (unit 9) and discards if it is comment.   !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  CHARACTER :: string*300
-  INTEGER   :: un, tn, ts(300), te(300)
+  character :: string*300
+  integer   :: un, tn, ts(300), te(300)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ReadC.f90,v 1.5 2002/10/30 16:29:33 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/ReadC.f90,v $            
+  integer :: i
 !======================================================================!
 !   A comment is each line which begins with one of the following      !
 !   characters: ! # $ % / & [ ] { } : @ < > * (Quite a lot, huh ?)     !
@@ -56,4 +53,4 @@
     end if
   end do
 
-  END SUBROUTINE ReadC
+  end subroutine ReadC

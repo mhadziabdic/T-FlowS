@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourceEpsKEPSV2F_rough()
+  subroutine SourceEpsKEPSV2F_rough()
 !-----------------------------------------------------------------------!
 ! Purpose:                                                              !
 ! Calculates source terms in equation of dissipation of turbulent energy! 
@@ -8,15 +8,15 @@
 ! Authors: Muhamed Hadziabdic and Bojan Niceno                          !
 !-----------------------------------------------------------------------!
 !------------------------------[Modules]--------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
+  use les_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, s, c1, c2,j	 
-  REAL    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret
+  integer :: c, s, c1, c2,j	 
+  real    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret
 !--------------------------------[CVS]---------------------------------!
 !  $Id: SourceEpsKEPSV2F_rough.f90,v 1.1 2017/08/31 22:35:25 mhadziabdic Exp $  
 !  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/SourceEpsKEPSV2F_rough.f90,v $  
@@ -75,4 +75,4 @@
     end do  
 
   RETURN
-  END SUBROUTINE SourceEpsKEPSV2F_rough  
+  end subroutine SourceEpsKEPSV2F_rough  

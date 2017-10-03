@@ -1,32 +1,32 @@
 !======================================================================!
-  SUBROUTINE UserProbe1D(y) 
+  subroutine UserProbe1D(y) 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
 ! the values of Umean, Vmean, Wmean, uu, vv, ww, uv, uw and vw and     !
 ! writes them into file ".1Dr".                                        !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: y(-NbC:NC)
+  real :: y(-NbC:NC)
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE 
+  interface
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, optional :: tol
+    end function Approx
+  end interface 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: Nprob, pl, c, dummy
-  CHARACTER           :: namCoo*80, namPro*80, answer*80
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+  integer             :: Nprob, pl, c, dummy
+  character           :: namCoo*80, namPro*80, answer*80
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
@@ -34,10 +34,7 @@
                                  Ksgsp(:), VISt_m(:), VISt_m1(:) ,VISt_m2(:),&
                                  Kin_mp(:), Eps_mp(:), v_2_mp(:), f22_mp(:), &
                                  var_1(:), var_2(:), var_3(:)
-  INTEGER,ALLOCATABLE :: Np(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D.f90,v $  
+  integer,allocatable :: Np(:)
 !======================================================================!
 
 !  if(this  < 2)  & 
@@ -262,4 +259,4 @@
     deallocate(vTp)
     deallocate(wTp)
   end if
-  END SUBROUTINE UserProbe1D
+  end subroutine UserProbe1D

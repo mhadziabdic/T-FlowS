@@ -13,6 +13,9 @@
 #  where [machine is: gnu, cluster, intel, ....
 #----------------------------------------------------------------------#
 
+#---------------------------
+# Default target is cluster
+#---------------------------
 TARGET = cluster
 
 STATIC_LIBS =
@@ -25,17 +28,18 @@ DOBJ  = ./obj/
 DMOD  = ./mod/
 
 ifeq ($(PRECISION),single)
-	INCLUDE_DIRS = ../Parallel/Single
+  INCLUDE_DIRS = ../Parallel/Single
 else
-	INCLUDE_DIRS = ../Parallel/Double
+  INCLUDE_DIRS = ../Parallel/Double
 endif
 
-ifeq ($(FORCE),seq)
-	INCLUDE_DIRS = ../Sequential
+ifeq ($(FORCE),sequential)
+  INCLUDE_DIRS = ../Sequential
 endif
 
 vpath %.f90 ../Library/ ../User ./  $(INCLUDE_DIRS) # source .f90 files search pattern
 vpath %.c   ../Library/ ../User ./  $(INCLUDE_DIRS) # source .c   files search pattern
+
 #-------------------------
 PROGRAM = RUN
 #-------------------------
@@ -45,34 +49,43 @@ PROGRAM = RUN
 #-----------------------------
 
 ifeq ($(TARGET),gnu)
-	FC     = mpif90
-	FL     = $(FC)
-	ifeq ($(DEBUG),yes)
-		FCOPTS = -g -O0 -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -ffree-line-length-none -fbacktrace -fmax-errors=0 -Wall -Wno-array-temporaries -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wconversion-extra -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wextra -Wuninitialized -fcheck=all -fmodule-private -fimplicit-none -ffpe-trap=invalid,overflow -fbacktrace -fdump-core -finit-real=nan #-fno-range-check  ,precision,denormal,underflow -std=f2003 -fall-intrinsics
-	else
-		FCOPTS =    -O3 -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -ffree-line-length-none
-	endif 
-	FLOPTS =    
+  FC = mpif90
+  ifeq ($(FORCE),sequential)
+    FC = gfortran
+  endif
+  FL = $(FC)
+  ifeq ($(DEBUG),yes)
+    FCOPTS = -g -O0 -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -ffree-line-length-none -fbacktrace -fmax-errors=0 -Wall -Wno-array-temporaries -Warray-bounds -Wcharacter-truncation -Wline-truncation -Wconversion-extra -Wimplicit-interface -Wimplicit-procedure -Wunderflow -Wextra -Wuninitialized -fcheck=all -fmodule-private -fimplicit-none -ffpe-trap=invalid,overflow -fbacktrace -fdump-core -finit-real=nan #-fno-range-check  ,precision,denormal,underflow -std=f2003 -fall-intrinsics
+  else
+    FCOPTS =    -O3 -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -ffree-line-length-none
+  endif 
+  FLOPTS =    
 endif
 
 ifeq ($(TARGET),intel)
-	FC     = mpiifort
-	FL     = $(FC)
-	ifeq ($(DEBUG),yes)
-		FCOPTS = -g -O0 -module $(DMOD) -r8 -traceback -warn all -check all -debug all -extend-source 132 -fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -traceback -gen-interfaces -std03 -ipo -inline all -ipo-jobs4 -vec-report1
-	else
-		FCOPTS =    -O3 -module $(DMOD) -r8
-	endif 
-	FLOPTS =    
+  FC = mpif90
+  ifeq ($(FORCE),sequential)
+    FC = ifort
+  endif
+  FL = $(FC)
+  ifeq ($(DEBUG),yes)
+    FCOPTS = -g -O0 -module $(DMOD) -r8 -traceback -warn all -check all -debug all -extend-source 132 -fpe-all=0 -fp-stack-check -fstack-protector-all -ftrapuv -no-ftz -traceback -gen-interfaces -std03 -ipo -inline all -ipo-jobs4 -vec-report1
+  else
+    FCOPTS =    -O3 -module $(DMOD) -r8
+  endif 
+  FLOPTS =    
 endif
 
 ifeq ($(TARGET),cluster)
   FC     = mpif90
+  ifeq ($(FORCE),sequential)
+    FC = gfortran
+  endif
   FL     = $(FC)
   ifeq ($(PRECISION),single)
-    FCOPTS =  -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -O3  -I /usr/lib64/mpi/gcc/openmpi/include/
+    FCOPTS = -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -O3 -I /usr/lib64/mpi/gcc/openmpi/include/
   else
-    FCOPTS = -J$(DMOD) -fdefault-real-8 -fdefault-double-8  -O3  -I /usr/lib64/mpi/gcc/openmpi/include/
+    FCOPTS = -J$(DMOD) -fdefault-real-8 -fdefault-double-8 -O3 -I /usr/lib64/mpi/gcc/openmpi/include/
   endif
   FLOPTS = #-L/home/muhamed/Downloads/openmpi-1.8.3/ompi/include  
 endif
@@ -95,7 +108,7 @@ endif
             CalcPF.f90      IniVar.f90      SavRes.f90      SourceKinKEps.f90 \
             CalcPS.f90      LoaRes.f90      CalcG.f90       SourceEpsKEps.f90 \
             ModOut.f90      NewUVW.f90      CalcShear.f90   DatSav.f90      \
-            Dist.f90        CalcTurb.f90    ReadC.f90       GeoAloc.f90     \
+            Distance.f90    CalcTurb.f90    ReadC.f90       GeoAloc.f90     \
             ToUppr.f90      Rnd.f90         GeoLoa.f90      ISort.f90       \
             Prec1.f90	    NamFil.f90      GradP3.f90      UnkAloc.f90     \
             StaPar.f90      EndPar.f90      BufLoa.f90      Exchng.f90      \
@@ -115,7 +128,7 @@ endif
             CalcVISt_SPA_ALL.f90 CalcVort.f90 RNSort.f90 RISort.f90\
             CalcSGS_Dynamic.f90  NearWallCell.f90 LoaIni.f90 SavIni.f90\
             CalcMn_Cylind.f90 UserCutLines_channel.f90 SSort.f90\
-            UserCutLines_pipe.f90 UserCutLines_Nu.f90 DistR.f90 CalcWALE.f90\
+            UserCutLines_pipe.f90 UserCutLines_Nu.f90 CalcWALE.f90\
             UserDiffuser.f90 UserProbe1D_Nusselt_jet.f90 UserProbe1D_jet_rans.f90\
             SavParView.f90 CalcStresses.f90\
 	    CalcVISt_EBM.f90 SourcesEBM.f90 CalcSGS_hybrid.f90 UserCutLines_annulus.f90\

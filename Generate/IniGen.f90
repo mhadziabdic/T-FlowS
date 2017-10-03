@@ -1,17 +1,14 @@
 !======================================================================!
-  SUBROUTINE IniGen 
+  subroutine IniGen 
 !----------------------------------------------------------------------!
 !   Initialize various parameters for the mesh generator.              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
-  USE par_mod
+  use all_mod
+  use gen_mod
+  use par_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
-!--------------------------------[CVS]---------------------------------!
-!  $Id: IniGen.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/IniGen.f90,v $  
+  implicit none
 !======================================================================!
 
 !-------------------------------!
@@ -23,4 +20,4 @@
   ELIPSO = 4
   PLANE  = 5
 
-  END SUBROUTINE IniGen
+  end subroutine IniGen

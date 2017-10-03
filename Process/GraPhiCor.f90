@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE GraPhiCor(PHI, PHI_x, PHI_y, PHI_z)
+  subroutine GraPhiCor(PHI, PHI_x, PHI_y, PHI_z)
 !----------------------------------------------------------------------!
 ! Calculates gradient in the cells adjencent to material interface     !
 ! boundaries. Assumes that "tentative" gradients are just calculated   !
@@ -24,23 +24,20 @@
 ! Further, it will probably not work on periodic boundaries.           !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE sol_mod  ! needed for p1 and p2 arrays
+  use all_mod
+  use pro_mod
+  use sol_mod  ! needed for p1 and p2 arrays
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: PHI(-NbC:NC),    &
+  real :: PHI(-NbC:NC),    &
           PHI_x(-NbC:NC),  &
           PHI_y(-NbC:NC),  &
           PHI_z(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2
-  REAL    :: DPHI1, DPHI2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
-  REAL    :: f1, f2, PHIs
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GraPhiCor.f90,v 1.2 2017/08/31 21:54:23 mhadziabdic Exp $
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/GraPhiCor.f90,v $ 
+  integer :: s, c, c1, c2
+  real    :: DPHI1, DPHI2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
+  real    :: f1, f2, PHIs
 !======================================================================!
 
   do s=1,NS
@@ -127,4 +124,4 @@
   call Exchng(PHI_y)
   call Exchng(PHI_z)
 
-  END SUBROUTINE GraPhiCor
+  end subroutine GraPhiCor

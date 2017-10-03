@@ -1,21 +1,18 @@
 !======================================================================!
-  SUBROUTINE CasSav(sub, NNsub, NCsub, NSsub)
+  subroutine CasSav(sub, NNsub, NCsub, NSsub)
 !----------------------------------------------------------------------!
 ! Writes: NAME.gmv                                                     !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER   :: sub, NNsub, NCsub, NSsub
+  integer   :: sub, NNsub, NCsub, NSsub
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: c,  c1,  c2,  n, s, Nfac, NtotFac 
-  CHARACTER :: namOut*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CasSav.f90,v 1.19 2005/01/25 12:41:08 muhamed Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/CasSav.f90,v $             
+  integer   :: c,  c1,  c2,  n, s, Nfac, NtotFac 
+  character :: namOut*80
 !======================================================================!
 !   See also: number                                                   !
 !   NSsub holds (has to hold) NS + NSsh                                !
@@ -291,4 +288,4 @@
   write(9,'(A5,I6,A18)') '(45 (', 110 , ' wall wall-10) ())'
   write(9,'(A5,I6,A18)') '(45 (', 111 , ' wall period ) ())'
 
-  END SUBROUTINE CasSav
+  end subroutine CasSav

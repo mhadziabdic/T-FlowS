@@ -1,19 +1,16 @@
 !======================================================================!
-  SUBROUTINE Calc3
+  subroutine Calc3
 !----------------------------------------------------------------------!
 !   Calculates additional geometrical quantities.                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, s, m
-  REAL    :: xc1, yc1, zc1, xc2, yc2, zc2, AreaTx, AreaTy, AreaTz
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Calc3.f90,v 1.2 2017/08/31 21:30:55 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/Calc3.f90,v $   
+  integer :: c1, c2, s, m
+  real    :: xc1, yc1, zc1, xc2, yc2, zc2, AreaTx, AreaTy, AreaTz
 !======================================================================!
 
 !++++++++++++++++++++++++++++++++++++++++++++++++++!
@@ -165,4 +162,4 @@
 
   RETURN
 
-  END SUBROUTINE Calc3
+  end subroutine Calc3

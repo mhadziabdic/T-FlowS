@@ -1,26 +1,23 @@
 !======================================================================!
-  SUBROUTINE Split(sub, Npar)
+  subroutine Split(sub, Npar)
 !----------------------------------------------------------------------!
 !   Splits the domain by a geometrical multisection technique.         !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod 
-  USE div_mod
-  USE par_mod 
+  use all_mod
+  use gen_mod 
+  use div_mod
+  use par_mod 
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: sub                           ! subdomain to be splitted
-  INTEGER :: Npar                          ! number of new partitions
+  integer :: sub                           ! subdomain to be splitted
+  integer :: Npar                          ! number of new partitions
 !-------------------------------[Locals]-------------------------------!
-  CHARACTER :: dir                         ! direction for splitting
-  INTEGER   :: c, ic, j
-  INTEGER   :: Nfiled
-  REAL      :: xmax,ymax,zmax,xmin,ymin,zmin, delx,dely,delz,dxyz 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Split.f90,v 1.1 2014/11/24 11:32:32 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Divide/Split.f90,v $    
+  character :: dir                         ! direction for splitting
+  integer   :: c, ic, j
+  integer   :: Nfiled
+  real      :: xmax,ymax,zmax,xmin,ymin,zmin, delx,dely,delz,dxyz 
 !======================================================================!
 ! TESTING TESTING TESTING
 !--------------------------------------------! 
@@ -125,4 +122,4 @@
 
   Nsub = Nsub + Npar - 1
 
-  END SUBROUTINE Split
+  end subroutine Split

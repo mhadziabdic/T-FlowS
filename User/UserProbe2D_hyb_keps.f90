@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE UserProbe2D(namAut) 
+  subroutine UserProbe2D(namAut) 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and  creates cut     !
 ! lines which position is defined in *.cmn file.It works for all models!
@@ -8,26 +8,26 @@
 ! instantenious.                                                       !
 ! It is necessary to defined exact values od x,y coordinates in*.cmn   !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE 
+  interface
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, optional :: tol
+    end function Approx
+  end interface 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: pl, c, dummy, K, Npoints
-  CHARACTER           :: namCoo*80, answer*80
-  REAL                :: u_tau, Re_tau, tau_w,u_tau_i,tau_w_i, Uref, WD
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:),         & 
+  integer             :: pl, c, dummy, K, Npoints
+  character           :: namCoo*80, answer*80
+  real                :: u_tau, Re_tau, tau_w,u_tau_i,tau_w_i, Uref, WD
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:),         & 
                                  uup(:), vvp(:), wwp(:),         &
                                  uvp(:), uwp(:), vwp(:),         &
                                  Umean(:), Vmean(:), Wmean(:),   &
@@ -35,11 +35,8 @@
                                  f22_mp(:), Utau_a(:), Utau_i(:),&
                                  VISt_mp(:),VIS_mp(:), T_mp(:),  &
                                  Pk_mp(:), PHI(:)
-  INTEGER,ALLOCATABLE :: Np(:), order(:) 
-  CHARACTER, OPTIONAL :: namAut*(*)            
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe2D_hyb_keps.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe2D_hyb_keps.f90,v $  
+  integer,allocatable :: Np(:), order(:) 
+  character, optional :: namAut*(*)            
 !======================================================================!
   if(PRESENT(namAut)) then
     write(*,*) namAut
@@ -518,4 +515,4 @@
   deallocate(VIS_mp)   
   deallocate(Pk_mp)   
 
-  END SUBROUTINE UserProbe2D
+  end subroutine UserProbe2D

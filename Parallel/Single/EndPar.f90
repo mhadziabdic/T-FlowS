@@ -1,18 +1,15 @@
 !======================================================================!
-  SUBROUTINE EndPar
+  subroutine EndPar
 !----------------------------------------------------------------------!
 !   Ends parallel execution.                                           !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Include]-------------------------------!
-  INCLUDE 'mpif.h'
+  include 'mpif.h'
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: ERROR
-!--------------------------------[CVS]---------------------------------!
-!  $Id: EndPar.f90,v 1.1 2014/11/24 11:39:07 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Single/EndPar.f90,v $  
+  integer :: ERROR
 !======================================================================!
 
   call MPI_FINALIZE(ERROR)
 
-  END SUBROUTINE EndPar
+  end subroutine EndPar

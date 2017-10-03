@@ -1,32 +1,29 @@
 !======================================================================!
-  SUBROUTINE Calc1
+  subroutine Calc1
 !----------------------------------------------------------------------!
 !   Calculate node coordinates inside the domain, block by block.      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  INTEGER :: IsLine
+  integer :: IsLine
 !-----------------------------[Interface]------------------------------!
-  INTERFACE 
-    LOGICAL FUNCTION Approx(A,B,tol)
-      IMPLICIT NONE
-      REAL          :: A,B 
-      REAL,OPTIONAL :: tol
-    END FUNCTION Approx   
-  END INTERFACE 
+  interface 
+    logical function Approx(A,B,tol)
+      implicit none
+      real          :: A,B 
+      real,optional :: tol
+    end function Approx   
+  end interface 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: b, bl, i, j, k, n, c, ig
-  INTEGER :: l, l1, l2
-  INTEGER :: is, js, ks, ie, je, ke, face 
-  INTEGER :: NI, NJ, NK, CI, CJ, CK
-  INTEGER :: trans(3,2)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Calc1.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/Calc1.f90,v $  
+  integer :: b, bl, i, j, k, n, c, ig
+  integer :: l, l1, l2
+  integer :: is, js, ks, ie, je, ke, face 
+  integer :: NI, NJ, NK, CI, CJ, CK
+  integer :: trans(3,2)
 !======================================================================!
 
   do n=1,MAXN
@@ -517,4 +514,4 @@
 
   end do  !  Nboun
 
-  END SUBROUTINE Calc1
+  end subroutine Calc1

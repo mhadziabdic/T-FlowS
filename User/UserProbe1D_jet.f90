@@ -1,33 +1,33 @@
 !======================================================================!
-  SUBROUTINE UserProbe1D_jet() 
+  subroutine UserProbe1D_jet() 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
 ! the values of Umean, Vmean, Wmean, uu, vv, ww, uv, uw and vw and     !
 ! writes them into file ".1Dr".                                        !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: y(-NbC:NC)
-  REAL :: Rad_2, Ufric 
+  real :: y(-NbC:NC)
+  real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE 
+  interface
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, optional :: tol
+    end function Approx
+  end interface 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: Nprob, pl, c, dummy, i, count, k, c1, c2, s
-  CHARACTER           :: namCoo*80, namPro*80, answer*80, JetIn*9, namOut*80
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+  integer             :: Nprob, pl, c, dummy, i, count, k, c1, c2, s
+  character           :: namCoo*80, namPro*80, answer*80, JetIn*9, namOut*80
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
@@ -35,14 +35,9 @@
                                  Ksgsp(:),               & 
                                  var_1(:), var_2(:), var_3(:), Rad_mp(:), &
                                  var_4(:), var_5(:)  
-  INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
-  REAL                :: R, Urad_mean, Utan_mean, R1, R2, Urad, Utan
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D_jet.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D_jet.f90,v $  
+  integer,allocatable :: Np(:), Ncount(:)
+  real                :: R, Urad_mean, Utan_mean, R1, R2, Urad, Utan
 !======================================================================!
-
-
 
   do k = 0, 8
 
@@ -279,4 +274,4 @@
 
   if(this < 2) write(*,*) 'Finished with UserProbe1D_jet '
 
-  END SUBROUTINE UserProbe1D_jet
+  end subroutine UserProbe1D_jet

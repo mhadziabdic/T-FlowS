@@ -1,24 +1,21 @@
 !======================================================================!
-  SUBROUTINE Linija(b, w, is,js,ks,ie,je,ke)
+  subroutine Linija(b, w, is,js,ks,ie,je,ke)
 !----------------------------------------------------------------------!
 !   Places the nodes on the line defined with local block position     !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
+  use all_mod
+  use gen_mod
 !----------------------------------------------------------------------! 
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: b, is,js,ks,ie,je,ke
-  REAL    :: w
+  integer :: b, is,js,ks,ie,je,ke
+  real    :: w
 !------------------------------[Calling]-------------------------------!
-  REAL :: atanh
+  real :: atanh
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: N, NI, NJ, NK, i, j, k, node, case
-  REAL    :: x0, y0, z0, delx, dely, delz, t, dt, ddt, pr, xi
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Linija.f90,v 1.1 2014/11/24 11:31:30 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Generate/Linija.f90,v $  
+  integer :: N, NI, NJ, NK, i, j, k, node, case
+  real    :: x0, y0, z0, delx, dely, delz, t, dt, ddt, pr, xi
 !======================================================================!
 
   NI=BlkRes(b,1)
@@ -42,38 +39,38 @@
     t=0.0
     do i=is,ie
       do j=js,je
-	do k=ks,ke
-	  if( ie /= is ) then
-	    dt=1.0/(1.0*N)+(1.0*i-0.5*(1.0*N+1)) * ddt
-	    t=t+dt
-	    node = NN + (k-1)*NI*NJ + (j-1)*NI + i+1
-	    if( (i  < ie).and.(x(node) == HUGE) ) then 
-	      x(node) = x0 + t*delx
-	      y(node) = y0 + t*dely
-	      z(node) = z0 + t*delz
-	    endif
-	  end if 
-	  if( je /= js ) then
-	    dt=1.0/(1.0*N)+(1.0*j-0.5*(1.0*N+1)) * ddt
-	    t=t+dt
-	    node = NN + (k-1)*NI*NJ + (j-0)*NI + i 
-	    if( (j  < je).and.(x(node) == HUGE) ) then 
-	      x(node) = x0 + t*delx
-	      y(node) = y0 + t*dely
-	      z(node) = z0 + t*delz
-	    endif
-	  end if 
-	  if( ke /= ks ) then
-	    dt=1.0/(1.0*N)+(1.0*k-0.5*(1.0*N+1)) * ddt
-	    t=t+dt
-	    node = NN + (k-0)*NI*NJ + (j-1)*NI + i 
-	    if( (k  < ke).and.(x(node) == HUGE) ) then 
-	      x(node) = x0 + t*delx
-	      y(node) = y0 + t*dely
-	      z(node) = z0 + t*delz
-	    endif
-	  end if 
-	end do
+        do k=ks,ke
+          if( ie /= is ) then
+            dt=1.0/(1.0*N)+(1.0*i-0.5*(1.0*N+1)) * ddt
+            t=t+dt
+            node = NN + (k-1)*NI*NJ + (j-1)*NI + i+1
+            if( (i  < ie).and.(x(node) == HUGE) ) then 
+              x(node) = x0 + t*delx
+              y(node) = y0 + t*dely
+              z(node) = z0 + t*delz
+            endif
+          end if 
+          if( je /= js ) then
+            dt=1.0/(1.0*N)+(1.0*j-0.5*(1.0*N+1)) * ddt
+            t=t+dt
+            node = NN + (k-1)*NI*NJ + (j-0)*NI + i 
+            if( (j  < je).and.(x(node) == HUGE) ) then 
+              x(node) = x0 + t*delx
+              y(node) = y0 + t*dely
+              z(node) = z0 + t*delz
+            endif
+          end if 
+          if( ke /= ks ) then
+            dt=1.0/(1.0*N)+(1.0*k-0.5*(1.0*N+1)) * ddt
+            t=t+dt
+            node = NN + (k-0)*NI*NJ + (j-1)*NI + i 
+            if( (k  < ke).and.(x(node) == HUGE) ) then 
+              x(node) = x0 + t*delx
+              y(node) = y0 + t*dely
+              z(node) = z0 + t*delz
+            endif
+          end if 
+        end do
       end do
     end do
 
@@ -95,13 +92,13 @@
 
     do i=is,ie
       do j=js,je
-	do k=ks,ke
-	  if( ie /= is ) then
+        do k=ks,ke
+          if( ie /= is ) then
     if(case == 1) xi = -1.0*(1.0*i)/(1.0*N)
     if(case == 2) xi =  1.0 - 1.0*(1.0*i)/(1.0*N)
     if(case == 3) xi = -1.0 + 2.0*(1.0*i)/(1.0*N)
-	    node = NN + (k-1)*NI*NJ + (j-1)*NI + i+1
-	    if( (i  < ie).and.(x(node) == HUGE) ) then 
+            node = NN + (k-1)*NI*NJ + (j-1)*NI + i+1
+            if( (i  < ie).and.(x(node) == HUGE) ) then 
     if    (case == 1) then
       x(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
       y(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
@@ -115,14 +112,14 @@
       y(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
       z(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
     endif 
-	    endif
-	  end if 
-	  if( je /= js ) then
+            endif
+          end if 
+          if( je /= js ) then
     if(case == 1) xi = -1.0*(1.0*j)/(1.0*N)
     if(case == 2) xi =  1.0 - 1.0*(1.0*j)/(1.0*N)
     if(case == 3) xi = -1.0 + 2.0*(1.0*j)/(1.0*N)
-	    node = NN + (k-1)*NI*NJ + (j-0)*NI + i 
-	    if( (j  < je).and.(x(node) == HUGE) ) then 
+            node = NN + (k-1)*NI*NJ + (j-0)*NI + i 
+            if( (j  < je).and.(x(node) == HUGE) ) then 
     if    (case == 1) then
       x(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
       y(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
@@ -136,14 +133,14 @@
       y(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
       z(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
     endif 
-	    endif
-	  end if 
-	  if( ke /= ks ) then
+            endif
+          end if 
+          if( ke /= ks ) then
     if(case == 1) xi = -1.0*(1.0*k)/(1.0*N)
     if(case == 2) xi =  1.0 - 1.0*(1.0*k)/(1.0*N)
     if(case == 3) xi = -1.0 + 2.0*(1.0*k)/(1.0*N)
-	    node = NN + (k-0)*NI*NJ + (j-1)*NI + i 
-	    if( (k  < ke).and.(x(node) == HUGE) ) then 
+            node = NN + (k-0)*NI*NJ + (j-1)*NI + i 
+            if( (k  < ke).and.(x(node) == HUGE) ) then 
     if    (case == 1) then
       x(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
       y(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
@@ -157,12 +154,12 @@
       y(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
       z(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
     endif 
-	    endif
-	  end if 
-	end do
+            endif
+          end if 
+        end do
       end do
     end do
 
   endif
 
-  END SUBROUTINE Linija
+  end subroutine Linija

@@ -1,21 +1,17 @@
 !======================================================================!
-  SUBROUTINE UnkAloc
+  subroutine UnkAloc
 !----------------------------------------------------------------------!
 ! Allocates memory for variables. It is called either from LoaRes      !
 ! or from Processor.                                                   !
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UnkAloc.f90,v 1.5 2017/08/31 21:55:57 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/UnkAloc.f90,v $  
+  implicit none
 !======================================================================!
-
 
   allocate (U % n(-NbC:NC)); U % n=0.
   allocate (V % n(-NbC:NC)); V % n=0.
@@ -693,4 +689,4 @@
 !??????????????????????????????????????????!
 ! Do something !  
 
-  END SUBROUTINE UnkAloc
+  end subroutine UnkAloc

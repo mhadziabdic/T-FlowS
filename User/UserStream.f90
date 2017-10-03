@@ -1,26 +1,23 @@
 !======================================================================!
-  SUBROUTINE UserStream(PHI,                   &
+  subroutine UserStream(PHI,                   &
                         XPHI,                  &
                         dPHIdx,  dPHIdy,   dPHIdz)
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Parameters]---------------------------!
   TYPE(Unknown) :: PHI
-  REAL XPHI(NC)
-  REAL dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
+  real XPHI(NC)
+  real dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: n,c,s,c1,c2,niter,miter
-  REAL    :: A12,A21,error
-  REAL    :: CONeff, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
-  REAL    ::         FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
-  REAL    :: H, half
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserStream.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserStream.f90,v $  
+  integer :: n,c,s,c1,c2,niter,miter
+  real    :: A12,A21,error
+  real    :: CONeff, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
+  real    ::         FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
+  real    :: H, half
 !======================================================================!
 
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -189,4 +186,4 @@
 
   end do ! ini
 
-  END SUBROUTINE
+  end subroutine

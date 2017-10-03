@@ -1,25 +1,22 @@
 !======================================================================!
-  SUBROUTINE TopolM 
+  subroutine TopolM 
 !----------------------------------------------------------------------!
 !   Determines the topology of the system matrix.                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: c, s, j, n
-  INTEGER             :: c1, c2
-  INTEGER,ALLOCATABLE :: stencw(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: TopolM.f90,v 1.2 2017/08/31 21:57:29 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/TopolM.f90,v $  
+  integer             :: c, s, j, n
+  integer             :: c1, c2
+  integer,allocatable :: stencw(:)
 !======================================================================!
 !   Relies only on SideC structure. Try to keep it that way.
 !----------------------------------------------------------------------!
-		  
+                  
 !---- memory allocation
   allocate(stencw(NC)); stencw=1
 
@@ -70,7 +67,7 @@
 !---- 
   do c=1,NC
     call isort(Arow(Acol(c)),                                       &
-	       Arow(Acol(c)),stencw(c),1)
+               Arow(Acol(c)),stencw(c),1)
     do j=Acol(c),Acol(c+1)-1
       if(Arow(j) == c) Adia(c)=j
     end do
@@ -83,11 +80,11 @@
     if(c2  > 0) then
 !----- where is A(c1,c2) and ...
       do c=Acol(c1),Acol(c1+1)-1 
-	if(Arow(c)  ==  c2) SidAij(1,s)=c
+        if(Arow(c)  ==  c2) SidAij(1,s)=c
       end do
 !----- where is A(c2,c1) and ...
       do c=Acol(c2),Acol(c2+1)-1 
-	if(Arow(c)  ==  c1) SidAij(2,s)=c
+        if(Arow(c)  ==  c1) SidAij(2,s)=c
       end do
     end if
   end do
@@ -98,4 +95,4 @@
 
   RETURN
 
-  END SUBROUTINE TopolM
+  end subroutine TopolM

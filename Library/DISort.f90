@@ -1,15 +1,13 @@
 !======================================================================*
-      SUBROUTINE DISort(X,Y,N,KFLAG)
+      subroutine DISort(X,Y,N,KFLAG)
 !----------------------------------------------------------------------*
 ! Sorts double array X and make same interchanges in integer arr. Y.   *
 !----------------------------------------------------------------------*
-      DIMENSION        IL(21),IU(21)
-      DOUBLE PRECISION X(N),T, TT
-      INTEGER          Y(N),TY,TTY
-!--------------------------------[CVS]---------------------------------*
-!      $Id: DISort.f90,v 1.2 2002/10/30 16:29:31 niceno Exp $  
-!      $Source: /home/muhamed/.CVSROOT/T-Rex/Library/DISort.f90,v $  
+      dimension :: IL(21),IU(21)
+      real      :: X(N),T, TT
+      integer   :: Y(N),TY,TTY
 !======================================================================*
+
 !***FIRST EXECUTABLE STATEMENT RISORT
       NN = N
       IF (NN.GE.1) GO TO 10
@@ -216,4 +214,4 @@
       X(I) = -X(I)
   310 CONTINUE
       RETURN
-      END SUBROUTINE
+      end subroutine

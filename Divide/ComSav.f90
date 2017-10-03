@@ -1,20 +1,17 @@
 !======================================================================!
-  SUBROUTINE ComSav()
+  subroutine ComSav()
 !----------------------------------------------------------------------!
 ! Writes: *.com, convert.scr and CONVERT.scr                           !
 ! ~~~~~~~                                                              ! 
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE gen_mod
-  USE par_mod
+  use all_mod
+  use gen_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  CHARACTER :: namOut*80
-  INTEGER   :: sub
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ComSav.f90,v 1.1 2014/11/24 11:32:32 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Divide/ComSav.f90,v $             
+  character :: namOut*80
+  integer   :: sub
 !======================================================================!
 
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
@@ -45,4 +42,4 @@
   end do
   close(9)
 
-  END SUBROUTINE ComSav
+  end subroutine ComSav

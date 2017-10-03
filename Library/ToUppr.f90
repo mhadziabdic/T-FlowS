@@ -1,16 +1,13 @@
 !======================================================================!
-  SUBROUTINE ToUppr(string)
+  subroutine ToUppr(string)
 !----------------------------------------------------------------------!
 !   Transforms string to uppercase.                                    !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  CHARACTER*(*) :: string  
+  character*(*) :: string  
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: i, value
-!--------------------------------[CVS]---------------------------------!
-!  $Id: ToUppr.f90,v 1.7 2002/10/30 16:29:33 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/ToUppr.f90,v $  
+  integer :: i, value
 !======================================================================!
 
   do i=1,len_trim(string)
@@ -20,4 +17,4 @@
     end if
   end do
 
-  END SUBROUTINE ToUppr
+  end subroutine ToUppr

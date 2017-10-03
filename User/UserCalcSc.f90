@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE UserCalcS(var, PHI, dPHIdx, dPHIdy, dPHIdz)
+  subroutine UserCalcS(var, PHI, dPHIdx, dPHIdy, dPHIdz)
 !----------------------------------------------------------------------!
 ! Purpose:                                                             !
 ! ~~~~~~~~                                                             !
@@ -17,23 +17,20 @@
 !  Authors: Adriaan Dronkers and Bojan Niceno                          !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
+  use all_mod
+  use pro_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Parameters]---------------------------!
-  INTEGER       :: var
+  integer       :: var
   TYPE(Unknown) :: PHI
-  REAL          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
+  real          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: n,c,s,c1,c2,niter,miter
-  REAL    :: A0,A12,A21,error
-  REAL    :: CONeff1, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
-  REAL    :: CONeff2, FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
-  REAL    :: Stot, PHIs1, PHIs2
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCalcSc.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCalcSc.f90,v $  
+  integer :: n,c,s,c1,c2,niter,miter
+  real    :: A0,A12,A21,error
+  real    :: CONeff1, FUex1, FUim1, PHIxS1, PHIyS1, PHIzS1
+  real    :: CONeff2, FUex2, FUim2, PHIxS2, PHIyS2, PHIzS2
+  real    :: Stot, PHIs1, PHIs2
 !----------------------------------------------------------------------!
 !     
 !  The form of equations which are solved:    
@@ -519,4 +516,4 @@
  
   call Exchng(PHI)
 
-  END SUBROUTINE UserCalcS
+  end subroutine UserCalcS

@@ -1,20 +1,17 @@
 !======================================================================!
-  SUBROUTINE CalcFlux()
+  subroutine CalcFlux()
 !----------------------------------------------------------------------!
 !   Calculate mass fluxes through whole domain.                        !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use les_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, s, m
-  REAL    :: xc1, yc1, zc1, xc2, yc2, zc2
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcFlux.f90,v 1.2 2017/08/31 21:32:52 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcFlux.f90,v $  
+  integer :: c1, c2, s, m
+  real    :: xc1, yc1, zc1, xc2, yc2, zc2
 !======================================================================!
 
   do m=1,Nmat
@@ -68,4 +65,4 @@
     Wbulk(m) = FLUXz(m) / (AreaZ(m) + TINY)
   end do ! m
 
-  END SUBROUTINE CalcFlux
+  end subroutine CalcFlux

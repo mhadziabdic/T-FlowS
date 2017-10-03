@@ -1,14 +1,11 @@
 !======================================================================!
-  SUBROUTINE GloSum(PHI) 
+  subroutine GloSum(PHI) 
 !----------------------------------------------------------------------!
 !   Dummy function.                                                    !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: PHI
-!--------------------------------[CVS]---------------------------------!
-!  $Id: GloSum.f90,v 1.1 2014/11/24 11:36:22 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Sequential/GloSum.f90,v $  
+  real :: PHI
 !======================================================================!
 
-  END SUBROUTINE GloSum
+  end subroutine GloSum

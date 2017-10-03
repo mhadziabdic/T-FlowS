@@ -1,59 +1,55 @@
 !======================================================================!
-  SUBROUTINE CalcBudgets_hot(n0,n1,n2)  
+  subroutine CalcBudgets_hot(n0,n1,n2)  
 !----------------------------------------------------------------------!
 !   Calculates time averaged velocity and velocity fluctuations.       !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: n0, n1, n2
+  integer :: n0, n1, n2
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, s, c, n, new, i, newhot
-  REAL    :: VolDom, Lf, Lmix, Esgs, vol1
-  REAL    :: Utan, Urad, Utan_mean, Urad_mean, R, Flux_mean, Us, Vs, Ws   
-  REAL    :: Fim1, Fex1, Fim2, Fex2, Fim3, Fex3, Fim4, Fex4, Fim5, Fex5, Fim6, Fex6
-  REAL    :: Fim7, Fex7, Fim8, Fex8, Fim9, Fex9, Fim10, Fex10 
-  REAL    :: uu_s, vv_s, ww_s, uv_s, uw_s, vw_s, A0, R2, R1, PHIs1, PHIs2,PHIs3 
-  REAL    :: ut_s, vt_s, wt_s, tt_s, A1, A2, CONc_s
+  integer :: c1, c2, s, c, n, new, i, newhot
+  real    :: VolDom, Lf, Lmix, Esgs, vol1
+  real    :: Utan, Urad, Utan_mean, Urad_mean, R, Flux_mean, Us, Vs, Ws   
+  real    :: Fim1, Fex1, Fim2, Fex2, Fim3, Fex3, Fim4, Fex4, Fim5, Fex5, Fim6, Fex6
+  real    :: Fim7, Fex7, Fim8, Fex8, Fim9, Fex9, Fim10, Fex10 
+  real    :: uu_s, vv_s, ww_s, uv_s, uw_s, vw_s, A0, R2, R1, PHIs1, PHIs2,PHIs3 
+  real    :: ut_s, vt_s, wt_s, tt_s, A1, A2, CONc_s
 
-  REAL    :: G1r, G1t, G2r, G2t, G3r, G3t, G4r, G4t, G5r, G5t 
-  REAL    :: G6r, G6t, G7r, G7t, G8r, G8t, G9r, G9t, Gr, Gt 
-  REAL    :: Gz, G1z, G2z, G3z, G4z, G5z, G6z, G7z, G8z, G9z
-  REAL    :: G10r, G10t, G10z
+  real    :: G1r, G1t, G2r, G2t, G3r, G3t, G4r, G4t, G5r, G5t 
+  real    :: G6r, G6t, G7r, G7t, G8r, G8t, G9r, G9t, Gr, Gt 
+  real    :: Gz, G1z, G2z, G3z, G4z, G5z, G6z, G7z, G8z, G9z
+  real    :: G10r, G10t, G10z
 
-  REAL,ALLOCATABLE :: Puu(:), Pvv(:), Pww(:), Puv(:), Puw(:), Pvw(:)
-  REAL,ALLOCATABLE :: Put(:), Pvt(:), Pwt(:), Ptt(:)
-  REAL,ALLOCATABLE :: dUdr(:), dUdt(:), dUdz(:)
-  REAL,ALLOCATABLE :: dVdr(:), dVdt(:), dVdz(:)
-  REAL,ALLOCATABLE :: dWdr(:), dWdt(:), dWdz(:) 
-  REAL,ALLOCATABLE :: Diss_uu(:), Diss_vv(:), Diss_ww(:) 
-  REAL,ALLOCATABLE :: Diss_uv(:), Diss_uw(:), Diss_vw(:) 
-  REAL,ALLOCATABLE :: Diss_ut(:), Diss_vt(:), Diss_wt(:), Diss_tt(:) 
-  REAL,ALLOCATABLE :: C_uu(:), C_vv(:), C_ww(:) 
-  REAL,ALLOCATABLE :: C_uv(:), C_uw(:), C_vw(:) 
-  REAL,ALLOCATABLE :: C_ut(:), C_vt(:), C_wt(:), C_tt(:) 
-  REAL,ALLOCATABLE :: Difv_uu(:), Difv_vv(:), Difv_ww(:) 
-  REAL,ALLOCATABLE :: Difv_uv(:), Difv_uw(:), Difv_vw(:) 
-  REAL,ALLOCATABLE :: Difv_ut(:), Difv_vt(:), Difv_wt(:), Difv_tt(:) 
-  REAL,ALLOCATABLE :: Difv2_ut(:), Difv2_vt(:), Difv2_wt(:)
-  REAL,ALLOCATABLE :: Dift_uu(:), Dift_vv(:), Dift_ww(:) 
-  REAL,ALLOCATABLE :: Dift_uv(:), Dift_uw(:), Dift_vw(:) 
-  REAL,ALLOCATABLE :: Dift_ut(:), Dift_vt(:), Dift_wt(:), Dift_tt(:) 
-  REAL,ALLOCATABLE :: R_uu(:), R_vv(:), R_ww(:) 
-  REAL,ALLOCATABLE :: R_uv(:), R_uw(:), R_vw(:) 
-  REAL,ALLOCATABLE :: R_ut(:), R_vt(:), R_wt(:) 
-  REAL,ALLOCATABLE :: PD_uu(:), PD_vv(:), PD_ww(:) 
-  REAL,ALLOCATABLE :: PD_uv(:), PD_uw(:), PD_vw(:) 
-  REAL,ALLOCATABLE :: PD_ut(:), PD_vt(:), PD_wt(:) 
-
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcBudgets_cylind_hot.f90,v 1.2 2017/08/31 21:31:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcBudgets_cylind_hot.f90,v $   
+  real,allocatable :: Puu(:), Pvv(:), Pww(:), Puv(:), Puw(:), Pvw(:)
+  real,allocatable :: Put(:), Pvt(:), Pwt(:), Ptt(:)
+  real,allocatable :: dUdr(:), dUdt(:), dUdz(:)
+  real,allocatable :: dVdr(:), dVdt(:), dVdz(:)
+  real,allocatable :: dWdr(:), dWdt(:), dWdz(:) 
+  real,allocatable :: Diss_uu(:), Diss_vv(:), Diss_ww(:) 
+  real,allocatable :: Diss_uv(:), Diss_uw(:), Diss_vw(:) 
+  real,allocatable :: Diss_ut(:), Diss_vt(:), Diss_wt(:), Diss_tt(:) 
+  real,allocatable :: C_uu(:), C_vv(:), C_ww(:) 
+  real,allocatable :: C_uv(:), C_uw(:), C_vw(:) 
+  real,allocatable :: C_ut(:), C_vt(:), C_wt(:), C_tt(:) 
+  real,allocatable :: Difv_uu(:), Difv_vv(:), Difv_ww(:) 
+  real,allocatable :: Difv_uv(:), Difv_uw(:), Difv_vw(:) 
+  real,allocatable :: Difv_ut(:), Difv_vt(:), Difv_wt(:), Difv_tt(:) 
+  real,allocatable :: Difv2_ut(:), Difv2_vt(:), Difv2_wt(:)
+  real,allocatable :: Dift_uu(:), Dift_vv(:), Dift_ww(:) 
+  real,allocatable :: Dift_uv(:), Dift_uw(:), Dift_vw(:) 
+  real,allocatable :: Dift_ut(:), Dift_vt(:), Dift_wt(:), Dift_tt(:) 
+  real,allocatable :: R_uu(:), R_vv(:), R_ww(:) 
+  real,allocatable :: R_uv(:), R_uw(:), R_vw(:) 
+  real,allocatable :: R_ut(:), R_vt(:), R_wt(:) 
+  real,allocatable :: PD_uu(:), PD_vv(:), PD_ww(:) 
+  real,allocatable :: PD_uv(:), PD_uw(:), PD_vw(:) 
+  real,allocatable :: PD_ut(:), PD_vt(:), PD_wt(:) 
 !======================================================================!
 !   It is obsolete and should be replaced with a newer one.            !
 !   See also: Processor                                                !
@@ -1047,4 +1043,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalcBudgets_hot
+  end subroutine CalcBudgets_hot

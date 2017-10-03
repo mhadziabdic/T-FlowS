@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE SourceV2KEPSV2F(Nstep)
+  subroutine SourceV2KEPSV2F(Nstep)
 !----------------------------------------------------------------------!
 ! Purpose:                                                             !
 ! Calculate source terms in equation for v2                            !
@@ -9,18 +9,14 @@
 ! Authors: Muhamed Hadziabdic and Bojan Niceno                         !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, Nstep
-  INTEGER :: s, c1, c2,j     
-
-!--------------------------------[CVS]---------------------------------!
-!  $Id: SourceV2KEPSV2F.f90,v 1.2 2014/12/08 08:16:48 muhamed Exp $  
-!  $Source: /home/IUS/mhadziabdic/Dropbox/CVSROOT/T-FlowS-CVS/Process/SourceV2KEPSV2F.f90,v $  
+  integer :: c, Nstep
+  integer :: s, c1, c2,j     
 !======================================================================!
 
 
@@ -68,4 +64,4 @@
   end if
 
   RETURN
-  END SUBROUTINE SourceV2KEPSV2F
+  end subroutine SourceV2KEPSV2F

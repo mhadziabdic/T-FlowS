@@ -1,21 +1,21 @@
 !======================================================================!
-  SUBROUTINE UserPerturb2(fac,n)
+  subroutine UserPerturb2(fac,n)
 !----------------------------------------------------------------------!
 !   Perturbs the flow field for any flow.                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
-  USE les_mod
+  use all_mod
+  use pro_mod
+  use par_mod
+  use les_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  INTEGER :: n
-  REAL    :: fac
+  integer :: n
+  real    :: fac
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c, seed(1), q
-  REAL    :: randn
+  integer :: c, seed(1), q
+  real    :: randn
   integer, allocatable :: a(:) 
 !--------------------------------[CVS]---------------------------------!
 !  $Id: UserPerturb2.f90_gfortran,v 1.1 2014/11/24 11:33:27 muhamed Exp $  
@@ -54,4 +54,4 @@
   end do
 
 
-  END SUBROUTINE UserPerturb2
+  end subroutine UserPerturb2

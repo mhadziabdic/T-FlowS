@@ -6,25 +6,20 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!..RCS/CVS ident
-! $Id: les_mod.h90,v 1.13 2005/01/25 12:38:19 muhamed Exp $
-! $Source: /home/muhamed/.CVSROOT/T-Rex/Library/les_mod.h90,v $
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-
 MODULE les_mod
 
-  USE allp_mod
+  use allp_mod
 
-  IMPLICIT NONE 
+  implicit none 
 
 !----- Variables relevant for LES computations
-  REAL             :: ReTau, Cs0, Kflow  
-  REAL,ALLOCATABLE :: Utau(:), Vtau(:), Wtau(:)
-  REAL,ALLOCATABLE :: Cdyn(:), Cdyn_mean(:)
+  real             :: ReTau, Cs0, Kflow  
+  real,allocatable :: Utau(:), Vtau(:), Wtau(:)
+  real,allocatable :: Cdyn(:), Cdyn_mean(:)
 
 !----- Pressure drop: for each material (domain) and for
 !      each direction
-  REAL,ALLOCATABLE :: PdropX(:), PdropY(:), PdropZ(:)
+  real,allocatable :: PdropX(:), PdropY(:), PdropZ(:)
 
 !----- Fluctuating values
 !  TYPE(Unknown) :: uu, vv, ww, uv, uw, vw
@@ -36,16 +31,16 @@ MODULE les_mod
   TYPE(Unknown) :: uwu, uwv, uww
 
 
-  REAL,ALLOCATABLE :: Shear(:), ShearMean(:), Ksgs(:), TauWall(:), VISt_mean(:)
-  REAL,ALLOCATABLE :: Shear_r(:), ShearMean_r(:), WALEv(:)
-  REAL,ALLOCATABLE ::                             &
+  real,allocatable :: Shear(:), ShearMean(:), Ksgs(:), TauWall(:), VISt_mean(:)
+  real,allocatable :: Shear_r(:), ShearMean_r(:), WALEv(:)
+  real,allocatable ::                             &
                        UUf(:), VVf(:), WWf(:),    &
                        UVf(:), UWf(:), VWf(:),    &
                        M11f(:), M22f(:), M33f(:), &
                        M12f(:), M13f(:), M23f(:), &
                        ShearTest(:),              &
                        Cinst(:)
-  REAL,ALLOCATABLE ::  Puu_mean(:), Pvv_mean(:), Pww_mean(:), &
+  real,allocatable ::  Puu_mean(:), Pvv_mean(:), Pww_mean(:), &
                        Puv_mean(:), Puw_mean(:), Pvw_mean(:), &
                        Put_mean(:), Pvt_mean(:), Pwt_mean(:), Ptt_mean(:), &
                        Diss_uu_mean(:), Diss_vv_mean(:), Diss_ww_mean(:), Diss_sgs_mean(:), &
@@ -67,4 +62,4 @@ MODULE les_mod
                        C_uv_mean(:), C_uw_mean(:), C_vw_mean(:), &
                        C_ut_mean(:), C_vt_mean(:), C_wt_mean(:), C_tt_mean(:), Difv_ut_tot(:), Difv_vt_tot(:), Difv_wt_tot(:)
 
-END MODULE  
+end MODULE  

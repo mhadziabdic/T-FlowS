@@ -30,104 +30,100 @@
 !   Authors: Bojan NICENO & Muhamed HADZIABDIC                         !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE les_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use les_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Calling]-------------------------------!
-  REAL :: CorUVW
+  real :: CorUVW
 !-------------------------------[Locals]-------------------------------!
-  INTEGER          :: i, m, n, Ndtt_temp, HOTtemp, SIMULAtemp, c, Nproc 
-  REAL             :: Mres, CPUtim
-  REAL             :: start, finish
-  CHARACTER        :: namSav*10
-  LOGICAL          :: restar, multiple 
+  integer          :: i, m, n, Ndtt_temp, HOTtemp, SIMULAtemp, c, Nproc 
+  real             :: Mres, CPUtim
+  real             :: start, finish
+  character        :: namSav*10
+  logical          :: restar, multiple 
 !-----------------------------[Interface]------------------------------!
-  INTERFACE
+  interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    SUBROUTINE NewUVW(var, Ui, dUidi, dUidj, dUidk,  &
-		      Si, Sj, Sk, Di, Dj, Dk, Pi, dUjdi, dUkdi) 
+    subroutine NewUVW(var, Ui, dUidi, dUidj, dUidk,  &
+                      Si, Sj, Sk, Di, Dj, Dk, Pi, dUjdi, dUkdi) 
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      USE all_mod
-      USE pro_mod
-      IMPLICIT NONE
-      INTEGER       :: var
+      use all_mod
+      use pro_mod
+      implicit none
+      integer       :: var
       TYPE(Unknown) :: Ui
-      REAL          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
-      REAL          :: Si(NS), Sj(NS), Sk(NS) 
-      REAL          :: Di(NS), Dj(NS), Dk(NS) 
-      REAL          :: Pi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
-    END SUBROUTINE NewUVW
+      real          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
+      real          :: Si(NS), Sj(NS), Sk(NS) 
+      real          :: Di(NS), Dj(NS), Dk(NS) 
+      real          :: Pi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
+    end subroutine NewUVW
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    SUBROUTINE CalcSc(var, PHI, dPHIdx, dPHIdy, dPHIdz)
+    subroutine CalcSc(var, PHI, dPHIdx, dPHIdy, dPHIdz)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      USE all_mod
-      USE pro_mod
-      IMPLICIT NONE
-      INTEGER       :: var
+      use all_mod
+      use pro_mod
+      implicit none
+      integer       :: var
       TYPE(Unknown) :: PHI
-      REAL          :: dPHIdx(-NbC:NC),dPHIdy(-NbC:NC),dPHIdz(-NbC:NC)
-    END SUBROUTINE CalcSc
+      real          :: dPHIdx(-NbC:NC),dPHIdy(-NbC:NC),dPHIdz(-NbC:NC)
+    end subroutine CalcSc
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    SUBROUTINE CalcTurb(var, PHI, dPHIdx, dPHIdy, dPHIdz, Nstep)  
+    subroutine CalcTurb(var, PHI, dPHIdx, dPHIdy, dPHIdz, Nstep)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      USE all_mod
-      USE pro_mod
-      IMPLICIT NONE
-      INTEGER       :: var, Nstep
+      use all_mod
+      use pro_mod
+      implicit none
+      integer       :: var, Nstep
       TYPE(Unknown) :: PHI
-      REAL          :: dPHIdx(-NbC:NC),dPHIdy(-NbC:NC),dPHIdz(-NbC:NC)
-    END SUBROUTINE CalcTurb
+      real          :: dPHIdx(-NbC:NC),dPHIdy(-NbC:NC),dPHIdz(-NbC:NC)
+    end subroutine CalcTurb
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    SUBROUTINE ProSav(namAut)  
+    subroutine ProSav(namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      USE all_mod
-      USE pro_mod
-      IMPLICIT NONE
-       CHARACTER, OPTIONAL :: namAut*(*)
-    END  SUBROUTINE ProSav  
+      use all_mod
+      use pro_mod
+      implicit none
+       character, optional :: namAut*(*)
+    end  subroutine ProSav  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    SUBROUTINE DatSav(namAut)  
+    subroutine DatSav(namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      USE all_mod
-      USE pro_mod
-      IMPLICIT NONE
-      CHARACTER, OPTIONAL :: namAut*(*)
-    END SUBROUTINE DatSav  
+      use all_mod
+      use pro_mod
+      implicit none
+      character, optional :: namAut*(*)
+    end subroutine DatSav  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    SUBROUTINE SavRes(namAut)  
+    subroutine SavRes(namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      USE all_mod
-      USE pro_mod
-      IMPLICIT NONE
-      CHARACTER, OPTIONAL :: namAut*(*)
-    END SUBROUTINE SavRes  
+      use all_mod
+      use pro_mod
+      implicit none
+      character, optional :: namAut*(*)
+    end subroutine SavRes  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-    SUBROUTINE UserProbe2D(namAut)
+    subroutine UserProbe2D(namAut)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-      USE all_mod
-      USE pro_mod
-      IMPLICIT NONE
-      CHARACTER, OPTIONAL :: namAut*(*)
-    END SUBROUTINE UserProbe2D
+      use all_mod
+      use pro_mod
+      implicit none
+      character, optional :: namAut*(*)
+    end subroutine UserProbe2D
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-    SUBROUTINE CalcShear(Ui, Vi, Wi, She)
+    subroutine CalcShear(Ui, Vi, Wi, She)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-      USE all_mod
-      USE pro_mod
-      USE les_mod
-      IMPLICIT NONE
-      REAL          :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
-      REAL          :: She(-NbC:NC)
-    END SUBROUTINE CalcShear
-  END INTERFACE
-
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Processor.f90,v 1.2 2017/08/31 22:05:07 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/Processor.f90,v $  
+      use all_mod
+      use pro_mod
+      use les_mod
+      implicit none
+      real          :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
+      real          :: She(-NbC:NC)
+    end subroutine CalcShear
+  end interface
 !======================================================================!
 
   call cpu_time(start)
@@ -679,4 +675,4 @@
   call cpu_time(finish)
   if(this < 2) print '("Time = ",f14.3," seconds.")',finish-start
 
-  END PROGRAM Processor  
+  end PROGRAM Processor  

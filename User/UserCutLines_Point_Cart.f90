@@ -1,26 +1,26 @@
 !======================================================================!
-  SUBROUTINE UserCutLines_Point_Cart() 
+  subroutine UserCutLines_Point_Cart() 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
 ! the values of Un, Vn, Wn, uu, vv, ww, uv, uw and vw and     !
 ! writes them into file ".1Dr".                                        !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-!  REAL :: y(-NbC:NC)
-  REAL :: Rad_2, Ufric, Rad_1 
+!  real :: y(-NbC:NC)
+  real :: Rad_2, Ufric, Rad_1 
 !------------------------------[Calling]-------------------------------!
-  INTEGER             :: Nprob, pl, c, i, count, k, c1, c2, s, N_hor, dir
-  CHARACTER           :: namCoo*80, namPro*80, answer*80, JetIn*14, namOut*80
-  REAL,ALLOCATABLE    :: y_p(:), x_p(:), z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+  integer             :: Nprob, pl, c, i, count, k, c1, c2, s, N_hor, dir
+  character           :: namCoo*80, namPro*80, answer*80, JetIn*14, namOut*80
+  real,allocatable    :: y_p(:), x_p(:), z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  uup(:), vvp(:), wwp(:), &
                                  uvp(:), uwp(:), vwp(:), &
                                  Tmp(:), TTp(:),         &
@@ -28,11 +28,8 @@
                                  Ksgsp(:),               & 
                                  var_1(:), var_2(:), var_3(:), Rad_mp(:), &
                                  var_4(:), var_5(:), R_p(:)  
-  INTEGER,ALLOCATABLE :: Np(:), Ncount(:)
-  REAL                :: R, Urad_n, Utan_n, R1, R2, Urad, Utan, dummy 
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserCutLines_Point_Cart.f90,v 1.1 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserCutLines_Point_Cart.f90,v $  
+  integer,allocatable :: Np(:), Ncount(:)
+  real                :: R, Urad_n, Utan_n, R1, R2, Urad, Utan, dummy 
 !======================================================================!
 
   open(9, FILE='Point_positions.dat')
@@ -293,4 +290,4 @@
 
   if(this < 2) write(*,*) 'Finished with UserCutLines_Horiz_Cart'
 
-  END SUBROUTINE UserCutLines_Point_Cart 
+  end subroutine UserCutLines_Point_Cart 

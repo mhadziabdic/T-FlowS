@@ -1,18 +1,15 @@
 !======================================================================!
-  SUBROUTINE RNSort(X,indx,N)
+  subroutine RNSort(X,indx,N)
 !----------------------------------------------------------------------!
 !   Sorts real array X according to indx.                              !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: N,indx(N)
-  REAL    :: X(N)
+  integer :: N,indx(N)
+  real    :: X(N)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER          :: i
-  REAL,ALLOCATABLE :: work(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: RNSort.f90,v 1.3 2002/10/30 16:29:33 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/RNSort.f90,v $  
+  integer          :: i
+  real,allocatable :: work(:)
 !======================================================================!
 
   allocate(work(N)); work=0
@@ -27,4 +24,4 @@
 
   deallocate(work)
 
-  END SUBROUTINE RNSort
+  end subroutine RNSort

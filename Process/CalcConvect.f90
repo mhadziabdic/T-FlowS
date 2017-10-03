@@ -1,19 +1,16 @@
 !======================================================================!
-  SUBROUTINE CalcConvect
+  subroutine CalcConvect
 !----------------------------------------------------------------------!
 !   Extrapoloate variables on the boundaries where needed              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: c1, c2, s
-!--------------------------------[CVS]---------------------------------!
-!  $Id: CalcConvect.f90,v 1.2 2017/08/31 21:31:56 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/CalcConvect.f90,v $  
+  integer :: c1, c2, s
 !======================================================================!
 
   call CalcFlux   
@@ -60,4 +57,4 @@
 
   RETURN 
 
-  END SUBROUTINE CalcConvect
+  end subroutine CalcConvect

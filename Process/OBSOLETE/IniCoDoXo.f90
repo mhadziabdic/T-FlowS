@@ -1,5 +1,5 @@
 !======================================================================!
-  SUBROUTINE IniCoDoXo(PHI)
+  subroutine IniCoDoXo(PHI)
 !----------------------------------------------------------------------!
 !  Initializes convective, diffusive and cross-diffusive terms from    !
 !  previous calculations.                                              !
@@ -15,22 +15,22 @@
 !                                                                      !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  USE all_mod
-  USE pro_mod
-  USE par_mod
-  USE les_mod
-  USE rans_mod
+  use all_mod
+  use pro_mod
+  use par_mod
+  use les_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
   TYPE(Unknown) :: PHI
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: s, c, c1, c2
-  REAL    :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
-  REAL    :: PHIs, Fex, Fim, A0, VISeff, Sfac
-  REAL    :: dPHIdxS, dPHIdyS, dPHIdzS
-  REAL    :: xc1, xc2, yc1, yc2, zc1, zc2
-  REAL    :: DeltaX, DeltaY, DeltaZ, Weigth
+  integer :: s, c, c1, c2
+  real    :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
+  real    :: PHIs, Fex, Fim, A0, VISeff, Sfac
+  real    :: dPHIdxS, dPHIdyS, dPHIdzS
+  real    :: xc1, xc2, yc1, yc2, zc1, zc2
+  real    :: DeltaX, DeltaY, DeltaZ, Weigth
 !--------------------------------[CVS]---------------------------------!
 !  $Id: IniCoDoXo.f90,v 1.2 2017/08/31 21:56:47 mhadziabdic Exp $  
 !  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Process/IniCoDoXo.f90,v $    
@@ -195,4 +195,4 @@
 !  call Exchng(PHI)    !CHANGED this caused trouble
 
   RETURN
-  END SUBROUTINE IniCoDoXo
+  end subroutine IniCoDoXo

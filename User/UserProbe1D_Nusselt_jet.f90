@@ -1,33 +1,33 @@
 !======================================================================!
-  SUBROUTINE UserProbe1D_Nusselt_jet()
+  subroutine UserProbe1D_Nusselt_jet()
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
 ! the values of Un, Vn, Wn, uu, vv, ww, uv, uw and vw and     !
 ! writes them into file ".1Dr".                                        !
 !----------------------------------------------------------------------!
-  USE all_mod
-  USE allp_mod
-  USE les_mod
-  USE pro_mod
-  USE par_mod
-  USE rans_mod
+  use all_mod
+  use allp_mod
+  use les_mod
+  use pro_mod
+  use par_mod
+  use rans_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  REAL :: y(-NbC:NC)
-  REAL :: Rad_2, Ufric, dummy 
+  real :: y(-NbC:NC)
+  real :: Rad_2, Ufric, dummy 
 !------------------------------[Calling]-------------------------------!
-  INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE 
+  interface
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, optional :: tol
+    end function Approx
+  end interface 
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: Nprob, pl, c, i, count, c1, c2, s
-  CHARACTER           :: namCoo*80, namPro*80, answer*80
-  REAL,ALLOCATABLE    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
+  integer             :: Nprob, pl, c, i, count, c1, c2, s
+  character           :: namCoo*80, namPro*80, answer*80
+  real,allocatable    :: z_p(:), Ump(:), Vmp(:), Wmp(:), & 
                                  Ump1(:), Vmp1(:), Wmp1(:), &
                                  Ump2(:), Vmp2(:), Wmp2(:), &
                                  Ump3(:), Vmp3(:), Wmp3(:), &
@@ -51,12 +51,9 @@
                                  Ksgsp(:),               & 
                                  var_1(:), var_2(:), var_3(:), var_4(:), Rad_1(:), Rad_mp(:)
                                   
-  INTEGER,ALLOCATABLE :: Np(:), Ncount(:), Ncount1(:), Ncount2(:), Ncount3(:)
-  INTEGER,ALLOCATABLE :: Ncount4(:), Ncount5(:), Ncount6(:), Ncount7(:)
-  REAL                :: R, Urad_n, Utan_n
-!--------------------------------[CVS]---------------------------------!
-!  $Id: UserProbe1D_Nusselt_jet.f90,v 1.2 2017/08/31 22:42:35 mhadziabdic Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/User/UserProbe1D_Nusselt_jet.f90,v $  
+  integer,allocatable :: Np(:), Ncount(:), Ncount1(:), Ncount2(:), Ncount3(:)
+  integer,allocatable :: Ncount4(:), Ncount5(:), Ncount6(:), Ncount7(:)
+  real                :: R, Urad_n, Utan_n
 !======================================================================!
 
 
@@ -610,4 +607,4 @@
     deallocate(vTp)
     deallocate(wTp)
   end if
-  END SUBROUTINE UserProbe1D_Nusselt_jet
+  end subroutine UserProbe1D_Nusselt_jet

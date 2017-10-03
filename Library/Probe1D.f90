@@ -1,29 +1,26 @@
 !======================================================================!
-  SUBROUTINE Probe1D
+  subroutine Probe1D
 !----------------------------------------------------------------------!
 ! This program finds the coordinate of cell-centers in non-homogeneous
 ! direction and write them in file name.1D
 !----------------------------------------------------------------------!
-  USE all_mod
+  use all_mod
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  LOGICAL :: isit
+  logical :: isit
 !------------------------------[Calling]-------------------------------! 
-  INTERFACE
-    LOGICAL FUNCTION Approx(A,B,tol)
-      REAL           :: A,B
-      REAL, OPTIONAL :: tol
-    END FUNCTION Approx
-  END INTERFACE
+  interface
+    logical function Approx(A,B,tol)
+      real           :: A,B
+      real, optional :: tol
+    end function Approx
+  end interface
 !-------------------------------[Locals]-------------------------------!
-  INTEGER   :: Nprob, p, c
-  REAL      :: zp(1000)
-  CHARACTER :: namPro*80
-  CHARACTER :: answer*80
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Probe1D.f90,v 1.5 2002/10/30 16:29:33 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/Probe1D.f90,v $    
+  integer   :: Nprob, p, c
+  real      :: zp(1000)
+  character :: namPro*80
+  character :: answer*80
 !======================================================================!
 
   write(*,*) '========================================'
@@ -83,4 +80,4 @@
 
   close(9)
 
-  END SUBROUTINE Probe1D
+  end subroutine Probe1D

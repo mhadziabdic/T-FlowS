@@ -1,17 +1,14 @@
 !======================================================================!
-  SUBROUTINE INSort(X,indx,N)
+  subroutine INSort(X,indx,N)
 !----------------------------------------------------------------------!
 !   Sorts int. array X according to indx.                              !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !-----------------------------[Parameters]-----------------------------!
-  INTEGER :: N,X(N),indx(N)
+  integer :: N,X(N),indx(N)
 !-------------------------------[Locals]-------------------------------!
-  INTEGER             :: i
-  INTEGER,ALLOCATABLE :: work(:)
-!--------------------------------[CVS]---------------------------------!
-!  $Id: INSort.f90,v 1.6 2002/10/30 16:29:33 niceno Exp $  
-!  $Source: /home/muhamed/.CVSROOT/T-Rex/Library/INSort.f90,v $  
+  integer             :: i
+  integer,allocatable :: work(:)
 !======================================================================!
 
   allocate(work(N)); work=0
@@ -26,4 +23,4 @@
 
   deallocate(work)
 
-  END SUBROUTINE INSort
+  end subroutine INSort

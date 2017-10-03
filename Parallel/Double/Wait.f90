@@ -1,23 +1,20 @@
 !======================================================================!
-  SUBROUTINE Wait 
+  subroutine Wait 
 !----------------------------------------------------------------------!
 !   Puts barrier for parallel execution.                               !
 !----------------------------------------------------------------------!
-  IMPLICIT NONE
+  implicit none
 !------------------------------[Include]-------------------------------!
-  INCLUDE 'mpif.h'
+  include 'mpif.h'
 !-------------------------------[Locals]-------------------------------!
-  INTEGER :: error
-!--------------------------------[CVS]---------------------------------!
-!  $Id: Wait.f90,v 1.1 2014/11/24 11:39:27 muhamed Exp $  
-!  $Source: /home/mhadziabdic/Dropbox/cvsroot/T-FlowS-CVS/Parallel/Double/Wait.f90,v $  
+  integer :: error
 !======================================================================!
 
 !==================================
       call MPI_BARRIER        &
 !----------------------------------
-	     (MPI_COMM_WORLD, &
-	      error) 
+             (MPI_COMM_WORLD, &
+              error) 
 !==================================
 
-  END SUBROUTINE Wait
+  end subroutine Wait

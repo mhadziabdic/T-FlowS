@@ -17,8 +17,8 @@
     end function Approx
   end interface
 !------------------------------[Calling]-------------------------------!
-  real    :: Dist       
-  real    :: Dist2       
+  real    :: Distance
+  real    :: Distance_Squared    
   real    :: Tol
 !-------------------------------[Locals]-------------------------------!
   integer             :: c, c1, c2, n, s, ss, cc2, c_max, NNN, hh, mm
@@ -858,7 +858,7 @@
       do c2=-1,-NbC,-1
         if(BCmark(c2) <= WallMark) then
           WallDs(c1)=min(WallDs(c1),                       &
-          Dist2(xc(c1),yc(c1),zc(c1),xc(c2),yc(c2),zc(c2)))
+          Distance_Squared(xc(c1),yc(c1),zc(c1),xc(c2),yc(c2),zc(c2)))
         end if
       end do
     end do
@@ -879,16 +879,16 @@
     c2=SideC(2,s)
 
 !----- first cell
-    xc1=xc(c1)
-    yc1=yc(c1)
-    zc1=zc(c1)
-    dsc1=dist(xc1,yc1,zc1,xsp(s), ysp(s), zsp(s))
+    xc1  = xc(c1)
+    yc1  = yc(c1)
+    zc1  = zc(c1)
+    dsc1 = Distance(xc1, yc1, zc1, xsp(s), ysp(s), zsp(s))
 
 !----- second cell (pls. check if xsi=xc on the boundary)
-    xc2=xc(c2)+Dx(s)
-    yc2=yc(c2)+Dy(s)
-    zc2=zc(c2)+Dz(s)
-    dsc2=dist(xc2,yc2,zc2,xsp(s), ysp(s), zsp(s))
+    xc2  = xc(c2)+Dx(s)
+    yc2  = yc(c2)+Dy(s)
+    zc2  = zc(c2)+Dz(s)
+    dsc2 = Distance(xc2, yc2, zc2, xsp(s), ysp(s), zsp(s))
 
 !----- interpolation factor
     f(s) = dsc2 / (dsc1+dsc2)   ! not checked

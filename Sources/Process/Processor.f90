@@ -46,7 +46,7 @@
   character        :: namSav*10
   logical          :: restar, multiple 
 !-----------------------------[Interface]------------------------------!
-  interface
+  INTERFACE
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine NewUVW(var, Ui, dUidi, dUidj, dUidk,  &
                       Si, Sj, Sk, Di, Dj, Dk, Pi, dUjdi, dUkdi) 
@@ -87,7 +87,7 @@
       use all_mod
       use pro_mod
       implicit none
-       character, optional :: namAut*(*)
+       character, OPTIONAL :: namAut*(*)
     end  subroutine ProSav  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine DatSav(namAut)  
@@ -95,7 +95,7 @@
       use all_mod
       use pro_mod
       implicit none
-      character, optional :: namAut*(*)
+      character, OPTIONAL :: namAut*(*)
     end subroutine DatSav  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine SavRes(namAut)  
@@ -103,7 +103,7 @@
       use all_mod
       use pro_mod
       implicit none
-      character, optional :: namAut*(*)
+      character, OPTIONAL :: namAut*(*)
     end subroutine SavRes  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine UserProbe2D(namAut)
@@ -111,7 +111,7 @@
       use all_mod
       use pro_mod
       implicit none
-      character, optional :: namAut*(*)
+      character, OPTIONAL :: namAut*(*)
     end subroutine UserProbe2D
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine CalcShear(Ui, Vi, Wi, She)
@@ -123,7 +123,7 @@
       real          :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
       real          :: She(-NbC:NC)
     end subroutine CalcShear
-  end interface
+  end INTERFACE
 !======================================================================!
 
   call cpu_time(start)
@@ -193,11 +193,11 @@
   call LoaIni()
 
   if(.not. restar) then
-    do m=1,Nmat
-      if(SHAKE(m) == YES) then
-        call UserPerturb2(5.0,0,m)
-      end if
-    end do  
+!BOJAN    do m=1,Nmat
+!BOJAN      if(SHAKE(m) == YES) then
+!BOJAN        call UserPerturb2(5.0,0,m)
+!BOJAN      end if
+!BOJAN    end do  
   end if
 
 !----- Check if there are more materials
@@ -520,8 +520,8 @@
 
    if(PIPE==YES.or.JET==YES) then 
      call CalcMn_Cylind(Nstat, n)  !  calculate mean values 
-     if(BUDG == YES.and.HOT==YES) call CalcBudgets_cylind(Nbudg, n)
-     if(BUDG == YES.and.HOT==NO)  call CalcBudgets_cylind(Nbudg, n)
+!BOJAN     if(BUDG == YES.and.HOT==YES) call CalcBudgets_cylind(Nbudg, n)
+!BOJAN     if(BUDG == YES.and.HOT==NO)  call CalcBudgets_cylind(Nbudg, n)
    else
      call CalcMn(Nstat, n)  !  calculate mean values 
    end if
@@ -551,11 +551,11 @@
 !                                                     !
 !-----------------------------------------------------!
     do m=1,Nmat
-      if(SHAKE(m) == YES) then
-        if( n  < SHAKE_PER(m) .and. MOD(n+1,SHAKE_INT(m)) == 0 ) then 
-          call UserPerturb2(5.0,n,m)
-        endif 
-      endif
+!BOJAN      if(SHAKE(m) == YES) then
+!BOJAN        if( n  < SHAKE_PER(m) .and. MOD(n+1,SHAKE_INT(m)) == 0 ) then 
+!BOJAN          call UserPerturb2(5.0,n,m)
+!BOJAN        endif 
+!BOJAN      endif
 
       if( FLUXoX(m)  /=  0.0 ) then
         PdropX(m) = (FLUXoX(m)-FLUXx(m)) / (dt*AreaX(m)+TINY) 
@@ -598,11 +598,11 @@
 !      call DatSav(namSav)
 !      call ProSav(namSav)
       call SavParView(this,NC,namSav, Nstat, n)
-      if(CHANNEL == YES) then
-        call UserCutLines_channel(zc)
-      else if(PIPE == YES) then
-        call UserCutLines_pipe
-      end if
+!BOJAN      if(CHANNEL == YES) then
+!BOJAN  call UserCutLines_channel(zc)
+!BOJAN      else if(PIPE == YES) then
+!BOJAN  call UserCutLines_pipe
+!BOJAN      end if
       Ndtt = Ndtt_temp
 8   continue 
 
@@ -630,25 +630,25 @@
 !  call UserCutLines_Point_Cart
 
 !---- Create a cut line with normalise a values
-  if(CHANNEL == YES) then
-    call UserCutLines_channel(zc)
-  else if(PIPE == YES) then
-    call UserCutLines_pipe
-    if(BUDG==YES.and.HOT==NO) call UserCutLines_budgets_cylind 
-    if(BUDG==YES.and.HOT==YES) call UserCutLines_budgets_cylind_HOT 
-!    call UserCutLines_annulus
-  else if(JET == YES) then
-    call UserCutLines_Nu
-    call UserCutLines_jet
-!    call UserProbe1D_Nusselt_jet
-!    call UserCutLines_Horiz_RANS
-  else if(BACKSTEP == YES) then
-    call UserBackstep        
-    call UserBackstep_Y        
-  else if(RB_CONV == YES) then
-    call UserCutLines_RB_conv
-!    call UserCutLines_Point_Cart
-  end if
+!BOJAN  if(CHANNEL == YES) then
+!BOJAN    call UserCutLines_channel(zc)
+!BOJAN  else if(PIPE == YES) then
+!BOJAN    call UserCutLines_pipe
+!BOJAN    if(BUDG==YES.and.HOT==NO) call UserCutLines_budgets_cylind 
+!BOJAN    if(BUDG==YES.and.HOT==YES) call UserCutLines_budgets_cylind_HOT 
+!BOJAN!    call UserCutLines_annulus
+!BOJAN  else if(JET == YES) then
+!BOJAN    call UserCutLines_Nu
+!BOJAN    call UserCutLines_jet
+!BOJAN!    call UserProbe1D_Nusselt_jet
+!BOJAN!    call UserCutLines_Horiz_RANS
+!BOJAN  else if(BACKSTEP == YES) then
+!BOJAN    call UserBackstep        
+!BOJAN    call UserBackstep_Y        
+!BOJAN  else if(RB_CONV == YES) then
+!BOJAN    call UserCutLines_RB_conv
+!BOJAN!    call UserCutLines_Point_Cart
+!BOJAN  end if
 
  
 !  call UserDiffuser 

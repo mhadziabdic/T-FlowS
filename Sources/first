@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#----------------------------------------------------#
+#  Write a warning if script is not called properly  #
+#----------------------------------------------------#
+if [ $# -lt 1 ]; then
+  echo "Wrong syntax!"
+  echo "Usage: " $0 "GNU        -> configure for GNU compiler"
+  echo "       " $0 "GNU-OPEN   -> configure for GNU compiler with OPEN MPI"
+  echo "       " $0 "INTEL      -> configure for INTEL compiler"
+  echo "       " $0 "INTEL-OPEN -> configure for INTEL compiler with OPEN MPI"
+else
+
+  #  Issue general commands for autotools 
+  aclocal
+  touch NEWS README AUTHORS ChangeLog
+  automake --add-missing
+  autoconf
+
+  #  Issue platform specific commands for autotools 
+  if [ $1 = "GNU" ]; then
+    cd Process/Communication; ln -f -s Sequential/*.f90 . ; cd ../..
+    ./configure FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules'
+  elif [ $1 = "GNU-OPEN" ]; then
+    cd Process/Communication; ln -f -s Sequential/*.f90 . ; cd ../..
+    ./configure FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules'
+  fi
+fi
+

@@ -8,7 +8,7 @@
   use all_mod
   use pro_mod
   use les_mod
-  use par_mod
+  use par_mod, only: this
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
@@ -17,7 +17,6 @@
 !-------------------------------[Locals]-------------------------------!
   integer          :: j, k,  c, nearest_cell, var, Nvar, c1, c2, s 
   integer          :: NCold  
-  TYPE(Unknown)    :: PHI
   real,allocatable :: Xold(:),Yold(:),Zold(:)
   real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v_2old(:), f22old(:)
   real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v_2Cold(:), f22Cold(:)
@@ -37,7 +36,7 @@
   character*80 :: namAut
 !======================================================================!  
 
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
 !->>> write(*,*) inp(1:300)
   read(inp(ts(1):te(1)), '(A80)') namAut
   answer=namAut

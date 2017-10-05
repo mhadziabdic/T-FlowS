@@ -27,6 +27,8 @@ MODULE all_mod
   character :: inp*300
   integer   :: tn, ts(300), te(300)
 
+  integer   :: cmn_line_count
+
   integer   :: NC, NS                    ! num. of nodes and cells 
   integer   :: NbC
   integer   :: MNBS

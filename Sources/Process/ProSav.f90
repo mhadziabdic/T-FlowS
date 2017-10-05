@@ -8,7 +8,7 @@
   use all_mod
   use pro_mod
   use les_mod
-  use par_mod
+  use par_mod, only: this
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
@@ -27,7 +27,7 @@
   else
     if(this  < 2)  &
       write(*,*) '# Input result file name [skip cancels]:'
-    call ReadC(7,inp,tn,ts,te)  
+    call ReadC(CMN_FILE,inp,tn,ts,te)  
     read(inp(ts(1):te(1)),'(A80)')  name
     answer=name
     call ToUppr(answer) 

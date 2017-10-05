@@ -139,10 +139,11 @@
 
   call Timex(CPUtim) 
 
-!///////////////////////////////!
-!     Open the command file     !
-!///////////////////////////////!
-  open(7, FILE='T-FlowS.cmn')    
+!/////////////////////////////////////////////////////////////////!
+!     Open the command file and initialize line count to zero     !
+!/////////////////////////////////////////////////////////////////!
+  open(CMN_FILE, FILE='T-FlowS.cmn')    
+  cmn_line_count = 0
 
   if(this  < 2) then
     call logo
@@ -189,8 +190,12 @@
     call Wait
   end if   
 
+  write(*,*) 'Before LoaIni() at line: ', cmn_line_count
+
 !----- Interpolate between diff. meshes
   call LoaIni()
+
+  write(*,*) 'After LoaIni() at line: ', cmn_line_count
 
   if(.not. restar) then
 !BOJAN    do m=1,Nmat
@@ -226,6 +231,8 @@
     'iterations ',          &
     '  dp/dx:   ',          &
     '    K:     '
+
+  write(*,*) 'At line: ', cmn_line_count
 
 !----- Loading data from previous computation   
 !  if(this<2) write(*,*)'Reading data from previous computation on the same mesh'
@@ -620,7 +627,7 @@
 !--------------------------!
 6 call SavRes                           
   call SavIni
-!  call ProSav ! Write results in GMV format. Obsolete. 
+  call ProSav ! Write results in GMV format. Obsolete. 
 !  call DatSav ! Write results in FLUENT dat format. Obsolete.
   namSav = 'SAVExxxxxx'
   write(namSav(5:10),'(I6.6)') n
@@ -658,8 +665,7 @@
 !////////////////////////////////!
 !     Close the command file     !
 !////////////////////////////////!
-  close(7)                
-
+  close(CMN_FILE)                
 
 !////////////////////////////////////!
 !     Close the monitoring files     !

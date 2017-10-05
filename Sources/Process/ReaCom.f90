@@ -29,13 +29,13 @@
     write(*,*) '# Enter the number of time steps: (',Ndt,') '
     write(*,*) '# (type 0 if you just want to analyse results)'
   end if
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*)  Ndt
 
 !----- Starting time step for statistics 
   if(this  < 2)  &
     write(*,*) '# Starting time step for statistics (',Nstat,') '
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*)  Nstat
   if(BUDG == YES) then
     read(inp(ts(2):te(2)),*) Nbudg
@@ -43,12 +43,12 @@
 
   if(this  < 2)  & 
     write(*,*) '# Number of monitoring points:'
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*) Nmon 
   if(this  < 2)  &
     write(*,*) '# Enter the coordinates of monitoring point(s)'
   do i=1,Nmon
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)  xm(i), ym(i), zm(i)
   end do
 
@@ -98,7 +98,7 @@
       write(*,*) '# Enter the coordinates of monitoring plane: (', &
                   xp(m), yp(m), zp(m), ' )'
     end if
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*) xp(m), yp(m), zp(m)
   end do
 
@@ -112,7 +112,7 @@
     write(*,*) '# SPA_ALL  -> Spalart-Allmaras model.' 
     write(*,*) '# ZETA  -> k-eps-zeta-f model.' 
   endif
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
   call ToUppr(answer)
   if(answer == 'DNS') then
@@ -138,7 +138,10 @@
   else if(answer == 'HJ') then
     SIMULA = HJ
   else
-    if(this  < 2) write(*,*) 'Error in input ! Exiting'
+    if(this  < 2) then
+      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                             cmn_line_count, ' Got a: ', answer
+    endif
     stop
   endif
 
@@ -160,7 +163,10 @@
     else if(answer == 'LRE') then
       MODE = LRE 
     else
-      if(this  < 2) write(*,*) 'Error in input ! Exiting'
+      if(this  < 2) then
+        write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                               cmn_line_count, ' Got a: ', answer
+      endif
       stop
     end if
   end if
@@ -175,7 +181,10 @@
     else if(answer == 'WALE') then
       MODE = WALE
     else
-      if(this  < 2) write(*,*) 'Error in input ! Exiting'
+      if(this  < 2) then
+        write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                               cmn_line_count, ' Got a: ', answer
+      endif
       stop
     end if
   end if
@@ -195,7 +204,7 @@
         write(*,*) '# YES -> shake'
         write(*,*) '# NO  -> don''t shake'
       end if
-      call ReadC(7,inp,tn,ts,te)
+      call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp(ts(1):te(1)),'(A)')  answer
       call ToUppr(answer)
       if(answer == 'YES') then
@@ -203,17 +212,20 @@
       else if(answer == 'NO') then
         SHAKE(m) = NO
       else
-        if(this  < 2) write(*,*) 'Error in input ! Exiting'
+        if(this  < 2) then
+          write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                                 cmn_line_count, ' Got a: ', answer
+        endif
         stop
       endif
       if(SHAKE(m) == YES) then
         if(this < 2) &
           write(*,*) '# For how many time steps you want to shake ?'
-        call ReadC(7,inp,tn,ts,te)
+        call ReadC(CMN_FILE,inp,tn,ts,te)
         read(inp,*) SHAKE_PER(m) 
         if(this < 2) &
           write(*,*) '# Interval for shaking:', SHAKE_PER(m)
-        call ReadC(7,inp,tn,ts,te)
+        call ReadC(CMN_FILE,inp,tn,ts,te)
         read(inp,*) SHAKE_INT(m)
       end if
     endif 
@@ -356,7 +368,7 @@
     write(*,*) '# SIMPLE [Nini] -> S. I. M. P. L. E.'
     write(*,*) '# FRACTION      -> Fractional step method'
   endif 
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
   call ToUppr(answer)
   if(answer == 'SIMPLE') then
@@ -367,25 +379,28 @@
     ALGOR = FRACT
     Nini  = 1
   else
-    if(this  < 2) write(*,*) 'Error in input ! Exiting'
+    if(this  < 2) then
+      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                             cmn_line_count, ' Got a: ', answer
+    endif
     stop
   endif
 
   if(ALGOR == SIMPLE) then
     if(this < 2) write(*,*) '# Under Relaxation Factor for velocity (',U % URF,')'
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)  U % URF
     if(this < 2) write(*,*) '# Under Relaxation Factor for pressure (',P % URF,')'
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)  P % URF
     if(HOT == YES) then
       if(this < 2) write(*,*) '# Under Relaxation Factor for temperature (',T % URF,')'
-      call ReadC(7,inp,tn,ts,te)
+      call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp,*)  T % URF
     end if
     if(SIMULA /= LES .and. SIMULA /= DNS) then
       if(this < 2) write(*,*) '# Under Relaxation Factor for turbulent variables (',T % URF,')'
-      call ReadC(7,inp,tn,ts,te)
+      call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp,*)  URFT
     end if
   endif
@@ -407,7 +422,7 @@
     write(*,*) '# LIN -> Linear'
     write(*,*) '# PAR -> Parabolic'
   endif 
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
   call ToUppr(answer)
   if(answer == 'LIN') then
@@ -415,7 +430,10 @@
   else if(answer == 'PAR') then
     INERT = PAR
   else
-    if(this  < 2) write(*,*) 'Error in input ! Exiting1'
+    if(this  < 2) then
+      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                             cmn_line_count, ' Got a: ', answer
+    endif
     stop
   endif
 
@@ -425,7 +443,7 @@
     write(*,*) '# CN -> Crank-Nicholson'
     write(*,*) '# FI -> Fully Implicit'
   endif 
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
   call ToUppr(answer)
   if(answer == 'AB') then
@@ -435,7 +453,10 @@
   else if(answer == 'FI') then
     CONVEC = FI
   else
-    if(this  < 2) write(*,*) 'Error in input ! Exiting2'
+    if(this  < 2) then
+      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                             cmn_line_count, ' Got a: ', answer
+    endif
     stop
   endif
 
@@ -445,7 +466,7 @@
     write(*,*) '# CN -> Crank-Nicholson'
     write(*,*) '# FI -> Fully Implicit'
   endif 
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
   call ToUppr(answer)
   if(answer == 'AB') then
@@ -455,7 +476,10 @@
   else if(answer == 'FI') then
     DIFFUS = FI
   else
-    if(this  < 2) write(*,*) 'Error in input ! Exiting3'
+    if(this  < 2) then
+      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                             cmn_line_count, ' Got a: ', answer
+    endif
     stop
   endif
 
@@ -465,7 +489,7 @@
     write(*,*) '# CN -> Crank-Nicholson'
     write(*,*) '# FI -> Fully Implicit'
   endif 
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
   call ToUppr(answer)
   if(answer == 'AB') then
@@ -475,7 +499,10 @@
   else if(answer == 'FI') then
     CROSS = FI
   else
-    if(this  < 2) write(*,*) 'Error in input ! Exiting'
+    if(this  < 2) then
+      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                             cmn_line_count, ' Got a: ', answer
+    endif
     stop
   endif
 
@@ -494,7 +521,7 @@
       write(*,*) '# SMART     -> self descriptive'
       write(*,*) '# AVL_SMART -> self descriptive'
     endif 
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp(ts(1):te(1)),'(A)')  answer
     call ToUppr(answer)
     if(answer == 'BLEND_CDS_UDS') then
@@ -522,9 +549,10 @@
     else if(answer == 'GAMMA') then
       BLEND(m) = GAMMA 
     else
-      if(this  < 2) write(*,*) 'Error in input in line:' 
-      if(this  < 2) write(*,*) answer
-      if(this  < 2) write(*,*) 'Exiting !'
+      if(this  < 2) then
+        write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                               cmn_line_count, ' Got a: ', answer
+      endif
       stop
     endif
   end do
@@ -535,7 +563,7 @@
       if(this  < 2) then
         write(*,*) '# Convetive schemes for energy equation:'
       endif 
-      call ReadC(7,inp,tn,ts,te)
+      call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp(ts(1):te(1)),'(A)')  answer
       call ToUppr(answer)
       if(answer == 'BLEND_TEM_CDS_UDS') then
@@ -563,9 +591,10 @@
       else if(answer == 'GAMMA') then
         BLEND_TEM(m) = GAMMA 
       else
-       if(this  < 2) write(*,*) 'Error in input in line:' 
-       if(this  < 2) write(*,*) answer
-       if(this  < 2) write(*,*) 'Exiting !'
+        if(this  < 2) then
+          write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                                 cmn_line_count, ' Got a: ', answer
+        endif
         stop
       endif
     end do
@@ -577,7 +606,7 @@
       if(this  < 2) then
         write(*,*) '# Convetive schemes for transport equation:'
       endif 
-      call ReadC(7,inp,tn,ts,te)
+      call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp(ts(1):te(1)),'(A)')  answer
       call ToUppr(answer)
       if(answer == 'BLEND_TUR_CDS_UDS') then
@@ -605,9 +634,10 @@
       else if(answer == 'GAMMA') then
         BLEND(m) = GAMMA 
       else
-        if(this  < 2) write(*,*) 'Error in input in line:' 
-        if(this  < 2) write(*,*) answer
-        if(this  < 2) write(*,*) 'Exiting !'
+        if(this  < 2) then
+          write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                                 cmn_line_count, ' Got a: ', answer
+        endif
         stop
       endif
     end do
@@ -620,7 +650,7 @@
     write(*,*) '# DI -> Diagonal preconditioning'
     write(*,*) '# IC -> Incomplete Cholesky'
   endif 
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
   call ToUppr(answer)
   if(answer == 'NO') then
@@ -630,23 +660,26 @@
   else if(answer == 'IC') then
     PREC = 2 
   else
-    if(this  < 2) write(*,*) 'Error in input ! Exiting'
+    if(this  < 2) then
+      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                             cmn_line_count, ' Got a: ', answer
+    endif
     stop
   endif
 
   if(this  < 2)  &
     write(*,*) '# Tolerance for velocity solver: (',U % STol,' )'
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)    U % STol
     V % Stol     = U % Stol
     W % Stol     = U % Stol
   if(this  < 2)  &
     write(*,*) '# Tolerance for pressure solver: (',PP % STol,' )'
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)   PP % STol
     P % Stol = PP % Stol
   if(SIMULA/=LES.and.SIMULA/=DNS) then
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)    Kin % STol
     Eps % Stol   = Kin % Stol
     v_2 % Stol   = Kin % Stol
@@ -662,28 +695,28 @@
   if(HOT == YES) then
     if(this  < 2)  &
       write(*,*) '# Tolerance for temperature solver: (',T % STol,' )'
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)    T % STol
   end if
  
   if(ALGOR == SIMPLE) then
     if(this  < 2)  &
       write(*,*) '# Tolerance for SIMPLE: (',SIMTol,' )'
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)   SIMTol
   endif     
 
 !----- Time step
   if(this  < 2)  &
     write(*,*) '# Time step: (',dt,' )'
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*)   dt
 
 !----- Wall velocity 
   do m=1,Nmat
     if(this  < 2)  &
       write(*,*) '# Enter Pdrop (x, y, z) for domain ', m
-    call ReadC(7,inp,tn,ts,te) 
+    call ReadC(CMN_FILE,inp,tn,ts,te) 
     if(.not. restar) then 
       read(inp,*)  PdropX(m), PdropY(m), PdropZ(m)
       UTau(m) = sqrt(abs(PdropX(m))) ! delta=1, nu=1 
@@ -700,7 +733,7 @@
       write(*,*) '# Enter the wanted mass flux through domain ', m
       write(*,*) '# (type 0.0 to keep the pressure drop constant)'
     endif 
-    call ReadC(7,inp,tn,ts,te) 
+    call ReadC(CMN_FILE,inp,tn,ts,te) 
     if(.not. restar) read(inp,*)  FLUXoX(m), FLUXoY(m), FLUXoZ(m)
     if(restar)       read(inp,*)  dummy, dummy, dummy 
   end do

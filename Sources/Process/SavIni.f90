@@ -20,7 +20,7 @@
 !---- store the name
    if(this  < 2)                                                     &
    write(*,*) '# Now saving initial files [skip cancels]:'  
-   call ReadC(7,inp,tn,ts,te)
+   call ReadC(CMN_FILE,inp,tn,ts,te)
   
    read(inp(ts(1):te(1)), '(A80)')  namOut
    answer=namOut

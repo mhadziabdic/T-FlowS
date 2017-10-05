@@ -11,7 +11,8 @@ MODULE allp_mod
   implicit none
 
   integer, parameter ::          & 
-    MAXP =   200, MAXL = 1000,   &
+    MAXP     =  200,             &
+    MAXL     = 1000,             &
     MAXPRO   = 1024,             & ! max. n. of processors    
     INFLOW   =    1,             & ! boundary condition       
     WALL     =    2,             & ! boundary condition
@@ -29,7 +30,8 @@ MODULE allp_mod
 
   integer, parameter ::          & 
     FLUID    =    7,             & ! material state: fluid
-    SOLID    =    8                ! material state: solid
+    SOLID    =    8,             & ! material state: solid
+    CMN_FILE =    7                ! T-FlowS command file (T-FlowS.cmn)
 
   real, parameter ::  & 
     HUGE=1.e+30, TINY=1.e-64

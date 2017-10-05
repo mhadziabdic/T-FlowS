@@ -24,7 +24,7 @@
   else
     if(this  < 2)                                                     &
       write(*,*) '# Output restart file name [skip cancels]:'
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
 !->>> write(*,*) inp(1:300)
     read(inp(ts(1):te(1)), '(A80)')  namOut
     answer=namOut

@@ -15,14 +15,13 @@
 %========%
 % INFLOW %
 %========%
-   2         iNFLOW   file  parabolic-0-3.prof 
+   2         iNFLOW   0.1  0.0  0.0
 %=========%
 % OUTFLOW %
 %=========%
-   3         oUTFLOW  file  parabolic-0-3.prof 
+   3         oUTFLOW  0.1  0.0  0.0
 
 %////////////////////%
 % INITIAL CONDITIONS %
 %////////////////////%
-   1
-   1   1.0  0.0  0.0
+   0

@@ -1,29 +1,108 @@
 #!/bin/bash
 
 #----------------------------------------------------#
+#                                                    #
 #  Write a warning if script is not called properly  #
+#                                                    #
 #----------------------------------------------------#
 if [ $# -lt 1 ]; then
-  echo "Wrong syntax!"
-  echo "Usage: " $0 "GNU        -> configure for GNU compiler"
-  echo "       " $0 "GNU-OPEN   -> configure for GNU compiler with OPEN MPI"
-  echo "       " $0 "INTEL      -> configure for INTEL compiler"
-  echo "       " $0 "INTEL-OPEN -> configure for INTEL compiler with OPEN MPI"
+
+  echo "==========================================================="
+  echo "Wrong syntax! Compiler is not specified!"
+  echo ""
+  echo "Correct usage: " $0 "[compiler] <optimization>"
+  echo ""
+  echo "Mandatory argument [compiler] can be:"
+  echo "  GNU       -> gnu compiler"
+  echo "  GNU-MPI   -> gnu compiler with MPI support"
+  echo "  INTEL     -> Intel(TM) compiler"
+  echo "  INTEL-MPI -> Intel(TM) compiler with MPI support"
+  echo "  PG        -> Portland Group(TM) compiler"
+  echo "  PG-MPI    -> Portland Group(TM) compiler with MPI support"
+  echo ""
+  echo "Optional argument <optimization> can be:"
+  echo "  DEBUG -> compile with debugging info."
+  echo "  SLOW  -> compile with no speed optimization."
+  echo "  FAST  -> compile with optimization for speed."
+  echo "-----------------------------------------------------------"
+
+#-------------------------------------------------------------#
+#                                                             #
+#  If called properly, set options for creation of Makefiles  #
+#                                                             #
+#-------------------------------------------------------------#
 else
 
-  #  Issue general commands for autotools 
+  #---------------------------------------#
+  #  Issue general commands for autotools #
+  #---------------------------------------#
+
   aclocal
   touch NEWS README AUTHORS ChangeLog
   automake --add-missing
   autoconf
 
-  #  Issue platform specific commands for autotools 
+  #------------------------------#
+  #  Parse optimization options  #
+  #------------------------------# 
+
+  OPTIMIZE=""
+  if [ $# -gt 1 ]; then
+    if [ $2 = "DEBUG" ]; then
+      OPTIMIZE="-g"
+    elif [ $2 = "SLOW" ]; then
+      OPTIMIZE="-O0"
+    elif [ $2 = "FAST" ]; then
+      OPTIMIZE="-O3"
+    else
+      echo "================================="
+      echo "Uknonwn optimization level: " $2
+      echo "---------------------------------"
+      exit 1
+    fi
+  fi
+
+  #--------------------------------------------------#
+  #  Issue platform specific commands for autotools  #
+  #--------------------------------------------------#
+
+  # GNU
   if [ $1 = "GNU" ]; then
     cd Process/Communication; ln -f -s Sequential/*.f90 . ; cd ../..
-    ./configure FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules'
-  elif [ $1 = "GNU-OPEN" ]; then
-    cd Process/Communication; ln -f -s Sequential/*.f90 . ; cd ../..
-    ./configure FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules'
-  fi
-fi
+    ./configure FC='gfortran' FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules '$OPTIMIZE
 
+  # GNU-MPI
+  elif [ $1 = "GNU-MPI" ]; then
+    cd Process/Communication; ln -i -s Parallel/Double/*.f90 . ; cd ../..
+    ./configure FC='mpif90' FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules '$OPTIMIZE
+
+  # INTEL
+  elif [ $1 = "INTEL" ]; then
+    echo $OPTIMIZE
+    cd Process/Communication; ln -f -s Sequential/*.f90 . ; cd ../..
+    ./configure FC='ifort' FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+
+  # INTEL-MPI
+  elif [ $1 = "INTEL-MPI" ]; then
+    cd Process/Communication; ln -i -s Parallel/Double/*.f90 . ; cd ../..
+    ./configure FC='mpif90' FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+
+  # PG
+  elif [ $1 = "PG" ]; then
+    echo $OPTIMIZE
+    cd Process/Communication; ln -f -s Sequential/*.f90 . ; cd ../..
+    ./configure FC='pgfortran' FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+
+  # PG-MPI
+  elif [ $1 = "PG-MPI" ]; then
+    cd Process/Communication; ln -i -s Parallel/Double/*.f90 . ; cd ../..
+    ./configure FC='mpif90' FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+
+  else
+    echo "============================"
+    echo "Uknonwn compiler: " $1
+    echo "----------------------------"
+    exit 1
+  fi
+
+fi

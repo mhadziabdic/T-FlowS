@@ -117,7 +117,8 @@
                 vvp(i)   = vvp(i) + Eps%n(c1)
                 wwp(i)   = wwp(i) + v_2%n(c1)
                 uvp(i)   = uvp(i) - f22 %n(c1) !2.0*VISc*v_2 % n(c1)/WallDs(c1)**2
-                Var_1(i) = Var_1(i) + 0.015663*TauWall(c1)*U%n(c1)/abs(U%n(c1)) !/11.3**2 !2.0*(VISc*U%n(c)/WallDs(c))/11.3**2 !sqrt(TauWall(c))*WallDs(c)/VISc
+!                Var_1(i) = Var_1(i) + 0.015663*TauWall(c1)*U%n(c1)/abs(U%n(c1)) !/11.3**2 !2.0*(VISc*U%n(c)/WallDs(c))/11.3**2 !sqrt(TauWall(c))*WallDs(c)/VISc
+                Var_1(i) = Var_1(i) + 2.0*(VISc*U%n(c1)/WallDs(c1))/11.3**2 !sqrt(TauWall(c))*WallDs(c)/VISc
                 Var_2(i) = Var_2(i) + Uf(c1)*WallDs(c1)/VISc !/11.3**2 !2.0*(VISc*U%n(c)/WallDs(c))/11.3**2 !sqrt(TauWall(c))*WallDs(c)/VISc
                 Var_3(i) = Var_3(i) +   0.1/((T%n(c2)-20)*11.3) !0.0038/(CONwall(c1)) !CONwall(c)/(WallDs(c)*11.3)  
                 Var_4(i) = Var_4(i) +   TauWall(c1)*U%n(c1)/abs(U%n(c1)) !Cmu**0.25*Kin%n(c1)**0.5/11.3 !sqrt(TauWall(c1))
@@ -177,7 +178,7 @@
     end if 
 
     open(3,FILE=JetIn)
-    write(3,*) 'x, U, k, eps, zeta, f, Cf, yPlus, St, TauWall, T'
+    write(3,*) '# x, U, k, eps, zeta, f, Cf, yPlus, St, TauWall, T'
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
         Wmp(i)    =  Wmp(i)/Ncount(i)

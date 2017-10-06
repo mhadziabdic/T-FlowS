@@ -113,6 +113,10 @@
 !---- Is this good in general case, when q <> 0 ??? Check it.
       if(HOT==YES) then
         Prt = 0.9
+        if(SIMULA/=LES.or.SIMULA/=DNS) then
+          Prt = 1.0/( 0.5882 + 0.228*(VISt(c1)/(VISc+1.0e-12)) - 0.0441*                  &
+          (VISt(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c1)+1.0e-12) ))) )
+        end if
         Stot = sqrt(Sx(s)*Sx(s) + Sy(s)*Sy(s) + Sz(s)*Sz(s))
         Nx = Sx(s)/Stot
         Ny = Sy(s)/Stot

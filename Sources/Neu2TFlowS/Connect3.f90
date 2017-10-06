@@ -30,8 +30,8 @@
   implicit none
 !------------------------------[Calling]-------------------------------!
   interface
-    logical function Approx(A,B,tol)
-      real          :: A,B
+    logical function Approx(a, b, tol)
+      real          :: a, b
       real,optional :: tol
     end function Approx
   end interface
@@ -80,8 +80,8 @@
             yc_12 = 0.0
             zc_12 = 0.0
             do i=1,SideN(s1,0)
-              yc_12 = yc_12 + y(SideN(s1,i))
-              zc_12 = zc_12 + z(SideN(s1,i))
+              yc_12 = yc_12 + y_node(SideN(s1,i))
+              zc_12 = zc_12 + z_node(SideN(s1,i))
             end do
             yc_12 = yc_12 / (real(SideN(s1,0)))
             zc_12 = zc_12 / (real(SideN(s1,0)))
@@ -89,8 +89,8 @@
             yc_22 = 0.0
             zc_22 = 0.0
             do i=1,SideN(s2,0)
-              yc_22 = yc_22 + y(SideN(s2,i))
-              zc_22 = zc_22 + z(SideN(s2,i))
+              yc_22 = yc_22 + y_node(SideN(s2,i))
+              zc_22 = zc_22 + z_node(SideN(s2,i))
             end do
             yc_22 = yc_22 / (real(SideN(s2,0)))
             zc_22 = zc_22 / (real(SideN(s2,0)))
@@ -129,8 +129,8 @@
             xc_12 = 0.0
             zc_12 = 0.0
             do i=1,SideN(s1,0)
-              xc_12 = xc_12 + x(SideN(s1,i))
-              zc_12 = zc_12 + z(SideN(s1,i))
+              xc_12 = xc_12 + x_node(SideN(s1,i))
+              zc_12 = zc_12 + z_node(SideN(s1,i))
             end do
             xc_12 = xc_12 / (real(SideN(s1,0)))
             zc_12 = zc_12 / (real(SideN(s1,0)))
@@ -138,8 +138,8 @@
             xc_22 = 0.0
             zc_22 = 0.0
             do i=1,SideN(s2,0)
-              xc_22 = xc_22 + x(SideN(s2,i))
-              zc_22 = zc_22 + z(SideN(s2,i))
+              xc_22 = xc_22 + x_node(SideN(s2,i))
+              zc_22 = zc_22 + z_node(SideN(s2,i))
             end do
             xc_22 = xc_22 / (real(SideN(s2,0)))
             zc_22 = zc_22 / (real(SideN(s2,0)))
@@ -178,8 +178,8 @@
             yc_12 = 0.0
             xc_12 = 0.0
             do i=1,SideN(s1,0)
-              yc_12 = yc_12 + y(SideN(s1,i))
-              xc_12 = xc_12 + x(SideN(s1,i))
+              yc_12 = yc_12 + y_node(SideN(s1,i))
+              xc_12 = xc_12 + x_node(SideN(s1,i))
             end do
             yc_12 = yc_12 / (real(SideN(s1,0)))
             xc_12 = xc_12 / (real(SideN(s1,0)))
@@ -187,8 +187,8 @@
             yc_22 = 0.0
             xc_22 = 0.0
             do i=1,SideN(s2,0)
-              yc_22 = yc_22 + y(SideN(s2,i))
-              xc_22 = xc_22 + x(SideN(s2,i))
+              yc_22 = yc_22 + y_node(SideN(s2,i))
+              xc_22 = xc_22 + x_node(SideN(s2,i))
             end do
             yc_22 = yc_22 / (real(SideN(s2,0)))
             xc_22 = xc_22 / (real(SideN(s2,0)))

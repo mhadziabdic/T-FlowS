@@ -131,9 +131,9 @@
   call CasSav(0, NN, NC, NS+NSsh) ! Save grid for postprocessing
                                   ! with Fluent
 !---- make eps figures
-  call EpsSav(y,z,x,Dy,Dz,'x') 
-  call EpsSav(z,x,y,Dz,Dx,'y') 
-  call EpsSav(x,y,z,Dx,Dy,'z') 
+  call EpsSav(y_node,z_node,x_node,Dy,Dz,'x') 
+  call EpsSav(z_node,x_node,y_node,Dz,Dx,'y') 
+  call EpsSav(x_node,y_node,z_node,Dx,Dy,'z') 
 
   call EpsWho(NSsh)  ! Draw the domain with shadows
 

@@ -1,5 +1,5 @@
 !======================================================================!
-  PROGRAM Neu2TFlowS 
+  program Neu2TFlowS 
 !------------------------------[Modules]-------------------------------!
   use all_mod 
   use gen_mod 
@@ -7,7 +7,7 @@
   implicit none
 !-------------------------------[Locals]-------------------------------!
   integer :: c, n, s
-  integer             :: i, typ, cnt
+  integer :: i, typ, cnt
 !======================================================================!
 
   call logo
@@ -51,9 +51,9 @@
 
 !---- make eps figures
   write(*,*) 'Making three .eps cuts through the domain.'
-  call EpsSav(y,z,x,Dy,Dz,'x')
-  call EpsSav(z,x,y,Dz,Dx,'y')
-  call EpsSav(x,y,z,Dx,Dy,'z')
+  call EpsSav(y_node, z_node, x_node, Dy, Dz, 'x')
+  call EpsSav(z_node, x_node, y_node, Dz, Dx, 'y')
+  call EpsSav(x_node, y_node, z_node, Dx, Dy, 'z')
  
   write(*,*) 'Making a 3D shaded .eps figure of the domain.'
   call EpsWho(NSsh)  ! Draw the domain with shadows
@@ -69,4 +69,4 @@
 !    write(*,*) 'Hamo, type ', typ, ' has ', cnt, ' cells'
 !  end do
 
-  end PROGRAM Neu2TFlowS 
+  end program Neu2TFlowS 

@@ -13,7 +13,7 @@
   real                :: xTnew, yTnew, zTnew    ! temporary new values
   real                :: xmax, ymax, zmax, xmin, ymin, zmin 
   real                :: x1,y1,z1,x8,y8,z8 
-  integer             :: regio
+  integer             :: reg
   real,allocatable    :: xnew(:), ynew(:), znew(:) ! new values
   integer,allocatable :: NodeN(:,:)
 !======================================================================!
@@ -37,12 +37,12 @@
   ymin=+HUGE
   zmin=+HUGE
   do n=1,Nn
-    xmax=max(x(n),xmax) 
-    ymax=max(y(n),ymax) 
-    zmax=max(z(n),zmax) 
-    xmin=min(x(n),xmin) 
-    ymin=min(y(n),ymin) 
-    zmin=min(z(n),zmin) 
+    xmax=max(x_node(n),xmax) 
+    ymax=max(y_node(n),ymax) 
+    zmax=max(z_node(n),zmax) 
+    xmin=min(x_node(n),xmin) 
+    ymin=min(y_node(n),ymin) 
+    zmin=min(z_node(n),zmin) 
   end do 
 
 !---------------------------!
@@ -67,20 +67,20 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 !     Browse through regions     !
 !<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
-  do regio=1,NSR
-    if( ( .not. SdirX(regio) ) .and.  &
-        ( .not. SdirY(regio) ) .and.  &
-        ( .not. SdirZ(regio) ) ) then
+  do reg=1,n_smoothing_regions
+    if( ( .not. smooth_in_x(reg) ) .and.  &
+        ( .not. smooth_in_y(reg) ) .and.  &
+        ( .not. smooth_in_z(reg) ) ) then
       do n=1,Nn
-        x1=SRegio(regio,1)
-        y1=SRegio(regio,2)
-        z1=SRegio(regio,3)
-        x8=SRegio(regio,4)
-        y8=SRegio(regio,5)
-        z8=SRegio(regio,6)
-        if( (x1 <= x(n)) .and. (x(n) <= x8) .and.  &
-            (y1 <= y(n)) .and. (y(n) <= y8) .and.  &
-            (z1 <= z(n)) .and. (z(n) <= z8) ) then
+        x1=smooth_regions(reg,1)
+        y1=smooth_regions(reg,2)
+        z1=smooth_regions(reg,3)
+        x8=smooth_regions(reg,4)
+        y8=smooth_regions(reg,5)
+        z8=smooth_regions(reg,6)
+        if( (x1 <= x_node(n)) .and. (x_node(n) <= x8) .and.  &
+            (y1 <= y_node(n)) .and. (y_node(n) <= y8) .and.  &
+            (z1 <= z_node(n)) .and. (z_node(n) <= z8) ) then
           NodeN(n,0) = 0
         endif
       end do
@@ -95,35 +95,35 @@
 !-------------------------!
 !     Smooth the grid     !
 !-------------------------!
-  do regio=1,NSR
-    write(*,*) 'Now smoothing region ',regio,' with:',              &
-                Siter(regio), ' iterations.'
+  do reg=1,n_smoothing_regions
+    write(*,*) 'Now smoothing region ',reg,' with:',              &
+                smooth_iters(reg), ' iterations.'
 
-    do j=1,Siter(regio)         
+    do j=1,smooth_iters(reg)         
 
-!---- calculate new coordinates using the old values (x(),y(),z())
+!---- calculate new coordinates using the old values (x_node(),y_node(),z_node())
       do n=1,Nn
         if(NodeN(n,0)   >  0) then
           xTnew=0.0
           yTnew=0.0
           zTnew=0.0
           do i=1,NodeN(n,0)
-            xTnew = xTnew + x(NodeN(n,i))
-            yTnew = yTnew + y(NodeN(n,i))
-            zTnew = zTnew + z(NodeN(n,i))
+            xTnew = xTnew + x_node(NodeN(n,i))
+            yTnew = yTnew + y_node(NodeN(n,i))
+            zTnew = zTnew + z_node(NodeN(n,i))
           end do
           xTnew = xTnew / (1.0*NodeN(n,0)) 
           yTnew = yTnew / (1.0*NodeN(n,0)) 
           zTnew = zTnew / (1.0*NodeN(n,0)) 
-          if(x(n)  > 0.001*xmin .and. x(n)  < 0.999*xmax)           &
-          xnew(n) = (1.0-Srelax(regio)*walln(n))*x(n)               &
-                  +      Srelax(regio)*walln(n) *xTnew
-          if(y(n)  > 0.001*ymin .and. y(n)  < 0.999*ymax)           &
-          ynew(n) = (1.0-Srelax(regio)*walln(n))*y(n)               &
-                  +      Srelax(regio)*walln(n) *yTnew
-          if(z(n)  > 0.001*zmin .and. z(n)  < 0.999*zmax)           &
-          znew(n) = (1.0-Srelax(regio)*walln(n))*z(n)               &
-                  +      Srelax(regio)*walln(n)* zTnew
+          if(x_node(n)  > 0.001*xmin .and. x_node(n)  < 0.999*xmax)           &
+          xnew(n) = (1.0-smooth_relax(reg)*walln(n))*x_node(n)                &
+                  +      smooth_relax(reg)*walln(n) *xTnew
+          if(y_node(n)  > 0.001*ymin .and. y_node(n)  < 0.999*ymax)           &
+          ynew(n) = (1.0-smooth_relax(reg)*walln(n))*y_node(n)                &
+                  +      smooth_relax(reg)*walln(n) *yTnew
+          if(z_node(n)  > 0.001*zmin .and. z_node(n)  < 0.999*zmax)           &
+          znew(n) = (1.0-smooth_relax(reg)*walln(n))*z_node(n)                &
+                  +      smooth_relax(reg)*walln(n)* zTnew
         end if
       end do
 
@@ -131,30 +131,30 @@
       do n=1,Nn
         if(NodeN(n,0)   >  0) then
 
-          x1=SRegio(regio,1)
-          y1=SRegio(regio,2)
-          z1=SRegio(regio,3)
-          x8=SRegio(regio,4)
-          y8=SRegio(regio,5)
-          z8=SRegio(regio,6)
+          x1=smooth_regions(reg,1)
+          y1=smooth_regions(reg,2)
+          z1=smooth_regions(reg,3)
+          x8=smooth_regions(reg,4)
+          y8=smooth_regions(reg,5)
+          z8=smooth_regions(reg,6)
 
-          if( (x1 <= x(n)) .and. (x(n) <= x8) .and.                 &
-              (y1 <= y(n)) .and. (y(n) <= y8) .and.                 &
-              (z1 <= z(n)) .and. (z(n) <= z8) ) then
+          if( (x1 <= x_node(n)) .and. (x_node(n) <= x8) .and.                 &
+              (y1 <= y_node(n)) .and. (y_node(n) <= y8) .and.                 &
+              (z1 <= z_node(n)) .and. (z_node(n) <= z8) ) then
 
-            if(SdirX(regio)) then
-              if(x(n)  > 0.001*xmin .and. x(n)  < 0.999*xmax)       &
-              x(n)=xnew(n)
+            if(smooth_in_x(reg)) then
+              if(x_node(n)  > 0.001*xmin .and. x_node(n)  < 0.999*xmax)       &
+              x_node(n)=xnew(n)
             end if
 
-            if(SdirY(regio)) then
-              if(y(n)  > 0.001*ymin .and. y(n)  < 0.999*ymax)       &
-              y(n)=ynew(n)
+            if(smooth_in_y(reg)) then
+              if(y_node(n)  > 0.001*ymin .and. y_node(n)  < 0.999*ymax)       &
+              y_node(n)=ynew(n)
             end if 
 
-            if(SdirZ(regio)) then
-              if(z(n)  > 0.001*zmin .and. z(n)  < 0.999*zmax)       &
-              z(n)=znew(n)
+            if(smooth_in_z(reg)) then
+              if(z_node(n)  > 0.001*zmin .and. z_node(n)  < 0.999*zmax)       &
+              z_node(n)=znew(n)
             end if 
 
           end if  ! if the point belongs to region

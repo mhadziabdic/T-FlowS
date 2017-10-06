@@ -42,7 +42,7 @@
 
 !---- x
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') x(n)
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') x_node(n)
   end do
   do c=1,NC
     if(NewC(c)  > 0) write(9, '(1PE14.7)') xc(c)
@@ -56,7 +56,7 @@
 
 !---- y
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') y(n)
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') y_node(n)
   end do
   do c=1,NC
     if(NewC(c)  > 0) write(9, '(1PE14.7)') yc(c)
@@ -70,7 +70,7 @@
 
 !---- z
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') z(n)
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') z_node(n)
   end do
   do c=1,NC
     if(NewC(c)  > 0) write(9, '(1PE14.7)') zc(c)
@@ -93,21 +93,21 @@
       if(CellN(c,0) == 8) then
         write(9,*) 'hex 8'
         write(9,*)                                                  &
-	      NewN(CellN(c,1)), NewN(CellN(c,2)),                   &
-	      NewN(CellN(c,4)), NewN(CellN(c,3)),                   &
-	      NewN(CellN(c,5)), NewN(CellN(c,6)),                   &
-	      NewN(CellN(c,8)), NewN(CellN(c,7))
+              NewN(CellN(c,1)), NewN(CellN(c,2)),                   &
+              NewN(CellN(c,4)), NewN(CellN(c,3)),                   &
+              NewN(CellN(c,5)), NewN(CellN(c,6)),                   &
+              NewN(CellN(c,8)), NewN(CellN(c,7))
       else if(CellN(c,0) == 6) then
         write(9,*) 'prism 6'
         write(9,*)                                                  &
-	      NewN(CellN(c,1)), NewN(CellN(c,2)),                   &
-	      NewN(CellN(c,3)), NewN(CellN(c,4)),                   &
-	      NewN(CellN(c,5)), NewN(CellN(c,6))
+              NewN(CellN(c,1)), NewN(CellN(c,2)),                   &
+              NewN(CellN(c,3)), NewN(CellN(c,4)),                   &
+              NewN(CellN(c,5)), NewN(CellN(c,6))
       else if(CellN(c,0) == 4) then
         write(9,*) 'tet 4'
         write(9,*)                                                  &
-	      NewN(CellN(c,1)), NewN(CellN(c,2)),                   &
-	      NewN(CellN(c,3)), NewN(CellN(c,4))
+              NewN(CellN(c,1)), NewN(CellN(c,2)),                   &
+              NewN(CellN(c,3)), NewN(CellN(c,4))
       else if(CellN(c,0) == 5) then
         write(9,*) 'pyramid 5'
         write(9,*)                                                  &
@@ -139,13 +139,13 @@
         c1 = NewC(SideC(1,s))
         c2 = NewC(SideC(2,s))
         if( c2  > 0 ) then
-	  write(9,*) 'general 1'
-	  write(9,*) '  2'
-	  write(9,*) NNsub+c1, NNsub+c2
+          write(9,*) 'general 1'
+          write(9,*) '  2'
+          write(9,*) NNsub+c1, NNsub+c2
         else
-	  write(9,*) 'general 1'
-	  write(9,*) '  2'
-	  write(9,*) NNsub+c1, NNsub+NCsub-c2
+          write(9,*) 'general 1'
+          write(9,*) '  2'
+          write(9,*) NNsub+c1, NNsub+NCsub-c2
         end if
       end if
 
@@ -169,13 +169,13 @@
         c1 = NewC(SideC(1,s))
         c2 = NewC(SideC(2,s))
         if( c2  > 0 ) then
-	  write(9,*) 'general 1'
-	  write(9,*) '  2'
-	  write(9,*) NNsub+c1, NNsub+c2
+          write(9,*) 'general 1'
+          write(9,*) '  2'
+          write(9,*) NNsub+c1, NNsub+c2
         else
-	  write(9,*) 'general 1'
-	  write(9,*) '  2'
-	  write(9,*) NNsub+c1, NNsub+NCsub-c2
+          write(9,*) 'general 1'
+          write(9,*) '  2'
+          write(9,*) NNsub+c1, NNsub+NCsub-c2
         end if
       end if
 

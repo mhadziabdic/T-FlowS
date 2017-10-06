@@ -106,9 +106,9 @@
   allocate (NewC(-NbC-1:NC)); NewC=0 
   allocate (NewS(NS));        NewS=0
 
-  allocate (x(NN)); x=0
-  allocate (y(NN)); y=0
-  allocate (z(NN)); z=0
+  allocate (x_node(NN)); x_node=0
+  allocate (y_node(NN)); y_node=0
+  allocate (z_node(NN)); z_node=0
 
   allocate (NewN(NN)); NewN=0 
 
@@ -132,13 +132,13 @@
 
 !>>>>> read node coordinates
   do n=1,NN
-    read(9,*) x(n)
+    read(9,*) x_node(n)
   end do
   do n=1,NN
-    read(9,*) y(n)
+    read(9,*) y_node(n)
   end do
   do n=1,NN
-    read(9,*) z(n)
+    read(9,*) z_node(n)
   end do
 
 !>>>>> read cell nodes 
@@ -150,24 +150,24 @@
       CellN(c,0) = 8
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
-	   CellN(c,1), CellN(c,2), CellN(c,4), CellN(c,3),          &
-	   CellN(c,5), CellN(c,6), CellN(c,8), CellN(c,7) 
+           CellN(c,1), CellN(c,2), CellN(c,4), CellN(c,3),          &
+           CellN(c,5), CellN(c,6), CellN(c,8), CellN(c,7) 
     else if(dummy  ==  'prism') then
       CellN(c,0) = 6
       call ReadC(9,inp,tn,ts,te)
       read(inp,*)                             &
-	 CellN(c,1), CellN(c,2), CellN(c,3),  &
+         CellN(c,1), CellN(c,2), CellN(c,3),  &
          CellN(c,4), CellN(c,5), CellN(c,6)
     else if(dummy  ==  'tet') then
       CellN(c,0) = 4
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
-	 CellN(c,1), CellN(c,2), CellN(c,3), CellN(c,4)
+         CellN(c,1), CellN(c,2), CellN(c,3), CellN(c,4)
     else if(dummy  ==  'pyramid') then
       CellN(c,0) = 5
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
-	 CellN(c,5), CellN(c,1), CellN(c,2), CellN(c,4), CellN(c,3)
+         CellN(c,5), CellN(c,1), CellN(c,2), CellN(c,4), CellN(c,3)
     else
       write(*,*) 'Unsupported cell type: ', dummy
       write(*,*) 'Exiting'

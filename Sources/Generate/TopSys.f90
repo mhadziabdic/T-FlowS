@@ -153,10 +153,10 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2  < 0 .and. CopyC(c1) /= 0   &
-               .and. BCmark(c2) == Copy(1,0)) then
+               .and. BCmark(c2) == copy_cond(1,0)) then
       CopyC(c2) = CopyC(c1)
 !>>>>>    CopyC(c1) = 0
-!>>>>>    write(*,*) 'Copy', CopyC(c2), ' to ', c2
+!>>>>>    write(*,*) 'copy_cond', CopyC(c2), ' to ', c2
 !>>>>>    write(*,*) c2, xc(c2), yc(c2), zc(c2)
 !>>>>>    write(*,*) BCmark(c2)
     end if

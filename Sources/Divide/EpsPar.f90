@@ -87,12 +87,12 @@
   namEps(len_trim(namEps)+1:len_trim(namEps)+4) = '.eps'
   write(6, *) 'Now creating the file:', namEps
 
-  xmax=maxval(x(1:NN))
-  ymax=maxval(y(1:NN))
-  zmax=maxval(z(1:NN))
-  xmin=minval(x(1:NN))
-  ymin=minval(y(1:NN))
-  zmin=minval(z(1:NN))
+  xmax=maxval(x_node(1:NN))
+  ymax=maxval(y_node(1:NN))
+  zmax=maxval(z_node(1:NN))
+  xmin=minval(x_node(1:NN))
+  ymin=minval(y_node(1:NN))
+  zmin=minval(z_node(1:NN))
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin),(zmax-zmin))
   sclp = 0.005 
 
@@ -103,19 +103,19 @@
   ymaxb=-1000000
   do n=1,Nn
     if(xk  < 0.0 .and. yk  > 0.0) then
-      xp1=-x(n)*sin(alfa)-y(n)*sin(beta)
+      xp1=-x_node(n)*sin(alfa)-y_node(n)*sin(beta)
     else if(xk  > 0.0 .and. yk  < 0.0) then
-      xp1=x(n)*sin(alfa)+y(n)*sin(beta)
+      xp1=x_node(n)*sin(alfa)+y_node(n)*sin(beta)
     else if(xk  > 0.0 .and. yk  > 0.0) then
-      xp1=-x(n)*sin(alfa)+y(n)*sin(beta)
+      xp1=-x_node(n)*sin(alfa)+y_node(n)*sin(beta)
     else
-      xp1=x(n)*sin(alfa)-y(n)*sin(beta)
+      xp1=x_node(n)*sin(alfa)-y_node(n)*sin(beta)
     end if
     xp1=xp1*sclf*sclp
     xmaxb=max(xmaxb,int(xp1))
     xminb=min(xminb,int(xp1))
 
-    yp1=(-x(n)*cos(alfa)-y(n)*cos(beta))*cos(gama)+z(n)*sin(gama) 
+    yp1=(-x_node(n)*cos(alfa)-y_node(n)*cos(beta))*cos(gama)+z_node(n)*sin(gama) 
     yp1=yp1*sclf*sclp
     ymaxb=max(ymaxb,int(yp1))
     yminb=min(yminb,int(yp1))
@@ -181,20 +181,20 @@
     if(c2 < 0 .or. &
       ( abs(Dx(s))+abs(Dy(s))+abs(Dz(s)) ) > 0. ) then 
 
-      x1 = x(SideN(s,1))
-      x2 = x(SideN(s,2))
-      x3 = x(SideN(s,3))
-      x4 = x(SideN(s,4))
+      x1 = x_node(SideN(s,1))
+      x2 = x_node(SideN(s,2))
+      x3 = x_node(SideN(s,3))
+      x4 = x_node(SideN(s,4))
 
-      y1 = y(SideN(s,1))
-      y2 = y(SideN(s,2))
-      y3 = y(SideN(s,3))
-      y4 = y(SideN(s,4))
+      y1 = y_node(SideN(s,1))
+      y2 = y_node(SideN(s,2))
+      y3 = y_node(SideN(s,3))
+      y4 = y_node(SideN(s,4))
 
-      z1 = z(SideN(s,1))
-      z2 = z(SideN(s,2))
-      z3 = z(SideN(s,3))
-      z4 = z(SideN(s,4))
+      z1 = z_node(SideN(s,1))
+      z2 = z_node(SideN(s,2))
+      z3 = z_node(SideN(s,3))
+      z4 = z_node(SideN(s,4))
 
       if(xk  < 0.0 .and. yk  > 0.0) then
         xp1=-x1*sin(alfa)-y1*sin(beta)

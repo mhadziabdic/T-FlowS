@@ -16,10 +16,10 @@
 !------------------------------[Calling]-------------------------------!
   real      :: Distance
 !-------------------------------[Locals]-------------------------------!
-  integer   :: i, j, l, m
-  real      :: Mres(MAXP), MresT, dummy
-  real      :: xm(MAXP), ym(MAXP), zm(MAXP)
-  character :: answer*80, nammon*80
+  integer           :: i, j, l, m
+  real              :: MresT, dummy
+  character         :: answer*80, nammon*80
+  real, allocatable :: mres(:), xm(:), ym(:), zm(:)
 !======================================================================!
 
   call Wait   
@@ -45,6 +45,12 @@
     write(*,*) '# Number of monitoring points:'
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*) Nmon 
+
+  allocate (mres(Nmon))
+  allocate (xm(Nmon))
+  allocate (ym(Nmon))
+  allocate (zm(Nmon))
+
   if(this  < 2)  &
     write(*,*) '# Enter the coordinates of monitoring point(s)'
   do i=1,Nmon

@@ -18,16 +18,16 @@
   real    :: x0, y0, z0, delx, dely, delz, t, dt, ddt, pr, xi
 !======================================================================!
 
-  NI=BlkRes(b,1)
-  NJ=BlkRes(b,2)
-  NK=BlkRes(b,3)   
+  NI=block_resolutions(b,1)
+  NJ=block_resolutions(b,2)
+  NK=block_resolutions(b,3)   
 
-  x0=x(NN+(ks-1)*NI*NJ+(js-1)*NI+is)
-  y0=y(NN+(ks-1)*NI*NJ+(js-1)*NI+is)
-  z0=z(NN+(ks-1)*NI*NJ+(js-1)*NI+is)
-  delx=x(NN+(ke-1)*NI*NJ+(je-1)*NI+ie)-x0
-  dely=y(NN+(ke-1)*NI*NJ+(je-1)*NI+ie)-y0
-  delz=z(NN+(ke-1)*NI*NJ+(je-1)*NI+ie)-z0
+  x0   = x_node(NN+(ks-1)*NI*NJ+(js-1)*NI+is)
+  y0   = y_node(NN+(ks-1)*NI*NJ+(js-1)*NI+is)
+  z0   = z_node(NN+(ks-1)*NI*NJ+(js-1)*NI+is)
+  delx = x_node(NN+(ke-1)*NI*NJ+(je-1)*NI+ie)-x0
+  dely = y_node(NN+(ke-1)*NI*NJ+(je-1)*NI+ie)-y0
+  delz = z_node(NN+(ke-1)*NI*NJ+(je-1)*NI+ie)-z0
 
   N=max( (ie-is), (je-js),  (ke-ks) )
 
@@ -44,30 +44,30 @@
             dt=1.0/(1.0*N)+(1.0*i-0.5*(1.0*N+1)) * ddt
             t=t+dt
             node = NN + (k-1)*NI*NJ + (j-1)*NI + i+1
-            if( (i  < ie).and.(x(node) == HUGE) ) then 
-              x(node) = x0 + t*delx
-              y(node) = y0 + t*dely
-              z(node) = z0 + t*delz
+            if( (i  < ie).and.(x_node(node) == HUGE) ) then 
+              x_node(node) = x0 + t*delx
+              y_node(node) = y0 + t*dely
+              z_node(node) = z0 + t*delz
             endif
           end if 
           if( je /= js ) then
             dt=1.0/(1.0*N)+(1.0*j-0.5*(1.0*N+1)) * ddt
             t=t+dt
             node = NN + (k-1)*NI*NJ + (j-0)*NI + i 
-            if( (j  < je).and.(x(node) == HUGE) ) then 
-              x(node) = x0 + t*delx
-              y(node) = y0 + t*dely
-              z(node) = z0 + t*delz
+            if( (j  < je).and.(x_node(node) == HUGE) ) then 
+              x_node(node) = x0 + t*delx
+              y_node(node) = y0 + t*dely
+              z_node(node) = z0 + t*delz
             endif
           end if 
           if( ke /= ks ) then
             dt=1.0/(1.0*N)+(1.0*k-0.5*(1.0*N+1)) * ddt
             t=t+dt
             node = NN + (k-0)*NI*NJ + (j-1)*NI + i 
-            if( (k  < ke).and.(x(node) == HUGE) ) then 
-              x(node) = x0 + t*delx
-              y(node) = y0 + t*dely
-              z(node) = z0 + t*delz
+            if( (k  < ke).and.(x_node(node) == HUGE) ) then 
+              x_node(node) = x0 + t*delx
+              y_node(node) = y0 + t*dely
+              z_node(node) = z0 + t*delz
             endif
           end if 
         end do
@@ -98,19 +98,19 @@
     if(case == 2) xi =  1.0 - 1.0*(1.0*i)/(1.0*N)
     if(case == 3) xi = -1.0 + 2.0*(1.0*i)/(1.0*N)
             node = NN + (k-1)*NI*NJ + (j-1)*NI + i+1
-            if( (i  < ie).and.(x(node) == HUGE) ) then 
+            if( (i  < ie).and.(x_node(node) == HUGE) ) then 
     if    (case == 1) then
-      x(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
-      y(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
-      z(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
+      x_node(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
+      y_node(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
+      z_node(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
     elseif(case == 2) then
-      x(node) = x0 + delx - (tanh(xi*atanh(pr))/pr)*delx
-      y(node) = y0 + dely - (tanh(xi*atanh(pr))/pr)*dely
-      z(node) = z0 + delz - (tanh(xi*atanh(pr))/pr)*delz
+      x_node(node) = x0 + delx - (tanh(xi*atanh(pr))/pr)*delx
+      y_node(node) = y0 + dely - (tanh(xi*atanh(pr))/pr)*dely
+      z_node(node) = z0 + delz - (tanh(xi*atanh(pr))/pr)*delz
     elseif(case == 3) then
-      x(node) = x0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
-      y(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
-      z(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
+      x_node(node) = x0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
+      y_node(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
+      z_node(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
     endif 
             endif
           end if 
@@ -119,19 +119,19 @@
     if(case == 2) xi =  1.0 - 1.0*(1.0*j)/(1.0*N)
     if(case == 3) xi = -1.0 + 2.0*(1.0*j)/(1.0*N)
             node = NN + (k-1)*NI*NJ + (j-0)*NI + i 
-            if( (j  < je).and.(x(node) == HUGE) ) then 
+            if( (j  < je).and.(x_node(node) == HUGE) ) then 
     if    (case == 1) then
-      x(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
-      y(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
-      z(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
+      x_node(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
+      y_node(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
+      z_node(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
     elseif(case == 2) then
-      x(node) = x0 + delx - (tanh(xi*atanh(pr))/pr)*delx
-      y(node) = y0 + dely - (tanh(xi*atanh(pr))/pr)*dely
-      z(node) = z0 + delz - (tanh(xi*atanh(pr))/pr)*delz
+      x_node(node) = x0 + delx - (tanh(xi*atanh(pr))/pr)*delx
+      y_node(node) = y0 + dely - (tanh(xi*atanh(pr))/pr)*dely
+      z_node(node) = z0 + delz - (tanh(xi*atanh(pr))/pr)*delz
     elseif(case == 3) then
-      x(node) = x0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
-      y(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
-      z(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
+      x_node(node) = x0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
+      y_node(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
+      z_node(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
     endif 
             endif
           end if 
@@ -140,19 +140,19 @@
     if(case == 2) xi =  1.0 - 1.0*(1.0*k)/(1.0*N)
     if(case == 3) xi = -1.0 + 2.0*(1.0*k)/(1.0*N)
             node = NN + (k-0)*NI*NJ + (j-1)*NI + i 
-            if( (k  < ke).and.(x(node) == HUGE) ) then 
+            if( (k  < ke).and.(x_node(node) == HUGE) ) then 
     if    (case == 1) then
-      x(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
-      y(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
-      z(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
+      x_node(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
+      y_node(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
+      z_node(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
     elseif(case == 2) then
-      x(node) = x0 + delx - (tanh(xi*atanh(pr))/pr)*delx
-      y(node) = y0 + dely - (tanh(xi*atanh(pr))/pr)*dely
-      z(node) = z0 + delz - (tanh(xi*atanh(pr))/pr)*delz
+      x_node(node) = x0 + delx - (tanh(xi*atanh(pr))/pr)*delx
+      y_node(node) = y0 + dely - (tanh(xi*atanh(pr))/pr)*dely
+      z_node(node) = z0 + delz - (tanh(xi*atanh(pr))/pr)*delz
     elseif(case == 3) then
-      x(node) = x0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
-      y(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
-      z(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
+      x_node(node) = x0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
+      y_node(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
+      z_node(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
     endif 
             endif
           end if 

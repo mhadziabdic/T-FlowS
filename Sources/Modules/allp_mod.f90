@@ -11,7 +11,6 @@ MODULE allp_mod
   implicit none
 
   integer, parameter ::          & 
-    MAXP     =  200,             &
     MAXL     = 1000,             &
     MAXPRO   = 1024,             & ! max. n. of processors    
     INFLOW   =    1,             & ! boundary condition       

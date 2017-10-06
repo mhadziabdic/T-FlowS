@@ -1,7 +1,7 @@
 !======================================================================!
   subroutine CGS(N, NB, NONZ, A, Acol,Arow,Adia,Ab,x,r1,            &
-		 prec,Niter,tol,                                    &
-		 IniRes,FinRes)
+                 prec,Niter,tol,                                    &
+                 IniRes,FinRes)
 !----------------------------------------------------------------------!
 !   Solves the linear systems of equations by a precond. CGS Method.   !
 !----------------------------------------------------------------------!
@@ -33,7 +33,7 @@
   real     :: tol                        !  tolerance
   real     :: IniRes, FinRes             !  residual
 !======================================================================!
-	   
+           
 !->>>
 !      integer c 
 !      do c=1,N
@@ -120,17 +120,17 @@
 
     if(iter == 1) then
       do i=1,N
-	u1(i) = r1(i)
-	u2(i) = u1(i)
+        u1(i) = r1(i)
+        u2(i) = u1(i)
       end do        
     else
       beta=rho/rhoold
       do i=1,N
-	u1(i) = r1(i) + beta*q1(i) 
-	u2(i) = u1(i) + beta*(q1(i) + beta*u2(i)) 
+        u1(i) = r1(i) + beta*q1(i) 
+        u2(i) = u1(i) + beta*(q1(i) + beta*u2(i)) 
       end do
     end if
-		   
+                   
 !++++++++++++++++++++++++!
 !     solve Mp2 = u2     !
 !++++++++++++++++++++++++!
@@ -141,7 +141,7 @@
 !-------------------------------------!          
     if(prec == 1) then
       do i=1,N
-	p2(i) = u2(i) / D(i)
+        p2(i) = u2(i) / D(i)
       end do
 
 !------------------------------------------------!
@@ -151,26 +151,26 @@
 
 !----- forward substitutionn
       do i=1,N
-	sum1=u2(i)
-	do j=Acol(i),Adia(i)-1  ! only the lower triangular
-	  k=Arow(j)
-	  sum1 = sum1 - A(j)*p2(k)
-	end do
-	p2(i) = sum1 * D(i)         ! BUG ?
+        sum1=u2(i)
+        do j=Acol(i),Adia(i)-1  ! only the lower triangular
+          k=Arow(j)
+          sum1 = sum1 - A(j)*p2(k)
+        end do
+        p2(i) = sum1 * D(i)         ! BUG ?
       end do
 
       do i=1,N
-	p2(i) = p2(i) / ( D(i) + TINY )
+        p2(i) = p2(i) / ( D(i) + TINY )
       end do
 
 !----- backward substitution
       do i=N,1,-1
-	sum1=p2(i)
-	do j = Adia(i)+1, Acol(i+1)-1 ! upper triangular
-	  k=Arow(j)
-	  sum1 = sum1 - A(j)*p2(k)
-	end do
-	p2(i) = sum1 * D(i)               ! BUG ?
+        sum1=p2(i)
+        do j = Adia(i)+1, Acol(i+1)-1 ! upper triangular
+          k=Arow(j)
+          sum1 = sum1 - A(j)*p2(k)
+        end do
+        p2(i) = sum1 * D(i)               ! BUG ?
       end do
 
 !-------------------------------!
@@ -179,7 +179,7 @@
 !-------------------------------!
     else
       do i=1,N
-	p2(i)=u2(i)
+        p2(i)=u2(i)
       end do
     end if
 
@@ -190,18 +190,18 @@
     do i=1,N
       v2(i) = 0.0                    
       do j=Acol(i), Acol(i+1)-1   
-	k=Arow(j)                  
-	v2(i) = v2(i) + A(j) * p2(k)   
+        k=Arow(j)                  
+        v2(i) = v2(i) + A(j) * p2(k)   
       end do
       alfa=alfa+r2(i)*v2(i)
     end do
     call Exchng(p2)
-    do sub=1,Npro
+    do sub=1,n_proc
       if(NBBe(sub)  <=  NBBs(sub)) then
-	do k=NBBs(sub),NBBe(sub),-1
-	  i=BufInd(k)
-	  v2(i) = v2(i) + Ab(k)*p2(k)
-	end do
+        do k=NBBs(sub),NBBe(sub),-1
+          i=BufInd(k)
+          v2(i) = v2(i) + Ab(k)*p2(k)
+        end do
       end if
     end do
 
@@ -223,7 +223,7 @@
     do i=1,N
       q1(i) = u1(i) - alfa*v2(i)
     end do
-	   
+           
 !+++++++++++++++++++++++++++++++++++!
 !     solve Mp1 = u1(i) + q1(i)     !
 !+++++++++++++++++++++++++++++++++++!
@@ -234,7 +234,7 @@
 !-------------------------------------!          
     if(prec == 1) then
       do i=1,N
-	p1(i) = (u1(i)+q1(i)) / D(i)
+        p1(i) = (u1(i)+q1(i)) / D(i)
       end do
 
 !------------------------------------------------!
@@ -244,26 +244,26 @@
 
 !----- forward substitutionn
       do i=1,N
-	sum1=u1(i)+q1(i)
-	do j=Acol(i),Adia(i)-1  ! only the lower triangular
-	  k=Arow(j)
-	  sum1 = sum1 - A(j)*p1(k)
-	end do
-	p1(i) = sum1 * D(i)         ! BUG ?
+        sum1=u1(i)+q1(i)
+        do j=Acol(i),Adia(i)-1  ! only the lower triangular
+          k=Arow(j)
+          sum1 = sum1 - A(j)*p1(k)
+        end do
+        p1(i) = sum1 * D(i)         ! BUG ?
       end do
 
       do i=1,N
-	p1(i) = p1(i) / ( D(i) + TINY )
+        p1(i) = p1(i) / ( D(i) + TINY )
       end do
 
 !----- backward substitution
       do i=N,1,-1
-	sum1=p1(i)
-	do j = Adia(i)+1, Acol(i+1)-1 ! upper triangular
-	  k=Arow(j)
-	  sum1 = sum1 - A(j)*p1(k)
-	end do
-	p1(i) = sum1 * D(i)               ! BUG ?
+        sum1=p1(i)
+        do j = Adia(i)+1, Acol(i+1)-1 ! upper triangular
+          k=Arow(j)
+          sum1 = sum1 - A(j)*p1(k)
+        end do
+        p1(i) = sum1 * D(i)               ! BUG ?
       end do
 
 !-------------------------------!
@@ -272,7 +272,7 @@
 !-------------------------------!
     else
       do i=1,N
-	p1(i)=u1(i)+q1(i)
+        p1(i)=u1(i)+q1(i)
       end do
     end if
 
@@ -291,17 +291,17 @@
     do i=1,N
       q2(i) = 0.0
       do j=Acol(i), Acol(i+1)-1
-	k=Arow(j)
-	q2(i) = q2(i) + A(j) * p1(k)
+        k=Arow(j)
+        q2(i) = q2(i) + A(j) * p1(k)
       end do
     end do
     call Exchng(p1)
-    do sub=1,Npro
+    do sub=1,n_proc
       if(NBBe(sub)  <=  NBBs(sub)) then
-	do k=NBBs(sub),NBBe(sub),-1
-	  i=BufInd(k)
-	  q2(i) = q2(i) + Ab(k)*p1(k)
-	end do
+        do k=NBBs(sub),NBBe(sub),-1
+          i=BufInd(k)
+          q2(i) = q2(i) + Ab(k)*p1(k)
+        end do
       end if
     end do
 

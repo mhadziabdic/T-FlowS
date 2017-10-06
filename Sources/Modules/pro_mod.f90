@@ -6,7 +6,7 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-MODULE pro_mod
+module pro_mod
 
   use allp_mod
 
@@ -305,4 +305,5 @@ MODULE pro_mod
 !---------------------------------------------------------------------------!
   character*100 :: LineRes              ! everything that goes on the screen
   character :: namIni(128)*80
-end MODULE
+
+end module

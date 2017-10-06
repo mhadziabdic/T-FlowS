@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine GloMax(PHI) 
+  subroutine GloMax(phi) 
 !----------------------------------------------------------------------!
 !   Estimates global maximum among all processors.                     !
 !----------------------------------------------------------------------!
@@ -7,17 +7,17 @@
 !------------------------------[Include]-------------------------------!
   include 'mpif.h'
 !-----------------------------[Parameters]-----------------------------!
-  real    :: PHI
+  real    :: phi
 !-------------------------------[Locals]-------------------------------!
-  real    :: PHInew
+  real    :: phi_new
   integer :: error
 !======================================================================!
 
 !================================================
       call MPI_ALLREDUCE      &               
 !-----------------------------------+------------
-             (PHI,            & ! send buffer
-              PHInew,         & ! recv buffer 
+             (phi,            & ! send buffer
+              phi_new,        & ! recv buffer 
               1,              & ! length     
               MPI_DOUBLE_PRECISION,     & ! datatype  
               MPI_MAX,        & ! operation 
@@ -25,6 +25,6 @@
               error) 
 !================================================
 
-  PHI = PHInew
+  phi = phi_new
 
   end subroutine GloMax

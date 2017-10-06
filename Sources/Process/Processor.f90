@@ -24,7 +24,7 @@
 !                                     niceno@ws.tn.tudelft.nl          !
 !                                                                      !
 !======================================================================!
-  PROGRAM Processor
+  program Processor
 !----------------------------------------------------------------------!
 !   Unstructured Finite Volume LES/RANS solver.                        !
 !   Authors: Bojan NICENO & Muhamed HADZIABDIC                         !
@@ -55,7 +55,7 @@
       use pro_mod
       implicit none
       integer       :: var
-      TYPE(Unknown) :: Ui
+      type(Unknown) :: Ui
       real          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
       real          :: Si(NS), Sj(NS), Sk(NS) 
       real          :: Di(NS), Dj(NS), Dk(NS) 
@@ -68,7 +68,7 @@
       use pro_mod
       implicit none
       integer       :: var
-      TYPE(Unknown) :: PHI
+      type(Unknown) :: PHI
       real          :: dPHIdx(-NbC:NC),dPHIdy(-NbC:NC),dPHIdz(-NbC:NC)
     end subroutine CalcSc
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
@@ -78,7 +78,7 @@
       use pro_mod
       implicit none
       integer       :: var, Nstep
-      TYPE(Unknown) :: PHI
+      type(Unknown) :: PHI
       real          :: dPHIdx(-NbC:NC),dPHIdy(-NbC:NC),dPHIdz(-NbC:NC)
     end subroutine CalcTurb
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
@@ -145,7 +145,7 @@
   open(CMN_FILE, FILE='T-FlowS.cmn')    
   cmn_line_count = 0
 
-  if(this  < 2) then
+  if(this_proc  < 2) then
     call logo
   endif
 
@@ -212,7 +212,7 @@
     if(StateMat(m) /= i) multiple = .TRUE.
   end do
 
-  if(this  < 2)             &
+  if(this_proc  < 2)             &
     write(*,'(A18,15A11)')  &
     '#        N        ',   &
     ' Mass inb. ',          &
@@ -221,7 +221,7 @@
     '    W:     ',          &
     '    P:     '   
 
-  if(this  < 2)             &
+  if(this_proc  < 2)             &
     write(*,'(A18,15A11)')  &
     '  CFL max: ',          &
     '  Pe max:  ',          &
@@ -235,7 +235,7 @@
   write(*,*) 'At line: ', cmn_line_count
 
 !----- Loading data from previous computation   
-!  if(this<2) write(*,*)'Reading data from previous computation on the same mesh'
+!  if(this_proc<2) write(*,*)'Reading data from previous computation on the same mesh'
   call LoaRes_Ini
 
 !----- Prepare ...
@@ -260,7 +260,7 @@
   if(ALGOR  ==  FRACT) call ForAPF() 
 
 !---- Print the areas of monitoring planes
-  if(This < 2) then
+  if(this_proc < 2) then
     do m=1,Nmat
       write(*,'(A5,I2,A2,1PE12.3)') '# Ax(',m,')=', AreaX(m)
       write(*,'(A5,I2,A2,1PE12.3)') '# Ay(',m,')=', AreaY(m)
@@ -588,7 +588,7 @@
 !---- Is user forcing it to stop ?                    
     open(1, file='exit_now', err=7, status='old') 
       call Wait
-      if(This < 2) close(1, status='delete')
+      if(this_proc < 2) close(1, status='delete')
       Ndtt = n 
       goto 6 
 7   continue 
@@ -596,7 +596,7 @@
 !---- Is user forcing it to save ?                    
     open(1, file='save_now', err=8, status='old') 
       call Wait
-      if(This < 2) close(1, status='delete')
+      if(this_proc < 2) close(1, status='delete')
       Ndtt_temp = Ndtt
       Ndtt      = n
       namSav = 'SAVExxxxxx'
@@ -604,7 +604,7 @@
       call SavRes(namSav)                          
 !      call DatSav(namSav)
 !      call ProSav(namSav)
-      call SavParView(this,NC,namSav, Nstat, n)
+      call SavParView(this_proc,NC,namSav, Nstat, n)
 !BOJAN      if(CHANNEL == YES) then
 !BOJAN  call UserCutLines_channel(zc)
 !BOJAN      else if(PIPE == YES) then
@@ -615,7 +615,7 @@
 
   end do                    ! n, number of time steps  
 
-  if(This < 2) then
+  if(this_proc < 2) then
     open(9,FILE='stop')
     close(9)
   end if
@@ -631,7 +631,7 @@
 !  call DatSav ! Write results in FLUENT dat format. Obsolete.
   namSav = 'SAVExxxxxx'
   write(namSav(5:10),'(I6.6)') n
-  call SavParView(this,NC,namSav, Nstat, n)
+  call SavParView(this_proc,NC,namSav, Nstat, n)
   call Wait
 
 !  call UserCutLines_Point_Cart
@@ -660,7 +660,7 @@
  
 !  call UserDiffuser 
 
-3 if(this  < 2) write(*,*) '# Exiting !'
+3 if(this_proc  < 2) write(*,*) '# Exiting !'
 
 !////////////////////////////////!
 !     Close the command file     !
@@ -679,6 +679,6 @@
 !////////////////////////////////!
   call endpar            
   call cpu_time(finish)
-  if(this < 2) print '("Time = ",f14.3," seconds.")',finish-start
+  if(this_proc < 2) print '("Time = ",f14.3," seconds.")',finish-start
 
-  end PROGRAM Processor  
+  end program Processor  

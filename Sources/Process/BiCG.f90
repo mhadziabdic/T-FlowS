@@ -1,7 +1,7 @@
 !======================================================================!
   subroutine bicg(N, NB, NONZ, A, Acol,Arow,Adia,Ab,x,r1,           &
-		  prec,niter,tol,                                   &
-		  IniRes,FinRes)
+                  prec,niter,tol,                                   &
+                  IniRes,FinRes)
 !----------------------------------------------------------------------!
 !   Solves the linear systems of equations by a precond. BiCG Method.  !
 !----------------------------------------------------------------------!
@@ -108,8 +108,8 @@
 !-------------------------------------!
     if(prec == 1) then
       do i=1,N
-	q1(i) = r1(i) / D(i)
-	q2(i) = r2(i) / D(i)
+        q1(i) = r1(i) / D(i)
+        q2(i) = r2(i) / D(i)
       end do
 
 !------------------------------------------------! 
@@ -119,33 +119,33 @@
 
 !----- forward substitutionn
       do i=1,N
-	sum1 = r1(i)
-	sum2 = r2(i)
-	do j=Acol(i),Adia(i)-1   ! only the lower triangular
-	  k=Arow(j)               
-	  sum1 = sum1 - A(j)*q1(k)  
-	  sum2 = sum2 - A(j)*q2(k) 
-	end do
-	q1(i) = sum1 * D(i)        ! BUG ?
-	q2(i) = sum2 * D(i)        ! BUG ?
+        sum1 = r1(i)
+        sum2 = r2(i)
+        do j=Acol(i),Adia(i)-1   ! only the lower triangular
+          k=Arow(j)               
+          sum1 = sum1 - A(j)*q1(k)  
+          sum2 = sum2 - A(j)*q2(k) 
+        end do
+        q1(i) = sum1 * D(i)        ! BUG ?
+        q2(i) = sum2 * D(i)        ! BUG ?
       end do
 
       do i=1,N
-	q1(i) = q1(i) / ( D(i) + TINY )
-	q2(i) = q2(i) / ( D(i) + TINY )
+        q1(i) = q1(i) / ( D(i) + TINY )
+        q2(i) = q2(i) / ( D(i) + TINY )
       end do
 
 !----- backward substitution
       do i=N,1,-1
-	sum1 = q1(i)
-	sum2 = q2(i)
-	do j = Adia(i)+1, Acol(i+1)-1 ! upper triangular 
-	  k=Arow(j)                  
-	  sum1 = sum1 - A(j)*q1(k)    
-	  sum2 = sum2 - A(j)*q2(k)   
-	end do
-	q1(i) = sum1 * D(i)
-	q2(i) = sum2 * D(i)
+        sum1 = q1(i)
+        sum2 = q2(i)
+        do j = Adia(i)+1, Acol(i+1)-1 ! upper triangular 
+          k=Arow(j)                  
+          sum1 = sum1 - A(j)*q1(k)    
+          sum2 = sum2 - A(j)*q2(k)   
+        end do
+        q1(i) = sum1 * D(i)
+        q2(i) = sum2 * D(i)
       end do
 
 !-------------------------------!
@@ -154,8 +154,8 @@
 !-------------------------------!
     else
       do i=1,N
-	q1(i) = r1(i)
-	q2(i) = r2(i)
+        q1(i) = r1(i)
+        q2(i) = r2(i)
       end do
     end if
 
@@ -171,14 +171,14 @@
 
     if(iter == 1) then
       do i=1,N
-	p1(i) = q1(i)
-	p2(i) = q2(i)
+        p1(i) = q1(i)
+        p2(i) = q2(i)
       end do        
     else
       beta=rho/rhoold
       do i=1,N
-	p1(i) = q1(i) + beta*p1(i)
-	p2(i) = q2(i) + beta*p2(i)
+        p1(i) = q1(i) + beta*p1(i)
+        p2(i) = q2(i) + beta*p2(i)
       end do
     end if
 
@@ -191,20 +191,20 @@
       q1(i)  = 0.0                     
       q2(i) = 0.0                     
       do j=Acol(i), Acol(i+1)-1     
-	k=Arow(j)                    
-	q1(i) = q1(i) + A(j) * p1(k)   
-	q2(i) = q2(i) + A(j) * p2(k)  
+        k=Arow(j)                    
+        q1(i) = q1(i) + A(j) * p1(k)   
+        q2(i) = q2(i) + A(j) * p2(k)  
       end do
     end do
     call Exchng(p1)
     call Exchng(p2)
-    do sub=1,Npro
+    do sub=1,n_proc
       if(NBBe(sub)  <=  NBBs(sub)) then
-	do k=NBBs(sub),NBBe(sub),-1
-	  i=BufInd(k)
-	  q1(i) = q1(i) + Ab(k)*p1(k)
-	  q2(i) = q2(i) + Ab(k)*p2(k)
-	end do
+        do k=NBBs(sub),NBBe(sub),-1
+          i=BufInd(k)
+          q1(i) = q1(i) + Ab(k)*p1(k)
+          q2(i) = q2(i) + Ab(k)*p2(k)
+        end do
       end if
     end do
 

@@ -471,7 +471,7 @@
     end if
   end do 
 
-  if(this < 2) write(*,*) 'Var ', var, res(var), niter 
+  if(this_proc < 2) write(*,*) 'Var ', var, res(var), niter 
 
   call Exchng(PHI % n)
 

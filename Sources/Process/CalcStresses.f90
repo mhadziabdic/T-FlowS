@@ -521,7 +521,7 @@
 !k-eps  end if
 
 
-  if(this < 2) write(*,*) 'Var ', var, res(var), niter 
+  if(this_proc < 2) write(*,*) 'Var ', var, res(var), niter 
 
   if(var == 13) then
     do c= 1, NC

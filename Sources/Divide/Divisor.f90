@@ -63,7 +63,11 @@
 
   write(*,*) 'Number of subdomains:'
   read(*,*)  n_sub_tot
-  Npro = n_sub_tot      ! Needed for EpsPar
+  n_proc = n_sub_tot      ! Needed for EpsPar
+
+  allocate (subNC(n_proc))
+  allocate (NBBs(0:n_proc))
+  allocate (NBBe(0:n_proc))
 
   write(*,*) 'Algorythm for decomposition:'
   write(*,*) 'COO -> Coordinate multisection' 
@@ -79,8 +83,8 @@
     stop
   end if
 
-  Nsub=1
-  subNC(Nsub) = NC
+  n_sub=1
+  subNC(n_sub) = NC
 
 !-------------------------------------!
 !     Find the number of divisions    !
@@ -93,14 +97,14 @@
 !----------------------------------!
   do i = 1, n_div
 
-    do j=1,Nsub
+    do j=1,n_sub
       write(*,*) 'Dividing', j, ' into', chunks(i), ' chunks'
       call Split(j, chunks(i))
     end do
 
   end do     
 
-  do j=1,Nsub
+  do j=1,n_sub
     write(*,*) 'Processor:', j, ' cells:', subNC(j)
   end do
 

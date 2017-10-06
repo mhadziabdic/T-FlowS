@@ -6,7 +6,7 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-MODULE div_mod
+module div_mod
 
   implicit none
 
@@ -17,4 +17,4 @@ MODULE div_mod
   integer, allocatable :: ix(:), iy(:), iz(:), iin(:)
   real, allocatable    :: criter(:) 
 
-end MODULE
+end module

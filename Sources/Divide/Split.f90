@@ -71,7 +71,7 @@
         do c=1,NC
           ic=ix(c)
           if(proces(ic) == sub) then
-            proces(ic) = Nsub+j
+            proces(ic) = n_sub+j
             n_filled = n_filled + 1
             if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
           end if
@@ -82,7 +82,7 @@
         do c=1,NC
           ic=iy(c)
           if(proces(ic) == sub) then
-            proces(ic) = Nsub+j
+            proces(ic) = n_sub+j
             n_filled = n_filled + 1
             if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
           end if
@@ -93,7 +93,7 @@
         do c=1,NC
           ic=iz(c)
           if(proces(ic) == sub) then
-            proces(ic) = Nsub+j
+            proces(ic) = n_sub+j
             n_filled = n_filled + 1
             if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
           end if
@@ -105,7 +105,7 @@
       do c=1,NC
         ic=iin(c)
         if(proces(ic) == sub) then
-          proces(ic) = Nsub+j
+          proces(ic) = n_sub+j
           n_filled = n_filled + 1
           if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
         end if
@@ -115,11 +115,11 @@
 !--------------------------------! 
 !     Subdomain is filled up     !
 !--------------------------------! 
- 2  subNC(Nsub+j) = n_filled
+ 2  subNC(n_sub+j) = n_filled
     subNC(sub) = subNC(sub) - n_filled
 
   end do  ! j
 
-  Nsub = Nsub + n_parts - 1
+  n_sub = n_sub + n_parts - 1
 
   end subroutine Split

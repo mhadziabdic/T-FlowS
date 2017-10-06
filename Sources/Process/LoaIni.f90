@@ -2,13 +2,13 @@
   subroutine LoaIni()
 !----------------------------------------------------------------------!
 ! This version of LoaIni is optimised for very large meshes
-! Program SUB_INI needs to be used to create files needed by this
+! Program SUB_INI needs to be used to create files needed by this_proc
 ! subroutine 
 !------------------------------[Modules]-------------------------------!
   use all_mod
   use pro_mod
   use les_mod
-  use par_mod, only: this
+  use par_mod, only: this_proc
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
@@ -32,8 +32,9 @@
   real             :: new_distance, old_distance
 
 !---- Variables for ReadC:
-  character  :: namCoo*80, ext*4, answer*80, answer_hot*80
-  character*80 :: namAut
+  character(len=80) :: namCoo, answer, answer_hot
+  character(len=4)  :: ext
+  character(len=80) :: namAut
 !======================================================================!  
 
   call ReadC(CMN_FILE,inp,tn,ts,te)
@@ -46,7 +47,6 @@
     answer = name
     name = namAut
 
-
 !  if(tn==2) read(inp(ts(2):te(2)),'(A8)') answer
 !  call ToUppr(answer)
 !  if(answer == 'HOT') then
@@ -55,9 +55,9 @@
 
   HOTini = NO
 
-  call NamFil(THIS, namAut, '.ini', len_trim('.ini'))
+  call NamFil(this_proc, namAut, '.ini', len_trim('.ini'))
 
-  if(this < 2) write(*,*)'now reading file:', namAut 
+  if(this_proc < 2) write(*,*)'now reading file:', namAut 
 
   open(5, FILE=namAut) 
   read(5,*) NCold
@@ -127,7 +127,7 @@
 
   j = NCold
   do k = 1, j
-    if(this < 2) then
+    if(this_proc < 2) then
       if(mod(k,20000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'  
     end if
     if(SIMULA == LES) then 
@@ -186,13 +186,13 @@
     end if 
   end do
   close(5)
-  if(this < 2) write(*,*) 'LoaInI: finished with reading the files'
+  if(this_proc < 2) write(*,*) 'LoaInI: finished with reading the files'
 
   nearest_cell = 0
   near = 0
   old_distance = HUGE
     do c = 1, NC
-      if(this < 2) then
+      if(this_proc < 2) then
         if(mod(c,20000) == 0) write(*,*) (100.*c/(1.*NC)), '% complete...'  
       end if
       old_distance = HUGE
@@ -335,7 +335,7 @@
   end if
 
 
-  write(*,*) 'Finished with LoaIni  Processor: ', this
+  write(*,*) 'Finished with LoaIni  Processor: ', this_proc
 
   !---- restore the name
   name = answer

@@ -4,7 +4,7 @@
 !       for the mesh generator        !
 !                                     !
 !+++++++++++++++++++++++++++++++++++++!
-MODULE gen_mod
+module gen_mod
 
   use allp_mod
 
@@ -76,4 +76,4 @@ MODULE gen_mod
 
   character(len=4), allocatable :: BndFac(:)
 
-end MODULE
+end module

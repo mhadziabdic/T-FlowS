@@ -12,10 +12,10 @@
 !-----------------------------[Parameters]-----------------------------!
   integer :: sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub
 !-------------------------------[Locals]-------------------------------!
-  integer             :: b, c, s, c1, c2, count, var, subo 
-  character           :: namOut*80
-  integer,allocatable :: iwork(:,:)
-  real,allocatable    :: work(:)
+  integer              :: b, c, s, c1, c2, count, var, subo 
+  character(len=80)    :: name_out
+  integer, allocatable :: iwork(:,:)
+  real, allocatable    :: work(:)
 !======================================================================!
 !   The files NAME.cns and NAME.geo should merge into one file in some !
 !   of the future releases.                                            !
@@ -33,9 +33,9 @@
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
 !     create CNS file     !
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
-  call NamFil( sub, namOut, '.cns', len_trim('.cns') )
-  open(9, FILE=namOut,FORM='UNFORMATTED')
-  write(6, *) 'Now creating the file:', namOut
+  call NamFil( sub, name_out, '.cns', len_trim('.cns') )
+  open(9, FILE=name_out,FORM='UNFORMATTED')
+  write(6, *) 'Now creating the file:', name_out
 
 !-------------------------------------------------!
 !    Number of cells, boundary cells ans sides    !
@@ -113,14 +113,14 @@
       iwork(count,1) = BCmark(c)   
       iwork(count,2) = NewC(CopyC(c)) 
       if(CopyC(c) /= 0 .and. proces(CopyC(c)) /= sub) then
-!	write(*,*) 'Uuups ! Sub: ', sub
-	do b=1,NBFsub
-	  if(BuReIn(b) == CopyC(c)) then
-	    write(*,*) BufPos(b) 
-	    write(*,*) xc(CopyC(c)), yc(CopyC(c)), zc(CopyC(c))  
-	    iwork(count,2)=-BufPos(b) ! - sign, copy buffer
-	  end if
-	end do
+!        write(*,*) 'Uuups ! Sub: ', sub
+        do b=1,NBFsub
+          if(BuReIn(b) == CopyC(c)) then
+            write(*,*) BufPos(b) 
+            write(*,*) xc(CopyC(c)), yc(CopyC(c)), zc(CopyC(c))  
+            iwork(count,2)=-BufPos(b) ! - sign, copy buffer
+          end if
+        end do
       endif
     end if
   end do 
@@ -155,9 +155,9 @@
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
 !     create GEO file     !
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
-  call NamFil( sub, namOut, '.geo', len_trim('.geo') )
-  open(9, FILE=namOut, FORM='UNFORMATTED')
-  write(6, *) 'Now creating the file:', namOut
+  call NamFil( sub, name_out, '.geo', len_trim('.geo') )
+  open(9, FILE=name_out, FORM='UNFORMATTED')
+  write(6, *) 'Now creating the file:', name_out
 
 !---------------------------------!
 !     cell center coordinates     !
@@ -166,10 +166,10 @@
     count=0
     do c=1,NC
       if(NewC(c)  > 0) then
-	count=count+1
-	if(var == 1) work(count) = xc(c)
-	if(var == 2) work(count) = yc(c)
-	if(var == 3) work(count) = zc(c)
+        count=count+1
+        if(var == 1) work(count) = xc(c)
+        if(var == 2) work(count) = yc(c)
+        if(var == 3) work(count) = zc(c)
       end if
     end do 
     write(9) (work(c), c=1,count)
@@ -184,10 +184,10 @@
     count=0
     do c=-1,-NBC, -1
       if(NewC(c) /= 0) then
-	count=count+1
-	if(var == 1) work(count) = xc(c)
-	if(var == 2) work(count) = yc(c)
-	if(var == 3) work(count) = zc(c)
+        count=count+1
+        if(var == 1) work(count) = xc(c)
+        if(var == 2) work(count) = yc(c)
+        if(var == 3) work(count) = zc(c)
       end if
     end do 
 !---- buffer boundary cell centers
@@ -285,39 +285,39 @@
   end do
 
 !---- from NSsub+1 to NSsub + NBFsub (think: are they in right order ?)
-  do subo=1,Nsub
+  do subo=1,n_sub
     do s=1,NS
       if(NewS(s)  > NSsub .and. NewS(s) <= NSsub+NBFsub) then
-	c1 = SideC(1,s)
-	c2 = SideC(2,s)
-	if(c2  > 0) then
-	  if( (proces(c1) == sub) .and. (proces(c2) == subo) ) then 
-	    count=count+1
-	    if(var ==  1)  work(count) = Sx(s)
-	    if(var ==  2)  work(count) = Sy(s)
-	    if(var ==  3)  work(count) = Sz(s)
-	    if(var ==  4)  work(count) = Dx(s)
-	    if(var ==  5)  work(count) = Dy(s)
-	    if(var ==  6)  work(count) = Dz(s)
-	    if(var ==  7)  work(count) = f(s)
+        c1 = SideC(1,s)
+        c2 = SideC(2,s)
+        if(c2  > 0) then
+          if( (proces(c1) == sub) .and. (proces(c2) == subo) ) then 
+            count=count+1
+            if(var ==  1)  work(count) = Sx(s)
+            if(var ==  2)  work(count) = Sy(s)
+            if(var ==  3)  work(count) = Sz(s)
+            if(var ==  4)  work(count) = Dx(s)
+            if(var ==  5)  work(count) = Dy(s)
+            if(var ==  6)  work(count) = Dz(s)
+            if(var ==  7)  work(count) = f(s)
             if(var ==  8)  work(count) = xsp(s)
             if(var ==  9)  work(count) = ysp(s)
             if(var == 10)  work(count) = zsp(s)
-	  end if  
-	  if( (proces(c2) == sub) .and. (proces(c1) == subo) ) then 
-	    count=count+1
-	    if(var ==  1)  work(count) = -Sx(s)
-	    if(var ==  2)  work(count) = -Sy(s)
-	    if(var ==  3)  work(count) = -Sz(s)
-	    if(var ==  4)  work(count) = -Dx(s)
-	    if(var ==  5)  work(count) = -Dy(s)
-	    if(var ==  6)  work(count) = -Dz(s)
-	    if(var ==  7)  work(count) = 1.0-f(s)
+          end if  
+          if( (proces(c2) == sub) .and. (proces(c1) == subo) ) then 
+            count=count+1
+            if(var ==  1)  work(count) = -Sx(s)
+            if(var ==  2)  work(count) = -Sy(s)
+            if(var ==  3)  work(count) = -Sz(s)
+            if(var ==  4)  work(count) = -Dx(s)
+            if(var ==  5)  work(count) = -Dy(s)
+            if(var ==  6)  work(count) = -Dz(s)
+            if(var ==  7)  work(count) = 1.0-f(s)
             if(var ==  8)  work(count) = xsp(s) - Dx(s)
             if(var ==  9)  work(count) = ysp(s) - Dy(s)
             if(var == 10)  work(count) = zsp(s) - Dz(s)
-	  end if  
-	end if  ! c2 > 0 
+          end if  
+        end if  ! c2 > 0 
       end if    ! I think this is not really necessary 
     end do
   end do

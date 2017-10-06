@@ -6,7 +6,7 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-MODULE allp_mod
+module allp_mod
 
   implicit none
 
@@ -54,4 +54,4 @@ MODULE allp_mod
     real              :: Sigma               ! sigma
   end type Unknown
 
-end MODULE 
+end module 

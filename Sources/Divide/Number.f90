@@ -37,7 +37,7 @@
 !     Browse through subdomains     !
 !                                   !
 !<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
-  do sub=1,Nsub
+  do sub=1,n_sub
 
     call NamFil(sub, name_out, '.buf', len_trim('.buf'))
     open(9, FILE=name_out)
@@ -134,7 +134,7 @@
     NCFsub = 0
     write(9,'(A33)') '#--- Number of physical b. cells:'
     write(9,'(I8)')  n_b_cells_sub   
-    do subo=1,Nsub
+    do subo=1,n_sub
       if(subo /= sub) then
         NBBs(subo)=n_buff_sub+1
 !----- Faces inside the domain
@@ -209,7 +209,7 @@
     write(*,*) '====================================' 
     write(*,*) 'Subdomain   ', sub
     write(*,*) 'Buffer size ', n_buff_sub
-    do subo=1,Nsub
+    do subo=1,n_sub
       if(subo /= sub) then
         write(*,*) 'Connections with ', subo ,' : ',                &
           NBBe(subo)-NBBs(subo)+1,                                  &
@@ -239,7 +239,7 @@
   end do
 
   n_cells_sub = 0     ! number of cells renumbered
-  do sub=1,Nsub
+  do sub=1,n_sub
     do c=1,NC
       if(proces(c) == sub) then
         n_cells_sub=n_cells_sub+1
@@ -249,7 +249,7 @@
   end do
 
   n_faces_sub = 0     ! number of sides renumbered
-  do sub=1,Nsub
+  do sub=1,n_sub
     do s=1,NS
       c1 = SideC(1,s)
       c2 = SideC(2,s)

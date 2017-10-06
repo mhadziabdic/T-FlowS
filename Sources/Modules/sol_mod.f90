@@ -1,4 +1,4 @@
-MODULE sol_mod 
+module sol_mod 
 
   use allp_mod
 
@@ -11,4 +11,5 @@ MODULE sol_mod
   real :: alfa, beta, rho, rhoold, bnrm2, sum1, sum2, error
 
   integer :: i, j, k, iter, sub
-end MODULE 
+
+end module 

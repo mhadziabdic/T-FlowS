@@ -20,14 +20,14 @@
                      error) 
 
   CALL MPI_COMM_RANK(MPI_COMM_WORLD,                                &
-                     this,                                          &
+                     this_proc,                                          &
                      error)
 
-  this=this+1
+  this_proc=this_proc+1
 
-  if(Npro == 1) then
-    Npro = 0
-    this = 0
+  if(n_proc == 1) then
+    n_proc = 0
+    this_proc = 0
   endif
 
   end subroutine StaPar

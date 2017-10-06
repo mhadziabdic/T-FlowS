@@ -255,7 +255,7 @@
   iy1 = ymaxb
   ix2 = ix1+boxsize
   iy2 = iy1+boxsize
-  do n=1,Nsub
+  do n=1,n_sub
     iy1 = iy1 - boxsize
     iy2 = iy2 - boxsize
     write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)') &

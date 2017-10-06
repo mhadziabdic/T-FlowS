@@ -6,7 +6,7 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-MODULE les_mod
+module les_mod
 
   use allp_mod
 
@@ -22,14 +22,13 @@ MODULE les_mod
   real,allocatable :: PdropX(:), PdropY(:), PdropZ(:)
 
 !----- Fluctuating values
-!  TYPE(Unknown) :: uu, vv, ww, uv, uw, vw
-!  TYPE(Unknown) :: TT, uT, vT, wT
+!  type(Unknown) :: uu, vv, ww, uv, uw, vw
+!  type(Unknown) :: TT, uT, vT, wT
 
-  TYPE(Unknown) :: uuu, uuv, uuw
-  TYPE(Unknown) :: vvu, vvv, vvw
-  TYPE(Unknown) :: wwu, wwv, www
-  TYPE(Unknown) :: uwu, uwv, uww
-
+  type(Unknown) :: uuu, uuv, uuw
+  type(Unknown) :: vvu, vvv, vvw
+  type(Unknown) :: wwu, wwv, www
+  type(Unknown) :: uwu, uwv, uww
 
   real,allocatable :: Shear(:), ShearMean(:), Ksgs(:), TauWall(:), VISt_mean(:)
   real,allocatable :: Shear_r(:), ShearMean_r(:), WALEv(:)
@@ -62,4 +61,4 @@ MODULE les_mod
                        C_uv_mean(:), C_uw_mean(:), C_vw_mean(:), &
                        C_ut_mean(:), C_vt_mean(:), C_wt_mean(:), C_tt_mean(:), Difv_ut_tot(:), Difv_vt_tot(:), Difv_wt_tot(:)
 
-end MODULE  
+end module  

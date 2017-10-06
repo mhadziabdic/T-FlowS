@@ -10,20 +10,23 @@ if [ $# -lt 1 ]; then
   echo "==========================================================="
   echo "Wrong syntax! Compiler is not specified!"
   echo ""
-  echo "Correct usage: " $0 "[compiler] <optimization>"
+  echo "Correct usage: " $0 "[platform] <optimization> <compiler>"
   echo ""
-  echo "Mandatory argument [compiler] can be:"
-  echo "  GNU       -> gnu compiler"
-  echo "  GNU-MPI   -> gnu compiler with MPI support"
-  echo "  INTEL     -> Intel(TM) compiler"
-  echo "  INTEL-MPI -> Intel(TM) compiler with MPI support"
-  echo "  PG        -> Portland Group(TM) compiler"
-  echo "  PG-MPI    -> Portland Group(TM) compiler with MPI support"
+  echo "Mandatory argument [platform] can be:"
+  echo "  GNU       -> gnu platform"
+  echo "  GNU-MPI   -> gnu platform with MPI support"
+  echo "  INTEL     -> Intel(TM) platform"
+  echo "  INTEL-MPI -> Intel(TM) platform with MPI support"
+  echo "  PG        -> Portland Group(TM) platform"
+  echo "  PG-MPI    -> Portland Group(TM) platform with MPI support"
   echo ""
-  echo "Optional argument <optimization> can be:"
+  echo "First optional argument <optimization> can be:"
   echo "  DEBUG -> compile with debugging info."
   echo "  SLOW  -> compile with no speed optimization."
   echo "  FAST  -> compile with optimization for speed."
+  echo ""
+  echo "With the second optional argument <compiler> you can"
+  echo "  specify the name of your compiler explicitly."
   echo "-----------------------------------------------------------"
 
 #-------------------------------------------------------------#
@@ -62,6 +65,41 @@ else
     fi
   fi
 
+  #----------------------------------------------------------#
+  #  Parse platofrm options to specify the default compiler  #
+  #----------------------------------------------------------# 
+
+  # GNU
+  if [ $1 = "GNU" ]; then
+    COMPILER='gfortran'
+
+  # GNU-MPI
+  elif [ $1 = "GNU-MPI" ]; then
+    COMPILER='mpif90'
+
+  # INTEL
+  elif [ $1 = "INTEL" ]; then
+    COMPILER='ifort'
+
+  # INTEL-MPI
+  elif [ $1 = "INTEL-MPI" ]; then
+    COMPILER='mpif90'
+
+  # PG
+  elif [ $1 = "PG" ]; then
+    COMPILER='pgfortran'
+
+  # PG-MPI
+  elif [ $1 = "PG-MPI" ]; then
+    COMPILER='mpif90'
+
+  fi
+
+  # Third argument is present, so this is compiler's explicit name
+  if [ $# -gt 2 ]; then
+    COMPILER=$3
+  fi
+
   #--------------------------------------------------#
   #  Issue platform specific commands for autotools  #
   #--------------------------------------------------#
@@ -69,40 +107,35 @@ else
   # GNU
   if [ $1 = "GNU" ]; then
     cd Process/Communication; ln -f -s Sequential/*.f90 . ; cd ../..
-    ./configure FC='gfortran' FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules '$OPTIMIZE
 
   # GNU-MPI
   elif [ $1 = "GNU-MPI" ]; then
     cd Process/Communication; ln -i -s Parallel/Double/*.f90 . ; cd ../..
-    ./configure FC='mpif90' FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules '$OPTIMIZE
 
   # INTEL
   elif [ $1 = "INTEL" ]; then
     echo $OPTIMIZE
     cd Process/Communication; ln -f -s Sequential/*.f90 . ; cd ../..
-    ./configure FC='ifort' FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
 
   # INTEL-MPI
   elif [ $1 = "INTEL-MPI" ]; then
     cd Process/Communication; ln -i -s Parallel/Double/*.f90 . ; cd ../..
-    ./configure FC='mpif90' FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
 
   # PG
   elif [ $1 = "PG" ]; then
     echo $OPTIMIZE
     cd Process/Communication; ln -f -s Sequential/*.f90 . ; cd ../..
-    ./configure FC='pgfortran' FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
 
   # PG-MPI
   elif [ $1 = "PG-MPI" ]; then
     cd Process/Communication; ln -i -s Parallel/Double/*.f90 . ; cd ../..
-    ./configure FC='mpif90' FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
 
-  else
-    echo "============================"
-    echo "Uknonwn compiler: " $1
-    echo "----------------------------"
-    exit 1
   fi
 
 fi

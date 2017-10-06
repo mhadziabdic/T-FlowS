@@ -4,12 +4,11 @@
 ! Reads NAME.cns and first part of T-FlowS.cmn                         !
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
+  use allp_mod, only: CMN_FILE
   use all_mod
   use pro_mod
-  use sol_mod
-  use les_mod
-  use par_mod
-  use rans_mod
+  use par_mod,  only: this
+  use rans_mod, only: grav_x, grav_y, grav_z, Zo
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
@@ -19,7 +18,7 @@
 !======================================================================!
 
   if(this < 2) write(*,*) '# Input problem name:'
-  call ReadC(7,inp,tn,ts,te)  
+  call ReadC(CMN_FILE,inp,tn,ts,te)  
   read(inp(ts(1):te(1)), '(A80)')  name
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
@@ -74,7 +73,7 @@
     write(*,*) '# TGV -> Taylor-Green Vortex test case'
     write(*,*) '# BUOY -> Buoyancy flows (Automatically turns HOT on)' 
   endif
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   do it=1,tn
     read(inp(ts(it):te(it)),'(A8)')  answer
     call ToUppr(answer)
@@ -122,7 +121,7 @@
 
   if(ROUGH == YES) then
     if(this < 2) write(*,*) '# Reading roughness coefficient Zo'
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*) Zo
   endif
 
@@ -130,7 +129,7 @@
   if(ROT == YES) then
     if(this  < 2)  &
     write(*,*) '# Angular velocity vector: '
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)  omegaX, omegaY, omegaZ
   end if
 
@@ -138,7 +137,7 @@
   if(BUOY == YES) then
     if(this  < 2)  &
     write(*,*) '# Gravitational constant in x, y and z directions: '
-    call ReadC(7,inp,tn,ts,te)
+    call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*) grav_x, grav_y, grav_z, Tref
   end if
 

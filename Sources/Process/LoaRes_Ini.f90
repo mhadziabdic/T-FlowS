@@ -7,7 +7,7 @@
   use all_mod
   use pro_mod
   use les_mod
-  use par_mod
+  use par_mod, only: this
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
@@ -22,7 +22,7 @@
 
   if(this  < 2) &              
     write(*,*) '# Input intial restart file name [write skip to continue]:'
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)), '(A80)')  nameIn
   answer=nameIn
   call ToUppr(answer) 
@@ -43,7 +43,7 @@
     write(*,*) '# HJ       -> HJ model.'
     write(*,*) '# EBM      -> EBM model.'
   endif
-  call ReadC(7,inp,tn,ts,te)
+  call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
   call ToUppr(answer)
   if(answer == 'DNS') then
@@ -71,7 +71,10 @@
   else if(answer == 'SKIP') then
     RES_INI = 1000 
   else
-    if(this  < 2) write(*,*) 'Error in input ! Exiting'
+    if(this  < 2) then
+      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
+                             cmn_line_count, ' Got a: ', answer
+    endif
     stop
   endif
 

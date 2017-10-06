@@ -16,13 +16,13 @@
   integer   :: NSchck, NNchck
   integer   :: NI, NJ, NK
   integer   :: dum
-  character :: namDom*80
+  character :: domain_name*80
   character :: answer*12 
   real      :: xt(8), yt(8), zt(8)
 
-  integer   :: FaceN(6,4)
+  integer   :: face_nodes(6,4)
 !======================================================================!
-  data      FaceN / 1, 1, 2, 4, 3, 5,                               &
+  data face_nodes / 1, 1, 2, 4, 3, 5,                               &
                     2, 5, 6, 8, 7, 7,                               &
                     4, 6, 8, 7, 5, 8,                               &
                     3, 2, 4, 3, 1, 6  /
@@ -32,10 +32,10 @@
   call ReadC(5,inp,tn,ts,te) 
   read(inp, '(A80)')  name
 
-  namDom = name
-  namDom(len_trim(name)+1:len_trim(name)+2) = '.d'
-  write(6, '(A24,A)') '# Now reading the file: ', namDom
-  open(9, FILE=namDom)
+  domain_name = name
+  domain_name(len_trim(name)+1:len_trim(name)+2) = '.d'
+  write(6, '(A24,A)') '# Now reading the file: ', domain_name
+  open(9, FILE=domain_name)
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 !     Max. number of nodes (cells), boundary faces and cell faces     ! 
@@ -198,7 +198,7 @@
   do b=1,Nbloc
     do fc=1,6
       do n=1,4
-        BlkFac(b, fc, n)=BlkPnt(b, FaceN(fc,n))
+        BlkFac(b, fc, n)=BlkPnt(b, face_nodes(fc,n))
       end do
     end do
   end do
@@ -347,6 +347,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*)        Nperi      ! number of periodic boundaries
+  write(*,*) 'Number of periodic boundaries: ', Nperi 
 
   do n=1,Nperi
     call ReadC(9,inp,tn,ts,te)
@@ -360,6 +361,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*)        Ncopy      ! number of periodic boundaries
+  write(*,*) 'Number of copy boundaries: ', Ncopy
 
   do n=1,Ncopy
     call ReadC(9,inp,tn,ts,te)

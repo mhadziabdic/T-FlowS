@@ -81,9 +81,7 @@
   write(90) 3.1451592
   close(90)
 
-  call logo
-
-  call IniGen 
+  call Logo
 
   call GenLoa
   call Calc1  

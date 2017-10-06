@@ -14,13 +14,14 @@
   logical :: IsTwin
   integer :: WchNod
 !-------------------------------[Locals]-------------------------------!
-  integer :: c, NCold, c1, c2, c3, c4, c5, c6
+  integer :: c, n_cells_old, c1, c2, c3, c4, c5, c6
   integer :: cr1, cr2, cr3, cr4, cr5, cr6, cr7, cr8
-  integer :: n, NNold, n1, n2, n3, n4, n5, n6, n7, n8
+  integer :: n, n_nodes_old, n1, n2, n3, n4, n5, n6, n7, n8
   integer :: n12,n13,n24,n34,n15,n26,n37,n48,n56,n57,n68,n78
   integer :: nF1, nF2, nF3, nF4, nF5, nF6, n0
   integer :: del   ! number of deleted nodes 
   integer :: nA, nA0, nA1, nA2, nB, nB0, nB1, nB2
+  integer :: NN2, NN4, NN8
 !======================================================================!
 !                                                                      !
 !                               c6      c3                             !
@@ -46,8 +47,8 @@
   write(*,*) 'Refine: Number of nodes: ', NN 
   write(*,*) '        Number of cells: ', NC 
 
-  NCold = NC 
-  NNold = NN
+  n_cells_old = NC 
+  n_nodes_old = NN
   NN2 = 0 
   NN4 = 0
   NN8 = 0
@@ -57,14 +58,14 @@
 !  Najprije pobroji nove celije  !
 !                                !
 !================================!
-  do c=1,NCold
+  do c=1,n_cells_old
     if(CelMar(c)  ==  -1) then 
       NC = NC + 8
       CelMar(c) = NC   ! now points to cr8
     end if
   end do
 
-  do c=1,NCold
+  do c=1,n_cells_old
 
     c1=CellC(c,1)
     c2=CellC(c,2)

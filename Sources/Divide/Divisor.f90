@@ -7,7 +7,7 @@
 !                                                                      !
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%!
 !======================================================================!
-  PROGRAM Divisor
+  program Divisor
 !----------------------------------------------------------------------!
 !   Divides the domain in equaly balanced subdomains.                  !
 !----------------------------------------------------------------------!
@@ -19,11 +19,11 @@
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
-  integer          :: Nsubto              ! total number of subdomains
-  integer          :: Ndiv                ! total number of divisions
+  integer          :: n_sub_tot            ! total number of subdomains
+  integer          :: n_div                ! total number of divisions
   integer          :: chunks(128)
   integer          :: i, j
-  character        :: answer*8
+  character(len=8) :: answer
   real             :: start, finish
 !======================================================================!
   call cpu_time(start)
@@ -62,8 +62,8 @@
   call GeoLoa
 
   write(*,*) 'Number of subdomains:'
-  read(*,*)  Nsubto
-  Npro = Nsubto      ! Needed for EpsPar
+  read(*,*)  n_sub_tot
+  Npro = n_sub_tot      ! Needed for EpsPar
 
   write(*,*) 'Algorythm for decomposition:'
   write(*,*) 'COO -> Coordinate multisection' 
@@ -71,9 +71,9 @@
   read(*,*) answer
   call ToUppr(answer)
   if(answer == 'COO') then
-    ALGOR = COORDINATE
+    division_algorithm = COORDINATE
   else if(answer == 'INE') then
-    ALGOR = INERTIAL
+    division_algorithm = INERTIAL
   else
     write(*,*) 'Error in input. Exiting!' 
     stop
@@ -85,13 +85,13 @@
 !-------------------------------------!
 !     Find the number of divisions    !
 !-------------------------------------!
-  call Factor(Ndiv, Nsubto, chunks)  ! ovu funkciju provjeri
-  write(*,*) 'Number of divisions:', Ndiv
+  call Factor(n_div, n_sub_tot, chunks)  ! ovu funkciju provjeri
+  write(*,*) 'Number of divisions:', n_div
 
 !----------------------------------! 
 !     Through all the divisions    !
 !----------------------------------!
-  do i = 1, Ndiv
+  do i = 1, n_div
 
     do j=1,Nsub
       write(*,*) 'Dividing', j, ' into', chunks(i), ' chunks'
@@ -110,4 +110,4 @@
   call cpu_time(finish)
   print '("Time = ",f14.3," seconds.")',finish-start
 
-  end PROGRAM Divisor
+  end program Divisor

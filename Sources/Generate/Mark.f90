@@ -45,13 +45,13 @@
 
 !->>>   write(*,*) x0, y0, z0
 
-        if(refined_regions(lev,reg,0) == ELIPSO) then
+        if(refined_regions(lev,reg,0) == ELIPSOID) then
           if(  ( ((x1-x0)/x8)**2 +                                  &
                  ((y1-y0)/y8)**2 +                                  &
                  ((z1-z0)/z8)**2)  < 1.0 ) then
             CelMar(c) = -1
           end if
-        else if(refined_regions(lev,reg,0) == RECTAN) then 
+        else if(refined_regions(lev,reg,0) == RECTANGLE) then 
           if( (x1  < x0) .and. (x0  < x8) .and.                     &
               (y1  < y0) .and. (y0  < y8) .and.                     &
               (z1  < z0) .and. (z0  < z8) ) then

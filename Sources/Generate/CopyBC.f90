@@ -16,8 +16,8 @@
   integer :: p11,p12,p13,p14,p21,p22,p23,p24 ! global node numbers
   integer :: l11,l12,l13,l14,l21,l22,l23,l24 ! local  node numbers
   integer :: i1, j1, i2, j2, k1, k2          ! directions in blocks
-  integer :: ig, jg, NIG, NJG                ! generic plane 
-  integer :: CI1, CJ1, CK1, CI2, CJ2, CK2    ! resolution of blocks
+  integer :: ig, jg, nig, njg                ! generic plane 
+  integer :: ci1, cj1, ck1, ci2, cj2, ck2    ! resolution of blocks
   integer :: c1, c2                          ! cells from block 1, 2
   integer :: trans1(3,3), trans2(3,3)
 !======================================================================!
@@ -89,97 +89,97 @@
 
 !----- direction ig, block 1
               if((l14-l11) == +1) then
-                NIG = block_resolutions(b1,1)       ! NI from block 1
+                nig = block_resolutions(b1,1)       ! ni from block 1
                 trans1(1,2)=+1
               elseif((l14-l11) == +2) then
-                NIG = block_resolutions(b1,2)       ! NJ from block 1
+                nig = block_resolutions(b1,2)       ! nj from block 1
                 trans1(2,2)=+1
               elseif((l14-l11) == +4) then 
-                NIG = block_resolutions(b1,3)       ! NK from block 1
+                nig = block_resolutions(b1,3)       ! nk from block 1
                 trans1(3,2)=+1
               elseif((l14-l11) == -1) then 
-                NIG = block_resolutions(b1,1)       ! NI from block 1
-                trans1(1,1)=NIG
+                nig = block_resolutions(b1,1)       ! ni from block 1
+                trans1(1,1)=nig
                 trans1(1,2)=-1
               elseif((l14-l11) == -2) then 
-                NIG = block_resolutions(b1,2)       ! NJ from block 1
-                trans1(2,1)=NIG
+                nig = block_resolutions(b1,2)       ! nj from block 1
+                trans1(2,1)=nig
                 trans1(2,2)=-1
               elseif((l14-l11) == -4) then 
-                NIG = block_resolutions(b1,3)       ! NK from block 1
-                trans1(3,1)=NIG
+                nig = block_resolutions(b1,3)       ! nk from block 1
+                trans1(3,1)=nig
                 trans1(3,2)=-1
               endif
 
 !----- direction jg, block 1 
               if((l12-l11) == +1) then 
-                NJG = block_resolutions(b1,1)       ! NI from block 1
+                njg = block_resolutions(b1,1)       ! ni from block 1
                 trans1(1,3)=+1
               elseif((l12-l11) == +2) then
-                NJG = block_resolutions(b1,2)       ! NJ from block 1
+                njg = block_resolutions(b1,2)       ! nj from block 1
                 trans1(2,3)=+1
               elseif((l12-l11) == +4) then
-                NJG = block_resolutions(b1,3)       ! NK from block 1
+                njg = block_resolutions(b1,3)       ! nk from block 1
                 trans1(3,3)=+1
               elseif((l12-l11) == -1) then
-                NJG = block_resolutions(b1,1)       ! NI from block 1
-                trans1(1,1)=NJG
+                njg = block_resolutions(b1,1)       ! ni from block 1
+                trans1(1,1)=njg
                 trans1(1,3)=-1
               elseif((l12-l11) == -2) then
-                NJG = block_resolutions(b1,2)       ! NJ from block 1
-                trans1(2,1)=NJG
+                njg = block_resolutions(b1,2)       ! nj from block 1
+                trans1(2,1)=njg
                 trans1(2,3)=-1
               elseif((l12-l11) == -4) then
-                NJG = block_resolutions(b1,3)       ! NK from block 1
-                trans1(3,1)=NJG
+                njg = block_resolutions(b1,3)       ! nk from block 1
+                trans1(3,1)=njg
                 trans1(3,3)=-1
               endif
 
 !----- direction ig, block 2
               if((l24-l21) == +1) then
-                NIG = block_resolutions(b2,1)       ! NI from block 2
+                nig = block_resolutions(b2,1)       ! ni from block 2
                 trans2(1,2)=+1
               elseif((l24-l21) == +2) then
-                NIG = block_resolutions(b2,2)       ! NJ from block 2
+                nig = block_resolutions(b2,2)       ! nj from block 2
                 trans2(2,2)=+1
               elseif((l24-l21) == +4) then 
-                NIG = block_resolutions(b2,3)       ! NK from block 2
+                nig = block_resolutions(b2,3)       ! nk from block 2
                 trans2(3,2)=+1
               elseif((l24-l21) == -1) then 
-                NIG = block_resolutions(b2,1)       ! NI from block 2
-                trans2(1,1)=NIG
+                nig = block_resolutions(b2,1)       ! ni from block 2
+                trans2(1,1)=nig
                 trans2(1,2)=-1
               elseif((l24-l21) == -2) then 
-                NIG = block_resolutions(b2,2)       ! NJ from block 2
-                trans2(2,1)=NIG
+                nig = block_resolutions(b2,2)       ! nj from block 2
+                trans2(2,1)=nig
                 trans2(2,2)=-1
               elseif((l24-l21) == -4) then 
-                NIG = block_resolutions(b2,3)       ! NK from block 2
-                trans2(3,1)=NIG
+                nig = block_resolutions(b2,3)       ! nk from block 2
+                trans2(3,1)=nig
                 trans2(3,2)=-1
               endif
 
 !----- direction jg, block 2 
               if((l22-l21) == +1) then 
-                NJG = block_resolutions(b2,1)       ! NI from block 2
+                njg = block_resolutions(b2,1)       ! ni from block 2
                 trans2(1,3)=+1
               elseif((l22-l21) == +2) then
-                NJG = block_resolutions(b2,2)       ! NJ from block 2
+                njg = block_resolutions(b2,2)       ! nj from block 2
                 trans2(2,3)=+1
               elseif((l22-l21) == +4) then
-                NJG = block_resolutions(b2,3)       ! NK from block 2
+                njg = block_resolutions(b2,3)       ! nk from block 2
                 trans2(3,3)=+1
               elseif((l22-l21) == -1) then
-                NJG = block_resolutions(b2,1)       ! NI from block 2
-                trans2(1,1)=NJG
+                njg = block_resolutions(b2,1)       ! ni from block 2
+                trans2(1,1)=njg
                 trans2(1,3)=-1
               elseif((l22-l21) == -2) then
-                NJG = block_resolutions(b2,2)       ! NJ from block 2
-                trans2(2,1)=NJG
+                njg = block_resolutions(b2,2)       ! nj from block 2
+                trans2(2,1)=njg
                 trans2(2,3)=-1
               elseif((l22-l21) == -4) then
-                NJG = block_resolutions(b2,3)       ! NK from block 2
-                trans2(3,1)=NJG
+                njg = block_resolutions(b2,3)       ! nk from block 2
+                trans2(3,1)=njg
                 trans2(3,3)=-1
               endif
 
@@ -214,15 +214,15 @@
 
 !----- finally conect the two copy boundaries
 !      now, connect the cells in the interior
-              do jg=1,NJG-1              ! through volumes only
-                do ig=1,NIG-1            ! through volumes only
+              do jg=1,njg-1              ! through volumes only
+                do ig=1,nig-1            ! through volumes only
                   n_cop = n_cop + 1
-                  CI1=block_resolutions(b1,1)-1
-                  CJ1=block_resolutions(b1,2)-1
-                  CK1=block_resolutions(b1,3)-1
-                  CI2=block_resolutions(b2,1)-1
-                  CJ2=block_resolutions(b2,2)-1
-                  CK2=block_resolutions(b2,3)-1
+                  ci1=block_resolutions(b1,1)-1
+                  cj1=block_resolutions(b1,2)-1
+                  ck1=block_resolutions(b1,3)-1
+                  ci2=block_resolutions(b2,1)-1
+                  cj2=block_resolutions(b2,2)-1
+                  ck2=block_resolutions(b2,3)-1
                   i1 = trans1(1,1)+trans1(1,2)*ig+trans1(1,3)*jg
                   j1 = trans1(2,1)+trans1(2,2)*ig+trans1(2,3)*jg
                   k1 = trans1(3,1)+trans1(3,2)*ig+trans1(3,3)*jg 
@@ -230,9 +230,9 @@
                   j2 = trans2(2,1)+trans2(2,2)*ig+trans2(2,3)*jg
                   k2 = trans2(3,1)+trans2(3,2)*ig+trans2(3,3)*jg
                   c1 = block_resolutions(b1,6)                                 &
-                       + (k1-1)*CI1*CJ1 + (j1-1)*CI1 + i1
+                       + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
                   c2 = block_resolutions(b2,6)                                 &
-                       + (k2-1)*CI2*CJ2 + (j2-1)*CI2 + i2
+                       + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
 !>>>>>         write(*,*) 'copy_cond ', c1, ' to ', c2
                   CopyC(c2) = c1 ! allway copy from c1 to c2 !
                   CopyS(1, n_cop) = c1

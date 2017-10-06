@@ -13,8 +13,8 @@
   real :: TetVol   
 !-------------------------------[Locals]-------------------------------!
   integer   :: b, i, l, s, fc, n, n1,n2,n3,n4
-  integer   :: NSchck, NNchck
-  integer   :: NI, NJ, NK
+  integer   :: n_faces_check, n_nodes_check
+  integer   :: ni, nj, nk
   integer   :: dum
   character :: domain_name*80
   character :: answer*12 
@@ -157,7 +157,7 @@
     block_points(b,0)=1       ! suppose it is properly oriented
 
     call ReadC(9,inp,tn,ts,te)
-    read(inp(ts(2):te(4)),*)  &  ! NI, NJ, NK  for a block
+    read(inp(ts(2):te(4)),*)  &  ! ni, nj, nk  for a block
          block_resolutions(b, 1), block_resolutions(b, 2), block_resolutions(b, 3) 
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)  &            ! Block weights 
@@ -282,35 +282,35 @@
 !??????????????????????????????????????????!
 
 !----- Nodes & Sides
-  NNchck = 0
-  NSchck = 0
+  n_nodes_check = 0
+  n_faces_check = 0
   do b=1,Nbloc
-    NI=block_resolutions(b,1)
-    NJ=block_resolutions(b,2)
-    NK=block_resolutions(b,3)
-    NNchck=NNchck + NI*NJ*NK
-    NSchck=NSchck + NI*NJ*NK + 2*( (NI*NJ)+(NJ*NK)+(NI*NK) )
+    ni=block_resolutions(b,1)
+    nj=block_resolutions(b,2)
+    nk=block_resolutions(b,3)
+    n_nodes_check=n_nodes_check + ni*nj*nk
+    n_faces_check=n_faces_check + ni*nj*nk + 2*( (ni*nj)+(nj*nk)+(ni*nk) )
   end do
 
-  if( (NSchck  > MAXS).or.(NNchck  > MAXN) ) then
+  if( (n_faces_check  > MAXS).or.(n_nodes_check  > MAXN) ) then
     write(6,*) 'ERROR MESSAGE FROM TFlowS:'
   end if
 
-  if( NSchck  > MAXS ) then
-    write(6,*) 'The estimated number of sides is :', NSchck
+  if( n_faces_check  > MAXS ) then
+    write(6,*) 'The estimated number of sides is :', n_faces_check
     write(6,*) 'There is space available only for:', MAXS
     write(6,*) 'Increase the parameter MAXS in the input file'
     write(6,*) 'and re-run the code !'
   end if
 
-  if( NNchck  > MAXN ) then
-    write(6,*) 'The estimated number of nodes is :', NNchck
+  if( n_nodes_check  > MAXN ) then
+    write(6,*) 'The estimated number of nodes is :', n_nodes_check
     write(6,*) 'There is space available only for:', MAXN
     write(6,*) 'Increase the parameter MAXN in the input file'
     write(6,*) 'and re-run the code !'
   end if 
 
-  if( (NSchck  > MAXS).or.(NNchck  > MAXN) ) then
+  if( (n_faces_check  > MAXS).or.(n_nodes_check  > MAXN) ) then
     stop
   end if
 
@@ -407,9 +407,9 @@
       read(inp(ts(3):te(3)),*) answer
       call ToUppr(answer)
       if(answer == 'RECTANGLE') then
-        refined_regions(l,n,0) = RECTAN
+        refined_regions(l,n,0) = RECTANGLE
       elseif(answer == 'ELIPSOID') then
-        refined_regions(l,n,0) = ELIPSO 
+        refined_regions(l,n,0) = ELIPSOID 
       elseif(answer == 'PLANE') then
         refined_regions(l,n,0) = PLANE
       else

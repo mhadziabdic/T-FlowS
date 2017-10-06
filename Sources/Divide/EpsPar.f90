@@ -14,7 +14,7 @@
 !-------------------------------[Locals]-------------------------------!
   integer             :: n, s, s0, c1, c2
   integer             :: xmaxb, xminb, ymaxb, yminb, xlegend
-  character           :: namEps*80, answer*80
+  character(len=80)   :: name_eps, answer
   real                :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin
   real                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,        &
                          xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade,     &
@@ -83,9 +83,9 @@
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
   write(6,*) 'Enter the file name (without extension): '
   call ReadC(5,inp,tn,ts,te)
-  read(inp, *) namEps 
-  namEps(len_trim(namEps)+1:len_trim(namEps)+4) = '.eps'
-  write(6, *) 'Now creating the file:', namEps
+  read(inp, *) name_eps 
+  name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
+  write(6, *) 'Now creating the file:', name_eps
 
   xmax=maxval(x_node(1:NN))
   ymax=maxval(y_node(1:NN))
@@ -123,7 +123,7 @@
   boxsize = (ymaxb - yminb) / 20
   xlegend = boxsize * 8 
 
-  open(9, FILE=namEps)
+  open(9, FILE=name_eps)
 
 !---- Create the header of the .eps file
   write(9, '(A24)') '%!PS-Adobe-2.0 EPSF-1.2 '

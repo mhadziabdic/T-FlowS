@@ -10,6 +10,12 @@ MODULE gen_mod
 
   implicit none
 
+  integer, parameter :: YES       = 1
+  integer, parameter :: NO        = 2
+  integer, parameter :: ELIPSOID  = 3
+  integer, parameter :: RECTANGLE = 4
+  integer, parameter :: PLANE     = 5
+
   real, allocatable :: x_node(:),  &  ! node coordinates
                        y_node(:),  &
                        z_node(:) 
@@ -63,12 +69,10 @@ MODULE gen_mod
 
   integer :: LinPnt(MAXL,2), LinRes(MAXL)
   integer :: Nbloc, Nline, Nsurf, n_b_cond, n_periodic_cond, n_copy_cond, n_refine_levels
-  integer :: NN, NN2, NN4, NN8
+  integer :: NN
   integer :: NSsh                  ! number of shadow faces
 
   integer :: WallFacFst, WallFacLst 
-
-  integer :: ELIPSO, RECTAN, PLANE,YES,NO
 
   character(len=4), allocatable :: BndFac(:)
 

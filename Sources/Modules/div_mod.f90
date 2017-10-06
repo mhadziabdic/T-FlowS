@@ -10,12 +10,11 @@ MODULE div_mod
 
   implicit none
 
-  integer,allocatable :: ix(:), iy(:), iz(:), iin(:)
-  real,allocatable    :: criter(:) 
+  integer, parameter :: COORDINATE = 1
+  integer, parameter :: INERTIAL   = 2
 
-!------------!
-! Parameters !
-!------------!
-  integer :: ALGOR, COORDINATE, INERTIAL
+  integer              :: division_algorithm
+  integer, allocatable :: ix(:), iy(:), iz(:), iin(:)
+  real, allocatable    :: criter(:) 
 
 end MODULE

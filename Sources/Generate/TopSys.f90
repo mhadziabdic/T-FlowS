@@ -15,10 +15,10 @@
 !-------------------------------[Locals]-------------------------------!
   integer :: c, s, i
   integer :: c1, c2, m, pass
-  integer :: FaceN(6,4)
+  integer :: local_face_nodes(6,4)
 !======================================================================!
 
-  data    FaceN / 1, 1, 2, 4, 3, 5,                                 &
+  data    local_face_nodes / 1, 1, 2, 4, 3, 5,                                 &
                   2, 5, 6, 8, 7, 7,                                 &
                   4, 6, 8, 7, 5, 8,                                 &
                   3, 2, 4, 3, 1, 6  /
@@ -83,21 +83,21 @@
 !----- nodes of a side NS
         if(c2  > 0) then
           if(level(c2)  > level(c1)) then
-            SideN(NS,1) = CellN( c2, FaceN(SideCc(NS,2),4) )
-            SideN(NS,2) = CellN( c2, FaceN(SideCc(NS,2),3) )
-            SideN(NS,3) = CellN( c2, FaceN(SideCc(NS,2),2) )
-            SideN(NS,4) = CellN( c2, FaceN(SideCc(NS,2),1) )
+            SideN(NS,1) = CellN( c2, local_face_nodes(SideCc(NS,2),4) )
+            SideN(NS,2) = CellN( c2, local_face_nodes(SideCc(NS,2),3) )
+            SideN(NS,3) = CellN( c2, local_face_nodes(SideCc(NS,2),2) )
+            SideN(NS,4) = CellN( c2, local_face_nodes(SideCc(NS,2),1) )
             else
-            SideN(NS,1) = CellN( c1, FaceN(m,1) )
-            SideN(NS,2) = CellN( c1, FaceN(m,2) )
-            SideN(NS,3) = CellN( c1, FaceN(m,3) )
-            SideN(NS,4) = CellN( c1, FaceN(m,4) )
+            SideN(NS,1) = CellN( c1, local_face_nodes(m,1) )
+            SideN(NS,2) = CellN( c1, local_face_nodes(m,2) )
+            SideN(NS,3) = CellN( c1, local_face_nodes(m,3) )
+            SideN(NS,4) = CellN( c1, local_face_nodes(m,4) )
           end if
         else
-          SideN(NS,1) = CellN( c1, FaceN(m,1) )
-          SideN(NS,2) = CellN( c1, FaceN(m,2) )
-          SideN(NS,3) = CellN( c1, FaceN(m,3) )
-          SideN(NS,4) = CellN( c1, FaceN(m,4) )
+          SideN(NS,1) = CellN( c1, local_face_nodes(m,1) )
+          SideN(NS,2) = CellN( c1, local_face_nodes(m,2) )
+          SideN(NS,3) = CellN( c1, local_face_nodes(m,3) )
+          SideN(NS,4) = CellN( c1, local_face_nodes(m,4) )
         end if 
 
       end if

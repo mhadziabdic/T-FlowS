@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine Split(sub, Npar)
+  subroutine Split(sub, n_parts)
 !----------------------------------------------------------------------!
 !   Splits the domain by a geometrical multisection technique.         !
 !----------------------------------------------------------------------!
@@ -12,25 +12,25 @@
   implicit none
 !-----------------------------[Parameters]-----------------------------!
   integer :: sub                           ! subdomain to be splitted
-  integer :: Npar                          ! number of new partitions
+  integer :: n_parts                          ! number of new partitions
 !-------------------------------[Locals]-------------------------------!
   character :: dir                         ! direction for splitting
   integer   :: c, ic, j
-  integer   :: Nfiled
+  integer   :: n_filled
   real      :: xmax,ymax,zmax,xmin,ymin,zmin, delx,dely,delz,dxyz 
 !======================================================================!
 ! TESTING TESTING TESTING
 !--------------------------------------------! 
 !     Find the smallest moment of inertia    !
 !--------------------------------------------! 
-  if(ALGOR == INERTIAL) then
+  if(division_algorithm == INERTIAL) then
     call Inertia(sub)
   end if
 
 !-------------------------------------------------! 
 !     Find the largest dimension of the domain    !
 !-------------------------------------------------! 
-  if(ALGOR == COORDINATE) then
+  if(division_algorithm == COORDINATE) then
     xmax=-HUGE
     ymax=-HUGE
     zmax=-HUGE
@@ -57,23 +57,23 @@
     if(delx == dxyz) dir='x'
   end if
 
-  do j=1,Npar-1
+  do j=1,n_parts-1
 
-    Nfiled   = 0
+    n_filled   = 0
 
 !----------------------------!
 !     Fill the subdomain     !
 !----------------------------!
 
-    if(ALGOR==COORDINATE) then
+    if(division_algorithm==COORDINATE) then
 
       if(dir == 'x') then
         do c=1,NC
           ic=ix(c)
           if(proces(ic) == sub) then
-	    proces(ic) = Nsub+j
-	    Nfiled = Nfiled + 1
-	    if(Nfiled >= subNC(sub)/(Npar-j+1)) goto 2 
+            proces(ic) = Nsub+j
+            n_filled = n_filled + 1
+            if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
           end if
         end do
       end if
@@ -82,9 +82,9 @@
         do c=1,NC
           ic=iy(c)
           if(proces(ic) == sub) then
-	    proces(ic) = Nsub+j
-	    Nfiled = Nfiled + 1
-	    if(Nfiled >= subNC(sub)/(Npar-j+1)) goto 2 
+            proces(ic) = Nsub+j
+            n_filled = n_filled + 1
+            if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
           end if
         end do
       end if
@@ -93,21 +93,21 @@
         do c=1,NC
           ic=iz(c)
           if(proces(ic) == sub) then
-  	    proces(ic) = Nsub+j
-	    Nfiled = Nfiled + 1
-	    if(Nfiled >= subNC(sub)/(Npar-j+1)) goto 2 
+            proces(ic) = Nsub+j
+            n_filled = n_filled + 1
+            if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
           end if
         end do
       end if
     end if
 
-    if(ALGOR==INERTIAL) then
+    if(division_algorithm==INERTIAL) then
       do c=1,NC
         ic=iin(c)
         if(proces(ic) == sub) then
           proces(ic) = Nsub+j
-          Nfiled = Nfiled + 1
-          if(Nfiled >= subNC(sub)/(Npar-j+1)) goto 2 
+          n_filled = n_filled + 1
+          if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
         end if
       end do
     end if
@@ -115,11 +115,11 @@
 !--------------------------------! 
 !     Subdomain is filled up     !
 !--------------------------------! 
- 2  subNC(Nsub+j) = Nfiled
-    subNC(sub) = subNC(sub) - Nfiled
+ 2  subNC(Nsub+j) = n_filled
+    subNC(sub) = subNC(sub) - n_filled
 
   end do  ! j
 
-  Nsub = Nsub + Npar - 1
+  Nsub = Nsub + n_parts - 1
 
   end subroutine Split

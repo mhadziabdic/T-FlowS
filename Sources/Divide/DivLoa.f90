@@ -11,8 +11,8 @@
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
-  integer      :: c, n, s
-  character*80 :: dummy, nameIn
+  integer           :: c, n, s
+  character(len=80) :: dum_s, name_in
 !======================================================================!
 
   write(*,'(A41)') '# Input problem name: (without extension)'
@@ -23,11 +23,11 @@
 !       Read the file with the      !
 !     connections between cells     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-  nameIn = name
-  nameIn(len_trim(name)+1:len_trim(name)+4) = '.cns'
+  name_in = name
+  name_in(len_trim(name)+1:len_trim(name)+4) = '.cns'
 
-  open(9, FILE=nameIn,FORM='UNFORMATTED')
-  write(*,'(A24,A)') '# Now reading the file: ', nameIn
+  open(9, FILE=name_in,FORM='UNFORMATTED')
+  write(*,'(A24,A)') '# Now reading the file: ', name_in
 
 !///// number of cells
   read(9) NC
@@ -64,10 +64,10 @@
 !     Read the GMV file with node      !
 !     coordinates and volume nodes     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-  nameIn = name
-  nameIn(len_trim(name)+1:len_trim(name)+4) = '.gmv'
-  write(*,*) '# Now reading the file:', nameIn
-  open(9, FILE=nameIn)
+  name_in = name
+  name_in(len_trim(name)+1:len_trim(name)+4) = '.gmv'
+  write(*,*) '# Now reading the file:', name_in
+  open(9, FILE=name_in)
 
 !>>>>> read the number of nodes
   call ReadC(9,inp,tn,ts,te)
@@ -145,31 +145,31 @@
   call ReadC(9,inp,tn,ts,te)  ! cells, number of cells
   do c=1,NC  !->>> ovo bi se moglo napravit neformatirano
     call ReadC(9,inp,tn,ts,te)
-    read(inp(ts(1):te(1)),*) dummy
-    if(dummy  ==  'hex') then
+    read(inp(ts(1):te(1)),*) dum_s
+    if(dum_s  ==  'hex') then
       CellN(c,0) = 8
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
            CellN(c,1), CellN(c,2), CellN(c,4), CellN(c,3),          &
            CellN(c,5), CellN(c,6), CellN(c,8), CellN(c,7) 
-    else if(dummy  ==  'prism') then
+    else if(dum_s  ==  'prism') then
       CellN(c,0) = 6
       call ReadC(9,inp,tn,ts,te)
       read(inp,*)                             &
          CellN(c,1), CellN(c,2), CellN(c,3),  &
          CellN(c,4), CellN(c,5), CellN(c,6)
-    else if(dummy  ==  'tet') then
+    else if(dum_s  ==  'tet') then
       CellN(c,0) = 4
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
          CellN(c,1), CellN(c,2), CellN(c,3), CellN(c,4)
-    else if(dummy  ==  'pyramid') then
+    else if(dum_s  ==  'pyramid') then
       CellN(c,0) = 5
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
          CellN(c,5), CellN(c,1), CellN(c,2), CellN(c,4), CellN(c,3)
     else
-      write(*,*) 'Unsupported cell type: ', dummy
+      write(*,*) 'Unsupported cell type: ', dum_s
       write(*,*) 'Exiting'
       stop
     end if

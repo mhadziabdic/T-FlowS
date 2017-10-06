@@ -10,10 +10,11 @@
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
-  integer   :: b, c, n, s, c1, c2
-  integer   :: sub,subo,NNsub,NCsub,NSsub,NBCsub,NBFsub,NCSsub,NCFsub
-  character :: namOut*80
-  integer,allocatable :: SideCell(:,:)
+  integer              :: b, c, n, s, c1, c2, sub, subo
+  integer              :: n_nodes_sub, n_cells_sub, n_faces_sub,  &
+                          n_b_cells_sub,n_buff_sub,NCSsub,NCFsub
+  character(len=80)    :: name_out
+  integer,allocatable  :: SideCell(:,:)
 !======================================================================!
 !  Each subdomain needs two buffers: a send buffer and a receive buffer.
 !  A receive buffer will be stored as aditional boundary cells for each
@@ -38,9 +39,9 @@
 !<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
   do sub=1,Nsub
 
-    call NamFil(sub, namOut, '.buf', len_trim('.buf'))
-    open(9, FILE=namOut)
-    write(6, *) 'Now creating the file:', namOut
+    call NamFil(sub, name_out, '.buf', len_trim('.buf'))
+    open(9, FILE=name_out)
+    write(6, *) 'Now creating the file:', name_out
 
     write(9,'(A20)') '%%%%%%%%%%%%%%%%%%%%'
     write(9,'(A20)') '%                  %'
@@ -49,44 +50,44 @@
     write(9,'(A20)') '%%%%%%%%%%%%%%%%%%%%'
 
 !---- cells
-    NCsub = 0     ! number of cells in subdomain
+    n_cells_sub = 0     ! number of cells in subdomain
     do c=1,NC
       NewC(c)=0
     end do
     do c=1,NC
       if(proces(c) == sub) then
-	NCsub=NCsub+1
-	NewC(c)=NCsub
+        n_cells_sub=n_cells_sub+1
+        NewC(c)=n_cells_sub
       end if
     end do
 
 !---- nodes
-    NNsub = 0     ! number of cells in subdomain
+    n_nodes_sub = 0     ! number of cells in subdomain
     do n=1,NN
       NewN(n)=0
     end do
     do c=1,NC
       if(proces(c) == sub) then
-	NewN(CellN(c,1))=-1
-	NewN(CellN(c,2))=-1
-	NewN(CellN(c,3))=-1
-	NewN(CellN(c,4))=-1
-	NewN(CellN(c,5))=-1
-	NewN(CellN(c,6))=-1
-	NewN(CellN(c,7))=-1
-	NewN(CellN(c,8))=-1
+        NewN(CellN(c,1))=-1
+        NewN(CellN(c,2))=-1
+        NewN(CellN(c,3))=-1
+        NewN(CellN(c,4))=-1
+        NewN(CellN(c,5))=-1
+        NewN(CellN(c,6))=-1
+        NewN(CellN(c,7))=-1
+        NewN(CellN(c,8))=-1
       end if
     end do
     do n=1,NN
       if(NewN(n) == -1) then
-	NNsub=NNsub+1
-	NewN(n)=NNsub
+        n_nodes_sub=n_nodes_sub+1
+        NewN(n)=n_nodes_sub
       end if
     end do
 
 !---- sides & real boundary cells
-    NSsub  = 0     ! number of sides in subdomain
-    NBCsub = 0     ! number of real boundary cells in subdomain
+    n_faces_sub  = 0     ! number of sides in subdomain
+    n_b_cells_sub = 0     ! number of real boundary cells in subdomain
     NCSsub = 0
     do s=1,NS
       NewS(s)=0
@@ -98,17 +99,17 @@
       c1=SideC(1,s)  
       c2=SideC(2,s) 
       if(c2  > 0) then
-	if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
-	  NSsub=NSsub+1
-	  NewS(s)=NSsub
-	end if
+        if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
+          n_faces_sub=n_faces_sub+1
+          NewS(s)=n_faces_sub
+        end if
       else ! c2 < 0
-	if( proces(c1) == sub ) then
-	  NSsub =NSsub+1
-	  NewS(s)=NSsub   ! new number for the side
-	  NBCsub=NBCsub+1
-	  NewC(c2)=-NBCsub ! new number for the boundary cell
-	end if
+        if( proces(c1) == sub ) then
+          n_faces_sub =n_faces_sub+1
+          NewS(s)=n_faces_sub   ! new number for the side
+          n_b_cells_sub=n_b_cells_sub+1
+          NewC(c2)=-n_b_cells_sub ! new number for the boundary cell
+        end if
       end if 
     end do
 
@@ -116,104 +117,104 @@
       c1=CopyS(1,s)
       c2=CopyS(2,s)
       if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
-	NCSsub=NCSsub+1
+        NCSsub=NCSsub+1
       end if
     end do
 
     write(*,*) 'Now saving subdomain ', sub, ' with:'
-    write(*,*) NCsub, ' cells'
-    write(*,*) NNsub, ' nodes' 
-    write(*,*) NSsub, ' sides' 
-    write(*,*) NBCsub, ' physical boundary cells' 
+    write(*,*) n_cells_sub, ' cells'
+    write(*,*) n_nodes_sub, ' nodes' 
+    write(*,*) n_faces_sub, ' sides' 
+    write(*,*) n_b_cells_sub, ' physical boundary cells' 
 
 !------------------------!
 !     Create buffers     !
 !------------------------!
-    NBFsub = 0
+    n_buff_sub = 0
     NCFsub = 0
     write(9,'(A33)') '#--- Number of physical b. cells:'
-    write(9,'(I8)')  NBCsub   
+    write(9,'(I8)')  n_b_cells_sub   
     do subo=1,Nsub
       if(subo /= sub) then
-	NBBs(subo)=NBFsub+1
+        NBBs(subo)=n_buff_sub+1
 !----- Faces inside the domain
-	do s=1,NS
-	  c1=SideC(1,s)  
-	  c2=SideC(2,s) 
-	  if(c2  > 0) then
-	    if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
-	      NBFsub = NBFsub+1
-	      BuSeIn(NBFsub)=NewC(c1) ! Buffer Send Index 
-	      BuReIn(NBFsub)=c2 ! important for coordinate
-	      BufPos(NBFsub)=-NBCsub-NBFsub
+        do s=1,NS
+          c1=SideC(1,s)  
+          c2=SideC(2,s) 
+          if(c2  > 0) then
+            if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
+              n_buff_sub = n_buff_sub+1
+              BuSeIn(n_buff_sub)=NewC(c1) ! Buffer Send Index 
+              BuReIn(n_buff_sub)=c2 ! important for coordinate
+              BufPos(n_buff_sub)=-n_b_cells_sub-n_buff_sub
 
-	      NewS(s)=NSsub+NBFsub
-	    end if
-	    if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
-	      NBFsub = NBFsub+1
-	      BuSeIn(NBFsub)=NewC(c2) ! Buffer Send Index
-	      BuReIn(NBFsub)=c1 ! important for coordinate
-	      BufPos(NBFsub)=-NBCsub-NBFsub
+              NewS(s)=n_faces_sub+n_buff_sub
+            end if
+            if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
+              n_buff_sub = n_buff_sub+1
+              BuSeIn(n_buff_sub)=NewC(c2) ! Buffer Send Index
+              BuReIn(n_buff_sub)=c1 ! important for coordinate
+              BufPos(n_buff_sub)=-n_b_cells_sub-n_buff_sub
 
-	      NewS(s)=NSsub+NBFsub
-	    end if
-	  end if  ! c2 > 0
-	end do    ! through sides
+              NewS(s)=n_faces_sub+n_buff_sub
+            end if
+          end if  ! c2 > 0
+        end do    ! through sides
 !----- Faces on the "copy" boundary
-	do s=1,Ncopy
-	  c1=CopyS(1,s)  
-	  c2=CopyS(2,s) 
-	  if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
-	    NBFsub = NBFsub+1
-	    NCFsub = NCFsub+1
-	    BuSeIn(NBFsub)=NewC(c1) ! Buffer Send Index 
-	    BuReIn(NBFsub)=c2 
-	    BufPos(NBFsub)= - (-NBCsub-NBFsub) ! watch out - sign
-	  end if
-	  if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
-	    NBFsub = NBFsub+1
-	    NCFsub = NCFsub+1
-	    BuSeIn(NBFsub)=NewC(c2) ! Buffer Send Index
-	    BuReIn(NBFsub)=c1 
-	    BufPos(NBFsub)= - (-NBCsub-NBFsub) ! watch out - sign
-	  end if
-	end do    ! through sides
-	NBBe(subo)=NBFsub
+        do s=1,Ncopy
+          c1=CopyS(1,s)  
+          c2=CopyS(2,s) 
+          if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
+            n_buff_sub = n_buff_sub+1
+            NCFsub = NCFsub+1
+            BuSeIn(n_buff_sub)=NewC(c1) ! Buffer Send Index 
+            BuReIn(n_buff_sub)=c2 
+            BufPos(n_buff_sub)= - (-n_b_cells_sub-n_buff_sub) ! watch out - sign
+          end if
+          if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
+            n_buff_sub = n_buff_sub+1
+            NCFsub = NCFsub+1
+            BuSeIn(n_buff_sub)=NewC(c2) ! Buffer Send Index
+            BuReIn(n_buff_sub)=c1 
+            BufPos(n_buff_sub)= - (-n_b_cells_sub-n_buff_sub) ! watch out - sign
+          end if
+        end do    ! through sides
+        NBBe(subo)=n_buff_sub
 
 !---- write to buffer file
-	write(9,'(A33)') '#===============================#' 
-	write(9,'(A33)') '#   Conections with subdomain:  #' 
-	write(9,'(A33)') '#===============================#' 
-	write(9,'(I8)')  subo 
-	write(9,'(A33)') '#--- Number of local connections:'
-	write(9,'(I8)')  NBBe(subo)-NBBs(subo)+1 
-	write(9,'(A40)') '#--- Local number in a buffer and index:'
-	do b=NBBs(subo),NBBe(subo)
-	  write(9,'(2I8)') b-NBBs(subo)+1, BuSeIn(b) 
-	end do
+        write(9,'(A33)') '#===============================#' 
+        write(9,'(A33)') '#   Conections with subdomain:  #' 
+        write(9,'(A33)') '#===============================#' 
+        write(9,'(I8)')  subo 
+        write(9,'(A33)') '#--- Number of local connections:'
+        write(9,'(I8)')  NBBe(subo)-NBBs(subo)+1 
+        write(9,'(A40)') '#--- Local number in a buffer and index:'
+        do b=NBBs(subo),NBBe(subo)
+          write(9,'(2I8)') b-NBBs(subo)+1, BuSeIn(b) 
+        end do
       end if 
 
     end do ! for subo
 
-    call GenSav(sub, NNsub, NCsub)
-    call GeoSav(sub,        NCsub, NSsub, NBCsub, NBFsub,NCFsub)
-    call TestLn(sub, NNsub, NCsub, NSsub, NBCsub, NBFsub)
+    call GenSav(sub, n_nodes_sub, n_cells_sub)
+    call GeoSav(sub,        n_cells_sub, n_faces_sub, n_b_cells_sub, n_buff_sub,NCFsub)
+    call TestLn(sub, n_nodes_sub, n_cells_sub, n_faces_sub, n_b_cells_sub, n_buff_sub)
 
     write(*,*) 'Test:'
-    write(*,*) 'NNsub=',NNsub
-    write(*,*) 'NCsub=',NCsub
-    write(*,*) 'NSsub=',NSsub
-    write(*,*) 'NBCsub=',NBCsub
+    write(*,*) 'n_nodes_sub   =', n_nodes_sub
+    write(*,*) 'n_cells_sub   =', n_cells_sub
+    write(*,*) 'n_faces_sub   =', n_faces_sub
+    write(*,*) 'n_b_cells_sub =', n_b_cells_sub
 
     write(*,*) '====================================' 
-    write(*,*) 'Subdomain ', sub
-    write(*,*) 'Buffer size ', NBFsub
+    write(*,*) 'Subdomain   ', sub
+    write(*,*) 'Buffer size ', n_buff_sub
     do subo=1,Nsub
       if(subo /= sub) then
-	write(*,*) 'Connections with ', subo ,' : ',                &
-	  NBBe(subo)-NBBs(subo)+1,                                  &
-	  NBCsub+NBBs(subo),                                        &
-	  NBCsub+NBBe(subo) 
+        write(*,*) 'Connections with ', subo ,' : ',                &
+          NBBe(subo)-NBBs(subo)+1,                                  &
+          n_b_cells_sub+NBBs(subo),                                        &
+          n_b_cells_sub+NBBe(subo) 
       end if 
     end do ! for subo
     write(*,*) '------------------------------------' 
@@ -237,28 +238,28 @@
     NewS(s)=0
   end do
 
-  NCsub = 0     ! number of cells renumbered
+  n_cells_sub = 0     ! number of cells renumbered
   do sub=1,Nsub
     do c=1,NC
       if(proces(c) == sub) then
-	NCsub=NCsub+1
-	NewC(c)=NCsub
+        n_cells_sub=n_cells_sub+1
+        NewC(c)=n_cells_sub
       end if
     end do
   end do
 
-  NSsub = 0     ! number of sides renumbered
+  n_faces_sub = 0     ! number of sides renumbered
   do sub=1,Nsub
     do s=1,NS
       c1 = SideC(1,s)
       c2 = SideC(2,s)
       if(proces(c1) == sub) then
-        NSsub=NSsub+1
-        NewS(s)=NSsub
+        n_faces_sub=n_faces_sub+1
+        NewS(s)=n_faces_sub
       end if
     end do
   end do
-  write(*,*) 'Number of sides: ', NS, NSsub
+  write(*,*) 'Number of sides: ', NS, n_faces_sub
 
   call INSort(CellN(1,0), NewC(1),NC)
   call INSort(CellN(1,1), NewC(1),NC)

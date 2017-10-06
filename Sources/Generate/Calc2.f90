@@ -11,19 +11,19 @@
 !-----------------------------[Parameters]-----------------------------!
   logical rrun     
 !------------------------------[Calling]-------------------------------!
-  real :: tetvol        
+  real :: Tetvol        
   real :: Distance       
   real :: Distance_Squared       
 !-------------------------------[Locals]-------------------------------!
   integer :: c, c1, c2, m, n, s, c_1, c_2
   integer :: WallMark
-  real    :: xt(4), yt(4), zt(4)
-  real    :: xTc, yTc, zTc       ! temporary cell coordinates 
+  real    :: local_x_node(4), local_y_node(4), local_z_node(4)
+  real    :: x_cell_tmp, y_cell_tmp, z_cell_tmp    
   real    :: xs2,ys2,zs2
   real    :: dsc1, dsc2          !  for the interpolation factors
   real    :: t, SurTot , maxdis
   real    :: xc1, yc1, zc1, xc2, yc2, zc2 
-  real    :: xmin, xmax, ymin, ymax, zmin, zmax
+  real    :: x_min, x_max, y_min, y_max, z_min, z_max
   integer :: f4n(6,4)
   integer :: f3n(4,3)
 !======================================================================!
@@ -147,66 +147,87 @@
 !++++++++++++++++++++++++++++++!
     do c=1,NC
       delta(c)=0.0
-      xmin = +HUGE   
-      ymin = +HUGE  
-      zmin = +HUGE  
-      xmax = -HUGE  
-      ymax = -HUGE  
-      zmax = -HUGE  
+      x_min = +HUGE   
+      y_min = +HUGE  
+      z_min = +HUGE  
+      x_max = -HUGE  
+      y_max = -HUGE  
+      z_max = -HUGE  
       do n=1,CellN(c,0)
-        xmin = min(xmin, x_node(CellN(c,n)))
-        ymin = min(ymin, y_node(CellN(c,n)))
-        zmin = min(zmin, z_node(CellN(c,n)))
-        xmax = max(xmax, x_node(CellN(c,n)))
-        ymax = max(ymax, y_node(CellN(c,n)))
-        zmax = max(zmax, z_node(CellN(c,n)))
+        x_min = min(x_min, x_node(CellN(c,n)))
+        y_min = min(y_min, y_node(CellN(c,n)))
+        z_min = min(z_min, z_node(CellN(c,n)))
+        x_max = max(x_max, x_node(CellN(c,n)))
+        y_max = max(y_max, y_node(CellN(c,n)))
+        z_max = max(z_max, z_node(CellN(c,n)))
       end do
-      delta(c) = xmax-xmin
-      delta(c) = max(delta(c), (ymax-ymin))
-      delta(c) = max(delta(c), (zmax-zmin))
+      delta(c) = x_max-x_min
+      delta(c) = max(delta(c), (y_max-y_min))
+      delta(c) = max(delta(c), (z_max-z_min))
     end do
 
 !+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
 !     Calculate:                                            ! 
 !        components of cell sides, cell side centers.       !
 !-----------------------------------------------------------!
-!     => depends on: x_node,y_node,z_node                                  !
+!     => depends on: x_node,y_node,z_node                   !
 !     <= gives:      Sx,Sy,Sz,xsp,yzp,zsp                   !
 !+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
     do s=1,NS
       do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-        xt(n)=x_node(SideN(s,n))
-        yt(n)=y_node(SideN(s,n))
-        zt(n)=z_node(SideN(s,n))
+        local_x_node(n)=x_node(SideN(s,n))
+        local_y_node(n)=y_node(SideN(s,n))
+        local_z_node(n)=z_node(SideN(s,n))
       end do                       
 
 !///// cell side components
 
       if( SideN(s,0)  ==  4 ) then
-        Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
-                      +(yt(3)-yt(2))*(zt(2)+zt(3))   &
-                      +(yt(4)-yt(3))*(zt(3)+zt(4))   &
-                      +(yt(1)-yt(4))*(zt(4)+zt(1)) )
-        Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
-                      +(zt(3)-zt(2))*(xt(2)+xt(3))   &
-                      +(zt(4)-zt(3))*(xt(3)+xt(4))   &
-                      +(zt(1)-zt(4))*(xt(4)+xt(1)) )
-        Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   & 
-                      +(xt(3)-xt(2))*(yt(2)+yt(3))   &
-                      +(xt(4)-xt(3))*(yt(3)+yt(4))   &
-                      +(xt(1)-xt(4))*(yt(4)+yt(1)) )
+        Sx(s)= 0.5 * (   (local_y_node(2)-local_y_node(1))  &
+                       * (local_z_node(2)+local_z_node(1))  &
+                       + (local_y_node(3)-local_y_node(2))  &
+                       * (local_z_node(2)+local_z_node(3))  &
+                       + (local_y_node(4)-local_y_node(3))  &
+                       * (local_z_node(3)+local_z_node(4))  &
+                       + (local_y_node(1)-local_y_node(4))  &
+                       * (local_z_node(4)+local_z_node(1)) )
+        Sy(s)= 0.5 * (   (local_z_node(2)-local_z_node(1))  &
+                       * (local_x_node(2)+local_x_node(1))  &
+                       + (local_z_node(3)-local_z_node(2))  &
+                       * (local_x_node(2)+local_x_node(3))  &
+                       + (local_z_node(4)-local_z_node(3))  &
+                       * (local_x_node(3)+local_x_node(4))  &
+                       + (local_z_node(1)-local_z_node(4))  &
+                       * (local_x_node(4)+local_x_node(1)) )
+        Sz(s)= 0.5 * (   (local_x_node(2)-local_x_node(1))  & 
+                       * (local_y_node(2)+local_y_node(1))  & 
+                       + (local_x_node(3)-local_x_node(2))  & 
+                       * (local_y_node(2)+local_y_node(3))  &
+                       + (local_x_node(4)-local_x_node(3))  & 
+                       * (local_y_node(3)+local_y_node(4))  &
+                       + (local_x_node(1)-local_x_node(4))  & 
+                       * (local_y_node(4)+local_y_node(1)) )
       else if( SideN(s,0)  ==  3 ) then 
-        Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
-                      +(yt(3)-yt(2))*(zt(2)+zt(3))   &
-                      +(yt(1)-yt(3))*(zt(3)+zt(1)) )
-        Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
-                      +(zt(3)-zt(2))*(xt(2)+xt(3))   & 
-                      +(zt(1)-zt(3))*(xt(3)+xt(1)) )
-        Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   &
-                      +(xt(3)-xt(2))*(yt(2)+yt(3))   & 
-                      +(xt(1)-xt(3))*(yt(3)+yt(1)) )
+        Sx(s)= 0.5 * (   (local_y_node(2)-local_y_node(1))  &
+                       * (local_z_node(2)+local_z_node(1))  & 
+                       + (local_y_node(3)-local_y_node(2))  &
+                       * (local_z_node(2)+local_z_node(3))  &
+                       + (local_y_node(1)-local_y_node(3))  &
+                       * (local_z_node(3)+local_z_node(1)) )
+        Sy(s)= 0.5 * (   (local_z_node(2)-local_z_node(1))  &
+                       * (local_x_node(2)+local_x_node(1))  &
+                       + (local_z_node(3)-local_z_node(2))  &
+                       * (local_x_node(2)+local_x_node(3))  & 
+                       + (local_z_node(1)-local_z_node(3))  &
+                       * (local_x_node(3)+local_x_node(1)) )
+        Sz(s)= 0.5 * (   (local_x_node(2)-local_x_node(1))  &
+                       * (local_y_node(2)+local_y_node(1))  &
+                       + (local_x_node(3)-local_x_node(2))  & 
+                       * (local_y_node(2)+local_y_node(3))  & 
+                       + (local_x_node(1)-local_x_node(3))  & 
+                       * (local_y_node(3)+local_y_node(1)) )
       else
-        write(*,*) 'calc2: something horrible has happened !'
+        write(*,*) 'Calc2: something horrible has happened !'
         stop
       end if
 
@@ -214,13 +235,16 @@
 
 !---- barycenters
       if(SideN(s,0) == 4) then  
-        xsp(s) = (xt(1)+xt(2)+xt(3)+xt(4))/4.0
-        ysp(s) = (yt(1)+yt(2)+yt(3)+yt(4))/4.0
-        zsp(s) = (zt(1)+zt(2)+zt(3)+zt(4))/4.0
+        xsp(s) = (   local_x_node(1)+local_x_node(2)        &
+                   + local_x_node(3)+local_x_node(4) )/4.0
+        ysp(s) = (   local_y_node(1)+local_y_node(2)        &
+                   + local_y_node(3)+local_y_node(4) )/4.0
+        zsp(s) = (   local_z_node(1)+local_z_node(2)        &
+                   + local_z_node(3)+local_z_node(4) )/4.0
       else if(SideN(s,0) == 3) then  
-        xsp(s) = (xt(1)+xt(2)+xt(3))/3.0
-        ysp(s) = (yt(1)+yt(2)+yt(3))/3.0
-        zsp(s) = (zt(1)+zt(2)+zt(3))/3.0
+        xsp(s) = (local_x_node(1)+local_x_node(2)+local_x_node(3))/3.0
+        ysp(s) = (local_y_node(1)+local_y_node(2)+local_y_node(3))/3.0
+        zsp(s) = (local_z_node(1)+local_z_node(2)+local_z_node(3))/3.0
       end if 
 
     end do ! through sides
@@ -383,48 +407,68 @@
     c2=SideC(2,s)   
 
     do n=1,SideN(s,0)      ! for quadrilateral an triangular faces
-      xt(n)=x_node(SideN(s,n))
-      yt(n)=y_node(SideN(s,n))
-      zt(n)=z_node(SideN(s,n))
+      local_x_node(n)=x_node(SideN(s,n))
+      local_y_node(n)=y_node(SideN(s,n))
+      local_z_node(n)=z_node(SideN(s,n))
     end do   
 
 !----- first cell
-    xTc=xc(c1)
-    yTc=yc(c1)
-    zTc=zc(c1)
-    dsc1=Distance(xTc,yTc,zTc,xsp(s), ysp(s), zsp(s)) 
+    x_cell_tmp=xc(c1)
+    y_cell_tmp=yc(c1)
+    z_cell_tmp=zc(c1)
+    dsc1=Distance(x_cell_tmp,y_cell_tmp,z_cell_tmp,xsp(s), ysp(s), zsp(s)) 
     volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),            &
-               xt(1),yt(1),zt(1),xt(2),yt(2),zt(2),xTc,yTc,zTc)
+               local_x_node(1),local_y_node(1),local_z_node(1),     &
+               local_x_node(2),local_y_node(2),local_z_node(2),     &
+               x_cell_tmp,y_cell_tmp,z_cell_tmp)
     volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),            &
-               xt(2),yt(2),zt(2),xt(3),yt(3),zt(3),xTc,yTc,zTc)
+               local_x_node(2),local_y_node(2),local_z_node(2),     &
+               local_x_node(3),local_y_node(3),local_z_node(3),     &
+               x_cell_tmp,y_cell_tmp,z_cell_tmp)
     if(SideN(s,0) == 4) then
       volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),          &
-                 xt(3),yt(3),zt(3),xt(4),yt(4),zt(4),xTc,yTc,zTc)
+                 local_x_node(3),local_y_node(3),local_z_node(3),   &
+                 local_x_node(4),local_y_node(4),local_z_node(4),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
       volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),          &
-                 xt(4),yt(4),zt(4),xt(1),yt(1),zt(1),xTc,yTc,zTc)
+                 local_x_node(4),local_y_node(4),local_z_node(4),   &
+                 local_x_node(1),local_y_node(1),local_z_node(1),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
     else if(SideN(s,0) == 3) then
       volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),          &
-                 xt(3),yt(3),zt(3),xt(1),yt(1),zt(1),xTc,yTc,zTc)
+                 local_x_node(3),local_y_node(3),local_z_node(3),   &
+                 local_x_node(1),local_y_node(1),local_z_node(1),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
     end if
 
 !----- second cell
     if(c2  > 0) then
-      xTc=xc(c2)+Dx(s)
-      yTc=yc(c2)+Dy(s)
-      zTc=zc(c2)+Dz(s)
-      dsc2=Distance(xTc,yTc,zTc,xsp(s), ysp(s), zsp(s)) 
+      x_cell_tmp=xc(c2)+Dx(s)
+      y_cell_tmp=yc(c2)+Dy(s)
+      z_cell_tmp=zc(c2)+Dz(s)
+      dsc2=Distance(x_cell_tmp,y_cell_tmp,z_cell_tmp,xsp(s), ysp(s), zsp(s)) 
       volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),           &
-                 xt(1),yt(1),zt(1),xt(2),yt(2),zt(2),xTc,yTc,zTc)
+                 local_x_node(1),local_y_node(1),local_z_node(1),   &
+                 local_x_node(2),local_y_node(2),local_z_node(2),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
       volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),           &
-                 xt(2),yt(2),zt(2),xt(3),yt(3),zt(3),xTc,yTc,zTc)
+                 local_x_node(2),local_y_node(2),local_z_node(2),   &
+                 local_x_node(3),local_y_node(3),local_z_node(3),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
       if(SideN(s,0) == 4) then
         volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),         &
-                   xt(3),yt(3),zt(3),xt(4),yt(4),zt(4),xTc,yTc,zTc)
+                   local_x_node(3),local_y_node(3),local_z_node(3), &
+                   local_x_node(4),local_y_node(4),local_z_node(4), &
+                   x_cell_tmp,y_cell_tmp,z_cell_tmp)
         volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),         &
-                   xt(4),yt(4),zt(4),xt(1),yt(1),zt(1),xTc,yTc,zTc)
+                   local_x_node(4),local_y_node(4),local_z_node(4), &
+                   local_x_node(1),local_y_node(1),local_z_node(1), &
+                   x_cell_tmp,y_cell_tmp,z_cell_tmp)
       else if(SideN(s,0) == 3) then
         volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),         &
-                   xt(3),yt(3),zt(3),xt(1),yt(1),zt(1),xTc,yTc,zTc)
+                   local_x_node(3),local_y_node(3),local_z_node(3), &
+                   local_x_node(1),local_y_node(1),local_z_node(1), &
+                   x_cell_tmp,y_cell_tmp,z_cell_tmp)
       end if  
     else        
       dsc2=0.0

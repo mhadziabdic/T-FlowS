@@ -9,9 +9,9 @@
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
-  integer   :: c, dummy 
-  integer   :: sub, subo, NNsub,NCsub,NSsub,NBCsub,NBFsub
-  character :: nameIn*80
+  integer           :: c, dummy 
+  integer           :: sub, subo, NNsub,NCsub,NSsub,NBCsub,NBFsub
+  character(len=80) :: name_in
 !======================================================================!
 !  Each subdomain needs two buffers: a send buffer and a receive buffer.
 !  A receive buffer will be stored as aditional boundary cells for each
@@ -29,25 +29,28 @@
 !  end do
 !----------------------------------------------------------------------!
 
-  if(Npro == 0) return
+  if(n_proc == 0) return
 
-  call NamFil(this, nameIn, '.buf', len_trim('.buf'))
-  open(9, FILE=nameIn)
-  if(this < 2) write(*,*) '# Now reading the file:', nameIn
+  call NamFil(this_proc, name_in, '.buf', len_trim('.buf'))
+  open(9, FILE=name_in)
+  if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
+
+  allocate (NBBs(0:n_proc))
+  allocate (NBBe(0:n_proc))
 
 !///// number of physical boundary cells
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) NBCsub
 
 !///// initialize 
-  do sub=0,NPRO
+  do sub=0,n_proc
     NBBs(sub) = -(NBCsub) 
     NBBe(sub) = -(NBCsub)
   end do
 
 !///// fill the indexes and the buffers
-  do sub=1,NPRO
-    if(sub  /=  this) then
+  do sub=1,n_proc
+    if(sub  /=  this_proc) then
 
 !----- connections with subdomain          
       call ReadC(9,inp,tn,ts,te)
@@ -61,19 +64,19 @@
       NBBe(sub) = NBBs(sub) - NBBe(sub) + 1
 
       do c=NBBs(sub),NBBe(sub),-1
-	call ReadC(9,inp,tn,ts,te)
-	read(inp,*) dummy, BufInd(c) 
+        call ReadC(9,inp,tn,ts,te)
+        read(inp,*) dummy, BufInd(c) 
       end do 
     else
       NBBs(sub) = NBBe(sub-1)-1  ! just to become "sloppy" 
-      NBBe(sub) = NBBe(sub-1)    ! this will be needed for next 
+      NBBe(sub) = NBBe(sub-1)    ! this_proc will be needed for next 
     end if
   end do   ! through subdomains
 
   close(9)
 
 !///// correct the "sloppy" indexes
-  do sub=1,NPRO
+  do sub=1,n_proc
     if(NBBe(sub)  > NBBs(sub)) then  
       NBBs(sub) = -1 
       NBBe(sub) = 0 
@@ -82,11 +85,11 @@
 
   call wait
 
-!->>>  write(*,*) 'PE',this, '#===================#' 
-!->>>  write(*,*) 'PE',this, '# Check connections #' 
-!->>>  write(*,*) 'PE',this, '#-------------------#' 
-!->>>  do sub=1,NPRO
-!->>>    write(*,'(A2,I2,3I7)') 'PE',this, sub, NBBs(sub), NBBe(sub)
+!->>>  write(*,*) 'PE',this_proc, '#===================#' 
+!->>>  write(*,*) 'PE',this_proc, '# Check connections #' 
+!->>>  write(*,*) 'PE',this_proc, '#-------------------#' 
+!->>>  do sub=1,n_proc
+!->>>    write(*,'(A2,I2,3I7)') 'PE',this_proc, sub, NBBs(sub), NBBe(sub)
 !->>>  end do   ! through subdomains
 
   end subroutine BufLoa

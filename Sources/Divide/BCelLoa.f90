@@ -11,8 +11,8 @@
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
-  integer      :: c1, c2, n, s, dum1
-  character*80 :: dummy, nameIn
+  integer           :: c1, c2, n, s, dum_i
+  character(len=80) :: dum_s, name_in
 !======================================================================!
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
@@ -23,42 +23,42 @@
 !      copying and modifying      ! 
 !          GenSav.f90)            !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-  nameIn = name
-  nameIn(len_trim(name)+1:len_trim(name)+10) = '.faces.gmv'
-  write(*,*) '# Now reading the file:', nameIn
-  open(9, FILE=nameIn)
+  name_in = name
+  name_in(len_trim(name)+1:len_trim(name)+10) = '.faces.gmv'
+  write(*,*) '# Now reading the file:', name_in
+  open(9, FILE=name_in)
 
 !---------------!
 !     start     !
 !---------------!
-  read(9,'(A80)') dummy 
+  read(9,'(A80)') dum_s 
 
 !---------------!
 !     nodes     !
 !---------------!
-  read(9,'(A80)') dummy 
+  read(9,'(A80)') dum_s 
   do n=1,3*NN
-    read(9,'(A80)') dummy 
+    read(9,'(A80)') dum_s 
   end do  
 
 !----------------------!
 !     cell section     !
 !----------------------!
-  read(9,'(A80)') dummy 
+  read(9,'(A80)') dum_s 
   do s=1,NS
     c1 = SideC(1,s)
     c2 = SideC(2,s)
-    read(9,*) dummy, dum1
-    if(dummy == 'tri') then 
+    read(9,*) dum_s, dum_i
+    if(dum_s == 'tri') then 
       SideN(s,0) = 3
       read(9,*) &
         SideN(s,1), SideN(s,2), SideN(s,3)
-    else if(dummy == 'quad') then
+    else if(dum_s == 'quad') then
       SideN(s,0) = 4
       read(9,*) &
         SideN(s,1), SideN(s,2), SideN(s,3), SideN(s,4)  
     else
-      write(*,*) 'Unsupported cell-face type:', dummy
+      write(*,*) 'Unsupported cell-face type:', dum_s
       write(*,*) 'Exiting'
       stop
     end if
@@ -71,9 +71,9 @@
 !     read shadow file     !
 !                          !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-  call NamFil(0, nameIn, '.shadow.gmv', len_trim('.shadow.gmv'))
-  open(9, FILE=nameIn)
-  write(6, *) 'Now reading the file:', nameIn
+  call NamFil(0, name_in, '.shadow.gmv', len_trim('.shadow.gmv'))
+  open(9, FILE=name_in)
+  write(6, *) 'Now reading the file:', name_in
 
   do s=NS+1,NS+NSsh
     read(9,*) SideN(s,0)

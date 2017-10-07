@@ -44,7 +44,7 @@
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
   call NamFil(sub, namOut, '.gmv', len_trim('.gmv'))
   open(9, FILE=namOut)
-  if (this <2) then
+  if (this_proc <2) then
     write(*,*) 'Now reading the file: ', namOut
   end if
 !---------------!
@@ -116,7 +116,7 @@
   call NamFil(sub, namXML, '.vtu', len_trim('.vtu'))
 
   open(9, FILE=namXML)
-  if (this <2) then
+  if (this_proc <2) then
   write(6, *) 'Now writing the file:', namXML
   end if
 
@@ -368,8 +368,8 @@ call wait
 ! actually it writes it down also for sequential process but it's not
 ! necessary for paraview
 
-  if (Npro > 1) then
-    if(this < 2) then
+  if (n_proc > 1) then
+    if(this_proc < 2) then
     name = storename
     call NamFil(0, name, '.pvtu', len_trim('.pvtu'))
     open(112, FILE=name)
@@ -418,7 +418,7 @@ call wait
   write(112,*) '         <PDataArray type="Float32" NumberOfComponents="3"/>'
   write(112,*) '       </PPoints>'
   name = namAut
-  do i=1,NPro
+  do i=1,n_proc
     call NamFil(i, nameIn, '.vtu"/>', len_trim('.vtu"/>'))
     write(112,'(A)',advance="no") '<Piece Source="'
     write(112,'(A)') nameIn
@@ -427,7 +427,7 @@ call wait
   write(112,*) '</PUnstructuredGrid>'
   write(112,*) '</VTKFile>'
   close(112)
-  end if !(this <2)
+  end if !(this_proc <2)
 
   close(9)
   name = namTem

@@ -1,6 +1,6 @@
 !======================================================================!
-  subroutine CalcF22(var, PHI,             &
-                      dPHIdx, dPHIdy, dPHIdz)
+  subroutine CalcF22(var, phi,             &
+                      dphidx, dphidy, dphidz)
 !----------------------------------------------------------------------!
 ! Discretizes and solves eliptic relaxation equations for f22          !
 !----------------------------------------------------------------------!
@@ -14,14 +14,14 @@
   implicit none
 !-----------------------------[Parameters]-----------------------------!
   integer       :: var
-  TYPE(Unknown) :: PHI
-  real          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
+  type(Unknown) :: phi
+  real          :: dphidx(-NbC:NC), dphidy(-NbC:NC), dphidz(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
   integer :: s, c, c1, c2, niter, miter
   real    :: Fex, Fim 
   real    :: A0, A12, A21
   real    :: error
-  real    :: dPHIdxS, dPHIdyS, dPHIdzS
+  real    :: dphidxS, dphidyS, dphidzS
 !======================================================================! 
 !  The form of equations which are solved:
 !
@@ -59,12 +59,12 @@
 !----- old values (o and oo)
   if(ini == 1) then
     do c=1,NC
-      PHI % oo(c)  = PHI % o(c)
-      PHI % o (c)  = PHI % n(c)
-      PHI % Doo(c) = PHI % Do(c)
-      PHI % Do (c) = 0.0 
-      PHI % Xoo(c) = PHI % Xo(c)
-      PHI % Xo (c) = PHI % X(c) 
+      phi % oo(c)  = phi % o(c)
+      phi % o (c)  = phi % n(c)
+      phi % Doo(c) = phi % Do(c)
+      phi % Do (c) = 0.0 
+      phi % Xoo(c) = phi % Xo(c)
+      phi % Xo (c) = phi % X(c) 
     end do
   end if
 
@@ -75,7 +75,7 @@
 
 !----- new values
   do c=1,NC
-    PHI % X(c) = 0.0
+    phi % X(c) = 0.0
   end do
 
 !==================!
@@ -92,24 +92,24 @@
     c1=SideC(1,s)
     c2=SideC(2,s)   
 
-    dPHIdxS = fF(s)*dPHIdx(c1) + (1.0-fF(s))*dPHIdx(c2)
-    dPHIdyS = fF(s)*dPHIdy(c1) + (1.0-fF(s))*dPHIdy(c2)
-    dPHIdzS = fF(s)*dPHIdz(c1) + (1.0-fF(s))*dPHIdz(c2)
+    dphidxS = fF(s)*dphidx(c1) + (1.0-fF(s))*dphidx(c2)
+    dphidyS = fF(s)*dphidy(c1) + (1.0-fF(s))*dphidy(c2)
+    dphidzS = fF(s)*dphidz(c1) + (1.0-fF(s))*dphidz(c2)
 
 
 !---- total (exact) diffusive flux
-    Fex=( dPHIdxS*Sx(s) + dPHIdyS*Sy(s) + dPHIdzS*Sz(s) )
+    Fex=( dphidxS*Sx(s) + dphidyS*Sy(s) + dphidzS*Sz(s) )
 
     A0 =  Scoef(s)
 
 !---- implicit diffusive flux
-!.... this is a very crude approximation: Scoef is not
+!.... this_proc is a very crude approximation: Scoef is not
 !.... corrected at interface between materials
-    Fim=( dPHIdxS*Dx(s)                      &
-         +dPHIdyS*Dy(s)                      &
-         +dPHIdzS*Dz(s))*A0
+    Fim=( dphidxS*Dx(s)                      &
+         +dphidyS*Dy(s)                      &
+         +dphidzS*Dz(s))*A0
 
-!---- this is yet another crude approximation:
+!---- this_proc is yet another crude approximation:
 !.... A0 is calculated approximatelly
 !    if( StateMat(material(c1))==FLUID .and.  &  ! 2mat
 !        StateMat(material(c2))==SOLID        &  ! 2mat
@@ -122,19 +122,19 @@
 !---- straight diffusion part 
     if(ini == 1) then
       if(c2  > 0) then
-        PHI % Do(c1) = PHI % Do(c1) + (PHI % n(c2)-PHI % n(c1))*A0   
-        PHI % Do(c2) = PHI % Do(c2) - (PHI % n(c2)-PHI % n(c1))*A0    
+        phi % Do(c1) = phi % Do(c1) + (phi % n(c2)-phi % n(c1))*A0   
+        phi % Do(c2) = phi % Do(c2) - (phi % n(c2)-phi % n(c1))*A0    
       else
         if(TypeBC(c2) /= SYMMETRY) then
-          PHI % Do(c1) = PHI % Do(c1) + (PHI % n(c2)-PHI % n(c1))*A0   
+          phi % Do(c1) = phi % Do(c1) + (phi % n(c2)-phi % n(c1))*A0   
         end if 
       end if 
     end if
 
 !---- cross diffusion part
-    PHI % X(c1) = PHI % X(c1) + Fex - Fim 
+    phi % X(c1) = phi % X(c1) + Fex - Fim 
     if(c2  > 0) then
-      PHI % X(c2) = PHI % X(c2) - Fex + Fim 
+      phi % X(c2) = phi % X(c2) - Fex + Fim 
     end if 
 
 !----- calculate the coefficients for the sysytem matrix
@@ -163,7 +163,7 @@
         if( (TypeBC(c2) == INFLOW)) then                    
 !---------  (TypeBC(c2) == OUTFLOW) ) then   
           Aval(Adia(c1)) = Aval(Adia(c1)) + A12
-          b(c1) = b(c1) + A12 * PHI % n(c2)
+          b(c1) = b(c1) + A12 * phi % n(c2)
 
         else
 
@@ -174,7 +174,7 @@
 ! Source coefficient is filled in SourceF22.f90 in order to   !
 ! get updated values of f22 on the wall.                      !
 ! Othrwise f22 equation does not converge very well           !
-!          b(c1) = b(c1) + A12 * PHI % n(c2)                  !
+!          b(c1) = b(c1) + A12 * phi % n(c2)                  !
 !=============================================================!
         else if( TypeBC(c2) == BUFFER ) then  
           Aval(Adia(c1)) = Aval(Adia(c1)) + A12
@@ -193,14 +193,14 @@
 !----- Adams-Bashfort scheeme for diffusion fluxes
   if(DIFFUS == AB) then 
     do c=1,NC
-      b(c) = b(c) + 1.5 * PHI % Do(c) - 0.5 * PHI % Doo(c)
+      b(c) = b(c) + 1.5 * phi % Do(c) - 0.5 * phi % Doo(c)
     end do  
   end if
 
 !----- Crank-Nicholson scheme for difusive terms
   if(DIFFUS == CN) then 
     do c=1,NC
-      b(c) = b(c) + 0.5 * PHI % Do(c)
+      b(c) = b(c) + 0.5 * phi % Do(c)
     end do  
   end if
                  
@@ -210,21 +210,21 @@
 !----- Adams-Bashfort scheeme for cross diffusion 
   if(CROSS == AB) then
     do c=1,NC
-      b(c) = b(c) + 1.5 * PHI % Xo(c) - 0.5 * PHI % Xoo(c)
+      b(c) = b(c) + 1.5 * phi % Xo(c) - 0.5 * phi % Xoo(c)
     end do 
   end if
 
 !----- Crank-Nicholson scheme for cross difusive terms
   if(CROSS == CN) then
     do c=1,NC
-      b(c) = b(c) + 0.5 * PHI % X(c) + 0.5 * PHI % Xo(c)
+      b(c) = b(c) + 0.5 * phi % X(c) + 0.5 * phi % Xo(c)
     end do 
   end if
 
 !----- Fully implicit treatment for cross difusive terms
   if(CROSS == FI) then
     do c=1,NC
-      b(c) = b(c) + PHI % X(c)
+      b(c) = b(c) + phi % X(c)
     end do 
   end if
 
@@ -244,12 +244,12 @@
 
 !=====================================!
 !                                     !
-!     Solve the equations for PHI     !
+!     Solve the equations for phi     !
 !                                     !    
 !=====================================!
     do c=1,NC
-      b(c) = b(c) + Aval(Adia(c)) * (1.0-PHI % URF)*PHI % n(c) / PHI % URF
-      Aval(Adia(c)) = Aval(Adia(c)) / PHI % URF
+      b(c) = b(c) + Aval(Adia(c)) * (1.0-phi % URF)*phi % n(c) / phi % URF
+      Aval(Adia(c)) = Aval(Adia(c)) / phi % URF
     end do 
 
 
@@ -258,13 +258,13 @@
 
   niter=miter
   call cg(NC, Nbc, NONZERO, Aval,Acol,Arow,Adia,Abou,   &
-           PHI % n, b, PREC,                            &
-           niter,PHI % STol, res(var), error)
+           phi % n, b, PREC,                            &
+           niter,phi % STol, res(var), error)
 
   
-  if(this < 2) write(*,*) 'Var ', var, res(var), niter 
+  if(this_proc < 2) write(*,*) 'Var ', var, res(var), niter 
 
-  call Exchng(PHI % n)
+  call Exchng(phi % n)
 
   RETURN
 

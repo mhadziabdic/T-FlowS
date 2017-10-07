@@ -14,13 +14,14 @@
   logical :: IsTwin
   integer :: WchNod
 !-------------------------------[Locals]-------------------------------!
-  integer :: c, NCold, c1, c2, c3, c4, c5, c6
+  integer :: c, n_cells_old, c1, c2, c3, c4, c5, c6
   integer :: cr1, cr2, cr3, cr4, cr5, cr6, cr7, cr8
-  integer :: n, NNold, n1, n2, n3, n4, n5, n6, n7, n8
+  integer :: n, n_nodes_old, n1, n2, n3, n4, n5, n6, n7, n8
   integer :: n12,n13,n24,n34,n15,n26,n37,n48,n56,n57,n68,n78
   integer :: nF1, nF2, nF3, nF4, nF5, nF6, n0
   integer :: del   ! number of deleted nodes 
   integer :: nA, nA0, nA1, nA2, nB, nB0, nB1, nB2
+  integer :: NN2, NN4, NN8
 !======================================================================!
 !                                                                      !
 !                               c6      c3                             !
@@ -46,8 +47,8 @@
   write(*,*) 'Refine: Number of nodes: ', NN 
   write(*,*) '        Number of cells: ', NC 
 
-  NCold = NC 
-  NNold = NN
+  n_cells_old = NC 
+  n_nodes_old = NN
   NN2 = 0 
   NN4 = 0
   NN8 = 0
@@ -57,14 +58,14 @@
 !  Najprije pobroji nove celije  !
 !                                !
 !================================!
-  do c=1,NCold
+  do c=1,n_cells_old
     if(CelMar(c)  ==  -1) then 
       NC = NC + 8
       CelMar(c) = NC   ! now points to cr8
     end if
   end do
 
-  do c=1,NCold
+  do c=1,n_cells_old
 
     c1=CellC(c,1)
     c2=CellC(c,2)
@@ -272,9 +273,9 @@
       NodeN2(NN2,0) = n12
       NodeN2(NN2,1) = n1
       NodeN2(NN2,2) = n2
-      x(n12) = 0.5 * (x(n1)+x(n2))
-      y(n12) = 0.5 * (y(n1)+y(n2))
-      z(n12) = 0.5 * (z(n1)+z(n2))
+      x_node(n12) = 0.5 * (x_node(n1)+x_node(n2))
+      y_node(n12) = 0.5 * (y_node(n1)+y_node(n2))
+      z_node(n12) = 0.5 * (z_node(n1)+z_node(n2))
     end if 
 
 !--- n13 ---!
@@ -291,9 +292,9 @@
       NodeN2(NN2,0) = n13
       NodeN2(NN2,1) = n1
       NodeN2(NN2,2) = n3
-      x(n13) = 0.5 * (x(n1)+x(n3))
-      y(n13) = 0.5 * (y(n1)+y(n3))
-      z(n13) = 0.5 * (z(n1)+z(n3))
+      x_node(n13) = 0.5 * (x_node(n1)+x_node(n3))
+      y_node(n13) = 0.5 * (y_node(n1)+y_node(n3))
+      z_node(n13) = 0.5 * (z_node(n1)+z_node(n3))
     end if 
 
 !--- n24 ---!
@@ -310,9 +311,9 @@
       NodeN2(NN2,0) = n24
       NodeN2(NN2,1) = n2
       NodeN2(NN2,2) = n4
-      x(n24) = 0.5 * (x(n2)+x(n4))
-      y(n24) = 0.5 * (y(n2)+y(n4))
-      z(n24) = 0.5 * (z(n2)+z(n4))
+      x_node(n24) = 0.5 * (x_node(n2)+x_node(n4))
+      y_node(n24) = 0.5 * (y_node(n2)+y_node(n4))
+      z_node(n24) = 0.5 * (z_node(n2)+z_node(n4))
     end if 
 
 !--- n34 ---!
@@ -329,9 +330,9 @@
       NodeN2(NN2,0) = n34
       NodeN2(NN2,1) = n3
       NodeN2(NN2,2) = n4
-      x(n34) = 0.5 * (x(n3)+x(n4))
-      y(n34) = 0.5 * (y(n3)+y(n4))
-      z(n34) = 0.5 * (z(n3)+z(n4))
+      x_node(n34) = 0.5 * (x_node(n3)+x_node(n4))
+      y_node(n34) = 0.5 * (y_node(n3)+y_node(n4))
+      z_node(n34) = 0.5 * (z_node(n3)+z_node(n4))
     end if 
 
 !--- n15 ---!
@@ -348,9 +349,9 @@
       NodeN2(NN2,0) = n15
       NodeN2(NN2,1) = n1
       NodeN2(NN2,2) = n5
-      x(n15) = 0.5 * (x(n1)+x(n5))
-      y(n15) = 0.5 * (y(n1)+y(n5))
-      z(n15) = 0.5 * (z(n1)+z(n5))
+      x_node(n15) = 0.5 * (x_node(n1)+x_node(n5))
+      y_node(n15) = 0.5 * (y_node(n1)+y_node(n5))
+      z_node(n15) = 0.5 * (z_node(n1)+z_node(n5))
     end if 
 
 !--- n26 ---!
@@ -367,9 +368,9 @@
       NodeN2(NN2,0) = n26
       NodeN2(NN2,1) = n2
       NodeN2(NN2,2) = n6
-      x(n26) = 0.5 * (x(n2)+x(n6))
-      y(n26) = 0.5 * (y(n2)+y(n6))
-      z(n26) = 0.5 * (z(n2)+z(n6))
+      x_node(n26) = 0.5 * (x_node(n2)+x_node(n6))
+      y_node(n26) = 0.5 * (y_node(n2)+y_node(n6))
+      z_node(n26) = 0.5 * (z_node(n2)+z_node(n6))
     end if 
 
 !--- n37 ---!
@@ -386,9 +387,9 @@
       NodeN2(NN2,0) = n37
       NodeN2(NN2,1) = n3
       NodeN2(NN2,2) = n7
-      x(n37) = 0.5 * (x(n3)+x(n7))
-      y(n37) = 0.5 * (y(n3)+y(n7))
-      z(n37) = 0.5 * (z(n3)+z(n7))
+      x_node(n37) = 0.5 * (x_node(n3)+x_node(n7))
+      y_node(n37) = 0.5 * (y_node(n3)+y_node(n7))
+      z_node(n37) = 0.5 * (z_node(n3)+z_node(n7))
     end if 
 
 !--- n48 ---!
@@ -405,9 +406,9 @@
       NodeN2(NN2,0) = n48
       NodeN2(NN2,1) = n4
       NodeN2(NN2,2) = n8
-      x(n48) = 0.5 * (x(n4)+x(n8))
-      y(n48) = 0.5 * (y(n4)+y(n8))
-      z(n48) = 0.5 * (z(n4)+z(n8))
+      x_node(n48) = 0.5 * (x_node(n4)+x_node(n8))
+      y_node(n48) = 0.5 * (y_node(n4)+y_node(n8))
+      z_node(n48) = 0.5 * (z_node(n4)+z_node(n8))
     end if 
 
 !--- n56 ---!
@@ -424,9 +425,9 @@
       NodeN2(NN2,0) = n56
       NodeN2(NN2,1) = n5
       NodeN2(NN2,2) = n6
-      x(n56) = 0.5 * (x(n5)+x(n6))
-      y(n56) = 0.5 * (y(n5)+y(n6))
-      z(n56) = 0.5 * (z(n5)+z(n6))
+      x_node(n56) = 0.5 * (x_node(n5)+x_node(n6))
+      y_node(n56) = 0.5 * (y_node(n5)+y_node(n6))
+      z_node(n56) = 0.5 * (z_node(n5)+z_node(n6))
     end if 
 
 !--- n57 ---!
@@ -443,9 +444,9 @@
       NodeN2(NN2,0) = n57
       NodeN2(NN2,1) = n5
       NodeN2(NN2,2) = n7
-      x(n57) = 0.5 * (x(n5)+x(n7))
-      y(n57) = 0.5 * (y(n5)+y(n7))
-      z(n57) = 0.5 * (z(n5)+z(n7))
+      x_node(n57) = 0.5 * (x_node(n5)+x_node(n7))
+      y_node(n57) = 0.5 * (y_node(n5)+y_node(n7))
+      z_node(n57) = 0.5 * (z_node(n5)+z_node(n7))
     end if 
 
 !--- n68 ---!
@@ -462,9 +463,9 @@
       NodeN2(NN2,0) = n68
       NodeN2(NN2,1) = n6
       NodeN2(NN2,2) = n8
-      x(n68) = 0.5 * (x(n6)+x(n8))
-      y(n68) = 0.5 * (y(n6)+y(n8))
-      z(n68) = 0.5 * (z(n6)+z(n8))
+      x_node(n68) = 0.5 * (x_node(n6)+x_node(n8))
+      y_node(n68) = 0.5 * (y_node(n6)+y_node(n8))
+      z_node(n68) = 0.5 * (z_node(n6)+z_node(n8))
     end if 
 
 !--- n78 ---!
@@ -481,9 +482,9 @@
       NodeN2(NN2,0) = n78
       NodeN2(NN2,1) = n7
       NodeN2(NN2,2) = n8
-      x(n78) = 0.5 * (x(n7)+x(n8))
-      y(n78) = 0.5 * (y(n7)+y(n8))
-      z(n78) = 0.5 * (z(n7)+z(n8))
+      x_node(n78) = 0.5 * (x_node(n7)+x_node(n8))
+      y_node(n78) = 0.5 * (y_node(n7)+y_node(n8))
+      z_node(n78) = 0.5 * (z_node(n7)+z_node(n8))
     end if 
 
 !------------------------------------!
@@ -514,9 +515,9 @@
       NodeN4(NN4,2) = n2
       NodeN4(NN4,3) = n3
       NodeN4(NN4,4) = n4
-      x(nF1) = 0.25 * (x(n1)+x(n2)+x(n3)+x(n4))
-      y(nF1) = 0.25 * (y(n1)+y(n2)+y(n3)+y(n4))
-      z(nF1) = 0.25 * (z(n1)+z(n2)+z(n3)+z(n4))
+      x_node(nF1) = 0.25 * (x_node(n1)+x_node(n2)+x_node(n3)+x_node(n4))
+      y_node(nF1) = 0.25 * (y_node(n1)+y_node(n2)+y_node(n3)+y_node(n4))
+      z_node(nF1) = 0.25 * (z_node(n1)+z_node(n2)+z_node(n3)+z_node(n4))
     end if 
 
 !--- nF2 ---!
@@ -537,9 +538,9 @@
       NodeN4(NN4,2) = n2
       NodeN4(NN4,3) = n5
       NodeN4(NN4,4) = n6
-      x(nF2) = 0.25 * (x(n1)+x(n2)+x(n5)+x(n6))
-      y(nF2) = 0.25 * (y(n1)+y(n2)+y(n5)+y(n6))
-      z(nF2) = 0.25 * (z(n1)+z(n2)+z(n5)+z(n6))
+      x_node(nF2) = 0.25 * (x_node(n1)+x_node(n2)+x_node(n5)+x_node(n6))
+      y_node(nF2) = 0.25 * (y_node(n1)+y_node(n2)+y_node(n5)+y_node(n6))
+      z_node(nF2) = 0.25 * (z_node(n1)+z_node(n2)+z_node(n5)+z_node(n6))
     end if 
 
 !--- nF3 ---!
@@ -560,9 +561,9 @@
       NodeN4(NN4,2) = n4
       NodeN4(NN4,3) = n6
       NodeN4(NN4,4) = n8
-      x(nF3) = 0.25 * (x(n2)+x(n4)+x(n6)+x(n8))
-      y(nF3) = 0.25 * (y(n2)+y(n4)+y(n6)+y(n8))
-      z(nF3) = 0.25 * (z(n2)+z(n4)+z(n6)+z(n8))
+      x_node(nF3) = 0.25 * (x_node(n2)+x_node(n4)+x_node(n6)+x_node(n8))
+      y_node(nF3) = 0.25 * (y_node(n2)+y_node(n4)+y_node(n6)+y_node(n8))
+      z_node(nF3) = 0.25 * (z_node(n2)+z_node(n4)+z_node(n6)+z_node(n8))
     end if 
 
 !--- nF4 ---!
@@ -583,9 +584,9 @@
       NodeN4(NN4,2) = n4
       NodeN4(NN4,3) = n7
       NodeN4(NN4,4) = n8
-      x(nF4) = 0.25 * (x(n3)+x(n4)+x(n7)+x(n8))
-      y(nF4) = 0.25 * (y(n3)+y(n4)+y(n7)+y(n8))
-      z(nF4) = 0.25 * (z(n3)+z(n4)+z(n7)+z(n8))
+      x_node(nF4) = 0.25 * (x_node(n3)+x_node(n4)+x_node(n7)+x_node(n8))
+      y_node(nF4) = 0.25 * (y_node(n3)+y_node(n4)+y_node(n7)+y_node(n8))
+      z_node(nF4) = 0.25 * (z_node(n3)+z_node(n4)+z_node(n7)+z_node(n8))
     end if 
 
 !--- nF5 ---!
@@ -606,9 +607,9 @@
       NodeN4(NN4,2) = n3
       NodeN4(NN4,3) = n5
       NodeN4(NN4,4) = n7
-      x(nF5) = 0.25 * (x(n1)+x(n3)+x(n5)+x(n7))
-      y(nF5) = 0.25 * (y(n1)+y(n3)+y(n5)+y(n7))
-      z(nF5) = 0.25 * (z(n1)+z(n3)+z(n5)+z(n7))
+      x_node(nF5) = 0.25 * (x_node(n1)+x_node(n3)+x_node(n5)+x_node(n7))
+      y_node(nF5) = 0.25 * (y_node(n1)+y_node(n3)+y_node(n5)+y_node(n7))
+      z_node(nF5) = 0.25 * (z_node(n1)+z_node(n3)+z_node(n5)+z_node(n7))
     end if 
 
 !--- nF6 ---!
@@ -629,9 +630,9 @@
       NodeN4(NN4,2) = n6
       NodeN4(NN4,3) = n7
       NodeN4(NN4,4) = n8
-      x(nF6) = 0.25 * (x(n5)+x(n6)+x(n7)+x(n8))
-      y(nF6) = 0.25 * (y(n5)+y(n6)+y(n7)+y(n8))
-      z(nF6) = 0.25 * (z(n5)+z(n6)+z(n7)+z(n8))
+      x_node(nF6) = 0.25 * (x_node(n5)+x_node(n6)+x_node(n7)+x_node(n8))
+      y_node(nF6) = 0.25 * (y_node(n5)+y_node(n6)+y_node(n7)+y_node(n8))
+      z_node(nF6) = 0.25 * (z_node(n5)+z_node(n6)+z_node(n7)+z_node(n8))
     end if 
 
 !---------------------------------!
@@ -649,9 +650,12 @@
     NodeN8(NN8,6) = n6
     NodeN8(NN8,7) = n7
     NodeN8(NN8,8) = n8
-    x(n0) = 0.125*(x(n1)+x(n2)+x(n3)+x(n4)+x(n5)+x(n6)+x(n7)+x(n8))
-    y(n0) = 0.125*(y(n1)+y(n2)+y(n3)+y(n4)+y(n5)+y(n6)+y(n7)+y(n8))
-    z(n0) = 0.125*(z(n1)+z(n2)+z(n3)+z(n4)+z(n5)+z(n6)+z(n7)+z(n8))
+    x_node(n0) = 0.125*(x_node(n1)+x_node(n2)+x_node(n3)+x_node(n4)+  &
+                        x_node(n5)+x_node(n6)+x_node(n7)+x_node(n8))
+    y_node(n0) = 0.125*(y_node(n1)+y_node(n2)+y_node(n3)+y_node(n4)+  &
+                        y_node(n5)+y_node(n6)+y_node(n7)+y_node(n8))
+    z_node(n0) = 0.125*(z_node(n1)+z_node(n2)+z_node(n3)+z_node(n4)+  &
+                        z_node(n5)+z_node(n6)+z_node(n7)+z_node(n8))
 
 !-------------------------!
 !                         !

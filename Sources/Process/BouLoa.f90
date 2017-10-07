@@ -15,22 +15,22 @@
 !------------------------------[Calling]-------------------------------!
   real          :: Distance
 !-------------------------------[Locals]-------------------------------!
-  integer       :: c, n, dum1, NB, NP, Ninit, m, c1, c2, s 
-  character*80  :: namBou, namPro(128), dir
-  integer       :: typBou(128)
-  real          :: xyz(10024)
-  real          :: wi
-  real          :: x1(55555), x2(55555), Mres
-  logical       :: here
+  integer           :: c, n, dum1, NB, NP, Ninit, m, c1, c2, s 
+  character(len=80) :: name_bou, name_prof(128), dir
+  integer           :: typBou(128)
+  real              :: xyz(10024)
+  real              :: wi
+  real              :: x1(55555), x2(55555), Mres
+  logical           :: here
 !======================================================================!
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 !     Read the file with boundary conditions     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-  namBou = name
-  namBou(len_trim(name)+1:len_trim(name)+2) = '.b'
-  open(9, FILE=namBou)
-  if(this < 2) write(*,*) '# Now reading the file:', namBou
+  name_bou = name
+  name_bou(len_trim(name)+1:len_trim(name)+2) = '.b'
+  open(9, FILE=name_bou)
+  if(this_proc < 2) write(*,*) '# Now reading the file:', name_bou
 
 !---------------------!
 ! Phisical properties !
@@ -45,7 +45,7 @@
     else if( inp(ts(2):te(2))  ==  'SOLID') then 
       StateMat(n)=SOLID
     else 
-      if(this < 2) write(*,*) 'BouLoa: Unknown material state'
+      if(this_proc < 2) write(*,*) 'BouLoa: Unknown material state'
       stop  
     end if
     read(inp(ts(3):te(3)),*) VISc
@@ -80,11 +80,11 @@
     else if( inp(ts(2):te(2)) == 'PRESSURE') then 
       typBou(n)=PRESSURE
     else
-      if(this < 2) write(*,*) 'BouLoa: Unknown boundary condition type: ', inp(ts(2):te(2))
+      if(this_proc < 2) write(*,*) 'BouLoa: Unknown boundary condition type: ', inp(ts(2):te(2))
       stop  
     end if
     if( inp(ts(3):te(3))  ==  'FILE') then
-      read(inp(ts(4):te(4)),'(A80)') namPro(n)
+      read(inp(ts(4):te(4)),'(A80)') name_prof(n)
     else
       read(inp(ts(3):te(3)),*) U % bound(n)
       read(inp(ts(4):te(4)),*) V % bound(n)
@@ -147,7 +147,7 @@
             read(inp(ts(7):te(7)),*) VIS % bound(n)
           end if
         end if
-        namPro(n)=''
+        name_prof(n)=''
       else  
         if(HOT==YES) then 
           read(inp(ts(6):te(6)),*) T % bound(n)
@@ -205,7 +205,7 @@
             read(inp(ts(6):te(6)),*) VIS % bound(n)
           end if
         end if
-        namPro(n)=''
+        name_prof(n)=''
       end if
     end if
   end do      
@@ -216,7 +216,7 @@
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) Ninit
   if(Ninit > Nmat) then
-    if(this < 2) write(*,*) 'Warning: there are more initial conditions then materials'
+    if(this_proc < 2) write(*,*) 'Warning: there are more initial conditions then materials'
   end if
 
   do n=1,Ninit
@@ -302,18 +302,18 @@
   do n=1,NB
 
 !---- Boundary condition is given by a single constant
-    if(namPro(n) == '') then 
+    if(name_prof(n) == '') then 
       do c=-1,-NbC,-1
-	if(bcmark(c) == n) then
-	  TypeBC(c) = typBou(n)
+        if(bcmark(c) == n) then
+          TypeBC(c) = typBou(n)
 
 !===== if in_out is set to true, set boundary values,
 !===== otherwise, just the TypeBC remains set.
 
           if(in_out) then
-	    U % n(c) = U % bound(n) 
-	    V % n(c) = V % bound(n)
-	    W % n(c) = W % bound(n)
+            U % n(c) = U % bound(n) 
+            V % n(c) = V % bound(n)
+            W % n(c) = W % bound(n)
             P % n(c) = P % bound(n) 
             if(HOT == YES) then
               if(TypeBC(c).eq.WALLFL) then
@@ -351,17 +351,17 @@
               VIS % n(c)   = VIS % bound(n)
             end if
           end if
-	end if 
+        end if 
       end do
 !---- Boundary condition is prescribed in a file 
     else
-      open(9, FILE=namPro(n))
-      if(this < 2) write(*,*) '# Now reading the file:', namPro(n)
+      open(9, FILE=name_prof(n))
+      if(this_proc < 2) write(*,*) '# Now reading the file:', name_prof(n)
       call ReadC(9,inp,tn,ts,te)
       read(inp(ts(1):te(1)),*) NP                  ! number of points
 !      if(NP  > 1000) then
-!	if(this < 2) write(*,*) 'BouLoa: Too much points in a profile !'
-!	stop  
+!        if(this_proc < 2) write(*,*) 'BouLoa: Too much points in a profile !'
+!        stop  
 !      end if
       call ReadC(9,inp,tn,ts,te)
       read(inp(ts(1):te(1)),*) dir  ! direction
@@ -502,7 +502,7 @@
 !===== otherwise, just the TypeBC remains set.
 
           if(in_out) then
-	    do m=1,NP-1
+            do m=1,NP-1
               here = .FALSE. 
 !----- compute the weight factors
               if( (dir == 'X' .or. dir == 'x') .and.                  &
@@ -561,9 +561,9 @@
                   VIS % n(c) = wi*VIS % pro(m) + (1.-wi)*VIS % pro(m+1)
                 end if
               end if
-	    end do
+            end do
           end if  ! if(in_out)
-	end if 
+        end if 
       end do
       end if
       close(9)

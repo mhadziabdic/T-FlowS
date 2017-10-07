@@ -38,8 +38,8 @@
 
   WchNod=0
   write(*,*) 'Which node: Trouble, node not found !'
-  write(*,*) 'x,y,z = ', x(n), y(n), z(n)
-  write(*,*) 'cell  = ', c, level(c)
+  write(*,*) 'x, y, z = ', x_node(n), y_node(n), z_node(n)
+  write(*,*) 'cell    = ', c, level(c)
   return
 
 10   WchNod=i

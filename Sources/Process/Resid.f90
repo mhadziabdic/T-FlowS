@@ -29,7 +29,7 @@
     end do
   end do
 !      call exchange(x) 
-  do sub=1,Npro
+  do sub=1,n_proc
     if(NBBe(sub)  <=  NBBs(sub)) then
       do k=NBBs(sub),NBBe(sub),-1
         i=BufInd(k)

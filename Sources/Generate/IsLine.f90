@@ -16,8 +16,8 @@
 
   do l1=1,8
     do l2=1,8
-      if( (BlkPnt(b,l1) == n1) .and.                                &
-          (BlkPnt(b,l2) == n2) ) then
+      if( (block_points(b,l1) == n1) .and.                                &
+          (block_points(b,l2) == n2) ) then
            goto 1
       end if 
     end do

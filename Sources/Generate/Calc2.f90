@@ -11,19 +11,19 @@
 !-----------------------------[Parameters]-----------------------------!
   logical rrun     
 !------------------------------[Calling]-------------------------------!
-  real :: tetvol        
+  real :: Tetvol        
   real :: Distance       
   real :: Distance_Squared       
 !-------------------------------[Locals]-------------------------------!
   integer :: c, c1, c2, m, n, s, c_1, c_2
   integer :: WallMark
-  real    :: xt(4), yt(4), zt(4)
-  real    :: xTc, yTc, zTc       ! temporary cell coordinates 
+  real    :: local_x_node(4), local_y_node(4), local_z_node(4)
+  real    :: x_cell_tmp, y_cell_tmp, z_cell_tmp    
   real    :: xs2,ys2,zs2
   real    :: dsc1, dsc2          !  for the interpolation factors
   real    :: t, SurTot , maxdis
   real    :: xc1, yc1, zc1, xc2, yc2, zc2 
-  real    :: xmin, xmax, ymin, ymax, zmin, zmax
+  real    :: x_min, x_max, y_min, y_max, z_min, z_max
   integer :: f4n(6,4)
   integer :: f3n(4,3)
 !======================================================================!
@@ -79,24 +79,24 @@
 !----------------------------------------------------------------------!
 !   Generaly:
 !
-!   the equation of plane reads: A*x + B*y + C*z + D = 0
+!   the equation of plane reads: A*x_node + B*y_node + C*z_node + D = 0
 !
-!   and the equation of line:  x = x0 + t*rx
-!                              y = y0 + t*ry
-!                              z = z0 + t*rz
+!   and the equation of line:  x_node = x0 + t*rx
+!                              y_node = y0 + t*ry
+!                              z_node = z0 + t*rz
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !   In our case:
 !
 !     line is a connection between the two cell centers:
 !
-!     x = xc(c1) + t*(xc(c2)-xc(c1)) = xc(c1) + t*rx
-!     y = yc(c1) + t*(yc(c2)-yc(c1)) = yc(c1) + t*ry
-!     z = zc(c1) + t*(zc(c2)-zc(c1)) = zc(c1) + t*rz
+!     x_node = xc(c1) + t*(xc(c2)-xc(c1)) = xc(c1) + t*rx
+!     y_node = yc(c1) + t*(yc(c2)-yc(c1)) = yc(c1) + t*ry
+!     z_node = zc(c1) + t*(zc(c2)-zc(c1)) = zc(c1) + t*rz
 !    
 !
 !     plane is a cell face: 
 !
-!     Sx * x + Sy * y + Sz * z = Sx * xsp(s) + Sy * ysp(s) + Sz * zsp(s)
+!     Sx * x_node + Sy * y_node + Sz * z_node = Sx * xsp(s) + Sy * ysp(s) + Sz * zsp(s)
 !  
 !     and the intersection is at:
 !  
@@ -106,13 +106,13 @@
 !  
 !----------------------------------------------------------------------!
   data    f4n / 1, 1, 2, 4, 3, 5,                                   &
-		2, 5, 6, 8, 7, 7,                                   &
-		4, 6, 8, 7, 5, 8,                                   &
-		3, 2, 4, 3, 1, 6  /
+                2, 5, 6, 8, 7, 7,                                   &
+                4, 6, 8, 7, 5, 8,                                   &
+                3, 2, 4, 3, 1, 6  /
 
   data    f3n / 1,  1,  2,  3,                                      &
-		2,  4,  4,  4,                                      &
-		3,  2,  3,  1 /
+                2,  4,  4,  4,                                      &
+                3,  2,  3,  1 /
 
 !---- Without the following six lines, this procedure works for any grid
     do c=1,NC
@@ -125,7 +125,7 @@
 !++++++++++++++++++++++++++++++++++++!
 !     Calculate the cell centers     !
 !------------------------------------!
-!     => depends on: x,y,z           !
+!     => depends on: x_node,y_node,z_node           !
 !     <= gives:      xc,yc,zc c>0    !
 !++++++++++++++++++++++++++++++++++++!
     do c=1,NC
@@ -133,94 +133,118 @@
       yc(c)=0.0
       zc(c)=0.0
       do n=1,CellN(c,0)
-	xc(c) = xc(c) + x(CellN(c,n))/(1.0*CellN(c,0))
-	yc(c) = yc(c) + y(CellN(c,n))/(1.0*CellN(c,0))
-	zc(c) = zc(c) + z(CellN(c,n))/(1.0*CellN(c,0))
+        xc(c) = xc(c) + x_node(CellN(c,n))/(1.0*CellN(c,0))
+        yc(c) = yc(c) + y_node(CellN(c,n))/(1.0*CellN(c,0))
+        zc(c) = zc(c) + z_node(CellN(c,n))/(1.0*CellN(c,0))
       end do
     end do
 
 !++++++++++++++++++++++++++++++!
 !     Calculate delta          !
 !------------------------------!
-!     => depends on: x,y,z     !
+!     => depends on: x_node,y_node,z_node     !
 !     <= gives:      delta     !
 !++++++++++++++++++++++++++++++!
     do c=1,NC
       delta(c)=0.0
-      xmin = +HUGE   
-      ymin = +HUGE  
-      zmin = +HUGE  
-      xmax = -HUGE  
-      ymax = -HUGE  
-      zmax = -HUGE  
+      x_min = +HUGE   
+      y_min = +HUGE  
+      z_min = +HUGE  
+      x_max = -HUGE  
+      y_max = -HUGE  
+      z_max = -HUGE  
       do n=1,CellN(c,0)
-        xmin = min(xmin, x(CellN(c,n)))
-        ymin = min(ymin, y(CellN(c,n)))
-        zmin = min(zmin, z(CellN(c,n)))
-        xmax = max(xmax, x(CellN(c,n)))
-        ymax = max(ymax, y(CellN(c,n)))
-        zmax = max(zmax, z(CellN(c,n)))
+        x_min = min(x_min, x_node(CellN(c,n)))
+        y_min = min(y_min, y_node(CellN(c,n)))
+        z_min = min(z_min, z_node(CellN(c,n)))
+        x_max = max(x_max, x_node(CellN(c,n)))
+        y_max = max(y_max, y_node(CellN(c,n)))
+        z_max = max(z_max, z_node(CellN(c,n)))
       end do
-      delta(c) = xmax-xmin
-      delta(c) = max(delta(c), (ymax-ymin))
-      delta(c) = max(delta(c), (zmax-zmin))
+      delta(c) = x_max-x_min
+      delta(c) = max(delta(c), (y_max-y_min))
+      delta(c) = max(delta(c), (z_max-z_min))
     end do
 
 !+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
 !     Calculate:                                            ! 
 !        components of cell sides, cell side centers.       !
 !-----------------------------------------------------------!
-!     => depends on: x,y,z                                  !
+!     => depends on: x_node,y_node,z_node                   !
 !     <= gives:      Sx,Sy,Sz,xsp,yzp,zsp                   !
 !+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
     do s=1,NS
       do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-	xt(n)=x(SideN(s,n))
-	yt(n)=y(SideN(s,n))
-	zt(n)=z(SideN(s,n))
+        local_x_node(n)=x_node(SideN(s,n))
+        local_y_node(n)=y_node(SideN(s,n))
+        local_z_node(n)=z_node(SideN(s,n))
       end do                       
 
 !///// cell side components
 
       if( SideN(s,0)  ==  4 ) then
-	Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
-		      +(yt(3)-yt(2))*(zt(2)+zt(3))   &
-		      +(yt(4)-yt(3))*(zt(3)+zt(4))   &
-		      +(yt(1)-yt(4))*(zt(4)+zt(1)) )
-	Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
-		      +(zt(3)-zt(2))*(xt(2)+xt(3))   &
-		      +(zt(4)-zt(3))*(xt(3)+xt(4))   &
-		      +(zt(1)-zt(4))*(xt(4)+xt(1)) )
-	Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   & 
-		      +(xt(3)-xt(2))*(yt(2)+yt(3))   &
-		      +(xt(4)-xt(3))*(yt(3)+yt(4))   &
-		      +(xt(1)-xt(4))*(yt(4)+yt(1)) )
+        Sx(s)= 0.5 * (   (local_y_node(2)-local_y_node(1))  &
+                       * (local_z_node(2)+local_z_node(1))  &
+                       + (local_y_node(3)-local_y_node(2))  &
+                       * (local_z_node(2)+local_z_node(3))  &
+                       + (local_y_node(4)-local_y_node(3))  &
+                       * (local_z_node(3)+local_z_node(4))  &
+                       + (local_y_node(1)-local_y_node(4))  &
+                       * (local_z_node(4)+local_z_node(1)) )
+        Sy(s)= 0.5 * (   (local_z_node(2)-local_z_node(1))  &
+                       * (local_x_node(2)+local_x_node(1))  &
+                       + (local_z_node(3)-local_z_node(2))  &
+                       * (local_x_node(2)+local_x_node(3))  &
+                       + (local_z_node(4)-local_z_node(3))  &
+                       * (local_x_node(3)+local_x_node(4))  &
+                       + (local_z_node(1)-local_z_node(4))  &
+                       * (local_x_node(4)+local_x_node(1)) )
+        Sz(s)= 0.5 * (   (local_x_node(2)-local_x_node(1))  & 
+                       * (local_y_node(2)+local_y_node(1))  & 
+                       + (local_x_node(3)-local_x_node(2))  & 
+                       * (local_y_node(2)+local_y_node(3))  &
+                       + (local_x_node(4)-local_x_node(3))  & 
+                       * (local_y_node(3)+local_y_node(4))  &
+                       + (local_x_node(1)-local_x_node(4))  & 
+                       * (local_y_node(4)+local_y_node(1)) )
       else if( SideN(s,0)  ==  3 ) then 
-	Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
-		      +(yt(3)-yt(2))*(zt(2)+zt(3))   &
-		      +(yt(1)-yt(3))*(zt(3)+zt(1)) )
-	Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
-		      +(zt(3)-zt(2))*(xt(2)+xt(3))   & 
-		      +(zt(1)-zt(3))*(xt(3)+xt(1)) )
-	Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   &
-		      +(xt(3)-xt(2))*(yt(2)+yt(3))   & 
-		      +(xt(1)-xt(3))*(yt(3)+yt(1)) )
+        Sx(s)= 0.5 * (   (local_y_node(2)-local_y_node(1))  &
+                       * (local_z_node(2)+local_z_node(1))  & 
+                       + (local_y_node(3)-local_y_node(2))  &
+                       * (local_z_node(2)+local_z_node(3))  &
+                       + (local_y_node(1)-local_y_node(3))  &
+                       * (local_z_node(3)+local_z_node(1)) )
+        Sy(s)= 0.5 * (   (local_z_node(2)-local_z_node(1))  &
+                       * (local_x_node(2)+local_x_node(1))  &
+                       + (local_z_node(3)-local_z_node(2))  &
+                       * (local_x_node(2)+local_x_node(3))  & 
+                       + (local_z_node(1)-local_z_node(3))  &
+                       * (local_x_node(3)+local_x_node(1)) )
+        Sz(s)= 0.5 * (   (local_x_node(2)-local_x_node(1))  &
+                       * (local_y_node(2)+local_y_node(1))  &
+                       + (local_x_node(3)-local_x_node(2))  & 
+                       * (local_y_node(2)+local_y_node(3))  & 
+                       + (local_x_node(1)-local_x_node(3))  & 
+                       * (local_y_node(3)+local_y_node(1)) )
       else
-	write(*,*) 'calc2: something horrible has happened !'
-	stop
+        write(*,*) 'Calc2: something horrible has happened !'
+        stop
       end if
 
 !->>> write(*,'(3I5,3F8.4)') s,SideC(1,s),SideC(2,s),Sx(s),Sy(s),Sz(s)
 
 !---- barycenters
       if(SideN(s,0) == 4) then  
-	xsp(s) = (xt(1)+xt(2)+xt(3)+xt(4))/4.0
-	ysp(s) = (yt(1)+yt(2)+yt(3)+yt(4))/4.0
-	zsp(s) = (zt(1)+zt(2)+zt(3)+zt(4))/4.0
+        xsp(s) = (   local_x_node(1)+local_x_node(2)        &
+                   + local_x_node(3)+local_x_node(4) )/4.0
+        ysp(s) = (   local_y_node(1)+local_y_node(2)        &
+                   + local_y_node(3)+local_y_node(4) )/4.0
+        zsp(s) = (   local_z_node(1)+local_z_node(2)        &
+                   + local_z_node(3)+local_z_node(4) )/4.0
       else if(SideN(s,0) == 3) then  
-	xsp(s) = (xt(1)+xt(2)+xt(3))/3.0
-	ysp(s) = (yt(1)+yt(2)+yt(3))/3.0
-	zsp(s) = (zt(1)+zt(2)+zt(3))/3.0
+        xsp(s) = (local_x_node(1)+local_x_node(2)+local_x_node(3))/3.0
+        ysp(s) = (local_y_node(1)+local_y_node(2)+local_y_node(3))/3.0
+        zsp(s) = (local_z_node(1)+local_z_node(2)+local_z_node(3))/3.0
       end if 
 
     end do ! through sides
@@ -238,12 +262,12 @@
       SurTot = sqrt(Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))
 
       if(c2  < 0) then
-	t = (   Sx(s)*(xsp(s)-xc(c1))                               &
-	      + Sy(s)*(ysp(s)-yc(c1))                               &
-	      + Sz(s)*(zsp(s)-zc(c1)) ) / SurTot
-	xc(c2) = xc(c1) + Sx(s)*t / SurTot
-	yc(c2) = yc(c1) + Sy(s)*t / SurTot
-	zc(c2) = zc(c1) + Sz(s)*t / SurTot
+        t = (   Sx(s)*(xsp(s)-xc(c1))                               &
+              + Sy(s)*(ysp(s)-yc(c1))                               &
+              + Sz(s)*(zsp(s)-zc(c1)) ) / SurTot
+        xc(c2) = xc(c1) + Sx(s)*t / SurTot
+        yc(c2) = yc(c1) + Sy(s)*t / SurTot
+        zc(c2) = zc(c1) + Sz(s)*t / SurTot
       endif 
     end do ! through sides
 
@@ -274,92 +298,92 @@
       if(c2   >  0) then
 
 !----- scalar product of the side with line c1-c2 is good criteria
-	if( (Sx(s) * (xc(c2)-xc(c1) )+                              &
-	     Sy(s) * (yc(c2)-yc(c1) )+                              &
-	     Sz(s) * (zc(c2)-zc(c1) ))  < 0.0 ) then
+        if( (Sx(s) * (xc(c2)-xc(c1) )+                              &
+             Sy(s) * (yc(c2)-yc(c1) )+                              &
+             Sz(s) * (zc(c2)-zc(c1) ))  < 0.0 ) then
 
           NSsh = NSsh + 2
  
 !----- find the coordinates of ...
-	  m=SideCc(s,2)
+          m=SideCc(s,2)
 
-	  if(SideN(s,0) == 4) then   
+          if(SideN(s,0) == 4) then   
             !---- coordinates of the shadow face
-	    xs2=.25*(x(CellN(c2,f4n(m,1)))+x(CellN(c2,f4n(m,2)))+   &
-		     x(CellN(c2,f4n(m,3)))+x(CellN(c2,f4n(m,4))) )
-	    ys2=.25*(y(CellN(c2,f4n(m,1)))+y(CellN(c2,f4n(m,2)))+   &
-		     y(CellN(c2,f4n(m,3)))+y(CellN(c2,f4n(m,4))) )
-	    zs2=.25*(z(CellN(c2,f4n(m,1)))+z(CellN(c2,f4n(m,2)))+   &
-		     z(CellN(c2,f4n(m,3)))+z(CellN(c2,f4n(m,4))) )
+            xs2=.25*(x_node(CellN(c2,f4n(m,1)))+x_node(CellN(c2,f4n(m,2)))+   &
+                     x_node(CellN(c2,f4n(m,3)))+x_node(CellN(c2,f4n(m,4))) )
+            ys2=.25*(y_node(CellN(c2,f4n(m,1)))+y_node(CellN(c2,f4n(m,2)))+   &
+                     y_node(CellN(c2,f4n(m,3)))+y_node(CellN(c2,f4n(m,4))) )
+            zs2=.25*(z_node(CellN(c2,f4n(m,1)))+z_node(CellN(c2,f4n(m,2)))+   &
+                     z_node(CellN(c2,f4n(m,3)))+z_node(CellN(c2,f4n(m,4))) )
             !---- add shadow faces
-	    SideN(NS+NSsh-1,0) = 4
-	    SideC(1,NS+NSsh-1) = c1 
-	    SideC(2,NS+NSsh-1) = -NbC-1
-	    SideN(NS+NSsh-1,1) = SideN(s,1)
-	    SideN(NS+NSsh-1,2) = SideN(s,2)
-	    SideN(NS+NSsh-1,3) = SideN(s,3)
-	    SideN(NS+NSsh-1,4) = SideN(s,4)
+            SideN(NS+NSsh-1,0) = 4
+            SideC(1,NS+NSsh-1) = c1 
+            SideC(2,NS+NSsh-1) = -NbC-1
+            SideN(NS+NSsh-1,1) = SideN(s,1)
+            SideN(NS+NSsh-1,2) = SideN(s,2)
+            SideN(NS+NSsh-1,3) = SideN(s,3)
+            SideN(NS+NSsh-1,4) = SideN(s,4)
             Sx(NS+NSsh-1) = Sx(s)
             Sy(NS+NSsh-1) = Sy(s)
             Sz(NS+NSsh-1) = Sz(s)
             xsp(NS+NSsh-1) = xsp(s)
             ysp(NS+NSsh-1) = ysp(s)
             zsp(NS+NSsh-1) = zsp(s)
-	    SideN(NS+NSsh,0) = 4
-	    SideC(1,NS+NSsh) = c2 
-	    SideC(2,NS+NSsh) = -NbC-1
-	    SideN(NS+NSsh,1) = CellN(c2,f4n(m,1)) 
-	    SideN(NS+NSsh,2) = CellN(c2,f4n(m,2))
-	    SideN(NS+NSsh,3) = CellN(c2,f4n(m,3))
-	    SideN(NS+NSsh,4) = CellN(c2,f4n(m,4))
+            SideN(NS+NSsh,0) = 4
+            SideC(1,NS+NSsh) = c2 
+            SideC(2,NS+NSsh) = -NbC-1
+            SideN(NS+NSsh,1) = CellN(c2,f4n(m,1)) 
+            SideN(NS+NSsh,2) = CellN(c2,f4n(m,2))
+            SideN(NS+NSsh,3) = CellN(c2,f4n(m,3))
+            SideN(NS+NSsh,4) = CellN(c2,f4n(m,4))
             Sx(NS+NSsh) = Sx(s)
             Sy(NS+NSsh) = Sy(s)
             Sz(NS+NSsh) = Sz(s)
             xsp(NS+NSsh) = xs2
             ysp(NS+NSsh) = ys2
             zsp(NS+NSsh) = zs2
- 	  else if(SideN(s,0) == 3) then  
+           else if(SideN(s,0) == 3) then  
             !---- coordinates of the shadow face
-	    xs2=.33333333 * (x(CellN(c2,f3n(m,1)))+                 &
-		     x(CellN(c2,f3n(m,2)))+x(CellN(c2,f3n(m,3))) )
-	    ys2=.33333333 * (y(CellN(c2,f4n(m,1)))+                 &
-		     y(CellN(c2,f3n(m,2)))+y(CellN(c2,f3n(m,3))) )
-	    zs2=.33333333 * (z(CellN(c2,f4n(m,1)))+                 &
-		     z(CellN(c2,f3n(m,2)))+z(CellN(c2,f3n(m,3))) )
+            xs2=.33333333 * (x_node(CellN(c2,f3n(m,1)))+                 &
+                     x_node(CellN(c2,f3n(m,2)))+x_node(CellN(c2,f3n(m,3))) )
+            ys2=.33333333 * (y_node(CellN(c2,f4n(m,1)))+                 &
+                     y_node(CellN(c2,f3n(m,2)))+y_node(CellN(c2,f3n(m,3))) )
+            zs2=.33333333 * (z_node(CellN(c2,f4n(m,1)))+                 &
+                     z_node(CellN(c2,f3n(m,2)))+z_node(CellN(c2,f3n(m,3))) )
             !---- add shadow faces
-	    SideN(NS+NSsh-1,0) = 3
-	    SideC(1,NS+NSsh-1) = c1 
-	    SideC(2,NS+NSsh-1) = -NbC-1
-	    SideN(NS+NSsh-1,1) = SideN(s,1)
-	    SideN(NS+NSsh-1,2) = SideN(s,2)
-	    SideN(NS+NSsh-1,3) = SideN(s,3)
+            SideN(NS+NSsh-1,0) = 3
+            SideC(1,NS+NSsh-1) = c1 
+            SideC(2,NS+NSsh-1) = -NbC-1
+            SideN(NS+NSsh-1,1) = SideN(s,1)
+            SideN(NS+NSsh-1,2) = SideN(s,2)
+            SideN(NS+NSsh-1,3) = SideN(s,3)
             Sx(NS+NSsh-1) = Sx(s)
             Sy(NS+NSsh-1) = Sy(s)
             Sz(NS+NSsh-1) = Sz(s)
             xsp(NS+NSsh-1) = xsp(s)
             ysp(NS+NSsh-1) = ysp(s)
             zsp(NS+NSsh-1) = zsp(s)
-	    SideN(NS+NSsh,0) = 3
-	    SideC(1,NS+NSsh) = c2 
-	    SideC(2,NS+NSsh) = -NbC-1
-	    SideN(NS+NSsh,1) = CellN(c2,f3n(m,1)) 
-	    SideN(NS+NSsh,2) = CellN(c2,f3n(m,2))
-	    SideN(NS+NSsh,3) = CellN(c2,f3n(m,3))
+            SideN(NS+NSsh,0) = 3
+            SideC(1,NS+NSsh) = c2 
+            SideC(2,NS+NSsh) = -NbC-1
+            SideN(NS+NSsh,1) = CellN(c2,f3n(m,1)) 
+            SideN(NS+NSsh,2) = CellN(c2,f3n(m,2))
+            SideN(NS+NSsh,3) = CellN(c2,f3n(m,3))
             Sx(NS+NSsh) = Sx(s)
             Sy(NS+NSsh) = Sy(s)
             Sz(NS+NSsh) = Sz(s)
             xsp(NS+NSsh) = xs2
             ysp(NS+NSsh) = ys2
             zsp(NS+NSsh) = zs2
-	  end if 
+          end if 
 
-	  Dx(s)=xsp(s)-xs2  !------------------------!
-	  Dy(s)=ysp(s)-ys2  ! later: xc2 = xc2 + Dx  !
-	  Dz(s)=zsp(s)-zs2  !------------------------!
+          Dx(s)=xsp(s)-xs2  !------------------------!
+          Dy(s)=ysp(s)-ys2  ! later: xc2 = xc2 + Dx  !
+          Dz(s)=zsp(s)-zs2  !------------------------!
 
 !->>>      write(6,'(2I5,A12,3F12.6)') s,' Dx,Dy,Dz= ', 
 !->>>     >           Dx(s),Dy(s),Dz(s)
-	endif !  S*(c2-c1) < 0.0
+        endif !  S*(c2-c1) < 0.0
       end if  !  c2 > 0
     end do    !  sides  
     write(*,*) 'Number of shadow faces: ', NSsh
@@ -383,48 +407,68 @@
     c2=SideC(2,s)   
 
     do n=1,SideN(s,0)      ! for quadrilateral an triangular faces
-      xt(n)=x(SideN(s,n))
-      yt(n)=y(SideN(s,n))
-      zt(n)=z(SideN(s,n))
+      local_x_node(n)=x_node(SideN(s,n))
+      local_y_node(n)=y_node(SideN(s,n))
+      local_z_node(n)=z_node(SideN(s,n))
     end do   
 
 !----- first cell
-    xTc=xc(c1)
-    yTc=yc(c1)
-    zTc=zc(c1)
-    dsc1=Distance(xTc,yTc,zTc,xsp(s), ysp(s), zsp(s)) 
+    x_cell_tmp=xc(c1)
+    y_cell_tmp=yc(c1)
+    z_cell_tmp=zc(c1)
+    dsc1=Distance(x_cell_tmp,y_cell_tmp,z_cell_tmp,xsp(s), ysp(s), zsp(s)) 
     volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),            &
-	       xt(1),yt(1),zt(1),xt(2),yt(2),zt(2),xTc,yTc,zTc)
+               local_x_node(1),local_y_node(1),local_z_node(1),     &
+               local_x_node(2),local_y_node(2),local_z_node(2),     &
+               x_cell_tmp,y_cell_tmp,z_cell_tmp)
     volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),            &
-	       xt(2),yt(2),zt(2),xt(3),yt(3),zt(3),xTc,yTc,zTc)
+               local_x_node(2),local_y_node(2),local_z_node(2),     &
+               local_x_node(3),local_y_node(3),local_z_node(3),     &
+               x_cell_tmp,y_cell_tmp,z_cell_tmp)
     if(SideN(s,0) == 4) then
       volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),          &
-		 xt(3),yt(3),zt(3),xt(4),yt(4),zt(4),xTc,yTc,zTc)
+                 local_x_node(3),local_y_node(3),local_z_node(3),   &
+                 local_x_node(4),local_y_node(4),local_z_node(4),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
       volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),          &
-		 xt(4),yt(4),zt(4),xt(1),yt(1),zt(1),xTc,yTc,zTc)
+                 local_x_node(4),local_y_node(4),local_z_node(4),   &
+                 local_x_node(1),local_y_node(1),local_z_node(1),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
     else if(SideN(s,0) == 3) then
       volume(c1)=volume(c1) + tetvol(xsp(s),ysp(s),zsp(s),          &
-		 xt(3),yt(3),zt(3),xt(1),yt(1),zt(1),xTc,yTc,zTc)
+                 local_x_node(3),local_y_node(3),local_z_node(3),   &
+                 local_x_node(1),local_y_node(1),local_z_node(1),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
     end if
 
 !----- second cell
     if(c2  > 0) then
-      xTc=xc(c2)+Dx(s)
-      yTc=yc(c2)+Dy(s)
-      zTc=zc(c2)+Dz(s)
-      dsc2=Distance(xTc,yTc,zTc,xsp(s), ysp(s), zsp(s)) 
+      x_cell_tmp=xc(c2)+Dx(s)
+      y_cell_tmp=yc(c2)+Dy(s)
+      z_cell_tmp=zc(c2)+Dz(s)
+      dsc2=Distance(x_cell_tmp,y_cell_tmp,z_cell_tmp,xsp(s), ysp(s), zsp(s)) 
       volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),           &
-		 xt(1),yt(1),zt(1),xt(2),yt(2),zt(2),xTc,yTc,zTc)
+                 local_x_node(1),local_y_node(1),local_z_node(1),   &
+                 local_x_node(2),local_y_node(2),local_z_node(2),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
       volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),           &
-		 xt(2),yt(2),zt(2),xt(3),yt(3),zt(3),xTc,yTc,zTc)
+                 local_x_node(2),local_y_node(2),local_z_node(2),   &
+                 local_x_node(3),local_y_node(3),local_z_node(3),   &
+                 x_cell_tmp,y_cell_tmp,z_cell_tmp)
       if(SideN(s,0) == 4) then
-	volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),         &
-		   xt(3),yt(3),zt(3),xt(4),yt(4),zt(4),xTc,yTc,zTc)
-	volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),         &
-		   xt(4),yt(4),zt(4),xt(1),yt(1),zt(1),xTc,yTc,zTc)
+        volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),         &
+                   local_x_node(3),local_y_node(3),local_z_node(3), &
+                   local_x_node(4),local_y_node(4),local_z_node(4), &
+                   x_cell_tmp,y_cell_tmp,z_cell_tmp)
+        volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),         &
+                   local_x_node(4),local_y_node(4),local_z_node(4), &
+                   local_x_node(1),local_y_node(1),local_z_node(1), &
+                   x_cell_tmp,y_cell_tmp,z_cell_tmp)
       else if(SideN(s,0) == 3) then
-	volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),         &
-		   xt(3),yt(3),zt(3),xt(1),yt(1),zt(1),xTc,yTc,zTc)
+        volume(c2)=volume(c2) -tetvol(xsp(s),ysp(s),zsp(s),         &
+                   local_x_node(3),local_y_node(3),local_z_node(3), &
+                   local_x_node(1),local_y_node(1),local_z_node(1), &
+                   x_cell_tmp,y_cell_tmp,z_cell_tmp)
       end if  
     else        
       dsc2=0.0
@@ -497,7 +541,7 @@
     c2=SideC(2,s)
     if(c2 < 0 .or. material(c1) /= material(c2)) then 
       do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-	walln(SideN(s,n)) = 0.0
+        walln(SideN(s,n)) = 0.0
       end do
     end if
   end do 
@@ -509,7 +553,7 @@
 
   do n=1,NN
     walln(n)=walln(n)/maxdis
-!->>>	write(*,*) walln(n)
+!->>>        write(*,*) walln(n)
   end do
 
 !++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!

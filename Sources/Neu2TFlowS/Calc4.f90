@@ -91,24 +91,24 @@
 !----------------------------------------------------------------------!
 !   Generaly:
 !
-!   the equation of plane reads: A*x + B*y + C*z + D = 0
+!   the equation of plane reads: A*x_node + B*y_node + C*z_node + D = 0
 !
-!   and the equation of line:  x = x0 + t*rx
-!                              y = y0 + t*ry
-!                              z = z0 + t*rz
+!   and the equation of line:  x_node = x0 + t*rx
+!                              y_node = y0 + t*ry
+!                              z_node = z0 + t*rz
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !   In our case:
 !
 !     line is a connection between the two cell centers:
 !
-!     x = xc(c1) + t*(xc(c2)-xc(c1)) = xc(c1) + t*rx
-!     y = yc(c1) + t*(yc(c2)-yc(c1)) = yc(c1) + t*ry
-!     z = zc(c1) + t*(zc(c2)-zc(c1)) = zc(c1) + t*rz
+!     x_node = xc(c1) + t*(xc(c2)-xc(c1)) = xc(c1) + t*rx
+!     y_node = yc(c1) + t*(yc(c2)-yc(c1)) = yc(c1) + t*ry
+!     z_node = zc(c1) + t*(zc(c2)-zc(c1)) = zc(c1) + t*rz
 !    
 !
 !     plane is a cell face: 
 !
-!     Sx * x + Sy * y + Sz * z = Sx * xsp(s) + Sy * ysp(s) + Sz * zsp(s)
+!     Sx * x_node + Sy * y_node + Sz * z_node = Sx * xsp(s) + Sy * ysp(s) + Sz * zsp(s)
 !  
 !     and the intersection is at:
 !  
@@ -121,7 +121,7 @@
 !++++++++++++++++++++++++++++++++++++!
 !     Calculate the cell centers     !
 !------------------------------------!
-!     => depends on: x,y,z           !
+!     => depends on: x_node,y_node,z_node           !
 !     <= gives:      xc,yc,zc c>0    !
 !++++++++++++++++++++++++++++++++++++!
     allocate(xc(-NbC:NC)); xc=0.0
@@ -131,9 +131,9 @@
 
     do c=1,NC
       do n=1,CellN(c,0)
-        xc(c) = xc(c) + x(CellN(c,n))/(1.0*CellN(c,0))
-        yc(c) = yc(c) + y(CellN(c,n))/(1.0*CellN(c,0))
-        zc(c) = zc(c) + z(CellN(c,n))/(1.0*CellN(c,0))
+        xc(c) = xc(c) + x_node(CellN(c,n))/(1.0*CellN(c,0))
+        yc(c) = yc(c) + y_node(CellN(c,n))/(1.0*CellN(c,0))
+        zc(c) = zc(c) + z_node(CellN(c,n))/(1.0*CellN(c,0))
       end do
     end do
 
@@ -143,7 +143,7 @@
 !     Calculate:                                            ! 
 !        components of cell sides, cell side centers.       !
 !-----------------------------------------------------------!
-!     => depends on: x,y,z                                  !
+!     => depends on: x_node,y_node,z_node                                  !
 !     <= gives:      Sx,Sy,Sz,xsp,yzp,zsp                   !
 !+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
     allocate(Sx(NS+max(NC,NBC))); Sx=0.0
@@ -158,9 +158,9 @@
 
     do s=1,NS
       do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-        xt(n)=x(SideN(s,n))
-        yt(n)=y(SideN(s,n))
-        zt(n)=z(SideN(s,n))
+        xt(n)=x_node(SideN(s,n))
+        yt(n)=y_node(SideN(s,n))
+        zt(n)=z_node(SideN(s,n))
       end do                       
 
 !///// cell side components
@@ -310,13 +310,13 @@
 
   if(OPT == 2) then
 
-    write(*,*) 'Insert the periodic direction (1 -> x, 2 -> y, 3 -> z)'
+    write(*,*) 'Insert the periodic direction (1 -> x_node, 2 -> y_node, 3 -> z_node)'
     read(*,*) dir 
     write(*,*) 
     write(*,*) 'Enter the angle for the rotation of the coordiante system (in degree)'
-    write(*,*) 'and the axes of rotation (1 -> x, 2 -> y, 3 -> z)'
+    write(*,*) 'and the axes of rotation (1 -> x_node, 2 -> y_node, 3 -> z_node)'
     write(*,*) 
-    write(*,*) '(if the periodic direction is not parallel to the Caresian axis (x, y and z),'
+    write(*,*) '(if the periodic direction is not parallel to the Caresian axis (x_node, y_node and z_node),'
     write(*,*) 'the coordinate system has to be rotated (in 2D))'
     read(*,*) angle, rot_dir 
 
@@ -805,7 +805,7 @@
 !++++++++++++++++++++++++++++++!
 !     Calculate delta          !
 !------------------------------!
-!     => depends on: x,y,z     !
+!     => depends on: x_node,y_node,z_node     !
 !     <= gives:      delta     !
 !++++++++++++++++++++++++++++++!
     allocate(delta(-NbC:NC));  delta=0.0
@@ -819,12 +819,12 @@
       ymax = -HUGE
       zmax = -HUGE
       do n=1,CellN(c,0)
-        xmin = min(xmin, x(CellN(c,n)))
-        ymin = min(ymin, y(CellN(c,n)))
-        zmin = min(zmin, z(CellN(c,n)))
-        xmax = max(xmax, x(CellN(c,n)))
-        ymax = max(ymax, y(CellN(c,n)))
-        zmax = max(zmax, z(CellN(c,n)))
+        xmin = min(xmin, x_node(CellN(c,n)))
+        ymin = min(ymin, y_node(CellN(c,n)))
+        zmin = min(zmin, z_node(CellN(c,n)))
+        xmax = max(xmax, x_node(CellN(c,n)))
+        ymax = max(ymax, y_node(CellN(c,n)))
+        zmax = max(zmax, z_node(CellN(c,n)))
       end do
       delta(c) = xmax-xmin
       delta(c) = max(delta(c), (ymax-ymin))

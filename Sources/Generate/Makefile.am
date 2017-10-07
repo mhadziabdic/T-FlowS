@@ -10,7 +10,6 @@ Generate_SOURCES =	 	\
   Fuzion.f90			\
   Generator.f90			\
   GenLoa.f90			\
-  IniGen.f90			\
   IsLine.f90			\
   IsTwin.f90			\
   Laplac.f90			\

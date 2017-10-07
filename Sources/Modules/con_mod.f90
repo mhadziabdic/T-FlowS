@@ -6,7 +6,7 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-MODULE con_mod
+module con_mod
 
   implicit none
 
@@ -14,4 +14,4 @@ MODULE con_mod
 
   integer   :: NN_1, NN_2, NC1, NC2, NS1, NS2, NbC1, NbC2, NSsh1, NSsh2
 
-end MODULE
+end module

@@ -41,7 +41,7 @@
   
   call IGlSum(NumBad)
 
-  if(THIS < 2) write(*,*) '# There are ', NumBad, &
+  if(this_proc < 2) write(*,*) '# There are ', NumBad, &
                           ' bad cells for gradients.'
 
   end subroutine FindBad

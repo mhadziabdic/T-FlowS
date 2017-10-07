@@ -7,25 +7,25 @@
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 
-MODULE rans_mod
+module rans_mod
 
   use allp_mod
 
   implicit none
 
 !----- Turbulence models variables
-  TYPE(Unknown) :: KIN
-  TYPE(Unknown) :: EPS
-  TYPE(Unknown) :: V_2
-  TYPE(Unknown) :: F22
-  TYPE(Unknown) :: VIS
+  type(Unknown) :: KIN
+  type(Unknown) :: EPS
+  type(Unknown) :: V_2
+  type(Unknown) :: F22
+  type(Unknown) :: VIS
 
-  TYPE(Unknown) :: uu
-  TYPE(Unknown) :: vv
-  TYPE(Unknown) :: ww
-  TYPE(Unknown) :: uv
-  TYPE(Unknown) :: uw
-  TYPE(Unknown) :: vw
+  type(Unknown) :: uu
+  type(Unknown) :: vv
+  type(Unknown) :: ww
+  type(Unknown) :: uv
+  type(Unknown) :: uw
+  type(Unknown) :: vw
  
 !----- Constants for the k-eps model:
   real :: Ce1, Ce2, Ce3, Cmu, Cmu25, Cmu75, kappa, Elog, Zo
@@ -97,4 +97,5 @@ MODULE rans_mod
   real,allocatable :: uv_star(:)
   real,allocatable :: uw_star(:)
   real,allocatable :: vw_star(:)
-end MODULE 
+
+end module 

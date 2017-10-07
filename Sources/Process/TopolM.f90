@@ -26,7 +26,7 @@
 !                                                                    !
 !====================================================================!
 
-  if(this < 2) write(*,*) '# Determining the topology of the system matrix.'
+  if(this_proc < 2) write(*,*) '# Determining the topology of the system matrix.'
 
 !---- 
   do s=1,NS
@@ -89,7 +89,7 @@
     end if
   end do
 
-  if(this < 2) write(*,*) '# Finished !'
+  if(this_proc < 2) write(*,*) '# Finished !'
  
   deallocate(stencw)
 

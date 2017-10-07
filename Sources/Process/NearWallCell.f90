@@ -22,7 +22,7 @@
 ! ~~~~~~~~ on the nearest_cell wall. This is needed for calculation y+  
 !--------------------------------------------------------------------------------!
 
-  if(this  < 2)                                                     &
+  if(this_proc  < 2)                                                     &
   write(*,*) '# Now searching for corresponding wall cells!'
 
   nearest_cell = 0
@@ -42,7 +42,7 @@
     near(c) = nearest_cell 
   end do
 
-  if(this < 2) write(*,*) '# Searching finished'
+  if(this_proc < 2) write(*,*) '# Searching finished'
 
   end subroutine NearWallCell
 

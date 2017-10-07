@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine Exchng(PHI) 
+  subroutine Exchng(phi) 
 !----------------------------------------------------------------------!
 !   Exchanges the values between the processors.                       !
 !----------------------------------------------------------------------!
@@ -12,34 +12,34 @@
 !------------------------------[Include]-------------------------------!
   include 'mpif.h'
 !-----------------------------[Parameters]-----------------------------!
-  real    :: PHI(-NbC:NC)
+  real    :: phi(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
   integer :: c1, c2, sub, rtag, stag, length, error
   integer :: status(MPI_STATUS_SIZE)
 !======================================================================!
 
 !///// fill the buffers with new values
-  do sub=1,NPro
+  do sub=1,n_proc
     if( NBBe(sub)  <=  NBBs(sub) ) then  
       do c2=NBBs(sub),NBBe(sub),-1
         c1 = BufInd(c2)
-        PHI(c2) = PHI(c1)
+        phi(c2) = phi(c1)
       end do
     end if
   end do   
 
 !///// exchange the values
-  do sub=1,NPro
+  do sub=1,n_proc
     if( NBBe(sub)  <=  NBBs(sub) ) then  
 
       length = NBBs(sub) - NBBe(sub) + 1
-      stag = MAXPRO*this + sub    ! tag for sending
-      rtag = MAXPRO*sub + this    ! tag for receivinging
+      stag = (n_proc)*this_proc + sub    ! tag for sending
+      rtag = (n_proc)*sub + this_proc    ! tag for receivinging
 
 !===============================================
       call MPI_SENDRECV_REPLACE & 
 !-------------------------------------+---------
-             (PHI(NBBe(sub)),   & ! buffer  
+             (phi(NBBe(sub)),   & ! buffer  
               length,           & ! length   
               MPI_REAL,         & ! datatype  
 !-------------------------------------+---------

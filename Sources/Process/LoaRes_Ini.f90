@@ -7,24 +7,24 @@
   use all_mod
   use pro_mod
   use les_mod
-  use par_mod, only: this
+  use par_mod, only: this_proc
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Parameters]-----------------------------!
 !-------------------------------[Locals]-------------------------------!
-  integer   :: c, s, m
-  integer   :: i_1, i_2, i_3, i_4, i_5, i_6
-  character :: nameIn*80, answer*80
-  real      :: version
-  real      :: r_1, r_2, r_3, r_4, r_5, r_6
+  integer           :: c, s, m
+  integer           :: i_1, i_2, i_3, i_4, i_5, i_6
+  character(len=80) :: name_in, answer
+  real              :: version
+  real              :: r_1, r_2, r_3, r_4, r_5, r_6
 !======================================================================!
 
-  if(this  < 2) &              
+  if(this_proc  < 2) &              
     write(*,*) '# Input intial restart file name [write skip to continue]:'
   call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)), '(A80)')  nameIn
-  answer=nameIn
+  read(inp(ts(1):te(1)), '(A80)')  name_in
+  answer=name_in
   call ToUppr(answer) 
 
   if(answer == 'SKIP') then
@@ -32,7 +32,7 @@
   end if
 
 !----- Initiated field from previous computation 
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# Initialization of fields from previous computation: '
     write(*,*) '# DNS      -> Direct Numerical Simulation'
     write(*,*) '# LES      -> Large Eddy Simulation'
@@ -71,7 +71,7 @@
   else if(answer == 'SKIP') then
     RES_INI = 1000 
   else
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                              cmn_line_count, ' Got a: ', answer
     endif
@@ -80,14 +80,14 @@
 
 !---- save the name
   answer = name
-  name = nameIn
+  name = name_in
 
 !---------------------------!
 !     Read restart file     !
 !---------------------------!
-  call NamFil(this, nameIn, '.restart', len_trim('.restart') )
-  open(9, FILE=nameIn, FORM='UNFORMATTED')
-  write(6, *) '# Now reading the file:', nameIn
+  call NamFil(this_proc, name_in, '.restart', len_trim('.restart') )
+  open(9, FILE=name_in, FORM='UNFORMATTED')
+  write(6, *) '# Now reading the file:', name_in
 
 !---- version
   read(9) version ! version

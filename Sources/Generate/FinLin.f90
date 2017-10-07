@@ -17,11 +17,11 @@
   do b=1,Nbloc
     do l1=1,8
       do l2=1,8
-        if( (BlkPnt(b,l1) == n1) .and. &
-            (BlkPnt(b,l2) == n2) ) then
-          if( iabs(l2-l1) == 1 ) res=BlkRes(b,1) 
-          if( iabs(l2-l1) == 2 ) res=BlkRes(b,2) 
-          if( iabs(l2-l1) == 4 ) res=BlkRes(b,3) 
+        if( (block_points(b,l1) == n1) .and. &
+            (block_points(b,l2) == n2) ) then
+          if( iabs(l2-l1) == 1 ) res=block_resolutions(b,1) 
+          if( iabs(l2-l1) == 2 ) res=block_resolutions(b,2) 
+          if( iabs(l2-l1) == 4 ) res=block_resolutions(b,3) 
           goto 1
         end if 
       end do

@@ -6,15 +6,19 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
-MODULE par_mod
+module par_mod
 
   use allp_mod
 
   implicit none
 
-  integer :: Nsub, subNC(MAXPRO), NBBs(0:MAXPRO), NBBe(0:MAXPRO),   &
-             this, NPro
-  integer,allocatable :: proces(:), BuSeIn(:), BuReIn(:), &
-                         BufInd(:), BufPos(:) 
+  integer :: n_sub      ! Number of subdivisions.  Used in Divide
+  integer :: this_proc  ! Processor i.d.
+  integer :: n_proc     ! Number of processors.  Mostly in Process
 
-end MODULE
+  integer, allocatable :: subNC(:), NBBs(:), NBBe(:)
+
+  integer, allocatable :: proces(:), BuSeIn(:), BuReIn(:), &
+                          BufInd(:), BufPos(:) 
+
+end module

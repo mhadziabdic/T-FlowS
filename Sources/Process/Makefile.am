@@ -52,7 +52,6 @@ Process_SOURCES =	 			\
   Processor.f90					\
   ProSav.f90					\
   ReaCom.f90					\
-  Resid.f90					\
   SavIni.f90					\
   SavParView.f90				\
   SavRes.f90					\
@@ -67,7 +66,6 @@ Process_SOURCES =	 			\
   SourcesHJ.f90					\
   SourceV2KEPSV2F.f90				\
   SourceVisSpalart.f90				\
-  TopolM.f90					\
   UnkAloc.f90
 
 SUBDIRS = ../Modules				\

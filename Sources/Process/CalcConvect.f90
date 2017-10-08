@@ -22,13 +22,13 @@
 !---- on the boundary perform the extrapolation
     if(c2  < 0) then
       if( (TypeBC(c2) == CONVECT) ) then
-	U % n(c2) = U % n(c2) - ( Ubulk(material(c1)) * Ux(c1)        & 
+        U % n(c2) = U % n(c2) - ( Ubulk(material(c1)) * Ux(c1)        & 
                                 + Vbulk(material(c1)) * Uy(c1)        &
                                 + Wbulk(material(c1)) * Uz(c1) ) * dt
-	V % n(c2) = V % n(c2) - ( Ubulk(material(c1)) * Vx(c1)        & 
+        V % n(c2) = V % n(c2) - ( Ubulk(material(c1)) * Vx(c1)        & 
                                 + Vbulk(material(c1)) * Vy(c1)        &
                                 + Wbulk(material(c1)) * Vz(c1) ) * dt
-	W % n(c2) = W % n(c2) - ( Ubulk(material(c1)) * Wx(c1)        & 
+        W % n(c2) = W % n(c2) - ( Ubulk(material(c1)) * Wx(c1)        & 
                                 + Vbulk(material(c1)) * Wy(c1)        &
                                 + Wbulk(material(c1)) * Wz(c1) ) * dt
       end if
@@ -47,7 +47,7 @@
 !---- on the boundary perform the extrapolation
       if(c2  < 0) then
         if( (TypeBC(c2) == CONVECT) ) then
-	  T % n(c2) = T % n(c2) - ( Ubulk(material(c1)) * PHIx(c1)        & 
+          T % n(c2) = T % n(c2) - ( Ubulk(material(c1)) * PHIx(c1)        & 
                                   + Vbulk(material(c1)) * PHIy(c1)        &
                                   + Wbulk(material(c1)) * PHIz(c1) ) * dt
         end if

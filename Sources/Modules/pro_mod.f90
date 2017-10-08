@@ -8,46 +8,35 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 module pro_mod
 
-  use allp_mod
+  use allt_mod
 
   implicit none
 
-!----- Right hand side for velocity and pressure equations 
+  ! Right hand side for velocity and pressure equations 
+  type(Matrix)     :: A  ! system matrix for all variables
   real,allocatable :: b(:)
 
-!----- System matrix for velocity and pressure correction
-  real,allocatable    :: Aval(:)
-  real,allocatable    :: Asave(:)
-  integer,allocatable :: Arow(:),  &
-                         Acol(:),  &
-                         Adia(:)  
-  integer,allocatable :: SidAij(:,:)     
-
-!----- Used in Dynamic Smgaorinsky model ----------------------------!
+  ! Used in Dynamic Smgaorinsky model 
   real,allocatable    :: Aval_dif(:)
-!--------------------------------------------------------------------!
 
-!----- Parts of the matrix for boundary conditions. 
-  real,allocatable :: Abou(:)  
-
-!----- Correlation points
+  ! Correlation points
   real :: R11_1, R11_2, R11_3, R11_4, R11_5
   real :: R11_6, R11_7, R11_8, R11_9, R11_10
   real :: A11_1, A11_2, A11_3, A11_4, A11_5
   real :: A11_6, A11_7, A11_8, A11_9, A11_10
 
 
-!----- Velocity derivativeses dP/dx .... 
+  ! Velocity derivativeses dP/dx .... 
   real,allocatable :: Ux(:), Uy(:), Uz(:)
   real,allocatable :: Vx(:), Vy(:), Vz(:)
   real,allocatable :: Wx(:), Wy(:), Wz(:)
 
-!----- Pressure derivativeses dP/dx .... 
+  ! Pressure derivativeses dP/dx .... 
   real,allocatable :: Px(:), Py(:), Pz(:)
 
   real,allocatable :: Kx(:)
 
-!----- Pressure at the cell faces  
+  ! Pressure at the cell faces  
   real,allocatable :: Ps(:)
 
   real,allocatable :: VAR1x(:),   VAR1y(:),   VAR1z(:)
@@ -77,56 +66,56 @@ module pro_mod
   real,allocatable :: PHIx(:),   PHIy(:),   PHIz(:)
   real,allocatable :: PHIside(:)
 
-!----- For convective schemes
+  ! For convective schemes
   real,allocatable :: PHImax(:), PHImin(:) 
 
-!----- Velocity components
-  TYPE(Unknown) :: U
-  TYPE(Unknown) :: V
-  TYPE(Unknown) :: W
+  ! Velocity components
+  type(Unknown) :: U
+  type(Unknown) :: V
+  type(Unknown) :: W
 
-!----- Temperature
-  TYPE(Unknown) :: T
-  TYPE(Unknown) :: tt
-  TYPE(Unknown) :: ut
-  TYPE(Unknown) :: vt
-  TYPE(Unknown) :: wt
+  ! Temperature
+  type(Unknown) :: T
+  type(Unknown) :: tt
+  type(Unknown) :: ut
+  type(Unknown) :: vt
+  type(Unknown) :: wt
 
-!----- Pressure 
-  TYPE(Unknown) :: P  
-  TYPE(Unknown) :: PP
+  ! Pressure 
+  type(Unknown) :: P  
+  type(Unknown) :: PP
 
 !=====================================================================!
 !        Hybrid apriori variables
 !=====================================================================!
 
-!----- Velocity components
-  TYPE(Unknown) :: U_r
-  TYPE(Unknown) :: V_r
-  TYPE(Unknown) :: W_r
+  ! Velocity components
+  type(Unknown) :: U_r
+  type(Unknown) :: V_r
+  type(Unknown) :: W_r
 
-!----- Pressure
-  TYPE(Unknown) :: P_r
-  TYPE(Unknown) :: PP_r
+  ! Pressure
+  type(Unknown) :: P_r
+  type(Unknown) :: PP_r
 
-!----- Turbulent viscosity
+  ! Turbulent viscosity
   real,allocatable :: VISt_sgs(:)
   real,allocatable :: VISt_eff(:)
   real,allocatable :: Ptt(:)
 
-!----- Reynolds stresses
-  TYPE(Unknown) :: uu_r, vv_r, ww_r, uv_r, uw_r, vw_r
+  ! Reynolds stresses
+  type(Unknown) :: uu_r, vv_r, ww_r, uv_r, uw_r, vw_r
 
-!----- Mass fluxes throught cell faces
+  ! Mass fluxes throught cell faces
   real,allocatable :: Flux_r(:), Alfa_lim(:)
 
-!----- Mass fluxes throught the whole domain
+  ! Mass fluxes throught the whole domain
   real,allocatable :: FLUXx_r(:),  FLUXy_r(:),  FLUXz_r(:)
 !=====================================================================!
  
-!------------------------------!
-!     Algorythm parameters     !
-!------------------------------!
+  !-------------------------!
+  !   Algorythm parameters  !
+  !-------------------------!
   integer :: K_EPS
   integer :: K_EPS_VV   
   integer :: HRe  
@@ -155,10 +144,10 @@ module pro_mod
   integer :: STAN
   integer :: BUOY
 
-!----- Mass fluxes throught cell faces
+  ! Mass fluxes throught cell faces
   real,allocatable :: Flux(:) 
 
-!---- Geometrical staff 
+  ! Geometrical staff 
   real,allocatable :: Scoef(:)
   real,allocatable :: G(:,:) 
   real,allocatable :: fF(:)   ! weight factors for the fluid phase
@@ -173,45 +162,45 @@ module pro_mod
   logical,allocatable :: IsNearInflow(:)
   logical,allocatable :: ConvZone1(:)
 
-!---- Cells which are bad for calculation of gradients
+  ! Cells which are bad for calculation of gradients
   logical,allocatable :: BadForG(:)
   integer,allocatable :: NumGood(:),   & 
                          NumNeig(:)
 
-!----- Mass fluxes throught the whole domain
+  ! Mass fluxes throught the whole domain
   real,allocatable :: MassIn(:), MasOut(:) 
   real,allocatable :: FLUXx(:),  FLUXy(:),  FLUXz(:)
   real,allocatable :: FLUXoX(:), FLUXoY(:), FLUXoZ(:) 
   real,allocatable :: Ubulk(:),  Vbulk(:),  Wbulk(:)
 
-!----- Viscosity, Density, Conductivity
+  ! Viscosity, Density, Conductivity
   integer :: StateMat(100)
   integer :: SimulMat(100)
   real    :: VISc, DENc(100), CONc(100), CAPc(100)
 
-!---- Average velocity 
+  ! Average velocity 
   real    :: Uaver
 
-!---- angular velocity 
+  ! angular velocity 
   real    :: omegaX, omegaY, omegaZ, omega
 
-!---- turbulent prandtl number 
+  ! turbulent prandtl number 
   real    :: Prt, Numax
 
 
-!---- Time step and total time
+  ! Time step and total time
   real    :: dt, Time
 
-!---- Maarten - Thickness of boundary layer
+  ! Maarten - Thickness of boundary layer
   real    :: Delta_m
 
-!----- Constants needed for UserProbe2d (cut lines)
+  ! Constants needed for UserProbe2d (cut lines)
   real      :: x_o, y_o, Href
   integer   :: Ncuts
   character :: namCut*80
 
-!---- Integer variable needed for interpolation of
-!---- results between different meshes tranfer (LoaIni)
+  ! Integer variable needed for interpolation of
+  ! results between different meshes tranfer (LoaIni)
   integer          :: NClast, N_sign, eqn
   integer,allocatable :: near(:)
   integer,allocatable :: near_2(:)
@@ -219,30 +208,30 @@ module pro_mod
   integer,allocatable :: connect(:)
   integer,allocatable :: connect2(:)
 
-!----- Residuals                
+  ! Residuals                
   real    :: errmax, res(100)  
 
-!----- Monitoring planes for each material (domain)
+  ! Monitoring planes for each material (domain)
   real,allocatable :: xp(:), yp(:), zp(:)
 
-!---------------------------!
-!     Solver parameters     !
-!---------------------------!
+  !---------------------------!
+  !     Solver parameters     !
+  !---------------------------!
   real    :: URFC(100), SIMTol, URFC_Tur(100), URFC_Tem(100)
   real    :: TRFC(100)
 
-!----- Under-relaxation parameter for turbulent quantity
+  ! Under-relaxation parameter for turbulent quantity
   real    :: URFT, Alfa_fin1, Alfa_fin2
 
-!-----------------------------------!
-!     Area of the cross section     !
-!-----------------------------------!
+  !-----------------------------------!
+  !     Area of the cross section     !
+  !-----------------------------------!
   real,allocatable :: AreaX(:), AreaY(:), AreaZ(:)           
   real :: Area, Tflux, Qflux, Xmax, Ymax, Zmax, Tref, Tinf           
 
-!------------------------------!
-!     Algorythm parameters     !
-!------------------------------!
+  !------------------------------!
+  !     Algorythm parameters     !
+  !------------------------------!
   integer :: INERT,    CONVEC,    CROSS,    DIFFUS 
   integer :: LIN,      PAR,       AB,       CN,       FI
   integer :: ALGOR,    SIMPLE,    FRACT
@@ -265,19 +254,17 @@ module pro_mod
 
   integer :: Ndt, Ndtt, Nstat, Nini, ini, Ndyn, Nstat2, NewSta, NK, Nbudg 
 
-  integer :: NONZERO
-
-!---------------------------------------------------------------------------!
-! LineMon:   1:  6 -> Time step 
-! ~~~~~~~~   7: 18 -> Time                
-!           19: 66 -> U,V,W,P monitoring
-!           67: 78 -> T  monitoring 
-!           79: 90 -> FLUXx
-!           91:102 -> P drop
-!          103:114 -> CFL
-!          115:126 -> Pe
-!          127:138 -> Kin.en.           
-!---------------------------------------------------------------------------!
+  !------------------------------------------------------------------!
+  ! LineMon:   1:  6 -> Time step 
+  ! ~~~~~~~~   7: 18 -> Time                
+  !           19: 66 -> U,V,W,P monitoring
+  !           67: 78 -> T  monitoring 
+  !           79: 90 -> FLUXx
+  !           91:102 -> P drop
+  !          103:114 -> CFL
+  !          115:126 -> Pe
+  !          127:138 -> Kin.en.           
+  !------------------------------------------------------------------!
   character*138 :: LinMon0 ! everything that goes on the screen
   character*138 :: LinMon1 ! everything that goes on the screen
   character*138 :: LinMon2 ! everything that goes on the screen
@@ -288,21 +275,22 @@ module pro_mod
   character*138 :: LinMon7 ! everything that goes on the screen
   character*138 :: LinMon8 ! everything that goes on the screen
   character*138 :: LinMon9 ! everything that goes on the screen
-!---------------------------------------------------------------------------!
-! LineRes:   1:  1 -> #
-! ~~~~~~~~   2:  4 -> ini
-!            5: 16 -> errmax 
-!           17: 28 -> res U
-!           29: 40 -> res V
-!           41: 52 -> res W
-!           53: 64 -> res PP
-!           65: 76 -> res T
-!           77: 80 -> iter U
-!           81: 84 -> iter V
-!           85: 88 -> iter W
-!           89: 92 -> iter P
-!           93: 96 -> iter T
-!---------------------------------------------------------------------------!
+
+  !------------------------------------------------------------------!
+  ! LineRes:   1:  1 -> #
+  ! ~~~~~~~~   2:  4 -> ini
+  !            5: 16 -> errmax 
+  !           17: 28 -> res U
+  !           29: 40 -> res V
+  !           41: 52 -> res W
+  !           53: 64 -> res PP
+  !           65: 76 -> res T
+  !           77: 80 -> iter U
+  !           81: 84 -> iter V
+  !           85: 88 -> iter W
+  !           89: 92 -> iter P
+  !           93: 96 -> iter T
+  !------------------------------------------------------------------!
   character*100 :: LineRes              ! everything that goes on the screen
   character :: namIni(128)*80
 

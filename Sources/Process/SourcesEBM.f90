@@ -106,7 +106,7 @@
       b(c) = b(c) + (max(Prod,0.0) + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
              f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
 
-      Aval(Adia(c)) =  Aval(Adia(c)) + (max(-Prod,0.0)/max(uu%n(c),1.0e-12) + (1.0-f22%n(c)*f22%n(c))*&
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + (max(-Prod,0.0)/max(uu%n(c),1.0e-12) + (1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c) +&         
                       f22%n(c)*f22%n(c)*(Diss_hom/max(uu%n(c),1.0e-12)+g1*Eps%n(c)/(2.0*Kin%n(c))&
                       +g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
@@ -135,7 +135,7 @@
       b(c) = b(c) + (max(Prod,0.0) + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
              f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
 
-      Aval(Adia(c)) =  Aval(Adia(c)) + (max(-Prod,0.0)/max(vv%n(c),1.0e-12) + (1.0-f22%n(c)*f22%n(c))*&
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + (max(-Prod,0.0)/max(vv%n(c),1.0e-12) + (1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c) &         
                     + f22%n(c)*f22%n(c)*(Diss_hom/max(vv%n(c),1.0e-12)+g1*Eps%n(c)/(2.0*Kin%n(c))&
                     +g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
@@ -162,7 +162,7 @@
 
       b(c) = b(c) + (max(Prod,0.0) + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
              f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
-      Aval(Adia(c)) =  Aval(Adia(c)) + (max(-Prod,0.0)/max(ww%n(c),1.0e-12)+(1.0-f22%n(c)*f22%n(c))*&
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + (max(-Prod,0.0)/max(ww%n(c),1.0e-12)+(1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c)          &
                     + f22%n(c)*f22%n(c)*(Diss_hom/max(ww%n(c),1.0e-12)+g1*Eps%n(c)/(2.0*Kin%n(c))&
                     +g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
@@ -192,7 +192,7 @@
  
       b(c) = b(c) + (Prod + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
              f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
-      Aval(Adia(c)) =  Aval(Adia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c)&
                     + f22%n(c)*f22%n(c)*( &
                     +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
@@ -223,7 +223,7 @@
 
       b(c) = b(c) + (Prod + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
              f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
-      Aval(Adia(c)) =  Aval(Adia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c)&           
                     + f22%n(c)*f22%n(c)*(&
                     +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
@@ -253,7 +253,7 @@
 
       b(c) = b(c) + (Prod + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
              f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
-      Aval(Adia(c)) =  Aval(Adia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c) &           
                     + f22%n(c)*f22%n(c)*(&
                     +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
@@ -267,7 +267,7 @@
       b(c) = b(c) + Ce11*Pk(c)*Esor 
 
 !----- Fill in a diagonal of coefficient matrix
-      Aval(Adia(c)) =  Aval(Adia(c)) + Ce2*Esor*DENc(material(c))
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
     end if
   end do
 

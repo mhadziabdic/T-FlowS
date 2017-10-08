@@ -25,11 +25,11 @@
 !======================================================================! 
 !  The form of equations which are solved:
 !
-!     /            /              /
-!    |  df22      | f22 dV       | f22hg dV
-!  - |  ---- dS + | ------   =   | --------
-!    |   dy       |  Lsc^2       |  Lsc^2
-!   /            /              /
+!     /           /              /
+!    | df22      | f22 dV       | f22hg dV
+!  - | ---- dS + | ------   =   | --------
+!    |  dy       |  Lsc^2       |  Lsc^2
+!   /           /              /
 !
 !
 !  Dimension of the system under consideration
@@ -42,14 +42,14 @@
 !
 !======================================================================!
 
-  Aval = 0.0
+  A % val = 0.0
 
   b=0.0
 
 
 !----- This is important for "copy" boundary conditions. Find out why !
   do c=-NbC,-1
-    Abou(c)=0.0
+    A % bou(c)=0.0
   end do
 
 !-----------------------------------------! 
@@ -152,24 +152,24 @@
 
 !----- fill the system matrix
       if(c2  > 0) then
-        Aval(SidAij(1,s)) = Aval(SidAij(1,s)) - A12
-        Aval(Adia(c1))    = Aval(Adia(c1))    + A12
-        Aval(SidAij(2,s)) = Aval(SidAij(2,s)) - A21
-        Aval(Adia(c2))    = Aval(Adia(c2))    + A21
+        A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - A12
+        A % val(A % dia(c1))  = A % val(A % dia(c1))  + A12
+        A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - A21
+        A % val(A % dia(c2))  = A % val(A % dia(c2))  + A21
       else if(c2  < 0) then
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -!
 ! Outflow is not included because it was causing problems     !
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -! 
         if( (TypeBC(c2) == INFLOW)) then                    
 !---------  (TypeBC(c2) == OUTFLOW) ) then   
-          Aval(Adia(c1)) = Aval(Adia(c1)) + A12
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * phi % n(c2)
 
         else
 
         if( (TypeBC(c2) == WALL).or.                          &
             (TypeBC(c2) == WALLFL) ) then
-          Aval(Adia(c1)) = Aval(Adia(c1)) + A12
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
 !=============================================================!
 ! Source coefficient is filled in SourceF22.f90 in order to   !
 ! get updated values of f22 on the wall.                      !
@@ -177,8 +177,8 @@
 !          b(c1) = b(c1) + A12 * phi % n(c2)                  !
 !=============================================================!
         else if( TypeBC(c2) == BUFFER ) then  
-          Aval(Adia(c1)) = Aval(Adia(c1)) + A12
-          Abou(c2) = - A12  ! cool parallel stuff
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
+          A % bou(c2) = - A12  ! cool parallel stuff
         endif
       end if     
      end if
@@ -248,8 +248,8 @@
 !                                     !    
 !=====================================!
     do c=1,NC
-      b(c) = b(c) + Aval(Adia(c)) * (1.0-phi % URF)*phi % n(c) / phi % URF
-      Aval(Adia(c)) = Aval(Adia(c)) / phi % URF
+      b(c) = b(c) + A % val(A % dia(c)) * (1.0-phi % URF)*phi % n(c) / phi % URF
+      A % val(A % dia(c)) = A % val(A % dia(c)) / phi % URF
     end do 
 
 
@@ -257,8 +257,8 @@
   if(ALGOR == FRACT)    miter=5
 
   niter=miter
-  call cg(NC, Nbc, NONZERO, Aval,Acol,Arow,Adia,Abou,   &
-           phi % n, b, PREC,                            &
+  call cg(NC, Nbc, A,           & 
+           phi % n, b, PREC,    &
            niter,phi % STol, res(var), error)
 
   

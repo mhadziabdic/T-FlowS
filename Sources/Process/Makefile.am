@@ -69,15 +69,15 @@ Process_SOURCES =	 			\
   UnkAloc.f90
 
 SUBDIRS = ../Modules				\
-          ../Shared				\
           Communication				\
           Linear_Solvers			\
-          User
+          User					\
+          ../Shared
 
 LDADD = ../Modules/libModules.a			\
-        ../Shared/libShared.a			\
         Communication/libCommunication.a	\
         Linear_Solvers/libLinear_Solvers.a	\
-        User/libUser.a
+        User/libUser.a				\
+        ../Shared/libShared.a
 
 INCLUDE = -I@top_srcdir@/

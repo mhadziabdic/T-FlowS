@@ -55,8 +55,8 @@
         Cs = Cs0
       end if
       VISt(c) = DENc(material(c)) &
-  	      * (lf*lf)         &          ! delta^2 
- 	      * (Cs*Cs)         &          ! Cs^2   
+               * (lf*lf)         &          ! delta^2 
+               * (Cs*Cs)         &          ! Cs^2   
               * Shear(c) 
     end do
   else if(MODE == DYN) then
@@ -80,9 +80,9 @@
     do c=1,NC
       lf =  (volume(c)**0.333333)    
       VISt(c) = DENc(material(c))    &
-  	      * (lf*lf)              &          ! delta^2 
- 	      * (0.5*0.5)         &          ! Cs^2   
-      	      * WALEv(c) 
+                * (lf*lf)              &          ! delta^2 
+               * (0.5*0.5)         &          ! Cs^2   
+                    * WALEv(c) 
     end do
   end if
 
@@ -114,25 +114,25 @@
       Nz = Sz(s)/Stot 
       if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
 
-	Utot = sqrt(  U % n(c1) * U % n(c1) &
+        Utot = sqrt(  U % n(c1) * U % n(c1) &
             + V % n(c1) * V % n(c1) &
-		    + W % n(c1) * W % n(c1)  )
+                    + W % n(c1) * W % n(c1)  )
 
-	Unor = ( U % n(c1) * Nx + V % n(c1) * Ny + W % n(c1) * Nz )   
+        Unor = ( U % n(c1) * Nx + V % n(c1) * Ny + W % n(c1) * Nz )   
 
-	if( abs(Utot) > abs(Unor) ) then
-	  Utan = sqrt(Utot * Utot - Unor * Unor)
-	else
-	  Utan = TINY 
-	end if
+        if( abs(Utot) > abs(Unor) ) then
+          Utan = sqrt(Utot * Utot - Unor * Unor)
+        else
+          Utan = TINY 
+        end if
 
-	Apow = 8.3
-	Bpow = 1.0/7.0
-	nu = VISc/DENc(material(c1))
-	dely = WallDs(c1)
+        Apow = 8.3
+        Bpow = 1.0/7.0
+        nu = VISc/DENc(material(c1))
+        dely = WallDs(c1)
 !----- calculate UtauL
-	UtauL = ( Utan/Apow * (nu/dely)**Bpow )                     &
-	  ** (1.0/(1.0+Bpow))
+        UtauL = ( Utan/Apow * (nu/dely)**Bpow )                     &
+          ** (1.0/(1.0+Bpow))
 
 !----- calculate TauWall 
         TauWall(c1) = VISc * Utan / dely 
@@ -144,7 +144,7 @@
           VISwall(c1) = DENc(material(c1))*UtauL*UtauL*dely/abs(Utan) 
         else 
           VISwall(c1) = VISc + fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2)
-	endif
+        endif
       end if  ! TypeBC(c2)==WALL or WALLFL
     end if    ! c2 < 0
   end do

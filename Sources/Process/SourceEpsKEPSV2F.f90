@@ -49,7 +49,7 @@
       b(c) = b(c) + Ce_11*Pk(c)*Esor
  
 !----- Fill in a diagonal of coefficient matrix 
-      Aval(Adia(c)) =  Aval(Adia(c)) + Ce2*Esor*DENc(material(c))
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
     end do                   
   end if
 !----  Imposing a boundary condition on wall for Eps 
@@ -96,11 +96,11 @@
             Eps%n(c1) = Cmu75 * Kin%n(c1)**1.5 / ((WallDs(c1)) * kappa)
           end if
 !-----Adjusting a coefficient to fix Eps value in near wall calls
-          do j=Acol(c1), Acol(c1+1)-1
-            Aval(j) = 0.0
+          do j=A % col(c1), A % col(c1+1)-1
+            A % val(j) = 0.0
           end do
           b(c1) = Eps % n(c1)
-          Aval(Adia(c1)) = 1.0
+          A % val(A % dia(c1)) = 1.0
        end if
       end if
     end do  
@@ -112,7 +112,7 @@
       b(c) = b(c) + Ce_11*Pk(c)*Esor
 
 !----- Fill in a diagonal of coefficient matrix
-      Aval(Adia(c)) =  Aval(Adia(c)) + Ce2*Esor*DENc(material(c))
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
     end do
   end if 
 

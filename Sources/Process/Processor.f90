@@ -32,6 +32,7 @@
 !------------------------------[Modules]-------------------------------!
   use all_mod
   use pro_mod
+  use sol_mod, only: D
   use les_mod
   use par_mod
   use rans_mod
@@ -45,8 +46,8 @@
   real             :: start, finish
   character        :: namSav*10
   logical          :: restar, multiple 
-!-----------------------------[Interface]------------------------------!
-  INTERFACE
+!-----------------------------[Interfaces]-----------------------------!
+  interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine NewUVW(var, Ui, dUidi, dUidj, dUidk,  &
                       Si, Sj, Sk, Di, Dj, Dk, Pi, dUjdi, dUkdi) 
@@ -87,7 +88,7 @@
       use all_mod
       use pro_mod
       implicit none
-       character, OPTIONAL :: namAut*(*)
+       character, optional :: namAut*(*)
     end  subroutine ProSav  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine DatSav(namAut)  
@@ -95,7 +96,7 @@
       use all_mod
       use pro_mod
       implicit none
-      character, OPTIONAL :: namAut*(*)
+      character, optional :: namAut*(*)
     end subroutine DatSav  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine SavRes(namAut)  
@@ -103,7 +104,7 @@
       use all_mod
       use pro_mod
       implicit none
-      character, OPTIONAL :: namAut*(*)
+      character, optional :: namAut*(*)
     end subroutine SavRes  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine UserProbe2D(namAut)
@@ -111,7 +112,7 @@
       use all_mod
       use pro_mod
       implicit none
-      character, OPTIONAL :: namAut*(*)
+      character, optional :: namAut*(*)
     end subroutine UserProbe2D
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine CalcShear(Ui, Vi, Wi, She)
@@ -123,7 +124,7 @@
       real          :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
       real          :: She(-NbC:NC)
     end subroutine CalcShear
-  end INTERFACE
+  end interface
 !======================================================================!
 
   call cpu_time(start)
@@ -163,7 +164,8 @@
 
   call wait   
 
-  call TopolM
+  call Matrix_Topology(A)
+  call Matrix_Topology(D)
 
   call Wait   
 
@@ -336,13 +338,14 @@
                      Sz,   Sx,   Sy,    &                         
                      Dz,   Dx,   Dy,    &                         
                      Pz,   Uz,   Vz)      ! dP/dz, dU/dz, dV/dz
+
       if(ALGOR == FRACT) then
-        call Exchng(Asave)  
+        call Exchng(A % sav)  
         call ModOut()
         call CalcPF()
       endif
       if(ALGOR == SIMPLE) then
-        call Exchng(Asave)  
+        call Exchng(A % sav)  
         call ModOut()
         call CalcPS()
       end if

@@ -1,7 +1,6 @@
 bin_PROGRAMS = Process
 
 Process_SOURCES =	 			\
-  BiCG.f90					\
   BouLoa.f90					\
   CalBou.f90					\
   Calc3.f90					\
@@ -27,8 +26,6 @@ Process_SOURCES =	 			\
   CalcVort.f90					\
   CalcWALE.f90					\
   CalMinMax.f90					\
-  CG.f90					\
-  CGS.f90					\
   CnsLoa.f90					\
   ConvScheme.f90				\
   CorBad.f90					\
@@ -52,11 +49,9 @@ Process_SOURCES =	 			\
   ModOut.f90					\
   NearWallCell.f90				\
   NewUVW.f90					\
-  Prec1.f90					\
   Processor.f90					\
   ProSav.f90					\
   ReaCom.f90					\
-  Resid.f90					\
   SavIni.f90					\
   SavParView.f90				\
   SavRes.f90					\
@@ -71,17 +66,18 @@ Process_SOURCES =	 			\
   SourcesHJ.f90					\
   SourceV2KEPSV2F.f90				\
   SourceVisSpalart.f90				\
-  TopolM.f90					\
   UnkAloc.f90
 
 SUBDIRS = ../Modules				\
           ../Shared				\
           Communication				\
+          Linear_Solvers			\
           User
 
 LDADD = ../Modules/libModules.a			\
         ../Shared/libShared.a			\
         Communication/libCommunication.a	\
+        Linear_Solvers/libLinear_Solvers.a	\
         User/libUser.a
 
 INCLUDE = -I@top_srcdir@/

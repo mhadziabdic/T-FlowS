@@ -37,7 +37,7 @@
 !   
 !======================================================================!
 
-  Aval = 0.0
+  A % val = 0.0
 
 !------------------------------------------!
 !      Initialize the source term for      !
@@ -72,37 +72,37 @@
     if( c2  > 0 .or. c2  < 0 .and. TypeBC(c2) == BUFFER) then 
 
 !---- extract the "centred" pressure terms from cell velocities
-      Us = f(s)*      (U % n(c1)+Px(c1)*volume(c1)/Asave(c1))       &
-         + (1.0-f(s))*(U % n(c2)+Px(c2)*volume(c2)/Asave(c2))
+      Us = f(s)*      (U % n(c1)+Px(c1)*volume(c1)/A % sav(c1))       &
+         + (1.0-f(s))*(U % n(c2)+Px(c2)*volume(c2)/A % sav(c2))
 
-      Vs = f(s)*      (V % n(c1)+Py(c1)*volume(c1)/Asave(c1))       &
-         + (1.0-f(s))*(V % n(c2)+Py(c2)*volume(c2)/Asave(c2))
+      Vs = f(s)*      (V % n(c1)+Py(c1)*volume(c1)/A % sav(c1))       &
+         + (1.0-f(s))*(V % n(c2)+Py(c2)*volume(c2)/A % sav(c2))
 
-      Ws = f(s)*      (W % n(c1)+Pz(c1)*volume(c1)/Asave(c1))       &
-         + (1.0-f(s))*(W % n(c2)+Pz(c2)*volume(c2)/Asave(c2))
+      Ws = f(s)*      (W % n(c1)+Pz(c1)*volume(c1)/A % sav(c1))       &
+         + (1.0-f(s))*(W % n(c2)+Pz(c2)*volume(c2)/A % sav(c2))
 
 !---- add the "staggered" pressure terms to face velocities
       Us= Us + (P % n(c1)-P % n(c2))*Sx(s)*                         &
-         ( f(s)/Asave(c1) + (1.0-f(s))/Asave(c2) )
+         ( f(s)/A % sav(c1) + (1.0-f(s))/A % sav(c2) )
       Vs=Vs+(P % n(c1)-P % n(c2))*Sy(s)*                            &
-         ( f(s)/Asave(c1) + (1.0-f(s))/Asave(c2) )
+         ( f(s)/A % sav(c1) + (1.0-f(s))/A % sav(c2) )
       Ws=Ws+(P % n(c1)-P % n(c2))*Sz(s)*                            &
-         ( f(s)/Asave(c1) + (1.0-f(s))/Asave(c2) )
+         ( f(s)/A % sav(c1) + (1.0-f(s))/A % sav(c2) )
 
 !---- now calculate the flux through cell face
       Flux(s) = DENs * ( Us*Sx(s) + Vs*Sy(s) + Ws*Sz(s) )
 
       A12=DENs*(Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))
-      A12=A12*(f(s)/Asave(c1)+(1.-f(s))/Asave(c2))
+      A12=A12*(f(s)/A % sav(c1)+(1.-f(s))/A % sav(c2))
 
       if(c2  > 0) then 
-        Aval(SidAij(1,s))  = -A12
-        Aval(SidAij(2,s))  = -A12
-        Aval(Adia(c1)) = Aval(Adia(c1)) +  A12
-        Aval(Adia(c2)) = Aval(Adia(c2)) +  A12
+        A % val(A % pos(1,s)) = -A12
+        A % val(A % pos(2,s)) = -A12
+        A % val(A % dia(c1))  = A % val(A % dia(c1)) +  A12
+        A % val(A % dia(c2))  = A % val(A % dia(c2)) +  A12
       else
-        Abou(c2) = -A12
-        Aval(Adia(c1)) = Aval(Adia(c1)) +  A12
+        A % bou(c2) = -A12
+        A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       endif
 
       b(c1)=b(c1)-Flux(s)
@@ -138,7 +138,7 @@
 !------------------------------------------------!
 !     Solve the pressure correction equation     !
 !------------------------------------------------!
-!>>>>> Aval(1) = Aval(1) * 2.0
+!>>>>> A % val(1) = A % val(1) * 2.0
 
 !---- Give the "false" flux back and set it to zero ! 2mat
   do s=1,NS                                         ! 2mat
@@ -161,28 +161,31 @@
     if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat 
       if(c2 > 0) then ! => not BUFFER               ! 2mat
         if(StateMat(material(c1)) == SOLID) then    ! 2mat
-          A12 = -Aval(SidAij(2,s))                  ! 2mat
-          Aval(SidAij(1,s)) = 0.0                   ! 2mat
-          Aval(SidAij(2,s)) = 0.0                   ! 2mat
+          A12 = -A % val(A % pos(2,s))              ! 2mat
+          A % val(A % pos(1,s)) = 0.0               ! 2mat
+          A % val(A % pos(2,s)) = 0.0               ! 2mat
           if(StateMat(material(c2)) == FLUID) then  ! 2mat
-            Aval(Adia(c2)) = Aval(Adia(c2)) -  A12  ! 2mat
+            A % val(A % dia(c2)) = &                ! 2mat
+            A % val(A % dia(c2)) -  A12             ! 2mat
           endif                                     ! 2mat
         end if                                      ! 2mat
         if(StateMat(material(c2)) == SOLID) then    ! 2mat
-          A12 = -Aval(SidAij(1,s))                  ! 2mat
-          Aval(SidAij(2,s)) = 0.0                   ! 2mat
-          Aval(SidAij(1,s)) = 0.0                   ! 2mat
+          A12 = -A % val(A % pos(1,s))              ! 2mat
+          A % val(A % pos(2,s)) = 0.0               ! 2mat
+          A % val(A % pos(1,s)) = 0.0               ! 2mat
           if(StateMat(material(c1)) == FLUID) then  ! 2mat
-            Aval(Adia(c1)) = Aval(Adia(c1)) -  A12  ! 2mat
+            A % val(A % dia(c1)) = &                ! 2mat
+            A % val(A % dia(c1)) -  A12             ! 2mat
           endif                                     ! 2mat
         end if                                      ! 2mat
       else            ! => BUFFER                   ! 2mat
         if(StateMat(material(c1)) == SOLID  .or. &  ! 2mat
            StateMat(material(c2)) == SOLID) then    ! 2mat
-          A12 = -Abou(c2)                           ! 2mat
-          Abou(c2) = 0.0                            ! 2mat
+          A12 = -A % bou(c2)                        ! 2mat
+          A % bou(c2) = 0.0                         ! 2mat
           if(StateMat(material(c1)) == FLUID) then  ! 2mat
-            Aval(Adia(c1)) = Aval(Adia(c1)) -  A12  ! 2mat
+            A % val(A % dia(c1)) = &                ! 2mat
+            A % val(A % dia(c1)) -  A12             ! 2mat
           endif                                     ! 2mat
         end if                                      ! 2mat
       end if                                        ! 2mat
@@ -196,8 +199,8 @@
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -!  
   if(ALGOR == FRACT)  niter = 200
   if(ALGOR == SIMPLE) niter =  15
-  call cg(NC, NbC, NONZERO, Aval, Acol,Arow,Adia,Abou,   &
-          PP % n, b, PREC, niter, PP % STol,             &
+  call cg(NC, NbC, A,                         &  
+          PP % n, b, PREC, niter, PP % STol,  &
           res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)
   write(LineRes(89:92),  '(I4)')      niter

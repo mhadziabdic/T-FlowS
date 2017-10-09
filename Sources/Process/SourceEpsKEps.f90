@@ -39,7 +39,7 @@
            + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * volume(c)
     
 !----- Negative contribution:
-      Aval(Adia(c)) = Aval(Adia(c)) &
+      A % val(A % dia(c)) = A % val(A % dia(c)) &
                     + Ce2 * DENc(material(c)) * Eps % n(c) / Kin % n(c) * volume(c)
     end do 
 !------------------------------------!
@@ -59,10 +59,10 @@
 !          else if(ROUGH==YES) then
 !            Eps % n(c1) = Cmu75*(Kin%n(c1))**1.5/(kappa*(WallDs(c1)+Zo))
 !          end if
-          do j=Acol(c1), Acol(c1+1) -1
-            Aval(j) = 0.0
+          do j=A % col(c1), A % col(c1+1) -1
+            A % val(j) = 0.0
           end do   
-          Aval(Adia(c1)) = 1.0
+          A % val(A % dia(c1)) = 1.0
           b(c1) = Eps % n(c1)
         end if  ! TypeBC(c2)==WALL or WALLFL
       end if    ! c2 < 0
@@ -90,7 +90,7 @@
 !----- Negative contribution:
       Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
       Fmu = 1.0 - 0.3*exp(-(Ret*Ret))
-      Aval(Adia(c)) = Aval(Adia(c))                                   &
+      A % val(A % dia(c)) = A % val(A % dia(c))                                   &
       + Fmu * Ce2 * DENc(material(c)) * Eps % n(c) / Kin % n(c) * volume(c)        
 
 !----- Yap correction
@@ -134,7 +134,7 @@
 
       Ce2 =  1.5 + 0.4/(1.0 + 2.4*(0.41*WallDs(c)/Lf)**0.66666)
 
-      Aval(Adia(c)) = Aval(Adia(c)) &
+      A % val(A % dia(c)) = A % val(A % dia(c)) &
       + (Ce1 + (Ce2 - Ce1) * Fmu ) * DENc(material(c)) * Eps % n(c) / Kin % n(c) * volume(c)
 
     end do

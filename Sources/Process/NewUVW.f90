@@ -89,13 +89,13 @@
 !======================================================================!
 
   b = 0.0
-  Aval = 0.0
+  A % val = 0.0
   Fstress = 0.0
 
 
 !----- This is important for "copy" boundary conditions. Find out why !
   do c=-NbC,-1
-    Abou(c)=0.0
+    A % bou(c)=0.0
   end do
 
 !-----------------------------------------! 
@@ -344,10 +344,10 @@
 
 !----- fill the system matrix
       if(c2  > 0) then
-        Aval(SidAij(1,s)) = Aval(SidAij(1,s)) - A12
-        Aval(Adia(c1))    = Aval(Adia(c1))    + A12
-        Aval(SidAij(2,s)) = Aval(SidAij(2,s)) - A21
-        Aval(Adia(c2))    = Aval(Adia(c2))    + A21
+        A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - A12
+        A % val(A % dia(c1))    = A % val(A % dia(c1))    + A12
+        A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - A21
+        A % val(A % dia(c2))    = A % val(A % dia(c2))    + A21
       else if(c2  < 0) then
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -!
 ! Outflow is not included because it was causing problems     !
@@ -357,11 +357,11 @@
            (TypeBC(c2) == CONVECT).or.                               &
            (TypeBC(c2) == WALLFL)) then                                
 !---------  (TypeBC(c2) == OUTFLOW) ) then   
-          Aval(Adia(c1)) = Aval(Adia(c1)) + A12
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * Ui % n(c2)
         else if(TypeBC(c2) == BUFFER) then  
-          Aval(Adia(c1)) = Aval(Adia(c1)) + A12
-          Abou(c2) = - A12  ! cool parallel stuff
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
+          A % bou(c2) = - A12  ! cool parallel stuff
         endif
       end if     
     end if
@@ -481,7 +481,7 @@
   if(INERT == LIN) then
     do c=1,NC
       A0 = DENc(material(c))*volume(c)/dt
-      Aval(Adia(c)) = Aval(Adia(c)) + A0
+      A % val(A % dia(c)) = A % val(A % dia(c)) + A0
       b(c) = b(c) + A0 * Ui % o(c)
     end do
   end if
@@ -490,7 +490,7 @@
   if(INERT == PAR) then
     do c=1,NC
       A0 = DENc(material(c))*volume(c)/dt
-      Aval(Adia(c)) = Aval(Adia(c)) + 1.5 * A0
+      A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
       b(c) = b(c) + 2.0*A0 * Ui % o(c) - 0.5*A0 * Ui % oo(c)
     end do
   end if
@@ -543,17 +543,17 @@
 !    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
 !      if(c2 > 0) then ! => not buffer               ! 2mat
 !        if(StateMat(material(c1)) == SOLID) then    ! 2mat
-!          Aval(SidAij(1,s)) = 0.0                   ! 2mat 
-!          Aval(SidAij(2,s)) = 0.0                   ! 2mat
+!          A % val(A % pos(1,s)) = 0.0                   ! 2mat 
+!          A % val(A % pos(2,s)) = 0.0                   ! 2mat
 !        end if                                      ! 2mat 
 !        if(StateMat(material(c2)) == SOLID) then    ! 2mat
-!          Aval(SidAij(2,s)) = 0.0                   ! 2mat
-!          Aval(SidAij(1,s)) = 0.0                   ! 2mat 
+!          A % val(A % pos(2,s)) = 0.0                   ! 2mat
+!          A % val(A % pos(1,s)) = 0.0                   ! 2mat 
 !        end if                                      ! 2mat 
 !      else            ! => buffer region            ! 2mat 
 !        if(StateMat(material(c1)) == SOLID .or.  &  ! 2mat
 !           StateMat(material(c2)) == SOLID) then    ! 2mat
-!          Abou(c2) = 0.0                            ! 2mat
+!          A % bou(c2) = 0.0                            ! 2mat
 !        end if                                      ! 2mat 
 !      end if                                        ! 2mat
 !    end if                                          ! 2mat
@@ -565,9 +565,9 @@
 !                                       !    
 !=======================================!
   do c=1,NC
-    Asave(c) = Aval(Adia(c))
-    b(c) = b(c) + Aval(Adia(c)) * (1.0-U % URF)*Ui % n(c) / U % URF
-    Aval(Adia(c)) = Aval(Adia(c)) / U % URF
+    A % sav(c) = A % val(A % dia(c))
+    b(c) = b(c) + A % val(A % dia(c)) * (1.0-U % URF)*Ui % n(c) / U % URF
+    A % val(A % dia(c)) = A % val(A % dia(c)) / U % URF
   end do
 
   if(ALGOR == SIMPLE)   miter=10
@@ -575,8 +575,8 @@
 
   niter=miter
 
-  call bicg(NC, Nbc, NONZERO, Aval,Acol,Arow,Adia,Abou,   &
-          Ui % n, b, PREC,                              &
+  call cgs(NC, Nbc, A,           & 
+          Ui % n, b, PREC,        &
           niter,U % STol, res(var), error)
 
   if(var == 1) then

@@ -1,13 +1,11 @@
 !======================================================================!
-  subroutine CGS(N, NB, NONZ, A, Acol,Arow,Adia,Ab,x,r1,            &
-                 prec,Niter,tol,                                    &
+  subroutine cgs(N, NB,           &
+                 A, x, r1,        &
+                 prec,niter,tol,  &
                  IniRes,FinRes)
 !----------------------------------------------------------------------!
 !   Solves the linear systems of equations by a precond. CGS Method.   !
 !----------------------------------------------------------------------!
-!   The structure of the system matrix is described by Acol, Arow,     !
-!   and Adia vectors.                                                  !
-!                                                                      !
 !   Allows preconditioning of the system by:                           !
 !     1. Diagonal preconditioning                                      !
 !     2. Incomplete Cholesky preconditioning                           !
@@ -17,44 +15,31 @@
 !   (incomplete Cholesky preconditioning)                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
+  use allt_mod, only: Matrix
   use sol_mod
   use par_mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Parameters]-----------------------------!
-  integer  :: N, NB, NONZ
-
-  real     :: A(NONZ),Ab(-NB:-1)
-  integer  :: Acol(N+1),Adia(N)
-  integer  :: Arow(NONZ)
-  real     :: x(-NB:N), r1(N)            !  [A]{x}={r1}
-
-  integer  :: prec,  Niter               !  preconditioning
-  real     :: tol                        !  tolerance
-  real     :: IniRes, FinRes             !  residual
+  integer      :: N, NB
+  type(Matrix) :: A
+  real         :: x(-NB:N), r1(N)                !  [A]{x}={r1}
+  integer      :: prec,  niter                   !  preconditioning
+  real         :: tol                            !  tolerance
+  real         :: IniRes, FinRes                 !  residual
+!-------------------------------[Locals]-------------------------------!
+  real    :: alfa, beta, rho, rhoold, bnrm2, sum1, sum2, error
+  integer :: i, j, k, iter, sub
 !======================================================================!
            
-!->>>
-!      integer c 
-!      do c=1,N
-!        write(*,*) 'Cell: ', c
-!        write(*,*) 'Width: ', Acol(c+1)-Acol(c)
-!        write(*,'(3I7)') Acol(c), Adia(c), Acol(c+1)-1
-!        write(*,*) 'Diag: ', A(Adia(c))
-!        write(*,'(25F15.9)') ( A(j),     j=Acol(c),Acol(c+1)-1 )
-!        write(*,'(25I7)') ( Arow(j), j=Acol(c),Acol(c+1)-1 )
-!        write(*,*) '- - - - - - - - - - - - - - - - - - - - - - -'
-!      end do
-
 !+++++++++++++++++++++++++!
 !     preconditioning     !
 !+++++++++++++++++++++++++!
-  call Prec1(N, NONZ, A, Acol,Arow,Adia,D,prec)    
+  call Prec_Form(N, A, D, prec)    
 
 !????????????????????????????????????!
 !      This is quite tricky point.   !
 !     What if bnrm2 is very small ?  !
-!     => Parallelized                !
 !????????????????????????????????????!
   bnrm2=0.0
   do i=1,N
@@ -70,13 +55,11 @@
 
 !+++++++++++++++++++++++++!
 !     r1 = b - Ax         !
-!     => Parallelized     !
 !+++++++++++++++++++++++++!
-  call Resid(N,NB,NONZ,A,Acol,Arow,Ab,x,r1) 
+  call Resid(N, NB, A, x, r1) 
 
 !+++++++++++++++++++++++++!
 !     r2 = r1             !
-!     => Parallelized     !
 !+++++++++++++++++++++++++!
   do i=1,N
     r2(i)=r1(i) 
@@ -84,7 +67,6 @@
 
 !++++++++++++++++++++++++++++++++++++!
 !     calculate initial residual     !
-!     => Parallelized                !
 !++++++++++++++++++++++++++++++++++++!
   error=0.0
   do i=1,N
@@ -110,7 +92,6 @@
 
 !+++++++++++++++++++++++++!
 !     rho = (r2,z1)       !
-!     => Parallelized     !
 !+++++++++++++++++++++++++!
     rho=0.0
     do i=1,N
@@ -134,64 +115,16 @@
 !++++++++++++++++++++++++!
 !     solve Mp2 = u2     !
 !++++++++++++++++++++++++!
-
-!-------------------------------------!
-!     1) diagonal preconditioning     !
-!     => Parallelized                 !
-!-------------------------------------!          
-    if(prec == 1) then
-      do i=1,N
-        p2(i) = u2(i) / D(i)
-      end do
-
-!------------------------------------------------!
-!     2) incomplete cholesky preconditioning     !
-!------------------------------------------------!
-   else if(prec == 2) then  
-
-!----- forward substitutionn
-      do i=1,N
-        sum1=u2(i)
-        do j=Acol(i),Adia(i)-1  ! only the lower triangular
-          k=Arow(j)
-          sum1 = sum1 - A(j)*p2(k)
-        end do
-        p2(i) = sum1 * D(i)         ! BUG ?
-      end do
-
-      do i=1,N
-        p2(i) = p2(i) / ( D(i) + TINY )
-      end do
-
-!----- backward substitution
-      do i=N,1,-1
-        sum1=p2(i)
-        do j = Adia(i)+1, Acol(i+1)-1 ! upper triangular
-          k=Arow(j)
-          sum1 = sum1 - A(j)*p2(k)
-        end do
-        p2(i) = sum1 * D(i)               ! BUG ?
-      end do
-
-!-------------------------------!
-!     .) no preconditioning     !
-!     => Parallelized           !
-!-------------------------------!
-    else
-      do i=1,N
-        p2(i)=u2(i)
-      end do
-    end if
+    call Prec_Solve(N, NB, A, D, p2, u2, prec) 
 
 !++++++++++++++++++++++++++++!
 !     v2   = Ap2             !  
-!     => Parallelized        !
 !++++++++++++++++++++++++++++!
     do i=1,N
       v2(i) = 0.0                    
-      do j=Acol(i), Acol(i+1)-1   
-        k=Arow(j)                  
-        v2(i) = v2(i) + A(j) * p2(k)   
+      do j=A % col(i), A % col(i+1)-1   
+        k=A % row(j)                  
+        v2(i) = v2(i) + A % val(j) * p2(k)   
       end do
       alfa=alfa+r2(i)*v2(i)
     end do
@@ -200,14 +133,13 @@
       if(NBBe(sub)  <=  NBBs(sub)) then
         do k=NBBs(sub),NBBe(sub),-1
           i=BufInd(k)
-          v2(i) = v2(i) + Ab(k)*p2(k)
+          v2(i) = v2(i) + A % bou(k)*p2(k)
         end do
       end if
     end do
 
 !++++++++++++++++++++++++++++!
 !     alfa = rho/(r2,v2)     !
-!     => Parallelized        !
 !++++++++++++++++++++++++++++!
     alfa=0.0
     do i=1,N
@@ -218,7 +150,6 @@
 
 !+++++++++++++++++++++++++++++!
 !     q1 = u1 - alfa * v2     !
-!     => Parallelized         !
 !+++++++++++++++++++++++++++++!
     do i=1,N
       q1(i) = u1(i) - alfa*v2(i)
@@ -227,58 +158,13 @@
 !+++++++++++++++++++++++++++++++++++!
 !     solve Mp1 = u1(i) + q1(i)     !
 !+++++++++++++++++++++++++++++++++++!
-
-!-------------------------------------!
-!     1) diagonal preconditioning     !
-!     => Parallelized                 !
-!-------------------------------------!          
-    if(prec == 1) then
-      do i=1,N
-        p1(i) = (u1(i)+q1(i)) / D(i)
-      end do
-
-!------------------------------------------------!
-!     2) incomplete cholesky preconditioning     !
-!------------------------------------------------!
-   else if(prec == 2) then     
-
-!----- forward substitutionn
-      do i=1,N
-        sum1=u1(i)+q1(i)
-        do j=Acol(i),Adia(i)-1  ! only the lower triangular
-          k=Arow(j)
-          sum1 = sum1 - A(j)*p1(k)
-        end do
-        p1(i) = sum1 * D(i)         ! BUG ?
-      end do
-
-      do i=1,N
-        p1(i) = p1(i) / ( D(i) + TINY )
-      end do
-
-!----- backward substitution
-      do i=N,1,-1
-        sum1=p1(i)
-        do j = Adia(i)+1, Acol(i+1)-1 ! upper triangular
-          k=Arow(j)
-          sum1 = sum1 - A(j)*p1(k)
-        end do
-        p1(i) = sum1 * D(i)               ! BUG ?
-      end do
-
-!-------------------------------!
-!     .) no preconditioning     !
-!     => Parallelized           !
-!-------------------------------!
-    else
-      do i=1,N
-        p1(i)=u1(i)+q1(i)
-      end do
-    end if
+    do i=1,N
+      u1_plus_q1(i) = u1(i) + q1(i)
+    end do
+    call Prec_Solve(N, NB, A, D, p1, u1_plus_q1, prec) 
 
 !+++++++++++++++++++++++++!
 !     x = x + alfa p1     !
-!     => Parallelized     !
 !+++++++++++++++++++++++++!
     do i=1,N
       x(i)=x(i) + alfa*p1(i)
@@ -286,13 +172,12 @@
 
 !+++++++++++++++++++++++++!
 !     q2 = Ap1            !     
-!     => Parallelized     !
 !+++++++++++++++++++++++++!
     do i=1,N
       q2(i) = 0.0
-      do j=Acol(i), Acol(i+1)-1
-        k=Arow(j)
-        q2(i) = q2(i) + A(j) * p1(k)
+      do j=A % col(i), A % col(i+1)-1
+        k=A % row(j)
+        q2(i) = q2(i) + A % val(j) * p1(k)
       end do
     end do
     call Exchng(p1)
@@ -300,14 +185,13 @@
       if(NBBe(sub)  <=  NBBs(sub)) then
         do k=NBBs(sub),NBBe(sub),-1
           i=BufInd(k)
-          q2(i) = q2(i) + Ab(k)*p1(k)
+          q2(i) = q2(i) + A % bou(k)*p1(k)
         end do
       end if
     end do
 
 !++++++++++++++++++++++++!
 !     r = r - alfa q2    !
-!     => Parallelized    !
 !++++++++++++++++++++++++!
     do i=1,N
       r1(i)=r1(i) - alfa*q2(i)
@@ -315,7 +199,6 @@
 
 !???????????????????????????!
 !     check convergence     !
-!     => Parallelized       !
 !???????????????????????????!
     error=0.0
     do i=1,N

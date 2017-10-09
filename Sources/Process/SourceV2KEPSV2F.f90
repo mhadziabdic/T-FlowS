@@ -47,19 +47,19 @@
         b(c) = b(c) + f22%n(c)*volume(c)
       else
         b(c) = b(c) + max(0.0,f22%n(c)*volume(c))
-        Aval(Adia(c))= Aval(Adia(c))                                       &  
+        A % val(A % dia(c))= A % val(A % dia(c))                                       &  
                    + max(0.0,-f22%n(c)*volume(c)/(v_2%n(c) + tiny))    
       end if      
-      Aval(Adia(c)) =  Aval(Adia(c)) + volume(c)*Pk(c)/(Kin%n(c)+tiny) 
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + volume(c)*Pk(c)/(Kin%n(c)+tiny) 
     end do
   else if(SIMULA == K_EPS_VV) then
     do c = 1, NC
       b(c) = b(c) + max(0.0,f22%n(c)*Kin%n(c)*volume(c))
-      Aval(Adia(c))= Aval(Adia(c))                                       &
+      A % val(A % dia(c))= A % val(A % dia(c))                                       &
                      + max(0.0,-f22%n(c)*Kin%n(c)*volume(c)/(v_2%n(c) + tiny))
     end do
     do c = 1, NC  
-      Aval(Adia(c)) =  Aval(Adia(c)) + volume(c)*Eps%n(c)/(Kin%n(c)+tiny) 
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + volume(c)*Eps%n(c)/(Kin%n(c)+tiny) 
     end do
   end if
 

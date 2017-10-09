@@ -5,10 +5,11 @@
 #define MAXBC   10
 
 #include<stdio.h>
+#include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
  {
   int  i, j, k, N, s, Nsc, insc, isc;
   char base_name[80], name[80], format[80], 

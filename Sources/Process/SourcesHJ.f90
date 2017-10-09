@@ -464,41 +464,41 @@
     if(var == 6) then
 !==============================================================================================================================!
       b(c) = b(c) + (max(P11,0.0)+CC1*Eps%n(c)*r23+max(VAR2_11,0.0)+max(VAR1w_11,0.0)+max(VAR2w_11,0.0))*volume(c) 
-      Aval(Adia(c)) = Aval(Adia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n1*n1 + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n1*n1 + &
                       fss*Eps%n(c)/Kin%n(c))*volume(c) 
-      Aval(Adia(c)) = Aval(Adia(c))+(max(-P11,0.0)+max(-VAR2_11,0.0)+max(-VAR1w_11,0.0)+max(-VAR2w_11,0.0) + &
+      A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P11,0.0)+max(-VAR2_11,0.0)+max(-VAR1w_11,0.0)+max(-VAR2w_11,0.0) + &
                       (1.0-fss)*r23*Eps%n(c))/max(uu%n(c),1.0e-10)*volume(c) 
 !==============================================================================================================================!
 !------- vv stress
     else if(var == 7) then
 !==============================================================================================================================!
       b(c) = b(c) + (max(P22,0.0)+CC1*Eps%n(c)*r23+max(VAR2_22,0.0)+max(VAR1w_22,0.0)+max(VAR2w_22,0.0))*volume(c) 
-      Aval(Adia(c)) = Aval(Adia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n2*n2 + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n2*n2 + &
                       fss*Eps%n(c)/Kin%n(c))*volume(c) 
-      Aval(Adia(c)) = Aval(Adia(c))+(max(-P22,0.0)+max(-VAR2_22,0.0)+max(-VAR1w_22,0.0)+max(-VAR2w_22,0.0)+ &
+      A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P22,0.0)+max(-VAR2_22,0.0)+max(-VAR1w_22,0.0)+max(-VAR2w_22,0.0)+ &
                       (1.0-fss)*r23*Eps%n(c))/max(vv%n(c),1.0e-10)*volume(c) 
 !==============================================================================================================================!
 !------- ww stress
     else if(var == 8) then
 !==============================================================================================================================!
       b(c) = b(c) + (max(P33,0.0)+CC1*Eps%n(c)*r23+max(VAR2_33,0.0)+max(VAR1w_33,0.0)+max(VAR2w_33,0.0))*volume(c) 
-      Aval(Adia(c)) = Aval(Adia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n3*n3 + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n3*n3 + &
                       fss*Eps%n(c)/Kin%n(c))*volume(c) 
-      Aval(Adia(c)) = Aval(Adia(c))+(max(-P33,0.0)+max(-VAR2_33,0.0)+max(-VAR1w_33,0.0)+max(-VAR2w_33,0.0)+ &
+      A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P33,0.0)+max(-VAR2_33,0.0)+max(-VAR1w_33,0.0)+max(-VAR2w_33,0.0)+ &
                       (1.0-fss)*r23*Eps%n(c))/max(ww%n(c),1.0e-10)*volume(c) 
 !==============================================================================================================================!
 !==============================================================================================================================!
 !------- uv stress
     else if(var == 9) then
       b(c) = b(c) + (P12 + VAR2_12 + VAR1w_12 + VAR2w_12)*volume(c) 
-      Aval(Adia(c)) = Aval(Adia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*1.5*(n1*n1+n2*n2) + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*1.5*(n1*n1+n2*n2) + &
                       fss*Eps%n(c)/Kin%n(c))*volume(c) 
 !==============================================================================================================================!
 !==============================================================================================================================!
 !------- uw stress
     else if(var == 10) then
       b(c) = b(c) + (P13 + VAR2_13 + VAR1w_13 + VAR2w_13)*volume(c) 
-      Aval(Adia(c)) = Aval(Adia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*1.5*(n1*n1+n3*n3) + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*1.5*(n1*n1+n3*n3) + &
                       fss*Eps%n(c)/Kin%n(c))*volume(c) 
 
 !==============================================================================================================================!
@@ -506,7 +506,7 @@
 !------- vw stress
     else if(var == 11) then
       b(c) = b(c) + (P23 + VAR2_23 + VAR1w_23 + VAR2w_23)*volume(c) 
-      Aval(Adia(c)) = Aval(Adia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*1.5*(n2*n2+n3*n3) + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*1.5*(n2*n2+n3*n3) + &
                       fss*Eps%n(c)/Kin%n(c))*volume(c) 
 !==============================================================================================================================!
 !==============================================================================================================================!
@@ -517,7 +517,7 @@
       Eps2 = Ce2*Feps*Eps%n(c)/Kin%n(c)
       b(c) = b(c) + max(Eps1 + Diss1(c),0.0)*volume(c) 
      
-      Aval(Adia(c)) =  Aval(Adia(c)) + Eps2*volume(c)
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + Eps2*volume(c)
     end if
   end do
 

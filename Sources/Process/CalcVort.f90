@@ -44,16 +44,16 @@
 
     do c=1,NC
       if(i == 1) then
-	Sjk = 0.5*(PHIy(c)-PHIz(c)) ! Syz=Szy:  .5(dV/dz+dW/dy)
-	Vort(c) = 2.0*Sjk*Sjk   
+        Sjk = 0.5*(PHIy(c)-PHIz(c)) ! Syz=Szy:  .5(dV/dz+dW/dy)
+        Vort(c) = 2.0*Sjk*Sjk   
       end if
       if(i == 2) then
-	Sjk = 0.5*(PHIx(c)-PHIz(c)) ! Sxz=Szx:  .5(dU/dz+dW/dx)
-	Vort(c) = Vort(c) + 2.0*Sjk*Sjk  
+        Sjk = 0.5*(PHIx(c)-PHIz(c)) ! Sxz=Szx:  .5(dU/dz+dW/dx)
+        Vort(c) = Vort(c) + 2.0*Sjk*Sjk  
       end if
       if(i == 3) then
-	Sjk = 0.5*(PHIx(c)-PHIy(c)) ! Sxy=Syx:  .5(dV/dx+dU/dy)
-	Vort(c) = Vort(c) + 2.0*Sjk*Sjk 
+        Sjk = 0.5*(PHIx(c)-PHIy(c)) ! Sxy=Syx:  .5(dV/dx+dU/dy)
+        Vort(c) = Vort(c) + 2.0*Sjk*Sjk 
       end if
     end do 
 

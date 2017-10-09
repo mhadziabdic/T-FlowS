@@ -58,7 +58,7 @@
 
    do c = 1, NC
      Sor11 = volume(c)/(Lsc(c)**2 + tiny)
-     Aval(Adia(c)) = Aval(Adia(c)) + Sor11 
+     A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11 
    end do
 
 !  Imposing boundary condition for f22 on the wall
@@ -87,7 +87,7 @@
                 + Cf_2*Pk(c)/(Kin % n(c)+tiny)
      b(c) = b(c) + f22hg*volume(c)/(Lsc(c)+tiny)**2.0
      Sor11 = volume(c)/Lsc(c)**2.0
-     Aval(Adia(c)) = Aval(Adia(c)) + Sor11
+     A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11
    end do
 
 !  Imposing boundary condition for f22 on the wall

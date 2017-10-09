@@ -38,7 +38,7 @@
       GG    = R + Cw2*(R**6.0 - R)
       Fw    = GG*((1.0 + Cw3**6.0)/(GG**6.0 + Cw3**6.0))**(1.0/6.0)
       DistV = Cw1* DENc(material(c)) * Fw * (VIS % n(c)/WallDs(c)**2.0)
-      Aval(Adia(c)) = Aval(Adia(c)) + DistV * volume(c)
+      A % val(A % dia(c)) = A % val(A % dia(c)) + DistV * volume(c)
  
 !--------------------------------------------------!
 !    Compute the first-order diffusion term        !
@@ -69,7 +69,7 @@
       GG    = R + Cw2*(R**6.0 - R)
       Fw    = GG*((1.0 + Cw3**6.0)/(GG**6.0 + Cw3**6.0))**(1.0/6.0)
       DistV = Cw1* DENc(material(c)) * Fw * (VIS % n(c)/dist**2.0)
-      Aval(Adia(c)) = Aval(Adia(c)) + DistV * volume(c)
+      A % val(A % dia(c)) = A % val(A % dia(c)) + DistV * volume(c)
 
 !--------------------------------------------------!
 !    Compute the first-order diffusion term        !

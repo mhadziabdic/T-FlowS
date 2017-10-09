@@ -67,8 +67,8 @@
     M13a = 0.0
     M23a = 0.0
   
-    do j = Acol(c), Acol(c + 1) - 1
-      cj = Arow(j) 
+    do j = A % col(c), A % col(c + 1) - 1
+      cj = A % row(j) 
       if(cj /= c) then
 
 !--- Test velocitys

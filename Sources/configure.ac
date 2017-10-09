@@ -3,6 +3,7 @@ AC_INIT([T-FlowS],[0.1])
 AM_INIT_AUTOMAKE
 
 AC_PROG_FC
+AC_PROG_CC
 
 AC_PROG_RANLIB
 
@@ -15,5 +16,7 @@ AC_OUTPUT(
   Neu2TFlowS/Makefile			\
   Process/Makefile			\
   Process/Communication/Makefile	\
-  Process/User/Makefile
+  Process/Linear_Solvers/Makefile	\
+  Process/User/Makefile			\
+  Utilities/Makefile
 )

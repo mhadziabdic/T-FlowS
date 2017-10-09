@@ -27,15 +27,15 @@
 !--------------------------------------------!
   if(ALGOR == FRACT) then
     do c=1,NC
-      U % n(c) = U % n(c) - Px(c) * volume(c) / Asave(c)
-      V % n(c) = V % n(c) - Py(c) * volume(c) / Asave(c)
-      W % n(c) = W % n(c) - Pz(c) * volume(c) / Asave(c)
+      U % n(c) = U % n(c) - Px(c) * volume(c) / A % sav(c)
+      V % n(c) = V % n(c) - Py(c) * volume(c) / A % sav(c)
+      W % n(c) = W % n(c) - Pz(c) * volume(c) / A % sav(c)
     end do 
   else ! Algorythm is SIMPLE
     do c=1,NC
-      U % n(c) = U % n(c) - Px(c) * volume(c) / Asave(c)
-      V % n(c) = V % n(c) - Py(c) * volume(c) / Asave(c)
-      W % n(c) = W % n(c) - Pz(c) * volume(c) / Asave(c)
+      U % n(c) = U % n(c) - Px(c) * volume(c) / A % sav(c)
+      V % n(c) = V % n(c) - Py(c) * volume(c) / A % sav(c)
+      W % n(c) = W % n(c) - Pz(c) * volume(c) / A % sav(c)
     end do 
   end if
 
@@ -59,7 +59,7 @@
 !     matrix must be formed from underrelaxed velocity coefficients    !
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
 !     Note that for FLUID-SOLID interaction, FLUX correctin is zero    !
-!     because Aval(SidAij(1,s)) is also zero.                          !  
+!     because A % val(A % pos(1,s)) is also zero.                       !  
 !     What will happen with parallel version ... only god knows.       !
 !----------------------------------------------------------------------!
   do s=1,NS
@@ -67,9 +67,9 @@
     c2=SideC(2,s)
     if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
       if(c2  > 0) then
-        Flux(s)=Flux(s)+(PP % n(c2) - PP % n(c1))*Aval(SidAij(1,s))
+        Flux(s)=Flux(s)+(PP % n(c2) - PP % n(c1))*A % val(A % pos(1,s))
       else 
-        Flux(s)=Flux(s)+(PP % n(c2) - PP % n(c1))*Abou(c2)
+        Flux(s)=Flux(s)+(PP % n(c2) - PP % n(c1))*A % bou(c2)
       endif
     end if             !                                          !
   end do               !<---------- this is correction ---------->!

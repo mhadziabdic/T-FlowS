@@ -49,7 +49,7 @@
    do c = 1,NC
      f22hg = 1.0
      Sor11 = volume(c)/Lsc(c)**2
-     Aval(Adia(c)) = Aval(Adia(c)) + Sor11     
+     A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11     
      b(c) = b(c) + f22hg*volume(c)/Lsc(c)**2
    end do
 !---- izvorni clan

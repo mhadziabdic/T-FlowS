@@ -1,38 +1,23 @@
 !======================================================================!
-  subroutine Prec1(N,NONZ,A,Acol,Arow,Adia,D,prec) 
+  subroutine Prec_Form(N, A, D, prec) 
 !----------------------------------------------------------------------!
-!   Solves the linear systems of equations by a precond. CG Method.    !
+! Forms preconditioning matrix "D" from provided matrix "A".           !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
+  use allt_mod, only: Matrix
   use par_mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Parameters]-----------------------------!
-  integer  :: N, NONZ      
-
-  real     :: A(NONZ)
-  integer  :: Acol(N),Adia(N)
-  integer  :: Arow(NONZ)
-  real     :: D(N) 
-
-  integer  :: prec
+  integer      :: N
+  type(Matrix) :: A
+  type(Matrix) :: D    
+  integer      :: prec
 !-------------------------------[Locals]-------------------------------!
   real     :: sum1
   integer  :: i, j, k
 !======================================================================!
                  
-!->>>
-!      integer c 
-!      do c=1,N
-!        write(*,*) 'Cell: ', c
-!        write(*,*) 'Width: ', Acol(c+1)-Acol(c)
-!        write(*,'(3I7)') Acol(c), Adia(c), Acol(c+1)-1
-!        write(*,*) 'Diag: ', A(Adia(c))
-!        write(*,'(25F15.9)') ( A(j),     j=Acol(c),Acol(c+1)-1 )
-!        write(*,'(25I7)') ( Arow(j), j=Acol(c),Acol(c+1)-1 )
-!        write(*,*) '- - - - - - - - - - - - - - - - - - - - - - -'
-!      end do
-
 !+++++++++++++++++++++++++!
 !     preconditioning     !
 !+++++++++++++++++++++++++!
@@ -41,26 +26,26 @@
 !     => Parallelized                   ! 
   if(prec == 1) then        
     do i=1,N                     
-      D(i)=A(Adia(i))           
+      D % val(D % dia(i)) = A % val(A % dia(i))           
     end do                      
 
 !----- 2) incomplete cholesky preconditioning -----!
   else if(prec == 2) then   
-    do i=1,N
-      sum1=A(Adia(i))          
-      do j=Acol(i), Adia(i)-1         ! only lower traingular
-        k=Arow(j)                    
-        sum1= sum1- D(k) * A(j)*A(j)  
+    do i = 1,N
+      sum1 = A % val(A % dia(i))       ! take diaginal entry   
+      do j = A % col(i), A % dia(i)-1  ! only lower traingular
+        k = A % row(j)                    
+        sum1 = sum1 - D % val(D % dia(k)) * A % val(j) * A % val(j)  
       end do
-      D(i) = 1.0 / sum1                 ! BUG ?
+      D % val(D % dia(i)) = 1.0 / sum1
     end do
 
 !----- .) no preconditioning -----!
 !     => Parallelized             ! 
   else                          
     do i=1,N
-      D(i)=1.0
+      D % val(D % dia(i)) = 1.0
     end do
   end if 
 
-  end subroutine Prec1
+  end subroutine Prec_Form

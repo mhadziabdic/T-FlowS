@@ -39,7 +39,7 @@
 !   
 !======================================================================!
 
-  Aval = 0.0
+  A % val = 0.0
 
 !------------------------------------------!
 !      Initialize the source term for      !
@@ -91,18 +91,18 @@
 !---- calculate coeficients for the system matrix
       if(c2  > 0) then 
         A12 = 0.5 * DENs * SMDPN *                                  &
-           (  volume(c1) / Asave(c1)                              &
-            + volume(c2) / Asave(c2) )  
-        Aval(SidAij(1,s))  = -A12
-        Aval(SidAij(2,s))  = -A12
-       Aval(Adia(c1)) = Aval(Adia(c1)) +  A12
-        Aval(Adia(c2)) = Aval(Adia(c2)) +  A12
+           (  volume(c1) / A % sav(c1)                              &
+            + volume(c2) / A % sav(c2) )  
+        A % val(A % pos(1,s))  = -A12
+        A % val(A % pos(2,s))  = -A12
+       A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
+        A % val(A % dia(c2)) = A % val(A % dia(c2)) +  A12
       else 
         A12 = 0.5 * DENs * SMDPN *                                  &
-             (  volume(c1) / Asave(c1)                              &
-              + volume(c2) / Asave(c2) )  
-        Abou(c2)  = -A12
-        Aval(Adia(c1)) = Aval(Adia(c1)) +  A12
+             (  volume(c1) / A % sav(c1)                              &
+              + volume(c2) / A % sav(c2) )  
+        A % bou(c2)  = -A12
+        A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       end if 
 
 !---- interpoliraj razliku pritiska
@@ -136,8 +136,8 @@
         b(c1) = b(c1)-Flux(s)
         SMDPN = ( Sx(s)*Sx(s) + Sy(s)*Sy(s) + Sz(s)*Sz(s) ) &
               / ( Sx(s)*Dx(s) + Sy(s)*Dy(s) + Sz(s)*Dz(s) )  
-        A12 = DENs * SMDPN * volume(c1) / Asave(c1)
-        Aval(Adia(c1)) = Aval(Adia(c1)) +  A12
+        A12 = DENs * SMDPN * volume(c1) / A % sav(c1)
+        A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       else if(TypeBC(c2) == PRESSURE) then
         Us = U % n(c1)
         Vs = V % n(c1)
@@ -146,8 +146,8 @@
         b(c1) = b(c1)-Flux(s)
         SMDPN = ( Sx(s)*Sx(s) + Sy(s)*Sy(s) + Sz(s)*Sz(s) ) &
               / ( Sx(s)*Dx(s) + Sy(s)*Dy(s) + Sz(s)*Dz(s) )
-        A12 = DENs * SMDPN * volume(c1) / Asave(c1)
-        Aval(Adia(c1)) = Aval(Adia(c1)) +  A12
+        A12 = DENs * SMDPN * volume(c1) / A % sav(c1)
+        A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       else  ! it is SYMMETRY
         Flux(s) = 0.0
       end if
@@ -164,7 +164,7 @@
 !------------------------------------------------!
 !     Solve the pressure correction equation     !
 !------------------------------------------------!
-!>>>>> Aval(1) = Aval(1) * 2.0
+!>>>>> A % val(1) = A % val(1) * 2.0
 
 !---- Give the "false" flux back and set it to zero ! 2mat
 !  do s=1,NS                                         ! 2mat
@@ -187,28 +187,28 @@
 !    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
 !      if(c2 > 0) then ! => not BUFFER               ! 2mat
 !        if(StateMat(material(c1)) == SOLID) then    ! 2mat
-!          A12 = -Aval(SidAij(2,s))                  ! 2mat
-!          Aval(SidAij(1,s)) = 0.0                   ! 2mat
-!          Aval(SidAij(2,s)) = 0.0                   ! 2mat
+!          A12 = -A % val(A % pos(2,s))                  ! 2mat
+!          A % val(A % pos(1,s)) = 0.0                   ! 2mat
+!          A % val(A % pos(2,s)) = 0.0                   ! 2mat
 !          if(StateMat(material(c2)) == FLUID) then  ! 2mat
-!            Aval(Adia(c2)) = Aval(Adia(c2)) -  A12  ! 2mat
+!            A % val(A % dia(c2)) = A % val(A % dia(c2)) -  A12  ! 2mat
 !          endif                                     ! 2mat
 !        end if                                      ! 2mat
 !        if(StateMat(material(c2)) == SOLID) then    ! 2mat
-!          A12 = -Aval(SidAij(1,s))                  ! 2mat
-!          Aval(SidAij(2,s)) = 0.0                   ! 2mat
-!          Aval(SidAij(1,s)) = 0.0                   ! 2mat
+!          A12 = -A % val(A % pos(1,s))                  ! 2mat
+!          A % val(A % pos(2,s)) = 0.0                   ! 2mat
+!          A % val(A % pos(1,s)) = 0.0                   ! 2mat
 !          if(StateMat(material(c1)) == FLUID) then  ! 2mat
-!            Aval(Adia(c1)) = Aval(Adia(c1)) -  A12  ! 2mat
+!            A % val(A % dia(c1)) = A % val(A % dia(c1)) -  A12  ! 2mat
 !          endif                                     ! 2mat
 !        end if                                      ! 2mat
 !      else            ! => BUFFER                   ! 2mat
 !        if(StateMat(material(c1)) == SOLID  .or. &  ! 2mat
 !           StateMat(material(c2)) == SOLID) then    ! 2mat
-!          A12 = -Abou(c2)                           ! 2mat
-!          Abou(c2) = 0.0                            ! 2mat
+!          A12 = -A % bou(c2)                           ! 2mat
+!          A % bou(c2) = 0.0                            ! 2mat
 !          if(StateMat(material(c1)) == FLUID) then  ! 2mat
-!            Aval(Adia(c1)) = Aval(Adia(c1)) -  A12  ! 2mat
+!            A % val(A % dia(c1)) = A % val(A % dia(c1)) -  A12  ! 2mat
 !          endif                                     ! 2mat
 !        end if                                      ! 2mat
 !      end if                                        ! 2mat
@@ -221,8 +221,8 @@
 !     Value 1.e-12 keeps the solution stable                !
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -!  
   niter=40
-  call bicg(NC, NbC, NONZERO, Aval, Acol,Arow,Adia,Abou,  &
-        PP % n, b, PREC, niter, PP % STol,            &
+  call cgs(NC, NbC, A,                     &
+        PP % n, b, PREC, niter, PP % STol,  &
         res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)
   write(LineRes(89:92),  '(I4)')      niter

@@ -65,10 +65,10 @@
 !----------------------------------------!
 !----- Dissipation:
       if(ALPHA1 < 1.05) then
-        Aval(Adia(c)) = Aval(Adia(c)) +                                    &
+        A % val(A % dia(c)) = A % val(A % dia(c)) +                                    &
                         DENc(material(c))*Eps%n(c)/(Kin%n(c) + tiny)*volume(c)
       else
-        Aval(Adia(c)) = Aval(Adia(c)) +                                    &
+        A % val(A % dia(c)) = A % val(A % dia(c)) +                                    &
                         DENc(material(c))*min(ALPHA1**1.45*Eps%n(c),Kin%n(c)**1.5  &
                        /(lf*0.01))/(Kin%n(c) + tiny)*volume(c)
       end if
@@ -81,14 +81,14 @@
  
 !----------------------------------------!
 !----- Dissipation:
-      Aval(Adia(c)) = Aval(Adia(c)) +                                    &
+      A % val(A % dia(c)) = A % val(A % dia(c)) +                                    &
                       DENc(material(c))*Eps%n(c)/(Kin%n(c)+tiny)*volume(c)
       Pk(c) =  VISt(c) * Shear(c) * Shear(c) 
       if (BUOY == YES) then ! XXXXX 6 Jun 2014
         buoyBeta(c) = 1.0
         Gbuoy(c) = -buoyBeta(c)*(grav_x*ut%n(c) + grav_y*vt%n(c) + grav_z*wt%n(c))   ! XXXXX 5 Jul 2014
         b(c) = b(c) + max(0.0,Gbuoy(c)*volume(c))
-        Aval(Adia(c))= Aval(Adia(c))                                       &
+        A % val(A % dia(c))= A % val(A % dia(c))                                       &
                      + max(0.0,-Gbuoy(c)*volume(c)/(Kin%n(c) + tiny))
       end if
     end do

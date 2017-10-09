@@ -65,8 +65,8 @@
 !    TDC = 1.0       
 !  end if        
 
-  do n=1,Acol(NC+1) ! to je broj nonzero + 1
-    Aval(n) = 0.0
+  do n=1,A % col(NC+1) ! to je broj nonzero + 1
+    A % val(n) = 0.0
   end do
 
   do c=1,NC
@@ -77,7 +77,7 @@
 !----- (I just coppied this from NewUVW.f90. I don't have a clue if it
 !----- is of any importance at all. Anyway, I presume it can do no harm.)
   do c=-NbC,-1
-    Abou(c)=0.0
+    A % bou(c)=0.0
   end do
 
 !-----------------------------------------! 
@@ -343,11 +343,11 @@
                 
 !----- fill the system matrix
       if(c2.gt.0) then
-        Aval(Adia(c1)) = Aval(Adia(c1)) + A12
-        Aval(Adia(c2)) = Aval(Adia(c2)) + A21
+        A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
+        A % val(A % dia(c2)) = A % val(A % dia(c2)) + A21
         if(material(c1) == material(c2)) then
-          Aval(SidAij(1,s)) = Aval(SidAij(1,s)) - A12
-          Aval(SidAij(2,s)) = Aval(SidAij(2,s)) - A21
+          A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - A12
+          A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - A21
         else
           b(c1) = b(c1) + A12*PHIside(s)
           b(c2) = b(c2) + A21*PHIside(s)
@@ -360,16 +360,16 @@
         if( (TypeBC(c2).eq.INFLOW).or.    &
             (TypeBC(c2).eq.WALL).or.      &
             (TypeBC(c2).eq.CONVECT) ) then    
-          Aval(Adia(c1)) = Aval(Adia(c1)) + A12
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1)  = b(c1)  + A12 * PHI % n(c2)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ! Buffer: System matrix and parts belonging to other
 ! subdomains are filled here.
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         else if(TypeBC(c2).eq.BUFFER) then
-          Aval(Adia(c1)) = Aval(Adia(c1)) + A12
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           if(material(c1) == material(c2)) then
-            Abou(c2) = -A12  ! cool parallel stuff
+            A % bou(c2) = -A12  ! cool parallel stuff
           else
             b(c1) = b(c1) + A12*PHIside(s)
           end if
@@ -420,7 +420,7 @@
       if( (PHI % X(c)+PHI % Xo(c))  >= 0) then
         b(c)  = b(c) + 0.5*(PHI % X(c) + PHI % Xo(c))
       else
-        Aval(Adia(c)) = Aval(Adia(c)) &
+        A % val(A % dia(c)) = A % val(A % dia(c)) &
              - 0.5 * (PHI % X(c) + PHI % Xo(c)) / (PHI % n(c)+1.e-6)
       end if
     end do
@@ -432,7 +432,7 @@
       if(PHI % X(c) >= 0) then
         b(c)  = b(c) + PHI % X(c)
       else
-        Aval(Adia(c)) = Aval(Adia(c)) - PHI % X(c)/(PHI % n(c)+1.e-6)
+        A % val(A % dia(c)) = A % val(A % dia(c)) - PHI % X(c)/(PHI % n(c)+1.e-6)
       end if
     end do
   end if
@@ -447,7 +447,7 @@
   if(INERT.eq.LIN) then
     do c=1,NC
       A0 = CAPc(material(c)) * DENc(material(c)) * volume(c)/dt
-      Aval(Adia(c)) = Aval(Adia(c)) + A0
+      A % val(A % dia(c)) = A % val(A % dia(c)) + A0
       b(c)  = b(c) + A0*PHI % o(c)
     end do
   end if
@@ -456,17 +456,17 @@
   if(INERT.eq.PAR) then
     do c=1,NC
       A0 = CAPc(material(c)) * DENc(material(c)) * volume(c)/dt
-      Aval(Adia(c)) = Aval(Adia(c)) + 1.5 * A0
+      A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
       b(c)  = b(c) + 2.0 * A0 * PHI % o(c) - 0.5 * A0 * PHI % oo(c)
     end do
   end if
 
 !->>> take a look at the system of equations
 !->>> do c=1,NC
-!->>>   write(*,*) 'Width: ', Acol(c+1)-Acol(c)
-!->>>   write(*,'(3I7)') Acol(c), Adia(c), Acol(c+1)-1
-!->>>   write(*,*) 'Diag: ', Aval(Adia(c))
-!->>>   write(*,'(F5.2)') ( Aval(j),  j=Acol(c),Acol(c+1)-1 )
+!->>>   write(*,*) 'Width: ', A % col(c+1)-A % col(c)
+!->>>   write(*,'(3I7)') A % col(c), A % dia(c), A % col(c+1)-1
+!->>>   write(*,*) 'Diag: ', A % val(A % dia(c))
+!->>>   write(*,'(F5.2)') ( A % val(j),  j=A % col(c),A % col(c+1)-1 )
 !->>>   write(*,*) '- - - - - - - - - - - - - - - - - - - - - - -'
 !->>> end do  
 
@@ -551,17 +551,17 @@
 !                                   !    
 !===================================!
   do c=1,NC
-    b(c) = b(c) + Aval(Adia(c)) * (1.0 - PHI % URF) * PHI % n(c) / PHI % URF
-    Aval(Adia(c)) = Aval(Adia(c)) / PHI % URF
-!?????? Asave(c) = Aval(Adia(c)) ??????
+    b(c) = b(c) + A % val(A % dia(c)) * (1.0 - PHI % URF) * PHI % n(c) / PHI % URF
+    A % val(A % dia(c)) = A % val(A % dia(c)) / PHI % URF
+!?????? A % sav(c) = A % val(A % dia(c)) ??????
   end do  
 
   if(ALGOR == SIMPLE)   miter=10
   if(ALGOR == FRACT)    miter=5 
 
   niter=miter
-  call bicg(NC, Nbc, NONZERO, Aval,Acol,Arow,Adia,Abou,  &
-            PHI % n, b, PREC,                            &
+  call bicg(NC, Nbc, A,           & 
+            PHI % n, b, PREC,     &
             niter,PHI % STol, res(var), error)
   write(LineRes(65:76),  '(1PE12.3)') res(var)
   write(LineRes(93:96),  '(I4)')      niter       

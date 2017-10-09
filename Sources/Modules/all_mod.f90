@@ -11,6 +11,8 @@
 !======================================================================!
 module all_mod
 
+  use allp_mod
+
   implicit none
 
   real,allocatable :: xc(:),yc(:),zc(:) 

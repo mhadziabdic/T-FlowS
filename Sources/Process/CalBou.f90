@@ -129,7 +129,6 @@
         if(SIMULA==ZETA.or.SIMULA==K_EPS) then
           Yplus = Cmu25 * sqrt(Kin%n(c1)) * WallDs(c1) / VISc
           Uplus = log(Yplus*Elog) / (kappa + TINY) + TINY
-          Prturb = 0.9
           Prmol = VISc / CONc(material(c1))
           beta = 9.24 * ((Prmol/Prturb)**0.75 - 1.0) * (1.0 + 0.28 * exp(-0.007*Prmol/Prturb))
           EBF = 0.01 * (Prmol*Yplus)**4.0 / (1.0 + 5.0 * Prmol**3.0 * Yplus) + TINY

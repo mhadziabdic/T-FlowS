@@ -28,7 +28,7 @@
   write(*,*) ' Creating 1D file with the node '
   write(*,*) ' coordinates in non-homogeneous directions '
   write(*,*) '-------------------------------------------'
-  write(*,*) 'Insert non-homogeneous direction (x, y, z, Rx, Ry, Rz or skip)'
+  write(*,*) 'Insert non-homogeneous direction (x_node, y_node, z_node, Rx, Ry, Rz or skip)'
   read(*,*) answer
   call touppr(answer)
   if(answer=='SKIP') return
@@ -40,29 +40,29 @@
 !---- try to find the cell among the probes
     do p=1,Nprob
         if(answer == 'X') then
-          if( Approx(x(n), N_p(p)) ) go to 1
+          if( Approx(x_node(n), N_p(p)) ) go to 1
         else if(answer == 'Y') then
-          if( Approx(y(n), N_p(p)) ) go to 1
+          if( Approx(y_node(n), N_p(p)) ) go to 1
         else if(answer == 'Z') then
-          if( Approx(z(n), N_p(p)) ) go to 1
+          if( Approx(z_node(n), N_p(p)) ) go to 1
         else if(answer == 'RX') then
-          if( Approx( (z(n)**2.0 + y(n)**2.0)**0.5, N_p(p)) ) go to 1
+          if( Approx( (z_node(n)**2.0 + y_node(n)**2.0)**0.5, N_p(p)) ) go to 1
         else if(answer == 'RY') then
-          if( Approx( (x(n)**2.0 + z(n)**2.0)**0.5, N_p(p)) ) go to 1
+          if( Approx( (x_node(n)**2.0 + z_node(n)**2.0)**0.5, N_p(p)) ) go to 1
         else if(answer == 'RZ') then
-          if( Approx( (x(n)*x(n) + y(n)*y(n))**0.5, N_p(p)) ) go to 1
+          if( Approx( (x_node(n)**2.0 + y_node(n)**2.0)**0.5, N_p(p)) ) go to 1
         end if
     end do 
   
 !---- couldn't find a cell among the probes, add a new one
     Nprob = Nprob+1
-    if(answer=='X') N_p(Nprob)= x(n)
-    if(answer=='Y') N_p(Nprob)= y(n)
-    if(answer=='Z') N_p(Nprob)= z(n)
+    if(answer=='X') N_p(Nprob)=x_node(n)
+    if(answer=='Y') N_p(Nprob)=y_node(n)
+    if(answer=='Z') N_p(Nprob)=z_node(n)
 
-    if(answer=='RX') N_p(Nprob)= (z(n)**2.0 + y(n)**2.0)**0.5
-    if(answer=='RY') N_p(Nprob)= (x(n)**2.0 + z(n)**2.0)**0.5
-    if(answer=='RZ') N_p(Nprob)= (x(n)*x(n) + y(n)*y(n))**0.5
+    if(answer=='RX') N_p(Nprob)=(z_node(n)**2.0 + y_node(n)**2.0)**0.5
+    if(answer=='RY') N_p(Nprob)=(x_node(n)**2.0 + z_node(n)**2.0)**0.5
+    if(answer=='RZ') N_p(Nprob)=(x_node(n)*x_node(n) + y_node(n)*y_node(n))**0.5
 
     if(Nprob == 10000) then
       write(*,*) 'Probe 1D: Not a 1D (channel flow) problem.'

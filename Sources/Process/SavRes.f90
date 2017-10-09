@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine SavRes(namAut)
+  subroutine SavRes(name_aut)
 !----------------------------------------------------------------------!
 ! Writes restart files. NAME.restart                                                 !
 ! ~~~~~~~                                                              !
@@ -13,36 +13,36 @@
   implicit none
 !-------------------------------[Locals]-------------------------------!
   integer             :: c, s, m
-  character           :: namOut*80, answer*80
-  character, optional :: namAut*(*)
+  character(len=80)   :: name_out, answer
+  character, optional :: name_aut*(*)
 !======================================================================!
 
-  if(PRESENT(namAut)) then
+  if(PRESENT(name_aut)) then
 !---- save the name
     answer = name
-    name = namAut
+    name = name_aut
   else
-    if(this  < 2)                                                     &
+    if(this_proc  < 2)                                                     &
       write(*,*) '# Output restart file name [skip cancels]:'
     call ReadC(CMN_FILE,inp,tn,ts,te)
 !->>> write(*,*) inp(1:300)
-    read(inp(ts(1):te(1)), '(A80)')  namOut
-    answer=namOut
+    read(inp(ts(1):te(1)), '(A80)')  name_out
+    answer=name_out
     call ToUppr(answer) 
 
     if(answer == 'SKIP') return 
 
 !---- save the name
     answer = name
-    name = namOut
+    name = name_out
   end if
 
 !-----------------------------!
 !     Create restart file     !
 !-----------------------------!
-  call NamFil(this, namOut, '.restart', len_trim('.restart') )
-  open(9, FILE=namOut, FORM='UNFORMATTED')
-  if(this  < 2) write(6, *) '# Now creating the file:', namOut
+  call NamFil(this_proc, name_out, '.restart', len_trim('.restart') )
+  open(9, FILE=name_out, FORM='UNFORMATTED')
+  if(this_proc  < 2) write(6, *) '# Now creating the file:', name_out
 
 !---- version
   write(9) 0.0  ! version

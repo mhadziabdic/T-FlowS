@@ -151,7 +151,7 @@
   Uaver  = MassIn(1)/Area 
 !   write(*,*) MassIn, Area, MassIn/Area 
 !>>> This is very handy test to perform 
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# MassIn=', MassIn(1)
     write(*,*) '# Average inflow velocity =', MassIn(1)/Area
     write(*,*) '# Number of faces on the wall        : ',N1

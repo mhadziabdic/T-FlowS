@@ -1,40 +1,40 @@
 !======================================================================!
-  subroutine DatSav(namAut)
+  subroutine DatSav(name_aut)
 !----------------------------------------------------------------------!
 ! Writes: NAME.dat                                                     !
 ! ~~~~~~~                                                              !
 !------------------------------[Modules]-------------------------------!
   use all_mod
   use pro_mod
-  use par_mod, only: this
+  use par_mod, only: this_proc
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
   integer             :: c,  c2,  n, s, Nadd
   integer             :: Nfac(10), NtotFac
-  character           :: answer*80, namOut*80, namTem*80
-  character, optional :: namAut*(*)
+  character(len=80)   :: answer, name_out, store_name
+  character, optional :: name_aut*(*)
   real                :: R, RR
 !======================================================================!
 !   See also: number                                                   !
 !----------------------------------------------------------------------!
 
 !---- store the name
-  namTem = name     
+  store_name = name     
 
-  if(PRESENT(namAut)) then
-    if(this  < 2) write(*,*) namAut
-    name = namAut  
+  if(PRESENT(name_aut)) then
+    if(this_proc  < 2) write(*,*) name_aut
+    name = name_aut  
   else
-    if(this  < 2)  &
+    if(this_proc  < 2)  &
       write(*,*) '# Input result file name [skip cancels]:'
     call ReadC(CMN_FILE,inp,tn,ts,te)  
     read(inp(ts(1):te(1)),'(A80)')  name
     answer=name
     call ToUppr(answer) 
     if(answer == 'SKIP') then
-      name = namTem  
+      name = store_name  
       return
     end if 
   end if
@@ -46,9 +46,9 @@
 !     create DAT file     !
 !                         !
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
-  call NamFil(THIS, namOut, '.dat', len_trim('.dat'))
-  open(9, FILE=namOut)
-  if(this  < 2) write(*,*) '# Now creating the file:', namOut  
+  call NamFil(this_proc, name_out, '.dat', len_trim('.dat'))
+  open(9, FILE=name_out)
+  if(this_proc  < 2) write(*,*) '# Now creating the file:', name_out  
 
     call GraPhi(U % n, 1, Ux,.TRUE.)    ! dU/dx
     call GraPhi(V % n, 1, Vx,.TRUE.)    ! dU/dx
@@ -116,24 +116,24 @@
       PP % n(c) = sqrt(R/RR) 
     end do
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A,E18.9)') '# Scalar ', Nadd, ' is L2 error', sqrt(R/RR) 
+    if(this_proc  < 2) write(*,'(A,I3,A,E18.9)') '# Scalar ', Nadd, ' is L2 error', sqrt(R/RR) 
     call DatSavSc('temperature', 699+Nadd, PP % n)
   end if
 
   if(HOT == YES) then
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is temperature' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is temperature' 
     call DatSavSc('temperature', 699+Nadd, T % n)
   end if
   
   if(SIMULA == K_EPS) then
 !-- VIS  
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is K' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is K' 
     call DatSavSc('Kin', 699+Nadd, Kin % n)
 !-- VISt  
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Eps' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Eps' 
     call DatSavSc('Eps', 699+Nadd, Eps % n)
   end if
 
@@ -141,19 +141,19 @@
   if(SIMULA == K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
 !-- VIS  
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is K' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is K' 
     call DatSavSc('Kin', 699+Nadd, Kin % n)
 !-- VISt  
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Eps' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Eps' 
     call DatSavSc('Eps', 699+Nadd, Eps % n)
 !-- Vort  
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is v_2' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is v_2' 
     call DatSavSc('v_2', 699+Nadd, v_2 % n)
 !-- WallDs
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is f22' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is f22' 
     call DatSavSc('f22', 699+Nadd, f22 % n)
 
   end if ! SIMULA=K_EPS_VV
@@ -161,96 +161,96 @@
   if(SIMULA == SPA_ALL) then
 !-- VIS  
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is VIS' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is VIS' 
     call DatSavSc('VIS', 699+Nadd, VIS % n)
 !-- VISt  
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is VISt' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is VISt' 
     call DatSavSc('VISt', 699+Nadd, VISt)
 !-- Vort  
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Vort' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Vort' 
     call DatSavSc('Vort', 699+Nadd, Vort)
 !-- WallDs
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is WallDs' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is WallDs' 
     call DatSavSc('WallDs', 699+Nadd, WallDs)
   end if ! SIMULA=SPA_ALL
 
   if(SIMULA == LES .or. SIMULA == DES_SPA) then
 !-- Umean
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Umean' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Umean' 
     call DatSavSc('Umean', 699+Nadd, U % mean)
 !-- Vmean
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Vmean' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Vmean' 
     call DatSavSc('Vmean', 699+Nadd, V % mean)
 !-- Wmean
     Nadd = Nadd + 1
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Wmean' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Wmean' 
     call DatSavSc('Wmean', 699+Nadd, W % mean)
 !-- uu
     Nadd = Nadd + 1
     PP % n = uu % mean - U % mean * U % mean
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uu' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uu' 
     call DatSavSc('uu', 699+Nadd, PP % n)
 !-- vv
     Nadd = Nadd + 1
     PP % n = vv % mean - V % mean * V % mean
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is vv' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is vv' 
     call DatSavSc('vv', 699+Nadd, PP % n) 
 !-- ww
     Nadd = Nadd + 1
     PP % n = ww % mean - W % mean * W % mean
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is ww' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is ww' 
     call DatSavSc('ww', 699+Nadd, PP % n)
 !-- uv
     Nadd = Nadd + 1
     PP % n = uv % mean - U % mean * V % mean
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uv' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uv' 
     call DatSavSc('uv', 699+Nadd, PP % n)
 !-- uw
     Nadd = Nadd + 1
     PP % n = uw % mean - U % mean * W % mean
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uw' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uw' 
     call DatSavSc('uw', 699+Nadd, PP % n) 
 !-- vw
     Nadd = Nadd + 1
     PP % n = vw % mean - V % mean * W % mean
-    if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is ww' 
+    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is ww' 
     call DatSavSc('vw', 699+Nadd, PP % n)
 
     if(HOT == YES) then
 !---- Tmean
       Nadd = Nadd + 1
-      if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Tmean' 
+      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Tmean' 
       call DatSavSc('Tmean', 699+Nadd, T % mean)
 !---- TT    
       Nadd = Nadd + 1
       PP % n = TT % mean - T % mean * T % mean
-      if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is TT' 
+      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is TT' 
       call DatSavSc('TT', 699+Nadd, PP % n)
 !---- uT    
       Nadd = Nadd + 1
       PP % n = uT % mean - U % mean * T % mean
-      if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uT' 
+      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uT' 
       call DatSavSc('uT', 699+Nadd, PP % n)
 !---- vT    
       Nadd = Nadd + 1
       PP % n = vT % mean - V % mean * T % mean
-      if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is vT' 
+      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is vT' 
       call DatSavSc('vT', 699+Nadd, PP % n)
 !---- wT    
       Nadd = Nadd + 1
       PP % n = wT % mean - W % mean * T % mean
-      if(this  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is wT' 
+      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is wT' 
       call DatSavSc('wT', 699+Nadd, PP % n)
     end if
   end if ! SIMULA == LES .or. SIMULA == DES_SPA
 
 !---------------------------------------!
-!     this is important for connect     !
+!     this_proc is important for connect     !
 !---------------------------------------!
   NtotFac = 0
   do n=1,10   ! Browse through boundary condition types
@@ -263,7 +263,7 @@
     end do    ! sides
 
 !---- prepare for next boundary
-    if(this  < 2) write(*,*) 'Number of faces:', Nfac(n), NtotFac+1, NtotFac+Nfac(n)
+    if(this_proc  < 2) write(*,*) 'Number of faces:', Nfac(n), NtotFac+1, NtotFac+Nfac(n)
     NtotFac = NtotFac+Nfac(n)
   end do   ! n -> boundary condition types
 
@@ -275,6 +275,6 @@
   close(9)
 
 !---- restore the name
-  name = namTem  
+  name = store_name  
 
   end subroutine DatSav

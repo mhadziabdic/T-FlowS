@@ -5,21 +5,21 @@
 ! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
   use all_mod
-  use par_mod  ! needs to know THIS
+  use par_mod, only: this_proc
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
-  integer      :: c, s
-  character*80 :: nameIn  
+  integer           :: c, s
+  character(len=80) :: name_in  
 !======================================================================!
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 !       Read the file with       !
 !     geometrical quantities     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-  call NamFil(THIS, nameIn, '.geo', len_trim('.geo')) 
-  open(9, FILE=nameIn, FORM='UNFORMATTED')
-  if(this < 2) write(*,*) '# Now reading the file:', nameIn
+  call NamFil(this_proc, name_in, '.geo', len_trim('.geo')) 
+  open(9, FILE=name_in, FORM='UNFORMATTED')
+  if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 
   read(9) (xc(c), c=1,NC)
   read(9) (yc(c), c=1,NC) 

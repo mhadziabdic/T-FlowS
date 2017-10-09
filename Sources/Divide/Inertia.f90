@@ -13,7 +13,7 @@
 !-----------------------------[Parameters]-----------------------------!
   integer :: sub                           ! subdomain 
 !-------------------------------[Locals]-------------------------------!
-  integer :: i, NCloc
+  integer :: i, n_cells_sub
   real    :: xm, ym, zm
   real    :: Im(3,3), d(3), v(3,3), d_max(3)    
 !======================================================================!
@@ -21,18 +21,18 @@
   xm=0.0
   ym=0.0
   zm=0.0
-  NCloc=0
+  n_cells_sub=0
   do i=1,NC
     if(proces(i)==sub) then
       xm = xm + xc(i)
       ym = ym + yc(i)
       zm = zm + zc(i)
-      NCloc=NCloc+1 
+      n_cells_sub=n_cells_sub+1 
     end if
   end do 
-  xm=xm/NCloc
-  ym=ym/NCloc
-  zm=zm/NCloc
+  xm=xm/n_cells_sub
+  ym=ym/n_cells_sub
+  zm=zm/n_cells_sub
 
   write(*,*) 'Center of mass for subdomain ', sub, ' is: ', xm, ym, zm
 

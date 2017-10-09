@@ -13,14 +13,15 @@
   real :: TetVol   
 !-------------------------------[Locals]-------------------------------!
   integer   :: b, i, l, s, fc, n, n1,n2,n3,n4
-  integer   :: NSchck, NNchck
-  integer   :: NI, NJ, NK
+  integer   :: n_faces_check, n_nodes_check
+  integer   :: ni, nj, nk
   integer   :: dum
   character :: domain_name*80
   character :: answer*12 
   real      :: xt(8), yt(8), zt(8)
 
   integer   :: face_nodes(6,4)
+  integer   :: n_points
 !======================================================================!
   data face_nodes / 1, 1, 2, 4, 3, 5,                               &
                     2, 5, 6, 8, 7, 7,                               &
@@ -82,9 +83,9 @@
   allocate (BCmark(-MAXB-1:-1)); BCmark=0;
 
 !---- variables declared in gen_mod.h90:
-  allocate (x(MAXN));     x=0 
-  allocate (y(MAXN));     y=0
-  allocate (z(MAXN));     z=0
+  allocate (x_node(MAXN));     x_node=0 
+  allocate (y_node(MAXN));     y_node=0
+  allocate (z_node(MAXN));     z_node=0
   allocate (walln(MAXN)); walln=0
   allocate (xsp(MAXS));   xsp=0
   allocate (ysp(MAXS));   ysp=0
@@ -130,63 +131,64 @@
 !     Corners     !
 !>>>>>>>>>>>>>>>>>!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*)      NP     ! number of points
-  if(NP  > MAXP) then
-    write(6,*) 'ERROR MESSAGE FROM TFlowS:'
-    write(6,*) 'You tried to define ', NP, ' points for'
-    write(6,*) 'the domain, and the limit is: ', MAXP
-    write(6,*) 'Increase the parameter MAXP in the file param.all'
-    write(6,*) 'and recompile the code. Good Luck !'
-    stop
-  end if
+  read(inp,*) n_points  ! number of points
 
-  do i=1,NP
+  allocate (x_point(n_points))
+  allocate (y_point(n_points))
+  allocate (z_point(n_points))
+
+  do i = 1, n_points
     call ReadC(9,inp,tn,ts,te)
-    read(inp(ts(2):te(4)),*) xp(i), yp(i), zp(i)
+    read(inp(ts(2):te(4)),*) x_point(i), y_point(i), z_point(i)
   end do
 
 !>>>>>>>>>>>>>>>>!
 !     Blocks     !
 !>>>>>>>>>>>>>>>>!
   call ReadC(9,inp,tn,ts,te)
-   read(inp,*)      Nbloc        ! number of blocks 
+  read(inp,*) Nbloc  ! number of blocks 
+
+  allocate (block_points(Nbloc,0:8))
+  allocate (block_resolutions(Nbloc,6))
+  allocate (block_faces(Nbloc,6,4))
+  allocate (face_laplace(Nbloc*6))
 
   do b=1,Nbloc
-    BlkPnt(b,0)=1       ! suppose it is properly oriented
+    block_points(b,0)=1       ! suppose it is properly oriented
 
     call ReadC(9,inp,tn,ts,te)
-    read(inp(ts(2):te(4)),*)  &  ! NI, NJ, NK  for a block
-         BlkRes(b, 1), BlkRes(b, 2), BlkRes(b, 3) 
+    read(inp(ts(2):te(4)),*)  &  ! ni, nj, nk  for a block
+         block_resolutions(b, 1), block_resolutions(b, 2), block_resolutions(b, 3) 
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)  &            ! Block weights 
          BlkWgt(b,1),BlkWgt(b,2),BlkWgt(b,3)
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)                       &
-         BlkPnt(b, 1), BlkPnt(b, 2),  &
-         BlkPnt(b, 3), BlkPnt(b, 4),  &
-         BlkPnt(b, 5), BlkPnt(b, 6),  &
-         BlkPnt(b, 7), BlkPnt(b, 8)
+         block_points(b, 1), block_points(b, 2),  &
+         block_points(b, 3), block_points(b, 4),  &
+         block_points(b, 5), block_points(b, 6),  &
+         block_points(b, 7), block_points(b, 8)
 
 !-------------------------------!
 !     Check if the block is     ! 
 !       properly oriented       !
 !-------------------------------!
     do n=1,8
-      xt(n)=xp(BlkPnt(b, n))
-      yt(n)=yp(BlkPnt(b, n))
-      zt(n)=zp(BlkPnt(b, n))
+      xt(n)=x_point(block_points(b, n))
+      yt(n)=y_point(block_points(b, n))
+      zt(n)=z_point(block_points(b, n))
 !->>>     write(6,'(3F8.4)') xt(n),yt(n),zt(n)
     end do
 
     if(tetvol( xt(2),yt(2),zt(2), xt(5),yt(5),zt(5),  &
                xt(3),yt(3),zt(3), xt(1),yt(1),zt(1) )  < 0) then
-      BlkPnt(b,0)=-1            !  It's nor properly oriented
-      call swapi(BlkPnt(b,2),BlkPnt(b,3))
-      call swapi(BlkPnt(b,6),BlkPnt(b,7))
+      block_points(b,0)=-1            !  It's nor properly oriented
+      call swapi(block_points(b,2),block_points(b,3))
+      call swapi(block_points(b,6),block_points(b,7))
       call swapr(BlkWgt(b,1),BlkWgt(b,2))
       BlkWgt(b,1)=1.0/BlkWgt(b,1)
       BlkWgt(b,2)=1.0/BlkWgt(b,2)
-      call swapi(BlkRes(b,1),BlkRes(b,2))
+      call swapi(block_resolutions(b,1),block_resolutions(b,2))
       write(6,*) 'Warning: Block ',b,' was not properly oriented'
     end if
   end do                 ! through blocks
@@ -198,7 +200,7 @@
   do b=1,Nbloc
     do fc=1,6
       do n=1,4
-        BlkFac(b, fc, n)=BlkPnt(b, face_nodes(fc,n))
+        block_faces(b, fc, n)=block_points(b, face_nodes(fc,n))
       end do
     end do
   end do
@@ -253,7 +255,7 @@
       BlFaWt(n,1)=BlkWgt(b,1)
       BlFaWt(n,2)=BlkWgt(b,2)
       BlFaWt(n,3)=BlkWgt(b,3)
-      BlFaLa(n)  = NO
+      face_laplace(n)  = NO
     end do
   end do
 
@@ -269,47 +271,46 @@
     call FinSur(n1,n2,n3,n4,b,fc)
     write(6,*) 'block: ', b, ' surf: ', fc
     n = (b-1)*6 + fc         ! surface number
-    BlFaLa(n) = YES          ! perform Laplace
+    face_laplace(n) = YES          ! perform Laplace
 
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)  BlFaWt(n,1),BlFaWt(n,2),BlFaWt(n,3)
   end do
-
 
 !??????????????????????????????????????????!
 !     Is there enough allocated memory     !
 !??????????????????????????????????????????!
 
 !----- Nodes & Sides
-  NNchck = 0
-  NSchck = 0
+  n_nodes_check = 0
+  n_faces_check = 0
   do b=1,Nbloc
-    NI=BlkRes(b,1)
-    NJ=BlkRes(b,2)
-    NK=BlkRes(b,3)
-    NNchck=NNchck + NI*NJ*NK
-    NSchck=NSchck + NI*NJ*NK + 2*( (NI*NJ)+(NJ*NK)+(NI*NK) )
+    ni=block_resolutions(b,1)
+    nj=block_resolutions(b,2)
+    nk=block_resolutions(b,3)
+    n_nodes_check=n_nodes_check + ni*nj*nk
+    n_faces_check=n_faces_check + ni*nj*nk + 2*( (ni*nj)+(nj*nk)+(ni*nk) )
   end do
 
-  if( (NSchck  > MAXS).or.(NNchck  > MAXN) ) then
+  if( (n_faces_check  > MAXS).or.(n_nodes_check  > MAXN) ) then
     write(6,*) 'ERROR MESSAGE FROM TFlowS:'
   end if
 
-  if( NSchck  > MAXS ) then
-    write(6,*) 'The estimated number of sides is :', NSchck
+  if( n_faces_check  > MAXS ) then
+    write(6,*) 'The estimated number of sides is :', n_faces_check
     write(6,*) 'There is space available only for:', MAXS
     write(6,*) 'Increase the parameter MAXS in the input file'
     write(6,*) 'and re-run the code !'
   end if
 
-  if( NNchck  > MAXN ) then
-    write(6,*) 'The estimated number of nodes is :', NNchck
+  if( n_nodes_check  > MAXN ) then
+    write(6,*) 'The estimated number of nodes is :', n_nodes_check
     write(6,*) 'There is space available only for:', MAXN
     write(6,*) 'Increase the parameter MAXN in the input file'
     write(6,*) 'and re-run the code !'
   end if 
 
-  if( (NSchck  > MAXS).or.(NNchck  > MAXN) ) then
+  if( (n_faces_check  > MAXS).or.(n_nodes_check  > MAXN) ) then
     stop
   end if
 
@@ -317,15 +318,18 @@
 !     Boundary conditions and materials     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*)     Nboun      ! number of boundary conditions 
+  read(inp,*)     n_b_cond      ! number of boundary conditions 
 
-  do n=1,Nboun
+  allocate (b_cond(n_b_cond,8))
+  allocate (BndFac(n_b_cond))
+
+  do n=1,n_b_cond
     BndFac(n)=''
     call ReadC(9,inp,tn,ts,te)
     if(tn == 7) then
       read(inp,*)  dum,                         &  
-           Bound(n,1), Bound(n,2), Bound(n,3),  &  ! is, js, ks 
-           Bound(n,4), Bound(n,5), Bound(n,6)      ! ie, je, ke
+           b_cond(n,1), b_cond(n,2), b_cond(n,3),  &  ! is, js, ks 
+           b_cond(n,4), b_cond(n,5), b_cond(n,6)      ! ie, je, ke
     else if(tn == 2) then
       read(inp(ts(1):te(1)),*)       dum           
       read(inp(ts(2):te(2)),'(A4)')  BndFac(n)
@@ -333,69 +337,81 @@
     end if
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)       &  
-         Bound(n,7),  &  ! block,  
-         Bound(n,8)      ! mark         
-  if( BlkPnt(Bound(n,7),0) == -1 ) then
-    call swapi( Bound(n,1),Bound(n,2) )
-    call swapi( Bound(n,4),Bound(n,5) )
+         b_cond(n,7),  &  ! block,  
+         b_cond(n,8)      ! mark         
+  if( block_points(b_cond(n,7),0) == -1 ) then
+    call swapi( b_cond(n,1),b_cond(n,2) )
+    call swapi( b_cond(n,4),b_cond(n,5) )
   end if
 
   end do
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     Periodic boundaries     !
+!     periodic boundaries     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*)        Nperi      ! number of periodic boundaries
-  write(*,*) 'Number of periodic boundaries: ', Nperi 
+  read(inp,*)  n_periodic_cond      ! number of periodic boundaries
+  write(*,*) 'Number of periodic boundaries: ', n_periodic_cond 
 
-  do n=1,Nperi
+  allocate (periodic_cond(n_periodic_cond,8))
+
+  do n=1,n_periodic_cond
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*) dum,Period(n,1),Period(n,2),Period(n,3),Period(n,4) 
+    read(inp,*) dum, periodic_cond(n,1), periodic_cond(n,2),  &
+                     periodic_cond(n,3), periodic_cond(n,4) 
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*)     Period(n,5),Period(n,6),Period(n,7),Period(n,8)
+    read(inp,*)      periodic_cond(n,5), periodic_cond(n,6),  &
+                     periodic_cond(n,7), periodic_cond(n,8)
   end do
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     Copy boundaries     !
+!     copy boundaries     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*)        Ncopy      ! number of periodic boundaries
-  write(*,*) 'Number of copy boundaries: ', Ncopy
+  read(inp,*)  n_copy_cond      ! number of copy boundaries
+  write(*,*) 'Number of copy boundaries: ', n_copy_cond
 
-  do n=1,Ncopy
+  allocate (copy_cond(n_copy_cond,8))
+
+  do n=1,n_copy_cond
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*) dum,Copy(n,1),Copy(n,2),Copy(n,3),Copy(n,4) 
+    read(inp,*) dum, copy_cond(n,1), copy_cond(n,2),  &
+                     copy_cond(n,3), copy_cond(n,4) 
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*)     Copy(n,5),Copy(n,6),Copy(n,7),Copy(n,8)
+    read(inp,*)      copy_cond(n,5), copy_cond(n,6),  &
+                     copy_cond(n,7),copy_cond(n,8)
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*)     Copy(n,0)
+    read(inp,*) copy_cond(n,0)
   end do
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 !     Refinement levels and regions     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*)        NRL ! number of refinement levels
+  read(inp,*) n_refine_levels ! number of refinement levels
 
-  write(*,*) 'Number of refinement levels: ', NRL 
+  write(*,*) 'Number of refinement levels: ', n_refine_levels
 
-  do l=1,NRL
+  allocate (refined_regions(n_refine_levels, 1024, 0:6))
+  allocate (n_refined_regions(n_refine_levels))
+
+  do l=1,n_refine_levels
+    write(*,*) 'Level: ', l
     call ReadC(9,inp,tn,ts,te)
     inp = inp(ts(2):te(2)) ! this is the only way Microsoft Fortran
                            ! compiles this part (two lines) of the code
-    read(inp,*) NR(l)      ! number of regions in level n
+    read(inp,*) n_refined_regions(l)      ! number of regions in level n
 
-    do n=1, NR(l)
+    do n=1, n_refined_regions(l)
       call ReadC(9,inp,tn,ts,te)
       read(inp(ts(3):te(3)),*) answer
       call ToUppr(answer)
       if(answer == 'RECTANGLE') then
-        Fregio(l,n,0) = RECTAN
+        refined_regions(l,n,0) = RECTANGLE
       elseif(answer == 'ELIPSOID') then
-        Fregio(l,n,0) = ELIPSO 
+        refined_regions(l,n,0) = ELIPSOID 
       elseif(answer == 'PLANE') then
-        Fregio(l,n,0) = PLANE
+        refined_regions(l,n,0) = PLANE
       else
         write(*,*) 'Error in input file: ', answer 
         stop
@@ -403,8 +419,9 @@
 
       call ReadC(9,inp,tn,ts,te)
       read(inp,*)                                                   &
-                  Fregio(l,n,1),Fregio(l,n,2),Fregio(l,n,3),        &
-                  Fregio(l,n,4),Fregio(l,n,5),Fregio(l,n,6)   
+                  refined_regions(l,n,1),refined_regions(l,n,2),    &
+                  refined_regions(l,n,3),refined_regions(l,n,4),    &
+                  refined_regions(l,n,5),refined_regions(l,n,6)   
     end do
   end do
 
@@ -412,43 +429,49 @@
 !     Smoothing regions     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) NSR  ! number of smoothing regions 
+  read(inp,*) n_smoothing_regions  ! number of smoothing regions 
 
-  write(*,*) 'Number of (non)smoothing regions: ', NSR 
+  write(*,*) 'Number of (non)smoothing regions: ', n_smoothing_regions 
 
-  do n=1, NSR
-    SdirX(n) = .FALSE.
-    SdirY(n) = .FALSE.
-    SdirZ(n) = .FALSE.
+  allocate (smooth_in_x(n_smoothing_regions))
+  allocate (smooth_in_y(n_smoothing_regions))
+  allocate (smooth_in_z(n_smoothing_regions))
+  allocate (smooth_iters(n_smoothing_regions))
+  allocate (smooth_relax(n_smoothing_regions))
+  allocate (smooth_regions(n_smoothing_regions,0:6))
+
+  do n=1, n_smoothing_regions
+    smooth_in_x(n) = .FALSE.
+    smooth_in_y(n) = .FALSE.
+    smooth_in_z(n) = .FALSE.
     call ReadC(9,inp,tn,ts,te)
-    read(inp(ts(1):te(1)),*) Sregio(n,0)  
+    read(inp(ts(1):te(1)),*) smooth_regions(n,0)  
     if(tn == 4) then   ! smoothing in three directions
-      SdirX(n) = .TRUE.
-      SdirY(n) = .TRUE.
-      SdirZ(n) = .TRUE.
+      smooth_in_x(n) = .TRUE.
+      smooth_in_y(n) = .TRUE.
+      smooth_in_z(n) = .TRUE.
     else if(tn == 3) then
       call ToUppr(inp(ts(2):te(2)))
       call ToUppr(inp(ts(3):te(3)))
-      if( inp(ts(2):te(2))  ==  'X' ) SdirX(n) = .TRUE.
-      if( inp(ts(3):te(3))  ==  'X' ) SdirX(n) = .TRUE.
-      if( inp(ts(2):te(2))  ==  'Y' ) SdirY(n) = .TRUE.
-      if( inp(ts(3):te(3))  ==  'Y' ) SdirY(n) = .TRUE.
-      if( inp(ts(2):te(2))  ==  'Z' ) SdirZ(n) = .TRUE.
-      if( inp(ts(3):te(3))  ==  'Z' ) SdirZ(n) = .TRUE.
+      if( inp(ts(2):te(2))  ==  'X' ) smooth_in_x(n) = .TRUE.
+      if( inp(ts(3):te(3))  ==  'X' ) smooth_in_x(n) = .TRUE.
+      if( inp(ts(2):te(2))  ==  'Y' ) smooth_in_y(n) = .TRUE.
+      if( inp(ts(3):te(3))  ==  'Y' ) smooth_in_y(n) = .TRUE.
+      if( inp(ts(2):te(2))  ==  'Z' ) smooth_in_z(n) = .TRUE.
+      if( inp(ts(3):te(3))  ==  'Z' ) smooth_in_z(n) = .TRUE.
     else if(tn == 2) then
       call ToUppr(inp(ts(2):te(2)))
-      if( inp(ts(2):te(2))  ==  'X' ) SdirX(n) = .TRUE.
-      if( inp(ts(2):te(2))  ==  'Y' ) SdirY(n) = .TRUE.
-      if( inp(ts(2):te(2))  ==  'Z' ) SdirZ(n) = .TRUE.
+      if( inp(ts(2):te(2))  ==  'X' ) smooth_in_x(n) = .TRUE.
+      if( inp(ts(2):te(2))  ==  'Y' ) smooth_in_y(n) = .TRUE.
+      if( inp(ts(2):te(2))  ==  'Z' ) smooth_in_z(n) = .TRUE.
     end if 
 
 !---- read the coordinates of the (non)smoothed region
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*) Siter(n), Srelax(n)
+    read(inp,*) smooth_iters(n), smooth_relax(n)
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*)                                                     &
-                Sregio(n,1),Sregio(n,2),Sregio(n,3),                &
-                Sregio(n,4),Sregio(n,5),Sregio(n,6)   
+    read(inp,*) smooth_regions(n,1),smooth_regions(n,2),smooth_regions(n,3), &
+                smooth_regions(n,4),smooth_regions(n,5),smooth_regions(n,6)   
   end do
 
   close(9)

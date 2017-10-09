@@ -16,16 +16,16 @@
 !------------------------------[Calling]-------------------------------!
   real      :: Distance
 !-------------------------------[Locals]-------------------------------!
-  integer   :: i, j, l, m
-  real      :: Mres(MAXP), MresT, dummy
-  real      :: xm(MAXP), ym(MAXP), zm(MAXP)
-  character :: answer*80, nammon*80
+  integer           :: i, j, l, m
+  real              :: MresT, dummy
+  character(len=80) :: answer, nammon
+  real, allocatable :: mres(:), xm(:), ym(:), zm(:)
 !======================================================================!
 
   call Wait   
 
 !----- The number of time steps
-  if(this  < 2) then 
+  if(this_proc  < 2) then 
     write(*,*) '# Enter the number of time steps: (',Ndt,') '
     write(*,*) '# (type 0 if you just want to analyse results)'
   end if
@@ -33,7 +33,7 @@
   read(inp,*)  Ndt
 
 !----- Starting time step for statistics 
-  if(this  < 2)  &
+  if(this_proc  < 2)  &
     write(*,*) '# Starting time step for statistics (',Nstat,') '
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*)  Nstat
@@ -41,11 +41,17 @@
     read(inp(ts(2):te(2)),*) Nbudg
   end if
 
-  if(this  < 2)  & 
+  if(this_proc  < 2)  & 
     write(*,*) '# Number of monitoring points:'
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*) Nmon 
-  if(this  < 2)  &
+
+  allocate (mres(Nmon))
+  allocate (xm(Nmon))
+  allocate (ym(Nmon))
+  allocate (zm(Nmon))
+
+  if(this_proc  < 2)  &
     write(*,*) '# Enter the coordinates of monitoring point(s)'
   do i=1,Nmon
     call ReadC(CMN_FILE,inp,tn,ts,te)
@@ -68,7 +74,7 @@
     MresT=Mres(j)
     call GloMin(MresT)
     if(MresT /= Mres(j)) then ! there is a cell which is nearer
-      Cm(j) = 0               ! so erase this monitoring point     
+      Cm(j) = 0               ! so erase this_proc monitoring point     
     end if 
   end do
 
@@ -94,7 +100,7 @@
 
 !----- Plane for calcution of overall mass fluxes
   do m=1,Nmat
-    if(this  < 2)  then
+    if(this_proc  < 2)  then
       write(*,*) '# Enter the coordinates of monitoring plane: (', &
                   xp(m), yp(m), zp(m), ' )'
     end if
@@ -103,7 +109,7 @@
   end do
 
 !----- Kind of simulation
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# Type of simulation: '
     write(*,*) '# DNS      -> Direct Numerical Simulation'
     write(*,*) '# LES      -> Large Eddy Simulation'
@@ -138,7 +144,7 @@
   else if(answer == 'HJ') then
     SIMULA = HJ
   else
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                              cmn_line_count, ' Got a: ', answer
     endif
@@ -163,7 +169,7 @@
     else if(answer == 'LRE') then
       MODE = LRE 
     else
-      if(this  < 2) then
+      if(this_proc  < 2) then
         write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                                cmn_line_count, ' Got a: ', answer
       endif
@@ -181,7 +187,7 @@
     else if(answer == 'WALE') then
       MODE = WALE
     else
-      if(this  < 2) then
+      if(this_proc  < 2) then
         write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                                cmn_line_count, ' Got a: ', answer
       endif
@@ -190,7 +196,7 @@
   end if
 
   if(SIMULA  ==  LES.and.MODE == SMAG) then
-    if(this  < 2)  &
+    if(this_proc  < 2)  &
       write(*,*) '# C Smagorinsky = ', Cs0, ' enter the new value: '
     read(inp(ts(3):te(3)),*) Cs0
   endif 
@@ -199,7 +205,7 @@
   do m=1,Nmat
     if(SIMULA  ==  LES .or. SIMULA == DNS .or. SIMULA == DES_SPA &
       .or.SIMULA  ==  HYB_PITM .or. SIMULA == HYB_ZETA) then
-      if(this  < 2) then
+      if(this_proc  < 2) then
         write(*,*) '# Do you want to shake the velocity field ?'
         write(*,*) '# YES -> shake'
         write(*,*) '# NO  -> don''t shake'
@@ -212,18 +218,18 @@
       else if(answer == 'NO') then
         SHAKE(m) = NO
       else
-        if(this  < 2) then
+        if(this_proc  < 2) then
           write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                                  cmn_line_count, ' Got a: ', answer
         endif
         stop
       endif
       if(SHAKE(m) == YES) then
-        if(this < 2) &
+        if(this_proc < 2) &
           write(*,*) '# For how many time steps you want to shake ?'
         call ReadC(CMN_FILE,inp,tn,ts,te)
         read(inp,*) SHAKE_PER(m) 
-        if(this < 2) &
+        if(this_proc < 2) &
           write(*,*) '# Interval for shaking:', SHAKE_PER(m)
         call ReadC(CMN_FILE,inp,tn,ts,te)
         read(inp,*) SHAKE_INT(m)
@@ -363,7 +369,7 @@
   end if
 
 !----- Time stepping scheme
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# Algorythm for time-integration: '
     write(*,*) '# SIMPLE [Nini] -> S. I. M. P. L. E.'
     write(*,*) '# FRACTION      -> Fractional step method'
@@ -379,7 +385,7 @@
     ALGOR = FRACT
     Nini  = 1
   else
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                              cmn_line_count, ' Got a: ', answer
     endif
@@ -387,19 +393,19 @@
   endif
 
   if(ALGOR == SIMPLE) then
-    if(this < 2) write(*,*) '# Under Relaxation Factor for velocity (',U % URF,')'
+    if(this_proc < 2) write(*,*) '# Under Relaxation Factor for velocity (',U % URF,')'
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)  U % URF
-    if(this < 2) write(*,*) '# Under Relaxation Factor for pressure (',P % URF,')'
+    if(this_proc < 2) write(*,*) '# Under Relaxation Factor for pressure (',P % URF,')'
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)  P % URF
     if(HOT == YES) then
-      if(this < 2) write(*,*) '# Under Relaxation Factor for temperature (',T % URF,')'
+      if(this_proc < 2) write(*,*) '# Under Relaxation Factor for temperature (',T % URF,')'
       call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp,*)  T % URF
     end if
     if(SIMULA /= LES .and. SIMULA /= DNS) then
-      if(this < 2) write(*,*) '# Under Relaxation Factor for turbulent variables (',T % URF,')'
+      if(this_proc < 2) write(*,*) '# Under Relaxation Factor for turbulent variables (',T % URF,')'
       call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp,*)  URFT
     end if
@@ -417,7 +423,7 @@
   vw  % URF   = URFT
 
 
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# Integration of inertial terms: '
     write(*,*) '# LIN -> Linear'
     write(*,*) '# PAR -> Parabolic'
@@ -430,14 +436,14 @@
   else if(answer == 'PAR') then
     INERT = PAR
   else
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                              cmn_line_count, ' Got a: ', answer
     endif
     stop
   endif
 
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# Integration of convective terms: '
     write(*,*) '# AB -> Adams-Bashforth'
     write(*,*) '# CN -> Crank-Nicholson'
@@ -453,14 +459,14 @@
   else if(answer == 'FI') then
     CONVEC = FI
   else
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                              cmn_line_count, ' Got a: ', answer
     endif
     stop
   endif
 
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# Integration of diffusive terms: '
     write(*,*) '# AB -> Adams-Bashforth'
     write(*,*) '# CN -> Crank-Nicholson'
@@ -476,14 +482,14 @@
   else if(answer == 'FI') then
     DIFFUS = FI
   else
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                              cmn_line_count, ' Got a: ', answer
     endif
     stop
   endif
 
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# Integration of cross-diffusive terms: '
     write(*,*) '# AB -> Adams-Bashforth'
     write(*,*) '# CN -> Crank-Nicholson'
@@ -499,7 +505,7 @@
   else if(answer == 'FI') then
     CROSS = FI
   else
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                              cmn_line_count, ' Got a: ', answer
     endif
@@ -509,7 +515,7 @@
 !----- Upwind blending
   do m=1,Nmat
     URFC(m) = 1.0
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,*) '# Convetive schemes for momentum equation:'
       write(*,*) '# Do you want to use upwind blending: '
       write(*,*) '# YES       -> use blening'
@@ -549,7 +555,7 @@
     else if(answer == 'GAMMA') then
       BLEND(m) = GAMMA 
     else
-      if(this  < 2) then
+      if(this_proc  < 2) then
         write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                                cmn_line_count, ' Got a: ', answer
       endif
@@ -560,7 +566,7 @@
   if(HOT==YES) then
     do m=1,Nmat
       URFC_Tem(m) = 1.0
-      if(this  < 2) then
+      if(this_proc  < 2) then
         write(*,*) '# Convetive schemes for energy equation:'
       endif 
       call ReadC(CMN_FILE,inp,tn,ts,te)
@@ -591,7 +597,7 @@
       else if(answer == 'GAMMA') then
         BLEND_TEM(m) = GAMMA 
       else
-        if(this  < 2) then
+        if(this_proc  < 2) then
           write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                                  cmn_line_count, ' Got a: ', answer
         endif
@@ -603,7 +609,7 @@
   if(SIMULA/=LES.and.SIMULA/=DNS) then
     do m=1,Nmat
       URFC_Tur(m) = 1.0
-      if(this  < 2) then
+      if(this_proc  < 2) then
         write(*,*) '# Convetive schemes for transport equation:'
       endif 
       call ReadC(CMN_FILE,inp,tn,ts,te)
@@ -634,7 +640,7 @@
       else if(answer == 'GAMMA') then
         BLEND(m) = GAMMA 
       else
-        if(this  < 2) then
+        if(this_proc  < 2) then
           write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                                  cmn_line_count, ' Got a: ', answer
         endif
@@ -644,7 +650,7 @@
   end if
 
 !----- Solver parameters
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# Preconditioning of the system matrix: '
     write(*,*) '# NO -> No preconditioning'
     write(*,*) '# DI -> Diagonal preconditioning'
@@ -660,20 +666,20 @@
   else if(answer == 'IC') then
     PREC = 2 
   else
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
                              cmn_line_count, ' Got a: ', answer
     endif
     stop
   endif
 
-  if(this  < 2)  &
+  if(this_proc  < 2)  &
     write(*,*) '# Tolerance for velocity solver: (',U % STol,' )'
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)    U % STol
     V % Stol     = U % Stol
     W % Stol     = U % Stol
-  if(this  < 2)  &
+  if(this_proc  < 2)  &
     write(*,*) '# Tolerance for pressure solver: (',PP % STol,' )'
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)   PP % STol
@@ -693,28 +699,28 @@
     vw  % Stol   = Kin % Stol
   end if
   if(HOT == YES) then
-    if(this  < 2)  &
+    if(this_proc  < 2)  &
       write(*,*) '# Tolerance for temperature solver: (',T % STol,' )'
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)    T % STol
   end if
  
   if(ALGOR == SIMPLE) then
-    if(this  < 2)  &
+    if(this_proc  < 2)  &
       write(*,*) '# Tolerance for SIMPLE: (',SIMTol,' )'
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)   SIMTol
   endif     
 
 !----- Time step
-  if(this  < 2)  &
+  if(this_proc  < 2)  &
     write(*,*) '# Time step: (',dt,' )'
     call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*)   dt
 
 !----- Wall velocity 
   do m=1,Nmat
-    if(this  < 2)  &
+    if(this_proc  < 2)  &
       write(*,*) '# Enter Pdrop (x, y, z) for domain ', m
     call ReadC(CMN_FILE,inp,tn,ts,te) 
     if(.not. restar) then 
@@ -729,7 +735,7 @@
 
 !----- Mass fluxes
   do m=1,Nmat
-    if(this  < 2) then
+    if(this_proc  < 2) then
       write(*,*) '# Enter the wanted mass flux through domain ', m
       write(*,*) '# (type 0.0 to keep the pressure drop constant)'
     endif 

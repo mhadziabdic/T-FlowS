@@ -17,7 +17,7 @@
   implicit none
 !-----------------------------[Parameters]-----------------------------!
   integer       :: var
-  TYPE(Unknown) :: Ui
+  type(Unknown) :: Ui
   real          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
   real          :: Si(NS), Sj(NS), Sk(NS) 
   real          :: Di(NS), Dj(NS), Dk(NS) 

@@ -7,17 +7,17 @@
   use allp_mod, only: CMN_FILE
   use all_mod
   use pro_mod
-  use par_mod,  only: this
+  use par_mod,  only: this_proc
   use rans_mod, only: grav_x, grav_y, grav_z, Zo
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
-  integer      :: c, s, it
-  character*80 :: nameIn
-  character*8  :: answer
+  integer           :: c, s, it
+  character(len=80) :: name_in
+  character(len=8)  :: answer
 !======================================================================!
 
-  if(this < 2) write(*,*) '# Input problem name:'
+  if(this_proc < 2) write(*,*) '# Input problem name:'
   call ReadC(CMN_FILE,inp,tn,ts,te)  
   read(inp(ts(1):te(1)), '(A80)')  name
 
@@ -25,10 +25,10 @@
 !       Read the file with the      !
 !     connections between cells     !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-  call NamFil(THIS, nameIn, '.cns', len_trim('.cns'))  
+  call NamFil(this_proc, name_in, '.cns', len_trim('.cns'))  
 
-  open(9, FILE=nameIn,FORM='UNFORMATTED')
-  if(this < 2) write(*,*) '# Now reading the file:', nameIn
+  open(9, FILE=name_in,FORM='UNFORMATTED')
+  if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 
 !///// number of cells, boundary cells and sides
   read(9) NC                                 
@@ -60,7 +60,7 @@
   close(9)
 
 !----- Type of the problem
-  if(this  < 2) then
+  if(this_proc  < 2) then
     write(*,*) '# Type of problem: '
     write(*,*) '# CHANNEL          -> Channel flow'
     write(*,*) '# PIPE             -> Pipe flow'
@@ -120,14 +120,14 @@
   end do
 
   if(ROUGH == YES) then
-    if(this < 2) write(*,*) '# Reading roughness coefficient Zo'
+    if(this_proc < 2) write(*,*) '# Reading roughness coefficient Zo'
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*) Zo
   endif
 
 !----- Angular velocity vector
   if(ROT == YES) then
-    if(this  < 2)  &
+    if(this_proc  < 2)  &
     write(*,*) '# Angular velocity vector: '
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*)  omegaX, omegaY, omegaZ
@@ -135,7 +135,7 @@
 
 !----- Gravity
   if(BUOY == YES) then
-    if(this  < 2)  &
+    if(this_proc  < 2)  &
     write(*,*) '# Gravitational constant in x, y and z directions: '
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp,*) grav_x, grav_y, grav_z, Tref

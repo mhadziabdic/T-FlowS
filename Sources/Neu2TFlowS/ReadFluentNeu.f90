@@ -72,9 +72,9 @@
   end do 
 
 !---- allocate memory ==> ATTENTION: NO CHECKING
-  allocate(x(NN)); x=0
-  allocate(y(NN)); y=0
-  allocate(z(NN)); z=0
+  allocate(x_node(NN)); x_node=0
+  allocate(y_node(NN)); y_node=0
+  allocate(z_node(NN)); z_node=0
 
   allocate(material(-NbC:NC));     material=0 
   allocate(BCtype(NC,6));          BCtype=0
@@ -104,9 +104,9 @@
   call Read9Ln(Line,tn,ts,te)          ! NODAL COORDINATES
   do i=1,NN
     call Read9Ln(Line,tn,ts,te)
-    read(Line(ts(2):te(2)),*) x(i)  
-    read(Line(ts(3):te(3)),*) y(i)
-    read(Line(ts(4):te(4)),*) z(i) 
+    read(Line(ts(2):te(2)),*) x_node(i)  
+    read(Line(ts(3):te(3)),*) y_node(i)
+    read(Line(ts(4):te(4)),*) z_node(i) 
   end do
   call Read9Ln(Line,tn,ts,te)          ! ENDOFSECTION
 

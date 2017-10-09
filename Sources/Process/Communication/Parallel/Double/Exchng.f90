@@ -19,7 +19,7 @@
 !======================================================================!
 
 !///// fill the buffers with new values
-  do sub=1,NPro
+  do sub=1,n_proc
     if( NBBe(sub)  <=  NBBs(sub) ) then  
       do c2=NBBs(sub),NBBe(sub),-1
         c1 = BufInd(c2)
@@ -29,12 +29,12 @@
   end do   
 
 !///// exchange the values
-  do sub=1,NPro
+  do sub=1,n_proc
     if( NBBe(sub)  <=  NBBs(sub) ) then  
 
       length = NBBs(sub) - NBBe(sub) + 1
-      stag = MAXPRO*this + sub    ! tag for sending
-      rtag = MAXPRO*sub + this    ! tag for receivinging
+      stag = (n_proc)*this_proc + sub    ! tag for sending
+      rtag = (n_proc)*sub + this_proc    ! tag for receivinging
 
 !===============================================
       call MPI_SENDRECV_REPLACE & 

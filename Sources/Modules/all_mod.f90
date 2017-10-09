@@ -9,7 +9,7 @@
 !   Note: cell_n, parent, A_row, A_col, A_dia, side_c, side_cc, 
 !         sideAij, are for all grids
 !======================================================================!
-MODULE all_mod
+module all_mod
 
   implicit none
 
@@ -52,4 +52,4 @@ MODULE all_mod
   real, allocatable   :: Dysp(:,:)       !  similar to SideC 
   real, allocatable   :: Dzsp(:,:)       !  similar to SideC 
 
-end MODULE 
+end module 

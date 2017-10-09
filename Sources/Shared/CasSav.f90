@@ -55,7 +55,7 @@
 !---- Regular node section
   write(9,'(A7,Z9,Z9,A4)') '(10 (7 ', 1, NNsub, ' 1)('
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(3E15.7)') x(n), y(n), z(n)
+    if(NewN(n) /= 0) write(9, '(3E15.7)') x_node(n), y_node(n), z_node(n)
   end do
   write(9,'(A2)') '))'
 

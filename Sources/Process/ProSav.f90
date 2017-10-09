@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine ProSav(namAut)
+  subroutine ProSav(name_aut)
 !----------------------------------------------------------------------!
 ! Writes: NAME.r.gmv   
 ! The subrotine write results in GMV format.                           !
@@ -8,31 +8,31 @@
   use all_mod
   use pro_mod
   use les_mod
-  use par_mod, only: this
+  use par_mod, only: this_proc
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
   integer             :: c, i 
-  character           :: namOut*80, answer*80, namTem*80
-  character, optional :: namAut*(*)
+  character(len=80)   :: name_out, answer, store_name
+  character, optional :: name_aut*(*)
 !======================================================================!
 
 !---- store the name
-  namTem = name     
+  store_name = name     
 
-  if(PRESENT(namAut)) then
-    write(*,*) namAut
-    name = namAut  
+  if(PRESENT(name_aut)) then
+    write(*,*) name_aut
+    name = name_aut  
   else
-    if(this  < 2)  &
+    if(this_proc  < 2)  &
       write(*,*) '# Input result file name [skip cancels]:'
     call ReadC(CMN_FILE,inp,tn,ts,te)  
     read(inp(ts(1):te(1)),'(A80)')  name
     answer=name
     call ToUppr(answer) 
     if(answer == 'SKIP') then
-      name = namTem  
+      name = store_name  
       return
     end if 
   end if
@@ -44,16 +44,16 @@
 !     Create GMV results file     !
 !                                 !
 !<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
-    call NamFil(THIS, namOut, '.r.gmv', len_trim('.r.gmv'))
-    open(9, FILE=namOut)
-    write(*,*) '# Now creating the file:', namOut
+    call NamFil(this_proc, name_out, '.r.gmv', len_trim('.r.gmv'))
+    open(9, FILE=name_out)
+    write(*,*) '# Now creating the file:', name_out
 
 !----------------!
 !    Geometry    !
 !----------------!
-!  if(this < 2) then
-!  answer = namTem
-!  answer(len_trim(namTem)+1 : len_trim(namTem)+4) = ".gmv"
+!  if(this_proc < 2) then
+!  answer = store_name
+!  answer(len_trim(store_name)+1 : len_trim(store_name)+4) = ".gmv"
 !  open(19, FILE=answer)
 !
 !--rewriting NAME.gmv
@@ -73,8 +73,8 @@
 !  end do
 
 !--no end of NAME.gmv found
-!  if(THIS < 2) write(*,*) '@ProSav: not found end of file', answer
-!  if(THIS < 2) write(*,*) '         Canceled making ', namOut
+!  if(this_proc < 2) write(*,*) '@ProSav: not found end of file', answer
+!  if(this_proc < 2) write(*,*) '         Canceled making ', name_out
 !  RETURN
 
 !--closing NAME.gmv
@@ -264,6 +264,6 @@
      close(9)
 
 !---- restore the name
-   name = namTem
+   name = store_name
 
    end subroutine ProSav

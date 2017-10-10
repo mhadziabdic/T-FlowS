@@ -12,7 +12,7 @@
 !-------------------------------[Locals]-------------------------------!
   integer :: c1, c2, s
   real    :: qx, qy, qz, Nx, Ny, Nz, Stot, CONeff, EBF, Yplus
-  real    :: Prmol, beta, Prturb, Uplus
+  real    :: Prmol, beta, Uplus
 !======================================================================!
 
   Area  = 0.0
@@ -127,17 +127,17 @@
         CONeff = CONc(material(c1))                 &
                 + CAPc(material(c1))*VISt(c1)/Prt
         if(SIMULA==ZETA.or.SIMULA==K_EPS) then
-          Yplus = Cmu25 * sqrt(Kin%n(c1)) * WallDs(c1) / VISc
+          Yplus = max(Cmu25 * sqrt(Kin%n(c1)) * WallDs(c1)/VISc,0.12)
           Uplus = log(Yplus*Elog) / (kappa + TINY) + TINY
           Prmol = VISc / CONc(material(c1))
-          beta = 9.24 * ((Prmol/Prturb)**0.75 - 1.0) * (1.0 + 0.28 * exp(-0.007*Prmol/Prturb))
+          beta = 9.24 * ((Prmol/Prt)**0.75 - 1.0) * (1.0 + 0.28 * exp(-0.007*Prmol/Prt))
           EBF = 0.01 * (Prmol*Yplus)**4.0 / (1.0 + 5.0 * Prmol**3.0 * Yplus) + TINY
           CONwall(c1) = Yplus * VISc * CAPc(material(c1)) / (Yplus * Prmol * exp(-1.0 * EBF)    &
-                      + (Uplus + beta) * Prturb * exp(-1.0 / EBF) + TINY)
+                      + (Uplus + beta) * Prt * exp(-1.0 / EBF) + TINY)
           if(TypeBC(c2) == WALLFL) then
             T% n(c2) = T % n(c1) + Prt / CAPc(material(c1)) * &
                      (qx * Dx(s) + qy * Dy(s) + qz * Dz(s))/CONwall(c1)
-            Tflux = T % q(c2) 
+            Tflux = T % q(c2)
           else if(TypeBC(c2) == WALL) then
             T % q(c2) = ( T % n(c2) - T % n(c1) ) * CONeff     &
                       / ( Nx * Dx(s) + Ny * Dy(s) + Nz * Dz(s) )

@@ -20,14 +20,8 @@
 !   Relies only on SideC structure. Try to keep it that way.
 !----------------------------------------------------------------------!
                   
-!---- memory allocation
+  ! Memory allocation
   allocate(stencw(NC)); stencw=1
-
-!====================================================================!
-!                                                                    !
-!     Determine the topology of unstructured system of equations     !
-!                                                                    !
-!====================================================================!
 
   if(this_proc < 2) write(*,*) '# Determining matrix topology.'
 
@@ -50,35 +44,35 @@
     n = n + stencw(c)
   end do   
   M % nonzeros = n + 1
-  allocate(M % val(n+1)); M % val=0 ! it reffers to M % col+1 
-  allocate(M % row(n+1)); M % row=0 ! it reffers to M % col+1 
+  allocate(M % val(n+1)); M % val=0 ! it reffers to M % row+1 
+  allocate(M % col(n+1)); M % col=0 ! it reffers to M % row+1 
 
-  ! Form M % col and diagonal only formation of M % row
-  M % col(1)=1
+  ! Form M % row and diagonal only formation of M % col
+  M % row(1)=1
   do c=1,NC
-    M % col(c+1)=M % col(c)+stencw(c)
-    M % row(M % col(c)) = c   ! sam sebi je prvi
+    M % row(c+1)=M % row(c)+stencw(c)
+    M % col(M % row(c)) = c   ! sam sebi je prvi
     stencw(c)=1
   end do 
 
-  ! Extend M % row entries with off-diagonal terms      
+  ! Extend M % col entries with off-diagonal terms      
   do s=1,NS
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2  > 0) then
-      M % row(M % col(c1)+stencw(c1)) = c2
-      M % row(M % col(c2)+stencw(c2)) = c1
+      M % col(M % row(c1)+stencw(c1)) = c2
+      M % col(M % row(c2)+stencw(c2)) = c1
       stencw(c1)=stencw(c1)+1
       stencw(c2)=stencw(c2)+1
     end if      
   end do
 
-  ! Sort M % row to make them nice and neat
+  ! Sort M % col to make them nice and neat
   do c=1,NC
-    call isort(M % row(M % col(c)),                                       &
-               M % row(M % col(c)),stencw(c),1)
-    do j=M % col(c),M % col(c+1)-1
-      if(M % row(j) == c) M % dia(c)=j
+    call isort(M % col(M % row(c)),                                       &
+               M % col(M % row(c)),stencw(c),1)
+    do j=M % row(c),M % row(c+1)-1
+      if(M % col(j) == c) M % dia(c)=j
     end do
   end do 
 
@@ -89,13 +83,13 @@
     if(c2  > 0) then
 
       ! Where is M(c1,c2) and ...
-      do c=M % col(c1),M % col(c1+1)-1 
-        if(M % row(c)  ==  c2) M % pos(1,s)=c
+      do c=M % row(c1),M % row(c1+1)-1 
+        if(M % col(c)  ==  c2) M % pos(1,s)=c
       end do
 
       ! Where is M(c2,c1) and ...
-      do c=M % col(c2),M % col(c2+1)-1 
-        if(M % row(c)  ==  c1) M % pos(2,s)=c
+      do c=M % row(c2),M % row(c2+1)-1 
+        if(M % col(c)  ==  c1) M % pos(2,s)=c
       end do
     end if
   end do

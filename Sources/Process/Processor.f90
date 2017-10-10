@@ -640,25 +640,25 @@
 !  call UserCutLines_Point_Cart
 
 !---- Create a cut line with normalise a values
-!BOJAN  if(CHANNEL == YES) then
-!BOJAN    call UserCutLines_channel(zc)
-!BOJAN  else if(PIPE == YES) then
-!BOJAN    call UserCutLines_pipe
-!BOJAN    if(BUDG==YES.and.HOT==NO) call UserCutLines_budgets_cylind 
-!BOJAN    if(BUDG==YES.and.HOT==YES) call UserCutLines_budgets_cylind_HOT 
-!BOJAN!    call UserCutLines_annulus
-!BOJAN  else if(JET == YES) then
-!BOJAN    call UserCutLines_Nu
-!BOJAN    call UserCutLines_jet
-!BOJAN!    call UserProbe1D_Nusselt_jet
-!BOJAN!    call UserCutLines_Horiz_RANS
-!BOJAN  else if(BACKSTEP == YES) then
-!BOJAN    call UserBackstep        
-!BOJAN    call UserBackstep_Y        
-!BOJAN  else if(RB_CONV == YES) then
-!BOJAN    call UserCutLines_RB_conv
-!BOJAN!    call UserCutLines_Point_Cart
-!BOJAN  end if
+!  if(CHANNEL == YES) then
+!    call UserCutLines_channel(zc)
+!  else if(PIPE == YES) then
+!    call UserCutLines_pipe
+!    if(BUDG==YES.and.HOT==NO) call UserCutLines_budgets_cylind 
+!    if(BUDG==YES.and.HOT==YES) call UserCutLines_budgets_cylind_HOT 
+!    call UserCutLines_annulus
+!  else if(JET == YES) then
+!    call UserCutLines_Nu
+!   call UserCutLines_jet
+!    call UserProbe1D_Nusselt_jet
+!    call UserCutLines_Horiz_RANS
+!  else if(BACKSTEP == YES) then
+!    call UserBackstep        
+!    call UserBackstep_Y        
+!  else if(RB_CONV == YES) then
+!    call UserCutLines_RB_conv
+!    call UserCutLines_Point_Cart
+!  end if
 
  
 !  call UserDiffuser 

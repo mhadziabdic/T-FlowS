@@ -575,7 +575,7 @@
 
   niter=miter
 
-  call cgs(NC, Nbc, A,           & 
+  call cg(NC, Nbc, A,           & 
           Ui % n, b, PREC,        &
           niter,U % STol, res(var), error)
 

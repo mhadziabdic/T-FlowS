@@ -54,7 +54,7 @@
         Ynd(c1) = WallDs(c1)*Uf(c1)/VISc 
         Gblend  = 0.01*Ynd(c1)**4.0/(1.0+5.0*Ynd(c1))
 
-        Yplus = Ynd(c1)  !max(Ynd(c1),1.1)
+        Yplus = max(Ynd(c1),0.13)  
         Uplus = log(Yplus*Elog)/(kappa)
    
         if(Yplus< 3.0) then

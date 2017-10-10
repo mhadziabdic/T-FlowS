@@ -81,16 +81,13 @@
           Pk_turb = Cmu75 * Kin%n(c1)**1.5 / (WallDs(c1) * kappa)
           Pk_vis = VISt(c1)*Shear(c1)*Shear(c1)                                   !standard
 !--Kader
-          Yplus = Cmu25 * sqrt(Kin%n(c1)) * WallDs(c1) / VISc + TINY     !standard
-          EBF = 0.01 * Yplus**4.0 / (1.0 + 5.0*Yplus) + TINY           !original
-          Pro = Pk_vis * exp(-1.0 * EBF) + Pk_turb * exp(-1.0 / EBF) 
-          BL_EPS = min((Pk_turb * exp(-1.0 / EBF))/Pro,1.0)
-          Ynd(c1) = Uf(c1)*WallDs(c1)/VISc 
+!         EBF = 0.01 * Yplus**4.0 / (1.0 + 5.0*Yplus) + TINY           !original
+!         Pro = Pk_vis * exp(-1.0 * EBF) + Pk_turb * exp(-1.0 / EBF) 
+!         BL_EPS = min((Pk_turb * exp(-1.0 / EBF))/Pro,1.0)
 
-          Ck = Cmu**0.25*Kin%n(c1)**0.5
-          Ynd(c1) = Ck*WallDs(c1)/VISc 
-          EBF  = 0.001*Ynd(c1)**4.0/(1.0+Ynd(c1))
-          Eps%n(c1) = EpsWall * exp(-1.0 * EBF) + EpsHom * exp(-1.0 / EBF) 
+          Yplus = Cmu25 * sqrt(Kin%n(c1)) * WallDs(c1) / VISc + TINY     !standard
+          EBF  = 0.001*Yplus**4.0/(1.0+Yplus)
+          Eps%n (c1) = EpsWall * exp(-1.0 * EBF) + EpsHom * exp(-1.0 / EBF) 
           
           if(ROUGH == YES) then
             Eps%n(c1) = Cmu75 * Kin%n(c1)**1.5 / ((WallDs(c1)) * kappa)

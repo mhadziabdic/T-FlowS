@@ -16,17 +16,18 @@
   integer  :: i,j,k,sub
 !======================================================================!
 
-!+++++++++++++++++++++++++!
-!     r = b - Ax          !
-!     => Parallelized     ! 
-!+++++++++++++++++++++++++!
+  !----------------!
+  !   r = b - Ax   !
+  !----------------!
   do i=1,N
-    do j=A % col(i),A % col(i+1)-1     
-      k = A % row(j)                 
+    do j=A % row(i),A % row(i+1)-1     
+      k = A % col(j)                 
       r1(i) = r1(i) - A % val(j) * x(k)  
     end do
   end do
-!      call exchange(x) 
+
+! call exchange(x) 
+
   do sub=1,n_proc
     if(NBBe(sub)  <=  NBBs(sub)) then
       do k=NBBs(sub),NBBe(sub),-1

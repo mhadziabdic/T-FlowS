@@ -13,7 +13,7 @@
   integer :: c, c1, c2, s 
 !======================================================================!
 
-  do c=1,A % col(NC+1) ! this is number of nozero entries + 1
+  do c=1,A % row(NC+1) ! this is number of nozero entries + 1
     A % val(c) = 0.0
   end do
 

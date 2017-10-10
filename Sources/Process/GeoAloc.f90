@@ -35,7 +35,7 @@
   allocate (a2(-NbC:NC));  a2=0.  
 
   ! Variables defined in sol.h90:
-  allocate (D % col(NC+1));     D % col=0
+  allocate (D % row(NC+1));     D % row=0
   allocate (D % dia(NC));       D % dia=0
   allocate (D % sav(-NbC:NC));  D % sav=0
   allocate (D % bou(-NbC:-1));  D % bou=0
@@ -52,7 +52,7 @@
   allocate (u1_plus_q1(NC));    u1_plus_q1=0
 
   ! Variables defined in pro_mod.h90:
-  allocate (A % col(NC+1));     A % col=0
+  allocate (A % row(NC+1));     A % row=0
   allocate (A % dia(NC));       A % dia=0
   allocate (A % sav(-NbC:NC));  A % sav=0
   allocate (A % bou(-NbC:-1));  A % bou=0

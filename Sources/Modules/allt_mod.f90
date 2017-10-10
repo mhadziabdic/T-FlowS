@@ -63,7 +63,9 @@ module allt_mod
     real,    allocatable :: val(:)                 ! value
     real,    allocatable :: sav(:)                 ! saved value
     real,    allocatable :: bou(:)                 ! boundary value
-    integer, allocatable :: row(:), col(:), dia(:) ! positions in the matrix
+    integer, allocatable :: col(:)                 ! beginning of each row   
+    integer, allocatable :: row(:)                 ! column positions
+    integer, allocatable :: dia(:)                 ! diagonal positions 
     integer, allocatable :: pos(:,:)               ! position in the matrix
   end type Matrix
 

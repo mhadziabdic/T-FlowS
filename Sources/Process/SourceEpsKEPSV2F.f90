@@ -15,7 +15,7 @@
 !----------------------------------------------------------------------!
   implicit none
 !-------------------------------[Locals]-------------------------------!
-  integer :: c, s, c1, c2,j	 
+  integer :: c, s, c1, c2,j 
   real    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret, Ck, EBF
   real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, EpsWall, EpsHom
   real    :: BL_EPS, Pro, Pk_turb, Pk_vis, Yplus
@@ -93,7 +93,7 @@
             Eps%n(c1) = Cmu75 * Kin%n(c1)**1.5 / ((WallDs(c1)) * kappa)
           end if
 !-----Adjusting a coefficient to fix Eps value in near wall calls
-          do j=A % col(c1), A % col(c1+1)-1
+          do j=A % row(c1), A % row(c1+1)-1
             A % val(j) = 0.0
           end do
           b(c1) = Eps % n(c1)

@@ -221,7 +221,7 @@
 !     Value 1.e-12 keeps the solution stable                !
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -!  
   niter=40
-  call cgs(NC, NbC, A,                     &
+  call bicg(NC, NbC, A,                     &
         PP % n, b, PREC, niter, PP % STol,  &
         res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)

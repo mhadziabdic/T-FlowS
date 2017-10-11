@@ -45,11 +45,11 @@ Process_SOURCES =	 			\
   LoaIni.f90					\
   LoaRes.f90					\
   LoaRes_Ini.f90				\
-  LogoPro.f90					\
+  Logo_Process.f90				\
   ModOut.f90					\
   NearWallCell.f90				\
   NewUVW.f90					\
-  Processor.f90					\
+  Process.f90					\
   ProSav.f90					\
   ReaCom.f90					\
   SavIni.f90					\

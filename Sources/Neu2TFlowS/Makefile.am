@@ -4,7 +4,7 @@ Neu2TFlowS_SOURCES =	 	\
   Calc4.f90			\
   Connect3.f90			\
   FindSides.f90			\
-  LogoNeu.f90			\
+  Logo_Neu2TFlowS.f90		\
   Neu2TFlowS.f90		\
   Read9Ln.f90			\
   ReadFluentNeu.f90		\

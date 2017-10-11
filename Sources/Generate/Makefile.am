@@ -14,7 +14,7 @@ Generate_SOURCES =	 	\
   IsTwin.f90			\
   Laplac.f90			\
   Linija.f90			\
-  LogoGen.f90			\
+  Logo_Generate.f90		\
   Mark.f90			\
   PeriBC.f90			\
   PrintG.f90			\

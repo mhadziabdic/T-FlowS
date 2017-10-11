@@ -1,17 +1,17 @@
-!======================================================================!
-  subroutine EpsPar()
-!----------------------------------------------------------------------!
-!   Saves the whole grid in encapsulated postscript.                   !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Save_Eps_Decomposed()
+!------------------------------------------------------------------------------!
+!   Saves the whole grid in encapsulated postscript.                           !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
   use par_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!------------------------------[Calling]-------------------------------!
+!----------------------------------[Calling]-----------------------------------!
   real :: Distance
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer             :: n, s, s0, c1, c2
   integer             :: xmaxb, xminb, ymaxb, yminb, xlegend
   character(len=80)   :: name_eps, answer
@@ -23,44 +23,44 @@
   integer,allocatable :: indx(:)
   real,allocatable    :: work(:) 
   integer             :: ix1, ix2, iy1, iy2, boxsize
-!======================================================================!
+!==============================================================================!
 
-!---- allocate the memory
+  ! Allocate the memory
   allocate(indx(NS)); indx=0
   allocate(work(NS)); work=0   
 
-!--------------------------!
-! Set the processor colors !
-!--------------------------! 
+  !------------------------------!
+  !   Set the processor colors   !
+  !------------------------------! 
   n=1  ! colour count
 
-!-- Few basic colors
-  red(n) = 1.00; green(n) = 0.00; blue(n) = 0.00;  n=n+1 ! Red
-  red(n) = 1.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! Yellow
-  red(n) = 0.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! Green
-  red(n) = 0.00; green(n) = 1.00; blue(n) = 1.00;  n=n+1 ! Cyan
-  red(n) = 0.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! Blue
-  red(n) = 1.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! Magenta
+  ! Few basic colors
+  red(n) = 1.00; green(n) = 0.00; blue(n) = 0.00;  n=n+1 ! red
+  red(n) = 1.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! yellow
+  red(n) = 0.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! green
+  red(n) = 0.00; green(n) = 1.00; blue(n) = 1.00;  n=n+1 ! cyan
+  red(n) = 0.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! blue
+  red(n) = 1.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! magenta
 
-!-- Few basic colors but lighter 
-  red(n) = 1.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! Light Red
-  red(n) = 1.00; green(n) = 1.00; blue(n) = 0.50;  n=n+1 ! Light Yellow
-  red(n) = 0.50; green(n) = 1.00; blue(n) = 0.50;  n=n+1 ! light Green
-  red(n) = 0.50; green(n) = 1.00; blue(n) = 1.00;  n=n+1 ! Light Cyan
-  red(n) = 0.50; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! Light Blue
-  red(n) = 1.00; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! Light Magenta
+  ! Few basic colors but lighter 
+  red(n) = 1.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! light red
+  red(n) = 1.00; green(n) = 1.00; blue(n) = 0.50;  n=n+1 ! light yellow
+  red(n) = 0.50; green(n) = 1.00; blue(n) = 0.50;  n=n+1 ! light green
+  red(n) = 0.50; green(n) = 1.00; blue(n) = 1.00;  n=n+1 ! light cyan
+  red(n) = 0.50; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! light blue
+  red(n) = 1.00; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! light magenta
 
-!-- Few basic colors but darker
-  red(n) = 0.50; green(n) = 0.00; blue(n) = 0.00;  n=n+1 ! Dark Red
-  red(n) = 0.50; green(n) = 0.50; blue(n) = 0.00;  n=n+1 ! Dark Yellow
-  red(n) = 0.00; green(n) = 0.50; blue(n) = 0.00;  n=n+1 ! Dark Green
-  red(n) = 0.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! Dark Cyan
-  red(n) = 0.00; green(n) = 0.00; blue(n) = 0.50;  n=n+1 ! Dark Blue
-  red(n) = 0.50; green(n) = 0.00; blue(n) = 0.50;  n=n+1 ! Dark Magenta
+  ! Few basic colors but darker
+  red(n) = 0.50; green(n) = 0.00; blue(n) = 0.00;  n=n+1 ! dark red
+  red(n) = 0.50; green(n) = 0.50; blue(n) = 0.00;  n=n+1 ! dark yellow
+  red(n) = 0.00; green(n) = 0.50; blue(n) = 0.00;  n=n+1 ! dark green
+  red(n) = 0.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! dark cyan
+  red(n) = 0.00; green(n) = 0.00; blue(n) = 0.50;  n=n+1 ! dark blue
+  red(n) = 0.50; green(n) = 0.00; blue(n) = 0.50;  n=n+1 ! dark magenta
 
-!--------------------------!
-! Input camera coordinates !
-!--------------------------!
+  !------------------------------!
+  !   Input camera coordinates   !
+  !------------------------------!
 1 write(6,*) 'Enter the camera coordinates (skip to exit): '
   call ReadC(5,inp,tn,ts,te)
   if(tn == 1) then
@@ -78,9 +78,11 @@
   ny = yk/sqrt(xk*xk+yk*yk+zk*zk)
   nz = zk/sqrt(xk*xk+yk*yk+zk*zk)
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
-!     create EPS file     !
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
+  !----------------------!
+  !                      !
+  !   Create .eps file   !
+  !                      !
+  !----------------------!
   write(6,*) 'Enter the file name (without extension): '
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) name_eps 
@@ -96,7 +98,7 @@
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin),(zmax-zmin))
   sclp = 0.005 
 
-!---- Find the bounding box
+  ! Find the bounding box
   xminb=+1000000
   xmaxb=-1000000
   yminb=+1000000
@@ -125,7 +127,7 @@
 
   open(9, FILE=name_eps)
 
-!---- Create the header of the .eps file
+  ! Create the header of the .eps file
   write(9, '(A24)') '%!PS-Adobe-2.0 EPSF-1.2 '
   write(9, '(A24)') '%% Created by:  T-Rex %%'
   write(9, '(A15,4I7)') '%%BoundingBox: ',                          &
@@ -282,4 +284,4 @@
   deallocate(indx)
   deallocate(work)
 
-  end subroutine EpsPar
+  end subroutine Save_Eps_Decomposed

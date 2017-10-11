@@ -35,7 +35,7 @@
 !======================================================================!
 
 !  open(9, FILE='Vert_positions.dat')
-!  if(this < 2) write(6, *) '# Now reading the file: Vert_positions.dat ' 
+!  if(this_proc < 2) write(6, *) '# Now reading the file: Vert_positions.dat ' 
 !  read(9,*) N_hor
 !  allocate(r1_p(N_hor))
 !  allocate(r2_p(N_hor))
@@ -47,7 +47,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
-    if(this < 2) write(6, *) '# Now reading the file: X_coordinate.dat ' 
+    if(this_proc < 2) write(6, *) '# Now reading the file: X_coordinate.dat ' 
     open(9, FILE='X_coordinate.dat')
 
 !---- write the number of probes 
@@ -109,23 +109,15 @@
           if(bcmark(c2).eq.1) then
             Rad_2 = xc(c1)
             if(Rad_2 > z_p(i) .and. Rad_2 < z_p(i+1)) then
-              if(SIMULA==ZETA) then      
-                Ump(i)   = Ump(i) + U % n(c1)
-                Vmp(i)   = Vmp(i) + V % n(c1)
-                Wmp(i)   = Wmp(i) + W % n(c1)
-                uup(i)   = uup(i) + Kin%n(c1)
-                vvp(i)   = vvp(i) + Eps%n(c1)
-                wwp(i)   = wwp(i) + v_2%n(c1)
-                uvp(i)   = uvp(i) - f22 %n(c1) !2.0*VISc*v_2 % n(c1)/WallDs(c1)**2
-!                Var_1(i) = Var_1(i) + 0.015663*TauWall(c1)*U%n(c1)/abs(U%n(c1)) !/11.3**2 !2.0*(VISc*U%n(c)/WallDs(c))/11.3**2 !sqrt(TauWall(c))*WallDs(c)/VISc
-                Var_1(i) = Var_1(i) + 2.0*(VISc*U%n(c1)/WallDs(c1))/11.3**2 !sqrt(TauWall(c))*WallDs(c)/VISc
-                Var_2(i) = Var_2(i) + Uf(c1)*WallDs(c1)/VISc !/11.3**2 !2.0*(VISc*U%n(c)/WallDs(c))/11.3**2 !sqrt(TauWall(c))*WallDs(c)/VISc
-                Var_3(i) = Var_3(i) +   0.1/((T%n(c2)-20)*11.3) !0.0038/(CONwall(c1)) !CONwall(c)/(WallDs(c)*11.3)  
-                Var_4(i) = Var_4(i) +   TauWall(c1)*U%n(c1)/abs(U%n(c1)) !Cmu**0.25*Kin%n(c1)**0.5/11.3 !sqrt(TauWall(c1))
-                Var_5(i) = Var_5(i) +   T % n(c2) !(CmuD*Kin%n(c1)*v_2%n(c1))**0.25!sqrt(TauWall(c1))
-                Rad_mp(i) = Rad_mp(i) + zc(c1) 
-                Ncount(i) = Ncount(i) + 1
-              end if
+              Ump(i)   = Ump(i) + U % n(c1)
+              Vmp(i)   = Vmp(i) + V % n(c1)
+              Wmp(i)   = Wmp(i) + W % n(c1)
+              Var_1(i) = Var_1(i) + 2.0*(VISc*U%n(c1)/WallDs(c1))/11.3**2 
+              Var_2(i) = Var_2(i) + sqrt(abs(U%n(c1))*WallDs(c1)/VISc) 
+              Var_3(i) = Var_3(i) + 0.1/((T%n(c2)-20)*11.3) 
+              Var_5(i) = Var_5(i) + T % n(c2) 
+              Rad_mp(i) = Rad_mp(i) + zc(c1) 
+              Ncount(i) = Ncount(i) + 1
             end if
           end if
         end if
@@ -178,7 +170,7 @@
     end if 
 
     open(3,FILE=JetIn)
-    write(3,*) '# x, U, k, eps, zeta, f, Cf, yPlus, St, TauWall, T'
+    write(3,*) '# x, U, Cf, yPlus, St, T'
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
         Wmp(i)    =  Wmp(i)/Ncount(i)
@@ -203,8 +195,8 @@
         Var_5(i)  =  Var_5(i)/Ncount(i)
         Rad_mp(i) =  Rad_mp(i)/Ncount(i)
 
-        write(3,'(11E15.7)') (z_p(i)+z_p(i+1))/(2.*0.038), Ump(i), uup(i), &
-        vvp(i), wwp(i), uvp(i), Var_1(i), Var_2(i), Var_3(i), Var_4(i), var_5(i) 
+        write(3,'(6E15.7)') (z_p(i)+z_p(i+1))/(2.*0.038), Ump(i), &
+        Var_1(i), Var_2(i), Var_3(i), var_5(i) 
 
         Wmp(i)    = 0.0   
         Ump(i)    = 0.0 
@@ -267,6 +259,6 @@
   end if
 
 
-  if(this < 2) write(*,*) 'Finished with UserCutLines_X_dir'
+  if(this_proc < 2) write(*,*) 'Finished with UserCutLines_X_dir'
 
   end subroutine UserBackstep 

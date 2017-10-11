@@ -53,12 +53,11 @@
       if(c2 < 0.and.TypeBC(c2) /= BUFFER ) then  
         if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
 !----- This will fix the value of Eps in the first cell
-
-!          if(ROUGH==NO) then
+          if(ROUGH==NO) then
             Eps % n(c1) = Cmu75 * (Kin % n(c1))**1.5 / (kappa*WallDs(c1))
-!          else if(ROUGH==YES) then
-!            Eps % n(c1) = Cmu75*(Kin%n(c1))**1.5/(kappa*(WallDs(c1)+Zo))
-!          end if
+          else if(ROUGH==YES) then
+            Eps % n(c1) = Cmu75*(Kin%n(c1))**1.5/(kappa*(WallDs(c1)+Zo))
+          end if
           do j=A % row(c1), A % row(c1+1) -1
             A % val(j) = 0.0
           end do   

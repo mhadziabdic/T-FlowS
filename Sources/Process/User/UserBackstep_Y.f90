@@ -35,7 +35,7 @@
 !======================================================================!
 
   open(9, FILE='Horiz_positions.dat')
-  if(this < 2) write(6, *) '# Now reading the file: Horiz_positions.dat ' 
+  if(this_proc < 2) write(6, *) '# Now reading the file: Horiz_positions.dat ' 
   read(9,*) N_hor
   allocate(r1_p(N_hor))
   allocate(r2_p(N_hor))
@@ -48,7 +48,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
-    if(this < 2) write(6, *) '# Now reading the file: Y_coordinate.dat ' 
+    if(this_proc < 2) write(6, *) '# Now reading the file: Y_coordinate.dat ' 
     open(9, FILE='Y_coordinate.dat')
 
 !---- write the number of probes 
@@ -105,18 +105,18 @@
         Rad_2 = zc(c)
         if(xc(c) < r1_p(k) .and. xc(c) > r2_p(k)) then
           if(Rad_2 > z_p(i) .and. Rad_2 < z_p(i+1)) then
+            Ump(i)   = Ump(i) + U % n(c)
+            Vmp(i)   = Vmp(i) + V % n(c)
+            Wmp(i)   = Wmp(i) + W % n(c)
+            uup(i)   = uup(i) + Kin%n(c)
+            vvp(i)   = vvp(i) + Eps%n(c)
+            Var_1(i) = Var_1(i) + TauWall(c)/11.3**2 
+            Var_2(i) = Var_2(i) + T%n(c)-20.0
+            Rad_mp(i) = Rad_mp(i) + zc(c) 
+            Ncount(i) = Ncount(i) + 1
             if(SIMULA==ZETA) then      
-              Ump(i)   = Ump(i) + U % n(c)
-              Vmp(i)   = Vmp(i) + V % n(c)
-              Wmp(i)   = Wmp(i) + W % n(c)
-              uup(i)   = uup(i) + Kin%n(c)
-              vvp(i)   = vvp(i) + Eps%n(c)
               wwp(i)   = wwp(i) + v_2%n(c)
               uvp(i)   = uvp(i) + f22%n(c)
-              Var_1(i) = Var_1(i) + TauWall(c)/11.3**2 !2.0*(VISc*U%n(c)/WallDs(c))/11.3**2 !sqrt(TauWall(c))*WallDs(c)/VISc
-              Var_2(i) = Var_2(i) + T%n(c)-20.0
-              Rad_mp(i) = Rad_mp(i) + zc(c) 
-              Ncount(i) = Ncount(i) + 1
             end if
           end if
         end if
@@ -253,6 +253,6 @@
   end if
 
 
-  if(this < 2) write(*,*) 'Finished with UserCutLines_X_dir'
+  if(this_proc < 2) write(*,*) 'Finished with UserCutLines_X_dir'
 
   end subroutine UserBackstep_Y 

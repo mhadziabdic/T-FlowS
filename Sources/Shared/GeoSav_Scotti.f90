@@ -139,13 +139,13 @@
 !     COPY     !
 !--------------!
   count = 0
-  do s=1,Ncopy
+  do s=1,n_copy
     count = count + 1
     iwork(count,1) = CopyS(1,s) 
     iwork(count,2) = CopyS(2,s) 
   end do
 
-  write(*,*) 'Ncopy ', count 
+  write(*,*) 'n_copy ', count 
   write(9) count 
   write(9) (iwork(c,1), c=1,count)
   write(9) (iwork(c,2), c=1,count)

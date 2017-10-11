@@ -1,38 +1,38 @@
-!======================================================================!
+!==============================================================================!
   subroutine ReadFluentNeu() 
-!----------------------------------------------------------------------!
-! Reads the Fluents (Gambits) neutral file format.                     !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+! Reads the Fluents (Gambits) neutral file format.                             !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use gen_mod 
   use neu_mod 
   use par_mod 
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   character           :: Line*300
-  character           :: nameIn*130
+  character           :: name_in*130
   integer             :: i, j, dum1, dum2, dum3
   integer,allocatable :: temp(:)
   integer             :: c, dir, type
-!======================================================================!
+!==============================================================================!
 
   write(*,*) 'Enter the Fluent''s (*.NEU) file name (without ext.):'
   read(*,*) name
 
-  nameIn = name
-  nameIn(len_trim(name)+1:len_trim(name)+4) = '.neu'
+  name_in = name
+  name_in(len_trim(name)+1:len_trim(name)+4) = '.neu'
 
-  open(9,FILE=nameIn)
-  write(*,*) 'Now reading the file: ', nameIn
+  open(9,FILE=name_in)
+  write(*,*) 'Now reading the file: ', name_in
 
-!---- skip first 6 lines
+  ! Skip first 6 lines
   do i=1,6
     call Read9Ln(Line,tn,ts,te)
   end do 
 
-!---- read the line which contains usefull information  
+  ! Read the line which contains usefull information  
   call Read9Ln(Line,tn,ts,te)
   read(Line(ts(1):te(1)),*) NN  
   read(Line(ts(2):te(2)),*) NC
@@ -44,7 +44,7 @@
   write(*,*) 'Total number of blocks: ', NBloc
   write(*,*) 'Total number of boundary sections: ', NBS
 
-!---- count the boundary cells
+  ! Count the boundary cells
   NbC = 0
   do 
     call Read9Ln(Line,tn,ts,te)
@@ -66,12 +66,12 @@
 
 1 rewind(9)
 
-!---- skip first 7 lines
+  ! Skip first 7 lines
   do i=1,7
     call Read9Ln(Line,tn,ts,te)
   end do 
 
-!---- allocate memory ==> ATTENTION: NO CHECKING
+  ! Allocate memory =--> carefull, there is no checking!
   allocate(x_node(NN)); x_node=0
   allocate(y_node(NN)); y_node=0
   allocate(z_node(NN)); z_node=0
@@ -82,9 +82,9 @@
   allocate(CellN(-NbC-1:NC,-1:8)); CellN=0
   allocate(SideC(0:2,NC*5));       SideC=0    
   allocate(SideN(NC*5,0:4));       SideN=0
-  Ncopy = 1000000 
+  n_copy = 1000000 
   allocate(CopyC(-NbC:-1));  CopyC=0
-  allocate(CopyS(2,Ncopy));  CopyS=0
+  allocate(CopyS(2,n_copy));  CopyS=0
 
   allocate(NewN(NN));        NewN=0  
   allocate(NewC(-NbC-1:NC)); NewC=0  
@@ -94,13 +94,12 @@
 
   allocate(temp(NC)); temp=0
 
-!--- skip one line 
+  ! Skip one line 
   call Read9Ln(Line,tn,ts,te)
 
-!%%%%%%%%%%%%%%%%%%%!
-! NODAL COORDINATES !
-!%%%%%%%%%%%%%%%%%%%!
-!---- read the nodal coordinates
+  !------------------------------!
+  !  Read the nodal coordinates  !
+  !------------------------------!
   call Read9Ln(Line,tn,ts,te)          ! NODAL COORDINATES
   do i=1,NN
     call Read9Ln(Line,tn,ts,te)
@@ -110,10 +109,9 @@
   end do
   call Read9Ln(Line,tn,ts,te)          ! ENDOFSECTION
 
-!%%%%%%%%%%%%%%%%!
-! ELEMENTS/CELLS !
-!%%%%%%%%%%%%%%%%!
-!---- read nodes of each cell
+  !----------------------------!
+  !  Read nodes of each cell   !
+  !----------------------------!
   call Read9Ln(Line,tn,ts,te)          ! ELEMENTS/CELLS
   do i=1,NC
     read(9,'(I8,1X,I2,1X,I2,1X,7I8:/(15X,7I8:))') dum1, dum2, CellN(i,0), (CellN(i,j), j=1,CellN(i,0))
@@ -133,9 +131,9 @@
     call Read9Ln(Line,tn,ts,te)        ! ENDOFSECTION
   end do
 
-!%%%%%%%%%%%%%%%%%%%%%!
-! BOUNDARY CONDITIONS !
-!%%%%%%%%%%%%%%%%%%%%%!
+  !------------------------!
+  !  Boundary conditions   !
+  !------------------------!
   write(*,*) 'NBS=', NBS 
   do j=1,NBS
     call Read9Ln(Line,tn,ts,te)        ! BOUNDARY CONDITIONS

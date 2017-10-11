@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine Probe2D 
+  subroutine Probe_2D 
 !----------------------------------------------------------------------!
 ! Finds coordinates of all the planes for the channel flow.            !
 ! It assumes that homogeneous directions of the flow are x and y.      !
@@ -8,17 +8,12 @@
 !----------------------------------------------------------------------!
   implicit none
 !------------------------------[Calling]-------------------------------! 
-  interface
-    logical function Approx(A,B,tol)
-      real           :: A,B
-      real, optional :: tol
-    end function Approx
-  end interface
+  include "Approx.int"
 !-------------------------------[Locals]-------------------------------!
-  integer   :: Nprob, p, c
-  real      :: yp(20000), zp(20000)
-  character :: namPro*80
-  character :: answer*80
+  integer           :: n_prob, p, c
+  real              :: yp(20000), zp(20000)
+  character(len=80) :: name_prob
+  character(len=80) :: answer
 !======================================================================!
 
   write(*,*) '==============================='
@@ -29,14 +24,17 @@
   call touppr(answer)
   if(answer=='SKIP') return
 
-  NProb = 0
+  n_prob = 0
   zp=0.0
   yp=0.0
 
+  !-----------------------------!
+  !   Browse through all cells  !
+  !-----------------------------!
   do c=1,NC
 
-!---- try to find the cell among the probes
-    do p=1,Nprob
+    ! Try to find the cell among the probes
+    do p=1,n_prob
       if(answer=='YZ') then
         if( Approx(yc(c), yp(p)) .and. &  
             Approx(zc(c), zp(p)) ) go to 1
@@ -49,41 +47,41 @@
       end if
     end do 
 
-!---- couldn't find a cell among the probes, add a new one
-    Nprob = Nprob+1
+    ! Couldn't find a cell among the probes, add a new one
+    n_prob = n_prob+1
     if(answer=='YZ') then
-      yp(Nprob)=yc(c)
-      zp(Nprob)=zc(c)
+      yp(n_prob)=yc(c)
+      zp(n_prob)=zc(c)
     else if(answer=='ZX') then
-      yp(Nprob)=xc(c)
-      zp(Nprob)=zc(c)
+      yp(n_prob)=xc(c)
+      zp(n_prob)=zc(c)
     else if(answer=='XY') then
-      yp(Nprob)=xc(c)
-      zp(Nprob)=yc(c)
+      yp(n_prob)=xc(c)
+      zp(n_prob)=yc(c)
     end if 
 
-    if(Nprob == 20000) then
+    if(n_prob == 20000) then
       write(*,*) 'Probe 2D: Not a 2D problem.'
       return
     end if
 1 end do
 
-!<<<<<<<<<<<<<<<<<<<<<<<<!
-!     create 2D file     !
-!<<<<<<<<<<<<<<<<<<<<<<<<!
-  namPro = name
-  namPro(len_trim(name)+1:len_trim(name)+3) = '.2D'
-  write(6, *) 'Now creating the file:', namPro
-  open(9, FILE=namPro)
+  !--------------------!
+  !   Create 2D file   !
+  !--------------------!
+  name_prob = name
+  name_prob(len_trim(name)+1:len_trim(name)+3) = '.2D'
+  write(6, *) 'Now creating the file:', name_prob
+  open(9, file=name_prob)
 
-!---- write the number of probes 
-  write(9,'(I8)') Nprob
+  ! Write the number of probes 
+  write(9,'(I8)') n_prob
 
-!---- write the probe coordinates out
-  do p=1,Nprob
+  ! Write the probe coordinates out
+  do p=1,n_prob
     write(9,'(I8,1PE17.8,1PE17.8)') p, yp(p), zp(p)
   end do
 
   close(9)
 
-  end subroutine Probe2D
+  end subroutine Probe_2D

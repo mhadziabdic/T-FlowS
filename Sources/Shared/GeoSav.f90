@@ -1,55 +1,55 @@
-!======================================================================!
+!==============================================================================!
   subroutine GeoSav(sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub)
-!----------------------------------------------------------------------!
-! Writes: NAME.cns, NAME.geo                                           !
-! ~~~~~~~                                                              !
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+! Writes: NAME.cns, NAME.geo                                                   !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
   use par_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!---------------------------------[Parameters]---------------------------------!
   integer :: sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer              :: b, c, s, c1, c2, count, var, subo 
   character(len=80)    :: name_out
   integer, allocatable :: iwork(:,:)
   real, allocatable    :: work(:)
-!======================================================================!
-!   The files NAME.cns and NAME.geo should merge into one file in some !
-!   of the future releases.                                            !
-!                                                                      !
-!   sub    - subdomain number                                          !
-!   NCsub  - number of cells in subdomain                              !
-!   NSsub  - number of sides in subdomain, but without sides on buffer !
-!   NBCsub - number of physicall boundary cells in subdomain           !
-!   NBFsub - number of buffer boundary faces in subdomain              !
-!----------------------------------------------------------------------!
+!==============================================================================!
+!   The files NAME.cns and NAME.geo should merge into one file in some         !
+!   of the future releases.                                                    !
+!                                                                              !
+!   sub    - subdomain number                                                  !
+!   NCsub  - number of cells in subdomain                                      !
+!   NSsub  - number of sides in subdomain, but without sides on buffer         !
+!   NBCsub - number of physicall boundary cells in subdomain                   !
+!   NBFsub - number of buffer boundary faces in subdomain                      !
+!------------------------------------------------------------------------------!
 
   allocate(iwork(-NbC:NS,0:2)); iwork=0
   allocate(work(NS));           work=0
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
-!     create CNS file     !
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
+  !----------------------!
+  !                      !
+  !   Create .cns file   !
+  !                      !
+  !----------------------!
   call NamFil( sub, name_out, '.cns', len_trim('.cns') )
   open(9, FILE=name_out,FORM='UNFORMATTED')
   write(6, *) 'Now creating the file:', name_out
 
-!-------------------------------------------------!
-!    Number of cells, boundary cells ans sides    !
-!-------------------------------------------------!
+  !-----------------------------------------------!
+  !   Number of cells, boundary cells ans sides   !
+  !-----------------------------------------------!
   write(9) NCsub
   write(9) NBCsub+NBFsub 
   write(9) NSsub+NBFsub-NCFsub
   write(9) NSsh
   write(9) Nmat
-!  write(9) MNBS
 
-!-----------* 
-!   CELLS   * 
-!-----------* 
+  !-----------! 
+  !   Cells   ! 
+  !-----------! 
   count=0
   do c=1,NC
     if(NewC(c) /= 0) then
@@ -58,7 +58,8 @@
     end if
   end do 
   write(9) (iwork(c,1), c=1,count)
-!---- physicall cells
+
+  ! Physicall cells
   count=0
   do c=-1,-NBC, -1
     if(NewC(c) /= 0) then
@@ -66,19 +67,20 @@
       iwork(count,1) = material(c)
     end if
   end do
-!---- buffer boundary cell centers
+
+  ! Buffer boundary cell centers
   do s=1,NBFsub
     count=count+1
     iwork(count,1) = material(BuReIn(s))
   end do
   write(9) (iwork(c,1), c=1,count)
                       
-!-----------* 
-!   SIDES   * 
-!-----------*
+  !-----------! 
+  !   Faces   ! 
+  !-----------!
   count=0
 
-!---- NSsub physical faces
+  ! NSsub physical faces
   do s=1,NS  ! OK, later chooses just sides with NewS
     if( NewS(s)  > 0  .and.  NewS(s) <= NSsub ) then
       count=count+1 
@@ -87,7 +89,8 @@
       iwork(count,2) = NewC(SideC(2,s))
     end if
   end do 
-!---- NBFsub buffer faces (copy faces here, avoid them with BufPos) 
+
+  ! NBFsub buffer faces (copy faces here, avoid them with BufPos) 
   do s=1,NBFsub
     if(BufPos(s)  < 0) then         ! normal buffer (non-copy) 
       count=count+1 
@@ -101,12 +104,12 @@
   write(9) (iwork(s,1), s=1,count)
   write(9) (iwork(s,2), s=1,count)
 
-!-----------! 
-!   BOUND   !
-!-----------! 
+  !--------------! 
+  !   Boundary   !
+  !--------------! 
   count=0          ! count goes to negative
 
-!---- NBCsub physical boundary cells
+  ! NBCsub physical boundary cells
   do c=-1,-NbC,-1  ! OK, later chooses just cells with NewC
     if(NewC(c) /= 0) then
       count=count-1 
@@ -114,7 +117,6 @@
       iwork(count,1) = BCmark(c)   
       iwork(count,2) = NewC(CopyC(c)) 
       if(CopyC(c) /= 0 .and. proces(CopyC(c)) /= sub) then
-!        write(*,*) 'Uuups ! Sub: ', sub
         do b=1,NBFsub
           if(BuReIn(b) == CopyC(c)) then
             write(*,*) BufPos(b) 
@@ -125,7 +127,8 @@
       endif
     end if
   end do 
-!---- NBFsub buffer cells
+
+  ! NBFsub buffer cells
   do c=1,NBFsub
     count=count-1 
     ! nekad bio i: -NBCsub-c, 
@@ -136,33 +139,35 @@
   write(9) (iwork(c,1), c=-1,count,-1)
   write(9) (iwork(c,2), c=-1,count,-1)
 
-!--------------!
-!     COPY     !
-!--------------!
+  !----------!
+  !   Copy   !
+  !----------!
   count = 0
-  do s=1,Ncopy
+  do s=1,n_copy
     count = count + 1
     iwork(count,1) = CopyS(1,s) 
     iwork(count,2) = CopyS(2,s) 
   end do
 
-  write(*,*) 'Ncopy ', count 
+  write(*,*) 'n_copy ', count 
   write(9) count 
   write(9) (iwork(c,1), c=1,count)
   write(9) (iwork(c,2), c=1,count)
 
   close(9)
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
-!     create GEO file     !
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
+  !----------------------!
+  !                      !
+  !   Create .geo file   !
+  !                      !
+  !----------------------!
   call NamFil( sub, name_out, '.geo', len_trim('.geo') )
   open(9, FILE=name_out, FORM='UNFORMATTED')
   write(6, *) 'Now creating the file:', name_out
 
-!---------------------------------!
-!     cell center coordinates     !
-!---------------------------------!
+  !---------------------------------!
+  !     cell center coordinates     !
+  !---------------------------------!
   do var=1,3
     count=0
     do c=1,NC
@@ -176,11 +181,11 @@
     write(9) (work(c), c=1,count)
   end do
 
-!-------------------------------!
-!     boundary cell centers     !
-!-------------------------------!
+  !---------------------------!
+  !   Boundary cell centers   !
+  !---------------------------!
 
-!---- physicall cells
+  ! Physicall cells
   do var=1,3
     count=0
     do c=-1,-NBC, -1
@@ -191,7 +196,8 @@
         if(var == 3) work(count) = zc(c)
       end if
     end do 
-!---- buffer boundary cell centers
+
+    ! Buffer boundary cell centers
     do s=1,NBFsub
       count=count+1
       if(var ==  1) work(count) = xc(BuReIn(s))
@@ -201,9 +207,9 @@
     write(9) (work(c), c=1,count)
   end do
 
-!----------------------!
-!     cell volumes     !
-!----------------------!
+  !------------------!
+  !   Cell volumes   !
+  !------------------!
   count=0
   do c=1,NC
     if(NewC(c)  > 0) then
@@ -213,9 +219,9 @@
   end do
   write(9) (work(c), c=1,count) 
 
-!--------------------!
-!     cell delta     !
-!--------------------!
+  !---------------!
+  !   Cell data   !
+  !---------------!
   count=0
   do c=1,NC
     if(NewC(c)  > 0) then
@@ -225,9 +231,9 @@
   end do
   write(9) (work(c), c=1,count) 
 
-!----------------------!
-!     wall distance    !
-!----------------------!
+  !-------------------!
+  !   Wall distance   !
+  !-------------------!
   count=0
   do c=1,NC
     if(NewC(c)  > 0) then
@@ -237,11 +243,11 @@
   end do
   write(9) (work(c), c=1,count) 
 
-!---------------!
-!     sides     !
-!---------------!
+  !-----------!
+  !   Faces   !
+  !-----------!
 
-!---- from 1 to NSsub -> cell faces for which both cells are inside sub
+  ! From 1 to NSsub -> cell faces for which both cells are inside sub
   do var=1,10
   count=0
 
@@ -261,7 +267,7 @@
     end if 
   end do
 
-!---- from NSsub+1 to NSsub + NBFsub (think: are they in right order ?)
+  ! From NSsub+1 to NSsub + NBFsub (think: are they in right order ?)
   do subo=1,n_sub
     do s=1,NS
       if(NewS(s)  > NSsub .and. NewS(s) <= NSsub+NBFsub) then

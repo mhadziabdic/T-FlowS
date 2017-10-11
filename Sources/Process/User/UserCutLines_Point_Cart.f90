@@ -33,7 +33,7 @@
 !======================================================================!
 
   open(9, FILE='Point_positions.dat')
-  if(this < 2) write(6, *) '# Now reading the file: Point_positions.dat ' 
+  if(this_proc < 2) write(6, *) '# Now reading the file: Point_positions.dat ' 
   read(9,*) N_hor
   allocate(x_p(N_hor))
   allocate(y_p(N_hor))
@@ -46,7 +46,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
-!    if(this < 2) write(6, *) '# Now reading the file: Z_coordinate.dat ' 
+!    if(this_proc < 2) write(6, *) '# Now reading the file: Z_coordinate.dat ' 
     if(dir == 1) then
       open(9, FILE='X_coordinate.dat')
     else if(dir == 2) then
@@ -288,6 +288,6 @@
   end if
 
 
-  if(this < 2) write(*,*) 'Finished with UserCutLines_Horiz_Cart'
+  if(this_proc < 2) write(*,*) 'Finished with UserCutLines_Horiz_Cart'
 
   end subroutine UserCutLines_Point_Cart 

@@ -51,7 +51,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
-    if(this < 2)  write(6, *) '# Now reading the file:', namCoo
+    if(this_proc < 2)  write(6, *) '# Now reading the file:', namCoo
     open(9, FILE=namCoo)
 
 !---- write the number of searching intervals 
@@ -447,7 +447,7 @@
 10  continue
 
     if(Ufric == 0.0) then
-      if(this < 2) write(*,*) 'Friction velocity is zero in UserCutLines_channel.f90 !'
+      if(this_proc < 2) write(*,*) 'Friction velocity is zero in UserCutLines_channel.f90 !'
       return
     end if
 

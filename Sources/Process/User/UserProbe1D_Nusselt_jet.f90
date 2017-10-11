@@ -72,7 +72,7 @@
     read(9,*) dummy, z_p(pl) 
   end do
   close(9)
-  if(this < 2) write(*,*)'finished reading'
+  if(this_proc < 2) write(*,*)'finished reading'
   allocate(Np(Nprob));     Np=0 
   allocate(Ump(Nprob));    Ump=0.0
   allocate(Vmp(Nprob));    Vmp=0.0

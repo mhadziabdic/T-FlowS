@@ -59,7 +59,7 @@
 !          else if(ROUGH==YES) then
 !            Eps % n(c1) = Cmu75*(Kin%n(c1))**1.5/(kappa*(WallDs(c1)+Zo))
 !          end if
-          do j=A % col(c1), A % col(c1+1) -1
+          do j=A % row(c1), A % row(c1+1) -1
             A % val(j) = 0.0
           end do   
           A % val(A % dia(c1)) = 1.0

@@ -12,7 +12,7 @@
   implicit none
 !-------------------------------[Parameters]---------------------------!
   integer       :: var
-  TYPE(Unknown) :: PHI
+  type(Unknown) :: PHI
   real          :: dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)
 
 !------------------------------[Calling]-------------------------------!
@@ -65,9 +65,10 @@
 !    TDC = 1.0       
 !  end if        
 
-  do n=1,A % col(NC+1) ! to je broj nonzero + 1
+  do n=1,A % row(NC+1) ! to je broj nonzero + 1
     A % val(n) = 0.0
   end do
+  A % val = 0.0
 
   do c=1,NC
     b(c)=0.0
@@ -463,10 +464,10 @@
 
 !->>> take a look at the system of equations
 !->>> do c=1,NC
-!->>>   write(*,*) 'Width: ', A % col(c+1)-A % col(c)
-!->>>   write(*,'(3I7)') A % col(c), A % dia(c), A % col(c+1)-1
+!->>>   write(*,*) 'Width: ', A % row(c+1)-A % row(c)
+!->>>   write(*,'(3I7)') A % row(c), A % dia(c), A % row(c+1)-1
 !->>>   write(*,*) 'Diag: ', A % val(A % dia(c))
-!->>>   write(*,'(F5.2)') ( A % val(j),  j=A % col(c),A % col(c+1)-1 )
+!->>>   write(*,'(F5.2)') ( A % val(j),  j=A % row(c),A % row(c+1)-1 )
 !->>>   write(*,*) '- - - - - - - - - - - - - - - - - - - - - - -'
 !->>> end do  
 

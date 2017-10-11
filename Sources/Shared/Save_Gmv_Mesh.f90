@@ -1,40 +1,37 @@
-!======================================================================!
-  subroutine GenSav(sub, NNsub, NCsub)
-!----------------------------------------------------------------------!
-! Writes: NAME.gmv, NAME.faces.gmv, NAME.shadow.gmv                    !
-! ~~~~~~~                                                              ! 
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Save_Gmv_Mesh(sub, NNsub, NCsub)
+!------------------------------------------------------------------------------!
+! Writes: NAME.gmv, NAME.faces.gmv, NAME.shadow.gmv                            !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
   use par_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!---------------------------------[Parameters]---------------------------------!
   integer :: sub, NNsub, NCsub, NmaterBC
-!-------------------------------[Locals]-------------------------------!
-  integer   :: c,  c1,  c2,  n, s
-  character :: namOut*80
-!======================================================================!
-!   See also: number                                                   !
-!----------------------------------------------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
+  integer           :: c,  c1,  c2,  n, s
+  character(len=80) :: name_out
+!==============================================================================!
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
-!                         !
-!     create GMV file     !
-!                         !
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
-  call NamFil(sub, namOut, '.gmv', len_trim('.gmv'))
-  open(9, FILE=namOut)
-  write(6, *) 'Now creating the file:', namOut
+  !----------------------!
+  !                      !
+  !   Create .gmv file   !
+  !                      !
+  !----------------------!
+  call NamFil(sub, name_out, '.gmv', len_trim('.gmv'))
+  open(9, FILE=name_out)
+  write(6, *) 'Now creating the file:', name_out
 
-!---------------!
-!     start     !
-!---------------!
+  !-----------!
+  !   Start   !
+  !-----------!
   write(9,'(A14)') 'gmvinput ascii'
 
-!---------------!
-!     nodes     !
-!---------------!
+  !-----------!
+  !   Nodes   !
+  !-----------!
   write(9,*) 'nodes', NNsub
 
   do n=1,NN
@@ -47,9 +44,11 @@
     if(NewN(n) /= 0) write(9, '(1PE14.7)') z_node(n)
   end do
 
-!----------------------!
-!     cell section     !
-!----------------------!
+  !-----------!
+  !   Cells   !
+  !-----------!
+  write(9,*) 'nodes', NNsub
+
   write(9,*) 'cells', NCsub
   do c=1,NC
     if(NewC(c) /= 0) then
@@ -85,16 +84,9 @@
     end if
   end do  
 
-!->>>  write(9,*) 'variables'
-!->>>  write(9,*) 'wallds 0'
-!->>>  do c=1,NC
-!->>>    write(9,*) WallDs(c)
-!->>>  end do
-!->>>  write(9,*) 'endvars'
- 
-!--------------------------!
-!     material section     !
-!--------------------------!
+  !---------------!
+  !   Materials   !
+  !---------------!
   write(9,'(A10,2I5)') 'materials', Nmat, 0
   do n=1,1024
     if(Mater(n)) write(9,*) n 
@@ -108,25 +100,25 @@
   write(9,'(A6)') 'endgmv'            !  end the GMV file
   close(9)
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
-!                                            !
-!     create boundary condition GMV file     !
-!                                            !
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
+  !-----------------------------------------!
+  !                                         !
+  !   Create boundary condition .gmv file   !
+  !                                         !
+  !-----------------------------------------!
   if(sub /= 0) return
 
-  call NamFil(sub, namOut, '.faces.gmv', len_trim('.faces.gmv'))
-  open(9, FILE=namOut)
-  write(6, *) 'Now creating the file:', namOut
+  call NamFil(sub, name_out, '.faces.gmv', len_trim('.faces.gmv'))
+  open(9, FILE=name_out)
+  write(6, *) 'Now creating the file:', name_out
 
-!---------------!
-!     start     !
-!---------------!
+  !-----------!
+  !   Start   !
+  !-----------!
   write(9,'(A14)') 'gmvinput ascii'
 
-!---------------!
-!     nodes     !
-!---------------!
+  !-----------!
+  !   Nodes   !
+  !-----------!
   write(9,*) 'nodes', NNsub
 
   do n=1,NN
@@ -139,11 +131,11 @@
     write(9, '(1PE14.7)') z_node(n)
   end do
 
-!----------------------!
-!     cell section     !
-!----------------------!
+  !-----------!
+  !   Cells   !
+  !-----------!
 
-!---- count the cell faces on the periodic boundaries
+  ! Count the cell faces on the periodic boundaries
   write(9,*) 'cells', NS
   do s=1,NS
     if(SideN(s,0) == 4) then
@@ -163,9 +155,9 @@
     end if
   end do  
 
-!--------------------------!
-!     material section     !
-!--------------------------!
+  !---------------!
+  !   Materials   !
+  !---------------!
   NmaterBC = 0
   do s=1,NS
     c1 = SideC(1,s)
@@ -193,16 +185,16 @@
   write(9,'(A6)') 'endgmv'            !  end the GMV file
   close(9)
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
-!                            !
-!     create shadow file     !
-!                            !
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
+  !-----------------------------!
+  !                             !
+  !   Create shadow .gmv file   !
+  !                             !
+  !-----------------------------!
   if(sub /= 0) return
 
-  call NamFil(sub, namOut, '.shadow.gmv', len_trim('.shadow.gmv'))
-  open(9, FILE=namOut)
-  write(6, *) 'Now creating the file:', namOut
+  call NamFil(sub, name_out, '.shadow.gmv', len_trim('.shadow.gmv'))
+  open(9, FILE=name_out)
+  write(6, *) 'Now creating the file:', name_out
 
   do s=NS+1,NS+NSsh
     write(9,*) SideN(s,0) 
@@ -217,4 +209,4 @@
 
   close(9)
 
-  end subroutine GenSav
+  end subroutine Save_Gmv_Mesh

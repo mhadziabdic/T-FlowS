@@ -1,21 +1,21 @@
-!======================================================================!
-  subroutine EpsWho(NSsh0)
-!----------------------------------------------------------------------!
-!   Saves the whole grid in encapsulated postscript.                   !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Save_Eps_Whole(NSsh0)
+!------------------------------------------------------------------------------!
+!   Saves the whole grid in encapsulated postscript.                           !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-!----------------------------------------------------------------------! 
+!------------------------------------------------------------------------------! 
   implicit none
-!------------------------------[Calling]-------------------------------!
+!----------------------------------[Calling]-----------------------------------!
   real :: Distance
-!-----------------------------[Parameters]-----------------------------!
-  integer :: NSsh0 ! if 0, shadow will not be drawn 
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Parameters]---------------------------------!
+  integer :: NSsh0  ! if 0, shadow will not be drawn 
+!-----------------------------------[Locals]-----------------------------------!
   integer             :: n, s, s0, c1, c2
   integer             :: xmaxb, xminb, ymaxb, yminb, xlegend
-  character           :: namEps*80, answer*80, colour*80
+  character(len=80)   :: name_eps, answer, colour
   real                :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin
   real                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,    &
                          xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade, &
@@ -24,9 +24,9 @@
   real,allocatable    :: work(:)
   real                :: red(10), green(10), blue(10)
   integer             :: ix1, ix2, iy1, iy2, boxsize, BCcount(0:11)
-!======================================================================!
+!==============================================================================!
 
-!---- allocate the memory
+  ! Allocate the memory
   allocate(indx(max(NS+NSsh0,MAXS))); indx=0
   allocate(work(max(NS+NSsh0,MAXS))); work=0
 
@@ -36,9 +36,9 @@
   write(*,'(A46)') '# Making a 3D shaded .eps figure of the domain'
   write(*,'(A46)') '#---------------------------------------------'
 
-!-----------------------------------!
-! Set the boundary condition colors !
-!-----------------------------------!
+  !---------------------------------------!
+  !   Set the boundary condition colors   !
+  !---------------------------------------!
   n=1  ! colour count
 
   red(n) = 1.00; green(n) = 0.00; blue(n) = 0.00;  n=n+1 ! Red
@@ -52,9 +52,9 @@
   red(n) = 0.50; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! Light Blue
   red(n) = 0.50; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! Gray           
 
-!--------------------------!
-! Input camera coordinates !
-!--------------------------!
+  !------------------------------!
+  !   Input camera coordinates   !
+  !------------------------------!
 1 write(6,*) 'Enter the camera coordinates (skip to exit): '
   call ReadC(5,inp,tn,ts,te)
   if(tn == 1) then 
@@ -72,18 +72,20 @@
   ny = yk/sqrt(xk*xk+yk*yk+zk*zk)
   nz = zk/sqrt(xk*xk+yk*yk+zk*zk)
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
-!     create EPS file     !
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
+  !----------------------!
+  !                      !
+  !   Create .eps file   !
+  !                      !
+  !----------------------!
   write(6,*) 'G-> Gray or C-> Coloured (by boundary conditions): '
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) colour 
   call ToUppr(colour);
   write(6,*) 'Enter the file name (without extension): '
   call ReadC(5,inp,tn,ts,te)
-  read(inp, *) namEps 
-  namEps(len_trim(namEps)+1:len_trim(namEps)+4) = '.eps'
-  write(6, *) 'Now creating the file:', namEps
+  read(inp, *) name_eps 
+  name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
+  write(6, *) 'Now creating the file:', name_eps
 
   xmax=maxval(x_node(1:NN))
   ymax=maxval(y_node(1:NN))
@@ -125,7 +127,7 @@
     xlegend = 0
   end if
 
-  open(9, FILE=namEps)
+  open(9, FILE=name_eps)
 
   write(*,*) 'File opened'
 
@@ -287,9 +289,9 @@
 
   end do 
 
-!-------------!
-! Plot legend !
-!-------------!
+  !-----------------!
+  !   Plot legend   !
+  !-----------------!
   if(colour(1:1) == 'C') then
     ix1 = xmaxb + boxsize/2
     iy1 = ymaxb
@@ -323,8 +325,8 @@
 
   goto 1
 
-!---- free the memory
+  ! Free the memory
   deallocate(indx)
   deallocate(work)
 
-  end subroutine EpsWho
+  end subroutine Save_Eps_Whole

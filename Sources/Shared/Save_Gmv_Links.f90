@@ -1,46 +1,45 @@
-!======================================================================!
-  subroutine TestLn(sub, NNsub, NCsub, NSsub, NBCsub, NBFsub) 
-!----------------------------------------------------------------------!
-!   Creates the file "test.link.gmv" to check the cell connections.    !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Save_Gmv_Links(sub, NNsub, NCsub, NSsub, NBCsub, NBFsub) 
+!------------------------------------------------------------------------------!
+!   Creates the file "name.ln.gmv" to check the cell connections.              !
+!                                                                              !
+!   Links between the computational cells have been introduced as aditional    !
+!   cells of general type. Cell centers are introduced as aditional nodes      !
+!   with numbers NN+1 to NN+NC. Material of this links is different than       !
+!   from the cells, so that they can be visualised  more easily in GMV.        !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use gen_mod 
   use par_mod 
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!---------------------------------[Parameters]---------------------------------!
   integer :: sub, NNsub, NCsub, NSsub, NBCsub, NBFsub
-!-------------------------------[Locals]-------------------------------!
-  integer   :: n,c,c1,c2,s 
-  integer   :: NSsubNonPer, NSsubPer
-  character :: namOut*80
-!======================================================================!
+!-----------------------------------[Locals]-----------------------------------!
+  integer           :: n, c, c1, c2, s 
+  integer           :: nf_sub_non_per, nf_sub_per
+  character(len=80) :: name_out
+!==============================================================================!
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<!
-!     create GMV file     !
-!<<<<<<<<<<<<<<<<<<<<<<<<<!--------------------------------------------!
-!     Big changes have taken place in this section. Links between      !
-!     the computational cells have been introduced as aditional        !
-!     cells of general type. Cell centers are introduced as aditional  !
-!     nodes with numbers NN+1 to NN+NC. Material of this links is      !
-!     different than from the cells, so that they can be visualised    !
-!     more easily in GMV. I still have to check this changes with      !
-!     divide4 program.                                                 !
-!----------------------------------------------------------------------!
-  namOut = name         
+  !----------------------!
+  !                      !
+  !   Create .gmv file   !
+  !                      !
+  !----------------------!
+  name_out = name         
 
-  call NamFil(sub, namOut, '.ln.gmv', len_trim('.ln.gmv'))
-  open(9, FILE=namOut)
-  write(6, *) 'Now creating the file:', namOut
+  call NamFil(sub, name_out, '.ln.gmv', len_trim('.ln.gmv'))
+  open(9, FILE=name_out)
+  write(6, *) 'Now creating the file:', name_out
 
-!---------------!
-!     nodes     !
-!---------------!
+  !-----------!
+  !   Nodes   !
+  !-----------!
   write(9,'(A14)') 'gmvinput ascii'          !  start of GMV file
   write(9,*) 'nodes', NNsub + NCsub + NBCsub + NBFsub
 
-!---- x
+  ! X
   do n=1,NN
     if(NewN(n) /= 0) write(9, '(1PE14.7)') x_node(n)
   end do
@@ -54,7 +53,7 @@
     write(9, '(1PE14.7)') xc(BuReIn(c))
   end do
 
-!---- y
+  ! Y
   do n=1,NN
     if(NewN(n) /= 0) write(9, '(1PE14.7)') y_node(n)
   end do
@@ -68,7 +67,7 @@
     write(9, '(1PE14.7)') yc(BuReIn(c))
   end do
 
-!---- z
+  ! Z
   do n=1,NN
     if(NewN(n) /= 0) write(9, '(1PE14.7)') z_node(n)
   end do
@@ -82,11 +81,11 @@
     write(9, '(1PE14.7)') zc(BuReIn(c))
   end do
 
-!----------------------!
-!     cell section     !
-!----------------------!
+  !-----------!
+  !   Cells   !
+  !-----------!
 
-!---- regular (ordinary) cells
+  ! Regular (ordinary) cells
   write(9,*) 'cells', NCsub + NSsub + NBFsub ! + NBFsub
   do c=1,NC
     if(NewC(c)  > 0) then
@@ -122,8 +121,8 @@
     end if 
   end do  
 
-!---- physical links; non-periodic
-  NSsubNonPer = 0 
+  ! Physical links; non-periodic
+  nf_sub_non_per = 0 
   do s=1, NS
     c1 = SideC(1,s)
     c2 = SideC(2,s)
@@ -134,7 +133,7 @@
            Sy(s) * (yc(c2)-yc(c1) )+               &
            Sz(s) * (zc(c2)-zc(c1) ))  > 0.0 ) then 
 
-        NSsubNonPer = NSsubNonPer + 1
+        nf_sub_non_per = nf_sub_non_per + 1
 
         c1 = NewC(SideC(1,s))
         c2 = NewC(SideC(2,s))
@@ -152,8 +151,8 @@
     end if
   end do  
 
-!---- physical links; periodic
-  NSsubPer    = 0 
+  ! Physical links; periodic
+  nf_sub_per    = 0 
   do s=1, NS
     c1 = SideC(1,s)
     c2 = SideC(2,s)
@@ -164,7 +163,7 @@
            Sy(s) * (yc(c2)-yc(c1) )+               &
            Sz(s) * (zc(c2)-zc(c1) ))  < 0.0 ) then 
 
-        NSsubPer = NSsubPer + 1
+        nf_sub_per = nf_sub_per + 1
 
         c1 = NewC(SideC(1,s))
         c2 = NewC(SideC(2,s))
@@ -182,11 +181,11 @@
     end if
   end do  
 
-  write(*,*) 'Non-periodic links:', NSsubNonPer
-  write(*,*) 'Periodic links    :', NSsubPer
+  write(*,*) 'Non-periodic links:', nf_sub_non_per
+  write(*,*) 'Periodic links    :', nf_sub_per
   write(*,*) 'Number of sides   :', NSsub
 
-!---- interprocessor links
+  ! Interprocessor links
   do c=1,NBFsub
     c1 = BuSeIn(c) 
     write(9,*) 'general 1'
@@ -194,9 +193,9 @@
     write(9,*) NNsub+c1, NNsub+NCsub+NBCsub+c
   end do  
 
-!--------------------------!
-!     material section     !
-!--------------------------!
+  !---------------!
+  !   Materials   !
+  !---------------!
   write(9,*) 'material  4  0'
   write(9,*) 'cells'
   write(9,*) 'links'
@@ -206,10 +205,10 @@
   do c=1, NCsub
     write(9,*) 1
   end do
-  do s=1, NSsubNonPer
+  do s=1, nf_sub_non_per
     write(9,*) 2
   end do
-  do s=1, NSsubPer
+  do s=1, nf_sub_per
     write(9,*) 3
   end do
   do s=1,NBFsub
@@ -219,4 +218,4 @@
   write(9,'(A6)') 'endgmv'            !  end the GMV file
   close(9)
 
-  end subroutine TestLn
+  end subroutine Save_Gmv_Links

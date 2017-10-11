@@ -76,7 +76,7 @@
   integer :: c,s,n
 !======================================================================!
 
-!---- Test the precision
+  ! Test the precision
   open(90,FORM='UNFORMATTED',FILE='Generator.real'); 
   write(90) 3.1451592
   close(90)
@@ -98,7 +98,7 @@
   call TopSys(.TRUE.) ! real run
   call Calc2(.TRUE.)
 
-!---- prepare for saving
+  ! Prepare for saving
   do n=1,NN
     NewN(n)=n
   end do
@@ -109,33 +109,33 @@
     NewS(s)=s
   end do
 
-!---- count the materials in the grid
-  call CouMat
+  ! Count the materials in the grid
+  call Count_Materials
 
-!---- save the grid
-  call GenSav(0, NN, NC)            ! Save grid for postprocessing
-  call GeoSav(0, NC, NS, NBC, 0, 0) ! Saved data for processing
+  ! Save the grid
+  call Save_Gmv_Mesh(0, NN, NC)            ! save grid for postprocessing
+  call GeoSav(0, NC, NS, NBC, 0, 0) ! saved data for processing
 
-  call TestLn(0, NN, NC, NS, NbC, 0)
+  call Save_Gmv_Links(0, NN, NC, NS, NbC, 0)
 
-!---- save the 1D probe (good for the channel flow)
+  ! Save the 1D probe (good for the channel flow)
   call Probe_1D_Nodes_Gen
 
-!---- save the 2D probe (good for the channel flow)
+  ! Save the 2D probe (good for the channel flow)
   call Probe_2D
 
-!---- create output for Fluent
+  ! Create output for Fluent
   NewC(-NBC-1) = -NBC-1
-  call CasSav(0, NN, NC, NS+NSsh) ! Save grid for postprocessing
-                                  ! with Fluent
-!---- make eps figures
-  call EpsSav(y_node,z_node,x_node,Dy,Dz,'x') 
-  call EpsSav(z_node,x_node,y_node,Dz,Dx,'y') 
-  call EpsSav(x_node,y_node,z_node,Dx,Dy,'z') 
+  call Save_Cas(0, NN, NC, NS+NSsh) ! save grid for postprocessing
+                                    ! with Fluent
+  ! Make eps figures
+  call Save_Eps_Cut(y_node,z_node,x_node,Dy,Dz,'x') 
+  call Save_Eps_Cut(z_node,x_node,y_node,Dz,Dx,'y') 
+  call Save_Eps_Cut(x_node,y_node,z_node,Dx,Dy,'z') 
 
-  call EpsWho(NSsh)  ! Draw the domain with shadows
+  call Save_Eps_Whole(NSsh)  ! draw the domain with shadows
 
-!---- write something on the screen
+  ! Write something on the screen
   call PrintG
 
   end PROGRAM Generator 

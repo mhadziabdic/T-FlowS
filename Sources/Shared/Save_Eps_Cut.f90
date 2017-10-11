@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Eps_Cuts(xg,yg,zg,sidegDx,sidegDy,dir)
+  subroutine Save_Eps_Cut(xg,yg,zg,sidegDx,sidegDy,dir)
 !------------------------------------------------------------------------------!
 ! Writes: Grid in encapsulated postscript format.                              !
 !----------------------------------[Modules]-----------------------------------!
@@ -187,4 +187,4 @@
 
   close(9)
 
-  end subroutine Save_Eps_Cuts
+  end subroutine Save_Eps_Cut

@@ -644,8 +644,6 @@
 !    call UserCutLines_channel(zc)
 !  else if(PIPE == YES) then
 !    call UserCutLines_pipe
-!    if(BUDG==YES.and.HOT==NO) call UserCutLines_budgets_cylind 
-!    if(BUDG==YES.and.HOT==YES) call UserCutLines_budgets_cylind_HOT 
 !    call UserCutLines_annulus
 !  else if(JET == YES) then
 !    call UserCutLines_Nu
@@ -659,10 +657,7 @@
 !    call UserCutLines_RB_conv
 !    call UserCutLines_Point_Cart
 !  end if
-
  
-!  call UserDiffuser 
-
 3 if(this_proc  < 2) write(*,*) '# Exiting !'
 
 !////////////////////////////////!

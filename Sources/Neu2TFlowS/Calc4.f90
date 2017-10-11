@@ -1,44 +1,37 @@
-!======================================================================!
+!==============================================================================!
   subroutine Calc4()
-!----------------------------------------------------------------------!
-!   Calculates geometrical quantities of the grid.                     !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Calculates geometrical quantities of the grid.                             !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use gen_mod 
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!----------------------------------------------------------------------!
-  interface
-    logical function Approx(A,B,tol)
-      implicit none
-      real          :: A,B
-      real,optional :: tol
-    end function Approx
-  end interface
-!------------------------------[Calling]-------------------------------!
-  real    :: Distance
-  real    :: Distance_Squared    
-  real    :: Tol
-!-------------------------------[Locals]-------------------------------!
-  integer             :: c, c1, c2, n, s, ss, cc2, c_max, NNN, hh, mm
-  integer             :: c11, c12, c21, c22, s1, s2,       &
-                         BouCen,                           &
-                         TypePer, Nper, NumberSides, dir, OPT
-  integer             :: WallMark, rot_dir, dir_face
-  real                :: xt(4), yt(4), zt(4), angle_face
-  real                :: xs2,ys2,zs2, x_a, y_a, z_a, x_b, y_b, z_b
-  real                :: x_c, y_c, z_c, Det
-  real                :: ABi, ABj, ABk, ACi, ACj, ACk, Pi, Pj, Pk
-  real                :: dsc1, dsc2, PerMin, PerMax
-  real                :: t, SurTot, angle 
-  real                :: xc1, yc1, zc1, xc2, yc2, zc2 
-  real                :: MaxDis, TotVol, MinVol, MaxVol, Max_Coor, Min_Coor
-  real                :: xmin, xmax, ymin, ymax, zmin, zmax 
-  real,allocatable    :: xnr(:), ynr(:), znr(:), xspr(:), yspr(:), zspr(:)
-  real,allocatable    :: BCoor(:), phi_face(:)
-  integer,allocatable :: BFace(:)
-!======================================================================!
+!------------------------------------------------------------------------------!
+  include "../Shared/Approx.int"
+!----------------------------------[Calling]-----------------------------------!
+  real :: Distance
+  real :: Distance_Squared    
+  real :: Tol
+!-----------------------------------[Locals]-----------------------------------!
+  integer              :: c, c1, c2, n, s, ss, cc2, c_max, nnn, hh, mm
+  integer              :: c11, c12, c21, c22, s1, s2, bou_cen
+  integer              :: type_per, n_per, number_sides, dir, option
+  integer              :: wall_mark, rot_dir, dir_face
+  real                 :: xt(4), yt(4), zt(4), angle_face
+  real                 :: xs2, ys2, zs2, x_a, y_a, z_a, x_b, y_b, z_b
+  real                 :: x_c, y_c, z_c, Det
+  real                 :: ab_i, ab_j, ab_k, ac_i, ac_j, ac_k, p_i, p_j, p_k
+  real                 :: dsc1, dsc2, per_min, per_max
+  real                 :: t, SurTot, angle 
+  real                 :: xc1, yc1, zc1, xc2, yc2, zc2 
+  real                 :: max_dis, tot_vol, min_vol, max_vol
+  real                 :: xmin, xmax, ymin, ymax, zmin, zmax 
+  real, allocatable    :: xnr(:), ynr(:), znr(:), xspr(:), yspr(:), zspr(:)
+  real, allocatable    :: b_coor(:), phi_face(:)
+  integer, allocatable :: b_face(:)
+!==============================================================================!
 !
 !                                n3 
 !                 +---------------!---------------+
@@ -88,7 +81,7 @@
 !             +---------------+
 !                            n1
 ! 
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
 !   Generaly:
 !
 !   the equation of plane reads: A*x_node + B*y_node + C*z_node + D = 0
@@ -96,7 +89,7 @@
 !   and the equation of line:  x_node = x0 + t*rx
 !                              y_node = y0 + t*ry
 !                              z_node = z0 + t*rz
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !   In our case:
 !
 !     line is a connection between the two cell centers:
@@ -108,7 +101,8 @@
 !
 !     plane is a cell face: 
 !
-!     Sx * x_node + Sy * y_node + Sz * z_node = Sx * xsp(s) + Sy * ysp(s) + Sz * zsp(s)
+!     Sx * x_node + Sy * y_node + Sz * z_node = 
+!     Sx * xsp(s) + Sy * ysp(s) + Sz * zsp(s)
 !  
 !     and the intersection is at:
 !  
@@ -116,108 +110,107 @@
 !     t = -----------------------------------------------------------
 !                           rx*Sx + ry*Sy + rz*Sz
 !  
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
  
-!++++++++++++++++++++++++++++++++++++!
-!     Calculate the cell centers     !
-!------------------------------------!
-!     => depends on: x_node,y_node,z_node           !
-!     <= gives:      xc,yc,zc c>0    !
-!++++++++++++++++++++++++++++++++++++!
-    allocate(xc(-NbC:NC)); xc=0.0
-    allocate(yc(-NbC:NC)); yc=0.0
-    allocate(zc(-NbC:NC)); zc=0.0
-    allocate(volume(NC)); volume=0.0
+  !-----------------------------------------!
+  !   Calculate the cell centers            !
+  !-----------------------------------------!
+  !   => depends on: x_node,y_node,z_node   !
+  !   <= gives:      xc,yc,zc c>0           !
+  !-----------------------------------------!
+  allocate(xc(-NbC:NC)); xc=0.0
+  allocate(yc(-NbC:NC)); yc=0.0
+  allocate(zc(-NbC:NC)); zc=0.0
+  allocate(volume(NC)); volume=0.0
 
-    do c=1,NC
-      do n=1,CellN(c,0)
-        xc(c) = xc(c) + x_node(CellN(c,n))/(1.0*CellN(c,0))
-        yc(c) = yc(c) + y_node(CellN(c,n))/(1.0*CellN(c,0))
-        zc(c) = zc(c) + z_node(CellN(c,n))/(1.0*CellN(c,0))
-      end do
+  do c=1,NC
+    do n=1,CellN(c,0)
+      xc(c) = xc(c) + x_node(CellN(c,n))/(1.0*CellN(c,0))
+      yc(c) = yc(c) + y_node(CellN(c,n))/(1.0*CellN(c,0))
+      zc(c) = zc(c) + z_node(CellN(c,n))/(1.0*CellN(c,0))
     end do
+  end do
 
-    write(*,*) 'Cell centers calculated !'
+  write(*,*) 'Cell centers calculated !'
 
-!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
-!     Calculate:                                            ! 
-!        components of cell sides, cell side centers.       !
-!-----------------------------------------------------------!
-!     => depends on: x_node,y_node,z_node                                  !
-!     <= gives:      Sx,Sy,Sz,xsp,yzp,zsp                   !
-!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
-    allocate(Sx(NS+max(NC,NBC))); Sx=0.0
-    allocate(Sy(NS+max(NC,NBC))); Sy=0.0
-    allocate(Sz(NS+max(NC,NBC))); Sz=0.0
-    allocate(xsp(NS+max(NC,NBC))); xsp=0.0
-    allocate(ysp(NS+max(NC,NBC))); ysp=0.0
-    allocate(zsp(NS+max(NC,NBC))); zsp=0.0
-    allocate(Dx(NS+max(NC,NBC))); Dx=0.0
-    allocate(Dy(NS+max(NC,NBC))); Dy=0.0
-    allocate(Dz(NS+max(NC,NBC))); Dz=0.0
+  !-----------------------------------------------------!
+  !   Calculate:                                        ! 
+  !      components of cell sides, cell side centers.   !
+  !-----------------------------------------------------!
+  !   => depends on: x_node,y_node,z_node               !
+  !   <= gives:      Sx,Sy,Sz,xsp,yzp,zsp               !
+  !-----------------------------------------------------!
+  allocate(Sx(NS+max(NC,NBC))); Sx=0.0
+  allocate(Sy(NS+max(NC,NBC))); Sy=0.0
+  allocate(Sz(NS+max(NC,NBC))); Sz=0.0
+  allocate(xsp(NS+max(NC,NBC))); xsp=0.0
+  allocate(ysp(NS+max(NC,NBC))); ysp=0.0
+  allocate(zsp(NS+max(NC,NBC))); zsp=0.0
+  allocate(Dx(NS+max(NC,NBC))); Dx=0.0
+  allocate(Dy(NS+max(NC,NBC))); Dy=0.0
+  allocate(Dz(NS+max(NC,NBC))); Dz=0.0
 
-    do s=1,NS
-      do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-        xt(n)=x_node(SideN(s,n))
-        yt(n)=y_node(SideN(s,n))
-        zt(n)=z_node(SideN(s,n))
-      end do                       
+  do s=1,NS
+    do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
+      xt(n)=x_node(SideN(s,n))
+      yt(n)=y_node(SideN(s,n))
+      zt(n)=z_node(SideN(s,n))
+    end do                       
 
-!///// cell side components
+    ! Cell side components
+    if( SideN(s,0)  ==  4 ) then
+      Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
+                    +(yt(3)-yt(2))*(zt(2)+zt(3))   &
+                    +(yt(4)-yt(3))*(zt(3)+zt(4))   &
+                    +(yt(1)-yt(4))*(zt(4)+zt(1)) )
+      Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
+                    +(zt(3)-zt(2))*(xt(2)+xt(3))   &
+                    +(zt(4)-zt(3))*(xt(3)+xt(4))   &
+                    +(zt(1)-zt(4))*(xt(4)+xt(1)) )
+      Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   & 
+                    +(xt(3)-xt(2))*(yt(2)+yt(3))   &
+                    +(xt(4)-xt(3))*(yt(3)+yt(4))   &
+                    +(xt(1)-xt(4))*(yt(4)+yt(1)) )
+    else if( SideN(s,0)  ==  3 ) then 
+      Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
+                    +(yt(3)-yt(2))*(zt(2)+zt(3))   &
+                    +(yt(1)-yt(3))*(zt(3)+zt(1)) )
+      Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
+                    +(zt(3)-zt(2))*(xt(2)+xt(3))   & 
+                    +(zt(1)-zt(3))*(xt(3)+xt(1)) )
+      Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   &
+                    +(xt(3)-xt(2))*(yt(2)+yt(3))   & 
+                    +(xt(1)-xt(3))*(yt(3)+yt(1)) )
+    else
+      write(*,*) 'calc4: something horrible has happened !'
+      stop
+    end if
 
-      if( SideN(s,0)  ==  4 ) then
-        Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
-                      +(yt(3)-yt(2))*(zt(2)+zt(3))   &
-                      +(yt(4)-yt(3))*(zt(3)+zt(4))   &
-                      +(yt(1)-yt(4))*(zt(4)+zt(1)) )
-        Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
-                      +(zt(3)-zt(2))*(xt(2)+xt(3))   &
-                      +(zt(4)-zt(3))*(xt(3)+xt(4))   &
-                      +(zt(1)-zt(4))*(xt(4)+xt(1)) )
-        Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   & 
-                      +(xt(3)-xt(2))*(yt(2)+yt(3))   &
-                      +(xt(4)-xt(3))*(yt(3)+yt(4))   &
-                      +(xt(1)-xt(4))*(yt(4)+yt(1)) )
-      else if( SideN(s,0)  ==  3 ) then 
-        Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
-                      +(yt(3)-yt(2))*(zt(2)+zt(3))   &
-                      +(yt(1)-yt(3))*(zt(3)+zt(1)) )
-        Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
-                      +(zt(3)-zt(2))*(xt(2)+xt(3))   & 
-                      +(zt(1)-zt(3))*(xt(3)+xt(1)) )
-        Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   &
-                      +(xt(3)-xt(2))*(yt(2)+yt(3))   & 
-                      +(xt(1)-xt(3))*(yt(3)+yt(1)) )
-      else
-        write(*,*) 'calc4: something horrible has happened !'
-        stop
-      end if
+    ! Barycenters
+    if(SideN(s,0) == 4) then  
+      xsp(s) = (xt(1)+xt(2)+xt(3)+xt(4))/4.0
+      ysp(s) = (yt(1)+yt(2)+yt(3)+yt(4))/4.0
+      zsp(s) = (zt(1)+zt(2)+zt(3)+zt(4))/4.0
+    else if(SideN(s,0) == 3) then  
+      xsp(s) = (xt(1)+xt(2)+xt(3))/3.0
+      ysp(s) = (yt(1)+yt(2)+yt(3))/3.0
+      zsp(s) = (zt(1)+zt(2)+zt(3))/3.0
+    end if 
 
-!---- barycenters
-      if(SideN(s,0) == 4) then  
-        xsp(s) = (xt(1)+xt(2)+xt(3)+xt(4))/4.0
-        ysp(s) = (yt(1)+yt(2)+yt(3)+yt(4))/4.0
-        zsp(s) = (zt(1)+zt(2)+zt(3)+zt(4))/4.0
-      else if(SideN(s,0) == 3) then  
-        xsp(s) = (xt(1)+xt(2)+xt(3))/3.0
-        ysp(s) = (yt(1)+yt(2)+yt(3))/3.0
-        zsp(s) = (zt(1)+zt(2)+zt(3))/3.0
-      end if 
+  end do ! through sides
 
-    end do ! through sides
+  write(*,*) 'Cell face components calculated !'
 
-    write(*,*) 'Cell face components calculated !'
-
-!+++++++++++++++++++++++++++++++++++++++++!
-!     Calculate boundary cell centers     !
-!-----------------------------------------!
-!     => depends on: xc,yc,zc,Sx,Sy,Sz    !
-!     <= gives:      xc,yc,zc for c<0     !   
-!+++++++++++++++++++++++++++++++++++++++++!
+  !--------------------------------------!
+  !   Calculate boundary cell centers    !
+  !--------------------------------------!
+  !   => depends on: xc,yc,zc,Sx,Sy,Sz   !
+  !   <= gives:      xc,yc,zc for c<0    !   
+  !--------------------------------------!
   write(*,*) 'Position the boundary cell centres:'
   write(*,*) 'Type 1 for barycentric placement'
   write(*,*) 'Type 2 for orthogonal placement'
-  read(*,*) BouCen 
+  read(*,*) bou_cen 
 
   do s=1,NS
     c1=SideC(1,s)
@@ -232,7 +225,7 @@
       xc(c2) = xc(c1) + Sx(s)*t / SurTot
       yc(c2) = yc(c1) + Sy(s)*t / SurTot
       zc(c2) = zc(c1) + Sz(s)*t / SurTot
-      if(BouCen == 1) then
+      if(bou_cen == 1) then
         xc(c2) = xsp(s)
         yc(c2) = ysp(s)
         zc(c2) = zsp(s)
@@ -240,13 +233,13 @@
     endif 
   end do ! through sides
 
-!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
-!    Move the centers of co-planar molecules towards the walls    !
-!-----------------------------------------------------------------!
-!     => depends on: xc,yc,zc                                     !
-!     <= gives:      xc,yc,zc                                     !
-!     +  uses:       Dx,Dy,Dz                                     !
-!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
+  !---------------------------------------------------------------!
+  !   Move the centers of co-planar molecules towards the walls   !
+  !---------------------------------------------------------------!
+  !   => depends on: xc,yc,zc                                     !
+  !   <= gives:      xc,yc,zc                                     !
+  !   +  uses:       Dx,Dy,Dz                                     !
+  !---------------------------------------------------------------!
   do s=1,NS
     c1=SideC(1,s)
     c2=SideC(2,s)
@@ -276,28 +269,27 @@
   Dy = 0.0
   Dz = 0.0
 
-!+++++++++++++++++++++++++++++++++++++++++++++++++!
-!     Find the sides on the periodic boundary     !
-!-------------------------------------------------!
-!     => depends on: xc,yc,zc,Sx,Sy,Sz            !
-!     <= gives:      Dx,Dy,Dz                     !
-!+++++++++++++++++++++++++++++++++++++++++++++++++!
-!    I am trying to do it with Gambit             !
-!+++++++++++++++++++++++++++++++++++++++++++++++++!
+  !--------------------------------------------!
+  !   Find the sides on the periodic boundary  !
+  !--------------------------------------------!
+  !   => depends on: xc,yc,zc,Sx,Sy,Sz         !
+  !   <= gives:      Dx,Dy,Dz                  !
+  !--------------------------------------------!
+  allocate(b_coor(NS)); b_coor=0.0
+  allocate(b_face(NS)); b_face=0
 
-  allocate(BCoor(NS)); BCoor=0.0
-  allocate(BFace(NS)); Bface=0
+  !--------------------------------------------------------!
+  !                                                        !
+  !   Phase I  ->  find the sides on periodic boundaries   !
+  !                                                        !
+  !--------------------------------------------------------!
+! write(*,*) 'Type 1 for fast but unreliable algorithm for periodic cells search.'
+! write(*,*) 'Type 2 for slow but reliable algorithm for periodic cells search.'
+! read(*,*) option
 
-!===================!
-!===== Phase I =====! -> find the sides on periodic boundaries
-!===================!
-!  write(*,*) 'Type 1 for fast but unreliable algorithm for periodic cells search.'
-!  write(*,*) 'Type 2 for slow but reliable algorithm for periodic cells search.'
-!  read(*,*) OPT
+  option = 2
 
-  OPT = 2
-
-2 Nper = 0 
+2 n_per = 0 
   write(*,*) 'Type the periodic-boundary-condition marker number.'
   write(*,*) 'Type 0 if there is none !'
   write(*,*) ''
@@ -305,10 +297,10 @@
   write(*,*) 'of the boundary conditions. Their BC markers have to be larger'
   write(*,*) 'than the markers of the other boundary conditions.)'
   write(*,*) ''
-  read(*,*) TypePer
-  if( TypePer == 0 ) goto 1  
+  read(*,*) type_per
+  if( type_per == 0 ) goto 1  
 
-  if(OPT == 2) then
+  if(option == 2) then
 
     write(*,*) 'Insert the periodic direction (1 -> x_node, 2 -> y_node, 3 -> z_node)'
     read(*,*) dir 
@@ -353,35 +345,36 @@
       y_c = 1.0
       z_c = 0.0       
     end if        
-!    write(*,*) 
-!    write(*,*) 'Enter the coordinates of three points that define'
-!    write(*,*) 'periodic plane'
-!    write(*,*) 
-!    write(*,*) 'Point 1:'
-!    read(*,*) x_a, y_a, z_a  !angle 
-!    write(*,*) 
-!    write(*,*) 'Point 2:'
-!    read(*,*) x_b, y_b, z_b  !angle 
-!    write(*,*) 
-!    write(*,*) 'Point 3:'
-!    read(*,*) x_c, y_c, z_c  !angle 
 
-!    write(*,*) 
-!    write(*,*) 'Enter approximative distance between the periodic faces'
-!    read(*,*) PerMax
+!   write(*,*) 
+!   write(*,*) 'Enter the coordinates of three points that define'
+!   write(*,*) 'periodic plane'
+!   write(*,*) 
+!   write(*,*) 'Point 1:'
+!   read(*,*) x_a, y_a, z_a  !angle 
+!   write(*,*) 
+!   write(*,*) 'Point 2:'
+!   read(*,*) x_b, y_b, z_b  !angle 
+!   write(*,*) 
+!   write(*,*) 'Point 3:'
+!   read(*,*) x_c, y_c, z_c  !angle 
+
+!   write(*,*) 
+!   write(*,*) 'Enter approximative distance between the periodic faces'
+!   read(*,*) per_max
 
 
-    ABi = x_b - x_a 
-    ABj = y_b - y_a 
-    ABk = z_b - z_a 
+    ab_i = x_b - x_a 
+    ab_j = y_b - y_a 
+    ab_k = z_b - z_a 
 
-    ACi = x_c - x_a 
-    ACj = y_c - y_a 
-    ACk = z_c - z_a
+    ac_i = x_c - x_a 
+    ac_j = y_c - y_a 
+    ac_k = z_c - z_a
 
-    Pi = ABj*ACk - ACj*ABk 
-    Pj = -ABi*ACk + ACi*ABk 
-    Pk = ABi*ACj - ACi*ABj
+    p_i =  ab_j*ac_k - ac_j*ab_k 
+    p_j = -ab_i*ac_k + ac_i*ab_k 
+    p_k =  ab_i*ac_j - ac_i*ab_j
 
     angle_face = angle_face * 3.1415926 / 180.0
  
@@ -393,7 +386,7 @@
     do s=1,NS
       c2 = SideC(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == TypePer) then
+        if(BCmark(c2) == type_per) then
           if( Approx(angle, 0.0, 1.e-6) ) then
             xspr(s) = xsp(s)  
             yspr(s) = ysp(s)  
@@ -423,31 +416,31 @@
   zmax = -HUGE
 
 
-  BCoor=0.0
-  Bface=0
+  b_coor=0.0
+  b_face=0
 
   c = 0
 
-  if(OPT == 1) then 
+  if(option == 1) then 
     do s=1,NS
       c2 = SideC(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == TypePer) then
+        if(BCmark(c2) == type_per) then
           c = c + 1
-          if(dir==1) BCoor(c) = xsp(s)*1000000.0 + ysp(s)*10000.0 + zsp(s)
-          if(dir==2) BCoor(c) = ysp(s)*1000000.0 + xsp(s)*10000.0 + zsp(s)
-          if(dir==3) BCoor(c) = zsp(s)*1000000.0 + xsp(s)*10000.0 + ysp(s)
-          BFace(c) = s
+          if(dir==1) b_coor(c) = xsp(s)*1000000.0 + ysp(s)*10000.0 + zsp(s)
+          if(dir==2) b_coor(c) = ysp(s)*1000000.0 + xsp(s)*10000.0 + zsp(s)
+          if(dir==3) b_coor(c) = zsp(s)*1000000.0 + xsp(s)*10000.0 + ysp(s)
+          b_face(c) = s
         end if
       end if
     end do
-    call DISort(BCoor,BFace,c,2)
-  else if(OPT == 2) then 
+    call DISort(b_coor,b_face,c,2)
+  else if(option == 2) then 
     c_max = 0
     do s=1,NS
       c2 = SideC(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == TypePer) then
+        if(BCmark(c2) == type_per) then
           c_max = c_max + 1
         end if 
       end if 
@@ -457,51 +450,53 @@
 10 continue
 
 
-    NNN = 0
+    nnn = 0
     hh = 0 
     mm = 0 
     c = 0
   
-    PerMax = -HUGE
-    PerMin =  HUGE 
+    per_max = -HUGE
+    per_min =  HUGE 
 
     do s=1,NS
       c2 = SideC(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == TypePer) then
-          Det = (Pi*(xsp(s)) + Pj*(ysp(s)) + Pk*(zsp(s)))/sqrt(Pi*Pi + Pj*Pj + Pk*Pk)
-          PerMin = min(PerMin, Det)          
-          PerMax = max(PerMax, Det)          
+        if(BCmark(c2) == type_per) then
+          Det = (p_i*(xsp(s)) + p_j*(ysp(s)) + p_k*(zsp(s)))/sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
+          per_min = min(per_min, Det)          
+          per_max = max(per_max, Det)          
         end if
       end if
     end do
     
-    PerMax = 0.5*(PerMax + PerMin)
+    per_max = 0.5*(per_max + per_min)
 
     do s=1,NS
       c2 = SideC(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == TypePer) then
+        if(BCmark(c2) == type_per) then
           c = c + 1
-          Det = (Pi*(xsp(s)) + Pj*(ysp(s)) + Pk*(zsp(s)))/sqrt(Pi*Pi + Pj*Pj + Pk*Pk)
+          Det = (p_i*(xsp(s)) + p_j*(ysp(s)) + p_k*(zsp(s)))  &
+              / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
 
           if(dir==1) then
-            if((Det) < (PerMax)) then
+            if((Det) < (per_max)) then
               hh = hh + 1
-              BCoor(hh) = hh
-              BFace(hh) = s
+              b_coor(hh) = hh
+              b_face(hh) = s
               do ss=1,NS
                 cc2 = SideC(2,ss)
                 if(cc2 < 0) then
-                  if(BCmark(cc2) == TypePer) then 
-                    Det = (Pi*(xsp(ss)) + Pj*(ysp(ss)) + Pk*(zsp(ss)))/sqrt(Pi*Pi + Pj*Pj + Pk*Pk)
-                    if((Det) > (PerMax)) then
+                  if(BCmark(cc2) == type_per) then 
+                    Det = (p_i*(xsp(ss)) + p_j*(ysp(ss)) + p_k*(zsp(ss)))  &
+                        / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
+                    if((Det) > (per_max)) then
                       if((abs(zsp(ss)-zsp(s))) < Tol.and.         &
                          (abs(yspr(ss)-yspr(s))) < Tol) then
                          mm = hh + c_max/2 
-                         BCoor(mm) = mm
-                         BFace(mm) = ss
-                         NNN = NNN + 1
+                         b_coor(mm) = mm
+                         b_face(mm) = ss
+                         nnn = nnn + 1
                       end if 
                     end if 
                   end if
@@ -512,22 +507,23 @@
 
 
           if(dir==2) then
-            if((Det) < (PerMax)) then
+            if((Det) < (per_max)) then
               hh = hh + 1
-              BCoor(hh) = hh
-              BFace(hh) = s
+              b_coor(hh) = hh
+              b_face(hh) = s
               do ss=1,NS
                 cc2 = SideC(2,ss)
                 if(cc2 < 0) then
-                  if(BCmark(cc2) == TypePer) then 
-                    Det = (Pi*(xsp(ss)) + Pj*(ysp(ss)) + Pk*(zsp(ss)))/sqrt(Pi*Pi + Pj*Pj + Pk*Pk)
-                    if((Det) > (PerMax)) then
+                  if(BCmark(cc2) == type_per) then 
+                    Det = (p_i*(xsp(ss)) + p_j*(ysp(ss)) + p_k*(zsp(ss))) &
+                        / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
+                    if((Det) > (per_max)) then
                       if(abs((zsp(ss)-zsp(s))) < Tol.and.         &
                         abs((xspr(ss)-xspr(s))) < Tol) then
                         mm = hh + c_max/2 
-                        BCoor(mm) = mm
-                        BFace(mm) = ss
-                        NNN = NNN + 1
+                        b_coor(mm) = mm
+                        b_face(mm) = ss
+                        nnn = nnn + 1
                       end if 
                     end if 
                   end if
@@ -537,22 +533,23 @@
           end if
 
           if(dir==3) then
-            if((Det) < (PerMax)) then
+            if((Det) < (per_max)) then
               hh = hh + 1
-              BCoor(hh) = hh
-              BFace(hh) = s
+              b_coor(hh) = hh
+              b_face(hh) = s
               do ss=1,NS
                 cc2 = SideC(2,ss)
                 if(cc2 < 0) then
-                  if(BCmark(cc2) == TypePer) then
-                    Det = (Pi*(xsp(ss)) + Pj*(ysp(ss)) + Pk*(zsp(ss)))/sqrt(Pi*Pi + Pj*Pj + Pk*Pk)
-                    if((Det) > (PerMax)) then
+                  if(BCmark(cc2) == type_per) then
+                    Det = (p_i*(xsp(ss)) + p_j*(ysp(ss)) + p_k*(zsp(ss)))  &
+                        / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
+                    if((Det) > (per_max)) then
                       if(abs((xsp(ss)-xsp(s))) < Tol.and.         &
                         abs((ysp(ss)-ysp(s))) < Tol) then
                         mm = hh + c_max/2 
-                        BCoor(mm) = mm
-                        BFace(mm) = ss
-                        NNN = NNN + 1
+                        b_coor(mm) = mm
+                        b_face(mm) = ss
+                        nnn = nnn + 1
                       end if 
                     end if 
                   end if
@@ -566,9 +563,9 @@
     end do
 
     write(*,*)'Iterating search for periodic cells: ',  &
-    'Target: ', c_max/2, 'Result: ',NNN, 'Tolerance: ',Tol
+    'Target: ', c_max/2, 'Result: ',nnn, 'Tolerance: ',Tol
 
-    if(NNN == c_max/2) then
+    if(nnn == c_max/2) then
       continue
     else
       Tol = Tol*0.5 
@@ -580,39 +577,36 @@
     deallocate(yspr)
     deallocate(zspr)
 
-    call DISort(BCoor,BFace,c,2)
-  end if  ! end OPT
-  
+    call DISort(b_coor,b_face,c,2)
+  end if  ! end option
 
   do s=1,c/2
-    s1 = BFace(s)
-    s2 = BFace(s+c/2)
-    c11 = SideC(1,s1) ! cell 1 for side 1
-    c21 = SideC(2,s1) ! cell 2 for cell 1
-    c12 = SideC(1,s2) ! cell 1 for side 2
-    c22 = SideC(2,s2) ! cell 2 for side 2
-!>>>    write(*,*) c
-!>>>    write(*,*) s1, BFace(s),     xc(c21), yc(c21), zc(c21) 
-!>>>    write(*,*) s2, BFace(s+c/2), xc(c22), yc(c22), zc(c22) 
-!>>>    write(*,*) '---------------------------------'
+    s1 = b_face(s)
+    s2 = b_face(s+c/2)
+    c11 = SideC(1,s1)  ! cell 1 for side 1
+    c21 = SideC(2,s1)  ! cell 2 for cell 1
+    c12 = SideC(1,s2)  ! cell 1 for side 2
+    c22 = SideC(2,s2)  ! cell 2 for side 2
     SideC(0,s1) = s2   ! just to remember where it was coppied from
     SideC(2,s1) = c12 
     SideC(1,s2) = 0    ! c21 
     SideC(2,s2) = 0    ! c21 
   end do
 
-  Nper = c/2
-  write(*,*) 'Phase I: periodic cells: ', Nper
+  n_per = c/2
+  write(*,*) 'Phase I: periodic cells: ', n_per
   go to 2
 
-!====================!
-!===== Phase II =====! -> similar to the loop in Generator
-!====================!
+  !----------------------------------------------------!
+  !                                                    !
+  !   Phase II  ->  similar to the loop in Generator   !
+  !                                                    !
+  !----------------------------------------------------!
 1 continue 
   NSsh = 0
   do s=1,NS
 
-!----- initialize
+    ! Initialize
     Dx(s)=0.0
     Dy(s)=0.0
     Dz(s)=0.0
@@ -621,19 +615,22 @@
     c2=SideC(2,s)
     if(c2   >  0) then
 
-!----- scalar product of the side with line c1-c2 is good criteria
+      ! Scalar product of the side with line c1-c2 is good criteria
       if( (Sx(s) * (xc(c2)-xc(c1) )+                              &
            Sy(s) * (yc(c2)-yc(c1) )+                              &
            Sz(s) * (zc(c2)-zc(c1) ))  < 0.0 ) then
 
         NSsh = NSsh + 2
-!----- find the coordinates of ...
+
+        ! Find the coordinates of ...
         if(SideN(s,0) == 4) then
-          !---- coordinates of the shadow face
+
+          ! Coordinates of the shadow face
           xs2=xsp(SideC(0,s))
           ys2=ysp(SideC(0,s))
           zs2=zsp(SideC(0,s))
-          !---- add shadow faces
+
+          ! Add shadow faces
           SideN(NS+NSsh-1,0) = 4
           SideC(1,NS+NSsh-1) = c1
           SideC(2,NS+NSsh-1) = -NbC-1
@@ -661,11 +658,13 @@
           ysp(NS+NSsh) = ys2
           zsp(NS+NSsh) = zs2
         else if(SideN(s,0) == 3) then
-          !---- coordinates of the shadow face
+
+          ! Coordinates of the shadow face
           xs2=xsp(SideC(0,s))
           ys2=ysp(SideC(0,s))
           zs2=zsp(SideC(0,s))
-          !---- add shadow faces
+ 
+          ! Add shadow faces
           SideN(NS+NSsh-1,0) = 3
           SideC(1,NS+NSsh-1) = c1
           SideC(2,NS+NSsh-1) = -NbC-1
@@ -692,38 +691,40 @@
           zsp(NS+NSsh) = zs2
         end if
 
-        Dx(s)=xsp(s)-xs2  !------------------------!
-        Dy(s)=ysp(s)-ys2  ! later: xc2 = xc2 + Dx  !
-        Dz(s)=zsp(s)-zs2  !------------------------!
+        Dx(s)=xsp(s)-xs2  !
+        Dy(s)=ysp(s)-ys2  ! later: xc2 = xc2 + Dx  
+        Dz(s)=zsp(s)-zs2  !
 
-!->>>     write(6,'(I5,A12,3F12.6)') s,' Dx,Dy,Dz= ', &
-!->>>               Dx(s),Dy(s),Dz(s)
       endif !  S*(c2-c1) < 0.0
     end if  !  c2 > 0
   end do    !  sides
   write(*,*) 'Phase II: number of shadow faces: ', NSsh
 
-!=====================!
-!===== Phase III =====! -> find the new numbers of cell faces
-!=====================!
-  NumberSides = 0
+  !-------------------------------------------------------!
+  !                                                       !
+  !   Phase III  ->  find the new numbers of cell faces   !
+  !                                                       !
+  !-------------------------------------------------------!
+  number_sides = 0
   do s=1,NS+NSsh
     c1 = SideC(1,s)
     c2 = SideC(2,s)
     if(c1 > 0) then
-      NumberSides = NumberSides  + 1
-      NewS(s) = NumberSides 
+      number_sides = number_sides  + 1
+      NewS(s) = number_sides 
     else
       NewS(s) = -1
     end if
   end do
   write(*,'(A21,I9,Z9)') 'Old number of sides: ', NS, NS
   write(*,'(A21,I9,Z9)') 'New number of sides: ', &
-                          NumberSides-NSsh,NumberSides-NSsh
+                          number_sides-NSsh,number_sides-NSsh
   
-!====================!
-!===== Phase IV =====! -> compress the sides
-!====================!
+  !--------------------------------------!
+  !                                      !
+  !   Phase IV  ->  compress the sides   !
+  !                                      !
+  !--------------------------------------!
   do s=1,NS+NSsh
     if(NewS(s) > 0) then
       SideC(1,NewS(s)) = SideC(1,s) 
@@ -744,26 +745,25 @@
       Dz(NewS(s)) = Dz(s)
     end if
   end do 
-  NS = NumberSides-NSsh
+  NS = number_sides-NSsh
 
-!+++++++++++++++++++++++++++++++++++++++!
-!     Check the periodic boundaries     !
-!+++++++++++++++++++++++++++++++++++++++!
-  MaxDis = 0.0 
+  !-----------------------------------!
+  !   Check the periodic boundaries   !
+  !-----------------------------------!
+  max_dis = 0.0 
   do s=1,NS-NSsh
-    MaxDis = max(MaxDis, (Dx(s)*Dx(s)+Dy(s)*Dy(s)+Dz(s)*Dz(s)))
+    max_dis = max(max_dis, (Dx(s)*Dx(s)+Dy(s)*Dy(s)+Dz(s)*Dz(s)))
   end do
-  write(*,*) 'Maximal distance of periodic boundary is:', sqrt(MaxDis)
+  write(*,*) 'Maximal distance of periodic boundary is:', sqrt(max_dis)
 
-!++++++++++++++++++++++++++++++++++++++++++++++++++!
-!     Calculate the cell volumes                   !
-!--------------------------------------------------!
-!     => depends on: xc,yc,zc,                     !
-!                    Dx,Dy,Dz,                     !
-!                    xsp, ysp, zsp                 !
-!     <= gives:      volume                        !
-!++++++++++++++++++++++++++++++++++++++++++++++++++!
-
+  !----------------------------------!
+  !   Calculate the cell volumes     !
+  !----------------------------------!
+  !   => depends on: xc,yc,zc,       !
+  !                  Dx,Dy,Dz,       !
+  !                  xsp, ysp, zsp   !
+  !   <= gives:      volume          !
+  !----------------------------------!
   do s=1,NS
     c1=SideC(1,s)
     c2=SideC(2,s)   
@@ -779,35 +779,35 @@
   end do
   volume = volume/3.0
   c1 = 0
-  MinVol =  1E+30
-  MaxVol = -1E+30
-  TotVol = 0.0
+  min_vol =  1E+30
+  max_vol = -1E+30
+  tot_vol = 0.0
   do c=1,NC
-    TotVol = TotVol + volume(c)
-    MinVol = min(MinVol, volume(c))
-    MaxVol = max(MaxVol, volume(c))
+    tot_vol = tot_vol + volume(c)
+    min_vol = min(min_vol, volume(c))
+    max_vol = max(max_vol, volume(c))
   end do
-  write(*,*) 'Minimal cell volume is: ', MinVol
-  write(*,*) 'Maximal cell volume is: ', MaxVol
-  write(*,*) 'Total domain volume is: ', TotVol
+  write(*,*) 'Minimal cell volume is: ', min_vol
+  write(*,*) 'Maximal cell volume is: ', max_vol
+  write(*,*) 'Total domain volume is: ', tot_vol
   write(*,*) 'Cell volumes calculated !'
 
-  if(MinVol < 0.0) then
+  if(min_vol < 0.0) then
     write(*,*) 'Negative volume occured! Another, slower, algoritham should be run !'
     write(*,*) 'Execution will be halt now! '
     stop
   end if 
  
-  deallocate(BCoor)
-  deallocate(Bface)
+  deallocate(b_coor)
+  deallocate(b_face)
  
 
-!++++++++++++++++++++++++++++++!
-!     Calculate delta          !
-!------------------------------!
-!     => depends on: x_node,y_node,z_node     !
-!     <= gives:      delta     !
-!++++++++++++++++++++++++++++++!
+    !------------------------------------------!
+    !     Calculate delta                      !
+    !------------------------------------------!
+    !     => depends on: x_node,y_node,z_node  !
+    !     <= gives:      delta                 !
+    !------------------------------------------!
     allocate(delta(-NbC:NC));  delta=0.0
 
     do c=1,NC
@@ -831,13 +831,12 @@
       delta(c) = max(delta(c), (zmax-zmin))
     end do
 
-!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
-!     Calculate:                                              ! 
-!        distance from the cell center to the nearest wall.   !
-!-------------------------------------------------------------!
-!     => depends on: xc,yc,zc inside and on the boundary.     !
-!     <= gives:      WallDs i                                 !
-!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
+  !------------------------------------------------------------------!
+  !   Calculate distance from the cell center to the nearest wall.   !
+  !------------------------------------------------------------------!
+  !     => depends on: xc,yc,zc inside and on the boundary.          !
+  !     <= gives:      WallDs i                                      !
+  !------------------------------------------------------------------!
   allocate(WallDs(-NbC:NC)); WallDs = HUGE
 
   write(*,*) ''
@@ -847,16 +846,16 @@
   write(*,*) 'of the boundary conditions. Their BC markers have to be smaller'
   write(*,*) 'than the markers of the other boundary conditions.)'
   write(*,*) ''
-  read(*,*) WallMark
+  read(*,*) wall_mark
  
-  if(WallMark == 0) then
+  if(wall_mark == 0) then
     WallDs = 1.0
     write(*,*) 'Distance to the wall set to 1.0 everywhere !'
   else
     do c1=1,NC
       if(mod(c1,10000) == 0) write(*,*) (100.*c1/(1.*NC)), '% complete...'
       do c2=-1,-NbC,-1
-        if(BCmark(c2) <= WallMark) then
+        if(BCmark(c2) <= wall_mark) then
           WallDs(c1)=min(WallDs(c1),                       &
           Distance_Squared(xc(c1),yc(c1),zc(c1),xc(c2),yc(c2),zc(c2)))
         end if
@@ -869,9 +868,9 @@
   end if
 
 
-!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
-!     Calculate the interpolation factors for the cell sides     !
-!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++!
+  !------------------------------------------------------------!
+  !   Calculate the interpolation factors for the cell sides   !
+  !------------------------------------------------------------!
   allocate(f(NS+max(NC,NBC))); f=0.0          
 
   do s=1,NS

@@ -119,10 +119,10 @@
   call TestLn(0, NN, NC, NS, NbC, 0)
 
 !---- save the 1D probe (good for the channel flow)
-  call Probe1D_nodes_gen
+  call Probe_1D_Nodes_Gen
 
 !---- save the 2D probe (good for the channel flow)
-  call Probe2D
+  call Probe_2D
 
 !---- create output for Fluent
   NewC(-NBC-1) = -NBC-1

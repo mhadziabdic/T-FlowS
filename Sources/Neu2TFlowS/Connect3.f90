@@ -1,52 +1,45 @@
-!======================================================================!
+!==============================================================================!
   subroutine Connect3 
-!----------------------------------------------------------------------!
-! Connects two problem domains, one with periodic streamwise boundary  !
-! conditions and another with inflow-outflow.                          !
-!                                                                      !
-! Note:                                                                !
-! ~~~~~                                                                !
-!                                                                      !
-! Situations like the on depicted bellow are now working.              !
-!                                                                      !
-!   +-------+   +_                                                     ! 
-!   |       |   | ~-_                                                  ! 
-!   |   o---|   |    ~-_                                               !
-!   |       |   |---o   +                                              ! 
-!   +-------+   +_      |                                              !
-!                 ~-_   |                                              !
-!                    ~-_|                                              !
-!                       +                                              !
-!                                                                      !
-! Constrains:                                                          !
-! ~~~~~~~~~~~                                                          !
-!  1. First domain must be the channel-like, with peridicity in the    !
-!     streamwise direction.                                            !
-!                                                                      !
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Connects two problem domains, one with periodic streamwise boundary        !
+!   conditions and another with inflow-outflow.                                !
+!                                                                              !
+!   Note:                                                                      !
+!                                                                              !
+!   Situations like the on depicted bellow are now working.                    !
+!                                                                              !
+!   +-------+   +_                                                             ! 
+!   |       |   | ~-_                                                          ! 
+!   |   o---|   |    ~-_                                                       !
+!   |       |   |---o   +                                                      ! 
+!   +-------+   +_      |                                                      !
+!                 ~-_   |                                                      !
+!                    ~-_|                                                      !
+!                       +                                                      !
+!                                                                              !
+!   Constrains:                                                                !
+!                                                                              !
+!   First domain must be the channel-like, periodic in streamwise direction.   !
+!                                                                              !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod 
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!------------------------------[Calling]-------------------------------!
-  interface
-    logical function Approx(a, b, tol)
-      real          :: a, b
-      real,optional :: tol
-    end function Approx
-  end interface
-!-------------------------------[Locals]-------------------------------!
-  integer      :: i, c1, c11, c12, c21, c22, s1, s2
-  integer      :: CopyMarker,  x_copy, y_copy, z_copy
-  real         :: xc_12, xc_22
-  real         :: yc_12, yc_22
-  real         :: zc_12, zc_22
-  real,parameter :: one3rd = 0.3333333
-  real,parameter :: two3rd = 0.6666666
-  character*80 :: Answer
-!======================================================================!
+!----------------------------------[Calling]-----------------------------------!
+  include "../Shared/Approx.int"
+!-----------------------------------[Locals]-----------------------------------!
+  integer           :: i, c1, c11, c12, c21, c22, s1, s2
+  integer           :: copy_marker,  x_copy, y_copy, z_copy
+  real              :: xc_12, xc_22
+  real              :: yc_12, yc_22
+  real              :: zc_12, zc_22
+  real,parameter    :: one3rd = 0.3333333
+  real,parameter    :: two3rd = 0.6666666
+  character(len=80) :: answer
+!==============================================================================!
 
-  Ncopy = 0
+  n_copy = 0
   x_copy = 0
   y_copy = 0
   z_copy = 0
@@ -58,12 +51,12 @@
   if(answer == 'SKIP') then
     return
   else 
-    read(inp,*) CopyMarker 
+    read(inp,*) copy_marker 
   end if    
 
-!---!
-! x !
-!---! 
+  !-------!
+  !   X   !
+  !-------! 
   do s1=1,NS
     if(mod(s1,100000)==0) then
       write(*,*) ((one3rd*s1)/(1.0*NS)) * 100, 'Complete'
@@ -75,7 +68,7 @@
         c21 = SideC(1,s2)
         c22 = SideC(2,s2)
         if(c22 < 0) then
-          if(BCmark(c22) == CopyMarker) then
+          if(BCmark(c22) == copy_marker) then
 
             yc_12 = 0.0
             zc_12 = 0.0
@@ -97,12 +90,12 @@
               
             if( Approx( yc_22, yc_12, tol=1.e-4 ) .and. &
                 Approx( zc_22, zc_12, tol=1.e-4 ) ) then
-              Ncopy = Ncopy + 1
+              n_copy = n_copy + 1
               x_copy = x_copy + 1
               if( abs(xc(c11)-xc(c22)) < abs(xc(c12)-xc(c22))) c1 = c11
               if( abs(xc(c11)-xc(c22)) > abs(xc(c12)-xc(c22))) c1 = c12
-              CopyS(1, Ncopy) = c1
-              CopyS(2, Ncopy) = c21           !   inside the domain
+              CopyS(1, n_copy) = c1
+              CopyS(2, n_copy) = c21           !   inside the domain
               CopyC(c22) = c1
             end if
           end if
@@ -110,9 +103,10 @@
       end do
     end if
   end do
-!---!
-! y !
-!---! 
+
+  !-------!
+  !   Y   !
+  !-------! 
   do s1=1,NS
     if(mod(s1,100000)==0) then
       write(*,*) (one3rd + (one3rd*s1)/(1.0*NS)) * 100.0, 'Complete'
@@ -124,7 +118,7 @@
         c21 = SideC(1,s2)
         c22 = SideC(2,s2)
         if(c22 < 0) then
-          if(BCmark(c22) == CopyMarker) then
+          if(BCmark(c22) == copy_marker) then
 
             xc_12 = 0.0
             zc_12 = 0.0
@@ -146,12 +140,12 @@
               
             if( Approx( xc_22, xc_12, tol=1.e-4 ) .and. &
                 Approx( zc_22, zc_12, tol=1.e-4 ) ) then
-              Ncopy = Ncopy + 1 
+              n_copy = n_copy + 1 
               y_copy = y_copy + 1
               if( abs(yc(c11)-yc(c22)) < abs(yc(c12)-yc(c22))) c1 = c11
               if( abs(yc(c11)-yc(c22)) > abs(yc(c12)-yc(c22))) c1 = c12
-              CopyS(1, Ncopy) = c1
-              CopyS(2, Ncopy) = c21           !   inside the domain
+              CopyS(1, n_copy) = c1
+              CopyS(2, n_copy) = c21           !   inside the domain
               CopyC(c22) = c1
             end if
           end if
@@ -159,9 +153,10 @@
       end do
     end if
   end do
-!---!
-! z !
-!---! 
+
+  !-------!
+  !   Z   !
+  !-------! 
   do s1=1,NS
     if(mod(s1,100000)==0) then
       write(*,*) (two3rd + (one3rd*s1)/(1.0*NS)) * 100.0, 'Complete'
@@ -173,7 +168,7 @@
         c21 = SideC(1,s2)
         c22 = SideC(2,s2)
         if(c22 < 0) then
-          if(BCmark(c22) == CopyMarker) then
+          if(BCmark(c22) == copy_marker) then
 
             yc_12 = 0.0
             xc_12 = 0.0
@@ -195,12 +190,12 @@
               
             if( Approx( yc_22, yc_12, tol=1.e-4 ) .and. &
                 Approx( xc_22, xc_12, tol=1.e-4 ) ) then
-              Ncopy = Ncopy + 1 
+              n_copy = n_copy + 1 
               z_copy = z_copy + 1
               if( abs(zc(c11)-zc(c22)) < abs(zc(c12)-zc(c22))) c1 = c11
               if( abs(zc(c11)-zc(c22)) > abs(zc(c12)-zc(c22))) c1 = c12
-              CopyS(1, Ncopy) = c1
-              CopyS(2, Ncopy) = c21           !   inside the domain
+              CopyS(1, n_copy) = c1
+              CopyS(2, n_copy) = c21           !   inside the domain
               CopyC(c22) = c1
             end if
           end if
@@ -209,10 +204,10 @@
     end if
   end do
 
-  write(*,*) '# Ncopy = ', Ncopy
-  write(*,*) '# X copy = ', x_copy
-  write(*,*) '# Y copy = ', y_copy
-  write(*,*) '# Z copy = ', z_copy
+  write(*,*) '# n copy = ', n_copy
+  write(*,*) '# x copy = ', x_copy
+  write(*,*) '# x copy = ', y_copy
+  write(*,*) '# x copy = ', z_copy
 
   goto 1
 

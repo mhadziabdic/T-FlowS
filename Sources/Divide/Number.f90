@@ -1,42 +1,43 @@
-!======================================================================!
+!==============================================================================!
   subroutine Number
-!----------------------------------------------------------------------!
-!   Number the cells in each subdomain for subsequent separate saving. !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Number the cells in each subdomain for subsequent separate saving.         !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod 
   use par_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer              :: b, c, n, s, c1, c2, sub, subo
   integer              :: n_nodes_sub, n_cells_sub, n_faces_sub,  &
                           n_b_cells_sub,n_buff_sub,NCSsub,NCFsub
   character(len=80)    :: name_out
   integer,allocatable  :: SideCell(:,:)
-!======================================================================!
+!==============================================================================!
 !  Each subdomain needs two buffers: a send buffer and a receive buffer.
 !  A receive buffer will be stored as aditional boundary cells for each
-!  subdomain. So each subdomain will have NBC physical boundary faces
-!  and NBBC-NBC buffer bounndary cells. It is handy to do it that way,
-!  because most of the algorythms can remain the same as they are now.
-!  They won't even "know" that they use values from other processors.
-!  On the other hand, a sending buffer has to be allocated in a new 
-!  separate array called simply buffer(). An additional array is needed 
-!  to keep track of all the indexes. That one is called buffind().
-!  buffind() has stored cell numbers from it's own subdomain so that
-!  later they can be copied with (well, something like that):
+!  subdomain. So each subdomain will have NBC physical boundary faces and 
+!  NBBC-NBC buffer bounndary cells. It is handy to do it that way, because 
+!  most of the algorythms can remain the same as they are now.  They won't 
+!  even "know" that they use values from other processors.  On the other 
+!  hand, a sending buffer has to be allocated in a new separate array called 
+!  simply buffer(). An additional array is needed to keep track of all the 
+!  indexes. That one is called buffind().  buffind() has stored cell numbers 
+!  from it's own subdomain so that later they can be copied with (well, 
+!  something like that):
+!
 !  do i=1,BUFFSIZ
 !    buffer(i) = U(buffind(i))
 !  end do
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!                                   !
-!     Browse through subdomains     !
-!                                   !
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
+  !-------------------------------!
+  !                               !
+  !   Browse through subdomains   !
+  !                               !
+  !-------------------------------!
   do sub=1,n_sub
 
     call NamFil(sub, name_out, '.buf', len_trim('.buf'))
@@ -49,7 +50,7 @@
     write(9,'(A20)') '%                  %'
     write(9,'(A20)') '%%%%%%%%%%%%%%%%%%%%'
 
-!---- cells
+    ! Cells
     n_cells_sub = 0     ! number of cells in subdomain
     do c=1,NC
       NewC(c)=0
@@ -61,7 +62,7 @@
       end if
     end do
 
-!---- nodes
+    ! Nodes
     n_nodes_sub = 0     ! number of cells in subdomain
     do n=1,NN
       NewN(n)=0
@@ -85,7 +86,7 @@
       end if
     end do
 
-!---- sides & real boundary cells
+    ! Faces & real boundary cells
     n_faces_sub  = 0     ! number of sides in subdomain
     n_b_cells_sub = 0     ! number of real boundary cells in subdomain
     NCSsub = 0
@@ -113,7 +114,7 @@
       end if 
     end do
 
-    do s=1,Ncopy
+    do s=1,n_copy
       c1=CopyS(1,s)
       c2=CopyS(2,s)
       if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
@@ -127,9 +128,9 @@
     write(*,*) n_faces_sub, ' sides' 
     write(*,*) n_b_cells_sub, ' physical boundary cells' 
 
-!------------------------!
-!     Create buffers     !
-!------------------------!
+    !--------------------!
+    !   Create buffers   !
+    !--------------------!
     n_buff_sub = 0
     NCFsub = 0
     write(9,'(A33)') '#--- Number of physical b. cells:'
@@ -137,7 +138,8 @@
     do subo=1,n_sub
       if(subo /= sub) then
         NBBs(subo)=n_buff_sub+1
-!----- Faces inside the domain
+
+        ! Faces inside the domain
         do s=1,NS
           c1=SideC(1,s)  
           c2=SideC(2,s) 
@@ -160,8 +162,9 @@
             end if
           end if  ! c2 > 0
         end do    ! through sides
-!----- Faces on the "copy" boundary
-        do s=1,Ncopy
+
+        ! Faces on the "copy" boundary
+        do s=1,n_copy
           c1=CopyS(1,s)  
           c2=CopyS(2,s) 
           if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
@@ -181,7 +184,7 @@
         end do    ! through sides
         NBBe(subo)=n_buff_sub
 
-!---- write to buffer file
+        ! Write to buffer file
         write(9,'(A33)') '#===============================#' 
         write(9,'(A33)') '#   Conections with subdomain:  #' 
         write(9,'(A33)') '#===============================#' 
@@ -197,8 +200,10 @@
     end do ! for subo
 
     call GenSav(sub, n_nodes_sub, n_cells_sub)
-    call GeoSav(sub,        n_cells_sub, n_faces_sub, n_b_cells_sub, n_buff_sub,NCFsub)
-    call TestLn(sub, n_nodes_sub, n_cells_sub, n_faces_sub, n_b_cells_sub, n_buff_sub)
+    call GeoSav(sub, n_cells_sub, n_faces_sub, n_b_cells_sub,   &
+                     n_buff_sub,NCFsub)
+    call TestLn(sub, n_nodes_sub, n_cells_sub, n_faces_sub,     &
+                     n_b_cells_sub, n_buff_sub)
 
     write(*,*) 'Test:'
     write(*,*) 'n_nodes_sub   =', n_nodes_sub
@@ -213,7 +218,7 @@
       if(subo /= sub) then
         write(*,*) 'Connections with ', subo ,' : ',                &
           NBBe(subo)-NBBs(subo)+1,                                  &
-          n_b_cells_sub+NBBs(subo),                                        &
+          n_b_cells_sub+NBBs(subo),                                 &
           n_b_cells_sub+NBBe(subo) 
       end if 
     end do ! for subo
@@ -223,11 +228,11 @@
 
   close(9)
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
-!                                                      !
-!     Save the entire domain with renumbered cells     !
-!                                                      !
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
+  !--------------------------------------------------!
+  !                                                  !
+  !   Save the entire domain with renumbered cells   !
+  !                                                  !
+  !--------------------------------------------------!
   do n=1,NN
     NewN(n)=n
   end do
@@ -278,7 +283,7 @@
   call INSort(SideN(1,2), NewS(1),NS)
   call INSort(SideN(1,3), NewS(1),NS)
   call INSort(SideN(1,4), NewS(1),NS)
-  call RNSort(Dx(1), NewS(1), NS)  ! This is important
+  call RNSort(Dx(1), NewS(1), NS)  ! this is important
   call RNSort(Dy(1), NewS(1), NS)  ! for plotting the
   call RNSort(Dz(1), NewS(1), NS)  ! grid with EpsPar()
   allocate(SideCell(NS,2))

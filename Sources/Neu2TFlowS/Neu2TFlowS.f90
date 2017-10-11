@@ -10,7 +10,7 @@
   integer :: i, typ, cnt
 !======================================================================!
 
-  call logo
+  call Logo
 
 !---- Test the precision
   open(90,FORM='UNFORMATTED',FILE='Neu2FlowS.real');
@@ -47,7 +47,7 @@
                                        ! with Fluent
 
 !---- create 1D file (used for channel or pipe flow) 
-  call Probe1D_nodes
+  call Probe_1D_Nodes
 
 !---- make eps figures
   write(*,*) 'Making three .eps cuts through the domain.'
@@ -57,16 +57,5 @@
  
   write(*,*) 'Making a 3D shaded .eps figure of the domain.'
   call EpsWho(NSsh)  ! Draw the domain with shadows
-
-!  Debugging efforts. 
-!  do typ=1,17
-!    cnt = 0
-!    do i=-1,-NbC,-1
-!      if(BCmark(i)== typ) then
-!        cnt = cnt + 1
-!      end if
-!    end do
-!    write(*,*) 'Hamo, type ', typ, ' has ', cnt, ' cells'
-!  end do
 
   end program Neu2TFlowS 

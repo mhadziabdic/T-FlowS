@@ -1,20 +1,16 @@
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!                                 !                                    !
-!                                 !   Bojan Niceno                     !
-!   Global variable definitions   !   Delft University of Technology   !
-!         for all modules         !   Section Heat Transfer            !
-!                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
-!                                 !                                    !
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!   Note: cell_n, parent, A_row, A_col, A_dia, side_c, side_cc, 
-!         sideAij, are for all grids
-!======================================================================!
+!==============================================================================!
+!   Module for global variable definitions.  Variables defined here are        !
+!   supposed to be accessible to all routines in all programs.                 !
+!==============================================================================!
 module all_mod
 
   use allp_mod
 
   implicit none
 
+  !----------------------------------------------------!
+  !   Geometrical quantities for describing the grid   !
+  !----------------------------------------------------!
   real,allocatable :: xc(:),yc(:),zc(:) 
   real,allocatable :: Sx(:),Sy(:),Sz(:)
   real,allocatable :: volume(:)            ! cell's volume
@@ -25,17 +21,22 @@ module all_mod
   real,allocatable :: xsp(:),ysp(:),zsp(:) ! face coordinates    
   real,allocatable :: WallDs(:), f(:)
 
-  character :: name*80
-  character :: inp*300
-  integer   :: tn, ts(300), te(300)
+  !----------------------------------------!
+  !   Variables for ease of input/output   !
+  !----------------------------------------!
+  character(len=80)  :: name
+  character(len=300) :: inp*300
+  integer            :: tn, ts(300), te(300)
+  integer            :: cmn_line_count
 
-  integer   :: cmn_line_count
-
+  !-------------------------------------------!
+  !   Logical quantities desribing the grid   !
+  !-------------------------------------------!
   integer   :: NC, NS                    ! num. of nodes and cells 
   integer   :: NbC
   integer   :: MNBS
   integer   :: NRL
-  integer   :: Ncopy
+  integer   :: n_copy                    ! number of copy cells/faces
   integer   :: Nmat                      ! number of materials
   logical   :: Mater(1024)               ! is the material present ?
 

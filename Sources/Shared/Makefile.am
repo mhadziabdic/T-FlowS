@@ -6,12 +6,11 @@ libShared_a_SOURCES = 		\
   DISort.f90			\
   Distance.f90			\
   Distance_Squared.f90		\
-  GeoLoa.f90			\
   GeoLoa_Scotti.f90		\
-  GeoSav.f90			\
   GeoSav_Scotti.f90		\
   INSort.f90			\
   ISort.f90			\
+  Load_Geo.f90			\
   NamFil.f90			\
   Probe_1D.f90			\
   Probe_1D_Nodes.f90		\
@@ -22,13 +21,14 @@ libShared_a_SOURCES = 		\
   Rnd.f90			\
   RNSort.f90			\
   Save_Cas.f90			\
+  Save_Cns_Geo.f90		\
   Save_Eps_Cut.f90		\
   Save_Eps_Whole.f90		\
   Save_Gmv_Links.f90		\
   Save_Gmv_Mesh.f90		\
   Sort2.f90			\
   SSort.f90			\
-  TetVol.f90			\
+  Tet_Volume.f90		\
   ToUppr.f90
 
 INCLUDE = -I@top_srcdir@/

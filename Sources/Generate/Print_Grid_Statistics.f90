@@ -1,16 +1,16 @@
-!======================================================================!
-  subroutine PrintG 
-!----------------------------------------------------------------------!
-!   Prints some statistical data about the grid on the standard output !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Print_Grid_Statistics 
+!------------------------------------------------------------------------------!
+!   Prints some statistical data about the grid on the standard output.        !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-!----------------------------------------------------------------------! 
+!------------------------------------------------------------------------------! 
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, k, numb, nonz, stencw
-!======================================================================!
+!==============================================================================!
 
   write(*,*) '==============='
   write(*,*) 'Grid statistics'
@@ -21,12 +21,12 @@
   write(*,*) '  number of boundary cells:', NbC
   write(*,*) '----------------------------------'
 
-!----- Find the number of non zero entries
+  ! Find the number of non zero entries
   nonz=0
   do i = 1,NC
-    stencw=1            ! prije je bilo 0
+    stencw=1            ! it used to be zero
     do j=1,24
-      if( CellC(i,j)  > 0 ) stencw=stencw+1
+      if( CellC(i,j) > 0 ) stencw=stencw + 1
     end do
     nonz = nonz + stencw
   end do
@@ -37,7 +37,7 @@
   write(*,*) '  max number of boundary cells:',    MAXB
   write(*,*) '----------------------------------'
 
-!----- Neighbours
+  ! Neighbours
   do j=1,24
     numb=0
     do i=1,NC
@@ -52,7 +52,7 @@
     endif
   end do
 
-!----- Twins
+  ! Twins
   do j=1,8
     numb=0
     do i=1,NN
@@ -63,4 +63,4 @@
     endif 
   end do
 
-  end subroutine PrintG
+  end subroutine Print_Grid_Statistics

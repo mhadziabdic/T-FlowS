@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Calc1
+  subroutine Compute_Node_Coordinates
 !------------------------------------------------------------------------------!
 !   Calculate node coordinates inside the domain, block by block.              !
 !------------------------------------------------------------------------------!
@@ -226,7 +226,7 @@
           ie=trans(1,1)+trans(1,2)*LinRes(l)
           je=trans(2,1)+trans(2,2)*LinRes(l)
           ke=trans(3,1)+trans(3,2)*LinRes(l)
-          call linija( b, LinWgt(l), is, js, ks, ie, je, ke)
+          call Distribute_Nodes( b, LinWgt(l), is, js, ks, ie, je, ke)
         endif  
 
       endif ! if the block contains
@@ -238,19 +238,19 @@
     !-----------!
     do k=1,nk,nk-1
       do j=1,nj,nj-1
-        call linija( b, BlkWgt(b,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes( b, BlkWgt(b,1), 1,j,k,ni,j,k)
       end do
     end do
 
     do k=1,nk,nk-1
       do i=1,ni,ni-1
-        call linija( b, BlkWgt(b,2), i,1,k,i,nj,k)
+        call Distribute_Nodes( b, BlkWgt(b,2), i,1,k,i,nj,k)
       end do
     end do
 
     do j=1,nj,nj-1
       do i=1,ni,ni-1
-        call linija( b, BlkWgt(b,3), i,j,1,i,j,nk)
+        call Distribute_Nodes( b, BlkWgt(b,3), i,j,1,i,j,nk)
       end do
     end do
 
@@ -266,11 +266,11 @@
     k=1
     if( .NOT. Approx(BlfaWt(n,1),1.0 ) ) then
       do j=1,nj
-        call linija( b, BlfaWt(n,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes( b, BlfaWt(n,1), 1,j,k,ni,j,k)
       end do
     else ! lines in the j direction
       do i=1,ni
-        call linija( b, BlfaWt(n,2), i,1,k,i,nj,k)
+        call Distribute_Nodes( b, BlfaWt(n,2), i,1,k,i,nj,k)
       end do
     endif
 
@@ -279,11 +279,11 @@
     k=nk
     if( .NOT. Approx(BlfaWt(n,1),1.0 ) ) then
      do j=1,nj
-        call linija( b, BlFaWt(n,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes( b, BlFaWt(n,1), 1,j,k,ni,j,k)
       end do
     else ! lines in the j direction
       do i=1,ni
-        call linija( b, BlfaWt(n,2), i,1,k,i,nj,k)
+        call Distribute_Nodes( b, BlfaWt(n,2), i,1,k,i,nj,k)
       end do
     endif
 
@@ -292,11 +292,11 @@
     i=1
     if( .NOT. Approx(BlfaWt(n,3),1.0 ) ) then
       do j=1,nj
-        call linija( b, BlFaWt(n,3), i,j,1,i,j,nk)
+        call Distribute_Nodes( b, BlFaWt(n,3), i,j,1,i,j,nk)
       end do
     else ! lines in the j direction
       do k=1,nk
-        call linija( b, BlFaWt(n,2), i,1,k,i,nj,k)
+        call Distribute_Nodes( b, BlFaWt(n,2), i,1,k,i,nj,k)
       end do
     end if 
 
@@ -305,11 +305,11 @@
     i=ni
     if( .NOT. Approx(BlfaWt(n,3),1.0 ) ) then
       do j=1,nj
-        call linija( b, BlFaWt(n,3), i,j,1,i,j,nk)
+        call Distribute_Nodes( b, BlFaWt(n,3), i,j,1,i,j,nk)
       end do
     else ! lines in the j direction
       do k=1,nk
-        call linija( b, BlFaWt(n,2), i,1,k,i,nj,k)
+        call Distribute_Nodes( b, BlFaWt(n,2), i,1,k,i,nj,k)
       end do
     end if 
 
@@ -318,11 +318,11 @@
     j=1
     if( .NOT. Approx(BlfaWt(n,3),1.0 ) ) then
       do i=1,ni
-        call linija( b, BlFaWt(n,3), i,j,1,i,j,nk)
+        call Distribute_Nodes( b, BlFaWt(n,3), i,j,1,i,j,nk)
       end do
     else ! lines in the i direction
       do k=1,nk
-        call linija( b, BlFaWt(n,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes( b, BlFaWt(n,1), 1,j,k,ni,j,k)
       end do
     endif
 
@@ -331,11 +331,11 @@
     j=nj
     if( .NOT. Approx(BlfaWt(n,3),1.0 ) ) then
       do i=1,ni
-        call linija( b, BlFaWt(n,3), i,j,1,i,j,nk)
+        call Distribute_Nodes( b, BlFaWt(n,3), i,j,1,i,j,nk)
       end do
     else ! lines in the i direction
       do k=1,nk
-        call linija( b, BlFaWt(n,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes( b, BlFaWt(n,1), 1,j,k,ni,j,k)
       end do
     endif
 
@@ -345,19 +345,19 @@
     if( .NOT. Approx( BlkWgt(b,3), 1.0 ) ) then
       do i=1,ni
         do j=1,nj
-          call linija( b, BlkWgt(b,3), i,j,1,i,j,nk)
+          call Distribute_Nodes( b, BlkWgt(b,3), i,j,1,i,j,nk)
         end do
       end do
     else if( .NOT. Approx( BlkWgt(b,1), 1.0 ) ) then
       do k=1,nk
         do j=1,nj
-          call linija( b, BlkWgt(b,1), 1,j,k,ni,j,k)
+          call Distribute_Nodes( b, BlkWgt(b,1), 1,j,k,ni,j,k)
         end do
       end do
     else if( .NOT. Approx( BlkWgt(b,2), 1.0 ) ) then
       do k=1,nk
         do i=1,ni
-          call linija( b, BlkWgt(b,2), i,1,k,i,nj,k)
+          call Distribute_Nodes( b, BlkWgt(b,2), i,1,k,i,nj,k)
         end do
       end do
     else
@@ -506,4 +506,4 @@
 
   end do  !  n_b_cond
 
-  end subroutine Calc1
+  end subroutine Compute_Node_Coordinates

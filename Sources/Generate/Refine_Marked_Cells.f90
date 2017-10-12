@@ -1,19 +1,19 @@
-!======================================================================!
-  subroutine Refine(lev)
-!----------------------------------------------------------------------!
-!   Refine the marked cells.                                           !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Refine_Marked_Cells(lev)
+!------------------------------------------------------------------------------!
+!   Refine the marked cells.                                                   !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-!----------------------------------------------------------------------! 
+!------------------------------------------------------------------------------! 
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!---------------------------------[Parameters]---------------------------------!
   integer :: lev 
-!------------------------------[Calling]-------------------------------!
+!----------------------------------[Calling]-----------------------------------!
   logical :: IsTwin
-  integer :: WchNod
-!-------------------------------[Locals]-------------------------------!
+  integer :: Which_Node
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c, n_cells_old, c1, c2, c3, c4, c5, c6
   integer :: cr1, cr2, cr3, cr4, cr5, cr6, cr7, cr8
   integer :: n, n_nodes_old, n1, n2, n3, n4, n5, n6, n7, n8
@@ -22,27 +22,27 @@
   integer :: del   ! number of deleted nodes 
   integer :: nA, nA0, nA1, nA2, nB, nB0, nB1, nB2
   integer :: NN2, NN4, NN8
-!======================================================================!
-!                                                                      !
-!                               c6      c3                             !
-!                               |      /                               !
-!                         8-----|---------6                            !
-!                        /  cr8 |/  cr6  /|                            !
-!                       /-------+-------/ |                            !
-!                      /       /       /| |                            !
-!                     7-------+-------5 | |                            !
-!                     |       |       | |/|                            !
-!                c4---|  cr7  |  cr5  | +-----c2                       !
-!                     |       |       |/| |                            !
-!                     +-------+-------+ | 2                            !
-!                     |      /|       | |/                             !
-!                     |  cr3/ |  cr1  | /                              !
-!                     |    /  |       |/                               !
-!                     3---c5--+-------1                                !
-!                               |                                      !
-!                               c1                                     !
-!                                                                      !
-!----------------------------------------------------------------------!
+!==============================================================================!
+!                                                                              !
+!                               c6      c3                                     !
+!                               |      /                                       !
+!                         8-----|---------6                                    !
+!                        /  cr8 |/  cr6  /|                                    !
+!                       /-------+-------/ |                                    !
+!                      /       /       /| |                                    !
+!                     7-------+-------5 | |                                    !
+!                     |       |       | |/|                                    !
+!                c4---|  cr7  |  cr5  | +-----c2                               !
+!                     |       |       |/| |                                    !
+!                     +-------+-------+ | 2                                    !
+!                     |      /|       | |/                                     !
+!                     |  cr3/ |  cr1  | /                                      !
+!                     |    /  |       |/                                       !
+!                     3---c5--+-------1                                        !
+!                               |                                              !
+!                               c1                                             !
+!                                                                              !
+!------------------------------------------------------------------------------!
 
   write(*,*) 'Refine: Number of nodes: ', NN 
   write(*,*) '        Number of cells: ', NC 
@@ -53,11 +53,11 @@
   NN4 = 0
   NN8 = 0
 
-!================================!
-!                                !
-!  Najprije pobroji nove celije  !
-!                                !
-!================================!
+  !---------------------!
+  !                     !
+  !   Count new celss   !
+  !                     !
+  !---------------------!
   do c=1,n_cells_old
     if(CelMar(c)  ==  -1) then 
       NC = NC + 8
@@ -83,19 +83,16 @@
     n7=CellN(c,7)
     n8=CellN(c,8)
 
-!==========================!
-!                          !
-!     Usitnjene celije     !
-!                          !
-!==========================!
-    if(CelMar(c)   >  0) then  ! -> samo usitnjeni 
+    !-------------------!
+    !                   !
+    !   Refined cells   !
+    !                   !
+    !-------------------!
+    if(CelMar(c)   >  0) then  ! only refined
 
-!-------------------------!
-!                         !
-!     Najprije  sredi     !
-!     susjedne celije     !
-!                         !
-!-------------------------!
+      !------------------------------------!
+      !   Take care of neighboring cells   !
+      !------------------------------------!
       cr1=CelMar(c)-7
       cr2=CelMar(c)-6
       cr3=CelMar(c)-5
@@ -114,44 +111,49 @@
       material(cr7) = material(c) 
       material(cr8) = material(c) 
 
-!--------------------------------------------!
-!     Interne veze ne ovise o susjedima      !
-!--------------------------------------------!
+      !-----------------------------------------------!
+      !   Internal links do not depend on neighbors   !
+      !-----------------------------------------------!
 
-!----- 6
+      ! 6
       CellC(cr1,6) = cr5
       CellC(cr2,6) = cr6
       CellC(cr3,6) = cr7
       CellC(cr4,6) = cr8
-!----- 5
+
+      ! 5
       CellC(cr2,5) = cr1
       CellC(cr4,5) = cr3
       CellC(cr6,5) = cr5
       CellC(cr8,5) = cr7
-!----- 4
+
+      ! 4
       CellC(cr1,4) = cr3
       CellC(cr2,4) = cr4
       CellC(cr5,4) = cr7
       CellC(cr6,4) = cr8
-!----- 3
+
+      ! 3
       CellC(cr1,3) = cr2
       CellC(cr3,3) = cr4
       CellC(cr5,3) = cr6
       CellC(cr7,3) = cr8
-!----- 2
+
+      ! 2
       CellC(cr3,2) = cr1
       CellC(cr4,2) = cr2
       CellC(cr7,2) = cr5
       CellC(cr8,2) = cr6
-!----- 1
+
+      ! 1
       CellC(cr5,1) = cr1
       CellC(cr6,1) = cr2
       CellC(cr7,1) = cr3
       CellC(cr8,1) = cr4
 
-!-----------------------------!
-!     Level of refinement     !
-!-----------------------------!
+      !-------------------------!
+      !   Level of refinement   !
+      !-------------------------!
       level(cr1) = lev
       level(cr2) = lev
       level(cr3) = lev
@@ -161,91 +163,88 @@
       level(cr7) = lev
       level(cr8) = lev
 
-!-------------------------------------------------!         
-!     Vanjske veze ovise o topologiji susjeda     !
-!-------------------------------------------------!
-      if(CelMar(c1)  ==  0) then  ! -> susjed 1 neusitnjen
+      !----------------------------------------!         
+      !   External links depend on neighbors   !
+      !----------------------------------------!
+      if(CelMar(c1)  ==  0) then  ! neighbor 1 not refined
         CellC(cr1,1) = c1
         CellC(cr2,1) = c1
         CellC(cr3,1) = c1
         CellC(cr4,1) = c1
-      else                           ! -> susjed 1 usitnjen
-        CellC(cr1,1) = CelMar(c1) - 8 + WchNod(c1,n1)
-        CellC(cr2,1) = CelMar(c1) - 8 + WchNod(c1,n2)
-        CellC(cr3,1) = CelMar(c1) - 8 + WchNod(c1,n3)
-        CellC(cr4,1) = CelMar(c1) - 8 + WchNod(c1,n4)
+      else                        ! neighbor 1 refined
+        CellC(cr1,1) = CelMar(c1) - 8 + Which_Node(c1,n1)
+        CellC(cr2,1) = CelMar(c1) - 8 + Which_Node(c1,n2)
+        CellC(cr3,1) = CelMar(c1) - 8 + Which_Node(c1,n3)
+        CellC(cr4,1) = CelMar(c1) - 8 + Which_Node(c1,n4)
       endif           
 
-      if(CelMar(c2)  ==  0) then  ! -> susjed 2 neusitnjen
+      if(CelMar(c2)  ==  0) then  ! neighbor 2 not refined
         CellC(cr1,2) = c2
         CellC(cr2,2) = c2
         CellC(cr5,2) = c2
         CellC(cr6,2) = c2
-      else                           ! -> susjed 2 usitnjen
-        CellC(cr1,2) = CelMar(c2) - 8 + WchNod(c2, n1)
-        CellC(cr2,2) = CelMar(c2) - 8 + WchNod(c2, n2)
-        CellC(cr5,2) = CelMar(c2) - 8 + WchNod(c2, n5)
-        CellC(cr6,2) = CelMar(c2) - 8 + WchNod(c2, n6)
+      else                        ! neighbor 2 refined
+        CellC(cr1,2) = CelMar(c2) - 8 + Which_Node(c2, n1)
+        CellC(cr2,2) = CelMar(c2) - 8 + Which_Node(c2, n2)
+        CellC(cr5,2) = CelMar(c2) - 8 + Which_Node(c2, n5)
+        CellC(cr6,2) = CelMar(c2) - 8 + Which_Node(c2, n6)
       endif           
 
-      if(CelMar(c3)  ==  0) then  ! -> susjed 3 neusitnjen
+      if(CelMar(c3)  ==  0) then  ! neighbor 3 not refined
         CellC(cr2,3) = c3
         CellC(cr4,3) = c3
         CellC(cr6,3) = c3
         CellC(cr8,3) = c3
-      else                           ! -> susjed 3 usitnjen
-        CellC(cr2,3) = CelMar(c3) - 8 + WchNod(c3, n2)
-        CellC(cr4,3) = CelMar(c3) - 8 + WchNod(c3, n4)
-        CellC(cr6,3) = CelMar(c3) - 8 + WchNod(c3, n6)
-        CellC(cr8,3) = CelMar(c3) - 8 + WchNod(c3, n8)
+      else                        ! neighbor 3 refined
+        CellC(cr2,3) = CelMar(c3) - 8 + Which_Node(c3, n2)
+        CellC(cr4,3) = CelMar(c3) - 8 + Which_Node(c3, n4)
+        CellC(cr6,3) = CelMar(c3) - 8 + Which_Node(c3, n6)
+        CellC(cr8,3) = CelMar(c3) - 8 + Which_Node(c3, n8)
       endif           
 
-      if(CelMar(c4)  ==  0) then  ! -> susjed 4 neusitnjen
+      if(CelMar(c4)  ==  0) then  ! neighbor 4 not refine
         CellC(cr3,4) = c4
         CellC(cr4,4) = c4
         CellC(cr7,4) = c4
         CellC(cr8,4) = c4
-      else                           ! -> susjed 4 usitnjen
-        CellC(cr3,4) = CelMar(c4) - 8 + WchNod(c4, n3)
-        CellC(cr4,4) = CelMar(c4) - 8 + WchNod(c4, n4)
-        CellC(cr7,4) = CelMar(c4) - 8 + WchNod(c4, n7)
-        CellC(cr8,4) = CelMar(c4) - 8 + WchNod(c4, n8)
+      else                        ! neighbor 4 refine
+        CellC(cr3,4) = CelMar(c4) - 8 + Which_Node(c4, n3)
+        CellC(cr4,4) = CelMar(c4) - 8 + Which_Node(c4, n4)
+        CellC(cr7,4) = CelMar(c4) - 8 + Which_Node(c4, n7)
+        CellC(cr8,4) = CelMar(c4) - 8 + Which_Node(c4, n8)
       endif           
 
-      if(CelMar(c5)  ==  0) then  ! -> susjed 5 neusitnjen
+      if(CelMar(c5)  ==  0) then  ! neighbor 5 not refined
         CellC(cr1,5) = c5
         CellC(cr3,5) = c5
         CellC(cr5,5) = c5
         CellC(cr7,5) = c5
-      else                           ! -> susjed 5 usitnjen
-        CellC(cr1,5) = CelMar(c5) - 8 + WchNod(c5, n1)
-        CellC(cr3,5) = CelMar(c5) - 8 + WchNod(c5, n3)
-        CellC(cr5,5) = CelMar(c5) - 8 + WchNod(c5, n5)
-        CellC(cr7,5) = CelMar(c5) - 8 + WchNod(c5, n7)
+      else                        ! neighbor 5 refined
+        CellC(cr1,5) = CelMar(c5) - 8 + Which_Node(c5, n1)
+        CellC(cr3,5) = CelMar(c5) - 8 + Which_Node(c5, n3)
+        CellC(cr5,5) = CelMar(c5) - 8 + Which_Node(c5, n5)
+        CellC(cr7,5) = CelMar(c5) - 8 + Which_Node(c5, n7)
       endif
 
-      if(CelMar(c6)  ==  0) then  ! -> susjed 6 neusitnjen
+      if(CelMar(c6)  ==  0) then  ! neighbor 6 not refined
         CellC(cr5,6) = c6
         CellC(cr6,6) = c6
         CellC(cr7,6) = c6
         CellC(cr8,6) = c6
-      else                           ! -> susjed 6 usitnjen
-        CellC(cr5,6) = CelMar(c6) - 8 + WchNod(c6, n5)
-        CellC(cr6,6) = CelMar(c6) - 8 + WchNod(c6, n6)
-        CellC(cr7,6) = CelMar(c6) - 8 + WchNod(c6, n7)
-        CellC(cr8,6) = CelMar(c6) - 8 + WchNod(c6, n8)
+      else                        ! neighbor 6 refined
+        CellC(cr5,6) = CelMar(c6) - 8 + Which_Node(c6, n5)
+        CellC(cr6,6) = CelMar(c6) - 8 + Which_Node(c6, n6)
+        CellC(cr7,6) = CelMar(c6) - 8 + Which_Node(c6, n7)
+        CellC(cr8,6) = CelMar(c6) - 8 + Which_Node(c6, n8)
       endif           
 
-!-----------------------!
-!                       !
-!      Onda odredi      !
-!     nove  cvorove     !
-!                       !
-!-----------------------!
+    !------------------------!
+    !   Take care of nodes   !
+    !------------------------!
 
-!-----------------------------------!
-!     Prvo cvorove na bridovima     !
-!-----------------------------------!
+    !------------------------!
+    !   Nodes on the edges   !
+    !------------------------!
     n12 = 0     !
     n13 = 0     !         8-----n68-----6
     n24 = 0     !        /|            /|
@@ -259,7 +258,7 @@
     n68 = 0     !     |/            |/
     n78 = 0     !     3-----n13-----1
 
-!--- n12 ---!
+    ! n12
     do n=1,NN2
       if( ( NodeN2(n,1) == n1 .and. NodeN2(n,2) == n2 ) .or.  &
           ( NodeN2(n,1) == n2 .and. NodeN2(n,2) == n1) ) then
@@ -278,7 +277,7 @@
       z_node(n12) = 0.5 * (z_node(n1)+z_node(n2))
     end if 
 
-!--- n13 ---!
+    ! n13
     do n=1,NN2
       if( ( NodeN2(n,1) == n1 .and. NodeN2(n,2) == n3 ) .or.  &
           ( NodeN2(n,1) == n3 .and. NodeN2(n,2) == n1) ) then
@@ -297,7 +296,7 @@
       z_node(n13) = 0.5 * (z_node(n1)+z_node(n3))
     end if 
 
-!--- n24 ---!
+    ! n24
     do n=1,NN2
       if( ( NodeN2(n,1) == n2 .and. NodeN2(n,2) == n4 ) .or.  &
           ( NodeN2(n,1) == n4 .and. NodeN2(n,2) == n2) ) then
@@ -316,7 +315,7 @@
       z_node(n24) = 0.5 * (z_node(n2)+z_node(n4))
     end if 
 
-!--- n34 ---!
+    ! n34
     do n=1,NN2
       if( ( NodeN2(n,1) == n3 .and. NodeN2(n,2) == n4 ) .or.  &
           ( NodeN2(n,1) == n4 .and. NodeN2(n,2) == n3) ) then
@@ -335,7 +334,7 @@
       z_node(n34) = 0.5 * (z_node(n3)+z_node(n4))
     end if 
 
-!--- n15 ---!
+    ! n15
     do n=1,NN2
       if( ( NodeN2(n,1) == n1 .and. NodeN2(n,2) == n5 ) .or.  &
           ( NodeN2(n,1) == n5 .and. NodeN2(n,2) == n1) ) then
@@ -354,7 +353,7 @@
       z_node(n15) = 0.5 * (z_node(n1)+z_node(n5))
     end if 
 
-!--- n26 ---!
+    ! n26
     do n=1,NN2
       if( ( NodeN2(n,1) == n2 .and. NodeN2(n,2) == n6 ) .or.  &
           ( NodeN2(n,1) == n6 .and. NodeN2(n,2) == n2) ) then
@@ -373,7 +372,7 @@
       z_node(n26) = 0.5 * (z_node(n2)+z_node(n6))
     end if 
 
-!--- n37 ---!
+    ! n37
     do n=1,NN2
       if( ( NodeN2(n,1) == n3 .and. NodeN2(n,2) == n7 ) .or.  &
           ( NodeN2(n,1) == n7 .and. NodeN2(n,2) == n3) ) then
@@ -392,7 +391,7 @@
       z_node(n37) = 0.5 * (z_node(n3)+z_node(n7))
     end if 
 
-!--- n48 ---!
+    ! n48
     do n=1,NN2
       if( ( NodeN2(n,1) == n4 .and. NodeN2(n,2) == n8 ) .or.  &
           ( NodeN2(n,1) == n8 .and. NodeN2(n,2) == n4) ) then
@@ -411,7 +410,7 @@
       z_node(n48) = 0.5 * (z_node(n4)+z_node(n8))
     end if 
 
-!--- n56 ---!
+    ! n56
     do n=1,NN2
       if( ( NodeN2(n,1) == n5 .and. NodeN2(n,2) == n6 ) .or.  &
           ( NodeN2(n,1) == n6 .and. NodeN2(n,2) == n5) ) then
@@ -430,7 +429,7 @@
       z_node(n56) = 0.5 * (z_node(n5)+z_node(n6))
     end if 
 
-!--- n57 ---!
+    ! n57
     do n=1,NN2
       if( ( NodeN2(n,1) == n5 .and. NodeN2(n,2) == n7 ) .or.  &
           ( NodeN2(n,1) == n7 .and. NodeN2(n,2) == n5) ) then
@@ -449,7 +448,7 @@
       z_node(n57) = 0.5 * (z_node(n5)+z_node(n7))
     end if 
 
-!--- n68 ---!
+    ! n68 
     do n=1,NN2
       if( ( NodeN2(n,1) == n6 .and. NodeN2(n,2) == n8 ) .or.  &
           ( NodeN2(n,1) == n8 .and. NodeN2(n,2) == n6) ) then
@@ -468,7 +467,7 @@
       z_node(n68) = 0.5 * (z_node(n6)+z_node(n8))
     end if 
 
-!--- n78 ---!
+    ! n78
     do n=1,NN2
       if( ( NodeN2(n,1) == n7 .and. NodeN2(n,2) == n8 ) .or.  &
           ( NodeN2(n,1) == n8 .and. NodeN2(n,2) == n7) ) then
@@ -487,17 +486,17 @@
       z_node(n78) = 0.5 * (z_node(n7)+z_node(n8))
     end if 
 
-!------------------------------------!
-!     Onda cvorove na stranicama     !
-!------------------------------------!
-  nF1 = 0
-  nF2 = 0
-  nF3 = 0
-  nF4 = 0
-  nF5 = 0
-  nF6 = 0
+    !-------------------------!
+    !   Then nodes on faces   !
+    !-------------------------!
+    nF1 = 0
+    nF2 = 0
+    nF3 = 0
+    nF4 = 0
+    nF5 = 0
+    nF6 = 0
 
-!--- nF1 ---!
+    ! nF1
     do n=1,NN4
       if( ( NodeN4(n,1) == n1 .and. NodeN4(n,4) == n4 ) .or.  &
           ( NodeN4(n,1) == n4 .and. NodeN4(n,4) == n1 ) .or.  &
@@ -520,7 +519,7 @@
       z_node(nF1) = 0.25 * (z_node(n1)+z_node(n2)+z_node(n3)+z_node(n4))
     end if 
 
-!--- nF2 ---!
+    ! nF2
     do n=1,NN4
       if( ( NodeN4(n,1) == n1 .and. NodeN4(n,4) == n6 ) .or.  &
           ( NodeN4(n,1) == n6 .and. NodeN4(n,4) == n1 ) .or.  &
@@ -543,7 +542,7 @@
       z_node(nF2) = 0.25 * (z_node(n1)+z_node(n2)+z_node(n5)+z_node(n6))
     end if 
 
-!--- nF3 ---!
+    ! nF3
     do n=1,NN4
       if( ( NodeN4(n,1) == n2 .and. NodeN4(n,4) == n8 ) .or.  &
           ( NodeN4(n,1) == n8 .and. NodeN4(n,4) == n2 ) .or.  &
@@ -566,7 +565,7 @@
       z_node(nF3) = 0.25 * (z_node(n2)+z_node(n4)+z_node(n6)+z_node(n8))
     end if 
 
-!--- nF4 ---!
+    ! nF4
     do n=1,NN4
       if( ( NodeN4(n,1) == n3 .and. NodeN4(n,4) == n8 ) .or.  &
           ( NodeN4(n,1) == n8 .and. NodeN4(n,4) == n3 ) .or.  &
@@ -589,7 +588,7 @@
       z_node(nF4) = 0.25 * (z_node(n3)+z_node(n4)+z_node(n7)+z_node(n8))
     end if 
 
-!--- nF5 ---!
+    ! nF5
     do n=1,NN4
       if( ( NodeN4(n,1) == n1 .and. NodeN4(n,4) == n7 ) .or.  &
           ( NodeN4(n,1) == n7 .and. NodeN4(n,4) == n1 ) .or.  &
@@ -612,7 +611,7 @@
       z_node(nF5) = 0.25 * (z_node(n1)+z_node(n3)+z_node(n5)+z_node(n7))
     end if 
 
-!--- nF6 ---!
+    ! nF6
     do n=1,NN4
       if( ( NodeN4(n,1) == n5 .and. NodeN4(n,4) == n8 ) .or.  &
           ( NodeN4(n,1) == n8 .and. NodeN4(n,4) == n5 ) .or.  &
@@ -635,9 +634,9 @@
       z_node(nF6) = 0.25 * (z_node(n5)+z_node(n6)+z_node(n7)+z_node(n8))
     end if 
 
-!---------------------------------!
-!     Na kraju cvor u sredini     !
-!---------------------------------!
+    !----------------------------------------!
+    !   Eventually, the node in the middle   !
+    !----------------------------------------!
     NN8 = NN8 + 1
     NN  = NN + 1
     n0  = NN
@@ -657,14 +656,11 @@
     z_node(n0) = 0.125*(z_node(n1)+z_node(n2)+z_node(n3)+z_node(n4)+  &
                         z_node(n5)+z_node(n6)+z_node(n7)+z_node(n8))
 
-!-------------------------!
-!                         !
-!     Postavi cvorove     !
-!     novim  celijama     !
-!                         !
-!-------------------------!
+    !----------------------------!
+    !   Set nodes to new cells   !
+    !----------------------------!
 
-!----- cr1 -!
+    ! cr1 -!
     CellN(cr1,1) = n1
     CellN(cr1,2) = n12
     CellN(cr1,3) = n13
@@ -674,7 +670,7 @@
     CellN(cr1,7) = nF5
     CellN(cr1,8) = n0 
 
-!----- cr2 -!
+    ! cr2 -!
     CellN(cr2,1) = n12
     CellN(cr2,2) = n2 
     CellN(cr2,3) = nF1
@@ -684,7 +680,7 @@
     CellN(cr2,7) = n0 
     CellN(cr2,8) = nF3
 
-!----- cr3 -!
+    ! cr3 -!
     CellN(cr3,1) = n13
     CellN(cr3,2) = nF1
     CellN(cr3,3) = n3 
@@ -694,7 +690,7 @@
     CellN(cr3,7) = n37
     CellN(cr3,8) = nF4
 
-!----- cr4 -!
+    ! cr4 -!
     CellN(cr4,1) = nF1
     CellN(cr4,2) = n24
     CellN(cr4,3) = n34
@@ -704,7 +700,7 @@
     CellN(cr4,7) = nF4
     CellN(cr4,8) = n48
 
-!----- cr5 -!
+    ! cr5 -!
     CellN(cr5,1) = n15
     CellN(cr5,2) = nF2
     CellN(cr5,3) = nF5
@@ -714,7 +710,7 @@
     CellN(cr5,7) = n57
     CellN(cr5,8) = nF6
 
-!----- cr6 -!
+    ! cr6 -!
     CellN(cr6,1) = nF2
     CellN(cr6,2) = n26
     CellN(cr6,3) = n0 
@@ -724,7 +720,7 @@
     CellN(cr6,7) = nF6
     CellN(cr6,8) = n68
 
-!----- cr7 -!
+    ! cr7 -!
     CellN(cr7,1) = nF5
     CellN(cr7,2) = n0 
     CellN(cr7,3) = n37
@@ -734,7 +730,7 @@
     CellN(cr7,7) = n7 
     CellN(cr7,8) = n78
 
-!----- cr8 -!
+    ! cr8 -!
     CellN(cr8,1) = n0 
     CellN(cr8,2) = nF3
     CellN(cr8,3) = nF4
@@ -744,53 +740,53 @@
     CellN(cr8,7) = n78
     CellN(cr8,8) = n8 
 
-!============================!
-!                            !
-!     Neusitnjene celije     !
-!                            !
-!============================!
+    !-----------------------!
+    !                       !
+    !   Non-refined cells   !
+    !                       !
+    !-----------------------!
     else
 
-      if(CelMar(c1)   >  0) then  ! -> susjed 1 usitnjen
-        CellC(c, 1) = CelMar(c1) - 8 + WchNod(c1,n1)
-        CellC(c, 7) = CelMar(c1) - 8 + WchNod(c1,n2)
-        CellC(c,13) = CelMar(c1) - 8 + WchNod(c1,n3)
-        CellC(c,19) = CelMar(c1) - 8 + WchNod(c1,n4)
+      if(CelMar(c1)   >  0) then  ! neighbor 1 refined
+        CellC(c, 1) = CelMar(c1) - 8 + Which_Node(c1,n1)
+        CellC(c, 7) = CelMar(c1) - 8 + Which_Node(c1,n2)
+        CellC(c,13) = CelMar(c1) - 8 + Which_Node(c1,n3)
+        CellC(c,19) = CelMar(c1) - 8 + Which_Node(c1,n4)
       endif           
 
-      if(CelMar(c2)   >  0) then  ! -> susjed 2 usitnjen
-        CellC(c, 2) = CelMar(c2) - 8 + WchNod(c2, n1)
-        CellC(c, 8) = CelMar(c2) - 8 + WchNod(c2, n2)
-        CellC(c,14) = CelMar(c2) - 8 + WchNod(c2, n5)
-        CellC(c,20) = CelMar(c2) - 8 + WchNod(c2, n6)
+      if(CelMar(c2)   >  0) then  ! neighbor 2 refined
+        CellC(c, 2) = CelMar(c2) - 8 + Which_Node(c2, n1)
+        CellC(c, 8) = CelMar(c2) - 8 + Which_Node(c2, n2)
+        CellC(c,14) = CelMar(c2) - 8 + Which_Node(c2, n5)
+        CellC(c,20) = CelMar(c2) - 8 + Which_Node(c2, n6)
       endif           
 
-      if(CelMar(c3)   >  0) then  ! -> susjed 3 usitnjen
-        CellC(c, 3) = CelMar(c3) - 8 + WchNod(c3, n2)
-        CellC(c, 9) = CelMar(c3) - 8 + WchNod(c3, n4)
-        CellC(c,15) = CelMar(c3) - 8 + WchNod(c3, n6)
-        CellC(c,21) = CelMar(c3) - 8 + WchNod(c3, n8)
+      if(CelMar(c3)   >  0) then  ! neighbor 3 refined
+        CellC(c, 3) = CelMar(c3) - 8 + Which_Node(c3, n2)
+        CellC(c, 9) = CelMar(c3) - 8 + Which_Node(c3, n4)
+        CellC(c,15) = CelMar(c3) - 8 + Which_Node(c3, n6)
+        CellC(c,21) = CelMar(c3) - 8 + Which_Node(c3, n8)
       endif           
 
-      if(CelMar(c4)   >  0) then  ! -> susjed 4 usitnjen
-        CellC(c, 4) = CelMar(c4) - 8 + WchNod(c4, n3)
-        CellC(c,10) = CelMar(c4) - 8 + WchNod(c4, n4)
-        CellC(c,16) = CelMar(c4) - 8 + WchNod(c4, n7)
-        CellC(c,22) = CelMar(c4) - 8 + WchNod(c4, n8)
+      if(CelMar(c4)   >  0) then  ! neighbor 4 refined
+        CellC(c, 4) = CelMar(c4) - 8 + Which_Node(c4, n3)
+        CellC(c,10) = CelMar(c4) - 8 + Which_Node(c4, n4)
+        CellC(c,16) = CelMar(c4) - 8 + Which_Node(c4, n7)
+        CellC(c,22) = CelMar(c4) - 8 + Which_Node(c4, n8)
       endif           
 
-      if(CelMar(c5)   >  0) then  ! -> susjed 5 usitnjen
-        CellC(c, 5) = CelMar(c5) - 8 + WchNod(c5, n1)
-        CellC(c,11) = CelMar(c5) - 8 + WchNod(c5, n3)
-        CellC(c,17) = CelMar(c5) - 8 + WchNod(c5, n5)
-        CellC(c,23) = CelMar(c5) - 8 + WchNod(c5, n7)
+      if(CelMar(c5)   >  0) then  ! neighbor 5 refined
+        CellC(c, 5) = CelMar(c5) - 8 + Which_Node(c5, n1)
+        CellC(c,11) = CelMar(c5) - 8 + Which_Node(c5, n3)
+        CellC(c,17) = CelMar(c5) - 8 + Which_Node(c5, n5)
+        CellC(c,23) = CelMar(c5) - 8 + Which_Node(c5, n7)
       endif
 
-      if(CelMar(c6)   >  0) then  ! -> susjed 6 usitnjen
-        CellC(c, 6) = CelMar(c6) - 8 + WchNod(c6, n5)
-        CellC(c,12) = CelMar(c6) - 8 + WchNod(c6, n6)
-        CellC(c,18) = CelMar(c6) - 8 + WchNod(c6, n7)
-        CellC(c,24) = CelMar(c6) - 8 + WchNod(c6, n8)
+      if(CelMar(c6)   >  0) then  ! neighbor 6 refined
+        CellC(c, 6) = CelMar(c6) - 8 + Which_Node(c6, n5)
+        CellC(c,12) = CelMar(c6) - 8 + Which_Node(c6, n6)
+        CellC(c,18) = CelMar(c6) - 8 + Which_Node(c6, n7)
+        CellC(c,24) = CelMar(c6) - 8 + Which_Node(c6, n8)
       endif           
 
     end if   
@@ -799,11 +795,11 @@
   write(*,*) 'Number of nodes after the refinement: ', NN 
   write(*,*) 'Number of cells after the refinement: ', NC 
 
-!==============================================!
-!                                              !
-!     Connect the new twins, if they exist     !
-!                                              !
-!==============================================!  
+  !------------------------------------------!
+  !                                          !
+  !   Connect the new twins, if they exist   !
+  !                                          !
+  !------------------------------------------!  
 
   do nA=1,NN2
     nA0=NodeN2(nA,0)
@@ -861,13 +857,13 @@
     end if
   end do
 
-!====================================!
-!                                    !
-!     Delete the redundant cells     !
-!                                    !
-!====================================!  
+  !----------------------------!
+  !                            !
+  !   Delete redundant cells   !
+  !                            !
+  !----------------------------!  
 
-!----- Initialize the new numbers for the cells
+  ! Initialize the new numbers for the cells
   do c=-NbC,NC
     NewN(c)=c
   end do
@@ -885,13 +881,14 @@
 
   do c=1,NC
     if(NewN(c) /= -1) then
-!----- update the cell numbers. Watch out ! The numbers you are
-!----- updating are old, so ...
+
+      ! Update the cell numbers. Watch out ! The numbers you are
+      ! updating are old, so double indexing is needed
       do n=1,24  ! n is neighbour now
         CellC( NewN(c),n ) = NewN(CellC( c,n ))
       end do
 
-!----- update the node numbers
+      ! Update the node numbers
       do n=1,8   ! n is node now
         CellN( NewN(c),n ) = CellN( c,n ) 
       end do
@@ -901,7 +898,7 @@
     end if
   end do
 
-  do c=NC-del+1, MAXN   ! da obrise stare podatke
+  do c=NC-del+1, MAXN   ! erase old data
     do n=1,24           ! n is neighbour now
       CellC(c,n ) = 0
     end do
@@ -911,4 +908,4 @@
 
   write(*,*) 'Number of cells after the renumeration: ', NC 
 
-  end subroutine Refine
+  end subroutine Refine_Marked_Cells

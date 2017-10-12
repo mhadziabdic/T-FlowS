@@ -11,7 +11,7 @@
 !---------------------------------[Parameters]---------------------------------!
   integer :: lev 
 !----------------------------------[Calling]-----------------------------------!
-  logical :: IsTwin
+  logical :: Are_Nodes_Twins
   integer :: Which_Node
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, n_cells_old, c1, c2, c3, c4, c5, c6
@@ -815,9 +815,9 @@
 
         if( (TwinN(nB1,0) /= 0).and.(TwinN(nB2,0) /= 0) ) then
 
-          if( (IsTwin(nA1,nB1) .and. IsTwin(nA2,nB2)) .or.          &
-              (IsTwin(nA1,nB2) .and. IsTwin(nA2,nB1))  ) then
-            if (.not. IsTwin(nA0,nB0)) then
+          if( (Are_Nodes_Twins(nA1,nB1) .and. Are_Nodes_Twins(nA2,nB2)) .or.          &
+              (Are_Nodes_Twins(nA1,nB2) .and. Are_Nodes_Twins(nA2,nB1))  ) then
+            if (.not. Are_Nodes_Twins(nA0,nB0)) then
               TwinN(nA0,0)=TwinN(nA0,0)+1
               TwinN(nA0,TwinN(nA0,0))=nB0
               TwinN(nB0,0)=TwinN(nB0,0)+1
@@ -843,9 +843,9 @@
 
         if( (TwinN(nB1,0) /= 0).and.(TwinN(nB2,0) /= 0) ) then
 
-          if( (IsTwin(nA1,nB1) .and. IsTwin(nA2,nB2)) .or.          &
-              (IsTwin(nA1,nB2) .and. IsTwin(nA2,nB1))  ) then
-            if (.not. IsTwin(nA0,nB0)) then
+          if( (Are_Nodes_Twins(nA1,nB1) .and. Are_Nodes_Twins(nA2,nB2)) .or.          &
+              (Are_Nodes_Twins(nA1,nB2) .and. Are_Nodes_Twins(nA2,nB1))  ) then
+            if (.not. Are_Nodes_Twins(nA0,nB0)) then
               TwinN(nA0,0)=TwinN(nA0,0)+1
               TwinN(nA0,TwinN(nA0,0))=nB0
               TwinN(nB0,0)=TwinN(nB0,0)+1

@@ -85,7 +85,7 @@
 
   call Load_Domain
   call Compute_Node_Coordinates
-  call Fuzion
+  call Connect_Blocks
   call PeriBC
   call CopyBC
 

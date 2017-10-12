@@ -1,14 +1,14 @@
-!======================================================================!
+!==============================================================================!
   subroutine Smooth
-!----------------------------------------------------------------------!
-!   Smooths the grid lines by a Laplacian-like algorythm.              !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Smooths the grid lines by a Laplacian-like algorythm.                      !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-!----------------------------------------------------------------------! 
+!------------------------------------------------------------------------------! 
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer              :: c, n, i, j, k, m
   real                 :: x_new_tmp, y_new_tmp, z_new_tmp    
   real                 :: x_max, y_max, z_max, x_min, y_min, z_min 
@@ -16,9 +16,9 @@
   integer              :: reg
   real, allocatable    :: x_node_new(:), y_node_new(:), z_node_new(:) 
   integer, allocatable :: node_to_nodes(:,:)
-!======================================================================!
+!==============================================================================!
 
-!---- allocate memory for additional arrays
+  ! Allocate memory for additional arrays
   allocate(x_node_new(MAXN)); x_node_new=0
   allocate(y_node_new(MAXN)); y_node_new=0
   allocate(z_node_new(MAXN)); z_node_new=0
@@ -45,9 +45,9 @@
     z_min=min(z_node(n),z_min) 
   end do 
 
-!---------------------------!
-!     Connect the nodes     !
-!---------------------------!
+  !-----------------------!
+  !   Connect the nodes   !
+  !-----------------------!
   do c=1,Nc            ! through cells
     do i=1,8           ! through nodes of a cell 
       n = CellN(c,i)   ! first cell
@@ -64,9 +64,9 @@
     end do
   end do 
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     Browse through regions     !
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
+  !----------------------------!
+  !   Browse through regions   !
+  !----------------------------!
   do reg=1,n_smoothing_regions
     if( ( .not. smooth_in_x(reg) ) .and.  &
         ( .not. smooth_in_y(reg) ) .and.  &
@@ -87,21 +87,17 @@
     end if
   end do
 
-!->>> do n=1,Nn
-!->>>   write(*,*) '=>', n, node_to_nodes(n,0)
-!->>>   write(*,*) (node_to_nodes(n,i), i=1,node_to_nodes(n,0) )
-!->>> end do
-
-!-------------------------!
-!     Smooth the grid     !
-!-------------------------!
+  !---------------------!
+  !   Smooth the grid   !
+  !---------------------!
   do reg=1,n_smoothing_regions
     write(*,*) 'Now smoothing region ',reg,' with:',              &
                 smooth_iters(reg), ' iterations.'
 
     do j=1,smooth_iters(reg)         
 
-!---- calculate new coordinates using the old values (x_node(),y_node(),z_node())
+      ! Calculate new coordinates using the 
+      ! old values (x_node(),y_node(),z_node())
       do n=1,Nn
         if(node_to_nodes(n,0)   >  0) then
           x_new_tmp=0.0
@@ -127,7 +123,7 @@
         end if
       end do
 
-!---- update coordinates
+      ! Update coordinates
       do n=1,Nn
         if(node_to_nodes(n,0)   >  0) then
 

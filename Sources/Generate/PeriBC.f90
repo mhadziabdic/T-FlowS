@@ -9,7 +9,7 @@
 !----------------------------------------------------------------------! 
   implicit none
 !------------------------------[Calling]-------------------------------!
-  logical :: IsTwin
+  logical :: Are_Nodes_Twins
 !-------------------------------[Locals]-------------------------------!
   integer :: i, j, n, p                      ! counters
   integer :: b1, b2                          ! block 1 and 2
@@ -31,7 +31,6 @@
   do n=1,MAXN
     TwinN(n,0) = 0
   end do
-  
 
 !---------------------------------------------------------!
 !     Search through all block and all of their faces     !
@@ -92,9 +91,6 @@
               end do
 
                write(6, *) 'Periodicity between:', b1, b2
-!>>>>          write(6, '(2I2)') f1, f2
-!>>>>          write(6, '(4I5)') l11, l12, l13, l14
-!>>>>          write(6, '(4I5)') l21, l22, l23, l24
 
 !----- direction ig, block 1
               if((l14-l11) == +1) then
@@ -207,20 +203,6 @@
               if(f2 == 5) trans2(1,1)=1
               if(f2 == 6) trans2(3,1)=block_resolutions(b2,3)-1
 
-!>>>> ispisi to sta si dobio za provjeru                  
-!>>>>             write(6, *) '   C   ig   jg'
-!>>>>             do i=1,3
-!>>>>               write(6, '(3I5)')  &
-!>>>>                     trans1(i,1), trans1(i,2), trans1(i,3)
-!>>>>             end do
-!>>>>
-!>>>>             write(6, *) '   C   ig   jg'
-!>>>>             do i=1,3
-!>>>>               write(6, '(3I5)')  &
-!>>>>                     trans2(i,1), trans2(i,2), trans2(i,3)
-!>>>>             end do
-
-
 !----- finally conect the two periodic boundaries
               do jg=1,njg-1              ! through volumes only
                 do ig=1,nig-1            ! through volumes only
@@ -278,7 +260,7 @@
 
 !----- check if they are already connected
                   do n=1, TwinN(n1,0)
-                    if(IsTwin(n1,n2)) goto 10
+                    if(Are_Nodes_Twins(n1,n2)) goto 10
                   end do
 
 !----- if they were not, connect them

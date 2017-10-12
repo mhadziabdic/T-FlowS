@@ -47,8 +47,6 @@
   !-----------!
   !   Cells   !
   !-----------!
-  write(9,*) 'nodes', NNsub
-
   write(9,*) 'cells', NCsub
   do c=1,NC
     if(NewC(c) /= 0) then

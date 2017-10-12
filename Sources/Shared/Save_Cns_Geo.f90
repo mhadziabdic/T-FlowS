@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine GeoSav(sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub)
+  subroutine Save_Cns_Geo(sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub)
 !------------------------------------------------------------------------------!
-! Writes: NAME.cns, NAME.geo                                                   !
+!   Writes: name.cns, name.geo                                                 !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
@@ -16,7 +16,7 @@
   integer, allocatable :: iwork(:,:)
   real, allocatable    :: work(:)
 !==============================================================================!
-!   The files NAME.cns and NAME.geo should merge into one file in some         !
+!   The files name.cns and name.geo should merge into one file in some         !
 !   of the future releases.                                                    !
 !                                                                              !
 !   sub    - subdomain number                                                  !
@@ -35,7 +35,7 @@
   !                      !
   !----------------------!
   call NamFil( sub, name_out, '.cns', len_trim('.cns') )
-  open(9, FILE=name_out,FORM='UNFORMATTED')
+  open(9, FILE=name_out,form='unformatted')
   write(6, *) 'Now creating the file:', name_out
 
   !-----------------------------------------------!
@@ -162,7 +162,7 @@
   !                      !
   !----------------------!
   call NamFil( sub, name_out, '.geo', len_trim('.geo') )
-  open(9, FILE=name_out, FORM='UNFORMATTED')
+  open(9, FILE=name_out, form='unformatted')
   write(6, *) 'Now creating the file:', name_out
 
   !---------------------------------!
@@ -314,4 +314,4 @@
   deallocate (iwork)
   deallocate (work)
 
-  end subroutine GeoSav
+  end subroutine Save_Cns_Geo

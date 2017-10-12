@@ -1,33 +1,31 @@
-!======================================================================!
-  subroutine GenLoa
-!----------------------------------------------------------------------!
-! Reads: NAME.d                                                        !
-! ~~~~~~                                                               !
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Load_Domain
+!------------------------------------------------------------------------------!
+!   Reads: name.d                                                              !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
   use par_mod
-!----------------------------------------------------------------------! 
+!------------------------------------------------------------------------------! 
   implicit none
-!------------------------------[Calling]-------------------------------!
-  real :: TetVol   
-!-------------------------------[Locals]-------------------------------!
-  integer   :: b, i, l, s, fc, n, n1,n2,n3,n4
-  integer   :: n_faces_check, n_nodes_check
-  integer   :: ni, nj, nk
-  integer   :: dum
-  character :: domain_name*80
-  character :: answer*12 
-  real      :: xt(8), yt(8), zt(8)
-
-  integer   :: face_nodes(6,4)
-  integer   :: n_points
-!======================================================================!
+!----------------------------------[Calling]-----------------------------------!
+  real :: Tet_Volume   
+!-----------------------------------[Locals]-----------------------------------!
+  integer           :: b, i, l, s, fc, n, n1,n2,n3,n4
+  integer           :: n_faces_check, n_nodes_check
+  integer           :: ni, nj, nk
+  integer           :: dum
+  character(len=80) :: domain_name
+  character(len=12) :: answer
+  real              :: xt(8), yt(8), zt(8)
+  integer           :: face_nodes(6,4)
+  integer           :: n_points
+!==============================================================================!
   data face_nodes / 1, 1, 2, 4, 3, 5,                               &
                     2, 5, 6, 8, 7, 7,                               &
                     4, 6, 8, 7, 5, 8,                               &
                     3, 2, 4, 3, 1, 6  /
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
 
   write(6,'(A41)') '# Input problem name: (without extension)'
   call ReadC(5,inp,tn,ts,te) 
@@ -38,23 +36,21 @@
   write(6, '(A24,A)') '# Now reading the file: ', domain_name
   open(9, FILE=domain_name)
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     Max. number of nodes (cells), boundary faces and cell faces     ! 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+  !-----------------------------------------------------------------!
+  !   Max. number of nodes (cells), boundary faces and cell faces   ! 
+  !-----------------------------------------------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) MAXN, MAXB, MAXS  
 
-!/////////////////////////!
-!     Allocate memory     !
-!/////////////////////////!
-
+  !---------------------!
+  !   Allocate memory   !
+  !---------------------!
   write(6,'(A25)')       '# Allocating memory for: ' 
   write(6,'(A1,I8,A16)') '#', MAXN, ' nodes and cells' 
   write(6,'(A1,I8,A15)') '#', MAXB, ' boundary cells'         
   write(6,'(A1,I8,A11)') '#', MAXS, ' cell faces' 
 
-!---- variables declared in all_mod.h90:
-!---- (these are stored in .geo)
+  ! Variables declared in all_mod.h90:
   allocate (xc(-MAXB:MAXN)); xc=0.0
   allocate (yc(-MAXB:MAXN)); yc=0.0
   allocate (zc(-MAXB:MAXN)); zc=0.0
@@ -73,7 +69,7 @@
   allocate (WallDs(MAXN)); WallDs=0.0
   allocate (f(MAXS)); f=0.0
 
-!---- ()
+  !
   allocate (material(-MAXB:MAXN));  material=0
   allocate (SideC(0:2,MAXS)); SideC   =0
 
@@ -82,7 +78,7 @@
 
   allocate (BCmark(-MAXB-1:-1)); BCmark=0;
 
-!---- variables declared in gen_mod.h90:
+  ! Variables declared in gen_mod.h90:
   allocate (x_node(MAXN));     x_node=0 
   allocate (y_node(MAXN));     y_node=0
   allocate (z_node(MAXN));     z_node=0
@@ -109,7 +105,7 @@
 
   allocate (level(MAXN)); level=0
 
-!---- variables declared in pro_mod.h90:
+  ! Variables declared in pro_mod.h90:
   allocate (proces(MAXN)); proces=0
   allocate (BuSeIn(MAXS)); BuSeIn=0
   allocate (BuReIn(MAXS)); BuReIn=0
@@ -117,9 +113,9 @@
 
   write(6,'(A26)') '# Allocation successfull !'
 
-!////////////////////////!
-!     Initialization     !
-!////////////////////////!
+  !--------------------!
+  !   Initialization   !
+  !--------------------!
   do i=1,120 
     do n=1,3
       BlkWgt(i,n) = 1.0
@@ -127,9 +123,9 @@
     end do
   end do
 
-!>>>>>>>>>>>>>>>>>!
-!     Corners     !
-!>>>>>>>>>>>>>>>>>!
+  !-------------!
+  !   Corners   !
+  !-------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_points  ! number of points
 
@@ -142,9 +138,9 @@
     read(inp(ts(2):te(4)),*) x_point(i), y_point(i), z_point(i)
   end do
 
-!>>>>>>>>>>>>>>>>!
-!     Blocks     !
-!>>>>>>>>>>>>>>>>!
+  !------------!
+  !   Blocks   !
+  !------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) Nbloc  ! number of blocks 
 
@@ -169,34 +165,33 @@
          block_points(b, 5), block_points(b, 6),  &
          block_points(b, 7), block_points(b, 8)
 
-!-------------------------------!
-!     Check if the block is     ! 
-!       properly oriented       !
-!-------------------------------!
+    !---------------------------!
+    !   Check if the block is   ! 
+    !     properly oriented     !
+    !---------------------------!
     do n=1,8
       xt(n)=x_point(block_points(b, n))
       yt(n)=y_point(block_points(b, n))
       zt(n)=z_point(block_points(b, n))
-!->>>     write(6,'(3F8.4)') xt(n),yt(n),zt(n)
     end do
 
-    if(tetvol( xt(2),yt(2),zt(2), xt(5),yt(5),zt(5),  &
-               xt(3),yt(3),zt(3), xt(1),yt(1),zt(1) )  < 0) then
+    if(Tet_Volume( xt(2),yt(2),zt(2), xt(5),yt(5),zt(5),  &
+                   xt(3),yt(3),zt(3), xt(1),yt(1),zt(1) )  < 0) then
       block_points(b,0)=-1            !  It's nor properly oriented
-      call swapi(block_points(b,2),block_points(b,3))
-      call swapi(block_points(b,6),block_points(b,7))
-      call swapr(BlkWgt(b,1),BlkWgt(b,2))
+      call Swap_Integers(block_points(b,2),block_points(b,3))
+      call Swap_Integers(block_points(b,6),block_points(b,7))
+      call Swap_Reals(BlkWgt(b,1),BlkWgt(b,2))
       BlkWgt(b,1)=1.0/BlkWgt(b,1)
       BlkWgt(b,2)=1.0/BlkWgt(b,2)
-      call swapi(block_resolutions(b,1),block_resolutions(b,2))
+      call Swap_Integers(block_resolutions(b,1),block_resolutions(b,2))
       write(6,*) 'Warning: Block ',b,' was not properly oriented'
     end if
   end do                 ! through blocks
 
-!---------------------------------!
-!     Set the corners of each     !
-!        face of the block        !
-!---------------------------------!
+  !-----------------------------!
+  !   Set the corners of each   !
+  !      face of the block      !
+  !-----------------------------!
   do b=1,Nbloc
     do fc=1,6
       do n=1,4
@@ -205,12 +200,12 @@
     end do
   end do
 
-!>>>>>>>>>>>>>>>!
-!     Lines     !   -->> Under construction
-!>>>>>>>>>>>>>>>!--------------------------------!
-!     Linije mogu biti zadan tocka po tocka,     ! 
-!             ili samo tezinski faktor           !
-!------------------------------------------------!
+  !----------------------------------------------!
+  !   Lines                                      !
+  !----------------------------------------------!
+  !   Lines can be prescribed point by point     ! 
+  !   or with just a weighting factor.           !
+  !----------------------------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*)       Nline     ! number of defined lines
   do l=1, Nline
@@ -218,7 +213,7 @@
 
     read(inp(ts(1):te(3)),*) dum, LinPnt(l,1), LinPnt(l,2)
 
-    call FinLin(LinPnt(l,1),LinPnt(l,2),LinRes(l))
+    call Find_Line(LinPnt(l,1),LinPnt(l,2),LinRes(l))
 
     if(LinRes(l)  > MAXL) then
       write(6,*) 'ERROR MESSAGE FROM TFlowS:'
@@ -229,15 +224,15 @@
       stop
     end if 
 
-!----- zadana tocka po tocka
+    ! Point by point
     if(dum  > 0) then
       do n=1,LinRes(l)
         call ReadC(9,inp,tn,ts,te)
         read(inp(ts(2):te(4)),*) xl(l,n), yl(l,n), zl(l,n)
-!->>>
         write(6,*)  xl(l,n), yl(l,n), zl(l,n)
       end do
-!----- zadan tezinski faktor
+
+    ! Weight factor
     else
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) LinWgt(l)
@@ -245,10 +240,9 @@
 
   end do
 
-!--------------------------------!
-!                                !
-!                                !
-!--------------------------------!
+  !----------------------------------------!
+  !   Copy block weights to face weights   !
+  !----------------------------------------!
   do b=1,Nbloc
     do fc=1,6                          !  face of the block
       n = (b-1)*6 + fc                 !  surface number
@@ -259,16 +253,16 @@
     end do
   end do
 
-!>>>>>>>>>>>>>>>>>>!
-!     Surfaces     !  -->> Under construction
-!>>>>>>>>>>>>>>>>>>!
+  !--------------!
+  !   Surfaces   !
+  !--------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*)     Nsurf     ! number of defined surfaces
 
   do s=1,Nsurf
     call ReadC(9,inp,tn,ts,te)
     read(inp,*) dum, n1,n2,n3,n4
-    call FinSur(n1,n2,n3,n4,b,fc)
+    call Find_Surface(n1,n2,n3,n4,b,fc)
     write(6,*) 'block: ', b, ' surf: ', fc
     n = (b-1)*6 + fc         ! surface number
     face_laplace(n) = YES          ! perform Laplace
@@ -277,11 +271,11 @@
     read(inp,*)  BlFaWt(n,1),BlFaWt(n,2),BlFaWt(n,3)
   end do
 
-!??????????????????????????????????????????!
-!     Is there enough allocated memory     !
-!??????????????????????????????????????????!
+  !---------------------------------------!
+  !   Is there enough allocated memory?   !
+  !---------------------------------------!
 
-!----- Nodes & Sides
+  ! Nodes & faces
   n_nodes_check = 0
   n_faces_check = 0
   do b=1,Nbloc
@@ -314,9 +308,9 @@
     stop
   end if
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     Boundary conditions and materials     !
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+  !---------------------------------------!
+  !   Boundary conditions and materials   !
+  !---------------------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*)     n_b_cond      ! number of boundary conditions 
 
@@ -340,15 +334,15 @@
          b_cond(n,7),  &  ! block,  
          b_cond(n,8)      ! mark         
   if( block_points(b_cond(n,7),0) == -1 ) then
-    call swapi( b_cond(n,1),b_cond(n,2) )
-    call swapi( b_cond(n,4),b_cond(n,5) )
+    call Swap_Integers( b_cond(n,1),b_cond(n,2) )
+    call Swap_Integers( b_cond(n,4),b_cond(n,5) )
   end if
 
   end do
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     periodic boundaries     !
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+  !-------------------------!
+  !   Periodic boundaries   !
+  !-------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*)  n_periodic_cond      ! number of periodic boundaries
   write(*,*) 'Number of periodic boundaries: ', n_periodic_cond 
@@ -364,9 +358,9 @@
                      periodic_cond(n,7), periodic_cond(n,8)
   end do
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     copy boundaries     !
-!>>>>>>>>>>>>>>>>>>>>>>>>>!
+  !---------------------!
+  !   Copy boundaries   !
+  !---------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*)  n_copy_cond      ! number of copy boundaries
   write(*,*) 'Number of copy boundaries: ', n_copy_cond
@@ -384,9 +378,9 @@
     read(inp,*) copy_cond(n,0)
   end do
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     Refinement levels and regions     !
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+  !-----------------------------------!
+  !   Refinement levels and regions   !
+  !-----------------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_refine_levels ! number of refinement levels
 
@@ -425,9 +419,9 @@
     end do
   end do
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     Smoothing regions     !
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+  !-----------------------!
+  !   Smoothing regions   !
+  !-----------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_smoothing_regions  ! number of smoothing regions 
 
@@ -447,26 +441,26 @@
     call ReadC(9,inp,tn,ts,te)
     read(inp(ts(1):te(1)),*) smooth_regions(n,0)  
     if(tn == 4) then   ! smoothing in three directions
-      smooth_in_x(n) = .TRUE.
-      smooth_in_y(n) = .TRUE.
-      smooth_in_z(n) = .TRUE.
+      smooth_in_x(n) = .true.
+      smooth_in_y(n) = .true.
+      smooth_in_z(n) = .true.
     else if(tn == 3) then
       call ToUppr(inp(ts(2):te(2)))
       call ToUppr(inp(ts(3):te(3)))
-      if( inp(ts(2):te(2))  ==  'X' ) smooth_in_x(n) = .TRUE.
-      if( inp(ts(3):te(3))  ==  'X' ) smooth_in_x(n) = .TRUE.
-      if( inp(ts(2):te(2))  ==  'Y' ) smooth_in_y(n) = .TRUE.
-      if( inp(ts(3):te(3))  ==  'Y' ) smooth_in_y(n) = .TRUE.
-      if( inp(ts(2):te(2))  ==  'Z' ) smooth_in_z(n) = .TRUE.
-      if( inp(ts(3):te(3))  ==  'Z' ) smooth_in_z(n) = .TRUE.
+      if( inp(ts(2):te(2))  ==  'X' ) smooth_in_x(n) = .true.
+      if( inp(ts(3):te(3))  ==  'X' ) smooth_in_x(n) = .true.
+      if( inp(ts(2):te(2))  ==  'Y' ) smooth_in_y(n) = .true.
+      if( inp(ts(3):te(3))  ==  'Y' ) smooth_in_y(n) = .true.
+      if( inp(ts(2):te(2))  ==  'Z' ) smooth_in_z(n) = .true.
+      if( inp(ts(3):te(3))  ==  'Z' ) smooth_in_z(n) = .true.
     else if(tn == 2) then
       call ToUppr(inp(ts(2):te(2)))
-      if( inp(ts(2):te(2))  ==  'X' ) smooth_in_x(n) = .TRUE.
-      if( inp(ts(2):te(2))  ==  'Y' ) smooth_in_y(n) = .TRUE.
-      if( inp(ts(2):te(2))  ==  'Z' ) smooth_in_z(n) = .TRUE.
+      if( inp(ts(2):te(2))  ==  'X' ) smooth_in_x(n) = .true.
+      if( inp(ts(2):te(2))  ==  'Y' ) smooth_in_y(n) = .true.
+      if( inp(ts(2):te(2))  ==  'Z' ) smooth_in_z(n) = .true.
     end if 
 
-!---- read the coordinates of the (non)smoothed region
+    ! Read the coordinates of the (non)smoothed region
     call ReadC(9,inp,tn,ts,te)
     read(inp,*) smooth_iters(n), smooth_relax(n)
     call ReadC(9,inp,tn,ts,te)
@@ -476,4 +470,4 @@
 
   close(9)
 
-  end subroutine GenLoa
+  end subroutine Load_Domain

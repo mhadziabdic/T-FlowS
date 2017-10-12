@@ -83,20 +83,20 @@
 
   call Logo
 
-  call GenLoa
-  call Calc1  
+  call Load_Domain
+  call Compute_Node_Coordinates
   call Fuzion
   call PeriBC
   call CopyBC
 
-  call TopSys(.FALSE.)  ! trial run 
-  call Calc2(.FALSE.)
+  call TopSys(.false.)  ! trial run 
+  call Compute_Grid_Geometry(.false.)
   call Smooth 
 
-  call Mark
+  call Refine_Grid
 
-  call TopSys(.TRUE.) ! real run
-  call Calc2(.TRUE.)
+  call TopSys(.true.) ! real run
+  call Compute_Grid_Geometry(.true.)
 
   ! Prepare for saving
   do n=1,NN
@@ -136,6 +136,6 @@
   call Save_Eps_Whole(NSsh)  ! draw the domain with shadows
 
   ! Write something on the screen
-  call PrintG
+  call Print_Grid_Statistics
 
   end PROGRAM Generator 

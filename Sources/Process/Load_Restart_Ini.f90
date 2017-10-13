@@ -1,37 +1,36 @@
-!======================================================================!
-  subroutine LoaRes_Ini
-!----------------------------------------------------------------------!
-! Reads: NAME.restart                                                  !
-! ~~~~~~                                                               ! 
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Load_Restart_Ini
+!------------------------------------------------------------------------------!
+! Reads: name.restart                                                          !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Parameters]---------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer           :: c, s, m
   integer           :: i_1, i_2, i_3, i_4, i_5, i_6
   character(len=80) :: name_in, answer
   real              :: version
   real              :: r_1, r_2, r_3, r_4, r_5, r_6
-!======================================================================!
+!==============================================================================!
 
   if(this_proc  < 2) &              
     write(*,*) '# Input intial restart file name [write skip to continue]:'
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)), '(A80)')  name_in
   answer=name_in
-  call ToUppr(answer) 
+  call To_Upper_Case(answer) 
 
   if(answer == 'SKIP') then
     return 
   end if
 
-!----- Initiated field from previous computation 
+  ! Initiated field from previous computation 
   if(this_proc  < 2) then
     write(*,*) '# Initialization of fields from previous computation: '
     write(*,*) '# DNS      -> Direct Numerical Simulation'
@@ -45,7 +44,7 @@
   endif
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'DNS') then
     RES_INI = DNS
   else if(answer == 'LES') then
@@ -78,21 +77,21 @@
     stop
   endif
 
-!---- save the name
+  ! Save the name
   answer = name
   name = name_in
 
-!---------------------------!
-!     Read restart file     !
-!---------------------------!
+  !-----------------------!
+  !   Read restart file   !
+  !-----------------------!
   call NamFil(this_proc, name_in, '.restart', len_trim('.restart') )
   open(9, FILE=name_in, FORM='UNFORMATTED')
   write(6, *) '# Now reading the file:', name_in
 
-!---- version
+  ! Version
   read(9) version ! version
 
-!---- 60 integer parameters ----------------------------------------
+  ! 60 integer parameters
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
@@ -103,9 +102,8 @@
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
-!-------------------------------------------------------------------
 
-!---- 60 real parameters --------------------------------------
+  ! 60 real parameters 
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6
@@ -116,7 +114,6 @@
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6 
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6   
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6   
-!--------------------------------------------------------------
 
   read(9) (U % n(c),   c=-NbC,NC)
   read(9) (V % n(c),   c=-NbC,NC)
@@ -145,12 +142,12 @@
 
   read(9) (P % n(c),   c=-NbC,NC)
   read(9) (PP % n(c),  c=-NbC,NC)
-!----- Q was here
+
   read(9) (Px(c),   c=-NbC,NC)
   read(9) (Py(c),   c=-NbC,NC)
   read(9) (Pz(c),   c=-NbC,NC)
 
-!---- Pressure drops in each material (domain)
+  ! Pressure drops in each material (domain)
   do m=1,Nmat
     read(9) PdropX(m), PdropY(m), PdropZ(m)
     read(9) FLUXoX(m), FLUXoY(m), FLUXoZ(m)
@@ -159,7 +156,7 @@
     read(9) Ubulk(m),  Vbulk(m),  Wbulk(m)
   end do
 
-!---- Fluxes 
+  ! Fluxes 
   read(9) (Flux(s), s=1,NS)
 
   if(HOT == YES) then
@@ -287,7 +284,7 @@
     end if
   end if
 
- if(RES_INI == SPA_ALL.or.RES_INI==DES_SPA) then
+  if(RES_INI == SPA_ALL.or.RES_INI==DES_SPA) then
     read(9) (VIS % n(c),    c=-NbC,NC)
     read(9) (VIS % o(c),    c=1,NC)
     read(9) (VIS % C(c),    c=1,NC)
@@ -303,9 +300,9 @@
 
   close(9)
 
-!---- restore the name
+  ! Restore the name
   name = answer 
 
-  write(*,*) 'Leaving LoaRes_Ini.f90'
+  write(*,*) 'Leaving Load_Restart_Ini.f90'
 
-  end subroutine LoaRes_Ini 
+  end subroutine Load_Restart_Ini

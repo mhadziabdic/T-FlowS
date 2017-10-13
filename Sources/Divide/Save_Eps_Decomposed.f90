@@ -65,7 +65,7 @@
   call ReadC(5,inp,tn,ts,te)
   if(tn == 1) then
     read(inp, *) answer
-    call ToUppr(answer)
+    call To_Upper_Case(answer)
     if(answer == 'SKIP') return 
   else if(tn == 3) then
     read(inp, *) xk, yk, zk 

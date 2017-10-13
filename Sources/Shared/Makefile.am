@@ -6,8 +6,6 @@ libShared_a_SOURCES = 		\
   DISort.f90			\
   Distance.f90			\
   Distance_Squared.f90		\
-  GeoLoa_Scotti.f90		\
-  GeoSav_Scotti.f90		\
   INSort.f90			\
   ISort.f90			\
   Load_Geo.f90			\
@@ -29,6 +27,6 @@ libShared_a_SOURCES = 		\
   Sort2.f90			\
   SSort.f90			\
   Tet_Volume.f90		\
-  ToUppr.f90
+  To_Upper_Case.f90
 
 INCLUDE = -I@top_srcdir@/

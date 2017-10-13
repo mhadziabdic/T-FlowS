@@ -1,20 +1,20 @@
-!======================================================================!
-  subroutine LoaIni()
-!----------------------------------------------------------------------!
-! This version of LoaIni is optimised for very large meshes
+!==============================================================================!
+  subroutine Load_Ini()
+!------------------------------------------------------------------------------!
+! This version of Load_Ini is optimised for very large meshes
 ! Program SUB_INI needs to be used to create files needed by this_proc
 ! subroutine 
-!------------------------------[Modules]-------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!------------------------------[Calling]-------------------------------!
+!----------------------------------[Calling]-----------------------------------!
   real             :: Distance
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer          :: j, k,  c, nearest_cell, var, Nvar, c1, c2, s 
   integer          :: NCold  
   real,allocatable :: Xold(:),Yold(:),Zold(:)
@@ -31,35 +31,29 @@
   real             :: Us, Ws, Vs, R, Rnew, Rold
   real             :: new_distance, old_distance
 
-!---- Variables for ReadC:
+  ! Variables for ReadC:
   character(len=80) :: namCoo, answer, answer_hot
   character(len=4)  :: ext
-  character(len=80) :: namAut
-!======================================================================!  
+  character(len=80) :: name_in
+!==============================================================================!  
 
   call ReadC(CMN_FILE,inp,tn,ts,te)
-!->>> write(*,*) inp(1:300)
-  read(inp(ts(1):te(1)), '(A80)') namAut
-  answer=namAut
-  call ToUppr(answer)
+  read(inp(ts(1):te(1)), '(A80)') name_in
+  answer=name_in
+  call To_Upper_Case(answer)
   if(answer == 'SKIP') return
-!---- save the name
-    answer = name
-    name = namAut
 
-!  if(tn==2) read(inp(ts(2):te(2)),'(A8)') answer
-!  call ToUppr(answer)
-!  if(answer == 'HOT') then
-!    HOTini = YES
-!  end if
+  ! Save the name
+  answer = name
+  name = name_in
 
   HOTini = NO
 
-  call NamFil(this_proc, namAut, '.ini', len_trim('.ini'))
+  call NamFil(this_proc, name_in, '.ini', len_trim('.ini'))
 
-  if(this_proc < 2) write(*,*)'now reading file:', namAut 
+  if(this_proc < 2) write(*,*)'now reading file:', name_in 
 
-  open(5, FILE=namAut) 
+  open(5, FILE=name_in) 
   read(5,*) NCold
 
   allocate (Xold(NCold)); Xold = 0.0
@@ -260,7 +254,7 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
 
-!---- interpoliraj gustocu i brzine
+    ! Interpolate density and velocity
     Us = f(s) * U % n(c1) + (1.0-f(s)) * U % n(c2)
     Vs = f(s) * V % n(c1) + (1.0-f(s)) * V % n(c2)
     Ws = f(s) * W % n(c1) + (1.0-f(s)) * W % n(c2)
@@ -335,10 +329,10 @@
   end if
 
 
-  write(*,*) 'Finished with LoaIni  Processor: ', this_proc
+  write(*,*) 'Finished with Load_Ini  Processor: ', this_proc
 
-  !---- restore the name
+  ! Restore the name
   name = answer
 
-  end subroutine LoaIni
+  end subroutine Load_Ini
 

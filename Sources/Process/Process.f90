@@ -83,29 +83,29 @@
       real          :: dPHIdx(-NbC:NC),dPHIdy(-NbC:NC),dPHIdz(-NbC:NC)
     end subroutine CalcTurb
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine ProSav(namAut)  
+    subroutine Save_Gmv_Results(namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
       implicit none
        character, optional :: namAut*(*)
-    end  subroutine ProSav  
+    end  subroutine Save_Gmv_Results  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine DatSav(namAut)  
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      use all_mod
-      use pro_mod
-      implicit none
-      character, optional :: namAut*(*)
-    end subroutine DatSav  
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine SavRes(namAut)  
+    subroutine Save_Dat_Results(namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
       implicit none
       character, optional :: namAut*(*)
-    end subroutine SavRes  
+    end subroutine Save_Dat_Results  
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
+    subroutine Save_Restart(namAut)  
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
+      use all_mod
+      use pro_mod
+      implicit none
+      character, optional :: namAut*(*)
+    end subroutine Save_Restart  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine UserProbe2D(namAut)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
@@ -156,9 +156,9 @@
   call IniPar
   
 !---- load the finite volume grid      
-  call CnsLoa
+  call Load_Cns
   call GeoAloc
-  call GeoLoa
+  call Load_Geo
   call BufLoa
   call Exchng(volume(-NbC))
 
@@ -176,10 +176,10 @@
 !<<<<<<<<<<<<<<<<<<<!
   Ndt  = 0
   Ndtt = 0
-  call LoaRes(restar)
+  call Load_Restart(restar)
 
   if(restar) then
-    call BouLoa(.false.)
+    call Load_Boundary_Conditions(.false.)
   end if
 
 !----- Read command file (T-FlowS.cmn) 
@@ -187,17 +187,17 @@
 
 !----- Initialize variables
   if(.not. restar) then
-    call BouLoa(.true.)
+    call Load_Boundary_Conditions(.true.)
     call IniVar 
     call Wait
   end if   
 
-  write(*,*) 'Before LoaIni() at line: ', cmn_line_count
+  write(*,*) 'Before Load_Ini() at line: ', cmn_line_count
 
 !----- Interpolate between diff. meshes
-  call LoaIni()
+  call Load_Ini()
 
-  write(*,*) 'After LoaIni() at line: ', cmn_line_count
+  write(*,*) 'After Load_Ini() at line: ', cmn_line_count
 
   if(.not. restar) then
 !BOJAN    do m=1,Nmat
@@ -238,7 +238,7 @@
 
 !----- Loading data from previous computation   
 !  if(this_proc<2) write(*,*)'Reading data from previous computation on the same mesh'
-  call LoaRes_Ini
+  call Load_Restart_Ini
 
 !----- Prepare ...
   call Calc3()
@@ -584,7 +584,7 @@
       Ndtt      = n
       namSav = 'SAVExxxxxx'
       write(namSav(5:10),'(I6.6)') n
-      call SavRes(namSav)                          
+      call Save_Restart(namSav)                          
       Ndtt = Ndtt_temp
     end if   
 
@@ -604,9 +604,9 @@
       Ndtt      = n
       namSav = 'SAVExxxxxx'
       write(namSav(5:10),'(I6.6)') n
-      call SavRes(namSav)                          
-!      call DatSav(namSav)
-!      call ProSav(namSav)
+      call Save_Restart(namSav)                          
+!      call Save_Dat_Results(namSav)
+!      call Save_Gmv_Results(namSav)
       call SavParView(this_proc,NC,namSav, Nstat, n)
 !BOJAN      if(CHANNEL == YES) then
 !BOJAN  call UserCutLines_channel(zc)
@@ -628,10 +628,10 @@
 !--------------------------!
 !     Save the results     !
 !--------------------------!
-6 call SavRes                           
-  call SavIni
-  call ProSav ! Write results in GMV format. Obsolete. 
-!  call DatSav ! Write results in FLUENT dat format. Obsolete.
+6 call Save_Restart                           
+  call Save_Ini
+  call Save_Gmv_Results ! Write results in GMV format. 
+!  call Save_Dat_Results ! Write results in FLUENT dat format. 
   namSav = 'SAVExxxxxx'
   write(namSav(5:10),'(I6.6)') n
   call SavParView(this_proc,NC,namSav, Nstat, n)

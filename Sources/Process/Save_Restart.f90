@@ -1,53 +1,51 @@
-!======================================================================!
-  subroutine SavRes(name_aut)
-!----------------------------------------------------------------------!
-! Writes restart files. NAME.restart                                                 !
-! ~~~~~~~                                                              !
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Save_Restart(name_aut)
+!------------------------------------------------------------------------------!
+!   Writes restart files. name.restart                                         !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use par_mod
   use rans_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer             :: c, s, m
   character(len=80)   :: name_out, answer
   character, optional :: name_aut*(*)
-!======================================================================!
+!==============================================================================!
 
   if(PRESENT(name_aut)) then
-!---- save the name
+    ! Save the name
     answer = name
     name = name_aut
   else
     if(this_proc  < 2)                                                     &
       write(*,*) '# Output restart file name [skip cancels]:'
     call ReadC(CMN_FILE,inp,tn,ts,te)
-!->>> write(*,*) inp(1:300)
     read(inp(ts(1):te(1)), '(A80)')  name_out
     answer=name_out
-    call ToUppr(answer) 
+    call To_Upper_Case(answer) 
 
     if(answer == 'SKIP') return 
 
-!---- save the name
+    ! save the name
     answer = name
     name = name_out
   end if
 
-!-----------------------------!
-!     Create restart file     !
-!-----------------------------!
+  !-------------------------!
+  !   Create restart file   !
+  !-------------------------!
   call NamFil(this_proc, name_out, '.restart', len_trim('.restart') )
   open(9, FILE=name_out, FORM='UNFORMATTED')
   if(this_proc  < 2) write(6, *) '# Now creating the file:', name_out
 
-!---- version
+  ! Version
   write(9) 0.0  ! version
 
-!---- 60 integer parameters -----------------------------------------
+  ! 60 integer parameters 
   write(9)        0,      NbC,       NC,       NS,     Ndtt,    Nstat
   write(9)       Cm,        0,        0,        0,        0,        0
   write(9)    ALGOR,    INERT,   CONVEC,    CROSS,   DIFFUS,   SIMULA
@@ -58,9 +56,8 @@
   write(9)        0,        0,        0,        0,        0,        0
   write(9)        0,        0,        0,        0,        0,        0
   write(9)        0,        0,        0,        0,        0,        0
-!--------------------------------------------------------------------
 
-!---- 60 real parameters --------------------------------------
+  ! 60 real parameters
   write(9)     0.0,    0.0,    0.0,     xp,     yp,     zp  
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0     
   write(9)   ReTau,   Tref,    Cs0,   Tinf,    0.0,    0.0
@@ -71,7 +68,6 @@
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
-!--------------------------------------------------------------
 
   write(9) (U % n(c),   c=-NbC,NC)
   write(9) (V % n(c),   c=-NbC,NC)
@@ -105,7 +101,7 @@
   write(9) (Py(c),   c=-NbC,NC)
   write(9) (Pz(c),   c=-NbC,NC)
 
-!---- Pressure drops in each material (domain)
+  ! Pressure drops in each material (domain)
   do m=1,Nmat
     write(9) PdropX(m), PdropY(m), PdropZ(m)
     write(9) FLUXoX(m), FLUXoY(m), FLUXoZ(m)
@@ -115,7 +111,7 @@
   end do
 
 
-!---- Fluxes 
+  ! Fluxes 
   write(9) (Flux(s), s=1,NS)
 
   if(HOT == YES) then
@@ -252,7 +248,7 @@
     end if  
   end if
 
- if(SIMULA == SPA_ALL.or.SIMULA==DES_SPA) then
+  if(SIMULA == SPA_ALL.or.SIMULA==DES_SPA) then
     write(9) (VIS % n(c),    c=-NbC,NC)
     write(9) (VIS % o(c),    c=1,NC)
     write(9) (VIS % C(c),    c=1,NC)
@@ -306,7 +302,7 @@
 
   close(9)
 
-!---- restore the name
+  ! Restore the name
   name = answer 
 
-  end subroutine SavRes 
+  end subroutine Save_Restart 

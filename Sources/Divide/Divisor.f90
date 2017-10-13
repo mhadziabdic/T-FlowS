@@ -36,7 +36,7 @@
 
 !---- load the finite volume grid
   call DivLoa
-  call GeoLoa
+  call Load_Geo
   call BCelLoa
 
   call IniDiv 
@@ -59,7 +59,7 @@
   call RISort(criter(1),iz(1),NC,2)
   write(*,*) 'Finished sorting'
 
-  call GeoLoa
+  call Load_Geo
 
   write(*,*) 'Number of subdomains:'
   read(*,*)  n_sub_tot
@@ -73,7 +73,7 @@
   write(*,*) 'COO -> Coordinate multisection' 
   write(*,*) 'INE -> Inertial multisection' 
   read(*,*) answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'COO') then
     division_algorithm = COORDINATE
   else if(answer == 'INE') then

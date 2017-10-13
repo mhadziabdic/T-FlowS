@@ -38,7 +38,7 @@
   call Count_Materials
 
   call Save_Gmv_Mesh(0, NN, NC, NS, NbC)
-  call GeoSav(0, NC, NS, NBC, 0, 0) 
+  call Save_Cns_Geo(0, NC, NS, NBC, 0, 0) 
   call Save_Gmv_Links(0, NN, NC, NS, NbC, 0)
 
   ! Create output for Fluent

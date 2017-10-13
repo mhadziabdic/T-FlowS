@@ -327,7 +327,7 @@
     else if(tn == 2) then
       read(inp(ts(1):te(1)),*)       dum           
       read(inp(ts(2):te(2)),'(A4)')  BndFac(n)
-      call ToUppr(BndFac(n))           
+      call To_Upper_Case(BndFac(n))           
     end if
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)       &  
@@ -399,7 +399,7 @@
     do n=1, n_refined_regions(l)
       call ReadC(9,inp,tn,ts,te)
       read(inp(ts(3):te(3)),*) answer
-      call ToUppr(answer)
+      call To_Upper_Case(answer)
       if(answer == 'RECTANGLE') then
         refined_regions(l,n,0) = RECTANGLE
       elseif(answer == 'ELIPSOID') then
@@ -435,9 +435,9 @@
   allocate (smooth_regions(n_smoothing_regions,0:6))
 
   do n=1, n_smoothing_regions
-    smooth_in_x(n) = .FALSE.
-    smooth_in_y(n) = .FALSE.
-    smooth_in_z(n) = .FALSE.
+    smooth_in_x(n) = .false.
+    smooth_in_y(n) = .false.
+    smooth_in_z(n) = .false.
     call ReadC(9,inp,tn,ts,te)
     read(inp(ts(1):te(1)),*) smooth_regions(n,0)  
     if(tn == 4) then   ! smoothing in three directions
@@ -445,8 +445,8 @@
       smooth_in_y(n) = .true.
       smooth_in_z(n) = .true.
     else if(tn == 3) then
-      call ToUppr(inp(ts(2):te(2)))
-      call ToUppr(inp(ts(3):te(3)))
+      call To_Upper_Case(inp(ts(2):te(2)))
+      call To_Upper_Case(inp(ts(3):te(3)))
       if( inp(ts(2):te(2))  ==  'X' ) smooth_in_x(n) = .true.
       if( inp(ts(3):te(3))  ==  'X' ) smooth_in_x(n) = .true.
       if( inp(ts(2):te(2))  ==  'Y' ) smooth_in_y(n) = .true.
@@ -454,7 +454,7 @@
       if( inp(ts(2):te(2))  ==  'Z' ) smooth_in_z(n) = .true.
       if( inp(ts(3):te(3))  ==  'Z' ) smooth_in_z(n) = .true.
     else if(tn == 2) then
-      call ToUppr(inp(ts(2):te(2)))
+      call To_Upper_Case(inp(ts(2):te(2)))
       if( inp(ts(2):te(2))  ==  'X' ) smooth_in_x(n) = .true.
       if( inp(ts(2):te(2))  ==  'Y' ) smooth_in_y(n) = .true.
       if( inp(ts(2):te(2))  ==  'Z' ) smooth_in_z(n) = .true.

@@ -1,65 +1,64 @@
-!======================================================================!
-  subroutine CnsLoa
-!----------------------------------------------------------------------!
-! Reads NAME.cns and first part of T-FlowS.cmn                         !
-! ~~~~~~                                                               !
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Load_Cns
+!------------------------------------------------------------------------------!
+!   Reads name.cns and first part of T-FlowS.cmn                               !
+!----------------------------------[Modules]-----------------------------------!
   use allp_mod, only: CMN_FILE
   use all_mod
   use pro_mod
   use par_mod,  only: this_proc
   use rans_mod, only: grav_x, grav_y, grav_z, Zo
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer           :: c, s, it
   character(len=80) :: name_in
   character(len=8)  :: answer
-!======================================================================!
+!==============================================================================!
 
   if(this_proc < 2) write(*,*) '# Input problem name:'
   call ReadC(CMN_FILE,inp,tn,ts,te)  
   read(inp(ts(1):te(1)), '(A80)')  name
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!       Read the file with the      !
-!     connections between cells     !
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+  !-------------------------------!
+  !     Read the file with the    !
+  !   connections between cells   !
+  !-------------------------------!
   call NamFil(this_proc, name_in, '.cns', len_trim('.cns'))  
 
-  open(9, FILE=name_in,FORM='UNFORMATTED')
+  open(9, file=name_in,form='unformatted')
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 
-!///// number of cells, boundary cells and sides
+  ! Number of cells, boundary cells and sides
   read(9) NC                                 
   read(9) NbC
   read(9) NS
   read(9) c   ! NSsh is not used in Processor. 
   read(9) Nmat
 
-!///// cell materials
+  ! Cell materials
   allocate (material(-NbC:NC))
   read(9) (material(c), c=1,NC)        
   read(9) (material(c), c=-1,-NBC,-1) 
 
-!///// sides
+  ! Faces
   allocate (SideC(0:2,NS))
   read(9) (SideC(0,s), s=1,NS)
   read(9) (SideC(1,s), s=1,NS)
   read(9) (SideC(2,s), s=1,NS)
 
-!///// boundary cells
+  ! Boundary cells
   allocate (TypeBC(-NbC:NC)); TypeBC=0 
   allocate (bcmark(-NbC:-1))
   read(9) (bcmark(c), c=-1,-NbC, -1) 
 
-!///// boundary copy cells
+  ! Boundary copy cells
   allocate (CopyC(-NbC:-1))
   read(9) (CopyC(c), c=-1,-NbC, -1)   
 
   close(9)
 
-!----- Type of the problem
+  ! Type of the problem
   if(this_proc  < 2) then
     write(*,*) '# Type of problem: '
     write(*,*) '# CHANNEL          -> Channel flow'
@@ -76,7 +75,7 @@
   call ReadC(CMN_FILE,inp,tn,ts,te)
   do it=1,tn
     read(inp(ts(it):te(it)),'(A8)')  answer
-    call ToUppr(answer)
+    call To_Upper_Case(answer)
     if(answer == 'CHANNEL') then
       CHANNEL = YES
     else if(answer == 'PIPE') then
@@ -125,7 +124,7 @@
     read(inp,*) Zo
   endif
 
-!----- Angular velocity vector
+  ! Angular velocity vector
   if(ROT == YES) then
     if(this_proc  < 2)  &
     write(*,*) '# Angular velocity vector: '
@@ -133,7 +132,7 @@
     read(inp,*)  omegaX, omegaY, omegaZ
   end if
 
-!----- Gravity
+  ! Gravity
   if(BUOY == YES) then
     if(this_proc  < 2)  &
     write(*,*) '# Gravitational constant in x, y and z directions: '
@@ -141,4 +140,4 @@
     read(inp,*) grav_x, grav_y, grav_z, Tref
   end if
 
-  end subroutine CnsLoa
+  end subroutine Load_Cns

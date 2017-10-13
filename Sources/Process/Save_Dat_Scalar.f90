@@ -1,38 +1,38 @@
-!======================================================================!
-  subroutine DatSavSc(namSc, idSc, PHI)
-!----------------------------------------------------------------------!
-! Writes: NAME.dat                                                     !
-! ~~~~~~~                                                              !
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Save_Dat_Scalar(namSc, idSc, phi)
+!------------------------------------------------------------------------------!
+!   Writes: NAME.dat                                                           !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use par_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!---------------------------------[Parameters]---------------------------------!
   integer   :: idSc
   character :: namSc*(*)
-  real      :: PHI(-NbC:NC)
-!-------------------------------[Locals]-------------------------------!
+  real      :: phi(-NbC:NC)
+!-----------------------------------[Locals]-----------------------------------!
   integer   :: N, s, c, c1, c2, Nfac(10), NtotFac
-!======================================================================!
-!----------------!
-!     inside     !
-!----------------!
+!==============================================================================!
+
+  !------------!
+  !   Inside   !
+  !------------!
   write(9,'(A4,A,A2)') '(0 "', namSc, '")'
   write(9,'(A6,I3,A9,I8,2X,I9,A2)') '(300 (', idSc, ' 1 1 0 0 ',  1, NC, ')(' 
   do c=1,NC
-    write(9,'(F14.6)') PHI(c)
+    write(9,'(F14.6)') phi(c)
   end do  
   write(9,'(A2)') '))'
 
-!-------------------------!
-!     on the boundary     !
-!-------------------------!
+  !---------------------!
+  !   On the boundary   !
+  !---------------------!
   NtotFac = 0
-  do n=1,10   ! Browse through boundary condition types
+  do n=1,10   ! browse through boundary condition types
     Nfac(n) = 0
-    do s=1,NS   ! Count the faces with boundary condition "n"
+    do s=1,NS   ! count the faces with boundary condition "n"
       c2 = SideC(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == n) Nfac(n)=Nfac(n)+1
@@ -49,9 +49,9 @@
         if(c2 < 0) then
           if(BCmark(c2) == n) then
             if(TypeBC(c2) == SYMMETRY) then
-              write(9,'(F14.6)') PHI(c1)
+              write(9,'(F14.6)') phi(c1)
             else
-              write(9,'(F14.6)') PHI(c2)
+              write(9,'(F14.6)') phi(c2)
             end if
           end if
         end if
@@ -59,9 +59,9 @@
       write(9,'(A2)') '))'
     end if
 
-!---- prepare for next boundary
+    ! Prepare for next boundary
     NtotFac = NtotFac+Nfac(n)
 
   end do   ! n -> boundary condition types
 
-  end subroutine DatSavSc
+  end subroutine Save_Dat_Scalar

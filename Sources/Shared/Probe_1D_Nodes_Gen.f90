@@ -30,7 +30,7 @@
   write(*,*) '-------------------------------------------'
   write(*,*) 'Insert non-homogeneous direction (x_node, y_node, z_node, Rx, Ry, Rz or skip)'
   read(*,*) answer
-  call touppr(answer)
+  call To_Upper_Case(answer)
   if(answer=='SKIP') return
  
   NProb = 0

@@ -1,51 +1,50 @@
-!======================================================================!
-  subroutine BouLoa(in_out)
-!----------------------------------------------------------------------!
-! Reads: NAME.b                                                        !
-! ~~~~~~                                                               !
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Load_Boundary_Conditions(in_out)
+!------------------------------------------------------------------------------!
+!   Reads: name.b                                                              !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use rans_mod
   use par_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!---------------------------------[Parameters]---------------------------------!
   logical       :: in_out
-!------------------------------[Calling]-------------------------------!
+!----------------------------------[Calling]-----------------------------------!
   real          :: Distance
-!-------------------------------[Locals]-------------------------------!
-  integer           :: c, n, dum1, NB, NP, Ninit, m, c1, c2, s 
+!-----------------------------------[Locals]-----------------------------------!
+  integer           :: c, n, dum1, n_bnd_cond, n_points, n_initial_cond, m, c1, c2, s 
   character(len=80) :: name_bou, name_prof(128), dir
   integer           :: typBou(128)
   real              :: xyz(10024)
   real              :: wi
   real              :: x1(55555), x2(55555), Mres
   logical           :: here
-!======================================================================!
+!==============================================================================!
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!     Read the file with boundary conditions     !
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+  !--------------------------------------------!
+  !   Read the file with boundary conditions   !
+  !--------------------------------------------!
   name_bou = name
   name_bou(len_trim(name)+1:len_trim(name)+2) = '.b'
   open(9, FILE=name_bou)
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_bou
 
-!---------------------!
-! Phisical properties !
-!---------------------!
+  !-------------------------!
+  !   Phisical properties   !
+  !-------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) Nmat
-  do n=1,Nmat
+  do n = 1,Nmat
     call ReadC(9,inp,tn,ts,te)
-    call ToUppr(  inp(ts(2):te(2))  )
+    call To_Upper_Case(  inp(ts(2):te(2))  )
     if( inp(ts(2):te(2))  ==  'FLUID') then 
       StateMat(n)=FLUID
     else if( inp(ts(2):te(2))  ==  'SOLID') then 
       StateMat(n)=SOLID
     else 
-      if(this_proc < 2) write(*,*) 'BouLoa: Unknown material state'
+      if(this_proc < 2) write(*,*) 'Load_Boundary_Conditions: Unknown material state'
       stop  
     end if
     read(inp(ts(3):te(3)),*) VISc
@@ -54,15 +53,15 @@
     if(HOT==YES) read(inp(ts(6):te(6)),*) CAPc(n)
   end do
   
-!---------------------!
-! Boundary conditions !
-!---------------------!
+  !-------------------------!
+  !   Boundary conditions   !
+  !-------------------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) NB
-  do n=1,NB
+  read(inp,*) n_bnd_cond
+  do n = 1,n_bnd_cond  ! number of boundary conditions
     call ReadC(9,inp,tn,ts,te)
-    call ToUppr(  inp(ts(2):te(2))  )
-    call ToUppr(  inp(ts(3):te(3))  )
+    call To_Upper_Case(  inp(ts(2):te(2))  )
+    call To_Upper_Case(  inp(ts(3):te(3))  )
     read(inp(ts(1):te(1)),*) dum1
     if( inp(ts(2):te(2)) == 'INFLOW') then 
       typBou(n)=INFLOW
@@ -80,7 +79,7 @@
     else if( inp(ts(2):te(2)) == 'PRESSURE') then 
       typBou(n)=PRESSURE
     else
-      if(this_proc < 2) write(*,*) 'BouLoa: Unknown boundary condition type: ', inp(ts(2):te(2))
+      if(this_proc < 2) write(*,*) 'Load_Boundary_Conditions: Unknown boundary condition type: ', inp(ts(2):te(2))
       stop  
     end if
     if( inp(ts(3):te(3))  ==  'FILE') then
@@ -119,7 +118,7 @@
           if(SIMULA == DES_SPA) then
             read(inp(ts(8):te(8)),*) VIS % bound(n)
           end if
-        else
+        else  ! HOT .ne. YES
           if(SIMULA==EBM.or.SIMULA==HJ) then
             read(inp(ts(7):te(7)),*)   uu % bound(n)
             read(inp(ts(8):te(8)),*)   vv % bound(n)
@@ -146,9 +145,9 @@
           if(SIMULA == DES_SPA) then
             read(inp(ts(7):te(7)),*) VIS % bound(n)
           end if
-        end if
+        end if  ! HOT == YES
         name_prof(n)=''
-      else  
+      else   ! typBou .ne. PRESSURE
         if(HOT==YES) then 
           read(inp(ts(6):te(6)),*) T % bound(n)
           if(SIMULA==EBM.or.SIMULA==HJ) then
@@ -177,7 +176,7 @@
           if(SIMULA == DES_SPA) then
             read(inp(ts(7):te(7)),*) VIS % bound(n)
           end if
-        else
+        else  ! HOT .ne. YES
           if(SIMULA==EBM.or.SIMULA==HJ) then
             read(inp(ts(6):te(6)),*) uu % bound(n)
             read(inp(ts(7):te(7)),*) vv % bound(n)
@@ -204,112 +203,111 @@
           if(SIMULA == DES_SPA) then
             read(inp(ts(6):te(6)),*) VIS % bound(n)
           end if
-        end if
+        end if  ! HOT == YES
         name_prof(n)=''
-      end if
-    end if
+      end if  ! typBou == PRESSURE
+    end if    ! inp .not. FILE
   end do      
 
-!--------------------!
-! Initial conditions !
-!--------------------!
+  !------------------------!
+  !   Initial conditions   !
+  !------------------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) Ninit
-  if(Ninit > Nmat) then
+  read(inp,*) n_initial_cond
+  if(n_initial_cond > Nmat) then
     if(this_proc < 2) write(*,*) 'Warning: there are more initial conditions then materials'
   end if
 
-  do n=1,Ninit
+  do n=1,n_initial_cond
     call ReadC(9,inp,tn,ts,te)
-    call ToUppr(inp(ts(2):te(2)))
+    call To_Upper_Case(inp(ts(2):te(2)))
 
-!-----Initial conditions given in GMV file
+    ! Initial conditions given in GMV file
     if(inp(ts(2):te(2)) == 'FILE') then
       read(inp(ts(3):te(3)),'(A80)') namIni(n)
-      write(*,*) '@BouLoa: material ', n, '; init. cond. given by file: ', namIni(n)
+      write(*,*) '@Load_Boundary_Conditions: material ', n, '; init. cond. given by file: ', namIni(n)
     else
       namIni(n) = ''
 
-!-----Initial conditions given by constant
-    read(inp(ts(2):te(2)),*) U % init(n)
-    read(inp(ts(3):te(3)),*) V % init(n)
-    read(inp(ts(4):te(4)),*) W % init(n)
+      ! Initial conditions given by constant
+      read(inp(ts(2):te(2)),*) U % init(n)
+      read(inp(ts(3):te(3)),*) V % init(n)
+      read(inp(ts(4):te(4)),*) W % init(n)
  
-    if(HOT==YES) then
-      read(inp(ts(5):te(5)),*) T % init(n)
-      if(SIMULA==EBM.or.SIMULA==HJ) then
-        read(inp(ts(6):te(6)),*) uu % init(n)
-        read(inp(ts(7):te(7)),*) vv % init(n)
-        read(inp(ts(8):te(8)),*) ww % init(n)
-        read(inp(ts(9):te(9)),*) uv % init(n)
-        read(inp(ts(10):te(10)),*) uw % init(n)
-        read(inp(ts(11):te(11)),*) vw % init(n)
-        read(inp(ts(12):te(12)),*) Eps% init(n)
-        if(SIMULA==EBM) read(inp(ts(13):te(13)),*) f22 % init(n)
+      if(HOT==YES) then
+        read(inp(ts(5):te(5)),*) T % init(n)
+        if(SIMULA==EBM.or.SIMULA==HJ) then
+          read(inp(ts(6):te(6)),*) uu % init(n)
+          read(inp(ts(7):te(7)),*) vv % init(n)
+          read(inp(ts(8):te(8)),*) ww % init(n)
+          read(inp(ts(9):te(9)),*) uv % init(n)
+          read(inp(ts(10):te(10)),*) uw % init(n)
+          read(inp(ts(11):te(11)),*) vw % init(n)
+          read(inp(ts(12):te(12)),*) Eps% init(n)
+          if(SIMULA==EBM) read(inp(ts(13):te(13)),*) f22 % init(n)
+        end if
+        if(SIMULA==K_EPS) then
+          read(inp(ts(6):te(6)),*) Kin % init(n)
+          read(inp(ts(7):te(7)),*) Eps % init(n)
+        end if
+        if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
+          read(inp(ts(6):te(6)),*) Kin % init(n)
+          read(inp(ts(7):te(7)),*) Eps % init(n)
+          read(inp(ts(8):te(8)),*) v_2  % init(n)
+          read(inp(ts(9):te(9)),*) f22 % init(n)
+        end if
+        if(SIMULA == SPA_ALL) then
+          read(inp(ts(6):te(6)),*) VIS % init(n)
+        end if
+        if(SIMULA == DES_SPA) then
+          read(inp(ts(6):te(6)),*) VIS % init(n)
+        end if
+      else ! HOT /= YES
+        if(SIMULA==EBM.or.SIMULA==HJ) then
+          read(inp(ts(5):te(5)),*) uu % init(n)
+          read(inp(ts(6):te(6)),*) vv % init(n)
+          read(inp(ts(7):te(7)),*) ww % init(n)
+          read(inp(ts(8):te(8)),*) uv % init(n)
+          read(inp(ts(9):te(9)),*) uw % init(n)
+          read(inp(ts(10):te(10)),*) vw % init(n)
+          read(inp(ts(11):te(11)),*) Eps% init(n)
+          if(SIMULA==EBM) read(inp(ts(12):te(12)),*) f22 % init(n)
+        end if
+        if(SIMULA==K_EPS) then
+          read(inp(ts(5):te(5)),*) Kin % init(n)
+          read(inp(ts(6):te(6)),*) Eps % init(n)
+        end if
+        if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
+          read(inp(ts(5):te(5)),*) Kin % init(n)
+          read(inp(ts(6):te(6)),*) Eps % init(n)
+          read(inp(ts(7):te(7)),*) v_2  % init(n)
+          read(inp(ts(8):te(8)),*) f22 % init(n)
+        end if
+        if(SIMULA == SPA_ALL) then
+          read(inp(ts(5):te(5)),*) VIS % init(n)
+        end if
+        if(SIMULA == DES_SPA) then
+          read(inp(ts(5):te(5)),*) VIS % init(n)
+        end if
       end if
-      if(SIMULA==K_EPS) then
-        read(inp(ts(6):te(6)),*) Kin % init(n)
-        read(inp(ts(7):te(7)),*) Eps % init(n)
-      end if
-      if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-        read(inp(ts(6):te(6)),*) Kin % init(n)
-        read(inp(ts(7):te(7)),*) Eps % init(n)
-        read(inp(ts(8):te(8)),*) v_2  % init(n)
-        read(inp(ts(9):te(9)),*) f22 % init(n)
-      end if
-      if(SIMULA == SPA_ALL) then
-        read(inp(ts(6):te(6)),*) VIS % init(n)
-      end if
-      if(SIMULA == DES_SPA) then
-        read(inp(ts(6):te(6)),*) VIS % init(n)
-      end if
-    else ! HOT /= YES
-      if(SIMULA==EBM.or.SIMULA==HJ) then
-        read(inp(ts(5):te(5)),*) uu % init(n)
-        read(inp(ts(6):te(6)),*) vv % init(n)
-        read(inp(ts(7):te(7)),*) ww % init(n)
-        read(inp(ts(8):te(8)),*) uv % init(n)
-        read(inp(ts(9):te(9)),*) uw % init(n)
-        read(inp(ts(10):te(10)),*) vw % init(n)
-        read(inp(ts(11):te(11)),*) Eps% init(n)
-        if(SIMULA==EBM) read(inp(ts(12):te(12)),*) f22 % init(n)
-      end if
-      if(SIMULA==K_EPS) then
-        read(inp(ts(5):te(5)),*) Kin % init(n)
-        read(inp(ts(6):te(6)),*) Eps % init(n)
-      end if
-      if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-        read(inp(ts(5):te(5)),*) Kin % init(n)
-        read(inp(ts(6):te(6)),*) Eps % init(n)
-        read(inp(ts(7):te(7)),*) v_2  % init(n)
-        read(inp(ts(8):te(8)),*) f22 % init(n)
-      end if
-      if(SIMULA == SPA_ALL) then
-        read(inp(ts(5):te(5)),*) VIS % init(n)
-      end if
-      if(SIMULA == DES_SPA) then
-        read(inp(ts(5):te(5)),*) VIS % init(n)
-      end if
-    end if
     end if
   end do  
 
   close(9)
 
-!----------------------------------!
-!/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\!
-!----------------------------------!
-  do n=1,NB
+  !-------------------------------------------------------------!
+  !  I wanted to write something here, but I can't recall what  |
+  !-------------------------------------------------------------!
+  do n=1,n_bnd_cond
 
-!---- Boundary condition is given by a single constant
+    ! Boundary condition is given by a single constant
     if(name_prof(n) == '') then 
       do c=-1,-NbC,-1
         if(bcmark(c) == n) then
           TypeBC(c) = typBou(n)
 
-!===== if in_out is set to true, set boundary values,
-!===== otherwise, just the TypeBC remains set.
-
+          ! If in_out is set to true, set boundary values,
+          ! otherwise, just the TypeBC remains set.
           if(in_out) then
             U % n(c) = U % bound(n) 
             V % n(c) = V % bound(n)
@@ -353,21 +351,18 @@
           end if
         end if 
       end do
-!---- Boundary condition is prescribed in a file 
+
+    ! Boundary condition is prescribed in a file 
     else
       open(9, FILE=name_prof(n))
       if(this_proc < 2) write(*,*) '# Now reading the file:', name_prof(n)
       call ReadC(9,inp,tn,ts,te)
-      read(inp(ts(1):te(1)),*) NP                  ! number of points
-!      if(NP  > 1000) then
-!        if(this_proc < 2) write(*,*) 'BouLoa: Too much points in a profile !'
-!        stop  
-!      end if
+      read(inp(ts(1):te(1)),*) n_points                  ! number of points
       call ReadC(9,inp,tn,ts,te)
       read(inp(ts(1):te(1)),*) dir  ! direction
-      call ToUppr(dir)
+      call To_Upper_Case(dir)
       if(dir=="XPL" .or. dir=="YPL" .or. dir=="ZPL") then
-        do m=1,NP
+        do m=1,n_points
           call ReadC(9,inp,tn,ts,te)
           read(inp(ts(1):te(1)),*) x1(m)
           read(inp(ts(2):te(2)),*) x2(m)
@@ -385,62 +380,63 @@
             read(inp(ts(13):te(13)),*) Eps % pro(m)
           end if
         end do  
-!--set the closest point
-      do c=-1,-NbC,-1
-        if(bcmark(c) == n) then
-          TypeBC(c) = typBou(n)
-          if(in_out) then    !if .true. set boundary values, otherwise, just set TypeBC
-            Mres = HUGE
-            do s=1,NP
-              if(dir=="XPL") then
-                if(Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0) < Mres) then
-                  Mres = Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0)
-                  c1 = s
+
+        ! Set the closest point
+        do c=-1,-NbC,-1
+          if(bcmark(c) == n) then
+            TypeBC(c) = typBou(n)
+            if(in_out) then    !if .true. set boundary values, otherwise, just set TypeBC
+              Mres = HUGE
+              do s=1,n_points
+                if(dir=="XPL") then
+                  if(Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0) < Mres) then
+                    Mres = Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0)
+                    c1 = s
+                  end if
+                else if(dir=="YPL") then
+                  if(Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0) < Mres) then
+                    Mres = Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0)
+                    c1 = s
+                  end if
+                else if(dir=="ZPL") then
+                  if(Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0) < Mres) then
+                    Mres = Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0)
+                    c1 = s
+                  end if
                 end if
-              else if(dir=="YPL") then
-                if(Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0) < Mres) then
-                  Mres = Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0)
-                  c1 = s
-                end if
-              else if(dir=="ZPL") then
-                if(Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0) < Mres) then
-                  Mres = Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0)
-                  c1 = s
-                end if
+              end do
+              U%n(c) = U % pro(c1)
+              V%n(c) = V % pro(c1)
+              W%n(c) = W % pro(c1)
+              if(HOT==YES) T%n(c) = T%pro(c1)
+              if(SIMULA==K_EPS) then
+                Kin%n(c) = Kin%pro(c1)
+                Eps%n(c) = Eps%pro(c1)
               end if
-            end do
-            U%n(c) = U % pro(c1)
-            V%n(c) = V % pro(c1)
-            W%n(c) = W % pro(c1)
-            if(HOT==YES) T%n(c) = T%pro(c1)
-            if(SIMULA==K_EPS) then
-              Kin%n(c) = Kin%pro(c1)
-              Eps%n(c) = Eps%pro(c1)
-            end if
-            if(SIMULA==K_EPS_VV.or.SIMULA==ZETA) then
-              Kin%n(c) = Kin%pro(c1)
-              Eps%n(c) = Eps%pro(c1)
-              v_2%n(c) = v_2%pro(c1)
-              f22%n(c) = f22%pro(c1)
-            end if
-            if(SIMULA == DES_SPA) then
-              VIS%n(c) = VIS%pro(c1)
-            end if
-            if(SIMULA == EBM) then
-              uu%n(c) = uu % pro(c1)
-              vv%n(c) = vv % pro(c1)
-              ww%n(c) = ww % pro(c1)
-              uv%n(c) = uv % pro(c1)
-              uw%n(c) = uw % pro(c1)
-              vw%n(c) = vw % pro(c1)
-              f22%n(c) = f22 % pro(c1)
-              Eps%n(c) = Eps % pro(c1)
-            end if        
-          end if    !end if(in_out)
-        end if      !end if(bcmark(c) == n)
-      end do        !end do c=-1,-NbC,-1
-      else 
-        do m=1,NP
+              if(SIMULA==K_EPS_VV.or.SIMULA==ZETA) then
+                Kin%n(c) = Kin%pro(c1)
+                Eps%n(c) = Eps%pro(c1)
+                v_2%n(c) = v_2%pro(c1)
+                f22%n(c) = f22%pro(c1)
+              end if
+              if(SIMULA == DES_SPA) then
+                VIS%n(c) = VIS%pro(c1)
+              end if
+              if(SIMULA == EBM) then
+                uu%n(c) = uu % pro(c1)
+                vv%n(c) = vv % pro(c1)
+                ww%n(c) = ww % pro(c1)
+                uv%n(c) = uv % pro(c1)
+                uw%n(c) = uw % pro(c1)
+                vw%n(c) = vw % pro(c1)
+                f22%n(c) = f22 % pro(c1)
+                Eps%n(c) = Eps % pro(c1)
+              end if        
+            end if    !end if(in_out)
+          end if      !end if(bcmark(c) == n)
+        end do        !end do c=-1,-NbC,-1
+      else  ! dir == "XPL" ...
+        do m=1,n_points
           call ReadC(9,inp,tn,ts,te)
           read(inp(ts(1):te(1)),*) xyz(m)
           read(inp(ts(2):te(2)),*) U % pro(m)
@@ -498,85 +494,83 @@
           if(bcmark(c) == n) then
             TypeBC(c) = typBou(n)
           
-!===== if in_out is set to true, set boundary values,
-!===== otherwise, just the TypeBC remains set.
+            ! If in_out is set to true, set boundary values,
+            ! otherwise, just the TypeBC remains set.
+            if(in_out) then
+              do m=1,n_points-1
+                here = .FALSE. 
 
-          if(in_out) then
-            do m=1,NP-1
-              here = .FALSE. 
-!----- compute the weight factors
-              if( (dir == 'X' .or. dir == 'x') .and.                  &
+                ! Compute the weight factors
+                if( (dir == 'X' .or. dir == 'x') .and.                  &
                    xc(c) >= xyz(m) .and. xc(c) <= xyz(m+1) ) then
-                wi = ( xyz(m+1)-xc(c) ) / ( xyz(m+1) - xyz(m) )
-                here = .TRUE.
-              else if( (dir == 'Y' .or. dir == 'y') .and.             &
-                   yc(c) >= xyz(m) .and. yc(c) <= xyz(m+1) ) then
-                wi = ( xyz(m+1)-yc(c) ) / ( xyz(m+1) - xyz(m) )
-                here = .TRUE.
-              else if( (dir == 'Z' .or. dir == 'z') .and.             &
-                   zc(c) >= xyz(m) .and. zc(c) <= xyz(m+1) ) then
-                wi = ( xyz(m+1)-zc(c) ) / ( xyz(m+1) - xyz(m) )
-                here = .TRUE.
-              else if( (dir == 'RX' .or. dir == 'rx') .and.           &
-                   sqrt(yc(c)*yc(c)+zc(c)*zc(c)) >= xyz(m) .and.      &
-                   sqrt(yc(c)*yc(c)+zc(c)*zc(c)) <= xyz(m+1) ) then
-                wi = ( xyz(m+1) - sqrt(yc(c)*yc(c)+zc(c)*zc(c)) )     &
-                   / ( xyz(m+1) - xyz(m) )
-                here = .TRUE.
-              else if( (dir == 'RY' .or. dir == 'ry') .and.           &
-                   sqrt(xc(c)*xc(c)+zc(c)*zc(c)) >= xyz(m) .and.      &
-                   sqrt(xc(c)*xc(c)+zc(c)*zc(c)) <= xyz(m+1) ) then
-                wi = ( xyz(m+1) - sqrt(xc(c)*xc(c)+zc(c)*zc(c)) )     &
-                   / ( xyz(m+1) - xyz(m) )
-                here = .TRUE.
-              else if( (dir == 'RZ' .or. dir == 'rz') .and.           &
-                   sqrt(xc(c)*xc(c)+yc(c)*yc(c)) <= xyz(m) .and.      &
-                   sqrt(xc(c)*xc(c)+yc(c)*yc(c)) >= xyz(m+1) ) then
-                wi = ( xyz(m+1) - sqrt(xc(c)*xc(c)+yc(c)*yc(c)) )     &
-                   / ( xyz(m+1) - xyz(m) )
-                here = .TRUE.
-              end if
+                  wi = ( xyz(m+1)-xc(c) ) / ( xyz(m+1) - xyz(m) )
+                  here = .TRUE.
+                else if( (dir == 'Y' .or. dir == 'y') .and.             &
+                     yc(c) >= xyz(m) .and. yc(c) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1)-yc(c) ) / ( xyz(m+1) - xyz(m) )
+                    here = .TRUE.
+                else if( (dir == 'Z' .or. dir == 'z') .and.             &
+                     zc(c) >= xyz(m) .and. zc(c) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1)-zc(c) ) / ( xyz(m+1) - xyz(m) )
+                  here = .TRUE.
+                else if( (dir == 'RX' .or. dir == 'rx') .and.           &
+                       sqrt(yc(c)*yc(c)+zc(c)*zc(c)) >= xyz(m) .and.      &
+                     sqrt(yc(c)*yc(c)+zc(c)*zc(c)) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1) - sqrt(yc(c)*yc(c)+zc(c)*zc(c)) )     &
+                     / ( xyz(m+1) - xyz(m) )
+                  here = .TRUE.
+                else if( (dir == 'RY' .or. dir == 'ry') .and.           &
+                     sqrt(xc(c)*xc(c)+zc(c)*zc(c)) >= xyz(m) .and.      &
+                     sqrt(xc(c)*xc(c)+zc(c)*zc(c)) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1) - sqrt(xc(c)*xc(c)+zc(c)*zc(c)) )     &
+                     / ( xyz(m+1) - xyz(m) )
+                  here = .TRUE.
+                else if( (dir == 'RZ' .or. dir == 'rz') .and.           &
+                     sqrt(xc(c)*xc(c)+yc(c)*yc(c)) <= xyz(m) .and.      &
+                     sqrt(xc(c)*xc(c)+yc(c)*yc(c)) >= xyz(m+1) ) then
+                    wi = ( xyz(m+1) - sqrt(xc(c)*xc(c)+yc(c)*yc(c)) )     &
+                     / ( xyz(m+1) - xyz(m) )
+                  here = .TRUE.
+                end if
 
-!----- interpolate the profiles     
-              if(here) then
-                U % n(c) = wi*U % pro(m) + (1.-wi)*U % pro(m+1)
-                V % n(c) = wi*V % pro(m) + (1.-wi)*V % pro(m+1)
-                W % n(c) = wi*W % pro(m) + (1.-wi)*W % pro(m+1)
-                if(HOT==YES) &
-                  T % n(c) = wi*T % pro(m) + (1.-wi)*T % pro(m+1)
-                if(SIMULA==K_EPS) then
-                  Kin % n(c) = wi*Kin % pro(m) + (1.-wi)*Kin % pro(m+1)
-                  Eps % n(c) = wi*Eps % pro(m) + (1.-wi)*Eps % pro(m+1)
+                ! Interpolate the profiles     
+                if(here) then
+                  U % n(c) = wi*U % pro(m) + (1.-wi)*U % pro(m+1)
+                  V % n(c) = wi*V % pro(m) + (1.-wi)*V % pro(m+1)
+                  W % n(c) = wi*W % pro(m) + (1.-wi)*W % pro(m+1)
+                  if(HOT==YES) &
+                    T % n(c) = wi*T % pro(m) + (1.-wi)*T % pro(m+1)
+                  if(SIMULA==K_EPS) then
+                    Kin % n(c) = wi*Kin % pro(m) + (1.-wi)*Kin % pro(m+1)
+                    Eps % n(c) = wi*Eps % pro(m) + (1.-wi)*Eps % pro(m+1)
+                  end if
+                  if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
+                    Kin % n(c) = wi*Kin % pro(m) + (1.-wi)*Kin % pro(m+1)
+                    Eps % n(c) = wi*Eps % pro(m) + (1.-wi)*Eps % pro(m+1)
+                    f22 % n(c) = wi*f22 % pro(m) + (1.-wi)*f22 % pro(m+1)
+                    v_2 % n(c) = wi*v_2 % pro(m)  + (1.-wi)*v_2% pro(m+1)
+                  end if
+                  if(SIMULA == SPA_ALL) then
+                    VIS % n(c) = wi*VIS % pro(m) + (1.-wi)*VIS % pro(m+1)
+                  end if
+                  if(SIMULA == DES_SPA) then
+                    VIS % n(c) = wi*VIS % pro(m) + (1.-wi)*VIS % pro(m+1)
+                  end if
                 end if
-                if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-                  Kin % n(c) = wi*Kin % pro(m) + (1.-wi)*Kin % pro(m+1)
-                  Eps % n(c) = wi*Eps % pro(m) + (1.-wi)*Eps % pro(m+1)
-                  f22 % n(c) = wi*f22 % pro(m) + (1.-wi)*f22 % pro(m+1)
-                  v_2 % n(c) = wi*v_2 % pro(m)  + (1.-wi)*v_2% pro(m+1)
-                end if
-                if(SIMULA == SPA_ALL) then
-                  VIS % n(c) = wi*VIS % pro(m) + (1.-wi)*VIS % pro(m+1)
-                end if
-                if(SIMULA == DES_SPA) then
-                  VIS % n(c) = wi*VIS % pro(m) + (1.-wi)*VIS % pro(m+1)
-                end if
-              end if
-            end do
-          end if  ! if(in_out)
-        end if 
-      end do
+              end do
+            end if  ! if(in_out)
+          end if 
+        end do
       end if
       close(9)
     end if
   end do 
 
-!---------------------------------!
-! Finally handle the buffer cells !
-!---------------------------------!
+  !-------------------------------------!
+  !   Finally handle the buffer cells   !
+  !-------------------------------------!
   do c=-1,-NbC,-1
     if(bcmark(c) == BUFFER) TypeBC(c)=BUFFER 
   end do
 
-  RETURN 
-
-  end subroutine BouLoa
+  end subroutine Load_Boundary_Conditions

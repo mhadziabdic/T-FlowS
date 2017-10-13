@@ -41,16 +41,16 @@
   !---------------------------------------!
   n=1  ! colour count
 
-  red(n) = 1.00; green(n) = 0.00; blue(n) = 0.00;  n=n+1 ! Red
-  red(n) = 0.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! Green
-  red(n) = 0.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! Blue
-  red(n) = 1.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! Magenta
-  red(n) = 1.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! Yellow
-  red(n) = 0.00; green(n) = 1.00; blue(n) = 1.00;  n=n+1 ! Cyan
-  red(n) = 1.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! Light Red
+  red(n) = 1.00; green(n) = 0.00; blue(n) = 0.00;  n=n+1 ! red
+  red(n) = 0.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! green
+  red(n) = 0.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! blue
+  red(n) = 1.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! magenta
+  red(n) = 1.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! yellow
+  red(n) = 0.00; green(n) = 1.00; blue(n) = 1.00;  n=n+1 ! cyan
+  red(n) = 1.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! light Red
   red(n) = 0.50; green(n) = 1.00; blue(n) = 0.50;  n=n+1 ! light Green
-  red(n) = 0.50; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! Light Blue
-  red(n) = 0.50; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! Gray           
+  red(n) = 0.50; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! light Blue
+  red(n) = 0.50; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! gray           
 
   !------------------------------!
   !   Input camera coordinates   !
@@ -59,7 +59,7 @@
   call ReadC(5,inp,tn,ts,te)
   if(tn == 1) then 
     read(inp, *) answer
-    call ToUppr(answer)
+    call To_Upper_Case(answer)
     if(answer == 'SKIP') return  
   else if(tn == 3) then 
     read(inp, *) xk, yk, zk  
@@ -80,7 +80,7 @@
   write(6,*) 'G-> Gray or C-> Coloured (by boundary conditions): '
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) colour 
-  call ToUppr(colour);
+  call To_Upper_Case(colour);
   write(6,*) 'Enter the file name (without extension): '
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) name_eps 

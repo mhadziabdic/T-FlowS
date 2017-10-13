@@ -47,7 +47,7 @@
 1 write(*,*) 'Enter the copy marker (skip to exit):'
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'SKIP') then
     return
   else 

@@ -199,11 +199,11 @@
 
     end do ! for subo
 
-    call Save_Gmv_mesh(sub, n_nodes_sub, n_cells_sub)
-    call GeoSav(sub, n_cells_sub, n_faces_sub, n_b_cells_sub,   &
-                     n_buff_sub,NCFsub)
-    call Save_Gmv_Links(sub, n_nodes_sub, n_cells_sub, n_faces_sub,  &
-                     n_b_cells_sub, n_buff_sub)
+    call Save_Gmv_Mesh(sub, n_nodes_sub, n_cells_sub)
+    call Save_Cns_Geo(sub, n_cells_sub, n_faces_sub, n_b_cells_sub,  &
+                      n_buff_sub,NCFsub)
+    call Save_Gmv_Links(sub, n_nodes_sub, n_cells_sub, n_faces_sub,   &
+                        n_b_cells_sub, n_buff_sub)
 
     write(*,*) 'Test:'
     write(*,*) 'n_nodes_sub   =', n_nodes_sub

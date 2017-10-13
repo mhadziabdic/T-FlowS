@@ -1,30 +1,30 @@
-!======================================================================!
+!==============================================================================!
   subroutine ReaCom(restar) 
-!----------------------------------------------------------------------!
-!   Reads second part of T-FlowS.cmn file.                             ! 
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Reads second part of T-FlowS.cmn file.                                     ! 
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use par_mod
   use rans_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!---------------------------------[Parameters]---------------------------------!
   logical   :: restar
-!------------------------------[Calling]-------------------------------!
+!----------------------------------[Calling]-----------------------------------!
   real      :: Distance
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer           :: i, j, l, m
   real              :: MresT, dummy
   character(len=80) :: answer, nammon
   real, allocatable :: mres(:), xm(:), ym(:), zm(:)
-!======================================================================!
+!==============================================================================!
 
   call Wait   
 
-!----- The number of time steps
+  ! The number of time steps
   if(this_proc  < 2) then 
     write(*,*) '# Enter the number of time steps: (',Ndt,') '
     write(*,*) '# (type 0 if you just want to analyse results)'
@@ -32,7 +32,7 @@
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*)  Ndt
 
-!----- Starting time step for statistics 
+  ! Starting time step for statistics 
   if(this_proc  < 2)  &
     write(*,*) '# Starting time step for statistics (',Nstat,') '
   call ReadC(CMN_FILE,inp,tn,ts,te)
@@ -58,7 +58,7 @@
     read(inp,*)  xm(i), ym(i), zm(i)
   end do
 
-!----- Find the monitoring cells
+  ! Find the monitoring cells
   nammon=name 
   nammon(len_trim(name)+1:len_trim(name)+10)="-monit.000"
   l=len_trim(nammon) 
@@ -98,7 +98,7 @@
     end if
   end do
 
-!----- Plane for calcution of overall mass fluxes
+  ! Plane for calcution of overall mass fluxes
   do m=1,Nmat
     if(this_proc  < 2)  then
       write(*,*) '# Enter the coordinates of monitoring plane: (', &
@@ -108,7 +108,7 @@
     read(inp,*) xp(m), yp(m), zp(m)
   end do
 
-!----- Kind of simulation
+  ! Kind of simulation
   if(this_proc  < 2) then
     write(*,*) '# Type of simulation: '
     write(*,*) '# DNS      -> Direct Numerical Simulation'
@@ -120,7 +120,7 @@
   endif
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'DNS') then
     SIMULA = DNS
   else if(answer == 'LES') then
@@ -153,7 +153,7 @@
 
   if(SIMULA==EBM.or.SIMULA==HJ) then
     read(inp(ts(2):te(2)),'(A8)') answer
-    call ToUppr(answer)
+    call To_Upper_Case(answer)
     if(answer == 'HYB') then
       MODE = HYB 
     else
@@ -163,7 +163,7 @@
 
   if(SIMULA==K_EPS) then
     read(inp(ts(2):te(2)),'(A8)') answer
-    call ToUppr(answer)
+    call To_Upper_Case(answer)
     if(answer == 'HRE') then
       MODE = HRE
     else if(answer == 'LRE') then
@@ -179,7 +179,7 @@
 
   if(SIMULA==LES.or.SIMULA==HYB_ZETA) then
     read(inp(ts(2):te(2)),'(A8)') answer
-    call ToUppr(answer)
+    call To_Upper_Case(answer)
     if(answer == 'SMAG') then
       MODE = SMAG 
     else if(answer == 'DYN') then
@@ -212,7 +212,7 @@
       end if
       call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp(ts(1):te(1)),'(A)')  answer
-      call ToUppr(answer)
+      call To_Upper_Case(answer)
       if(answer == 'YES') then
         SHAKE(m) = YES
       else if(answer == 'NO') then
@@ -368,7 +368,7 @@
     SIGMAv = 2.0/3.0
   end if
 
-!----- Time stepping scheme
+  ! Time stepping scheme
   if(this_proc  < 2) then
     write(*,*) '# Algorythm for time-integration: '
     write(*,*) '# SIMPLE [Nini] -> S. I. M. P. L. E.'
@@ -376,7 +376,7 @@
   endif 
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'SIMPLE') then
     ALGOR = SIMPLE
     Nini  = 10
@@ -430,7 +430,7 @@
   endif 
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'LIN') then
     INERT = LIN
   else if(answer == 'PAR') then
@@ -451,7 +451,7 @@
   endif 
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'AB') then
     CONVEC = AB
   else if(answer == 'CN') then
@@ -474,7 +474,7 @@
   endif 
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'AB') then
     DIFFUS = AB
   else if(answer == 'CN') then
@@ -497,7 +497,7 @@
   endif 
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'AB') then
     CROSS = AB
   else if(answer == 'CN') then
@@ -512,7 +512,7 @@
     stop
   endif
 
-!----- Upwind blending
+  ! Upwind blending
   do m=1,Nmat
     URFC(m) = 1.0
     if(this_proc  < 2) then
@@ -529,7 +529,7 @@
     endif 
     call ReadC(CMN_FILE,inp,tn,ts,te)
     read(inp(ts(1):te(1)),'(A)')  answer
-    call ToUppr(answer)
+    call To_Upper_Case(answer)
     if(answer == 'BLEND_CDS_UDS') then
       BLEND(m) = YES
       if(tn==2) read(inp(ts(2):te(2)),*) URFC(m)
@@ -571,7 +571,7 @@
       endif 
       call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp(ts(1):te(1)),'(A)')  answer
-      call ToUppr(answer)
+      call To_Upper_Case(answer)
       if(answer == 'BLEND_TEM_CDS_UDS') then
         BLEND_TEM(m) = YES
         if(tn==2) read(inp(ts(2):te(2)),*) URFC_Tem(m)
@@ -614,7 +614,7 @@
       endif 
       call ReadC(CMN_FILE,inp,tn,ts,te)
       read(inp(ts(1):te(1)),'(A)')  answer
-      call ToUppr(answer)
+      call To_Upper_Case(answer)
       if(answer == 'BLEND_TUR_CDS_UDS') then
         BLEND_TUR(m) = YES
         if(tn==2) read(inp(ts(2):te(2)),*) URFC_Tur(m)
@@ -649,7 +649,7 @@
     end do
   end if
 
-!----- Solver parameters
+  ! Solver parameters
   if(this_proc  < 2) then
     write(*,*) '# Preconditioning of the system matrix: '
     write(*,*) '# NO -> No preconditioning'
@@ -658,7 +658,7 @@
   endif 
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp(ts(1):te(1)),'(A)')  answer
-  call ToUppr(answer)
+  call To_Upper_Case(answer)
   if(answer == 'NO') then
     PREC = 0 
   else if(answer == 'DI') then
@@ -712,13 +712,13 @@
     read(inp,*)   SIMTol
   endif     
 
-!----- Time step
+  ! Time step
   if(this_proc  < 2)  &
     write(*,*) '# Time step: (',dt,' )'
     call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*)   dt
 
-!----- Wall velocity 
+  ! Wall velocity 
   do m=1,Nmat
     if(this_proc  < 2)  &
       write(*,*) '# Enter Pdrop (x, y, z) for domain ', m
@@ -733,7 +733,7 @@
     end if     
   end do
 
-!----- Mass fluxes
+  ! Mass fluxes
   do m=1,Nmat
     if(this_proc  < 2) then
       write(*,*) '# Enter the wanted mass flux through domain ', m
@@ -745,8 +745,6 @@
   end do
 
   call Wait   
-
-  RETURN
 
   end subroutine ReaCom
 

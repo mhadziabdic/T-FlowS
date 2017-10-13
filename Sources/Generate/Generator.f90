@@ -114,7 +114,7 @@
 
   ! Save the grid
   call Save_Gmv_Mesh(0, NN, NC)            ! save grid for postprocessing
-  call GeoSav(0, NC, NS, NBC, 0, 0) ! saved data for processing
+  call Save_Cns_Geo(0, NC, NS, NBC, 0, 0) ! saved data for processing
 
   call Save_Gmv_Links(0, NN, NC, NS, NbC, 0)
 

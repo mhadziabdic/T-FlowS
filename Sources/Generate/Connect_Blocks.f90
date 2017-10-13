@@ -1,14 +1,14 @@
-!======================================================================!
-  subroutine Fuzion
-!----------------------------------------------------------------------!
-!   Solve the cell connectivity after block by block grid generation   !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Connect_Blocks
+!------------------------------------------------------------------------------!
+!   Solve the cell connectivity after block by block grid generation           !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-!----------------------------------------------------------------------! 
+!------------------------------------------------------------------------------! 
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, n                         ! counters
   integer :: b1, b2                          ! block 1 and 2
   integer :: f1, f2                          ! faces of block 1 and 2
@@ -23,29 +23,29 @@
   integer :: n1, n2                          ! from block 1, 2
   integer :: trans1(3,3), trans2(3,3)
   integer :: del                             ! number of deleted nodes
-!======================================================================!
+!==============================================================================!
 
-!----- initialize the NewN array
+  ! Initialize the NewN array
   do n=1,NN
     NewN(n)=n
   end do
 
   if(Nbloc == 1) return 
 
-!----- initialize the number of deleted nodes
+  ! Initialize the number of deleted nodes
   del=0
 
   ni1=0; nj1=0; nk1=0; ni2=0; nj2=0; nk2=0 
 
-!---------------------------------------------------------!
-!     Search through all block and all of their faces     !
-!---------------------------------------------------------!
+  !-----------------------------------------------------!
+  !   Search through all block and all of their faces   !
+  !-----------------------------------------------------!
   do b2=2,Nbloc
     do b1=1,b2-1
       do f2=1,6    ! faces of the second block
         do f1=1,6  ! faces of the first block
 
-!----- initialize the transformation matrixes             
+          ! Initialize the transformation matrixes             
           do i=1,3
             do j=1,3
               trans1(i,j)=0
@@ -62,19 +62,19 @@
           n23=block_faces(b2, f2, 3)
           n24=block_faces(b2, f2, 4)
 
-!----- check if they are connected 
+          ! Check if they are connected 
           if( ((n11 == n21).and.(n13 == n23)) .or.  &
               ((n11 == n24).and.(n13 == n22)) .or.  &
               ((n11 == n23).and.(n13 == n21)) .or.  &
               ((n11 == n22).and.(n13 == n24)) ) then
 
-!----- definiraj genericku povrsinu (g1-g4 u biti ne trebaju)
+            ! Define generic surface (g1-g4 are in essence not needed)
             g1=n11
             g2=n12
             g3=n13
             g4=n14
 
-!----- nadji lokalne cvorove (1-8) blokova 1 i 2 na generickoj povrsini
+            ! Find local nodes (1-8) from blocks 1 and 2 on generic surface
             do n=1,8
               if(block_points(b1,n) == g1) l11=n
               if(block_points(b2,n) == g1) l21=n
@@ -86,14 +86,7 @@
               if(block_points(b2,n) == g4) l24=n
             end do
 
-               write(6, *) 'Connecting blocks: ', b1, b2
-!>>>>          write(6, *) 'f1,f2= ', f1, f2
-!>>>>          write(6,*) n11, n12, n13, n14, n21, n22, n23, n24
-!>>>>          write(6, '(4I5)') g1,  g2,  g3,  g4
-!>>>>          write(6, '(4I5)') l11, l12, l13, l14
-!>>>>          write(6, '(4I5)') l21, l22, l23, l24
-
-!----- direction ig, block 1
+            ! Direction ig, block 1
             if((l14-l11) == +1) then
               nig = block_resolutions(b1,1)       ! ni from block 1
               trans1(1,2)=+1
@@ -117,7 +110,7 @@
               trans1(3,2)=-1
             endif
 
-!----- direction jg, block 1 
+            ! Direction jg, block 1 
             if((l12-l11) == +1) then 
               njg = block_resolutions(b1,1)       ! ni from block 1
               trans1(1,3)=+1
@@ -141,7 +134,7 @@
               trans1(3,3)=-1
             endif
 
-!----- direction ig, block 2
+            ! Direction ig, block 2
             if((l24-l21) == +1) then
               nig = block_resolutions(b2,1)       ! ni from block 2
               trans2(1,2)=+1
@@ -165,7 +158,7 @@
               trans2(3,2)=-1
             endif
 
-!----- direction jg, block 2 
+            ! Direction jg, block 2 
             if((l22-l21) == +1) then 
               njg = block_resolutions(b2,1)       ! ni from block 2
               trans2(1,3)=+1
@@ -189,7 +182,7 @@
               trans2(3,3)=-1
             endif
 
-!----- set the constant directions
+            ! Set the constant directions
             if(f1 == 1) trans1(3,1)=1
             if(f1 == 2) trans1(2,1)=1
             if(f1 == 3) trans1(1,1)=block_resolutions(b1,1)-1
@@ -204,21 +197,7 @@
             if(f2 == 5) trans2(1,1)=1
             if(f2 == 6) trans2(3,1)=block_resolutions(b2,3)-1
 
-!>>>> ispisi to sta si dobio za provjeru                  
-!>>>>     write(6, *) '   C   ig   jg'
-!>>>>     do i=1,3
-!>>>>       write(6, '(3I5)')  &
-!>>>>             trans1(i,1), trans1(i,2), trans1(i,3)
-!>>>>     end do
-!>>>>
-!>>>>     write(6, *) '   C   ig   jg'
-!>>>>     do i=1,3
-!>>>>       write(6, '(3I5)')  &
-!>>>>             trans2(i,1), trans2(i,2), trans2(i,3)
-!>>>>     end do
-
-
-!----- finally conect the two blocks
+            ! Finally conect the two blocks
             do jg=1,njg-1              ! through volumes only
               do ig=1,nig-1            ! through volumes only
                 ci1=block_resolutions(b1,1)-1
@@ -237,13 +216,12 @@
                      + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
                 c2 = block_resolutions(b2,6)  &
                      + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
-!->>>               write(6, '(2I5)') c1, c2
                 CellC(c1, f1) = c2
                 CellC(c2, f2) = c1
               end do
             end do
 
-!----- modify the transformation matrices for nodal connection
+            ! Modify the transformation matrices for nodal connection
             if(trans1(1,1)  > 1) trans1(1,1)=trans1(1,1)+1
             if(trans1(2,1)  > 1) trans1(2,1)=trans1(2,1)+1
             if(trans1(3,1)  > 1) trans1(3,1)=trans1(3,1)+1
@@ -251,7 +229,7 @@
             if(trans2(2,1)  > 1) trans2(2,1)=trans2(2,1)+1
             if(trans2(3,1)  > 1) trans2(3,1)=trans2(3,1)+1
 
-!----- conect the nodes 
+            ! Conect the nodes 
             do jg=1,njg                ! through nodes 
               do ig=1,nig              ! through nodes
                 ni1=block_resolutions(b1,1)
@@ -280,7 +258,7 @@
       end do      ! f2
     end do        ! b1
 
-!----- update the node numbers
+    ! Update node numbers
     do n=block_resolutions(b2,5)+1, block_resolutions(b2,5)+ni2*nj2*nk2
       if(NewN(n) /= n) del=del+1
       if(NewN(n) == n) NewN(n)=NewN(n)-del
@@ -290,7 +268,6 @@
 
 
   do n=1,NN
-!->>>   write(6, '(2I8)') n, NewN(n)
     x_node(NewN(n))=x_node(n)
     y_node(NewN(n))=y_node(n)
     z_node(NewN(n))=z_node(n)
@@ -298,7 +275,7 @@
 
   NN=NN-del
 
-!----- skip the merged points in the node() structure
+  ! Skip the merged points in the node() structure
   do i=1,NC
     do n=1,8
       CellN(i,n)=NewN(CellN(i,n))
@@ -307,4 +284,4 @@
 
   write(6, '(I8)') del       
 
-  end subroutine Fuzion   
+  end subroutine Connect_Blocks   

@@ -1,6 +1,7 @@
 bin_PROGRAMS = Generate
 
 Generate_SOURCES =	 	\
+  Are_Nodes_Twins.f90		\
   Atanh.f90			\
   Compute_Node_Coordinates.f90	\
   Compute_Grid_Geometry.f90	\
@@ -8,11 +9,10 @@ Generate_SOURCES =	 	\
   Distribute_Nodes.f90		\
   Find_Line.f90			\
   Find_Surface.f90		\
-  Fuzion.f90			\
+  Connect_Blocks.f90		\
   Generator.f90			\
   Load_Domain.f90		\
-  IsLine.f90			\
-  IsTwin.f90			\
+  Is_Line_In_Block.f90		\
   Laplac.f90			\
   Logo_Generate.f90		\
   PeriBC.f90			\

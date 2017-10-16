@@ -36,7 +36,7 @@
 !----------------------!
 !-- Coordinates Loop --!
 !----------------------!
-  if(this < 2) write(*,*) '# NOW READING FILE: ', FLUfile
+  if(this < 2) write(*,*) '# NOW READING file: ', FLUfile
   open (5, file=FLUfile)
 
   do i=1,6                             !header
@@ -85,7 +85,7 @@
 !-- Variables Loop --!
 !--------------------!
   FLUfile(len_trim(FLUfile)-3 : len_trim(FLUfile)) = ".dat"
-  if(this < 2) write(*,*) '# NOW READING FILE: ', FLUfile
+  if(this < 2) write(*,*) '# NOW READING file: ', FLUfile
   open (5, file=FLUfile)
 
   do i=1,4                             !header

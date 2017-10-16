@@ -52,7 +52,7 @@
 !                         !
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
   call NamFil(sub, namOut, '.gmv', len_trim('.gmv'))
-  open(9, FILE=namOut)
+  open(9, file=namOut)
 !  if (this <2) then
 !    write(*,*) 'Now reading the file: ', namOut
 !  end if
@@ -126,7 +126,7 @@
   name = namAut
   call NamFil(sub, namXML, '.vtu', len_trim('.vtu'))
 
-  open(9, FILE=namXML)
+  open(9, file=namXML)
   if (this <2) then
   write(6, *) 'Now writing the file:', namXML
   end if
@@ -812,7 +812,7 @@ end if !HOT == YES
   if (this < 2) then
     name = storename
     call NamFil(0, name, '.pvtu', len_trim('.pvtu'))
-    open(12, FILE=name)
+    open(12, file=name)
 !     write(*,*) 'writing parallel master file: ', name
      write(12,'(A21)') '<?xml version="1.0"?>'
      write(12,'(A74)') '<VTKFile type="PUnstructuredGrid" version="0.1" byte_order="LittleEndian">'

@@ -47,7 +47,7 @@
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
     if(this < 2) write(6, *) '# Now reading the file: jet_rad.1D ' 
-    open(9, FILE='jet_rad.1D')
+    open(9, file='jet_rad.1D')
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -199,7 +199,7 @@
     JetIn  = 'Jet_res_x'
     write(JetIn(9:9),'(I1)') k
 
-    open(3,FILE=JetIn)
+    open(3,file=JetIn)
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
         Wmp(i)    =  Wmp(i)/Ncount(i)
@@ -259,7 +259,7 @@
 !   namOut ='proba'
 !   call NamFil(this, namOut, '.r', len_trim('.r') )
 !
-!    open(3,FILE=namOut)
+!    open(3,file=namOut)
 !    do s=1,NS
 !      c1=SideC(1,s)
 !      c2=SideC(2,s)

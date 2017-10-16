@@ -24,7 +24,7 @@
   name_in = name
   name_in(len_trim(name)+1:len_trim(name)+4) = '.neu'
 
-  open(9,FILE=name_in)
+  open(9,file=name_in)
   write(*,*) 'Now reading the file: ', name_in
 
   ! Skip first 6 lines

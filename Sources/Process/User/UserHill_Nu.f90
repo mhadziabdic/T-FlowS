@@ -38,7 +38,7 @@
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
     if(this < 2) write(6, *) '# Now reading the file: x_dist.1D ' 
-    open(9, FILE='x_dist.1D')
+    open(9, file='x_dist.1D')
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -105,7 +105,7 @@
     do i = 1, Nprob
       Ncount(i) = max(Ncount(i),1) 
     end do
-    open(9, FILE='Hill_Nu.dat')
+    open(9, file='Hill_Nu.dat')
     do i = 1, Nprob-1
       Wmp(i)    =  Wmp(i)/Ncount(i)
       Ump(i)    =  Ump(i)/Ncount(i)

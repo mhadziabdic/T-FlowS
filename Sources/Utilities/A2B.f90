@@ -41,7 +41,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
   nameIn=name
   nameIn(len_trim(name)+1:len_trim(name)+4)='.cns'
-  open(9, FILE=nameIn)
+  open(9, file=nameIn)
   write(*,*) '# Now reading the ascii .cns file:', nameIn
 
 !///// number of cells, boundary cells and sides 
@@ -82,7 +82,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
   namOut = name 
   namOut(len_trim(name)+1:len_trim(name)+4)='.cns'
-  open(9, FILE=namOut, FORM='UNFORMATTED')
+  open(9, file=namOut, FORM='unformatted')
   write(*,*) '# Now writing the binary .cns file:', namOut
 
 !///// number of cells
@@ -117,7 +117,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
   nameIn = name 
   nameIn(len_trim(name)+1:len_trim(name)+4)='.geo'
-  open(9, FILE=nameIn)
+  open(9, file=nameIn)
   write(*,*) '# Now reading the ascii .geo file:', nameIn
 
   allocate (xc(-NbC:NC))
@@ -165,7 +165,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
   namOut = name 
   namOut(len_trim(name)+1:len_trim(name)+4)='.geo'
-  open(9, FILE=namOut, FORM='UNFORMATTED')
+  open(9, file=namOut, FORM='unformatted')
   write(*,*) '# Now writing the binary .geo file:', namOut
 
   write(9) (xc(c), c=1,NC)

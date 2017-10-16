@@ -21,7 +21,7 @@
   !                      !
   !----------------------!
   call NamFil(sub, name_out, '.gmv', len_trim('.gmv'))
-  open(9, FILE=name_out)
+  open(9, file=name_out)
   write(6, *) 'Now creating the file:', name_out
 
   !-----------!
@@ -106,7 +106,7 @@
   if(sub /= 0) return
 
   call NamFil(sub, name_out, '.faces.gmv', len_trim('.faces.gmv'))
-  open(9, FILE=name_out)
+  open(9, file=name_out)
   write(6, *) 'Now creating the file:', name_out
 
   !-----------!
@@ -191,7 +191,7 @@
   if(sub /= 0) return
 
   call NamFil(sub, name_out, '.shadow.gmv', len_trim('.shadow.gmv'))
-  open(9, FILE=name_out)
+  open(9, file=name_out)
   write(6, *) 'Now creating the file:', name_out
 
   do s=NS+1,NS+NSsh

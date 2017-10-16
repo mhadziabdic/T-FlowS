@@ -44,7 +44,7 @@
   !                      !
   !----------------------!
   call NamFil(this_proc, name_out, '.dat', len_trim('.dat'))
-  open(9, FILE=name_out)
+  open(9, file=name_out)
   if(this_proc  < 2) write(*,*) '# Now creating the file:', name_out  
 
     call GraPhi(U % n, 1, Ux,.true.)    ! dU/dx

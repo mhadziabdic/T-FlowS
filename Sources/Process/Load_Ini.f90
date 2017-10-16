@@ -53,7 +53,7 @@
 
   if(this_proc < 2) write(*,*)'now reading file:', name_in 
 
-  open(5, FILE=name_in) 
+  open(5, file=name_in) 
   read(5,*) NCold
 
   allocate (Xold(NCold)); Xold = 0.0

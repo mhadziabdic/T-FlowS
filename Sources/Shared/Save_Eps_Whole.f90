@@ -127,7 +127,7 @@
     xlegend = 0
   end if
 
-  open(9, FILE=name_eps)
+  open(9, file=name_eps)
 
   write(*,*) 'File opened'
 

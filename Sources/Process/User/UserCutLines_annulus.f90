@@ -59,7 +59,7 @@
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
     if(this_proc < 2) write(6, *) '# Now reading the file:', namCoo
-    open(9, FILE=namCoo)
+    open(9, file=namCoo)
 
 !---- write the number of searching intervals 
     read(9,*) Nprob
@@ -259,7 +259,7 @@
 10  continue
 
 
-!    open(12, FILE='inflow.dat')
+!    open(12, file='inflow.dat')
 !      do i = 1, Nprob-1
 !        if(Ncount(i) /= 0) then
 !          write(12,'(4E15.7)') var_4(i), var_1(i), var_2(i), var_3(i)
@@ -268,7 +268,7 @@
 !    close(12)
 
  
-    open(3,FILE=namRes)
+    open(3,file=namRes)
     write(3,'(A1,2(A10, F13.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric*R_max/VISc
     if(SIMULA == LES.or.SIMULA == DES_SPA.or.SIMULA == DNS) then
       write(3,'(A1,2X,A80)') '#', '1:Xrad, 2:U, 3:V, 4:W, 5:uu, 6:vv, 7:ww, 8:uv, 9:uw, 10:vw, 11:Kin' 
@@ -324,7 +324,7 @@
     end if
     close(3)
 
-    open(3,FILE=namRes_plus)
+    open(3,file=namRes_plus)
     write(3,'(A1,2(A10, F13.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric*R_max/VISc
     if(SIMULA == LES.or.SIMULA == DES_SPA.or.SIMULA==DNS) then
       write(3,'(A1,2X,A80)') '#', '1:Xrad+, 2:U+, 3:V+, 4:W+, 5:uu+, 6:vv+, 7:ww+, 8:uv+, 9:uw+, 10:vw+, 11:Kin+' 

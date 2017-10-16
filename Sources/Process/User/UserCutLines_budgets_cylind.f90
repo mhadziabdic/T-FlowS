@@ -66,7 +66,7 @@
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
     if(this < 2) write(6, *) '# Now reading the file:', namCoo
-    open(9, FILE=namCoo)
+    open(9, file=namCoo)
 
 
 !---- write the number of probes 
@@ -487,7 +487,7 @@
     end do
 
     NF    = 1.0   !VISc/Ufric**4.0
-    open(4,FILE='Budget_uu.dat')
+    open(4,file='Budget_uu.dat')
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
     write(4,'(A1,1X,A94)') '#', '1:Xrad, 2:Xrad+, 3:Prod, 4:Conv, 5:PressStrain, 6:ViscDiff, 7:TurbDiff, 8:Diss, 9:PresDiff' 
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
@@ -503,7 +503,7 @@
     end do
     close(4)
 
-    open(4,FILE='Budget_vv.dat')
+    open(4,file='Budget_vv.dat')
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
     write(4,'(A1,1X,A94)') '#', '1:Xrad, 2:Xrad+, 3:Prod, 4:Conv, 5:PressStrain, 6:ViscDiff, 7:TurbDiff, 8:Diss, 9:PresDiff' 
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
@@ -519,7 +519,7 @@
     end do
     close(4)
 
-    open(4,FILE='Budget_ww.dat')
+    open(4,file='Budget_ww.dat')
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
     write(4,'(A1,1X,A94)') '#', '1:Xrad, 2:Xrad+, 3:Prod, 4:Conv, 5:PressStrain, 6:ViscDiff, 7:TurbDiff, 8:Diss, 9:PresDiff' 
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
@@ -535,7 +535,7 @@
     end do
     close(4)
 
-    open(4,FILE='Budget_kin.dat')
+    open(4,file='Budget_kin.dat')
     write(4,'(A1,1X,A99)') '#','===========================================================================' 
     write(4,'(A1,1X,A99)') '#','1:Xrad,2:Xrad+,3:Prod,4:Conv,5:PressStrain,6:ViscDiff,7:TurbDiff,8:Diss,9:PresDiff,10:Diss_sgs' 
     write(4,'(A1,1X,A99)') '#','=============================================================================' 
@@ -552,7 +552,7 @@
     end do
     close(4)
 
-    open(4,FILE='Budget_uw.dat')
+    open(4,file='Budget_uw.dat')
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
     write(4,'(A1,1X,A94)') '#', '1:Xrad, 2:Xrad+, 3:Prod, 4:Conv, 5:PressStrain, 6:ViscDiff, 7:TurbDiff, 8:Diss, 9:PresDiff' 
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
@@ -568,7 +568,7 @@
     end do
     close(4)
 
-    open(4,FILE='Budget_uv.dat')
+    open(4,file='Budget_uv.dat')
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
     write(4,'(A1,1X,A94)') '#', '1:Xrad, 2:Xrad+, 3:Prod, 4:Conv, 5:PressStrain, 6:ViscDiff, 7:TurbDiff, 8:Diss, 9:PresDiff' 
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
@@ -584,7 +584,7 @@
     end do
     close(4)
 
-    open(4,FILE='Budget_vw.dat')
+    open(4,file='Budget_vw.dat')
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 
     write(4,'(A1,1X,A94)') '#', '1:Xrad, 2:Xrad+, 3:Prod, 4:Conv, 5:PressStrain, 6:ViscDiff, 7:TurbDiff, 8:Diss, 9:PresDiff' 
     write(4,'(A1,1X,A94)') '#', '==========================================================================================' 

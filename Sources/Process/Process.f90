@@ -129,7 +129,7 @@
 
   call cpu_time(start)
 !---- Test the precision
-  open(90,FORM='UNFORMATTED',FILE='Processor.real');
+  open(90,FORM='unformatted',file='Processor.real');
   write(90) 3.1451592
   close(90)
                
@@ -143,7 +143,7 @@
 !/////////////////////////////////////////////////////////////////!
 !     Open the command file and initialize line count to zero     !
 !/////////////////////////////////////////////////////////////////!
-  open(CMN_FILE, FILE='T-FlowS.cmn')    
+  open(CMN_FILE, file='T-FlowS.cmn')    
   cmn_line_count = 0
 
   if(this_proc  < 2) then
@@ -619,7 +619,7 @@
   end do                    ! n, number of time steps  
 
   if(this_proc < 2) then
-    open(9,FILE='stop')
+    open(9,file='stop')
     close(9)
   end if
 

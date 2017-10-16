@@ -23,7 +23,7 @@
   !                      !
   !----------------------!
   call NamFil(sub, namOut, '.cas', len_trim('.cas'))
-  open(9, FILE=namOut)
+  open(9, file=namOut)
   write(6, *) 'Now creating the file:', namOut
 
   !-----------!

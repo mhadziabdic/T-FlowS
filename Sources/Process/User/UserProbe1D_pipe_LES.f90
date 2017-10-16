@@ -45,7 +45,7 @@
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
   write(6, *) '# Now reading the file: pipe_rad.1D ' 
-  open(9, FILE='pipe_rad.1D')
+  open(9, file='pipe_rad.1D')
 
 !---- write the number of probes 
   read(9,*) Nprob
@@ -181,7 +181,7 @@
     end if
   end do
   
-    open(3,FILE='pipe_mean.dat')
+    open(3,file='pipe_mean.dat')
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
         Wmp(i)    =  Wmp(i)/Ncount(i)
@@ -210,7 +210,7 @@
       if(this < 2)write(*,*) 'mean Utau = ', Ufric,         &
        'ukupno nasao celija: ', count
 
-    open(3,FILE='pipe_mean_plus.dat')
+    open(3,file='pipe_mean_plus.dat')
     write(3,*)'# Utau = ', Ufric, 'Re_tau = ', Ufric/VISc
     do i = 1, Nprob
       if(Ncount(i) /= 0) then

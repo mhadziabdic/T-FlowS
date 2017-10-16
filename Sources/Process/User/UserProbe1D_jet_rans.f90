@@ -44,7 +44,7 @@
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
     if(this < 2) write(6, *) '# Now reading the file:', namCoo
-    open(9, FILE=namCoo)
+    open(9, file=namCoo)
 
 !---- write the number of searching intervals
     read(9,*) Nprob
@@ -216,7 +216,7 @@
       end if
     end do
 
-    open(3,FILE=JetIn)
+    open(3,file=JetIn)
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
         write(3,'(8E15.7)') (z_p(i)+z_p(i+1))/4.0, Ump(i), Vmp(i), Wmp(i) , uup(i), vvp(i), wwp(i), uvp(i) 

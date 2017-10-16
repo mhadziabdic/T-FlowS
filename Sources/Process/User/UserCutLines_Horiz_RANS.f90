@@ -32,7 +32,7 @@
   real                :: R, Urad_n, Utan_n, R1, R2, Urad, Utan 
 !======================================================================!
 
-  open(9, FILE='Horiz_positions.dat')
+  open(9, file='Horiz_positions.dat')
   if(this_proc < 2) write(6, *) '# Now reading the file: Horiz_positions.dat ' 
   read(9,*) N_hor
   allocate(r1_p(N_hor))
@@ -46,7 +46,7 @@
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
     if(this_proc < 2) write(6, *) '# Now reading the file: rad_coordinate.dat ' 
-    open(9, FILE='Z_coordinate.dat')
+    open(9, file='Z_coordinate.dat')
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -159,7 +159,7 @@
       write(JetIn(9:14),'(I2,A4)') k, '.dat'
     end if 
 
-    open(3,FILE=JetIn)
+    open(3,file=JetIn)
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
         Wmp(i)    =  Wmp(i)/Ncount(i)

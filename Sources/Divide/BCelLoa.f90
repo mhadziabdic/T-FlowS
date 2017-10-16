@@ -26,7 +26,7 @@
   name_in = name
   name_in(len_trim(name)+1:len_trim(name)+10) = '.faces.gmv'
   write(*,*) '# Now reading the file:', name_in
-  open(9, FILE=name_in)
+  open(9, file=name_in)
 
 !---------------!
 !     start     !
@@ -72,7 +72,7 @@
 !                          !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>!
   call NamFil(0, name_in, '.shadow.gmv', len_trim('.shadow.gmv'))
-  open(9, FILE=name_in)
+  open(9, file=name_in)
   write(6, *) 'Now reading the file:', name_in
 
   do s=NS+1,NS+NSsh

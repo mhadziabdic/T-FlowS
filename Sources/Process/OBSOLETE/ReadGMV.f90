@@ -58,7 +58,7 @@
 
 
 !-----Input file-------------------------------------------------------!
-  if(this < 2) write(*,*) '# NOW READING FILE: ', GMVfile
+  if(this < 2) write(*,*) '# NOW READING file: ', GMVfile
   open (5, file=GMVfile)
 
 !-----Header

@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
   int  i, j, k, N, s, Nsc, insc, isc;
   char base_name[80], name[80], format[80], 
        token1[80], token2[80], token3[80];
-  FILE *fp[MAXF+1];
+  file *fp[MAXF+1];
   int  NC[MAXF+1];
   int  NbC[MAXF+1][MAXBC+1];  
   int  visited;

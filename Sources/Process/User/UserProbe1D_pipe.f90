@@ -46,7 +46,7 @@
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
     write(6, *) '# Now reading the file:', namCoo
-    open(9, FILE=namCoo)
+    open(9, file=namCoo)
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -175,7 +175,7 @@
       end if
     end do
 
-    open(3,FILE='pipe_mean.dat')
+    open(3,file='pipe_mean.dat')
 
     do i = 2, Nprob
       if(Ncount(i) /= 0) then
@@ -198,7 +198,7 @@
 
 10  continue
  
-    open(3,FILE='pipe_mean.dat')
+    open(3,file='pipe_mean.dat')
     write(3,'(A1,2(A10, F13.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric/VISc
     if(SIMULA == LES.or.SIMULA == DES_SPA) then
       write(3,'(A1,2X,A80)') '#', '1:Xrad, 2:U, 3:V, 4:W, 5:uu, 6:vv, 7:ww, 8:uv, 9:uw, 10:vw, 11:Kin' 
@@ -220,7 +220,7 @@
     end if
     close(3)
 
-    open(3,FILE='pipe_mean_plus.dat')
+    open(3,file='pipe_mean_plus.dat')
     write(3,'(A1,2(A10, F13.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric/VISc
     if(SIMULA == LES.or.SIMULA == DES_SPA) then
       write(3,'(A1,2X,A80)') '#', '1:Xrad+, 2:U+, 3:V+, 4:W+, 5:uu+, 6:vv+, 7:ww+, 8:uv+, 9:uw+, 10:vw+, 11:Kin+' 

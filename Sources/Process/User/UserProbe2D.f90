@@ -208,7 +208,7 @@
 
 !---- write the values at the probes
     if(SIMULA==K_EPS) then                         
-      open(9, FILE=namCut)
+      open(9, file=namCut)
       write(9,'(A1,I8)') '#', Npoints
       write(9,'(A80)') '# 1-z  2-U  3-V  4-W  5-Kin  6-Eps  7-uv'  
       do pl=1,Npoints 
@@ -222,7 +222,7 @@
     end if
        
     if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA) then                         
-      open(9, FILE=namCut)
+      open(9, file=namCut)
       write(9,'(A1,I8)') '#', Npoints
       write(9,'(A80)') '# 1-z  2-U  3-V  4-W  '  
       do pl=1,Npoints 
@@ -234,7 +234,7 @@
     end if
 
 !    if(SIMULA==WOLF) then
-!      open(9, FILE=namCut)
+!      open(9, file=namCut)
 !      write(9,'(A1,I8)') '#', Npoints
 !      write(9,'(A80)') '# 1-z  2-U  3-V  4-W  '
 !      do pl=1,Npoints
@@ -247,7 +247,7 @@
 !    end if
        
     if(SIMULA==K_EPS_VV.or.SIMULA==LES.or.SIMULA==ZETA) then                      
-      open(9, FILE=namCut)
+      open(9, file=namCut)
       if(name /= 'Backstep') then
       write(9,'(A1,I8)') '#', Npoints
       write(9,'(A80)') '# 1-z  2-U  3-V  4-W  5-Kin  6-Eps  7-uv  8-vv  9-f22'  
@@ -275,7 +275,7 @@
       end if 
       end if
       if(name == 'Backstep') then
-        open(9, FILE=namCut)
+        open(9, file=namCut)
         Uref = 11.3
         Uref = 2.0
         write(9,'(A1,I8)') '#', Npoints
@@ -304,7 +304,7 @@
     end if
 
 !    if(SIMULA==LES) then
-!      open(9, FILE=namCut)
+!      open(9, file=namCut)
 !      write(9,'(A1,I8)') '#', Npoints
 !      write(9,'(A80)') '# 1-z  2-Umean  3-Vmean  4-Wmean  5-U   6-V   7-W  8-uu  9-vv 10-ww 11-uv 12-uw  13-vw'
 !      do pl=1,Npoints 
@@ -406,7 +406,7 @@
 !-----------------------------------------------------------------
 !---- write the values at the probes
     if(SIMULA==K_EPS) then
-      open(9, FILE=namCut)
+      open(9, file=namCut)
       write(9,'(A1,I8,A10,F10.7)') '#', Npoints, 'u_tau=',u_tau 
       write(9,'(A40)')'# 1-z  2-U  3-V  4-W  5-Kin  6-Eps  7-uv'
       do pl=1,Npoints
@@ -420,7 +420,7 @@
     end if
  
     if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA) then
-      open(9, FILE=namCut)
+      open(9, file=namCut)
       write(9,'(A1,I8,A10,F8.4)') '#', Npoints, 'u_tau=',u_tau 
       write(9,'(A80)') '# 1-z  2-U  3-V  4-W  '
       if(HOT == YES) then
@@ -443,7 +443,7 @@
       close(9)
     end if
 !    if(SIMULA==WOLF) then
-!      open(9, FILE=namCut)
+!      open(9, file=namCut)
 !      write(9,'(A1,I8,A10,F8.4)') '#', Npoints, 'u_tau=',u_tau
 !      write(9,'(A80)') '# 1-z  2-U  3-V  4-W  '
 !      do pl=1,Npoints
@@ -455,7 +455,7 @@
 !      close(9)
 !    end if
     if(SIMULA==K_EPS_VV.or.SIMULA==LES.or.SIMULA==ZETA) then
-      open(9, FILE=namCut)
+      open(9, file=namCut)
       write(9,*) '#', Npoints, 'u_tau=',u_tau, 'Ret=', Re_tau 
       write(9,'(A80)') '# 1-z  2-U  3-V  4-W  5-Kin  6-Eps  7-uv  8-vv  9-f22'
       if(HOT == YES) then
@@ -484,7 +484,7 @@
     end if
  
 !    if(SIMULA==LES) then
-!      open(9, FILE=namCut)
+!      open(9, file=namCut)
 !      write(9,'(A1,I8,A10,F8.4)') '#', Npoints, 'u_tau=',u_tau 
 !      write(9,'(A80)') '#  1-z  2-Umean  3-Vmean  4-Wmean  5-U   6-V   7-W  8-uu  9-vv 10-ww 11-uv 12-uw  13-vw'
 !      do pl=1,Npoints

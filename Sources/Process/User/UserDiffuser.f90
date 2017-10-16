@@ -49,227 +49,227 @@
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
     if(k == 0) then
-      open(9, FILE='y0.dat')
+      open(9, file='y0.dat')
       j = k + 1
       JetIn  = 'c13.2_z0250_x-2_IUS_ZETA-F.dat'
     else if(k == 1) then 
-      open(9, FILE='y0.dat')
+      open(9, file='y0.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x-2_IUS_ZETA-F.dat'
     else if(k == 2) then 
-      open(9, FILE='y0.dat')
+      open(9, file='y0.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x-2_IUS_ZETA-F.dat'
     else if(k == 3) then 
-      open(9, FILE='y0.dat')
+      open(9, file='y0.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x-2_IUS_ZETA-F.dat'
     else if(k == 4) then 
-      open(9, FILE='y0.dat')
+      open(9, file='y0.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x0_IUS_ZETA-F.dat'
     else if(k == 5) then 
-      open(9, FILE='y0.dat')
+      open(9, file='y0.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x0_IUS_ZETA-F.dat'
     else if(k == 6) then 
-      open(9, FILE='y0.dat')
+      open(9, file='y0.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x0_IUS_ZETA-F.dat'
     else if(k == 7) then 
-      open(9, FILE='y0.dat')
+      open(9, file='y0.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x0_IUS_ZETA-F.dat'
     else if(k == 8) then 
-      open(9, FILE='y2.dat')
+      open(9, file='y2.dat')
       j = k+1 
       JetIn  = 'c13.2_z0250_x2_IUS_ZETA-F.dat' 
     else if(k == 9) then 
-      open(9, FILE='y2.dat')
+      open(9, file='y2.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x2_IUS_ZETA-F.dat'
     else if(k == 10) then 
-      open(9, FILE='y2.dat')
+      open(9, file='y2.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x2_IUS_ZETA-F.dat'
     else if(k == 11) then 
-      open(9, FILE='y2.dat')
+      open(9, file='y2.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x2_IUS_ZETA-F.dat'
     else if(k == 12) then 
-      open(9, FILE='y4.dat')
+      open(9, file='y4.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x4_IUS_ZETA-F.dat'
     else if(k == 13) then 
-      open(9, FILE='y4.dat')
+      open(9, file='y4.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x4_IUS_ZETA-F.dat'
     else if(k == 14) then 
-      open(9, FILE='y4.dat')
+      open(9, file='y4.dat')
       j = k+1 
       JetIn  = 'c13.2_z0750_x4_IUS_ZETA-F.dat' 
     else if(k == 15) then 
-      open(9, FILE='y4.dat')
+      open(9, file='y4.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x4_IUS_ZETA-F.dat'
     else if(k == 16) then 
-      open(9, FILE='y6.dat')
+      open(9, file='y6.dat')
       j = k+1 
       JetIn  = 'c13.2_z0250_x6_IUS_ZETA-F.dat' 
     else if(k == 17) then 
-      open(9, FILE='y6.dat')
+      open(9, file='y6.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x6_IUS_ZETA-F.dat'
     else if(k == 18) then 
-      open(9, FILE='y6.dat')
+      open(9, file='y6.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x6_IUS_ZETA-F.dat'
     else if(k == 19) then 
-      open(9, FILE='y6.dat')
+      open(9, file='y6.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x6_IUS_ZETA-F.dat'
     else if(k == 20) then 
-      open(9, FILE='y8.dat')
+      open(9, file='y8.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x8_IUS_ZETA-F.dat'
     else if(k == 21) then 
-      open(9, FILE='y8.dat')
+      open(9, file='y8.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x8_IUS_ZETA-F.dat'
     else if(k == 22) then 
-      open(9, FILE='y8.dat')
+      open(9, file='y8.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x8_IUS_ZETA-F.dat'
     else if(k == 23) then 
-      open(9, FILE='y8.dat')
+      open(9, file='y8.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x8_IUS_ZETA-F.dat'
     else if(k == 24) then 
-      open(9, FILE='y10.dat')
+      open(9, file='y10.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x10_IUS_ZETA-F.dat'
     else if(k == 25) then 
-      open(9, FILE='y10.dat')
+      open(9, file='y10.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x10_IUS_ZETA-F.dat'
     else if(k == 26) then 
-      open(9, FILE='y10.dat')
+      open(9, file='y10.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x10_IUS_ZETA-F.dat'
     else if(k == 27) then 
-      open(9, FILE='y10.dat')
+      open(9, file='y10.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x10_IUS_ZETA-F.dat'
     else if(k == 28) then 
-      open(9, FILE='y12.dat')
+      open(9, file='y12.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x12_IUS_ZETA-F.dat'
     else if(k == 29) then 
-      open(9, FILE='y12.dat')
+      open(9, file='y12.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x12_IUS_ZETA-F.dat'
     else if(k == 30) then 
-      open(9, FILE='y12.dat')
+      open(9, file='y12.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x12_IUS_ZETA-F.dat'
     else if(k == 31) then 
-      open(9, FILE='y12.dat')
+      open(9, file='y12.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x12_IUS_ZETA-F.dat'
     else if(k == 32) then 
-      open(9, FILE='y14.dat')
+      open(9, file='y14.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x14_IUS_ZETA-F.dat'
     else if(k == 33) then 
-      open(9, FILE='y14.dat')
+      open(9, file='y14.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x14_IUS_ZETA-F.dat'
     else if(k == 34) then 
-      open(9, FILE='y14.dat')
+      open(9, file='y14.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x14_IUS_ZETA-F.dat'
     else if(k == 35) then 
-      open(9, FILE='y14.dat')
+      open(9, file='y14.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x14_IUS_ZETA-F.dat'
     else if(k == 36) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x155_IUS_ZETA-F.dat'
     else if(k == 37) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x155_IUS_ZETA-F.dat'
     else if(k == 38) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x155_IUS_ZETA-F.dat'
     else if(k == 39) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x155_IUS_ZETA-F.dat'
     else if(k == 40) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x17_IUS_ZETA-F.dat'
     else if(k == 41) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x17_IUS_ZETA-F.dat'
     else if(k == 42) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x17_IUS_ZETA-F.dat' 
     else if(k == 43) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x17_IUS_ZETA-F.dat'
     else if(k == 44) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x185_IUS_ZETA-F.dat'
     else if(k == 45) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x185_IUS_ZETA-F.dat'
     else if(k == 46) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x185_IUS_ZETA-F.dat'
     else if(k == 47) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x185_IUS_ZETA-F.dat'
     else if(k == 48) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x20_IUS_ZETA-F.dat'
     else if(k == 49) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x20_IUS_ZETA-F.dat'
     else if(k == 50) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x20_IUS_ZETA-F.dat'
     else if(k == 51) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0875_x20_IUS_ZETA-F.dat'
     else if(k == 52) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0250_x215_IUS_ZETA-F.dat'
     else if(k == 53) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0500_x215_IUS_ZETA-F.dat'
     else if(k == 54) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0750_x215_IUS_ZETA-F.dat'
     else if(k == 55) then 
-      open(9, FILE='y15.5.dat')
+      open(9, file='y15.5.dat')
       j = k+1  
       JetIn  = 'c13.2_z0975_x215_IUS_ZETA-F.dat'
     end if
@@ -361,7 +361,7 @@
 !    JetIn  = 'Diff_res_x'
 !    write(JetIn(9:10),'(I2)') k
 
-    open(3,FILE=JetIn)
+    open(3,file=JetIn)
 
     write(3,'(A)') '# International University of Sarajevo'
     write(3,'(A)') '# Muhamed Hadziabdic'

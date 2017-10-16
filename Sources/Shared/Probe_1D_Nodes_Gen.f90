@@ -79,7 +79,7 @@
   namPro = name
   namPro(len_trim(name)+1:len_trim(name)+3) = '.1D'
   write(6, *) 'Now creating the file:', namPro
-  open(9, FILE=namPro)
+  open(9, file=namPro)
 !---- write the number of probes 
   write(9,'(I8)') Nprob
 

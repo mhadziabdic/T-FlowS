@@ -35,7 +35,7 @@
   !                      !
   !----------------------!
   call NamFil( sub, name_out, '.cns', len_trim('.cns') )
-  open(9, FILE=name_out,form='unformatted')
+  open(9, file=name_out,form='unformatted')
   write(6, *) 'Now creating the file:', name_out
 
   !-----------------------------------------------!
@@ -162,7 +162,7 @@
   !                      !
   !----------------------!
   call NamFil( sub, name_out, '.geo', len_trim('.geo') )
-  open(9, FILE=name_out, form='unformatted')
+  open(9, file=name_out, form='unformatted')
   write(6, *) 'Now creating the file:', name_out
 
   !---------------------------------!

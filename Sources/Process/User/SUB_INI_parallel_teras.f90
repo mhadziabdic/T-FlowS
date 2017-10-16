@@ -88,7 +88,7 @@
   namT(len_trim(answer)+1:len_trim(answer)+4)='.T__'
 
   write(*,*)'Files to open are: ', naOut, namU, namV, namW, namP, namT
-  open(5, FILE=naOut)
+  open(5, file=naOut)
   read(5,*) NCold
 
   allocate (Xold(NCold)); Xold = 0.0
@@ -135,28 +135,28 @@
   end do
   close(5)
   write(*,*) ' Finished with reading ulaz.xyz file'
-  open(5, FILE=namU)
+  open(5, file=namU)
   do k = 1, j
     if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
     read(5,*) Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k)
   end do
   close(5)
   write(*,*) ' Finished with reading ulaz.U__ file'
-  open(5, FILE=namV)
+  open(5, file=namV)
   do k = 1, j
     if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
     read(5,*) Vold(k), Voold(k), VCold(k), VCoold(k), VDoold(k), VXold(k), VXoold(k)
   end do
   close(5)
   write(*,*) ' Finished with reading ulaz.V__ file'
-  open(5, FILE=namW)
+  open(5, file=namW)
   do k = 1, j
     if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
       read(5,*) Wold(k), Woold(k), WCold(k), WCoold(k), WDoold(k), WXold(k), WXoold(k)
     end do
   close(5)
   write(*,*) ' Finished with reading ulaz.W__ file'
-  open(5, FILE=namP)
+  open(5, file=namP)
   do k = 1, j
     if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
       read(5,*) Pold(k), PPold(k), Pxold(k), Pyold(k), Pzold(k)
@@ -165,7 +165,7 @@
   write(*,*) ' Finished with reading ulaz.P__ file'
 
   if(IND == 1) then
-    open(5, FILE=namT)
+    open(5, file=namT)
     do k = 1, j
       if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
         read(5,*) Told(k), Toold(k), TCold(k), TCoold(k), TDoold(k), TXold(k), TXoold(k) 
@@ -201,7 +201,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
       nameIn=name
       nameIn(len_trim(name)+1:len_trim(name)+4)='.cns'
-      open(9, FILE=nameIn,FORM='UNFORMATTED')
+      open(9, file=nameIn,FORM='unformatted')
       write(*,*) '# Now reading the binary .cns file:', nameIn
 
 !///// number of cells, boundary cells and sides
@@ -224,7 +224,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
       nameIn = name
       nameIn(len_trim(name)+1:len_trim(name)+4)='.geo'
-      open(9, FILE=nameIn, FORM='UNFORMATTED')
+      open(9, file=nameIn, FORM='unformatted')
       write(*,*) '# Now reading the binary .geo file:', nameIn
 
       allocate (xc(-NbC:NC))
@@ -358,7 +358,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
     nameIn=name
     nameIn(len_trim(name)+1:len_trim(name)+4)='.cns'
-    open(9, FILE=nameIn,FORM='UNFORMATTED')
+    open(9, file=nameIn,FORM='unformatted')
     write(*,*) '# Now reading the binary .cns file:', nameIn
 
 !///// number of cells, boundary cells and sides
@@ -381,7 +381,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
     nameIn = name
     nameIn(len_trim(name)+1:len_trim(name)+4)='.geo'
-    open(9, FILE=nameIn, FORM='UNFORMATTED')
+    open(9, file=nameIn, FORM='unformatted')
     write(*,*) '# Now reading the binary .geo file:', nameIn
 
     allocate (xc(-NbC:NC))

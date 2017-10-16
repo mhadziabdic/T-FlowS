@@ -25,7 +25,7 @@
   name_in = name
   name_in(len_trim(name)+1:len_trim(name)+4) = '.cns'
 
-  open(9, FILE=name_in,FORM='UNFORMATTED')
+  open(9, file=name_in,FORM='unformatted')
   write(*,'(A24,A)') '# Now reading the file: ', name_in
 
   ! Number of cells
@@ -66,7 +66,7 @@
   name_in = name
   name_in(len_trim(name)+1:len_trim(name)+4) = '.gmv'
   write(*,*) '# Now reading the file:', name_in
-  open(9, FILE=name_in)
+  open(9, file=name_in)
 
   ! Read the number of nodes
   call ReadC(9,inp,tn,ts,te)

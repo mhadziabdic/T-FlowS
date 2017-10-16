@@ -85,7 +85,7 @@
   !   Read restart file   !
   !-----------------------!
   call NamFil(this_proc, name_in, '.restart', len_trim('.restart') )
-  open(9, FILE=name_in, FORM='UNFORMATTED')
+  open(9, file=name_in, FORM='unformatted')
   write(6, *) '# Now reading the file:', name_in
 
   ! Version

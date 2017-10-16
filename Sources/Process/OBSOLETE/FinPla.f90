@@ -49,7 +49,7 @@
     call ReadC(7,inp,tn,ts,te)
     read(inp(ts(1):te(1)), '(A80)')  namOut
     call NamFil(THIS, namOut, '.plt', len_trim('.plt'))
-    open(9, FILE=namOut)
+    open(9, file=namOut)
     write(*,*) '# Now creating the file:', namOut
 
 !----- Count the values on the plane

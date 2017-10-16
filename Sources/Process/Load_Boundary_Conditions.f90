@@ -28,7 +28,7 @@
   !--------------------------------------------!
   name_bou = name
   name_bou(len_trim(name)+1:len_trim(name)+2) = '.b'
-  open(9, FILE=name_bou)
+  open(9, file=name_bou)
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_bou
 
   !-------------------------!
@@ -206,7 +206,7 @@
         end if  ! HOT == YES
         name_prof(n)=''
       end if  ! typBou == PRESSURE
-    end if    ! inp .not. FILE
+    end if    ! inp .not. file
   end do      
 
   !------------------------!
@@ -354,7 +354,7 @@
 
     ! Boundary condition is prescribed in a file 
     else
-      open(9, FILE=name_prof(n))
+      open(9, file=name_prof(n))
       if(this_proc < 2) write(*,*) '# Now reading the file:', name_prof(n)
       call ReadC(9,inp,tn,ts,te)
       read(inp(ts(1):te(1)),*) n_points                  ! number of points

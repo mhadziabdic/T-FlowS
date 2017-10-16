@@ -19,12 +19,13 @@
   character(len=80) :: answer
 !==============================================================================!
 
-  write(*,*) '==========================================='
-  write(*,*) ' Creating 1D file with the node '
-  write(*,*) ' coordinates in non-homogeneous directions '
-  write(*,*) '-------------------------------------------'
-  write(*,*) 'Insert non-homogeneous direction '// &
-             '(x_node, y_node, z_node, Rx, Ry, Rz or skip)'
+  write(*,*) '#==========================================='
+  write(*,*) '# Creating 1D file with the node '
+  write(*,*) '# coordinates in non-homogeneous directions '
+  write(*,*) '#-------------------------------------------'
+  write(*,*) '# Insert non-homogeneous direction '
+  write(*,*) '# (x, y, z, rx, ry, rz or skip)'
+  write(*,*) '# -------------------------------------------'
   read(*,*) answer
   call To_Upper_Case(answer)
   if(answer=='SKIP') return
@@ -72,7 +73,7 @@
                                      y_node(CellN(c,n))**2.0)**0.5
 
       if(n_prob == 10000) then
-        write(*,*) 'Probe 1D: Not a 1D (channel flow) problem.'
+        write(*,*) '# Probe 1D: Not a 1D (channel flow) problem.'
         isit = .false.
         return
       end if
@@ -86,7 +87,7 @@
   !--------------------!
   name_prob = name
   name_prob(len_trim(name)+1:len_trim(name)+3) = '.1D'
-  write(6, *) 'Now creating the file:', name_prob
+  write(6, *) '# Now creating the file:', name_prob
   open(9, file=name_prob)
 
   ! Write the number of probes 

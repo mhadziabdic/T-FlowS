@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Calc4()
+  subroutine Compute_Geometry()
 !------------------------------------------------------------------------------!
 !   Calculates geometrical quantities of the grid.                             !
 !------------------------------------------------------------------------------!
@@ -131,7 +131,7 @@
     end do
   end do
 
-  write(*,*) 'Cell centers calculated !'
+  write(*,*) '# Cell centers calculated !'
 
   !-----------------------------------------------------!
   !   Calculate:                                        ! 
@@ -199,7 +199,7 @@
 
   end do ! through sides
 
-  write(*,*) 'Cell face components calculated !'
+  write(*,*) '# Cell face components calculated !'
 
   !--------------------------------------!
   !   Calculate boundary cell centers    !
@@ -207,9 +207,12 @@
   !   => depends on: xc,yc,zc,Sx,Sy,Sz   !
   !   <= gives:      xc,yc,zc for c<0    !   
   !--------------------------------------!
-  write(*,*) 'Position the boundary cell centres:'
-  write(*,*) 'Type 1 for barycentric placement'
-  write(*,*) 'Type 2 for orthogonal placement'
+  write(*,*) '#===================================='
+  write(*,*) '# Position the boundary cell centres:'
+  write(*,*) '#------------------------------------'
+  write(*,*) '# Type 1 for barycentric placement'
+  write(*,*) '# Type 2 for orthogonal placement'
+  write(*,*) '#------------------------------------'
   read(*,*) bou_cen 
 
   do s=1,NS
@@ -290,26 +293,33 @@
   option = 2
 
 2 n_per = 0 
-  write(*,*) 'Type the periodic-boundary-condition marker number.'
-  write(*,*) 'Type 0 if there is none !'
-  write(*,*) ''
-  write(*,*) '(Please note that the periodic boundaries have to be the last on the list)'
-  write(*,*) 'of the boundary conditions. Their BC markers have to be larger'
-  write(*,*) 'than the markers of the other boundary conditions.)'
-  write(*,*) ''
+  write(*,*) '#======================================================'
+  write(*,*) '# Type the periodic-boundary-condition marker number.'
+  write(*,*) '# Type 0 if there is none !'
+  write(*,*) '#------------------------------------------------------'
+  write(*,*) '# (Please note that the periodic boundaries have to be' 
+  write(*,*) '#  the last on the list of the boundary conditions.'
+  write(*,*) '#  Their BC markers have to be larger than the markers'
+  write(*,*) '#  of all the other boundary conditions.)'
+  write(*,*) '#------------------------------------------------------'
   read(*,*) type_per
   if( type_per == 0 ) goto 1  
 
   if(option == 2) then
 
-    write(*,*) 'Insert the periodic direction (1 -> x_node, 2 -> y_node, 3 -> z_node)'
+    write(*,*) '#========================================================'
+    write(*,*) '# Insert the periodic direction (1 -> x, 2 -> y, 3 -> z)'
+    write(*,*) '#--------------------------------------------------------'
     read(*,*) dir 
     write(*,*) 
-    write(*,*) 'Enter the angle for the rotation of the coordiante system (in degree)'
-    write(*,*) 'and the axes of rotation (1 -> x_node, 2 -> y_node, 3 -> z_node)'
-    write(*,*) 
-    write(*,*) '(if the periodic direction is not parallel to the Caresian axis (x_node, y_node and z_node),'
-    write(*,*) 'the coordinate system has to be rotated (in 2D))'
+    write(*,*) '#=============================================================='
+    write(*,*) '# Enter the angle for the rotation of the coordiante system (in'
+    write(*,*) '# degrees) and the axes of rotation (1 -> x, 2 -> y, 3 -> z)'
+    write(*,*) '#--------------------------------------------------------------'
+    write(*,*) '# (If the periodic direction is not parallel to the Caresian '
+    write(*,*) '#  axis (x, y and z), the coordinate system has to be rotated'
+    write(*,*) '#  in 2D'                                                     
+    write(*,*) '#--------------------------------------------------------------'
     read(*,*) angle, rot_dir 
 
     angle = angle * 3.1415926 / 180.0
@@ -347,8 +357,8 @@
     end if        
 
 !   write(*,*) 
-!   write(*,*) 'Enter the coordinates of three points that define'
-!   write(*,*) 'periodic plane'
+!   write(*,*) '# Enter the coordinates of three points that define'
+!   write(*,*) '# periodic plane'
 !   write(*,*) 
 !   write(*,*) 'Point 1:'
 !   read(*,*) x_a, y_a, z_a  !angle 
@@ -434,7 +444,7 @@
         end if
       end if
     end do
-    call DISort(b_coor,b_face,c,2)
+    call Sort_Double_Carry_Int(b_coor,b_face,c,2)
   else if(option == 2) then 
     c_max = 0
     do s=1,NS
@@ -577,7 +587,7 @@
     deallocate(yspr)
     deallocate(zspr)
 
-    call DISort(b_coor,b_face,c,2)
+    call Sort_Double_Carry_Int(b_coor,b_face,c,2)
   end if  ! end option
 
   do s=1,c/2
@@ -716,8 +726,8 @@
       NewS(s) = -1
     end if
   end do
-  write(*,'(A21,I9,Z9)') 'Old number of sides: ', NS, NS
-  write(*,'(A21,I9,Z9)') 'New number of sides: ', &
+  write(*,'(A21,I9,Z9)') '# Old number of sides: ', NS, NS
+  write(*,'(A21,I9,Z9)') '# New number of sides: ', &
                           number_sides-NSsh,number_sides-NSsh
   
   !--------------------------------------!
@@ -754,7 +764,7 @@
   do s=1,NS-NSsh
     max_dis = max(max_dis, (Dx(s)*Dx(s)+Dy(s)*Dy(s)+Dz(s)*Dz(s)))
   end do
-  write(*,*) 'Maximal distance of periodic boundary is:', sqrt(max_dis)
+  write(*,*) '# Maximal distance of periodic boundary is:', sqrt(max_dis)
 
   !----------------------------------!
   !   Calculate the cell volumes     !
@@ -787,14 +797,14 @@
     min_vol = min(min_vol, volume(c))
     max_vol = max(max_vol, volume(c))
   end do
-  write(*,*) 'Minimal cell volume is: ', min_vol
-  write(*,*) 'Maximal cell volume is: ', max_vol
-  write(*,*) 'Total domain volume is: ', tot_vol
-  write(*,*) 'Cell volumes calculated !'
+  write(*,*) '# Minimal cell volume is: ', min_vol
+  write(*,*) '# Maximal cell volume is: ', max_vol
+  write(*,*) '# Total domain volume is: ', tot_vol
+  write(*,*) '# Cell volumes calculated !'
 
   if(min_vol < 0.0) then
-    write(*,*) 'Negative volume occured! Another, slower, algoritham should be run !'
-    write(*,*) 'Execution will be halt now! '
+    write(*,*) '# Negative volume occured! Another, slower, algoritham should be run !'
+    write(*,*) '# Execution will be halt now! '
     stop
   end if 
  
@@ -839,21 +849,23 @@
   !------------------------------------------------------------------!
   allocate(WallDs(-NbC:NC)); WallDs = HUGE
 
-  write(*,*) ''
-  write(*,*) 'Type the total number of wall boundary conditions:'
-  write(*,*) ''
-  write(*,*) '(Please note that the walls have to be the first on the list)'
-  write(*,*) 'of the boundary conditions. Their BC markers have to be smaller'
-  write(*,*) 'than the markers of the other boundary conditions.)'
-  write(*,*) ''
+  write(*,*) '#================================================================'
+  write(*,*) '# Type the total number of wall boundary conditions:'
+  write(*,*) '#----------------------------------------------------------------'
+  write(*,*) '# (Please note that the walls have to be the first on the list)'
+  write(*,*) '# of the boundary conditions. Their BC markers have to be smaller'
+  write(*,*) '# than the markers of the other boundary conditions.)'
+  write(*,*) '#----------------------------------------------------------------'
   read(*,*) wall_mark
  
   if(wall_mark == 0) then
     WallDs = 1.0
-    write(*,*) 'Distance to the wall set to 1.0 everywhere !'
+    write(*,*) '# Distance to the wall set to 1.0 everywhere !'
   else
     do c1=1,NC
-      if(mod(c1,10000) == 0) write(*,*) (100.*c1/(1.*NC)), '% complete...'
+      if(mod(c1,10000) == 0) then
+        write(*,'(a2, f5.0, a14)') ' #', (100.*c1/(1.*NC)), ' % complete...'
+      endif
       do c2=-1,-NbC,-1
         if(BCmark(c2) <= wall_mark) then
           WallDs(c1)=min(WallDs(c1),                       &
@@ -864,7 +876,7 @@
 
     WallDs = sqrt(WallDs)
 
-    write(*,*) 'Distance to the wall calculated !'
+    write(*,*) '# Distance to the wall calculated !'
   end if
 
 
@@ -893,12 +905,12 @@
     f(s) = dsc2 / (dsc1+dsc2)   ! not checked
   end do 
 
-  write(*,*) 'Interpolation factors calculated !'
+  write(*,*) '# Interpolation factors calculated !'
 
 
   return
 
-3 write(*,*) 'Horror ! Negative volume between cells ', c1, ' and ', c2
+3 write(*,*) '# Horror ! Negative volume between cells ', c1, ' and ', c2
   stop
 
-  end subroutine Calc4
+  end subroutine Compute_Geometry

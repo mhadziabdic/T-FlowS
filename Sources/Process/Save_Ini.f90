@@ -33,7 +33,7 @@
   name = name_out
   nn = 0
   ext = '.xyz'
-  call NamFil(this_proc, name_out, ext, len_trim(ext))
+  call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
   do c= 1, NC
     nn = nn + 1
@@ -45,7 +45,7 @@
   close(9)
 
   ext = '.U__'
-  call NamFil(this_proc, name_out, ext, len_trim(ext))
+  call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
   do c= 1, NC
     write(9,'(7E18.8)') U % n(c), U % o(c), U % C(c), U % Co(c),  &
@@ -54,7 +54,7 @@
   close(9)
 
   ext = '.V__'
-  call NamFil(this_proc, name_out, ext, len_trim(ext))
+  call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
   do c= 1, NC
     write(9,'(7E18.8)') V % n(c), V % o(c), V % C(c), V % Co(c),  &
@@ -63,7 +63,7 @@
   close(9)
 
   ext = '.W__'
-  call NamFil(this_proc, name_out, ext, len_trim(ext))
+  call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
   do c= 1, NC
     write(9,'(7E18.8)') W % n(c), W % o(c), W % C(c), W % Co(c),  &
@@ -72,7 +72,7 @@
   close(9)
 
   ext = '.P__'
-  call NamFil(this_proc, name_out, ext, len_trim(ext))
+  call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
   do c= 1, NC
     write(9,'(5E18.8)') P % n(c), PP % n(c), Px(c), Py(c),  &
@@ -82,7 +82,7 @@
  
   if(HOT == YES) then 
     ext = '.T__'
-    call NamFil(this_proc, name_out, ext, len_trim(ext))
+    call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, NC
       write(9,'(7E18.8)') T % n(c), T % o(c), T % C(c), T % Co(c),  &
@@ -93,7 +93,7 @@
  
   if(SIMULA == ZETA.or.SIMULA==K_EPS_VV) then
     ext = '.Kin'
-    call NamFil(this_proc, name_out, ext, len_trim(ext))
+    call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, NC
       write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % C(c), Kin % Co(c),  &
@@ -102,7 +102,7 @@
     close(9)
 
     ext = '.Eps'
-    call NamFil(this_proc, name_out, ext, len_trim(ext))
+    call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, NC
       write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % C(c), Eps % Co(c),  &
@@ -111,7 +111,7 @@
     close(9)
 
     ext = '.v_2'
-    call NamFil(this_proc, name_out, ext, len_trim(ext))
+    call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, NC
       write(9,'(7E18.8)') v_2 % n(c), v_2 % o(c), v_2 % C(c), v_2 % Co(c),  &
@@ -120,7 +120,7 @@
     close(9)
 
     ext = '.f22'
-    call NamFil(this_proc, name_out, ext, len_trim(ext))
+    call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, NC
       write(9,'(7E18.8)') f22 % n(c), f22 % o(c),  &
@@ -131,7 +131,7 @@
 
   if(SIMULA == K_EPS) then
     ext = '.Kin'
-    call NamFil(this_proc, name_out, ext, len_trim(ext))
+    call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, NC
       write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % C(c), Kin % Co(c),  &
@@ -140,7 +140,7 @@
     close(9)
 
     ext = '.Eps'
-    call NamFil(this_proc, name_out, ext, len_trim(ext))
+    call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, NC
       write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % C(c), Eps % Co(c),  &

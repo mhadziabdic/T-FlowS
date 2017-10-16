@@ -1,22 +1,16 @@
-!======================================================================!
-  subroutine FindSides
-!----------------------------------------------------------------------!
-!  Creates the "SideC structure"                                       !
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Find_Sides
+!------------------------------------------------------------------------------!
+!  Creates the "SideC structure"                                               !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use neu_mod 
   use gen_mod 
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!----------------------------------------------------------------------!
-  interface
-    logical function Approx(A,B,tol)
-      implicit none
-      real          :: A,B
-      real,optional :: tol
-    end function Approx
-  end interface
-!-------------------------------[Locals]-------------------------------!
+!------------------------------------------------------------------------------!
+  include "../Shared/Approx.int"
+!-----------------------------------[Locals]-----------------------------------!
   integer             :: c, c1, c2, n1, n2, n3, n4
   integer             :: Nmatch, j, MatchNodes(-1:8) 
   integer             :: i1, i2, Nuber
@@ -25,7 +19,7 @@
   real   ,allocatable :: SideCoor(:) 
   integer,allocatable :: SideCell(:), Starts(:), Ends(:) 
   real                :: VeryBig
-!======================================================================!
+!==============================================================================!
 
   VeryBig = max(NN,NC)
 
@@ -35,9 +29,9 @@
   allocate(Ends(NC*6));   Ends = 0    
   allocate(CellC(NC,6));  CellC = 0
 
-!--------------------------------------------------
-!---- Fill the generic coordinates with some values
-!--------------------------------------------------
+  !---------------------------------------------------!
+  !   Fill the generic coordinates with some values   !
+  !---------------------------------------------------!
   do c=1,NC
     if(CellN(c,0) == 4) fn = f4n
     if(CellN(c,0) == 5) fn = f5n
@@ -63,16 +57,16 @@
     end do
   end do
 
-!-------------------------------------------------
-!---- Sort the cell faces according to coordinares
-!-------------------------------------------------
-  call RISort(SideCoor,SideCell,NC*6,2)
+  !--------------------------------------------------!
+  !   Sort the cell faces according to coordinares   !
+  !--------------------------------------------------!
+  call Sort_Real_By_Index(SideCoor,SideCell,NC*6,2)
 
-!-----------------------------------------------
-!---- Anotate cell faces with same coordinates
-!---- (I am afraid that this might be influenced
-!----      by the numerical round-off errors)  
-!-----------------------------------------------
+  !------------------------------------------------!
+  !   Anotate cell faces with same coordinates     !
+  !   (I am afraid that this might be influenced   !
+  !      by the numerical round-off errors)        !
+  !------------------------------------------------!
   Nuber = 1
   Starts(1) = 1
   do c=2,NC*6
@@ -83,9 +77,11 @@
     end if
   end do
 
-!==========================================
-!==== Main loop to fill the SideC structure 
-!==========================================
+  !-------------------------------------------!
+  !                                           !
+  !   Main loop to fill the SideC structure   !
+  !                                           !
+  !-------------------------------------------!
   do n3=1,Nuber
     if(Starts(n3) /= Ends(n3)) then
       do i1=Starts(n3),Ends(n3)
@@ -93,9 +89,10 @@
           c1 = min(SideCell(i1),SideCell(i2))
           c2 = max(SideCell(i1),SideCell(i2))
           if(c1 /= c2) then
-!-----------------------------
-!---- number of matching nodes
-!-----------------------------
+
+            !------------------------------!
+            !   Number of matching nodes   !
+            !------------------------------!
             Nmatch     = 0
             MatchNodes = 0 
             do n1=1,CellN(c1,0)
@@ -106,10 +103,11 @@
                 end if
               end do
             end do
-!----------------------
-!---- general + general   
-!----   c1        c2
-!----------------------
+
+            !-----------------------!
+            !   general + general   ! 
+            !     c1        c2      !
+            !-----------------------!
             if(Nmatch > 2) then 
               if(CellN(c1,0) == 4) fn = f4n
               if(CellN(c1,0) == 5) fn = f5n
@@ -139,6 +137,6 @@
     end if
   end do    ! do n3
 
-  write(*,'(A30,I9,Z9)') 'FindSides: Number of sides: ', NS, NS
+  write(*,*) '# Find_Sides: Number of sides: ', NS, NS
 
-  end subroutine FindSides
+  end subroutine Find_Sides

@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine INSort(X,indx,N)
+  subroutine Sort_Int_By_Index(X,indx,N)
 !----------------------------------------------------------------------!
 !   Sorts int. array X according to indx.                              !
 !----------------------------------------------------------------------!
@@ -23,4 +23,4 @@
 
   deallocate(work)
 
-  end subroutine INSort
+  end subroutine Sort_Int_By_Index

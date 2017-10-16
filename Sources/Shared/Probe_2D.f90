@@ -16,10 +16,12 @@
   character(len=80) :: answer
 !======================================================================!
 
-  write(*,*) '==============================='
-  write(*,*) ' Looking for homogeneous plane '
-  write(*,*) '-------------------------------'
-  write(*,*) 'Insert homogeneous direction (xy,yz,zx or skip)'
+  write(*,*) '#==============================='
+  write(*,*) '# Looking for homogeneous plane '
+  write(*,*) '#-------------------------------'
+  write(*,*) '# Insert homogeneous direction  '
+  write(*,*) '# (xy, yz, zx or skip)'
+  write(*,*) '#-------------------------------'
   read(*,*) answer
   call To_Upper_Case(answer)
   if(answer=='SKIP') return
@@ -61,7 +63,7 @@
     end if 
 
     if(n_prob == 20000) then
-      write(*,*) 'Probe 2D: Not a 2D problem.'
+      write(*,*) '# Probe 2D: Not a 2D problem.'
       return
     end if
 1 end do
@@ -71,7 +73,7 @@
   !--------------------!
   name_prob = name
   name_prob(len_trim(name)+1:len_trim(name)+3) = '.2D'
-  write(6, *) 'Now creating the file:', name_prob
+  write(6, *) '# Now creating the file:', name_prob
   open(9, file=name_prob)
 
   ! Write the number of probes 

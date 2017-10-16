@@ -18,10 +18,10 @@
   character(len=80) :: answer
 !==============================================================================!
 
-  write(*,*) '========================================'
-  write(*,*) ' Looking for non-homogeneous directions '
-  write(*,*) '----------------------------------------'
-  write(*,*) 'Insert non-homogeneous direction (x,y,z or skip)'
+  write(*,*) '#================================================='
+  write(*,*) '# Looking for non-homogeneous directions '
+  write(*,*) '# Insert non-homogeneous direction (x,y,z or skip)'
+  write(*,*) '#-------------------------------------------------'
   read(*,*) answer
   call touppr(answer)
   if(answer=='SKIP') return
@@ -52,7 +52,7 @@
     if(answer=='Z') zp(n_prob)=zc(c)
 
     if(n_prob == 1000) then
-      write(*,*) 'Probe 1D: Not a 1D (channel flow) problem.'
+      write(*,*) '# Probe 1D: Not a 1D (channel flow) problem.'
       isit = .false.
       return
     end if
@@ -65,7 +65,7 @@
   !--------------------!
   name_prob = name
   name_prob(len_trim(name)+1:len_trim(name)+4) = '.1Dc'
-  write(6, *) 'Now creating the file:', name_prob
+  write(6, *) '# Now creating the file:', name_prob
   open(9, file=name_prob)
 
   ! Write the number of probes 

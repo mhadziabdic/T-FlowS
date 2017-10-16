@@ -16,21 +16,21 @@
   character(len=80)    :: name_out
   integer,allocatable  :: SideCell(:,:)
 !==============================================================================!
-!  Each subdomain needs two buffers: a send buffer and a receive buffer.
-!  A receive buffer will be stored as aditional boundary cells for each
-!  subdomain. So each subdomain will have NBC physical boundary faces and 
-!  NBBC-NBC buffer bounndary cells. It is handy to do it that way, because 
-!  most of the algorythms can remain the same as they are now.  They won't 
-!  even "know" that they use values from other processors.  On the other 
-!  hand, a sending buffer has to be allocated in a new separate array called 
-!  simply buffer(). An additional array is needed to keep track of all the 
-!  indexes. That one is called buffind().  buffind() has stored cell numbers 
-!  from it's own subdomain so that later they can be copied with (well, 
-!  something like that):
+!   Each subdomain needs two buffers: a send buffer and a receive buffer.
+!   A receive buffer will be stored as aditional boundary cells for each
+!   subdomain. So each subdomain will have NBC physical boundary faces and 
+!   NBBC-NBC buffer bounndary cells. It is handy to do it that way, because 
+!   most of the algorythms can remain the same as they are now.  They won't 
+!   even "know" that they use values from other processors.  On the other 
+!   hand, a sending buffer has to be allocated in a new separate array called 
+!   simply buffer(). An additional array is needed to keep track of all the 
+!   indexes. That one is called buffind().  buffind() has stored cell numbers 
+!   from it's own subdomain so that later they can be copied with (well, 
+!   something like that):
 !
-!  do i=1,BUFFSIZ
-!    buffer(i) = U(buffind(i))
-!  end do
+!   do i=1,BUFFSIZ
+!     buffer(i) = U(buffind(i))
+!   end do
 !------------------------------------------------------------------------------!
 
   !-------------------------------!
@@ -40,7 +40,7 @@
   !-------------------------------!
   do sub=1,n_sub
 
-    call NamFil(sub, name_out, '.buf', len_trim('.buf'))
+    call Name_File(sub, name_out, '.buf', len_trim('.buf'))
     open(9, file=name_out)
     write(6, *) 'Now creating the file:', name_out
 
@@ -266,23 +266,23 @@
   end do
   write(*,*) 'Number of sides: ', NS, n_faces_sub
 
-  call INSort(CellN(1,0), NewC(1),NC)
-  call INSort(CellN(1,1), NewC(1),NC)
-  call INSort(CellN(1,2), NewC(1),NC)
-  call INSort(CellN(1,3), NewC(1),NC)
-  call INSort(CellN(1,4), NewC(1),NC)
-  call INSort(CellN(1,5), NewC(1),NC)
-  call INSort(CellN(1,6), NewC(1),NC)
-  call INSort(CellN(1,7), NewC(1),NC)
-  call INSort(CellN(1,8), NewC(1),NC)
-  call INSort(proces(1),  NewC(1),NC)
-  call INSort(material(1),NewC(1),NC)
+  call Sort_Int_By_Index(CellN(1,0), NewC(1),NC)
+  call Sort_Int_By_Index(CellN(1,1), NewC(1),NC)
+  call Sort_Int_By_Index(CellN(1,2), NewC(1),NC)
+  call Sort_Int_By_Index(CellN(1,3), NewC(1),NC)
+  call Sort_Int_By_Index(CellN(1,4), NewC(1),NC)
+  call Sort_Int_By_Index(CellN(1,5), NewC(1),NC)
+  call Sort_Int_By_Index(CellN(1,6), NewC(1),NC)
+  call Sort_Int_By_Index(CellN(1,7), NewC(1),NC)
+  call Sort_Int_By_Index(CellN(1,8), NewC(1),NC)
+  call Sort_Int_By_Index(proces(1),  NewC(1),NC)
+  call Sort_Int_By_Index(material(1),NewC(1),NC)
 
-  call INSort(SideN(1,0), NewS(1),NS)
-  call INSort(SideN(1,1), NewS(1),NS)
-  call INSort(SideN(1,2), NewS(1),NS)
-  call INSort(SideN(1,3), NewS(1),NS)
-  call INSort(SideN(1,4), NewS(1),NS)
+  call Sort_Int_By_Index(SideN(1,0), NewS(1),NS)
+  call Sort_Int_By_Index(SideN(1,1), NewS(1),NS)
+  call Sort_Int_By_Index(SideN(1,2), NewS(1),NS)
+  call Sort_Int_By_Index(SideN(1,3), NewS(1),NS)
+  call Sort_Int_By_Index(SideN(1,4), NewS(1),NS)
   call RNSort(Dx(1), NewS(1), NS)  ! this is important
   call RNSort(Dy(1), NewS(1), NS)  ! for plotting the
   call RNSort(Dz(1), NewS(1), NS)  ! grid with EpsPar()
@@ -291,8 +291,8 @@
     SideCell(s,1) = SideC(1,s)
     SideCell(s,2) = SideC(2,s)
   end do
-  call INSort(SideCell(1,1), NewS(1),NS)
-  call INSort(SideCell(1,2), NewS(1),NS)
+  call Sort_Int_By_Index(SideCell(1,1), NewS(1),NS)
+  call Sort_Int_By_Index(SideCell(1,2), NewS(1),NS)
   do s=1,NS
     SideC(1,s) = SideCell(s,1)
     SideC(2,s) = SideCell(s,2)

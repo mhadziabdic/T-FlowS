@@ -69,7 +69,7 @@
 
   ! Sort M % col to make them nice and neat
   do c=1,NC
-    call isort(M % col(M % row(c)),                                       &
+    call Sort_Int_Carry_Int(M % col(M % row(c)),  &
                M % col(M % row(c)),stencw(c),1)
     do j=M % row(c),M % row(c+1)-1
       if(M % col(j) == c) M % dia(c)=j

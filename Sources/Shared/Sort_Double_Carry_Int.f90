@@ -1,5 +1,5 @@
 !======================================================================*
-      subroutine DISort(X,Y,N,KFLAG)
+      subroutine Sort_Double_Carry_Int(X,Y,N,KFLAG)
 !----------------------------------------------------------------------*
 ! Sorts double array X and make same interchanges in integer arr. Y.   *
 !----------------------------------------------------------------------*

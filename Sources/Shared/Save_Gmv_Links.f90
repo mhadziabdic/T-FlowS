@@ -29,9 +29,9 @@
   !----------------------!
   name_out = name         
 
-  call NamFil(sub, name_out, '.ln.gmv', len_trim('.ln.gmv'))
+  call Name_File(sub, name_out, '.ln.gmv', len_trim('.ln.gmv'))
   open(9, file=name_out)
-  write(6, *) 'Now creating the file:', name_out
+  write(6, *) '# Now creating the file:', name_out
 
   !-----------!
   !   Nodes   !
@@ -114,8 +114,8 @@
               NewN(CellN(c,2)), NewN(CellN(c,4)),                   &
               NewN(CellN(c,3))      
       else
-        write(*,*) 'Unsupported cell type with ', CellN(c,0), 'nodes. '
-        write(*,*) 'Exiting !'
+        write(*,*) '# Unsupported cell type with ', CellN(c,0), 'nodes. '
+        write(*,*) '# Exiting !'
         stop
       end if
     end if 
@@ -181,9 +181,9 @@
     end if
   end do  
 
-  write(*,*) 'Non-periodic links:', nf_sub_non_per
-  write(*,*) 'Periodic links    :', nf_sub_per
-  write(*,*) 'Number of sides   :', NSsub
+  write(*,*) '# Non-periodic links:', nf_sub_non_per
+  write(*,*) '# Periodic links    :', nf_sub_per
+  write(*,*) '# Number of sides   :', NSsub
 
   ! Interprocessor links
   do c=1,NBFsub

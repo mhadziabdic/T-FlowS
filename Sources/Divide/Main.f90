@@ -26,7 +26,7 @@
   write(90) 3.1451592
   close(90)
                
-  call Logo_Divide
+  call Logo
 
   write(*,'(A41)') '# Input problem name: (without extension)'
   call ReadC(5,inp,tn,ts,te)  
@@ -49,17 +49,17 @@
     ix(i) = i
     criter(i) = xc(i) + 0.01 * yc(i) + 0.0001 * zc(i)
   end do
-  call RISort(criter(1),ix(1),NC,2)
+  call Sort_Real_By_Index(criter(1),ix(1),NC,2)
   do i=1,NC
     iy(i) = i
     criter(i) = yc(i) + 0.01 * zc(i) + 0.0001 * xc(i)
   end do
-  call RISort(criter(1),iy(1),NC,2)
+  call Sort_Real_By_Index(criter(1),iy(1),NC,2)
   do i=1,NC
     iz(i) = i
     criter(i) = zc(i) + 0.01 * xc(i) + 0.0001 * yc(i)
   end do
-  call RISort(criter(1),iz(1),NC,2)
+  call Sort_Real_By_Index(criter(1),iz(1),NC,2)
   write(*,*) '# Finished sorting'
 
   call Load_Geo
@@ -104,7 +104,7 @@
 
     do j=1,n_sub
       write(*,*) '# Dividing', j, ' into', chunks(i), ' chunks'
-      call Split(j, chunks(i))
+      call Split_Subdomain(j, chunks(i))
     end do
 
   end do     

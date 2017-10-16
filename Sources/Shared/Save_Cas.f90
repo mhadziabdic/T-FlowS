@@ -22,9 +22,9 @@
   !   Create .cas file   !
   !                      !
   !----------------------!
-  call NamFil(sub, namOut, '.cas', len_trim('.cas'))
+  call Name_File(sub, namOut, '.cas', len_trim('.cas'))
   open(9, file=namOut)
-  write(6, *) 'Now creating the file:', namOut
+  write(6, *) '# Now creating the file:', namOut
 
   !-----------!
   !           !

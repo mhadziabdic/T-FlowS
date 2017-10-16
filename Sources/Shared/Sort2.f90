@@ -24,13 +24,13 @@ end
 !*            by the Shell-Mezgar method             *
 !* ------------------------------------------------- *
 !* INPUTS:                                           *
-!*	    N	  size of table ARR                  *
-!*          ARR	  table to be sorted                 *
+!*            N          size of table ARR           *
+!*          ARR          table to be sorted          *
 !* OUTPUT:                                           *
-!*	    ARR   table sorted in ascending order    *
+!*            ARR   table sorted in ascending order  *
 !*                                                   *
 !* NOTE: The Shell method is a N^3/2 routine and can *
-!*       be used for relatively large arrays.        *                             *
+!*       be used for relatively large arrays.        * 
 !*****************************************************         
 subroutine SHELL(N,ARR)
 parameter(ALN2I=1./0.69314718,TINY=1.E-5)
@@ -45,10 +45,10 @@ parameter(ALN2I=1./0.69314718,TINY=1.E-5)
       l=i+m
       if(ARR(l).LT.ARR(i)) then
         t=ARR(i)
-	ARR(i)=ARR(l)
-	ARR(l)=t
-	i=i-m
-	if(i.GE.1) GOTO 10
+        ARR(i)=ARR(l)
+        ARR(l)=t
+        i=i-m
+        if(i.GE.1) GOTO 10
       end if
     end do
   end do

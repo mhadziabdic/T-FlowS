@@ -59,7 +59,7 @@
 
   answer = name
   naOut = answer
-  call NamFil(name, naOut, '.xyz', len_trim('.xyz'))
+  call Name_File(name, naOut, '.xyz', len_trim('.xyz'))
 
   answer = name
   namU = answer
@@ -396,7 +396,7 @@
   end PROGRAM
 
 !======================================================================!
-  subroutine NamFil(name, namOut, ext, lext)
+  subroutine Name_File(name, namOut, ext, lext)
 !----------------------------------------------------------------------!
 !   Creates the file name depending on the subdomain and file type.    !
 !----------------------------------------------------------------------!
@@ -428,7 +428,7 @@
 !    namOut(len_trim(name)+6:len_trim(name)+6+lext-1) = ext(1:lext)
 !  end if
 
-  end subroutine NamFil
+  end subroutine Name_File
 
 
 

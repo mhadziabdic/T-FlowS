@@ -166,7 +166,7 @@
                        f(s)*yc(c1)+(1.-f(s))*(yc(c2)+Dy(s)),  &
                        f(s)*zc(c1)+(1.-f(s))*(zc(c2)+Dz(s)) )
   end do
-  call RISort(work,indx,NS,-2)
+  call Sort_Real_By_Index(work,indx,NS,-2)
 
   do s0=1,NS
     s=indx(s0)

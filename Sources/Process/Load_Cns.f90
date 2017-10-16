@@ -24,7 +24,7 @@
   !     Read the file with the    !
   !   connections between cells   !
   !-------------------------------!
-  call NamFil(this_proc, name_in, '.cns', len_trim('.cns'))  
+  call Name_File(this_proc, name_in, '.cns', len_trim('.cns'))  
 
   open(9, file=name_in,form='unformatted')
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_in

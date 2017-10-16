@@ -8,7 +8,7 @@
   use les_mod
   use par_mod
   use rans_mod
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
     integer :: n
     real    :: x1_dis, x0_dis, y1_dis, y0_dis, z1_dis, z0_dis
     real    :: TauWup, TauWdown, r23, TKE, Cmu_mod, Pk_tmp, Cs_mod, Cs_prime

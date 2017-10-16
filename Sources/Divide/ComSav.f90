@@ -21,21 +21,21 @@
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
   do sub=1,n_sub 
     call NamFil(sub, name_out, '.com', len_trim('.com'))
-    open(9, FILE=name_out)
+    open(9, file=name_out)
     write(6, *) 'Now creating the file:', name_out
     call NamFil(sub, name_out, '.com', 0)
     write(9,*) name_out 
     close(9)
   end do
 
-  open(9, FILE = 'convert.scr')
+  open(9, file = 'convert.scr')
   do sub=1,n_sub
     call NamFil(sub, name_out, '.com', len_trim('.com'))
     write(9,'(A8,A80)') './B2A < ', name_out
   end do
   close(9)
 
-  open(9, FILE = 'CONVERT.SCR')
+  open(9, file = 'CONVERT.SCR')
   do sub=1,n_sub
     call NamFil(sub, name_out, '.com', len_trim('.com'))
     write(9,'(A8,A80)') './A2B < ', name_out

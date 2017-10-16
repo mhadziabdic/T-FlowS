@@ -34,7 +34,7 @@
   domain_name = name
   domain_name(len_trim(name)+1:len_trim(name)+2) = '.d'
   write(6, '(A24,A)') '# Now reading the file: ', domain_name
-  open(9, FILE=domain_name)
+  open(9, file=domain_name)
 
   !-----------------------------------------------------------------!
   !   Max. number of nodes (cells), boundary faces and cell faces   ! 

@@ -12,7 +12,7 @@
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
   character, optional :: namAut*(*)
 !------------------------------[Calling]-------------------------------!
   real      :: Dist
@@ -150,8 +150,8 @@
     else
       write(namcut(l-2:l),'(I3)') Cln
     end if
-    if(This < 2) write(*,*) '# NOW CREATING FILE: ', namCut
-    open (100+Cln, FILE=namCut)
+    if(This < 2) write(*,*) '# NOW CREATING file: ', namCut
+    open (100+Cln, file=namCut)
 
 !--write file header
     if(dir == Xdir) XYZ = 'x'

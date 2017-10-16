@@ -10,7 +10,7 @@
   implicit none
 !----------------------------------[Calling]-----------------------------------!
   real :: Distance
-!---------------------------------[Parameters]---------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   integer :: NSsh0  ! if 0, shadow will not be drawn 
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: n, s, s0, c1, c2
@@ -127,7 +127,7 @@
     xlegend = 0
   end if
 
-  open(9, FILE=name_eps)
+  open(9, file=name_eps)
 
   write(*,*) 'File opened'
 

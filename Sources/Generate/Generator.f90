@@ -77,7 +77,7 @@
 !======================================================================!
 
   ! Test the precision
-  open(90,FORM='UNFORMATTED',FILE='Generator.real'); 
+  open(90,FORM='unformatted',file='Generator.real'); 
   write(90) 3.1451592
   close(90)
 

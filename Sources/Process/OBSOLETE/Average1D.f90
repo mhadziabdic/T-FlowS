@@ -12,7 +12,7 @@
   use par_mod
 !----------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
   real :: y(-NbC:NC)
 !------------------------------[Calling]-------------------------------!
   interface
@@ -52,7 +52,7 @@
   namCoo = name
   namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
   write(6, *) '# Now reading the file:', namCoo
-  open(9, FILE=namCoo)
+  open(9, file=namCoo)
 
 !---- write the number of probes 
   read(9,'(I8)') Nprob

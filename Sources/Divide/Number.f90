@@ -41,7 +41,7 @@
   do sub=1,n_sub
 
     call NamFil(sub, name_out, '.buf', len_trim('.buf'))
-    open(9, FILE=name_out)
+    open(9, file=name_out)
     write(6, *) 'Now creating the file:', name_out
 
     write(9,'(A20)') '%%%%%%%%%%%%%%%%%%%%'

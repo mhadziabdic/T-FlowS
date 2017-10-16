@@ -14,7 +14,7 @@
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
   real :: y(-NbC:NC)
   real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
@@ -46,7 +46,7 @@
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
 
-    INQUIRE( FILE=namCoo, EXIST=THERE )
+    INQUIRE( file=namCoo, EXIST=THERE )
     if(.NOT.THERE) then
       if(this_proc < 2) write(*,*) "==================================================================="
       if(this_proc < 2) write(*,*) "In order to extract results at certain locations in the wall jet"
@@ -63,7 +63,7 @@
     end if
 
     if(this_proc < 2) write(6, *) '# Now reading the file:', namCoo
-    open(9, FILE=namCoo)
+    open(9, file=namCoo)
 
 !---- write the number of searching intervals
     read(9,*) Nprob
@@ -243,7 +243,7 @@
       end if
     end do
 
-    open(3,FILE=JetIn)
+    open(3,file=JetIn)
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
         write(3,'(9E15.7)') (z_p(i)+z_p(i+1))/4.0, Ump(i)/Uaver, Vmp(i)/Uaver, Wmp(i)/Uaver, uup(i)/Uaver**2, vvp(i), wwp(i), uvp(i), Tmp(i) 

@@ -14,7 +14,7 @@
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
   real :: y(-NbC:NC)
   real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
@@ -45,7 +45,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
   if(k == 0) then  
     if(this < 2) write(6, *) '# Now reading the file: Hill_y_0.2.1D ' 
-    open(9, FILE='Hill_y_0.2.1D')
+    open(9, file='Hill_y_0.2.1D')
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -58,7 +58,7 @@
     close(9)
   else if(k == 1) then
     if(this < 2) write(6, *) '# Now reading the file: Hill_y_0.6.1D ' 
-    open(9, FILE='Hill_y_0.6.1D')
+    open(9, file='Hill_y_0.6.1D')
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -71,7 +71,7 @@
     close(9)
   else if(k == 2) then
     if(this < 2) write(6, *) '# Now reading the file: Hill_y_1.0.1D ' 
-    open(9, FILE='Hill_y_1.0.1D')
+    open(9, file='Hill_y_1.0.1D')
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -84,7 +84,7 @@
     close(9)
   else if(k == 3) then
     if(this < 2) write(6, *) '# Now reading the file: Hill_y_1.4.1D ' 
-    open(9, FILE='Hill_y_1.4.1D')
+    open(9, file='Hill_y_1.4.1D')
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -97,7 +97,7 @@
     close(9)
   else if(k == 4) then
     if(this < 2) write(6, *) '# Now reading the file: Hill_y_1.8.1D ' 
-    open(9, FILE='Hill_y_1.8.1D')
+    open(9, file='Hill_y_1.8.1D')
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -110,7 +110,7 @@
     close(9)
   else if(k == 5) then
     if(this < 2) write(6, *) '# Now reading the file: Hill_y_2.0.1D ' 
-    open(9, FILE='Hill_y_2.0.1D')
+    open(9, file='Hill_y_2.0.1D')
 
 !---- write the number of probes 
     read(9,*) Nprob
@@ -233,7 +233,7 @@
       Ncount(i) = max(Ncount(i),1) 
     end do
 
-    open(3,FILE=line_name)
+    open(3,file=line_name)
     do i = 1, Nprob-1
       Wmp(i)    =  Wmp(i)/Ncount(i)
       Ump(i)    =  Ump(i)/Ncount(i)

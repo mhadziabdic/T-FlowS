@@ -11,7 +11,7 @@
   use rans_mod
 !------------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Parameters]---------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   logical   :: restar
 !----------------------------------[Calling]-----------------------------------!
   real      :: Distance
@@ -88,9 +88,9 @@
         write(nammon(l-2:l),'(I3)') j
       end if
       if(Ndtt == 0) then
-        open(10+j,FILE=nammon)
+        open(10+j,file=nammon)
       else
-        open(10+j,FILE=nammon,POSITION='APPEND')
+        open(10+j,file=nammon,POSITION='APPEND')
       endif
 
       write(10+j,'(A24,3F16.6)')  &

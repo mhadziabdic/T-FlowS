@@ -125,7 +125,7 @@
   boxsize = (ymaxb - yminb) / 20
   xlegend = boxsize * 8 
 
-  open(9, FILE=name_eps)
+  open(9, file=name_eps)
 
   ! Create the header of the .eps file
   write(9, '(A24)') '%!PS-Adobe-2.0 EPSF-1.2 '

@@ -13,7 +13,7 @@
     use rans_mod
 !----------------------------------------------------------------------!
     implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
     real :: y(-NbC:NC)
     real :: Ufric, Wall_near 
 !------------------------------[Calling]-------------------------------!
@@ -52,7 +52,7 @@
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
     if(this_proc < 2)  write(6, *) '# Now reading the file:', namCoo
-    open(9, FILE=namCoo)
+    open(9, file=namCoo)
 
 !---- write the number of searching intervals 
     read(9,*) Nprob
@@ -451,7 +451,7 @@
       return
     end if
 
-    open(3,FILE=namRes)
+    open(3,file=namRes)
     write(3,'(A1,2(A10, F17.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric/VISc
     if(SIMULA == DNS) then
       write(3,'(A1,2X,A80)') '#', '1:Xrad, 2:U, 3:V, 4:W, 5:uu, 6:vv, 7:ww, 8:uv, 9:uw, 10:vw, 11:Kin' 
@@ -634,7 +634,7 @@
     end if
 
     close(3)
-    open(3,FILE=namRes_plus)
+    open(3,file=namRes_plus)
     write(3,'(A1,2(A10, F17.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric/VISc
     if(HOT==YES) write(3,'(A1,3(A10, F14.8))') '#', 'abs(Tflux) = ', abs(Tflux), &
     ' K+ =', abs(Tflux)/Ufric * (VISc/CONc(material(1)))**0.333333, 'Nu max = ', &

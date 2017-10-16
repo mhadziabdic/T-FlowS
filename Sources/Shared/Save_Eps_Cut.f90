@@ -7,7 +7,7 @@
   use gen_mod
 !------------------------------------------------------------------------------! 
   implicit none
-!---------------------------------[Parameters]---------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   real      :: xg(MAXN),yg(MAXN),zg(MAXN),sidegDx(MAXS),sidegDy(MAXS)
   character :: dir
 !-----------------------------------[Locals]-----------------------------------!
@@ -47,7 +47,7 @@
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin))
   sclp = 0.005 
 
-  open(9, FILE=name_eps)
+  open(9, file=name_eps)
 
   write(9, '(A24)') '%!PS-Adobe-2.0 EPSF-1.2 '
   write(9, '(A24)') '%% Created by:  TFlowS %%'

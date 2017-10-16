@@ -14,7 +14,7 @@
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
 !  real :: y(-NbC:NC)
   real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
@@ -40,7 +40,7 @@
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
     if(this_proc < 2) write(6, *) 'Now reading the file:', namCoo
-    open(9, FILE=namCoo)
+    open(9, file=namCoo)
 
 !---- write the number of probes 
     read(9,'(I8)') Nprob
@@ -158,7 +158,7 @@
     JetIn  = 'Cut_Ver_Y'
     write(JetIn(9:13),'(I1,A4)') k, '.dat'
 
-    open(3,FILE=JetIn)
+    open(3,file=JetIn)
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
         Wmp(i)    =  Wmp(i)/Ncount(i)

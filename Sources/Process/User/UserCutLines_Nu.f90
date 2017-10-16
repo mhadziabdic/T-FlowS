@@ -13,7 +13,7 @@
     use rans_mod
 !----------------------------------------------------------------------!
     implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
     real :: Ufric, Wall_near
 !------------------------------[Calling]-------------------------------!
     interface
@@ -42,7 +42,7 @@
     logical :: there
 !======================================================================!
 
-    INQUIRE( FILE='rad_coordinate.dat', EXIST=THERE ) 
+    INQUIRE( file='rad_coordinate.dat', EXIST=THERE ) 
     if(.NOT.THERE) then
       if(this_proc < 2) write(*,*) "==================================================================="
       if(this_proc < 2) write(*,*) "In order to extract Nusselt number profile in asci file"
@@ -58,7 +58,7 @@
       return
     end if
 
-    open(9, FILE='rad_coordinate.dat')
+    open(9, file='rad_coordinate.dat')
 !---- write the number of searching intervals 
     read(9,*) Nprob
     allocate(z_p(Nprob*2))
@@ -178,7 +178,7 @@
     end do
     call wait
 
-    open(3,FILE='Nusselt_Utau.dat')
+    open(3,file='Nusselt_Utau.dat')
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
 

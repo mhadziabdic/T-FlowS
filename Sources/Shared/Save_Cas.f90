@@ -10,7 +10,7 @@
   use gen_mod
 !------------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Parameters]---------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   integer   :: sub, NNsub, NCsub, NSsub
 !-----------------------------------[Locals]-----------------------------------!
   integer   :: c,  c1,  c2,  n, s, Nfac, NtotFac 
@@ -23,7 +23,7 @@
   !                      !
   !----------------------!
   call NamFil(sub, namOut, '.cas', len_trim('.cas'))
-  open(9, FILE=namOut)
+  open(9, file=namOut)
   write(6, *) 'Now creating the file:', namOut
 
   !-----------!

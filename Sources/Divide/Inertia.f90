@@ -10,12 +10,12 @@
   use par_mod
 !----------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
   integer :: sub                           ! subdomain 
 !-------------------------------[Locals]-------------------------------!
   integer :: i, n_cells_sub
   real    :: xm, ym, zm
-  real    :: Im(3,3), d(3), v(3,3), d_max(3)    
+  real    :: i_matrix(3,3), d(3), v(3,3), d_max(3)    
 !======================================================================!
 
   xm=0.0
@@ -36,23 +36,23 @@
 
   write(*,*) 'Center of mass for subdomain ', sub, ' is: ', xm, ym, zm
 
-  Im = 0.
+  i_matrix = 0.
   do i=1,NC
     if(proces(i)==sub) then
-      Im(1,1) = Im(1,1) + (yc(i)-ym)**2 + (zc(i)-zm)**2
-      Im(2,2) = Im(2,2) + (xc(i)-xm)**2 + (zc(i)-zm)**2
-      Im(3,3) = Im(3,3) + (xc(i)-xm)**2 + (yc(i)-ym)**2
+      i_matrix(1,1) = i_matrix(1,1) + (yc(i)-ym)**2 + (zc(i)-zm)**2
+      i_matrix(2,2) = i_matrix(2,2) + (xc(i)-xm)**2 + (zc(i)-zm)**2
+      i_matrix(3,3) = i_matrix(3,3) + (xc(i)-xm)**2 + (yc(i)-ym)**2
 
-      Im(1,2) = Im(1,2) - (xc(i)-xm)*(yc(i)-ym) 
-      Im(1,3) = Im(1,3) - (xc(i)-xm)*(zc(i)-zm) 
-      Im(2,3) = Im(2,3) - (yc(i)-ym)*(zc(i)-zm) 
+      i_matrix(1,2) = i_matrix(1,2) - (xc(i)-xm)*(yc(i)-ym) 
+      i_matrix(1,3) = i_matrix(1,3) - (xc(i)-xm)*(zc(i)-zm) 
+      i_matrix(2,3) = i_matrix(2,3) - (yc(i)-ym)*(zc(i)-zm) 
     end if
   end do 
-  Im(2,1) = Im(1,2)
-  Im(3,1) = Im(1,3)
-  Im(3,2) = Im(2,3)
+  i_matrix(2,1) = i_matrix(1,2)
+  i_matrix(3,1) = i_matrix(1,3)
+  i_matrix(3,2) = i_matrix(2,3)
 
-  call Jacobi(Im, 3, 3, d, v, i)
+  call Compute_Eigenvalues(i_matrix, 3, 3, d, v, i)
 
   write(*,*) 'd=',d(1), d(2), d(3)
 
@@ -74,7 +74,7 @@
     d_max(3)=v(3,3)
   end if 
 
-  write(*,*) 'Sorting the cells'
+  write(*,*) '# Sorting the cells'
   do i=1,NC
     iin(i) = i
     criter(i) = xc(i)*d_max(1) + yc(i)*d_max(2) + zc(i)*d_max(3)

@@ -20,7 +20,7 @@
 !------------------------------!
   namOut = name
   call NamFil(this, namOut, '.rawdata', len_trim('.rawdata') )
-  open(9, FILE=namOut)
+  open(9, file=namOut)
   write(6, *) 'Now creating the file:', namOut
 
 !---- Total number of cells

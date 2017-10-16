@@ -13,7 +13,7 @@
     use rans_mod
 !----------------------------------------------------------------------!
     implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
     real :: Ufric, Wall_near 
 !-------------------------------[Locals]-------------------------------!
     integer             :: s, c1, c2, k
@@ -27,17 +27,17 @@
 
 !  path ='/home/IUS/mhadziabdic/Documents/T-FlowS-Sep2009/Test_Cases/RANS/CYLINDER/LES_Feb_2016'
 
-  open(19, FILE='Force_cyl.dat', status='OLD', position = 'append')
+  open(19, file='Force_cyl.dat', status='OLD', position = 'append')
 !  if(this < 2) write(19,'(A50)') 'k, Fpx, Fpy, Fvx, Fvy, Fvz, FtotalX, FtotalY'
 !  call wait
 !    if(Ndtt == 0) then
-!      open(999,FILE=path//'force.dat',POSITION='APPEND')
+!      open(999,file=path//'force.dat',POSITION='APPEND')
 !      write(999,*) '#*******************************************************'
 !      write(999,*) '#timestep:  Fpx:  Fpy:  Fvx:  Fvy:  Fvz:  FtotX:  FtotY:'
 !      write(999,*) '#*******************************************************'
 !      close(999)
 !    if(mod(k,10)==0) then
-!      open(999,FILE=path//'force.dat',POSITION='APPEND')
+!      open(999,file=path//'force.dat',POSITION='APPEND')
 
 
 !   call GraPhi(U % mean, 1, Ux,.TRUE.)    ! dU/dx

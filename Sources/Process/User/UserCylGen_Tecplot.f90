@@ -8,7 +8,7 @@
   use les_mod
   use par_mod
   use rans_mod
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
     integer :: n
     real    :: x1_dis, x0_dis, y1_dis, y0_dis, z1_dis, z0_dis
     real    :: TauWup, TauWdown, r23, TKE, Cmu_mod, Pk_tmp, Cs_mod, Cs_prime
@@ -22,7 +22,7 @@
     character*80        :: namout
     character*39        :: path
 !======================================================================!
-!  open(9, FILE='Slice2.dat')
+!  open(9, file='Slice2.dat')
 !  if(this < 2) write(*,*) '# Now reading the file: Slice.dat '
 !  read(9,*) x1_dis, x0_dis
 !  read(9,*) y1_dis, y0_dis
@@ -34,7 +34,7 @@
 
     write(inflowfile(8:13),'(I6.6)') n
     write(inflowfile(15:17),'(I3.3)') this
-    open(500+this, FILE=inflowfile)
+    open(500+this, file=inflowfile)
 
     if( this < 2 ) then
       write(*,*) 'Capturing field..'

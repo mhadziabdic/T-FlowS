@@ -13,7 +13,7 @@
     use rans_mod
 !----------------------------------------------------------------------!
     implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
     real :: Ufric, Wall_near 
 !------------------------------[Calling]-------------------------------!
     INTERFACE
@@ -55,7 +55,7 @@
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
     if(this < 2) write(6, *) '# Now reading the file:', namCoo
-    open(9, FILE=namCoo)
+    open(9, file=namCoo)
 
 !---- write the number of searching intervals 
     read(9,*) Nprob
@@ -109,7 +109,7 @@
 !    do i = 1, Nprob
 !      R_max = max(z_p(i),R_max)
 !    end do
-!    open(12, FILE='inflow.dat') 
+!    open(12, file='inflow.dat') 
 !    do c=1, NC
 !      if(zc(c) > 0.0.and.zc(c) < 0.16) then
 !        write(12,'(13E15.7)') xc(c), yc(c), U%n(c),V%n(c),W%n(c),uu%n(c),vv%n(c),ww%n(c),uv%n(c),uw%n(c),vw%n(c),Eps%n(c),f22%n(c)
@@ -312,7 +312,7 @@
 
 10  continue
  
-    open(3,FILE=namRes)
+    open(3,file=namRes)
     write(3,'(A1,2(A10, F13.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric*R_max/VISc
     if(SIMULA == LES.or.SIMULA == DES_SPA.or.SIMULA == EBM) then
       write(3,'(A1,2X,A80)') '#', '1:Xrad, 2:U, 3:V, 4:W, 5:uu, 6:vv, 7:ww, 8:uv, 9:uw, 10:vw, 11:Kin' 
@@ -368,7 +368,7 @@
     end if
     close(3)
 
-    open(3,FILE=namRes_plus)
+    open(3,file=namRes_plus)
     write(3,'(A1,2(A10, F13.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric*R_max/VISc
     if(SIMULA == LES.or.SIMULA == DES_SPA.or.SIMULA==DNS) then
       write(3,'(A1,2X,A80)') '#', '1:Xrad+, 2:U+, 3:V+, 4:W+, 5:uu+, 6:vv+, 7:ww+, 8:uv+, 9:uw+, 10:vw+, 11:Kin+' 

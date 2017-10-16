@@ -14,7 +14,7 @@
   use par_mod 
 !------------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Parameters]---------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   integer :: sub, NNsub, NCsub, NSsub, NBCsub, NBFsub
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: n, c, c1, c2, s 
@@ -30,7 +30,7 @@
   name_out = name         
 
   call NamFil(sub, name_out, '.ln.gmv', len_trim('.ln.gmv'))
-  open(9, FILE=name_out)
+  open(9, file=name_out)
   write(6, *) 'Now creating the file:', name_out
 
   !-----------!

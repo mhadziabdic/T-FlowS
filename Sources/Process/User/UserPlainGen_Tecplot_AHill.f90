@@ -8,7 +8,7 @@
   use les_mod
   use par_mod
   use rans_mod
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
     integer             :: n
     real                :: x1_dis, x0_dis, y1_dis, y0_dis, z1_dis, z0_dis
     real                :: TauWup, TauWdown
@@ -22,9 +22,9 @@
    TauWdown = 0.0
    TauWup   = 0.0 
   
-!  open(19, FILE='Cyl_data.dat', status='OLD', position = 'append')
+!  open(19, file='Cyl_data.dat', status='OLD', position = 'append')
 
-  open(9, FILE='Slice.dat')
+  open(9, file='Slice.dat')
   if(this < 2) write(*,*) '# Now reading the file: Slice.dat '
   read(9,*) x1_dis, x0_dis
   read(9,*) y1_dis, y0_dis
@@ -36,7 +36,7 @@
 
     write(inflowfile(8:13),'(I6.6)') n
     write(inflowfile(15:17),'(I3.3)') this
-    open(500+this, FILE=inflowfile)
+    open(500+this, file=inflowfile)
 
     if( this < 2 ) then
       write(*,*) 'Capturing field..'

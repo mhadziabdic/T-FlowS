@@ -14,7 +14,7 @@
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
   real :: y(-NbC:NC)
   real :: Rad_2, Ufric, dummy 
 !------------------------------[Calling]-------------------------------!
@@ -61,7 +61,7 @@
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
   write(6, *) '# Now reading the file: pipe_rad_coordinate.1D ' 
-  open(9, FILE='rad_coordinate.dat')
+  open(9, file='rad_coordinate.dat')
 
 !---- write the number of probes 
   read(9,*) Nprob
@@ -402,7 +402,7 @@
     end do 
     call wait
 
-!    open(3,FILE='Nusselt_Utau.dat')
+!    open(3,file='Nusselt_Utau.dat')
 !    do i = 1, Nprob
 !      if(Ncount(i) /= 0) then
 !        write(3,'(5E15.7,I6)') Rad_mp(i)/2.0, 0.2/(1.4e-4*(Tmp(i)-20.0)), &
@@ -414,7 +414,7 @@
 !    end do 
 !    close(3)
 
-!    open(3,FILE='Kinetic_energy.dat')
+!    open(3,file='Kinetic_energy.dat')
 !    do i = 1, Nprob
 !      if(Ncount(i) /= 0) then
 !        write(3,'(6E15.7,1X,I6)') Rad_mp(i)/2.0, & 
@@ -427,7 +427,7 @@
 !    end do 
 !    close(3)
 
-    open(3,FILE='Res_position_1.dat')
+    open(3,file='Res_position_1.dat')
     do i = 1, Nprob
       if(Ncount1(i) /= 0) then
         write(3,'(9E15.7,1X,I6)') Rad_mp(i)/2.0, & 
@@ -439,7 +439,7 @@
     end do 
     close(3)
 
-    open(3,FILE='Res_position_2.dat')
+    open(3,file='Res_position_2.dat')
     do i = 1, Nprob
       if(Ncount2(i) /= 0) then
         write(3,'(9E15.7,1X,I6)') Rad_mp(i)/2.0, & 
@@ -451,7 +451,7 @@
     end do 
     close(3)
 
-    open(3,FILE='Res_position_3.dat')
+    open(3,file='Res_position_3.dat')
     do i = 1, Nprob
       if(Ncount3(i) /= 0) then
         write(3,'(9E15.7,1X,I6)') Rad_mp(i)/2.0, & 
@@ -463,7 +463,7 @@
     end do 
     close(3)
 
-    open(3,FILE='Res_position_4.dat')
+    open(3,file='Res_position_4.dat')
     do i = 1, Nprob
       if(Ncount4(i) /= 0) then
         write(3,'(9E15.7,1X,I6)') Rad_mp(i)/2.0, & 
@@ -475,7 +475,7 @@
     end do 
     close(3)
 
-    open(3,FILE='Res_position_5.dat')
+    open(3,file='Res_position_5.dat')
     do i = 1, Nprob
       if(Ncount5(i) /= 0) then
         write(3,'(9E15.7,1X,I6)') Rad_mp(i)/2.0, & 
@@ -487,7 +487,7 @@
     end do 
     close(3)
 
-    open(3,FILE='Res_position_6.dat')
+    open(3,file='Res_position_6.dat')
     do i = 1, Nprob
       if(Ncount6(i) /= 0) then
         write(3,'(9E15.7,1X,I6)') Rad_mp(i)/2.0, & 
@@ -499,7 +499,7 @@
     end do 
     close(3)
 
-    open(3,FILE='Res_position_7.dat')
+    open(3,file='Res_position_7.dat')
     do i = 1, Nprob
       if(Ncount7(i) /= 0) then
         write(3,'(9E15.7,1X,I6)') Rad_mp(i)/2.0, & 

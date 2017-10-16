@@ -10,7 +10,7 @@
   use rans_mod
 !------------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Parameters]---------------------------------!
+!---------------------------------[Arguments]----------------------------------!
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, s, m
   integer           :: i_1, i_2, i_3, i_4, i_5, i_6
@@ -85,7 +85,7 @@
   !   Read restart file   !
   !-----------------------!
   call NamFil(this_proc, name_in, '.restart', len_trim('.restart') )
-  open(9, FILE=name_in, FORM='UNFORMATTED')
+  open(9, file=name_in, FORM='unformatted')
   write(6, *) '# Now reading the file:', name_in
 
   ! Version

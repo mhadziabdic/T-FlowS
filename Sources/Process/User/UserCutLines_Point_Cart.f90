@@ -14,7 +14,7 @@
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
 !  real :: y(-NbC:NC)
   real :: Rad_2, Ufric, Rad_1 
 !------------------------------[Calling]-------------------------------!
@@ -32,7 +32,7 @@
   real                :: R, Urad_n, Utan_n, R1, R2, Urad, Utan, dummy 
 !======================================================================!
 
-  open(9, FILE='Point_positions.dat')
+  open(9, file='Point_positions.dat')
   if(this_proc < 2) write(6, *) '# Now reading the file: Point_positions.dat ' 
   read(9,*) N_hor
   allocate(x_p(N_hor))
@@ -48,11 +48,11 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
 !    if(this_proc < 2) write(6, *) '# Now reading the file: Z_coordinate.dat ' 
     if(dir == 1) then
-      open(9, FILE='X_coordinate.dat')
+      open(9, file='X_coordinate.dat')
     else if(dir == 2) then
-      open(9, FILE='Y_coordinate.dat')
+      open(9, file='Y_coordinate.dat')
     else if(dir == 3) then
-      open(9, FILE='Z_coordinate.dat')
+      open(9, file='Z_coordinate.dat')
     end if
 !---- write the number of probes 
     read(9,*) Nprob
@@ -205,7 +205,7 @@
       write(JetIn(9:14),'(I2,A4)') k, '.dat'
     end if 
 
-    open(3,FILE=JetIn)
+    open(3,file=JetIn)
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
         Ump(i)    =  Ump(i)/Ncount(i)

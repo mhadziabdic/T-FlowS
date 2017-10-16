@@ -13,7 +13,7 @@
     use rans_mod
 !----------------------------------------------------------------------!
     implicit none
-!-----------------------------[Parameters]-----------------------------!
+!-----------------------------[Arguments]------------------------------!
     real :: y(-NbC:NC)
     real :: Ufric, Wall_near 
 !------------------------------[Calling]-------------------------------!
@@ -55,7 +55,7 @@
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
     if(this < 2)  write(6, *) '# Now reading the file:', namCoo
-    open(9, FILE=namCoo)
+    open(9, file=namCoo)
 
 !---- write the number of searching intervals 
     read(9,*) Nprob
@@ -292,7 +292,7 @@
       return
     end if
 
-    open(3,FILE=namRes)
+    open(3,file=namRes)
     write(3,'(A1,2(A10, F13.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric/VISc
     write(3,'(A1,1X,A140)') '#', 'Xrad U V W T (-5) TT uu vv ww uv (-10) &
                              uw vw uuR vvR wwR (-15) uvR uwR vwR Kin Eps (-20) &
@@ -307,7 +307,7 @@
     end do     
     close(3)
 
-    open(3,FILE=namRes_plus)
+    open(3,file=namRes_plus)
     write(3,'(A1,2(A10, F13.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric/VISc
     write(3,'(A1,2(A10, F14.8))') '#', 'Tflux = ', Tflux, ' K+ =', Tflux/Ufric * (VISc/CONc(material(1)))**0.333333
     write(3,'(A1,1X,A130)') '#', 'Xrad U V W T (-5) uu vv ww uv uw (-10) &

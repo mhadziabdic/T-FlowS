@@ -8,7 +8,7 @@
   use pro_mod
 !----------------------------------------------------------------------!
   implicit none
-!-------------------------------[Parameters]---------------------------!
+!-------------------------------[Arguments]----------------------------!
   TYPE(Unknown) :: PHI
   real XPHI(NC)
   real dPHIdx(-NbC:NC), dPHIdy(-NbC:NC), dPHIdz(-NbC:NC)

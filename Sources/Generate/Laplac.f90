@@ -32,7 +32,7 @@
 
   n = NN + (k-1)*ni*nj + (j-1)*ni + i
 
-!----- node numbers at the block faces
+  ! Node numbers at the block faces
   n1 = NN + ( 1-1)*ni*nj + ( j-1)*ni + i     !  ->  k == 1
   n2 = NN + ( k-1)*ni*nj + ( j-1)*ni + 1     !  ->  i == 1
   n3 = NN + ( k-1)*ni*nj + ( 1-1)*ni + i     !  ->  j == 1
@@ -40,7 +40,7 @@
   n5 = NN + ( k-1)*ni*nj + (nj-1)*ni + i     !  ->  j == nj
   n6 = NN + (nk-1)*ni*nj + ( j-1)*ni + i     !  ->  k == nk
 
-!----- face I
+  ! Face I
   if(x_node(n1) == HUGE) then
     xf1=( ((ni-i)*xt(1) + (i-1)*xt(2)) * (nj-j) +                   &
           ((ni-i)*xt(3) + (i-1)*xt(4)) * (j-1)  ) /((ni-1)*(nj-1))
@@ -54,7 +54,7 @@
     zf1=z_node(n1)
   end if
 
-!----- face VI
+  ! Face VI
   if(x_node(n6) == HUGE) then
     xf6=( ((ni-i)*xt(5) + (i-1)*xt(6)) * (nj-j) +                   &
           ((ni-i)*xt(7) + (i-1)*xt(8)) * (j-1)  ) /((ni-1)*(nj-1))
@@ -68,7 +68,7 @@
     zf6=z_node(n6)
   endif
 
-!----- face III
+  ! Face III
   if(x_node(n3) == HUGE) then
     xf3=( ((ni-i)*xt(1) + (i-1)*xt(2)) * (Nk-k) +                   &
           ((ni-i)*xt(5) + (i-1)*xt(6)) * (k-1)  ) /((ni-1)*(nk-1))
@@ -82,7 +82,7 @@
     zf3=z_node(n3)
   endif
 
-!----- face V
+  ! Face V
   if(x_node(n5) == HUGE) then
     xf5=( ((ni-i)*xt(3) + (i-1)*xt(4)) * (Nk-k) +                   &
           ((ni-i)*xt(7) + (i-1)*xt(8)) * (k-1)  ) /((ni-1)*(nk-1))
@@ -96,7 +96,7 @@
     zf5=z_node(n5)
   endif
 
-!----- face II
+  ! Face II
   if(x_node(n2) == HUGE) then
     xf2=( ((nj-j)*xt(1) + (j-1)*xt(3)) * (nk-k) +                   &
           ((nj-j)*xt(5) + (j-1)*xt(7)) * (k-1)  ) /((nj-1)*(nk-1))
@@ -110,7 +110,7 @@
     zf2=z_node(n2)
   endif
 
-!----- face IV
+  ! Face IV
   if(x_node(n4) == HUGE) then
     xf4=( ((nj-j)*xt(2) + (j-1)*xt(4)) * (nk-k) +                   &
           ((nj-j)*xt(6) + (j-1)*xt(8)) * (k-1)  ) /((nj-1)*(nk-1))

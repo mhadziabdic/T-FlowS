@@ -31,11 +31,11 @@
   !--------------------!
   !   Alocate memory   ! 
   !--------------------!
-  write(6,'(A25)')       '# Allocating memory for: ' 
-  write(6,'(A1,I8,A6)')  '#', NN,  ' nodes' 
-  write(6,'(A1,I8,A6)')  '#', NC,  ' cells' 
-  write(6,'(A1,I8,A15)') '#', NbC, ' boundary cells'         
-  write(6,'(A1,I8,A11)') '#', NS,  ' cell faces' 
+  write(*,'(A25)')       '# Allocating memory for: ' 
+  write(*,'(A1,I8,A6)')  '#', NN,  ' nodes' 
+  write(*,'(A1,I8,A6)')  '#', NC,  ' cells' 
+  write(*,'(A1,I8,A15)') '#', NbC, ' boundary cells'         
+  write(*,'(A1,I8,A11)') '#', NS,  ' cell faces' 
 
   ! Variables defined in all_mod.h90:
   allocate (xc(-NbC:NC)); xc=0.0
@@ -81,7 +81,7 @@
   allocate (BuReIn(NS)); BuReIn=0
   allocate (BufPos(NS)); BufPos=0
 
-  write(6,'(A26)') '# Allocation successfull !'
+  write(*,*) '# Allocation successfull !'
 
   ! Read node coordinates
   do n=1,NN
@@ -122,8 +122,8 @@
       read(inp,*) &
          CellN(c,5), CellN(c,1), CellN(c,2), CellN(c,4), CellN(c,3)
     else
-      write(*,*) 'Unsupported cell type: ', dum_s
-      write(*,*) 'Exiting'
+      write(*,*) '# Unsupported cell type: ', dum_s
+      write(*,*) '# Exiting'
       stop
     end if
   end do

@@ -378,7 +378,7 @@
         endif !  S*(c2-c1) < 0.0
       end if  !  c2 > 0
     end do    !  sides  
-    write(*,*) 'Number of shadow faces: ', NSsh
+    write(*,*) '# Number of shadow faces: ', NSsh
     end if
 
   !----------------------------------!
@@ -478,21 +478,22 @@
   !----------------------------------------------------------!
   WallDs = HUGE 
 
-  write(*,'(A43)')   '#------------------------------------------'
+  write(*,*)   '#======================================================='
   if(rrun) then
-    write(*,'(A43)') '# Computing the distance to the walls (2/2)'           
+    write(*,*) '# Computing the distance to the walls (2/2)'           
   else            
-    write(*,'(A43)') '# Computing the distance to the walls (1/2)'           
+    write(*,*) '# Computing the distance to the walls (1/2)'           
   end if 
-  write(*,'(A43)')   '#------------------------------------------'
-  write(*,*) 'Insert the highest BC marker which represents the wall'
-  write(*,*) 'for computing the distance to the wall (0 to skip)'
-  write(*,*) 'If you skip this, smoothing will not work properly'
+  write(*,*)   '#-------------------------------------------------------'
+  write(*,*)   '# Insert the highest BC marker which represents the wall'
+  write(*,*)   '# for computing the distance to the wall (0 to skip)'
+  write(*,*)   '# If you skip this, smoothing will not work properly'
+  write(*,*)   '#-------------------------------------------------------'
   read(*,*) wall_mark   
 
   if(wall_mark == 0) then
     WallDs = 1.0
-    write(*,*) 'Distance to the wall set to 1 everywhere !'            
+    write(*,*) '# Distance to the wall set to 1 everywhere !'            
   else 
     do c1=1,NC 
       do s = WallFacFst, WallFacLst      ! 1,NS
@@ -503,9 +504,6 @@
             WallDs(c1)=min(WallDs(c1), &
             Distance_Squared(xc(c1),yc(c1),zc(c1),xsp(s),ysp(s),zsp(s)))
           end if
-!        else if(material(c_1) /= material(c_2) ) then
-!          WallDs(c1)=min(WallDs(c1), &
-!          Distance_Squared(xc(c1),yc(c1),zc(c1),xsp(s),ysp(s),zsp(s)))
         end if 
       end do
     end do
@@ -514,8 +512,8 @@
       WallDs(c)=sqrt(WallDs(c))
     end do
 
-    write(*,*) 'Maximal distance to the wall: ', maxval(WallDs(1:NC))
-    write(*,*) 'Minimal distance to the wall: ', minval(WallDs(1:NC))
+    write(*,*) '# Maximal distance to the wall: ', maxval(WallDs(1:NC))
+    write(*,*) '# Minimal distance to the wall: ', minval(WallDs(1:NC))
   end if
 
   do n=1,NN

@@ -3,7 +3,7 @@
                 dUidi, dUidj, dUidk,                            &
                 Si, Sj, Sk,                                     &
                 Di, Dj, Dk,                                     &
-                Pi, dUjdi, dUkdi)
+                Hi, dUjdi, dUkdi)
 !----------------------------------------------------------------------!
 !   Discretizes and solves momentum conservation equations             !
 !----------------------------------------------------------------------!
@@ -21,7 +21,7 @@
   real          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
   real          :: Si(NS), Sj(NS), Sk(NS) 
   real          :: Di(NS), Dj(NS), Dk(NS) 
-  real          :: Pi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
+  real          :: Hi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
   real          :: uuS, vvS, wwS, uvS, uwS, vwS
 !-------------------------------[Locals]-------------------------------!
   integer :: s, c, c1, c2, niter, miter, mat
@@ -522,7 +522,7 @@
 !     Local pressure distribution     !
 !-------------------------------------!
   do c=1,NC
-    b(c) = b(c) - Pi(c)*volume(c)
+    b(c) = b(c) - Hi(c)*volume(c)
   end do
 
 !--------------------------------------------!

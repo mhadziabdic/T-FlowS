@@ -21,7 +21,7 @@
   write(*,'(A10,A1,A28)') ' # Making ', dir, '.eps cut through the domain'
   write(*,'(A39)')        ' #--------------------------------------------'
 
-  write(6,*) '# Enter the ',dir,' coordinate for cutting or type 0 to exit: '
+  write(*,*) '# Enter the ',dir,' coordinate for cutting or type 0 to exit: '
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) z0
   if(z0 == 0) return
@@ -35,7 +35,7 @@
   name_eps = name
   name_eps(len_trim(name)+1:len_trim(name)+6) = '. .eps'
   name_eps(len_trim(name)+2:len_trim(name)+2) = dir
-  write(6, *) '# Now creating the file:', name_eps
+  write(*, *) '# Now creating the file:', name_eps
 
   xmax=maxval(xg(1:NN)) 
   ymax=maxval(yg(1:NN)) 

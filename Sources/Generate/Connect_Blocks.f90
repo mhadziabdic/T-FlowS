@@ -282,6 +282,6 @@
     end do
   end do
 
-  write(6, '(I8)') del       
+  write(*, '(I8)') del       
 
   end subroutine Connect_Blocks   

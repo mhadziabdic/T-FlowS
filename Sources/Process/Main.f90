@@ -50,7 +50,7 @@
   interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine NewUVW(var, Ui, dUidi, dUidj, dUidk,  &
-                      Si, Sj, Sk, Di, Dj, Dk, Pi, dUjdi, dUkdi) 
+                      Si, Sj, Sk, Di, Dj, Dk, Hi, dUjdi, dUkdi) 
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
@@ -60,7 +60,7 @@
       real          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
       real          :: Si(NS), Sj(NS), Sk(NS) 
       real          :: Di(NS), Dj(NS), Dk(NS) 
-      real          :: Pi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
+      real          :: Hi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
     end subroutine NewUVW
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine CalcSc(var, PHI, dPHIdx, dPHIdy, dPHIdz)

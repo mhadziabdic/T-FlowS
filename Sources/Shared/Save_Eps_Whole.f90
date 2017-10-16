@@ -55,7 +55,7 @@
   !------------------------------!
   !   Input camera coordinates   !
   !------------------------------!
-1 write(6,*) '# Enter the camera coordinates (skip to exit): '
+1 write(*,*) '# Enter the camera coordinates (skip to exit): '
   write(*,*) '#---------------------------------------------'
   call ReadC(5,inp,tn,ts,te)
   if(tn == 1) then 
@@ -78,15 +78,15 @@
   !   Create .eps file   !
   !                      !
   !----------------------!
-  write(6,*) '# G-> Gray or C-> Coloured (by boundary conditions): '
+  write(*,*) '# G-> Gray or C-> Coloured (by boundary conditions): '
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) colour 
   call To_Upper_Case(colour);
-  write(6,*) '# Enter the file name (without extension): '
+  write(*,*) '# Enter the file name (without extension): '
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
-  write(6, *) '# Now creating the file:', name_eps
+  write(*, *) '# Now creating the file:', name_eps
 
   xmax=maxval(x_node(1:NN))
   ymax=maxval(y_node(1:NN))
@@ -130,7 +130,7 @@
 
   open(9, file=name_eps)
 
-  write(*,*) 'File opened'
+  write(*,*) '# File opened'
 
   write(9, '(A24)') '%!PS-Adobe-2.0 EPSF-1.2 '
   write(9, '(A24)') '%% Created by:  TFlowS %%'

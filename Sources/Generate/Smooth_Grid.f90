@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Smooth
+  subroutine Smooth_Grid
 !------------------------------------------------------------------------------!
 !   Smooths the grid lines by a Laplacian-like algorythm.                      !
 !------------------------------------------------------------------------------!
@@ -24,7 +24,7 @@
   allocate(z_node_new(MAXN)); z_node_new=0
   allocate(node_to_nodes(MAXN,0:40)); node_to_nodes=0
 
-  write(*,*) 'Now smoothing the cells. This may take a while !' 
+  write(*,*) '# Now smoothing the cells. This may take a while !' 
 
   do n=1,Nn
     node_to_nodes(n,0) = 0
@@ -91,7 +91,7 @@
   !   Smooth the grid   !
   !---------------------!
   do reg=1,n_smoothing_regions
-    write(*,*) 'Now smoothing region ',reg,' with:',              &
+    write(*,*) '# Now smoothing region ',reg,' with:',              &
                 smooth_iters(reg), ' iterations.'
 
     do j=1,smooth_iters(reg)         
@@ -164,4 +164,4 @@
   deallocate(z_node_new)
   deallocate(node_to_nodes)
 
-  end subroutine Smooth
+  end subroutine Smooth_Grid

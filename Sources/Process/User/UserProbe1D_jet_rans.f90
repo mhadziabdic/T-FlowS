@@ -39,7 +39,6 @@
   real                :: R, Urad_mean, Utan_mean, R1, R2, Urad, Utan, pi
   character, optional :: namAut*(*)
 !======================================================================!
-    pi = 3.141592
 !    call Scale()
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'

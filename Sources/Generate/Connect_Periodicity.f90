@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine PeriBC
+  subroutine Connect_Periodicity
 !----------------------------------------------------------------------!
 !   Solve the cell connectivity for periodic boundary conditions.      !
 !----------------------------------------------------------------------!
@@ -27,21 +27,21 @@
   integer :: trans1(3,3), trans2(3,3)
 !======================================================================!
 
-!---- Initialise TwinN.
+  ! Initialise TwinN.
   do n=1,MAXN
     TwinN(n,0) = 0
   end do
 
-!---------------------------------------------------------!
-!     Search through all block and all of their faces     !
-!---------------------------------------------------------!
+  !-----------------------------------------------------!
+  !   Search through all block and all of their faces   !
+  !-----------------------------------------------------!
   do p=1, n_periodic_cond    
     do b2=1,Nbloc
       do b1=1,Nbloc
         do f2=1,6    ! faces of the second block
           do f1=1,6  ! faces of the first block
 
-!----- initialize the transformation matrixes             
+           ! Initialize the transformation matrixes             
             do i=1,3
               do j=1,3
                 trans1(i,j)=0
@@ -67,7 +67,7 @@
             p23=periodic_cond(p, 7)
             p24=periodic_cond(p, 8)
 
-!----- check if they are connected 
+          ! Check if they are connected 
           if( ( ((n11 == p11).and.(n13 == p13)) .or.                &
                 ((n11 == p14).and.(n13 == p12)) .or.                &
                 ((n11 == p13).and.(n13 == p11)) .or.                &
@@ -78,7 +78,7 @@
                 ((n21 == p23).and.(n23 == p21)) .or.                &
                 ((n21 == p22).and.(n23 == p24)) ) ) then
 
-!----- nadji lokalne cvorove (1-8) blokova 1 i 2 na generickoj povrsini
+              ! Nadji lokalne cvorove (1-8) blokova 1 i 2 na generickoj povrsini
               do n=1,8
                 if(block_points(b1,n) == p11) l11=n
                 if(block_points(b1,n) == p12) l12=n
@@ -90,9 +90,9 @@
                 if(block_points(b2,n) == p24) l24=n
               end do
 
-               write(6, *) 'Periodicity between:', b1, b2
+               write(*, *) '# Periodicity between:', b1, b2
 
-!----- direction ig, block 1
+              ! Direction ig, block 1
               if((l14-l11) == +1) then
                 nig = block_resolutions(b1,1)       ! ni from block 1
                 trans1(1,2)=+1
@@ -116,7 +116,7 @@
                 trans1(3,2)=-1
               endif
 
-!----- direction jg, block 1 
+              ! Direction jg, block 1 
               if((l12-l11) == +1) then 
                 njg = block_resolutions(b1,1)       ! ni from block 1
                 trans1(1,3)=+1
@@ -140,7 +140,7 @@
                 trans1(3,3)=-1
               endif
 
-!----- direction ig, block 2
+              ! Direction ig, block 2
               if((l24-l21) == +1) then
                 nig = block_resolutions(b2,1)       ! ni from block 2
                 trans2(1,2)=+1
@@ -164,7 +164,7 @@
                 trans2(3,2)=-1
               endif
 
-!----- direction jg, block 2 
+              ! Direction jg, block 2 
               if((l22-l21) == +1) then 
                 njg = block_resolutions(b2,1)       ! ni from block 2
                 trans2(1,3)=+1
@@ -188,7 +188,7 @@
                 trans2(3,3)=-1
               endif
 
-!----- set the constant directions
+              ! Set the constant directions
               if(f1 == 1) trans1(3,1)=1
               if(f1 == 2) trans1(2,1)=1
               if(f1 == 3) trans1(1,1)=block_resolutions(b1,1)-1
@@ -203,7 +203,7 @@
               if(f2 == 5) trans2(1,1)=1
               if(f2 == 6) trans2(3,1)=block_resolutions(b2,3)-1
 
-!----- finally conect the two periodic boundaries
+              ! Finally conect the two periodic boundaries
               do jg=1,njg-1              ! through volumes only
                 do ig=1,nig-1            ! through volumes only
                   ci1=block_resolutions(b1,1)-1
@@ -222,13 +222,12 @@
                        + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
                   c2 = block_resolutions(b2,6)  &
                        + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
-!               write(6, '(2I5)') c1, c2
                   CellC(c1, f1) = c2
                   CellC(c2, f2) = c1
                 end do
               end do
 
-!----- modify the transformation matrices for nodal connection
+              ! Modify the transformation matrices for nodal connection
               if(trans1(1,1)  > 1) trans1(1,1)=trans1(1,1)+1
               if(trans1(2,1)  > 1) trans1(2,1)=trans1(2,1)+1
               if(trans1(3,1)  > 1) trans1(3,1)=trans1(3,1)+1
@@ -236,7 +235,7 @@
               if(trans2(2,1)  > 1) trans2(2,1)=trans2(2,1)+1
               if(trans2(3,1)  > 1) trans2(3,1)=trans2(3,1)+1   
 
-!----- conect the nodes 
+              ! Conect the nodes 
               do jg=1,njg                ! through nodes 
                 do ig=1,nig              ! through nodes
                   ni1=block_resolutions(b1,1)
@@ -258,12 +257,12 @@
                   n1 = NewN(n1)
                   n2 = NewN(n2)
 
-!----- check if they are already connected
+                  ! Check if they are already connected
                   do n=1, TwinN(n1,0)
                     if(Are_Nodes_Twins(n1,n2)) goto 10
                   end do
 
-!----- if they were not, connect them
+                  ! If they were not, connect them
                   TwinN(n1,0)=TwinN(n1,0)+1
                   TwinN(n1,TwinN(n1,0))=n2
                   TwinN(n2,0)=TwinN(n2,0)+1
@@ -280,10 +279,10 @@
     end do          ! b2 
   end do            ! p periods
 
-!-------------------------!
-!     Twin of my twin     ! 
-!     is also my twin     !
-!-------------------------!
+  !---------------------!
+  !   Twin of my twin   ! 
+  !   is also my twin   !
+  !---------------------!
   do n1=1,NN
     do i1=1,TwinN(n1,0)
       n2=TwinN(n1,i1) 
@@ -301,4 +300,4 @@
     end do
   end do
 
-  end subroutine PeriBC
+  end subroutine Connect_Periodicity

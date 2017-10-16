@@ -42,7 +42,7 @@
 
     call Name_File(sub, name_out, '.buf', len_trim('.buf'))
     open(9, file=name_out)
-    write(6, *) 'Now creating the file:', name_out
+    write(*, *) '# Now creating the file:', name_out
 
     write(9,'(A20)') '%%%%%%%%%%%%%%%%%%%%'
     write(9,'(A20)') '%                  %'

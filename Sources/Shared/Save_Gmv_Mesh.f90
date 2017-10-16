@@ -20,9 +20,9 @@
   !   Create .gmv file   !
   !                      !
   !----------------------!
-  call NamFil(sub, name_out, '.gmv', len_trim('.gmv'))
+  call Name_File(sub, name_out, '.gmv', len_trim('.gmv'))
   open(9, file=name_out)
-  write(6, *) 'Now creating the file:', name_out
+  write(6, *) '# Now creating the file:', name_out
 
   !-----------!
   !   Start   !
@@ -75,8 +75,8 @@
           NewN(CellN(c,2)), NewN(CellN(c,4)),   &
           NewN(CellN(c,3))
       else
-        write(*,*) 'Unsupported cell type ', CellN(c,0), ' nodes.'
-        write(*,*) 'Exiting'
+        write(*,*) '# Unsupported cell type ', CellN(c,0), ' nodes.'
+        write(*,*) '# Exiting'
         stop 
       end if 
     end if
@@ -105,9 +105,9 @@
   !-----------------------------------------!
   if(sub /= 0) return
 
-  call NamFil(sub, name_out, '.faces.gmv', len_trim('.faces.gmv'))
+  call Name_File(sub, name_out, '.faces.gmv', len_trim('.faces.gmv'))
   open(9, file=name_out)
-  write(6, *) 'Now creating the file:', name_out
+  write(6, *) '# Now creating the file:', name_out
 
   !-----------!
   !   Start   !
@@ -147,8 +147,8 @@
         SideN(s,1), SideN(s,2),  &
         SideN(s,3)
     else
-      write(*,*) 'Unsupported cell type ', CellN(c,0), ' nodes.'
-      write(*,*) 'Exiting'
+      write(*,*) '# Unsupported cell type ', CellN(c,0), ' nodes.'
+      write(*,*) '# Exiting'
       stop 
     end if
   end do  
@@ -190,9 +190,9 @@
   !-----------------------------!
   if(sub /= 0) return
 
-  call NamFil(sub, name_out, '.shadow.gmv', len_trim('.shadow.gmv'))
+  call Name_File(sub, name_out, '.shadow.gmv', len_trim('.shadow.gmv'))
   open(9, file=name_out)
-  write(6, *) 'Now creating the file:', name_out
+  write(6, *) '# Now creating the file:', name_out
 
   do s=NS+1,NS+NSsh
     write(9,*) SideN(s,0) 

@@ -43,7 +43,7 @@
   !   Create .dat file   !
   !                      !
   !----------------------!
-  call NamFil(this_proc, name_out, '.dat', len_trim('.dat'))
+  call Name_File(this_proc, name_out, '.dat', len_trim('.dat'))
   open(9, file=name_out)
   if(this_proc  < 2) write(*,*) '# Now creating the file:', name_out  
 

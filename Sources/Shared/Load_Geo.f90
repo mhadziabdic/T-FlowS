@@ -16,7 +16,7 @@
   !     Read the file with     !
   !   geometrical quantities   !
   !----------------------------!
-  call NamFil(this_proc, name_in, '.geo', len_trim('.geo')) 
+  call Name_File(this_proc, name_in, '.geo', len_trim('.geo')) 
   open(9, file=name_in, FORM='unformatted')
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 

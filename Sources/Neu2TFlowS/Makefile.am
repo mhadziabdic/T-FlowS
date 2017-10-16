@@ -1,14 +1,14 @@
 bin_PROGRAMS = Neu2TFlowS
 
-Neu2TFlowS_SOURCES =	 	\
-  Calc4.f90			\
-  Connect3.f90			\
-  FindSides.f90			\
-  Logo_Neu2TFlowS.f90		\
-  Neu2TFlowS.f90		\
-  Read9Ln.f90			\
-  ReadFluentNeu.f90		\
-  TopolM.f90
+Neu2TFlowS_SOURCES =		\
+  Compute_Geometry.f90		\
+  Connect_Domains.f90		\
+  Find_Sides.f90		\
+  Logo.f90			\
+  Main.f90			\
+  Load_Neu.f90			\
+  Mesh_Topology.f90		\
+  Read_Line.f90
 
 SUBDIRS = ../Modules		\
           ../Shared

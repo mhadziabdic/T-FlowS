@@ -42,7 +42,7 @@
   !   Create .gmv results file   !
   !                              !
   !------------------------------!
-  call NamFil(this_proc, name_out, '.r.gmv', len_trim('.r.gmv'))
+  call Name_File(this_proc, name_out, '.r.gmv', len_trim('.r.gmv'))
   open(9, file=name_out)
   write(*,*) '# Now creating the file:', name_out
 

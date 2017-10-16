@@ -1,7 +1,7 @@
 !======================================================================!
-  subroutine Split(sub, n_parts)
+  subroutine Split_Subdomain(sub, n_parts)
 !----------------------------------------------------------------------!
-!   Splits the domain by a geometrical multisection technique.         !
+!   Splits a (sub) domain by a selected technique.                     !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
   use all_mod
@@ -19,17 +19,17 @@
   integer   :: n_filled
   real      :: xmax,ymax,zmax,xmin,ymin,zmin, delx,dely,delz,dxyz 
 !======================================================================!
-! TESTING TESTING TESTING
-!--------------------------------------------! 
-!     Find the smallest moment of inertia    !
-!--------------------------------------------! 
+
+  !-----------------------------------------! 
+  !   Find the smallest moment of inertia   !
+  !-----------------------------------------! 
   if(division_algorithm == INERTIAL) then
     call Inertia(sub)
   end if
 
-!-------------------------------------------------! 
-!     Find the largest dimension of the domain    !
-!-------------------------------------------------! 
+  !----------------------------------------------! 
+  !   Find the largest dimension of the domain   !
+  !----------------------------------------------! 
   if(division_algorithm == COORDINATE) then
     xmax=-HUGE
     ymax=-HUGE
@@ -61,10 +61,9 @@
 
     n_filled   = 0
 
-!----------------------------!
-!     Fill the subdomain     !
-!----------------------------!
-
+    !------------------------!
+    !   Fill the subdomain   !
+    !------------------------!
     if(division_algorithm==COORDINATE) then
 
       if(dir == 'x') then
@@ -112,9 +111,9 @@
       end do
     end if
 
-!--------------------------------! 
-!     Subdomain is filled up     !
-!--------------------------------! 
+    !----------------------------! 
+    !   Subdomain is filled up   !
+    !----------------------------! 
  2  subNC(n_sub+j) = n_filled
     subNC(sub) = subNC(sub) - n_filled
 
@@ -122,4 +121,4 @@
 
   n_sub = n_sub + n_parts - 1
 
-  end subroutine Split
+  end subroutine Split_Subdomain

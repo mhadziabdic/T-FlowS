@@ -10,11 +10,11 @@ Generate_SOURCES =	 	\
   Find_Line.f90			\
   Find_Surface.f90		\
   Connect_Blocks.f90		\
-  Generator.f90			\
   Load_Domain.f90		\
   Is_Line_In_Block.f90		\
   Laplac.f90			\
-  Logo_Generate.f90		\
+  Logo.f90			\
+  Main.f90			\
   PeriBC.f90			\
   Print_Grid_Statistics.f90	\
   Refine_Grid.f90		\

@@ -1,18 +1,72 @@
 !======================================================================*
-      subroutine RISort(X,Y,N,KFLAG)
+      subroutine Sort_Int_Carry_Int(X,Y,N,KFLAG)
 !----------------------------------------------------------------------*
-! Sorts real array X and make same interchanges in integer array Y.    *
+!   Sorts int. array X and makes the same changes in int. array Y.     *
 !----------------------------------------------------------------------*
       DIMENSION IL(21),IU(21)
-      real    X(N),T, TT
-      integer Y(N),TY,TTY
+      integer X(N),Y(N),T,TT,TY,TTY
 !======================================================================*
-!***FIRST EXECUTABLE STATEMENT RISORT
+! NIST Guide to Available Math Software.                               *
+! Source for module ISORT from package CMLIB.                          *
+! Retrieved from CAMSUN on Mon Feb 23 10:44:31 1998.                   *
+!                                                                      *
+! Slightly modified by Bojan Niceno on the same day                    *
+!----------------------------------------------------------------------*
+!***BEGIN PROLOGUE  ISORT
+!***DATE WRITTEN   761118   (YYMMDD)
+!***REVISION DATE  820801   (YYMMDD)
+!***CATEGORY NO.  N6A2A
+!***KEYWORDS  QUICKSORT,SINGLETON QUICKSORT,SORT,SORTING
+!***AUTHOR  JONES, R. E., (SNLA)
+!           KAHANER, D. K., (NBS)
+!           WISNIEWSKI, J. A., (SNLA)
+!***PURPOSE  ISORT sorts integer array X and optionally makes the same
+!            interchanges in integer array Y.  The array X may be
+!            sorted in increasing order or decreasing order.  A
+!            slightly modified QUICKSORT algorithm is used.
+!***DESCRIPTION
+!
+!     Written by Rondall E Jones
+!     Modified by John A. Wisniewski to use the Singleton QUICKSORT
+!     algorithm. Date 18 November 1976.
+!
+!     Further modified by David K. Kahaner
+!     NATIONAL BUREAU OF STANDARDS
+!     August, 1981
+!
+!     Abstract
+!         ISORT sorts integer array X and optionally makes the same
+!         interchanges in integer array Y.  The array X may be sorted in
+!         INCREASING order or DECREASING order.  A slightly modified
+!         QUICKSORT algorithm is used.
+!
+!     Reference
+!         Singleton,R.C., Algorithm 347, An Efficient Algorithm For
+!         Sorting With Minimal Storage, CACM,12(3),1969,185-7.
+!
+!     Description of Parameters
+!         X - integer array of values to be sorted
+!         Y - integer array to be (optionally) carried along
+!         N - number of values in integer array X to be sorted
+!     KFLAG - control parameter
+!           = 2 means sort X in INCREASING order and carry Y along.
+!           = 1 means sort X in INCREASING order (ignoring Y)
+!           =-1 means sort X in DECREASING order (ignoring Y)
+!           =-2 means sort X in DECREASING order and carry Y along.
+!***REFERENCES  SINGLETON, R. C., ALGORITHM 347, AN EFFICIENT
+!                 ALGORITHM FOR SORTING WITH MINIMAL STORAGE, CACM,
+!                 VOL. 12, NO. 3, 1969, PP. 185-187.
+!***ROUTINES CALLED  XERROR
+!***end PROLOGUE  ISORT
+!----------------------------------------------------------------------*
+!***FIRST EXECUTABLE STATEMENT  ISORT
       NN = N
       IF (NN.GE.1) GO TO 10
+      WRITE(*,*) 'ISORT: THE NUMBER OF VALUES TO BE SORTED WAS NOT POSITIVE.'
       RETURN
    10 KK = IABS(KFLAG)
       IF ((KK.EQ.1).OR.(KK.EQ.2)) GO TO 15
+      WRITE(*,*) 'ISORT: THE SORT CONTROL parameter, K, WAS NOT 2, 1, -1, OR -2.'
       RETURN
 !
 ! ALTER ARRAY X TO GET DECREASING ORDER IF NEEDED

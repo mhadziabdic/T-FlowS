@@ -49,7 +49,7 @@
 !     reads GMV file      !
 !                         !
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
-  call NamFil(sub, namOut, '.gmv', len_trim('.gmv'))
+  call Name_File(sub, namOut, '.gmv', len_trim('.gmv'))
   open(9, file=namOut)
 !  if (this <2) then
 !    write(*,*) 'Now reading the file: ', namOut
@@ -123,7 +123,7 @@
   close(9)
 
   name = namAut
-  call NamFil(sub, namXML, '.vtu', len_trim('.vtu'))
+  call Name_File(sub, namXML, '.vtu', len_trim('.vtu'))
 
   open(9, file=namXML)
   if (this <2) then
@@ -404,7 +404,7 @@ end if !HOT == YES
 
   if (this < 2) then
     name = storename
-    call NamFil(0, name, '.pvtu', len_trim('.pvtu'))
+    call Name_File(0, name, '.pvtu', len_trim('.pvtu'))
     open(12, file=name)
 !     write(*,*) 'writing parallel master file: ', name
      write(12,'(A21)') '<?xml version="1.0"?>'
@@ -486,7 +486,7 @@ end if !HOT == YES
      ! qui ci devo mettere la stampa dei vari files di sottoprocesso  <Piece Source="chan1_180.vtu"/>
         name = namAut
         do i=1,numprocessi
-           call NamFil(i, nameIn, '.vtu"/>', len_trim('.vtu"/>'))
+           call Name_File(i, nameIn, '.vtu"/>', len_trim('.vtu"/>'))
 !           write(12,*) '<Piece Source="',nameIn, '"/>'
            write(12,'(A)',advance="no") '<Piece Source="'
            write(12,'(A)') nameIn

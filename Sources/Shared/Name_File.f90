@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine NamFil(sub, namOut, ext, lext)
+  subroutine Name_File(sub, namOut, ext, lext)
 !----------------------------------------------------------------------!
 !   Creates the file name depending on the subdomain and file type.    !
 !----------------------------------------------------------------------!
@@ -30,4 +30,4 @@
     namOut(len_trim(name)+6:len_trim(name)+6+lext-1) = ext(1:lext) 
   end if 
 
-  end subroutine NamFil
+  end subroutine Name_File

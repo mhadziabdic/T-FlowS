@@ -49,7 +49,7 @@
 
   HOTini = NO
 
-  call NamFil(this_proc, name_in, '.ini', len_trim('.ini'))
+  call Name_File(this_proc, name_in, '.ini', len_trim('.ini'))
 
   if(this_proc < 2) write(*,*)'now reading file:', name_in 
 

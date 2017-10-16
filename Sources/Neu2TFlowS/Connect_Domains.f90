@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Connect3 
+  subroutine Connect_Domains 
 !------------------------------------------------------------------------------!
 !   Connects two problem domains, one with periodic streamwise boundary        !
 !   conditions and another with inflow-outflow.                                !
@@ -44,7 +44,9 @@
   y_copy = 0
   z_copy = 0
 
-1 write(*,*) 'Enter the copy marker (skip to exit):'
+1 write(*,*) '#======================================'
+  write(*,*) '# Enter the copy marker (skip to exit):'
+  write(*,*) '#--------------------------------------'
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) answer
   call To_Upper_Case(answer)
@@ -211,4 +213,4 @@
 
   goto 1
 
-  end subroutine Connect3
+  end subroutine Connect_Domains

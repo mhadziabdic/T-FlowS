@@ -17,12 +17,17 @@
   write(90) 3.1451592
   close(90)  
 
-  call ReadFluentNeu
-  call TopolM
-  call FindSides
-  call Calc4
+  write(*,*) '#======================================================'
+  write(*,*) '# Enter the Fluent''s (*.NEU) file name (without ext.):'
+  write(*,*) '#------------------------------------------------------'
+  read(*,*) name
+
+  call Load_Neu
+  call Mesh_Topology
+  call Find_Sides
+  call Compute_Geometry
   
-  call Connect3
+  call Connect_Domains
 
   do n=1,NN
     NewN(n) = n 
@@ -50,12 +55,12 @@
   call Probe_1D_Nodes
 
   ! Make .eps figures
-  write(*,*) 'Making three .eps cuts through the domain.'
+  write(*,*) '# Making three .eps cuts through the domain.'
   call Save_Eps_Cut(y_node, z_node, x_node, Dy, Dz, 'x')
   call Save_Eps_Cut(z_node, x_node, y_node, Dz, Dx, 'y')
   call Save_Eps_Cut(x_node, y_node, z_node, Dx, Dy, 'z')
  
-  write(*,*) 'Making a 3D shaded .eps figure of the domain.'
+  write(*,*) '# Making a 3D shaded .eps figure of the domain.'
   call Save_Eps_Whole(NSsh)   ! Draw the domain with shadows
 
   end program Neu2TFlowS 

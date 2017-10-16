@@ -17,15 +17,15 @@
   real              :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,xin(4),yin(4) 
 !==============================================================================!
 
-  write(*,'(A38)')       '#-------------------------------------'
-  write(*,'(A9,A1,A28)') '# Making ', dir, '.eps cut through the domain'
-  write(*,'(A38)')       '#-------------------------------------'
+  write(*,'(A39)')        ' #============================================'
+  write(*,'(A10,A1,A28)') ' # Making ', dir, '.eps cut through the domain'
+  write(*,'(A39)')        ' #--------------------------------------------'
 
-  write(6,*) 'Enter the ',dir,' coordinate for cutting or type 0 to exit: '
+  write(6,*) '# Enter the ',dir,' coordinate for cutting or type 0 to exit: '
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) z0
   if(z0 == 0) return
-  write(*,*) 'Z0 = ', z0
+  write(*,*) '# Z0 = ', z0
 
   !----------------------!
   !                      !
@@ -35,7 +35,7 @@
   name_eps = name
   name_eps(len_trim(name)+1:len_trim(name)+6) = '. .eps'
   name_eps(len_trim(name)+2:len_trim(name)+2) = dir
-  write(6, *) 'Now creating the file:', name_eps
+  write(6, *) '# Now creating the file:', name_eps
 
   xmax=maxval(xg(1:NN)) 
   ymax=maxval(yg(1:NN)) 

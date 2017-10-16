@@ -79,8 +79,6 @@
     iin(i) = i
     criter(i) = xc(i)*d_max(1) + yc(i)*d_max(2) + zc(i)*d_max(3)
   end do
-  call RISort(criter(1),iin(1),NC,2)
-
-  return
+  call Sort_Real_By_Index(criter(1),iin(1),NC,2)
 
   end subroutine Inertia

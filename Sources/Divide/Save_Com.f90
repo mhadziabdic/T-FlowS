@@ -14,10 +14,10 @@
 !==============================================================================!
 
   do sub=1,n_sub 
-    call NamFil(sub, name_out, '.com', len_trim('.com'))
+    call Name_File(sub, name_out, '.com', len_trim('.com'))
     open(9, file=name_out)
     write(6, *) 'Now creating the file:', name_out
-    call NamFil(sub, name_out, '.com', 0)
+    call Name_File(sub, name_out, '.com', 0)
     write(9,*) name_out 
     close(9)
   end do

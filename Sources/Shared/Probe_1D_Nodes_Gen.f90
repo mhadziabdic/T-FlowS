@@ -24,11 +24,13 @@
   character :: answer*80
 !======================================================================!
 
-  write(*,*) '==========================================='
-  write(*,*) ' Creating 1D file with the node '
-  write(*,*) ' coordinates in non-homogeneous directions '
-  write(*,*) '-------------------------------------------'
-  write(*,*) 'Insert non-homogeneous direction (x_node, y_node, z_node, Rx, Ry, Rz or skip)'
+  write(*,*) '#==========================================='
+  write(*,*) '# Creating 1D file with the node '
+  write(*,*) '# coordinates in non-homogeneous directions '
+  write(*,*) '#-------------------------------------------'
+  write(*,*) '# Insert non-homogeneous direction '
+  write(*,*) '# (x, y, z, rx, ry, rz or skip)'
+  write(*,*) '# -------------------------------------------'
   read(*,*) answer
   call To_Upper_Case(answer)
   if(answer=='SKIP') return
@@ -65,7 +67,7 @@
     if(answer=='RZ') N_p(Nprob)=(x_node(n)*x_node(n) + y_node(n)*y_node(n))**0.5
 
     if(Nprob == 10000) then
-      write(*,*) 'Probe 1D: Not a 1D (channel flow) problem.'
+      write(*,*) '# Probe 1D: Not a 1D (channel flow) problem.'
       isit = .false.
       return
     end if
@@ -73,22 +75,21 @@
 
   isit = .true.
 
-!<<<<<<<<<<<<<<<<<<<<<<<<!
-!     create 1D file     !
-!<<<<<<<<<<<<<<<<<<<<<<<<!
+  !--------------------!
+  !   Create 1D file   !
+  !--------------------!
   namPro = name
   namPro(len_trim(name)+1:len_trim(name)+3) = '.1D'
   write(6, *) 'Now creating the file:', namPro
   open(9, file=namPro)
-!---- write the number of probes 
+  ! Write the number of probes 
   write(9,'(I8)') Nprob
 
 !  call SSORT (N_p, 1, Nprob*3, 1)
 !  call  RISort(N_p, Nprob, Nprob*6,2)
-
   call SORT2(N_p, Nprob*2, Nprob)
 
-!---- write the probe coordinates out
+  ! Write the probe coordinates out
   do p=1, Nprob
     write(9,'(I8,1E17.8)') p, N_p(p)
   end do

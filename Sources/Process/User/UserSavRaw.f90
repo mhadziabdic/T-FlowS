@@ -19,7 +19,7 @@
 !     Create raw data file     !
 !------------------------------!
   namOut = name
-  call NamFil(this, namOut, '.rawdata', len_trim('.rawdata') )
+  call Name_File(this, namOut, '.rawdata', len_trim('.rawdata') )
   open(9, file=namOut)
   write(6, *) 'Now creating the file:', namOut
 

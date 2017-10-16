@@ -42,7 +42,7 @@
 !     reads GMV file      !
 !                         !
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
-  call NamFil(sub, namOut, '.gmv', len_trim('.gmv'))
+  call Name_File(sub, namOut, '.gmv', len_trim('.gmv'))
   open(9, file=namOut)
   if (this_proc <2) then
     write(*,*) 'Now reading the file: ', namOut
@@ -113,7 +113,7 @@
   close(9)
 
   name = namAut
-  call NamFil(sub, namXML, '.vtu', len_trim('.vtu'))
+  call Name_File(sub, namXML, '.vtu', len_trim('.vtu'))
 
   open(9, file=namXML)
   if (this_proc <2) then
@@ -371,7 +371,7 @@ call wait
   if (n_proc > 1) then
     if(this_proc < 2) then
     name = storename
-    call NamFil(0, name, '.pvtu', len_trim('.pvtu'))
+    call Name_File(0, name, '.pvtu', len_trim('.pvtu'))
     open(112, file=name)
     write(112,'(A21)') '<?xml version="1.0"?>'
     write(112,'(A74)') '<VTKFile type="PUnstructuredGrid" version="0.1" byte_order="LittleEndian">'
@@ -419,7 +419,7 @@ call wait
   write(112,*) '       </PPoints>'
   name = namAut
   do i=1,n_proc
-    call NamFil(i, nameIn, '.vtu"/>', len_trim('.vtu"/>'))
+    call Name_File(i, nameIn, '.vtu"/>', len_trim('.vtu"/>'))
     write(112,'(A)',advance="no") '<Piece Source="'
     write(112,'(A)') nameIn
   end do

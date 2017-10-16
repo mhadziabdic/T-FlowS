@@ -257,7 +257,7 @@
 
 
 !   namOut ='proba'
-!   call NamFil(this, namOut, '.r', len_trim('.r') )
+!   call Name_File(this, namOut, '.r', len_trim('.r') )
 !
 !    open(3,file=namOut)
 !    do s=1,NS

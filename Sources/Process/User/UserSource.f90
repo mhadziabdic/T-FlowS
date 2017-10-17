@@ -55,7 +55,7 @@
     end do
   else if(PIPE == YES.and.PER_BC==YES) then
     do c=1,NC
-      b(c)=b(c) -  2.0*3.1415926*0.005*W % n(c) / ( FLUXoZ(1) + TINY ) * volume(c)
+      b(c)=b(c) -  2.0*PI*0.005*W % n(c) / ( FLUXoZ(1) + TINY ) * volume(c)
     end do
   end if 
 

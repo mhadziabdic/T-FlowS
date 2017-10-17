@@ -27,13 +27,15 @@
                     3, 2, 4, 3, 1, 6  /
 !------------------------------------------------------------------------------!
 
-  write(6,'(A41)') '# Input problem name: (without extension)'
+  write(*,*) '#========================================'
+  write(*,*) '# Input problem name: (without extension)'
+  write(*,*) '#----------------------------------------'
   call ReadC(5,inp,tn,ts,te) 
   read(inp, '(A80)')  name
 
   domain_name = name
   domain_name(len_trim(name)+1:len_trim(name)+2) = '.d'
-  write(6, '(A24,A)') '# Now reading the file: ', domain_name
+  write(*, *) '# Now reading the file: ', domain_name
   open(9, file=domain_name)
 
   !-----------------------------------------------------------------!
@@ -45,10 +47,10 @@
   !---------------------!
   !   Allocate memory   !
   !---------------------!
-  write(6,'(A25)')       '# Allocating memory for: ' 
-  write(6,'(A1,I8,A16)') '#', MAXN, ' nodes and cells' 
-  write(6,'(A1,I8,A15)') '#', MAXB, ' boundary cells'         
-  write(6,'(A1,I8,A11)') '#', MAXS, ' cell faces' 
+  write(*,*) '# Allocating memory for: ' 
+  write(*,*) '#', MAXN, ' nodes and cells' 
+  write(*,*) '#', MAXB, ' boundary cells'         
+  write(*,*) '#', MAXS, ' cell faces' 
 
   ! Variables declared in all_mod.h90:
   allocate (xc(-MAXB:MAXN)); xc=0.0
@@ -69,7 +71,6 @@
   allocate (WallDs(MAXN)); WallDs=0.0
   allocate (f(MAXS)); f=0.0
 
-  !
   allocate (material(-MAXB:MAXN));  material=0
   allocate (SideC(0:2,MAXS)); SideC   =0
 
@@ -111,7 +112,7 @@
   allocate (BuReIn(MAXS)); BuReIn=0
   allocate (BufPos(MAXS)); BufPos=0
 
-  write(6,'(A26)') '# Allocation successfull !'
+  write(*,*) '# Allocation successfull !'
 
   !--------------------!
   !   Initialization   !
@@ -184,7 +185,7 @@
       BlkWgt(b,1)=1.0/BlkWgt(b,1)
       BlkWgt(b,2)=1.0/BlkWgt(b,2)
       call Swap_Integers(block_resolutions(b,1),block_resolutions(b,2))
-      write(6,*) 'Warning: Block ',b,' was not properly oriented'
+      write(*,*) 'Warning: Block ',b,' was not properly oriented'
     end if
   end do                 ! through blocks
 
@@ -216,11 +217,11 @@
     call Find_Line(LinPnt(l,1),LinPnt(l,2),LinRes(l))
 
     if(LinRes(l)  > MAXL) then
-      write(6,*) 'ERROR MESSAGE FROM TFlowS:'
-      write(6,*) 'You tried to define ', LinRes(l), ' points on'
-      write(6,*) 'the line ', l, ' and the limit is: ', MAXL
-      write(6,*) 'Increase the parameter MAXL in the file param.all'
-      write(6,*) 'and recompile the code. Good Luck !'
+      write(*,*) 'ERROR MESSAGE FROM TFlowS:'
+      write(*,*) 'You tried to define ', LinRes(l), ' points on'
+      write(*,*) 'the line ', l, ' and the limit is: ', MAXL
+      write(*,*) 'Increase the parameter MAXL in the file param.all'
+      write(*,*) 'and recompile the code. Good Luck !'
       stop
     end if 
 
@@ -229,7 +230,7 @@
       do n=1,LinRes(l)
         call ReadC(9,inp,tn,ts,te)
         read(inp(ts(2):te(4)),*) xl(l,n), yl(l,n), zl(l,n)
-        write(6,*)  xl(l,n), yl(l,n), zl(l,n)
+        write(*,*)  xl(l,n), yl(l,n), zl(l,n)
       end do
 
     ! Weight factor
@@ -263,7 +264,7 @@
     call ReadC(9,inp,tn,ts,te)
     read(inp,*) dum, n1,n2,n3,n4
     call Find_Surface(n1,n2,n3,n4,b,fc)
-    write(6,*) 'block: ', b, ' surf: ', fc
+    write(*,*) 'block: ', b, ' surf: ', fc
     n = (b-1)*6 + fc         ! surface number
     face_laplace(n) = YES          ! perform Laplace
 
@@ -287,21 +288,21 @@
   end do
 
   if( (n_faces_check  > MAXS).or.(n_nodes_check  > MAXN) ) then
-    write(6,*) 'ERROR MESSAGE FROM TFlowS:'
+    write(*,*) '# Error message from TFlowS:'
   end if
 
   if( n_faces_check  > MAXS ) then
-    write(6,*) 'The estimated number of sides is :', n_faces_check
-    write(6,*) 'There is space available only for:', MAXS
-    write(6,*) 'Increase the parameter MAXS in the input file'
-    write(6,*) 'and re-run the code !'
+    write(*,*) '# The estimated number of sides is :', n_faces_check
+    write(*,*) '# There is space available only for:', MAXS
+    write(*,*) '# Increase the parameter MAXS in the input file'
+    write(*,*) '# and re-run the code !'
   end if
 
   if( n_nodes_check  > MAXN ) then
-    write(6,*) 'The estimated number of nodes is :', n_nodes_check
-    write(6,*) 'There is space available only for:', MAXN
-    write(6,*) 'Increase the parameter MAXN in the input file'
-    write(6,*) 'and re-run the code !'
+    write(*,*) '# The estimated number of nodes is :', n_nodes_check
+    write(*,*) '# There is space available only for:', MAXN
+    write(*,*) '# Increase the parameter MAXN in the input file'
+    write(*,*) '# and re-run the code !'
   end if 
 
   if( (n_faces_check  > MAXS).or.(n_nodes_check  > MAXN) ) then
@@ -345,7 +346,7 @@
   !-------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*)  n_periodic_cond      ! number of periodic boundaries
-  write(*,*) 'Number of periodic boundaries: ', n_periodic_cond 
+  write(*,*) '# Number of periodic boundaries: ', n_periodic_cond 
 
   allocate (periodic_cond(n_periodic_cond,8))
 
@@ -363,7 +364,7 @@
   !---------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*)  n_copy_cond      ! number of copy boundaries
-  write(*,*) 'Number of copy boundaries: ', n_copy_cond
+  write(*,*) '# Number of copy boundaries: ', n_copy_cond
 
   allocate (copy_cond(n_copy_cond,8))
 
@@ -384,7 +385,7 @@
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_refine_levels ! number of refinement levels
 
-  write(*,*) 'Number of refinement levels: ', n_refine_levels
+  write(*,*) '# Number of refinement levels: ', n_refine_levels
 
   allocate (refined_regions(n_refine_levels, 1024, 0:6))
   allocate (n_refined_regions(n_refine_levels))
@@ -425,7 +426,7 @@
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_smoothing_regions  ! number of smoothing regions 
 
-  write(*,*) 'Number of (non)smoothing regions: ', n_smoothing_regions 
+  write(*,*) '# Number of (non)smoothing regions: ', n_smoothing_regions 
 
   allocate (smooth_in_x(n_smoothing_regions))
   allocate (smooth_in_y(n_smoothing_regions))

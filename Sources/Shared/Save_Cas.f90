@@ -13,8 +13,8 @@
 !---------------------------------[Arguments]----------------------------------!
   integer   :: sub, NNsub, NCsub, NSsub
 !-----------------------------------[Locals]-----------------------------------!
-  integer   :: c,  c1,  c2,  n, s, Nfac, NtotFac 
-  character :: namOut*80
+  integer           :: c,  c1,  c2,  n, s, Nfac, NtotFac 
+  character(len=80) :: name_out
 !==============================================================================!
 
   !----------------------!
@@ -22,9 +22,9 @@
   !   Create .cas file   !
   !                      !
   !----------------------!
-  call Name_File(sub, namOut, '.cas', len_trim('.cas'))
-  open(9, file=namOut)
-  write(6, *) '# Now creating the file:', namOut
+  call Name_File(sub, name_out, '.cas', len_trim('.cas'))
+  open(9, file=name_out)
+  write(*,*) '# Now creating the file:', name_out
 
   !-----------!
   !           !

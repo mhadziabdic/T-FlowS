@@ -30,7 +30,7 @@
   nn = 0  ! initialize n.o.n.
   nc = 0  ! initialize n.o.v.
   do b=1,Nbloc
-    write(*,*) 'Generating block: ', b
+    write(*,*) '# Generating block: ', b
     ni=block_resolutions(b, 1)
     nj=block_resolutions(b, 2)
     nk=block_resolutions(b, 3)   
@@ -204,9 +204,9 @@
 
         ! Line is defined point by point
         if(LinWgt(l) ==  0.0) then
-          write(6,*) 'LIniJA: ', l
-          write(6,*) 'l1= ', l1
-          write(6,*) 'l2= ', l2
+          write(*,*) '# Line: ', l
+          write(*,*) '# l1= ', l1
+          write(*,*) '# l2= ', l2
           do ig=1,LinRes(l)
             i=trans(1,1)+trans(1,2)*ig
             j=trans(2,1)+trans(2,2)*ig

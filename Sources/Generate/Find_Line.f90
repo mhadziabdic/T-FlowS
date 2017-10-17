@@ -29,10 +29,10 @@
     end do     
   end do 
 
-  write(6,*) 'ERROR MESSAGE FROM GENX'
-  write(6,*) 'You tried to define the line', n1, n2, ' but it'
-  write(6,*) 'doesn''t exists in the block specifications.'
-  write(6,*) 'Exiting !'
+  write(*,*) '# Error message form Generator'
+  write(*,*) '# You tried to define the line', n1, n2, ' but it'
+  write(*,*) '# doesn''t exists in the block specifications.'
+  write(*,*) '# Exiting !'
   stop
 
 1 return

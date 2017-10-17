@@ -322,7 +322,7 @@
     write(*,*) '#--------------------------------------------------------------'
     read(*,*) angle, rot_dir 
 
-    angle = angle * 3.1415926 / 180.0
+    angle = angle * PI / 180.0
 
     if(dir == 1) then
       x_a = 0.0
@@ -386,7 +386,7 @@
     p_j = -ab_i*ac_k + ac_i*ab_k 
     p_k =  ab_i*ac_j - ac_i*ab_j
 
-    angle_face = angle_face * 3.1415926 / 180.0
+    angle_face = angle_face * PI / 180.0
  
     allocate(phi_face(NS)); phi_face=0.0
     allocate(xspr(NS)); xspr=0.0

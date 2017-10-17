@@ -1,80 +1,16 @@
-!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%!
-!                    ________  ______                                  !
-!                   |        ||      \                                 !
-!                   `--.  .--'|  ,-.  \________  ___                   !
-!                      |  |___|  |_/  /  _  \  \/  /                   !
-!                      |  |___|      /  _____\    /                    !
-!                      |  |   |  |\  \  \____/    \                    !
-!                      |__|   |__| \__\_____/__/\__\                   !
-!                                                                      !
-!                                                                      !
-!           BLOCK-STRUCTURED 3D HEXAHEDRAL MESH GENERATOR              !
-!                                +                                     !
-!                  UNSTRUCTURED CELL REFINEMENT                        !
-!                                                                      !
-!----------------------------------------------------------------------!
-!                                                                      !
-!                                     Bojan Niceno                     !
-!                                     Delft University of Technology   !
-!                                     Section Heat Transfer            !
-!                                     niceno@duttwta.wt.tn.tudelft.nl  !
-!                                                                      !
-!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%!
-!                                                                      !
-!  Block structure:                                                    !
-!                                                                      !
-!                               b6                                     !
-!                               |                                      !
-!                         8-----|---------6                            !
-!                        /|     |        /|                            !
-!                       / |     +   b3  / |                            !
-!                      /  |        /   /  |                            !
-!                     7---------------5   |                            !
-!                     |   |     |/    |   |                            !
-!              b4---- | +-------o-----| +-------b2                     !
-!                     |   |    /|     |   |                            !
-!                     |   4---/-|-----|---2                            !
-!                     |  /   /  |     |  /                             !
-!                     | /   b5  +     | /                              !
-!                     |/              |/                               !
-!                     3---------------1                                !
-!                               |                                      !
-!                               b1                                     !
-!  Faces are defined as:
-!
-!     I   :
-!     II  :
-!     III :
-!     IV  :
-!     V   :
-!     VI  :
-!
-!  Local coordinate directions:                                        !
-!                                                                      !
-!     i: 1 -> 2                                                        !
-!     j: 1 -> 3                                                        !
-!     k: 1 -> 5                                                        !
-!                                                                      !
-!  Notes:                                                              !
-!                                                                      !
-!    - can't handle domains with less then 3x3x3 cells properly        !
-!    - nodes of a cell (and block) are deonoted with numbers 1 - 8     !
-!    - neighbouring cells are denoted with c1 - c6                     !
-!    - local coordinare directions (for blocks) are defined with:      !
-!                                                                      !
-!======================================================================!
+!==============================================================================!
   PROGRAM Generator
-!----------------------------------------------------------------------!
-!   Block structured mesh generation and unstructured cell refinement. *
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Block structured mesh generation and unstructured cell refinement.         !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-!----------------------------------------------------------------------! 
+!------------------------------------------------------------------------------! 
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c,s,n
-!======================================================================!
+!==============================================================================!
 
   ! Test the precision
   open(90,FORM='unformatted',file='Generator.real'); 
@@ -86,12 +22,12 @@
   call Load_Domain
   call Compute_Node_Coordinates
   call Connect_Blocks
-  call PeriBC
+  call Connect_Periodicity
   call CopyBC
 
   call TopSys(.false.)  ! trial run 
   call Compute_Grid_Geometry(.false.)
-  call Smooth 
+  call Smooth_Grid
 
   call Refine_Grid
 

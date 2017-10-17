@@ -28,10 +28,10 @@
     end do     
   end do 
 
-  write(6,*) 'ERROR MESSAGE FROM GENX'
-  write(6,*) 'You tried to define the surface', n1, n2, n3, n4
-  write(6,*) 'but it doesn''t exists in the block specifications.'
-  write(6,*) 'Exiting !'
+  write(*,*) '# Error message from Generator'
+  write(*,*) '# You tried to define the surface', n1, n2, n3, n4
+  write(*,*) '# but it doesn''t exists in the block specifications.'
+  write(*,*) '# Exiting !'
   stop
 
 1 block=b

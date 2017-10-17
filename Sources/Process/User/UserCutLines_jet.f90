@@ -36,11 +36,10 @@
                                  var_1(:), var_2(:), var_3(:), Rad_mp(:), &
                                  var_4(:), var_5(:)  
   integer,allocatable :: Np(:), Ncount(:)
-  real                :: R, Urad_mean, Utan_mean, R1, R2, Urad, Utan, pi, lnum
+  real                :: R, Urad_mean, Utan_mean, R1, R2, Urad, Utan, lnum
   character, optional :: namAut*(*)
   logical             :: THERE
 !======================================================================!
-    pi = 3.141592
     Uaver = 1.14
 !    call Scale()
     namCoo = name

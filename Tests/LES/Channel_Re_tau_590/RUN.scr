@@ -1,0 +1,6 @@
+~/Documents/T-FlowS/Sources/Generate/Generate < Gen.scr
+~/Documents/T-FlowS/Sources/Divide/Divide < Div.scr
+gfortran -fdefault-real-8  -o interpolate interpolate_on_new_mesh.f90
+gunzip chan_180*
+./interpolate < interpolate.scr
+mpirun -np 4 ~/Documents/T-FlowS/Sources/Process/Process 

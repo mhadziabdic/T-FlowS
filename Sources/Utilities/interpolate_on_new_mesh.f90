@@ -354,6 +354,7 @@
     deallocate (xsp)
     deallocate (ysp)
     deallocate (zsp)
+    deallocate (SideC)
   end do
 
   deallocate(Xold)

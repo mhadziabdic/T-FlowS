@@ -128,35 +128,35 @@
     n = n + 1
   end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.xyz file', n
+  write(*,*) ' Finished with reading case.xyz file', n
   open(5, file=namU)
   do k = 1, j
     if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
     read(5,*) Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k)
   end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.U__ file'
+  write(*,*) ' Finished with reading case.U__ file'
   open(5, file=namV)
   do k = 1, j
     if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
     read(5,*) Vold(k), Voold(k), VCold(k), VCoold(k), VDoold(k), VXold(k), VXoold(k)
   end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.V__ file'
+  write(*,*) ' Finished with reading case.V__ file'
   open(5, file=namW)
   do k = 1, j
     if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
       read(5,*) Wold(k), Woold(k), WCold(k), WCoold(k), WDoold(k), WXold(k), WXoold(k)
     end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.W__ file'
+  write(*,*) ' Finished with reading case.W__ file'
   open(5, file=namP)
   do k = 1, j
     if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
       read(5,*) Pold(k), PPold(k), Pxold(k), Pyold(k), Pzold(k)
     end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.P__ file'
+  write(*,*) ' Finished with reading case.P__ file'
 
   if(IND == 1) then
     open(5, file=namT)
@@ -165,7 +165,7 @@
         read(5,*) Told(k), Toold(k), TCold(k), TCoold(k), TDoold(k), TXold(k), TXoold(k) 
       end do
     close(5)
-    write(*,*) ' Finished with reading ulaz.T__ file'
+    write(*,*) ' Finished with reading case.T__ file'
     write(*,*) 'LoaInI: finished with reading the files'
   end if
 

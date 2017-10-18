@@ -1,36 +1,36 @@
-!======================================================================!
+!==============================================================================!
   subroutine cg(N, NB,           &
                 A, x, r1,        &
                 prec,niter,tol,  &
                 IniRes,FinRes)
-!----------------------------------------------------------------------!
-!   Solves the linear systems of equations by a precond. CG Method.    !
-!----------------------------------------------------------------------!
-!   Allows preconditioning of the system by:                           !
-!     1. Diagonal preconditioning                                      !
-!     2. Incomplete Cholesky preconditioning                           !
-!                                                                      !
-!   The type of precondtioning is chosen by setting the variable prec  !
-!   to 0 (no preconditioning), 1 (diagonal preconditioning) or 2       !
-!   (incomplete Cholesky preconditioning)                              !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Solves the linear systems of equations by a precond. CG Method.            !
+!------------------------------------------------------------------------------!
+!   Allows preconditioning of the system by:                                   !
+!     1. Diagonal preconditioning                                              !
+!     2. Incomplete Cholesky preconditioning                                   !
+!                                                                              !
+!   The type of precondtioning is chosen by setting the variable prec to 0     !
+!   (for no preconditioning), 1 (for diagonal preconditioning) or 2 (for       !
+!   incomplete Cholesky preconditioning)                                       !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use allt_mod, only: Matrix
   use sol_mod
   use par_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   integer      :: N, NB
   type(Matrix) :: A
   real         :: x(-NB:N), r1(N)                !  [A]{x}={r1}
   integer      :: prec,  niter                   !  preconditioning
   real         :: tol                            !  tolerance
   real         :: IniRes, FinRes                 !  residual
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   real    :: alfa, beta, rho, rhoold, bnrm2, sum1, sum2, error
   integer :: i, j, k, iter, sub
-!======================================================================!
+!==============================================================================!
            
   !---------------------!
   !   Preconditioning   !

@@ -1,32 +1,32 @@
-!======================================================================!
+!==============================================================================!
   subroutine Prec_Solve(N, NB, A, D, x, b, prec) 
-!----------------------------------------------------------------------!
-! Solves the preconditioning system [D]{x}={b}                       !
-!----------------------------------------------------------------------!
-!   Allows preconditioning of the system by:                           !
-!     1. Diagonal preconditioning                                      !
-!     2. Incomplete Cholesky preconditioning                           !
-!                                                                      !
-!   The type of precondtioning is chosen by setting the variable prec  !
-!   to 0 (no preconditioning), 1 (diagonal preconditioning) or 2       !
-!   (incomplete Cholesky preconditioning)                              !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+! Solves the preconditioning system [D]{x}={b}                                 !
+!------------------------------------------------------------------------------!
+!   Allows preconditioning of the system by:                                   !
+!     1. Diagonal preconditioning                                              !
+!     2. Incomplete Cholesky preconditioning                                   !
+!                                                                              !
+!   The type of precondtioning is chosen by setting the variable prec to 0     !
+!   (for no preconditioning), 1 (for diagonal preconditioning) or 2 (for       !
+!   incomplete Cholesky preconditioning)                                       !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use allt_mod, only: Matrix
 ! use sol_mod
   use par_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   integer      :: N, NB
   type(Matrix) :: A
   type(Matrix) :: D
   real         :: x(-NB:N), b(N)
   integer      :: prec
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, k
   real    :: sum1
-!======================================================================!
+!==============================================================================!
            
   !---------------------------------! 
   !   1) diagonal preconditioning   !

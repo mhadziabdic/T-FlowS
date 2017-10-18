@@ -1,24 +1,24 @@
-!======================================================================!
+!==============================================================================!
   subroutine Matrix_Topology(M)
-!----------------------------------------------------------------------!
-!   Determines the topology of the system matrix.                      !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Determines the topology of the system matrix.                              !
+!   It relies only on SideC structure. Try to keep it that way.                !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use allt_mod, only: Matrix
   use all_mod,  only: NC, NS, SideC
   use sol_mod
   use par_mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   type(Matrix) :: M
-!-------------------------------[Locals]-------------------------------!
-  integer              :: c, s, j, n
-  integer              :: c1, c2
+!-----------------------------------[Locals]-----------------------------------!
+  integer              :: c, s, pos, pos1, pos2, n
+  integer              :: c1, c2  ! cell 1 and 2
+  integer              :: n1, n2  ! neighbour 1 and 2
   integer, allocatable :: stencw(:)
-!======================================================================!
-!   Relies only on SideC structure. Try to keep it that way.
-!----------------------------------------------------------------------!
+!==============================================================================!
                   
   ! Memory allocation
   allocate(stencw(NC)); stencw=1
@@ -46,6 +46,7 @@
   M % nonzeros = n + 1
   allocate(M % val(n+1)); M % val=0 ! it reffers to M % row+1 
   allocate(M % col(n+1)); M % col=0 ! it reffers to M % row+1 
+  allocate(M % mir(n+1)); M % mir=0 ! it reffers to M % row+1 
 
   ! Form M % row and diagonal only formation of M % col
   M % row(1)=1
@@ -68,13 +69,36 @@
   end do
 
   ! Sort M % col to make them nice and neat
+  ! and also locate the position of diagonal
   do c=1,NC
     call Sort_Int_Carry_Int(M % col(M % row(c)),  &
-               M % col(M % row(c)),stencw(c),1)
-    do j=M % row(c),M % row(c+1)-1
-      if(M % col(j) == c) M % dia(c)=j
+                            M % col(M % row(c)),  &
+                            stencw(c), 1)
+    do pos=M % row(c),M % row(c+1)-1
+      if(M % col(pos) == c) M % dia(c)=pos
     end do
   end do 
+
+  ! Find mirror positions
+  do c1 = 1,NC
+    do pos1 = M % row(c1), M % row(c1 + 1) - 1 
+      n1 = M % col(pos1)  ! at this point you have c1 and n1  
+    
+      ! Inner loop (it might probably go from 1 to c1-1
+      c2 = n1
+      do pos2 = M % row(c2), M % row(c2 + 1) - 1 
+        n2 = M % col(pos2)  ! at this point you have c2 and n2 
+
+        if(n2 == c1) then
+          M % mir(pos1) = pos2 
+          M % mir(pos2) = pos1 
+          goto 2  ! done with the inner loop, get out
+        end if
+      end do
+      
+2     continue
+    end do    
+  end do    
 
   ! Connect faces with matrix entries
   do s=1,NS

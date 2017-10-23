@@ -1,0 +1,3 @@
+~/Documents/T-FlowS/Sources/Neu2TFlowS/Neu2TFlowS < Convert_mesh_neu.scr 
+~/Documents/T-FlowS/Sources/Divide/Divide < Div.scr
+mpirun -np 4 ~/Documents/T-FlowS/Sources/Process/Process 

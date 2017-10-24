@@ -224,7 +224,7 @@
         Uzy = Uyz
         Uzz = VAR1z(c)
         Diss1(c) = &
-                3.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
+                2.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
                (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+&
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+&
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+&
@@ -246,7 +246,7 @@
         Uzy = Uyz
         Uzz = VAR1z(c)
         Diss1(c) = Diss1(c) +&
-                3.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
+                2.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
                 (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+&
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+&
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+&
@@ -268,7 +268,7 @@
         Uzy = Uyz
         Uzz = VAR1z(c)
         Diss1(c) = Diss1(c) +&
-                3.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
+                2.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
                 (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+&
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+&
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+&

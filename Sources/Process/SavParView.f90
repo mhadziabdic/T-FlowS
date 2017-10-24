@@ -260,6 +260,25 @@
     end if
   end if
 
+  if(SIMULA == EBM.or.SIMULA==HJ) then
+    write(9,'(A99)') '        <DataArray type="Float32" Name="TKE" format="ascii">'
+    do c=1,NCsub
+      write(9,*) 0.5*(uu%n(c)+vv%n(c)+ww%n(c)) 
+    end do  
+    write(9,'(A20)') '        </DataArray>'
+
+    write(9,'(A99)') '        <DataArray type="Float32" Name="Eps" format="ascii">'
+    do c=1,NCsub
+      write(9,*) Eps%n(c)
+    end do  
+    write(9,'(A20)') '        </DataArray>'
+
+    write(9,'(A99)') '        <DataArray type="Float32" Name="uw" format="ascii">'
+    do c=1,NCsub
+      write(9,*) uw%n(c)
+    end do  
+    write(9,'(A20)') '        </DataArray>'
+  end if    
   if(SIMULA == K_EPS.or.SIMULA==ZETA) then
     write(9,'(A99)') '        <DataArray type="Float32" Name="TKE" format="ascii">'
     do c=1,NCsub
@@ -403,6 +422,11 @@ call wait
       end if
     end if
     if(SIMULA == K_EPS.or.SIMULA==ZETA) then
+      write(112,*) '        <PDataArray type="Float32" Name="TKE"/>'
+      write(112,*) '        <PDataArray type="Float32" Name="EPS"/>'
+      write(112,*) '        <PDataArray type="Float32" Name="uw"/>'
+    end if 
+    if(SIMULA == EBM.or.SIMULA==HJ) then
       write(112,*) '        <PDataArray type="Float32" Name="Viscosity ratio"/>'
       write(112,*) '        <PDataArray type="Float32" Name="TKE"/>'
       write(112,*) '        <PDataArray type="Float32" Name="EPS"/>'

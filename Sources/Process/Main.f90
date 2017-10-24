@@ -475,6 +475,8 @@
         call GraPhi(Eps % n,2,PHIy,.TRUE.)             ! df22/dy
         call GraPhi(Eps % n,3,PHIz,.TRUE.)             ! df22/dz
         call CalcStresses(13, Eps, PHIx, PHIy, PHIz) 
+
+        call CalcVISt_EBM
       end if                 
 
       if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA) then

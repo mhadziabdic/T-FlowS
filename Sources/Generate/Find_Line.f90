@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Block_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -18,11 +19,11 @@
   do b=1,Nbloc
     do l1=1,8
       do l2=1,8
-        if( (block_points(b,l1) == n1) .and. &
-            (block_points(b,l2) == n2) ) then
-          if( iabs(l2-l1) == 1 ) res = block_resolutions(b,1) 
-          if( iabs(l2-l1) == 2 ) res = block_resolutions(b,2) 
-          if( iabs(l2-l1) == 4 ) res = block_resolutions(b,3) 
+        if( (blocks(b) % points(l1) == n1) .and. &
+            (blocks(b) % points(l2) == n2) ) then
+          if( iabs(l2-l1) == 1 ) res = blocks(b) % resolutions(1) 
+          if( iabs(l2-l1) == 2 ) res = blocks(b) % resolutions(2) 
+          if( iabs(l2-l1) == 4 ) res = blocks(b) % resolutions(3) 
           goto 1
         end if 
       end do

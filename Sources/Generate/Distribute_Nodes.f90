@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Block_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -18,9 +19,9 @@
   real    :: x0, y0, z0, delx, dely, delz, t, dt, ddt, pr, xi
 !==============================================================================!
 
-  ni = block_resolutions(b,1)
-  nj = block_resolutions(b,2)
-  nk = block_resolutions(b,3)   
+  ni = blocks(b) % resolutions(1)
+  nj = blocks(b) % resolutions(2)
+  nk = blocks(b) % resolutions(3)   
 
   x0   = x_node(NN+(ks-1)*ni*nj+(js-1)*ni+is)
   y0   = y_node(NN+(ks-1)*ni*nj+(js-1)*ni+is)

@@ -152,9 +152,10 @@
   do s=1,NS
     c1=SideC(1,s)
     c2=SideC(2,s)
-    if(c2  < 0 .and. CopyC(c1) /= 0   &
-               .and. BCmark(c2) == copy_cond(1,0)) then
-      CopyC(c2) = CopyC(c1)
+    if(c2 < 0 .and. CopyC(c1) /= 0) then
+      if(BCmark(c2) == copy_cond(1,0)) then
+        CopyC(c2) = CopyC(c1)
+      end if
     end if
   end do
 

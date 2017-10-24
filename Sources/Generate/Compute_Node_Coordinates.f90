@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Block_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !----------------------------------[Calling]-----------------------------------!
@@ -31,57 +32,57 @@
   nc = 0  ! initialize n.o.v.
   do b=1,Nbloc
     write(*,*) '# Generating block: ', b
-    ni=block_resolutions(b, 1)
-    nj=block_resolutions(b, 2)
-    nk=block_resolutions(b, 3)   
+    ni=blocks(b) % resolutions( 1)
+    nj=blocks(b) % resolutions( 2)
+    nk=blocks(b) % resolutions( 3)   
 
     ! ( 1 )
     n = nn + ( 1-1)*ni*nj + ( 1-1)*ni +  1
-    x_node(n) = x_point(block_points(b, 1)) 
-    y_node(n) = y_point(block_points(b, 1)) 
-    z_node(n) = z_point(block_points(b, 1)) 
+    x_node(n) = x_point(blocks(b) % points(1)) 
+    y_node(n) = y_point(blocks(b) % points(1)) 
+    z_node(n) = z_point(blocks(b) % points(1)) 
 
     ! ( 2 )
     n = nn + ( 1-1)*ni*nj + ( 1-1)*ni + ni
-    x_node(n) = x_point(block_points(b, 2)) 
-    y_node(n) = y_point(block_points(b, 2)) 
-    z_node(n) = z_point(block_points(b, 2)) 
+    x_node(n) = x_point(blocks(b) % points(2)) 
+    y_node(n) = y_point(blocks(b) % points(2)) 
+    z_node(n) = z_point(blocks(b) % points(2)) 
 
     ! ( 3 )
     n = nn + ( 1-1)*ni*nj + (nj-1)*ni +  1
-    x_node(n) = x_point(block_points(b, 3)) 
-    y_node(n) = y_point(block_points(b, 3)) 
-    z_node(n) = z_point(block_points(b, 3)) 
+    x_node(n) = x_point(blocks(b) % points(3)) 
+    y_node(n) = y_point(blocks(b) % points(3)) 
+    z_node(n) = z_point(blocks(b) % points(3)) 
 
     ! ( 4 )
     n = nn + ( 1-1)*ni*nj + (nj-1)*ni + ni
-    x_node(n) = x_point(block_points(b, 4)) 
-    y_node(n) = y_point(block_points(b, 4)) 
-    z_node(n) = z_point(block_points(b, 4)) 
+    x_node(n) = x_point(blocks(b) % points(4)) 
+    y_node(n) = y_point(blocks(b) % points(4)) 
+    z_node(n) = z_point(blocks(b) % points(4)) 
 
     ! ( 5 ) !
     n = nn + (nk-1)*ni*nj + ( 1-1)*ni +  1
-    x_node(n) = x_point(block_points(b, 5)) 
-    y_node(n) = y_point(block_points(b, 5)) 
-    z_node(n) = z_point(block_points(b, 5)) 
+    x_node(n) = x_point(blocks(b) % points(5)) 
+    y_node(n) = y_point(blocks(b) % points(5)) 
+    z_node(n) = z_point(blocks(b) % points(5)) 
 
     ! ( 6 ) !
     n = nn + (nk-1)*ni*nj + ( 1-1)*ni + ni
-    x_node(n) = x_point(block_points(b, 6)) 
-    y_node(n) = y_point(block_points(b, 6)) 
-    z_node(n) = z_point(block_points(b, 6)) 
+    x_node(n) = x_point(blocks(b) % points(6)) 
+    y_node(n) = y_point(blocks(b) % points(6)) 
+    z_node(n) = z_point(blocks(b) % points(6)) 
 
     ! ( 7 ) !
     n = nn + (nk-1)*ni*nj + (nj-1)*ni +  1
-    x_node(n) = x_point(block_points(b, 7)) 
-    y_node(n) = y_point(block_points(b, 7)) 
-    z_node(n) = z_point(block_points(b, 7)) 
+    x_node(n) = x_point(blocks(b) % points(7)) 
+    y_node(n) = y_point(blocks(b) % points(7)) 
+    z_node(n) = z_point(blocks(b) % points(7)) 
 
     ! ( 8 ) !
     n = nn + (nk-1)*ni*nj + (nj-1)*ni + ni
-    x_node(n) = x_point(block_points(b, 8)) 
-    y_node(n) = y_point(block_points(b, 8)) 
-    z_node(n) = z_point(block_points(b, 8)) 
+    x_node(n) = x_point(blocks(b) % points(8)) 
+    y_node(n) = y_point(blocks(b) % points(8)) 
+    z_node(n) = z_point(blocks(b) % points(8)) 
 
     !----------------------------!
     !     First on the lines     !
@@ -94,8 +95,8 @@
       if(bl == b) then
 
         do n=1,8
-          if( LinPnt(l,1) == block_points(b,n)  ) l1=n
-          if( LinPnt(l,2) == block_points(b,n)  ) l2=n
+          if( LinPnt(l,1) == blocks(b) % points(n)  ) l1=n
+          if( LinPnt(l,2) == blocks(b) % points(n)  ) l2=n
         end do
 
         ! Line is defined in the +i direction
@@ -107,29 +108,29 @@
           if( (l1 == 1).or.(l1 == 5) ) then 
             trans(2,1) =1
           else                         
-            trans(2,1) =block_resolutions(b,2)
+            trans(2,1) =blocks(b) % resolutions(2)
           endif
           if( (l1 == 1).or.(l1 == 3) ) then
             trans(3,1) =1
           else                         
-            trans(3,1) =block_resolutions(b,3)
+            trans(3,1) =blocks(b) % resolutions(3)
           endif
 
         ! Line is defined in the -i direction
         else if( (l2-l1) == -1 ) then
-          trans(1,1) =block_resolutions(b,1)+1   ! ni from the block + 1
+          trans(1,1) =blocks(b) % resolutions(1)+1   ! ni from the block + 1
           trans(1,2) =-1
           trans(2,2) = 0
           trans(3,2) = 0
           if( (l1 == 2).or.(l1 == 6) ) then
             trans(2,1) =1
           else                         
-            trans(2,1) =block_resolutions(b,2)
+            trans(2,1) =blocks(b) % resolutions(2)
           endif
           if( (l1 == 2).or.(l1 == 4) ) then
             trans(3,1) =1
           else                         
-            trans(3,1) =block_resolutions(b,3)
+            trans(3,1) =blocks(b) % resolutions(3)
           endif
 
         ! Line is defined in the +j direction
@@ -141,29 +142,29 @@
           if( (l1 == 1).or.(l1 == 5) ) then
             trans(1,1) =1
           else                         
-            trans(1,1) =block_resolutions(b,1)
+            trans(1,1) =blocks(b) % resolutions(1)
           endif
           if( (l1 == 1).or.(l1 == 2) ) then
             trans(3,1) =1
           else                         
-            trans(3,1) =block_resolutions(b,3)
+            trans(3,1) =blocks(b) % resolutions(3)
           endif
 
         ! Line is defined in the -j direction
         else if( (l2-l1) == -2 ) then
-          trans(2,1) =block_resolutions(b,2)+1   ! nj from the block + 1
+          trans(2,1) =blocks(b) % resolutions(2)+1   ! nj from the block + 1
           trans(2,2) =-1
           trans(1,2) = 0
           trans(3,2) = 0 
           if( (l1 == 3).or.(l1 == 7) ) then
             trans(1,1) =1
           else                         
-            trans(1,1) =block_resolutions(b,1)
+            trans(1,1) =blocks(b) % resolutions(1)
           endif
           if( (l1 == 3).or.(l1 == 4) ) then
             trans(3,1) =1
           else                         
-            trans(3,1) =block_resolutions(b,3)
+            trans(3,1) =blocks(b) % resolutions(3)
           endif
 
         ! Line is defined in the +k direction
@@ -175,29 +176,29 @@
           if( (l1 == 1).or.(l1 == 3) ) then
             trans(1,1) =1
           else                         
-            trans(1,1) =block_resolutions(b,1)
+            trans(1,1) =blocks(b) % resolutions(1)
           end if
           if( (l1 == 1).or.(l1 == 2) ) then
             trans(2,1) =1
           else                         
-            trans(2,1) =block_resolutions(b,2)
+            trans(2,1) =blocks(b) % resolutions(2)
           endif
 
         ! Line is defined in the -k direction
         else if( (l2-l1) == -4 ) then
-          trans(3,1) =block_resolutions(b,3) + 1  ! nk from the block + 1
+          trans(3,1) =blocks(b) % resolutions(3) + 1  ! nk from the block + 1
           trans(3,2) =-1
           trans(1,2) = 0
           trans(2,2) = 0 
           if( (l1 == 5).or.(l1 == 7) ) then
             trans(1,1) =1
           else                         
-            trans(1,1) =block_resolutions(b,1)
+            trans(1,1) =blocks(b) % resolutions(1)
           endif
           if( (l1 == 5).or.(l1 == 6) ) then
             trans(2,1) =1
           else                         
-            trans(2,1) =block_resolutions(b,2)
+            trans(2,1) =blocks(b) % resolutions(2)
           endif
 
         endif ! l1-l2
@@ -418,9 +419,9 @@
       end do
     end do
 
-    block_resolutions(b,4) = ni*nj*nk ! is this needed ???
-    block_resolutions(b,5) = nn       ! old number of nodes, for fuzion 
-    block_resolutions(b,6) = nc       ! old number of volumes, for fuzion
+    blocks(b) % resolutions(4) = ni*nj*nk ! is this needed ???
+    blocks(b) % resolutions(5) = nn       ! old number of nodes, for fuzion 
+    blocks(b) % resolutions(6) = nc       ! old number of volumes, for fuzion
     nn = nn + ni*nj*nk
     nc = nc + ci*cj*ck
 
@@ -441,9 +442,9 @@
     b  = abs(b_cond(n,7))   ! block
 
     ! Block resolution
-    ci=block_resolutions(b,1)-1
-    cj=block_resolutions(b,2)-1
-    ck=block_resolutions(b,3)-1
+    ci=blocks(b) % resolutions(1)-1
+    cj=blocks(b) % resolutions(2)-1
+    ck=blocks(b) % resolutions(3)-1
 
     ! Default values
     is=1
@@ -494,7 +495,7 @@
     do i=is,ie
       do j=js,je
         do k=ks,ke
-          c = block_resolutions(b,6) + (k-1)*ci*cj + (j-1)*ci + i   
+          c = blocks(b) % resolutions(6) + (k-1)*ci*cj + (j-1)*ci + i   
           if(face /= 0) then 
             CellC(c,face) = -b_cond(n,8) ! marker
           else

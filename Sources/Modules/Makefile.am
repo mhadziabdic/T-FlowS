@@ -1,6 +1,7 @@
 noinst_LIBRARIES = libModules.a
 
 libModules_a_SOURCES = 	\
+  Block_Mod.f90		\
   allp_mod.f90		\
   allt_mod.f90		\
   all_mod.f90		\

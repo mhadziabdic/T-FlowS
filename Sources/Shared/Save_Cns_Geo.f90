@@ -116,14 +116,16 @@
       ! nekad bio i: NewC(c)
       iwork(count,1) = BCmark(c)   
       iwork(count,2) = NewC(CopyC(c)) 
-      if(CopyC(c) /= 0 .and. proces(CopyC(c)) /= sub) then
-        do b=1,NBFsub
-          if(BuReIn(b) == CopyC(c)) then
-            write(*,*) BufPos(b) 
-            write(*,*) xc(CopyC(c)), yc(CopyC(c)), zc(CopyC(c))  
-            iwork(count,2)=-BufPos(b) ! - sign, copy buffer
-          end if
-        end do
+      if(CopyC(c) /= 0) then
+        if(proces(CopyC(c)) /= sub) then
+          do b=1,NBFsub
+            if(BuReIn(b) == CopyC(c)) then
+              write(*,*) BufPos(b) 
+              write(*,*) xc(CopyC(c)), yc(CopyC(c)), zc(CopyC(c))  
+              iwork(count,2)=-BufPos(b) ! - sign, copy buffer
+            end if
+          end do
+        endif
       endif
     end if
   end do 

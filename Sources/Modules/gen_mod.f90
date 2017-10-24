@@ -59,10 +59,8 @@ module gen_mod
   real, allocatable :: xl(:,:), yl(:,:),zl(:,:), LinWgt(:)
   real              :: BlkWgt(MAXL,3), BlFaWt(MAXL,3)     ! leave this 
 
-  integer, allocatable :: block_points(:,:),       &  ! 0 for orientation                
-                          block_resolutions(:,:),  &  ! NI,NJ,NK,NI*NJ*NK,NNo,NV
-                          block_faces(:,:,:),      & 
-                          face_laplace(:),         &  ! never used 
+  integer, allocatable ::                          &
+!                         block_resolutions(:,:),  &  ! NI,NJ,NK,NI*NJ*NK,NNo,NV
                           b_cond(:,:),             &  
                           periodic_cond(:,:),      &                         
                           copy_cond(:,:)

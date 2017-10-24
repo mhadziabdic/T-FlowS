@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Block_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
@@ -53,14 +54,14 @@
             end do
           end do
 
-          n11=block_faces(b1, f1, 1)
-          n12=block_faces(b1, f1, 2)
-          n13=block_faces(b1, f1, 3)
-          n14=block_faces(b1, f1, 4) 
-          n21=block_faces(b2, f2, 1)
-          n22=block_faces(b2, f2, 2)
-          n23=block_faces(b2, f2, 3)
-          n24=block_faces(b2, f2, 4)
+          n11 = blocks(b1) % faces(f1, 1)
+          n12 = blocks(b1) % faces(f1, 2)
+          n13 = blocks(b1) % faces(f1, 3)
+          n14 = blocks(b1) % faces(f1, 4) 
+          n21 = blocks(b2) % faces(f2, 1)
+          n22 = blocks(b2) % faces(f2, 2)
+          n23 = blocks(b2) % faces(f2, 3)
+          n24 = blocks(b2) % faces(f2, 4)
 
           ! Check if they are connected 
           if( ((n11 == n21).and.(n13 == n23)) .or.  &
@@ -76,108 +77,108 @@
 
             ! Find local nodes (1-8) from blocks 1 and 2 on generic surface
             do n=1,8
-              if(block_points(b1,n) == g1) l11=n
-              if(block_points(b2,n) == g1) l21=n
-              if(block_points(b1,n) == g2) l12=n
-              if(block_points(b2,n) == g2) l22=n
-              if(block_points(b1,n) == g3) l13=n
-              if(block_points(b2,n) == g3) l23=n
-              if(block_points(b1,n) == g4) l14=n
-              if(block_points(b2,n) == g4) l24=n
+              if(blocks(b1) % points(n) == g1) l11=n
+              if(blocks(b2) % points(n) == g1) l21=n
+              if(blocks(b1) % points(n) == g2) l12=n
+              if(blocks(b2) % points(n) == g2) l22=n
+              if(blocks(b1) % points(n) == g3) l13=n
+              if(blocks(b2) % points(n) == g3) l23=n
+              if(blocks(b1) % points(n) == g4) l14=n
+              if(blocks(b2) % points(n) == g4) l24=n
             end do
 
             ! Direction ig, block 1
             if((l14-l11) == +1) then
-              nig = block_resolutions(b1,1)       ! ni from block 1
+              nig = blocks(b1) % resolutions(1)       ! ni from block 1
               trans1(1,2)=+1
             elseif((l14-l11) == +2) then
-              nig = block_resolutions(b1,2)       ! nj from block 1
+              nig = blocks(b1) % resolutions(2)       ! nj from block 1
               trans1(2,2)=+1
             elseif((l14-l11) == +4) then 
-              nig = block_resolutions(b1,3)       ! nk from block 1
+              nig = blocks(b1) % resolutions(3)       ! nk from block 1
               trans1(3,2)=+1
             elseif((l14-l11) == -1) then 
-              nig = block_resolutions(b1,1)       ! ni from block 1
+              nig = blocks(b1) % resolutions(1)       ! ni from block 1
               trans1(1,1)=nig
               trans1(1,2)=-1
             elseif((l14-l11) == -2) then 
-              nig = block_resolutions(b1,2)       ! nj from block 1
+              nig = blocks(b1) % resolutions(2)       ! nj from block 1
               trans1(2,1)=nig
               trans1(2,2)=-1
             elseif((l14-l11) == -4) then 
-              nig = block_resolutions(b1,3)       ! nk from block 1
+              nig = blocks(b1) % resolutions(3)       ! nk from block 1
               trans1(3,1)=nig
               trans1(3,2)=-1
             endif
 
             ! Direction jg, block 1 
             if((l12-l11) == +1) then 
-              njg = block_resolutions(b1,1)       ! ni from block 1
+              njg = blocks(b1) % resolutions(1)       ! ni from block 1
               trans1(1,3)=+1
             elseif((l12-l11) == +2) then
-              njg = block_resolutions(b1,2)       ! nj from block 1
+              njg = blocks(b1) % resolutions(2)       ! nj from block 1
               trans1(2,3)=+1
             elseif((l12-l11) == +4) then
-              njg = block_resolutions(b1,3)       ! nk from block 1
+              njg = blocks(b1) % resolutions(3)       ! nk from block 1
               trans1(3,3)=+1
             elseif((l12-l11) == -1) then
-              njg = block_resolutions(b1,1)       ! ni from block 1
+              njg = blocks(b1) % resolutions(1)       ! ni from block 1
               trans1(1,1)=njg
               trans1(1,3)=-1
             elseif((l12-l11) == -2) then
-              njg = block_resolutions(b1,2)       ! nj from block 1
+              njg = blocks(b1) % resolutions(2)       ! nj from block 1
               trans1(2,1)=njg
               trans1(2,3)=-1
             elseif((l12-l11) == -4) then
-              njg = block_resolutions(b1,3)       ! nk from block 1
+              njg = blocks(b1) % resolutions(3)       ! nk from block 1
               trans1(3,1)=njg
               trans1(3,3)=-1
             endif
 
             ! Direction ig, block 2
             if((l24-l21) == +1) then
-              nig = block_resolutions(b2,1)       ! ni from block 2
+              nig = blocks(b2) % resolutions(1)       ! ni from block 2
               trans2(1,2)=+1
             elseif((l24-l21) == +2) then
-              nig = block_resolutions(b2,2)       ! nj from block 2
+              nig = blocks(b2) % resolutions(2)       ! nj from block 2
               trans2(2,2)=+1
             elseif((l24-l21) == +4) then 
-              nig = block_resolutions(b2,3)       ! nk from block 2
+              nig = blocks(b2) % resolutions(3)       ! nk from block 2
               trans2(3,2)=+1
             elseif((l24-l21) == -1) then 
-              nig = block_resolutions(b2,1)       ! ni from block 2
+              nig = blocks(b2) % resolutions(1)       ! ni from block 2
               trans2(1,1)=nig
               trans2(1,2)=-1
             elseif((l24-l21) == -2) then 
-              nig = block_resolutions(b2,2)       ! nj from block 2
+              nig = blocks(b2) % resolutions(2)       ! nj from block 2
               trans2(2,1)=nig
               trans2(2,2)=-1
             elseif((l24-l21) == -4) then 
-              nig = block_resolutions(b2,3)       ! nk from block 2
+              nig = blocks(b2) % resolutions(3)       ! nk from block 2
               trans2(3,1)=nig
               trans2(3,2)=-1
             endif
 
             ! Direction jg, block 2 
             if((l22-l21) == +1) then 
-              njg = block_resolutions(b2,1)       ! ni from block 2
+              njg = blocks(b2) % resolutions(1)       ! ni from block 2
               trans2(1,3)=+1
             elseif((l22-l21) == +2) then
-              njg = block_resolutions(b2,2)       ! nj from block 2
+              njg = blocks(b2) % resolutions(2)       ! nj from block 2
               trans2(2,3)=+1
             elseif((l22-l21) == +4) then
-              njg = block_resolutions(b2,3)       ! nk from block 2
+              njg = blocks(b2) % resolutions(3)       ! nk from block 2
               trans2(3,3)=+1
             elseif((l22-l21) == -1) then
-              njg = block_resolutions(b2,1)       ! ni from block 2
+              njg = blocks(b2) % resolutions(1)       ! ni from block 2
               trans2(1,1)=njg
               trans2(1,3)=-1
             elseif((l22-l21) == -2) then
-              njg = block_resolutions(b2,2)       ! nj from block 2
+              njg = blocks(b2) % resolutions(2)       ! nj from block 2
               trans2(2,1)=njg
               trans2(2,3)=-1
             elseif((l22-l21) == -4) then
-              njg = block_resolutions(b2,3)       ! nk from block 2
+              njg = blocks(b2) % resolutions(3)       ! nk from block 2
               trans2(3,1)=njg
               trans2(3,3)=-1
             endif
@@ -185,36 +186,36 @@
             ! Set the constant directions
             if(f1 == 1) trans1(3,1)=1
             if(f1 == 2) trans1(2,1)=1
-            if(f1 == 3) trans1(1,1)=block_resolutions(b1,1)-1
-            if(f1 == 4) trans1(2,1)=block_resolutions(b1,2)-1
+            if(f1 == 3) trans1(1,1)=blocks(b1) % resolutions(1)-1
+            if(f1 == 4) trans1(2,1)=blocks(b1) % resolutions(2)-1
             if(f1 == 5) trans1(1,1)=1
-            if(f1 == 6) trans1(3,1)=block_resolutions(b1,3)-1
+            if(f1 == 6) trans1(3,1)=blocks(b1) % resolutions(3)-1
 
             if(f2 == 1) trans2(3,1)=1
             if(f2 == 2) trans2(2,1)=1
-            if(f2 == 3) trans2(1,1)=block_resolutions(b2,1)-1
-            if(f2 == 4) trans2(2,1)=block_resolutions(b2,2)-1
+            if(f2 == 3) trans2(1,1)=blocks(b2) % resolutions(1)-1
+            if(f2 == 4) trans2(2,1)=blocks(b2) % resolutions(2)-1
             if(f2 == 5) trans2(1,1)=1
-            if(f2 == 6) trans2(3,1)=block_resolutions(b2,3)-1
+            if(f2 == 6) trans2(3,1)=blocks(b2) % resolutions(3)-1
 
             ! Finally conect the two blocks
             do jg=1,njg-1              ! through volumes only
               do ig=1,nig-1            ! through volumes only
-                ci1=block_resolutions(b1,1)-1
-                cj1=block_resolutions(b1,2)-1
-                ck1=block_resolutions(b1,3)-1
-                ci2=block_resolutions(b2,1)-1
-                cj2=block_resolutions(b2,2)-1
-                ck2=block_resolutions(b2,3)-1
+                ci1=blocks(b1) % resolutions(1)-1
+                cj1=blocks(b1) % resolutions(2)-1
+                ck1=blocks(b1) % resolutions(3)-1
+                ci2=blocks(b2) % resolutions(1)-1
+                cj2=blocks(b2) % resolutions(2)-1
+                ck2=blocks(b2) % resolutions(3)-1
                 i1 = trans1(1,1) + trans1(1,2)*ig + trans1(1,3)*jg
                 j1 = trans1(2,1) + trans1(2,2)*ig + trans1(2,3)*jg
                 k1 = trans1(3,1) + trans1(3,2)*ig + trans1(3,3)*jg 
                 i2 = trans2(1,1) + trans2(1,2)*ig + trans2(1,3)*jg
                 j2 = trans2(2,1) + trans2(2,2)*ig + trans2(2,3)*jg
                 k2 = trans2(3,1) + trans2(3,2)*ig + trans2(3,3)*jg
-                c1 = block_resolutions(b1,6)  &
+                c1 = blocks(b1) % resolutions(6)  &
                      + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
-                c2 = block_resolutions(b2,6)  &
+                c2 = blocks(b2) % resolutions(6)  &
                      + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
                 CellC(c1, f1) = c2
                 CellC(c2, f2) = c1
@@ -232,21 +233,21 @@
             ! Conect the nodes 
             do jg=1,njg                ! through nodes 
               do ig=1,nig              ! through nodes
-                ni1=block_resolutions(b1,1)
-                nj1=block_resolutions(b1,2)
-                nk1=block_resolutions(b1,3)
-                ni2=block_resolutions(b2,1)
-                nj2=block_resolutions(b2,2)
-                nk2=block_resolutions(b2,3)
+                ni1=blocks(b1) % resolutions(1)
+                nj1=blocks(b1) % resolutions(2)
+                nk1=blocks(b1) % resolutions(3)
+                ni2=blocks(b2) % resolutions(1)
+                nj2=blocks(b2) % resolutions(2)
+                nk2=blocks(b2) % resolutions(3)
                 i1 = trans1(1,1) + trans1(1,2)*ig + trans1(1,3)*jg
                 j1 = trans1(2,1) + trans1(2,2)*ig + trans1(2,3)*jg
                 k1 = trans1(3,1) + trans1(3,2)*ig + trans1(3,3)*jg
                 i2 = trans2(1,1) + trans2(1,2)*ig + trans2(1,3)*jg
                 j2 = trans2(2,1) + trans2(2,2)*ig + trans2(2,3)*jg
                 k2 = trans2(3,1) + trans2(3,2)*ig + trans2(3,3)*jg
-                n1 = block_resolutions(b1,5)  &
+                n1 = blocks(b1) % resolutions(5)  &
                      + (k1-1)*ni1*nj1 + (j1-1)*ni1 + i1
-                n2 = block_resolutions(b2,5)  &
+                n2 = blocks(b2) % resolutions(5)  &
                      + (k2-1)*ni2*nj2 + (j2-1)*ni2 + i2
                 NewN(n2) = NewN(n1)
               end do
@@ -259,7 +260,7 @@
     end do        ! b1
 
     ! Update node numbers
-    do n=block_resolutions(b2,5)+1, block_resolutions(b2,5)+ni2*nj2*nk2
+    do n=blocks(b2) % resolutions(5)+1, blocks(b2) % resolutions(5)+ni2*nj2*nk2
       if(NewN(n) /= n) del=del+1
       if(NewN(n) == n) NewN(n)=NewN(n)-del
     end do 

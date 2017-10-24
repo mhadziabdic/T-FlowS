@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Block_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -16,8 +17,8 @@
 
   do l1=1,8
     do l2=1,8
-      if( (block_points(b,l1) == n1) .and.                                &
-          (block_points(b,l2) == n2) ) then
+      if( (blocks(b) % points(l1) == n1) .and.   &
+          (blocks(b) % points(l2) == n2) ) then
            goto 1
       end if 
     end do

@@ -3,6 +3,7 @@
 !------------------------------------------------------------------------------!
 !   Reads: name.d                                                              !
 !----------------------------------[Modules]-----------------------------------!
+  use Block_Mod
   use all_mod
   use gen_mod
   use par_mod
@@ -145,46 +146,45 @@
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) Nbloc  ! number of blocks 
 
-  allocate (block_points(Nbloc,0:8))
-  allocate (block_resolutions(Nbloc,6))
-  allocate (block_faces(Nbloc,6,4))
-  allocate (face_laplace(Nbloc*6))
+  allocate (blocks(Nbloc))
 
   do b=1,Nbloc
-    block_points(b,0)=1       ! suppose it is properly oriented
+    blocks(b) % points(0)=1       ! suppose it is properly oriented
 
     call ReadC(9,inp,tn,ts,te)
-    read(inp(ts(2):te(4)),*)  &  ! ni, nj, nk  for a block
-         block_resolutions(b, 1), block_resolutions(b, 2), block_resolutions(b, 3) 
+    read(inp(ts(2):te(4)),*)          &  ! ni, nj, nk  for a block
+         blocks(b) % resolutions(1),  &
+         blocks(b) % resolutions(2),  &
+         blocks(b) % resolutions(3) 
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)  &            ! Block weights 
          BlkWgt(b,1),BlkWgt(b,2),BlkWgt(b,3)
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)                       &
-         block_points(b, 1), block_points(b, 2),  &
-         block_points(b, 3), block_points(b, 4),  &
-         block_points(b, 5), block_points(b, 6),  &
-         block_points(b, 7), block_points(b, 8)
+         blocks(b) % points( 1), blocks(b) % points( 2),  &
+         blocks(b) % points( 3), blocks(b) % points( 4),  &
+         blocks(b) % points( 5), blocks(b) % points( 6),  &
+         blocks(b) % points( 7), blocks(b) % points( 8)
 
     !---------------------------!
     !   Check if the block is   ! 
     !     properly oriented     !
     !---------------------------!
     do n=1,8
-      xt(n)=x_point(block_points(b, n))
-      yt(n)=y_point(block_points(b, n))
-      zt(n)=z_point(block_points(b, n))
+      xt(n)=x_point(blocks(b) % points( n))
+      yt(n)=y_point(blocks(b) % points( n))
+      zt(n)=z_point(blocks(b) % points( n))
     end do
 
     if(Tet_Volume( xt(2),yt(2),zt(2), xt(5),yt(5),zt(5),  &
                    xt(3),yt(3),zt(3), xt(1),yt(1),zt(1) )  < 0) then
-      block_points(b,0)=-1            !  It's nor properly oriented
-      call Swap_Integers(block_points(b,2),block_points(b,3))
-      call Swap_Integers(block_points(b,6),block_points(b,7))
+      blocks(b) % points(0)=-1            !  It's nor properly oriented
+      call Swap_Integers(blocks(b) % points(2),blocks(b) % points(3))
+      call Swap_Integers(blocks(b) % points(6),blocks(b) % points(7))
       call Swap_Reals(BlkWgt(b,1),BlkWgt(b,2))
       BlkWgt(b,1)=1.0/BlkWgt(b,1)
       BlkWgt(b,2)=1.0/BlkWgt(b,2)
-      call Swap_Integers(block_resolutions(b,1),block_resolutions(b,2))
+      call Swap_Integers(blocks(b) % resolutions(1),blocks(b) % resolutions(2))
       write(*,*) 'Warning: Block ',b,' was not properly oriented'
     end if
   end do                 ! through blocks
@@ -196,7 +196,7 @@
   do b=1,Nbloc
     do fc=1,6
       do n=1,4
-        block_faces(b, fc, n)=block_points(b, face_nodes(fc,n))
+        blocks(b) % faces(fc, n)=blocks(b) % points(face_nodes(fc,n))
       end do
     end do
   end do
@@ -250,7 +250,6 @@
       BlFaWt(n,1)=BlkWgt(b,1)
       BlFaWt(n,2)=BlkWgt(b,2)
       BlFaWt(n,3)=BlkWgt(b,3)
-      face_laplace(n)  = NO
     end do
   end do
 
@@ -266,7 +265,6 @@
     call Find_Surface(n1,n2,n3,n4,b,fc)
     write(*,*) 'block: ', b, ' surf: ', fc
     n = (b-1)*6 + fc         ! surface number
-    face_laplace(n) = YES          ! perform Laplace
 
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)  BlFaWt(n,1),BlFaWt(n,2),BlFaWt(n,3)
@@ -280,9 +278,9 @@
   n_nodes_check = 0
   n_faces_check = 0
   do b=1,Nbloc
-    ni=block_resolutions(b,1)
-    nj=block_resolutions(b,2)
-    nk=block_resolutions(b,3)
+    ni = blocks(b) % resolutions(1)
+    nj = blocks(b) % resolutions(2)
+    nk = blocks(b) % resolutions(3)
     n_nodes_check=n_nodes_check + ni*nj*nk
     n_faces_check=n_faces_check + ni*nj*nk + 2*( (ni*nj)+(nj*nk)+(ni*nk) )
   end do
@@ -334,7 +332,7 @@
     read(inp,*)       &  
          b_cond(n,7),  &  ! block,  
          b_cond(n,8)      ! mark         
-  if( block_points(b_cond(n,7),0) == -1 ) then
+  if( blocks(b_cond(n,7)) % points(0) == -1 ) then
     call Swap_Integers( b_cond(n,1),b_cond(n,2) )
     call Swap_Integers( b_cond(n,4),b_cond(n,5) )
   end if

@@ -20,7 +20,7 @@
   character(len=12) :: answer
   real              :: xt(8), yt(8), zt(8)
   integer           :: face_nodes(6,4)
-  integer           :: n_points
+  integer           :: n_points, n_blocks
 !==============================================================================!
   data face_nodes / 1, 1, 2, 4, 3, 5,                               &
                     2, 5, 6, 8, 7, 7,                               &
@@ -115,16 +115,6 @@
 
   write(*,*) '# Allocation successfull !'
 
-  !--------------------!
-  !   Initialization   !
-  !--------------------!
-  do i=1,120 
-    do n=1,3
-      BlkWgt(i,n) = 1.0
-      BlFaWt(i,n) = 1.0
-    end do
-  end do
-
   !-------------!
   !   Corners   !
   !-------------!
@@ -144,11 +134,17 @@
   !   Blocks   !
   !------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) Nbloc  ! number of blocks 
+  read(inp,*) n_blocks  ! number of blocks 
 
-  allocate (blocks(Nbloc))
+  allocate (blocks(n_blocks))
 
-  do b=1,Nbloc
+  ! Initialize weights 
+  do b=1, size(blocks)
+    blocks(b) % weights      = 1.0
+    blocks(b) % face_weights = 1.0
+  end do
+
+  do b = 1, size(blocks)
     blocks(b) % points(0)=1       ! suppose it is properly oriented
 
     call ReadC(9,inp,tn,ts,te)
@@ -158,7 +154,7 @@
          blocks(b) % resolutions(3) 
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)  &            ! Block weights 
-         BlkWgt(b,1),BlkWgt(b,2),BlkWgt(b,3)
+         blocks(b) % weights(1),blocks(b) % weights(2),blocks(b) % weights(3)
     call ReadC(9,inp,tn,ts,te)
     read(inp,*)                       &
          blocks(b) % points( 1), blocks(b) % points( 2),  &
@@ -181,9 +177,9 @@
       blocks(b) % points(0)=-1            !  It's nor properly oriented
       call Swap_Integers(blocks(b) % points(2),blocks(b) % points(3))
       call Swap_Integers(blocks(b) % points(6),blocks(b) % points(7))
-      call Swap_Reals(BlkWgt(b,1),BlkWgt(b,2))
-      BlkWgt(b,1)=1.0/BlkWgt(b,1)
-      BlkWgt(b,2)=1.0/BlkWgt(b,2)
+      call Swap_Reals(blocks(b) % weights(1),blocks(b) % weights(2))
+      blocks(b) % weights(1)=1.0/blocks(b) % weights(1)
+      blocks(b) % weights(2)=1.0/blocks(b) % weights(2)
       call Swap_Integers(blocks(b) % resolutions(1),blocks(b) % resolutions(2))
       write(*,*) 'Warning: Block ',b,' was not properly oriented'
     end if
@@ -193,9 +189,9 @@
   !   Set the corners of each   !
   !      face of the block      !
   !-----------------------------!
-  do b=1,Nbloc
-    do fc=1,6
-      do n=1,4
+  do b = 1, size(blocks)
+    do fc = 1,6
+      do n = 1,4
         blocks(b) % faces(fc, n)=blocks(b) % points(face_nodes(fc,n))
       end do
     end do
@@ -244,12 +240,11 @@
   !----------------------------------------!
   !   Copy block weights to face weights   !
   !----------------------------------------!
-  do b=1,Nbloc
-    do fc=1,6                          !  face of the block
-      n = (b-1)*6 + fc                 !  surface number
-      BlFaWt(n,1)=BlkWgt(b,1)
-      BlFaWt(n,2)=BlkWgt(b,2)
-      BlFaWt(n,3)=BlkWgt(b,3)
+  do b = 1, size(blocks)
+    do fc = 1,6                          !  face of the block
+      blocks(b) % face_weights(fc,1) = blocks(b) % weights(1)
+      blocks(b) % face_weights(fc,2) = blocks(b) % weights(2)
+      blocks(b) % face_weights(fc,3) = blocks(b) % weights(3)
     end do
   end do
 
@@ -267,7 +262,9 @@
     n = (b-1)*6 + fc         ! surface number
 
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*)  BlFaWt(n,1),BlFaWt(n,2),BlFaWt(n,3)
+    read(inp,*) blocks(b) % face_weights(fc,1), &
+                blocks(b) % face_weights(fc,2), &
+                blocks(b) % face_weights(fc,2)
   end do
 
   !---------------------------------------!
@@ -277,7 +274,7 @@
   ! Nodes & faces
   n_nodes_check = 0
   n_faces_check = 0
-  do b=1,Nbloc
+  do b = 1,size(blocks)
     ni = blocks(b) % resolutions(1)
     nj = blocks(b) % resolutions(2)
     nk = blocks(b) % resolutions(3)

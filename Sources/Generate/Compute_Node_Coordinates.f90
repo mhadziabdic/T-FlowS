@@ -14,7 +14,7 @@
 !---------------------------------[Interface]----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: b, bl, i, j, k, n, c, ig
+  integer :: fc, b, bl, i, j, k, n, c, ig
   integer :: l, l1, l2
   integer :: is, js, ks, ie, je, ke, face 
   integer :: ni, nj, nk, ci, cj, ck
@@ -30,7 +30,9 @@
   !------------------------------------!
   nn = 0  ! initialize n.o.n.
   nc = 0  ! initialize n.o.v.
-  do b=1,Nbloc
+
+  do b = 1, size(blocks)
+
     write(*,*) '# Generating block: ', b
     ni=blocks(b) % resolutions( 1)
     nj=blocks(b) % resolutions( 2)
@@ -227,7 +229,7 @@
           ie=trans(1,1)+trans(1,2)*LinRes(l)
           je=trans(2,1)+trans(2,2)*LinRes(l)
           ke=trans(3,1)+trans(3,2)*LinRes(l)
-          call Distribute_Nodes( b, LinWgt(l), is, js, ks, ie, je, ke)
+          call Distribute_Nodes(b, LinWgt(l), is, js, ks, ie, je, ke)
         endif  
 
       endif ! if the block contains
@@ -239,19 +241,19 @@
     !-----------!
     do k=1,nk,nk-1
       do j=1,nj,nj-1
-        call Distribute_Nodes( b, BlkWgt(b,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes(b, blocks(b) % weights(1), 1,j,k,ni,j,k)
       end do
     end do
 
     do k=1,nk,nk-1
       do i=1,ni,ni-1
-        call Distribute_Nodes( b, BlkWgt(b,2), i,1,k,i,nj,k)
+        call Distribute_Nodes(b, blocks(b) % weights(2), i,1,k,i,nj,k)
       end do
     end do
 
     do j=1,nj,nj-1
       do i=1,ni,ni-1
-        call Distribute_Nodes( b, BlkWgt(b,3), i,j,1,i,j,nk)
+        call Distribute_Nodes(b, blocks(b) % weights(3), i,j,1,i,j,nk)
       end do
     end do
 
@@ -263,102 +265,102 @@
     !------------------------------------------------------------!
 
     ! I (k=1) 
-    n = (b-1)*6 + 1   ! face index
-    k=1
-    if( .NOT. Approx(BlfaWt(n,1),1.0 ) ) then
+    fc = 1   ! face index
+    k = 1
+    if( .not. Approx(blocks(b) % face_weights(fc,1),1.0 ) ) then
       do j=1,nj
-        call Distribute_Nodes( b, BlfaWt(n,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,1), 1,j,k,ni,j,k)
       end do
     else ! lines in the j direction
       do i=1,ni
-        call Distribute_Nodes( b, BlfaWt(n,2), i,1,k,i,nj,k)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,2), i,1,k,i,nj,k)
       end do
     endif
 
     ! VI (k=nk)
-    n = (b-1)*6 + 6   ! face index
-    k=nk
-    if( .NOT. Approx(BlfaWt(n,1),1.0 ) ) then
+    fc = 6   ! face index
+    k = nk
+    if( .not. Approx(blocks(b) % face_weights(fc,1),1.0 ) ) then
      do j=1,nj
-        call Distribute_Nodes( b, BlFaWt(n,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,1), 1,j,k,ni,j,k)
       end do
     else ! lines in the j direction
       do i=1,ni
-        call Distribute_Nodes( b, BlfaWt(n,2), i,1,k,i,nj,k)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,2), i,1,k,i,nj,k)
       end do
     endif
 
     ! V (i=1)
-    n = (b-1)*6 + 5   ! face index
-    i=1
-    if( .NOT. Approx(BlfaWt(n,3),1.0 ) ) then
+    fc = 5   ! face index
+    i = 1
+    if( .not. Approx(blocks(b) % face_weights(fc,3),1.0 ) ) then
       do j=1,nj
-        call Distribute_Nodes( b, BlFaWt(n,3), i,j,1,i,j,nk)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,3), i,j,1,i,j,nk)
       end do
     else ! lines in the j direction
       do k=1,nk
-        call Distribute_Nodes( b, BlFaWt(n,2), i,1,k,i,nj,k)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,2), i,1,k,i,nj,k)
       end do
     end if 
 
     ! III (i=ni)
-    n = (b-1)*6 + 3   ! face index
-    i=ni
-    if( .NOT. Approx(BlfaWt(n,3),1.0 ) ) then
+    fc = 3   ! face index
+    i = ni
+    if( .not. Approx(blocks(b) % face_weights(fc,3),1.0 ) ) then
       do j=1,nj
-        call Distribute_Nodes( b, BlFaWt(n,3), i,j,1,i,j,nk)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,3), i,j,1,i,j,nk)
       end do
     else ! lines in the j direction
       do k=1,nk
-        call Distribute_Nodes( b, BlFaWt(n,2), i,1,k,i,nj,k)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,2), i,1,k,i,nj,k)
       end do
     end if 
 
     ! II (j=1)       
-    n = (b-1)*6 + 2   ! face index
-    j=1
-    if( .NOT. Approx(BlfaWt(n,3),1.0 ) ) then
+    fc = 2   ! face index
+    j = 1
+    if( .not. Approx(blocks(b) % face_weights(fc,3),1.0 ) ) then
       do i=1,ni
-        call Distribute_Nodes( b, BlFaWt(n,3), i,j,1,i,j,nk)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,3), i,j,1,i,j,nk)
       end do
     else ! lines in the i direction
       do k=1,nk
-        call Distribute_Nodes( b, BlFaWt(n,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,1), 1,j,k,ni,j,k)
       end do
     endif
 
     ! IV (j=nj)       
-    n = (b-1)*6 + 4   ! face index
-    j=nj
-    if( .NOT. Approx(BlfaWt(n,3),1.0 ) ) then
+    fc = 4   ! face index
+    j = nj
+    if( .not. Approx(blocks(b) % face_weights(fc,3),1.0 ) ) then
       do i=1,ni
-        call Distribute_Nodes( b, BlFaWt(n,3), i,j,1,i,j,nk)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,3), i,j,1,i,j,nk)
       end do
     else ! lines in the i direction
       do k=1,nk
-        call Distribute_Nodes( b, BlFaWt(n,1), 1,j,k,ni,j,k)
+        call Distribute_Nodes(b, blocks(b) % face_weights(fc,1), 1,j,k,ni,j,k)
       end do
     endif
 
     !-------------!
     !   Volumes   !
     !-------------!
-    if( .NOT. Approx( BlkWgt(b,3), 1.0 ) ) then
+    if( .not. Approx( blocks(b) % weights(3), 1.0 ) ) then
       do i=1,ni
         do j=1,nj
-          call Distribute_Nodes( b, BlkWgt(b,3), i,j,1,i,j,nk)
+          call Distribute_Nodes(b, blocks(b) % weights(3), i,j,1,i,j,nk)
         end do
       end do
-    else if( .NOT. Approx( BlkWgt(b,1), 1.0 ) ) then
+    else if( .not. Approx( blocks(b) % weights(1), 1.0 ) ) then
       do k=1,nk
         do j=1,nj
-          call Distribute_Nodes( b, BlkWgt(b,1), 1,j,k,ni,j,k)
+          call Distribute_Nodes(b, blocks(b) % weights(1), 1,j,k,ni,j,k)
         end do
       end do
-    else if( .NOT. Approx( BlkWgt(b,2), 1.0 ) ) then
+    else if( .not. Approx( blocks(b) % weights(2), 1.0 ) ) then
       do k=1,nk
         do i=1,ni
-          call Distribute_Nodes( b, BlkWgt(b,2), i,1,k,i,nj,k)
+          call Distribute_Nodes(b, blocks(b) % weights(2), i,1,k,i,nj,k)
         end do
       end do
     else
@@ -419,9 +421,8 @@
       end do
     end do
 
-    blocks(b) % resolutions(4) = ni*nj*nk ! is this needed ???
-    blocks(b) % resolutions(5) = nn       ! old number of nodes, for fuzion 
-    blocks(b) % resolutions(6) = nc       ! old number of volumes, for fuzion
+    blocks(b) % n_nodes = nn       ! old number of nodes, for fusion 
+    blocks(b) % n_cells = nc       ! old number of volumes, for fusion
     nn = nn + ni*nj*nk
     nc = nc + ci*cj*ck
 
@@ -495,7 +496,7 @@
     do i=is,ie
       do j=js,je
         do k=ks,ke
-          c = blocks(b) % resolutions(6) + (k-1)*ci*cj + (j-1)*ci + i   
+          c = blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
           if(face /= 0) then 
             CellC(c,face) = -b_cond(n,8) ! marker
           else

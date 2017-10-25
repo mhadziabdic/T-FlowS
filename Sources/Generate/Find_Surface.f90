@@ -16,8 +16,8 @@
   integer :: b, fc, p1, p2, p3, p4
 !==============================================================================!
 
-  do b=1,Nbloc
-    do fc=1,6
+  do b = 1, size(blocks)
+    do fc = 1, 6
       p1=blocks(b) % faces(fc, 1)
       p2=blocks(b) % faces(fc, 2)
       p3=blocks(b) % faces(fc, 3)

@@ -16,9 +16,9 @@
   integer :: b, l1, l2
 !==============================================================================!
 
-  do b=1,Nbloc
-    do l1=1,8
-      do l2=1,8
+  do b = 1, size(blocks)
+    do l1 = 1, 8
+      do l2 = 1, 8
         if( (blocks(b) % points(l1) == n1) .and. &
             (blocks(b) % points(l2) == n2) ) then
           if( iabs(l2-l1) == 1 ) res = blocks(b) % resolutions(1) 

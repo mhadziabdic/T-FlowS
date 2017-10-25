@@ -28,11 +28,11 @@
   !-----------------------------------------------------!
   n_cop = 0       
 
-  do p=1, n_copy_cond    
-    do b2=1,Nbloc
-      do b1=1,Nbloc
-        do f2=1,6    ! faces of the second block
-          do f1=1,6  ! faces of the first block
+  do p = 1, n_copy_cond    
+    do b2 = 1, size(blocks)
+      do b1 = 1, size(blocks)
+        do f2 = 1, 6    ! faces of the second block
+          do f1 = 1, 6  ! faces of the first block
 
             ! Initialize the transformation matrixes             
             do i=1,3
@@ -213,10 +213,8 @@
                   i2 = trans2(1,1)+trans2(1,2)*ig+trans2(1,3)*jg
                   j2 = trans2(2,1)+trans2(2,2)*ig+trans2(2,3)*jg
                   k2 = trans2(3,1)+trans2(3,2)*ig+trans2(3,3)*jg
-                  c1 = blocks(b1) % resolutions(6)                                 &
-                       + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
-                  c2 = blocks(b2) % resolutions(6)                                 &
-                       + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
+                  c1 = blocks(b1) % n_cells + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
+                  c2 = blocks(b2) % n_cells + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
                   CopyC(c2) = c1 ! allway copy from c1 to c2 !
                   CopyS(1, n_cop) = c1
                   CopyS(2, n_cop) = c2

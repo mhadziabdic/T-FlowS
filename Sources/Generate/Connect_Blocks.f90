@@ -31,7 +31,8 @@
     NewN(n)=n
   end do
 
-  if(Nbloc == 1) return 
+  ! If number of blocks is equal to one, there is nothing to do
+  if(size(blocks) == 1) return 
 
   ! Initialize the number of deleted nodes
   del=0
@@ -41,10 +42,10 @@
   !-----------------------------------------------------!
   !   Search through all block and all of their faces   !
   !-----------------------------------------------------!
-  do b2=2,Nbloc
-    do b1=1,b2-1
-      do f2=1,6    ! faces of the second block
-        do f1=1,6  ! faces of the first block
+  do b2 = 2, size(blocks)
+    do b1 = 1, b2-1
+      do f2 = 1, 6    ! faces of the second block
+        do f1 = 1, 6  ! faces of the first block
 
           ! Initialize the transformation matrixes             
           do i=1,3
@@ -199,8 +200,8 @@
             if(f2 == 6) trans2(3,1)=blocks(b2) % resolutions(3)-1
 
             ! Finally conect the two blocks
-            do jg=1,njg-1              ! through volumes only
-              do ig=1,nig-1            ! through volumes only
+            do jg=1,njg-1              ! through cells only
+              do ig=1,nig-1            ! through cells only
                 ci1=blocks(b1) % resolutions(1)-1
                 cj1=blocks(b1) % resolutions(2)-1
                 ck1=blocks(b1) % resolutions(3)-1
@@ -213,10 +214,8 @@
                 i2 = trans2(1,1) + trans2(1,2)*ig + trans2(1,3)*jg
                 j2 = trans2(2,1) + trans2(2,2)*ig + trans2(2,3)*jg
                 k2 = trans2(3,1) + trans2(3,2)*ig + trans2(3,3)*jg
-                c1 = blocks(b1) % resolutions(6)  &
-                     + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
-                c2 = blocks(b2) % resolutions(6)  &
-                     + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
+                c1 = blocks(b1) % n_cells + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
+                c2 = blocks(b2) % n_cells + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
                 CellC(c1, f1) = c2
                 CellC(c2, f2) = c1
               end do
@@ -245,10 +244,8 @@
                 i2 = trans2(1,1) + trans2(1,2)*ig + trans2(1,3)*jg
                 j2 = trans2(2,1) + trans2(2,2)*ig + trans2(2,3)*jg
                 k2 = trans2(3,1) + trans2(3,2)*ig + trans2(3,3)*jg
-                n1 = blocks(b1) % resolutions(5)  &
-                     + (k1-1)*ni1*nj1 + (j1-1)*ni1 + i1
-                n2 = blocks(b2) % resolutions(5)  &
-                     + (k2-1)*ni2*nj2 + (j2-1)*ni2 + i2
+                n1 = blocks(b1) % n_nodes + (k1-1)*ni1*nj1 + (j1-1)*ni1 + i1
+                n2 = blocks(b2) % n_nodes + (k2-1)*ni2*nj2 + (j2-1)*ni2 + i2
                 NewN(n2) = NewN(n1)
               end do
             end do
@@ -260,7 +257,7 @@
     end do        ! b1
 
     ! Update node numbers
-    do n=blocks(b2) % resolutions(5)+1, blocks(b2) % resolutions(5)+ni2*nj2*nk2
+    do n=blocks(b2) % n_nodes+1, blocks(b2) % n_nodes+ni2*nj2*nk2
       if(NewN(n) /= n) del=del+1
       if(NewN(n) == n) NewN(n)=NewN(n)-del
     end do 

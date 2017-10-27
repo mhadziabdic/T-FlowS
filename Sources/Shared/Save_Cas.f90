@@ -8,6 +8,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -58,7 +59,9 @@
   ! Regular node section
   write(9,'(A7,Z9,Z9,A4)') '(10 (7 ', 1, NNsub, ' 1)('
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(3E15.7)') x_node(n), y_node(n), z_node(n)
+    if(NewN(n) /= 0) write(9, '(3E15.7)') grid % nodes(n) % x,  &
+                                          grid % nodes(n) % y,  &
+                                          grid % nodes(n) % z
   end do
   write(9,'(A2)') '))'
 
@@ -118,7 +121,7 @@
     end if
 
     ! Prepare for next boundary
-    write(*,*) 'Number of faces:', Nfac, NtotFac+1, NtotFac+Nfac
+    write(*,*) '# Number of faces:', Nfac, NtotFac+1, NtotFac+Nfac
     NtotFac = NtotFac+Nfac
 
   end do   ! n -> boundary condition types 
@@ -190,7 +193,7 @@
         NFac = NFac+1 
       end if
   end do
-  write(*,*) 'Number of cell faces at interface: ', Nfac
+  write(*,*) '# Number of cell faces at interface: ', Nfac
 
   write(9,'(A33)') '(0 "Sides on material interface")'
   write(9,'(A7,Z9,Z9,A6)') '(13 (3 ', NtotFac+1, NtotFac+Nfac, ' 2 0)('
@@ -252,16 +255,17 @@
   write(9,'(A7,Z9,Z9,A6)') '(12 (1 ', 1, NCsub, ' 1 0)('
   do c=1,NC
     if(NewC(c) /= 0) then
-      if(CellN(c,0) == 8) then       ! hexahedra   
+      if(grid % cells(c) % n_nodes == 8) then       ! hexahedra   
         write(9, *) ' 4 ' 
-      else if(CellN(c,0) == 6) then  ! prism
+      else if(grid % cells(c) % n_nodes == 6) then  ! prism
         write(9, *) ' 6 '
-      else if(CellN(c,0) == 4) then  ! tetrahedra
+      else if(grid % cells(c) % n_nodes == 4) then  ! tetrahedra
         write(9, *) ' 2 '
-      else if(CellN(c,0) == 5) then  ! pyramid    
+      else if(grid % cells(c) % n_nodes == 5) then  ! pyramid    
         write(9, *) ' 5 '
       else
-        write(*,*) 'Unsupported cell type ', CellN(c,0), ' nodes.'
+        write(*,*) 'Unsupported cell type with ', &
+                    grid % cells(c) % n_nodes, ' nodes.'
         write(*,*) 'Exiting'
         stop 
       end if 

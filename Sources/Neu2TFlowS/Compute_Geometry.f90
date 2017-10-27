@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use gen_mod 
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !------------------------------------------------------------------------------!
@@ -18,7 +19,7 @@
   integer              :: c, c1, c2, n, s, ss, cc2, c_max, nnn, hh, mm
   integer              :: c11, c12, c21, c22, s1, s2, bou_cen
   integer              :: type_per, n_per, number_sides, dir, option
-  integer              :: wall_mark, rot_dir, dir_face
+  integer              :: wall_mark, rot_dir
   real                 :: xt(4), yt(4), zt(4), angle_face
   real                 :: xs2, ys2, zs2, x_a, y_a, z_a, x_b, y_b, z_b
   real                 :: x_c, y_c, z_c, Det
@@ -28,7 +29,7 @@
   real                 :: xc1, yc1, zc1, xc2, yc2, zc2 
   real                 :: max_dis, tot_vol, min_vol, max_vol
   real                 :: xmin, xmax, ymin, ymax, zmin, zmax 
-  real, allocatable    :: xnr(:), ynr(:), znr(:), xspr(:), yspr(:), zspr(:)
+  real, allocatable    :: xspr(:), yspr(:), zspr(:)
   real, allocatable    :: b_coor(:), phi_face(:)
   integer, allocatable :: b_face(:)
 !==============================================================================!
@@ -124,10 +125,13 @@
   allocate(volume(NC)); volume=0.0
 
   do c=1,NC
-    do n=1,CellN(c,0)
-      xc(c) = xc(c) + x_node(CellN(c,n))/(1.0*CellN(c,0))
-      yc(c) = yc(c) + y_node(CellN(c,n))/(1.0*CellN(c,0))
-      zc(c) = zc(c) + z_node(CellN(c,n))/(1.0*CellN(c,0))
+    do n=1,grid % cells(c) % n_nodes
+      xc(c) = xc(c) + grid % nodes(grid % cells(c) % n(n)) % x  &
+                    / (1.0*grid % cells(c) % n_nodes)
+      yc(c) = yc(c) + grid % nodes(grid % cells(c) % n(n)) % y  &
+                    / (1.0*grid % cells(c) % n_nodes)
+      zc(c) = zc(c) + grid % nodes(grid % cells(c) % n(n)) % z  &
+                    / (1.0*grid % cells(c) % n_nodes)
     end do
   end do
 
@@ -152,9 +156,9 @@
 
   do s=1,NS
     do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-      xt(n)=x_node(SideN(s,n))
-      yt(n)=y_node(SideN(s,n))
-      zt(n)=z_node(SideN(s,n))
+      xt(n)=grid % nodes(SideN(s,n)) % x
+      yt(n)=grid % nodes(SideN(s,n)) % y
+      zt(n)=grid % nodes(SideN(s,n)) % z
     end do                       
 
     ! Cell side components
@@ -286,10 +290,6 @@
   !   Phase I  ->  find the sides on periodic boundaries   !
   !                                                        !
   !--------------------------------------------------------!
-! write(*,*) 'Type 1 for fast but unreliable algorithm for periodic cells search.'
-! write(*,*) 'Type 2 for slow but reliable algorithm for periodic cells search.'
-! read(*,*) option
-
   option = 2
 
 2 n_per = 0 
@@ -356,24 +356,6 @@
       z_c = 0.0       
     end if        
 
-!   write(*,*) 
-!   write(*,*) '# Enter the coordinates of three points that define'
-!   write(*,*) '# periodic plane'
-!   write(*,*) 
-!   write(*,*) 'Point 1:'
-!   read(*,*) x_a, y_a, z_a  !angle 
-!   write(*,*) 
-!   write(*,*) 'Point 2:'
-!   read(*,*) x_b, y_b, z_b  !angle 
-!   write(*,*) 
-!   write(*,*) 'Point 3:'
-!   read(*,*) x_c, y_c, z_c  !angle 
-
-!   write(*,*) 
-!   write(*,*) 'Enter approximative distance between the periodic faces'
-!   read(*,*) per_max
-
-
     ab_i = x_b - x_a 
     ab_j = y_b - y_a 
     ab_k = z_b - z_a 
@@ -425,7 +407,6 @@
   ymax = -HUGE
   zmax = -HUGE
 
-
   b_coor=0.0
   b_face=0
 
@@ -472,7 +453,8 @@
       c2 = SideC(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
-          Det = (p_i*(xsp(s)) + p_j*(ysp(s)) + p_k*(zsp(s)))/sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
+          Det = (p_i*(xsp(s)) + p_j*(ysp(s)) + p_k*(zsp(s)))  &
+              / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
           per_min = min(per_min, Det)          
           per_max = max(per_max, Det)          
         end if
@@ -803,8 +785,8 @@
   write(*,*) '# Cell volumes calculated !'
 
   if(min_vol < 0.0) then
-    write(*,*) '# Negative volume occured! Another, slower, algoritham should be run !'
-    write(*,*) '# Execution will be halt now! '
+    write(*,*) '# Negative volume occured! Slower, algoritham should be run !'
+    write(*,*) '# Execution will halt now! '
     stop
   end if 
  
@@ -812,34 +794,34 @@
   deallocate(b_face)
  
 
-    !------------------------------------------!
-    !     Calculate delta                      !
-    !------------------------------------------!
-    !     => depends on: x_node,y_node,z_node  !
-    !     <= gives:      delta                 !
-    !------------------------------------------!
-    allocate(delta(-NbC:NC));  delta=0.0
+  !------------------------------------------!
+  !     Calculate delta                      !
+  !------------------------------------------!
+  !     => depends on: x_node,y_node,z_node  !
+  !     <= gives:      delta                 !
+  !------------------------------------------!
+  allocate(delta(-NbC:NC));  delta=0.0
 
-    do c=1,NC
-      delta(c)=0.0
-      xmin = +HUGE
-      ymin = +HUGE
-      zmin = +HUGE
-      xmax = -HUGE
-      ymax = -HUGE
-      zmax = -HUGE
-      do n=1,CellN(c,0)
-        xmin = min(xmin, x_node(CellN(c,n)))
-        ymin = min(ymin, y_node(CellN(c,n)))
-        zmin = min(zmin, z_node(CellN(c,n)))
-        xmax = max(xmax, x_node(CellN(c,n)))
-        ymax = max(ymax, y_node(CellN(c,n)))
-        zmax = max(zmax, z_node(CellN(c,n)))
-      end do
-      delta(c) = xmax-xmin
-      delta(c) = max(delta(c), (ymax-ymin))
-      delta(c) = max(delta(c), (zmax-zmin))
+  do c=1,NC
+    delta(c)=0.0
+    xmin = +HUGE
+    ymin = +HUGE
+    zmin = +HUGE
+    xmax = -HUGE
+    ymax = -HUGE
+    zmax = -HUGE
+    do n=1,grid % cells(c) % n_nodes
+      xmin = min(xmin, grid % nodes(grid % cells(c) % n(n)) % x)
+      ymin = min(ymin, grid % nodes(grid % cells(c) % n(n)) % y)
+      zmin = min(zmin, grid % nodes(grid % cells(c) % n(n)) % z)
+      xmax = max(xmax, grid % nodes(grid % cells(c) % n(n)) % x)
+      ymax = max(ymax, grid % nodes(grid % cells(c) % n(n)) % y)
+      zmax = max(zmax, grid % nodes(grid % cells(c) % n(n)) % z)
     end do
+    delta(c) = xmax-xmin
+    delta(c) = max(delta(c), (ymax-ymin))
+    delta(c) = max(delta(c), (zmax-zmin))
+  end do
 
   !------------------------------------------------------------------!
   !   Calculate distance from the cell center to the nearest wall.   !
@@ -879,7 +861,6 @@
     write(*,*) '# Distance to the wall calculated !'
   end if
 
-
   !------------------------------------------------------------!
   !   Calculate the interpolation factors for the cell sides   !
   !------------------------------------------------------------!
@@ -889,28 +870,27 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
 
-!----- first cell
+    ! First cell
     xc1  = xc(c1)
     yc1  = yc(c1)
     zc1  = zc(c1)
     dsc1 = Distance(xc1, yc1, zc1, xsp(s), ysp(s), zsp(s))
 
-!----- second cell (pls. check if xsi=xc on the boundary)
+    ! Second cell (pls. check if xsi=xc on the boundary)
     xc2  = xc(c2)+Dx(s)
     yc2  = yc(c2)+Dy(s)
     zc2  = zc(c2)+Dz(s)
     dsc2 = Distance(xc2, yc2, zc2, xsp(s), ysp(s), zsp(s))
 
-!----- interpolation factor
+    ! Interpolation factor
     f(s) = dsc2 / (dsc1+dsc2)   ! not checked
   end do 
 
   write(*,*) '# Interpolation factors calculated !'
 
-
   return
 
-3 write(*,*) '# Horror ! Negative volume between cells ', c1, ' and ', c2
+  write(*,*) '# Horror ! Negative volume between cells ', c1, ' and ', c2
   stop
 
   end subroutine Compute_Geometry

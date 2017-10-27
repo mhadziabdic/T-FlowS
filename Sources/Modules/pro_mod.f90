@@ -8,6 +8,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 module pro_mod
 
+  use allp_mod, only: YES, NO
   use allt_mod
 
   implicit none
@@ -241,7 +242,7 @@ module pro_mod
   integer :: BACKSTEP, AHILL, RB_CONV
   integer :: ROUGH, PER_BC 
   integer :: SGDH, GGDH, BS
-  integer :: SHAKE(100),    BLEND(100),BLEND_TUR(100), BLEND_TEM(100), YES,      NO
+  integer :: SHAKE(100),    BLEND(100),BLEND_TUR(100), BLEND_TEM(100)
   integer :: SHAKE_PER(100),SHAKE_INT(100)
   integer :: PREC 
   integer :: CDS,      QUICK,    LUDS,     MINMOD,   SMART,    AVL_SMART, &

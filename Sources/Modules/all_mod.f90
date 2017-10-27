@@ -35,7 +35,6 @@ module all_mod
   integer   :: NC, NS                    ! num. of nodes and cells 
   integer   :: NbC
   integer   :: MNBS
-  integer   :: NRL
   integer   :: n_copy                    ! number of copy cells/faces
   integer   :: Nmat                      ! number of materials
   logical   :: Mater(1024)               ! is the material present ?

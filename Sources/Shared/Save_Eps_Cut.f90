@@ -1,10 +1,11 @@
 !==============================================================================!
-  subroutine Save_Eps_Cut(xg,yg,zg,sidegDx,sidegDy,dir)
+  subroutine Save_Eps_Cut(sidegDx,sidegDy,dir)
 !------------------------------------------------------------------------------!
 ! Writes: Grid in encapsulated postscript format.                              !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -12,18 +13,21 @@
   character :: dir
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c1, c2, count, lw
-  character(len=80) :: name_eps
+  character(len=80) :: name_eps, answer
   real              :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin, z0, fc
   real              :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,xin(4),yin(4) 
 !==============================================================================!
 
-  write(*,'(A39)')        ' #============================================'
+  write(*,'(A39)')        ' #==============================================='
   write(*,'(A10,A1,A28)') ' # Making ', dir, '.eps cut through the domain'
-  write(*,'(A39)')        ' #--------------------------------------------'
+  write(*,'(A39)')        ' #-----------------------------------------------'
 
-  write(*,*) '# Enter the ',dir,' coordinate for cutting or type 0 to exit: '
+  write(*,*) '# Enter the ',dir,' coordinate for cutting or type skip to exit: '
   call ReadC(5,inp,tn,ts,te)
-  read(inp, *) z0
+  read(inp, *) answer
+  call To_Upper_Case(answer)
+  if(answer == 'SKIP') return  
+  read(answer, *) z0
   if(z0 == 0) return
   write(*,*) '# Z0 = ', z0
 
@@ -37,12 +41,28 @@
   name_eps(len_trim(name)+2:len_trim(name)+2) = dir
   write(*, *) '# Now creating the file:', name_eps
 
-  xmax=maxval(xg(1:NN)) 
-  ymax=maxval(yg(1:NN)) 
-  zmax=maxval(zg(1:NN)) 
-  xmin=minval(xg(1:NN)) 
-  ymin=minval(yg(1:NN)) 
-  zmin=minval(zg(1:NN)) 
+  if(dir == 'x') then
+    xmax=maxval(grid % nodes(1:NN) % y)
+    ymax=maxval(grid % nodes(1:NN) % z)
+    zmax=maxval(grid % nodes(1:NN) % x)
+    xmin=minval(grid % nodes(1:NN) % y)
+    ymin=minval(grid % nodes(1:NN) % z)
+    zmin=minval(grid % nodes(1:NN) % x)
+  else if(dir == 'y') then
+    xmax=maxval(grid % nodes(1:NN) % z)
+    ymax=maxval(grid % nodes(1:NN) % x)
+    zmax=maxval(grid % nodes(1:NN) % y)
+    xmin=minval(grid % nodes(1:NN) % z)
+    ymin=minval(grid % nodes(1:NN) % x)
+    zmin=minval(grid % nodes(1:NN) % y)
+  else if(dir == 'z') then
+    xmax=maxval(grid % nodes(1:NN) % x)
+    ymax=maxval(grid % nodes(1:NN) % y)
+    zmax=maxval(grid % nodes(1:NN) % z)
+    xmin=minval(grid % nodes(1:NN) % x)
+    ymin=minval(grid % nodes(1:NN) % y)
+    zmin=minval(grid % nodes(1:NN) % z)
+  end if
 
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin))
   sclp = 0.005 

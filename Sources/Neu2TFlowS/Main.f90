@@ -7,7 +7,6 @@
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, n, s
-  integer :: i, typ, cnt
 !==============================================================================!
 
   call Logo
@@ -23,7 +22,7 @@
   read(*,*) name
 
   call Load_Neu
-  call Mesh_Topology
+  call Grid_Topology
   call Find_Sides
   call Compute_Geometry
   
@@ -42,7 +41,7 @@
   ! Count all materials
   call Count_Materials
 
-  call Save_Gmv_Mesh(0, NN, NC, NS, NbC)
+  call Save_Gmv_Grid(0, NN, NC, NS, NbC)
   call Save_Cns_Geo(0, NC, NS, NBC, 0, 0) 
   call Save_Gmv_Links(0, NN, NC, NS, NbC, 0)
 
@@ -56,9 +55,9 @@
 
   ! Make .eps figures
   write(*,*) '# Making three .eps cuts through the domain.'
-  call Save_Eps_Cut(y_node, z_node, x_node, Dy, Dz, 'x')
-  call Save_Eps_Cut(z_node, x_node, y_node, Dz, Dx, 'y')
-  call Save_Eps_Cut(x_node, y_node, z_node, Dx, Dy, 'z')
+  call Save_Eps_Cut(Dy, Dz, 'x')
+  call Save_Eps_Cut(Dz, Dx, 'y')
+  call Save_Eps_Cut(Dx, Dy, 'z')
  
   write(*,*) '# Making a 3D shaded .eps figure of the domain.'
   call Save_Eps_Whole(NSsh)   ! Draw the domain with shadows

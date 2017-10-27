@@ -2,6 +2,11 @@ noinst_LIBRARIES = libModules.a
 
 libModules_a_SOURCES = 	\
   Block_Mod.f90		\
+  Point_Mod.f90		\
+  Line_Mod.f90		\
+  Domain_Mod.f90	\
+  Cell_Mod.f90		\
+  Grid_Mod.f90		\
   allp_mod.f90		\
   allt_mod.f90		\
   all_mod.f90		\

@@ -4,9 +4,6 @@
   implicit none
 !======================================================================!
 
-!---- number of boundary sections
-  integer NBS
-
 !---- boundary conditions type
   integer,allocatable :: BCtype(:,:)  ! Gambit's
 

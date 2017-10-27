@@ -8,10 +8,10 @@
 !                                                                              !
 !   Situations like the on depicted bellow are now working.                    !
 !                                                                              !
-!   +-------+   +_                                                             ! 
-!   |       |   | ~-_                                                          ! 
+!   +-------+   +_                                                             !
+!   |       |   | ~-_                                                          !
 !   |   o---|   |    ~-_                                                       !
-!   |       |   |---o   +                                                      ! 
+!   |       |   |---o   +                                                      !
 !   +-------+   +_      |                                                      !
 !                 ~-_   |                                                      !
 !                    ~-_|                                                      !
@@ -24,6 +24,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod 
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !----------------------------------[Calling]-----------------------------------!
@@ -75,8 +76,8 @@
             yc_12 = 0.0
             zc_12 = 0.0
             do i=1,SideN(s1,0)
-              yc_12 = yc_12 + y_node(SideN(s1,i))
-              zc_12 = zc_12 + z_node(SideN(s1,i))
+              yc_12 = yc_12 + grid % nodes(SideN(s1,i)) % y
+              zc_12 = zc_12 + grid % nodes(SideN(s1,i)) % z
             end do
             yc_12 = yc_12 / (real(SideN(s1,0)))
             zc_12 = zc_12 / (real(SideN(s1,0)))
@@ -84,8 +85,8 @@
             yc_22 = 0.0
             zc_22 = 0.0
             do i=1,SideN(s2,0)
-              yc_22 = yc_22 + y_node(SideN(s2,i))
-              zc_22 = zc_22 + z_node(SideN(s2,i))
+              yc_22 = yc_22 + grid % nodes(SideN(s2,i)) % y
+              zc_22 = zc_22 + grid % nodes(SideN(s2,i)) % z
             end do
             yc_22 = yc_22 / (real(SideN(s2,0)))
             zc_22 = zc_22 / (real(SideN(s2,0)))
@@ -125,8 +126,8 @@
             xc_12 = 0.0
             zc_12 = 0.0
             do i=1,SideN(s1,0)
-              xc_12 = xc_12 + x_node(SideN(s1,i))
-              zc_12 = zc_12 + z_node(SideN(s1,i))
+              xc_12 = xc_12 + grid % nodes(SideN(s1,i)) % x
+              zc_12 = zc_12 + grid % nodes(SideN(s1,i)) % z
             end do
             xc_12 = xc_12 / (real(SideN(s1,0)))
             zc_12 = zc_12 / (real(SideN(s1,0)))
@@ -134,8 +135,8 @@
             xc_22 = 0.0
             zc_22 = 0.0
             do i=1,SideN(s2,0)
-              xc_22 = xc_22 + x_node(SideN(s2,i))
-              zc_22 = zc_22 + z_node(SideN(s2,i))
+              xc_22 = xc_22 + grid % nodes(SideN(s2,i)) % x
+              zc_22 = zc_22 + grid % nodes(SideN(s2,i)) % z
             end do
             xc_22 = xc_22 / (real(SideN(s2,0)))
             zc_22 = zc_22 / (real(SideN(s2,0)))
@@ -175,8 +176,8 @@
             yc_12 = 0.0
             xc_12 = 0.0
             do i=1,SideN(s1,0)
-              yc_12 = yc_12 + y_node(SideN(s1,i))
-              xc_12 = xc_12 + x_node(SideN(s1,i))
+              yc_12 = yc_12 + grid % nodes(SideN(s1,i)) % y
+              xc_12 = xc_12 + grid % nodes(SideN(s1,i)) % x
             end do
             yc_12 = yc_12 / (real(SideN(s1,0)))
             xc_12 = xc_12 / (real(SideN(s1,0)))
@@ -184,8 +185,8 @@
             yc_22 = 0.0
             xc_22 = 0.0
             do i=1,SideN(s2,0)
-              yc_22 = yc_22 + y_node(SideN(s2,i))
-              xc_22 = xc_22 + x_node(SideN(s2,i))
+              yc_22 = yc_22 + grid % nodes(SideN(s2,i)) % y
+              xc_22 = xc_22 + grid % nodes(SideN(s2,i)) % x
             end do
             yc_22 = yc_22 / (real(SideN(s2,0)))
             xc_22 = xc_22 / (real(SideN(s2,0)))

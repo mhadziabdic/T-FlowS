@@ -8,12 +8,13 @@
   use gen_mod 
   use neu_mod 
   use par_mod 
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
   character(len=300)  :: Line
   character(len=130)  :: name_in
-  integer             :: i, j, dum1, dum2, dum3
+  integer             :: i, j, n_blocks, n_bnd_sect, dum1, dum2
   integer,allocatable :: temp(:)
   integer             :: c, dir, type
 !==============================================================================!
@@ -33,20 +34,20 @@
   call Read_Line(9,Line,tn,ts,te)
   read(Line(ts(1):te(1)),*) NN  
   read(Line(ts(2):te(2)),*) NC
-  read(Line(ts(3):te(3)),*) NBloc
-  read(Line(ts(4):te(4)),*) NBS
+  read(Line(ts(3):te(3)),*) n_blocks
+  read(Line(ts(4):te(4)),*) n_bnd_sect
 
-  write(*,*) '# Total number of nodes:  ', NN
-  write(*,*) '# Total number of cells:  ', NC
-  write(*,*) '# Total number of blocks: ', NBloc
-  write(*,*) '# Total number of boundary sections: ', NBS
+  write(*,*) '# Total number of nodes:  ',            NN
+  write(*,*) '# Total number of cells:  ',            NC
+  write(*,*) '# Total number of blocks: ',            n_blocks
+  write(*,*) '# Total number of boundary sections: ', n_bnd_sect
 
   ! Count the boundary cells
   NbC = 0
   do 
     call Read_Line(9,Line,tn,ts,te)
     if( Line(ts(1):te(1)) == 'BOUNDARY' ) then
-      do j=1,NBS
+      do j=1,n_bnd_sect
         if(j>1) call Read_Line(9,Line,tn,ts,te) ! BOUNDARY CONDITIONS
         call Read_Line(9,Line,tn,ts,te)
         read(Line(ts(3):te(3)),*) dum1  
@@ -69,14 +70,13 @@
   end do 
 
   ! Allocate memory =--> carefull, there is no checking!
-  allocate(x_node(NN)); x_node=0
-  allocate(y_node(NN)); y_node=0
-  allocate(z_node(NN)); z_node=0
+  call Allocate_Grid_Nodes(grid, NN) 
+  call Allocate_Grid_Cells(grid, NbC, NC) 
 
   allocate(material(-NbC:NC));     material=0 
   allocate(BCtype(NC,6));          BCtype=0
   allocate(BCmark(-NbC-1:-1));     BCmark=0
-  allocate(CellN(-NbC-1:NC,-1:8)); CellN=0
+! WARNING:  allocate(CellN(-NbC-1:NC,-1:8)); CellN=0
   allocate(SideC(0:2,NC*5));       SideC=0    
   allocate(SideN(NC*5,0:4));       SideN=0
   n_copy = 1000000 
@@ -100,9 +100,9 @@
   call Read_Line(9,Line,tn,ts,te)          ! NODAL COORDINATES
   do i=1,NN
     call Read_Line(9,Line,tn,ts,te)
-    read(Line(ts(2):te(2)),*) x_node(i)  
-    read(Line(ts(3):te(3)),*) y_node(i)
-    read(Line(ts(4):te(4)),*) z_node(i) 
+    read(Line(ts(2):te(2)),*) grid % nodes(i) % x 
+    read(Line(ts(3):te(3)),*) grid % nodes(i) % y
+    read(Line(ts(4):te(4)),*) grid % nodes(i) % z
   end do
   call Read_Line(9,Line,tn,ts,te)          ! ENDOFSECTION
 
@@ -112,12 +112,13 @@
   call Read_Line(9,Line,tn,ts,te)          ! ELEMENTS/CELLS
   do i=1,NC
     read(9,'(I8,1X,I2,1X,I2,1X,7I8:/(15X,7I8:))') dum1, dum2, &
-           CellN(i,0), (CellN(i,j), j=1,CellN(i,0))
+           grid % cells(i) % n_nodes,                         &
+          (grid % cells(i) % n(j), j = 1,grid % cells(i) % n_nodes)
   end do
   call Read_Line(9,Line,tn,ts,te)          ! ENDOFSECTION
 
   ! Read block data
-  do j=1,NBloc
+  do j=1,n_blocks
     call Read_Line(9,Line,tn,ts,te)        ! ELEMENT GROUP
     call Read_Line(9,Line,tn,ts,te)
     read(Line(ts(4):te(4)),'(I10)') dum1  
@@ -133,8 +134,8 @@
   !-------------------------!
   !   Boundary conditions   !
   !-------------------------!
-  write(*,*) '# NBS=', NBS 
-  do j=1,NBS
+  write(*,*) '# n_bnd_sect=', n_bnd_sect 
+  do j=1,n_bnd_sect
     call Read_Line(9,Line,tn,ts,te)        ! BOUNDARY CONDITIONS
     call Read_Line(9,Line,tn,ts,te)
     if( Line(ts(1):te(1)) == 'one')      type =  1

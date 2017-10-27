@@ -1,28 +1,24 @@
-!======================================================================!
+!==============================================================================!
   subroutine Probe_1D_Nodes_Gen
-!----------------------------------------------------------------------!
-! This program finds the coordinate of nodes in non-homogeneous  
-! direction and write them in file name.1D
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
+!   This subroutine finds the coordinate of nodes in non-homogeneous           !
+!   direction and write them in file name.1D                                   !
+!------------------------------------------------------------------------------!
   use all_mod
   use gen_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   logical :: isit
-!------------------------------[Calling]-------------------------------! 
-  interface
-    logical function Approx(A,B,tol)
-      real           :: A,B
-      real, optional :: tol
-    end function Approx
-  end interface
-!-------------------------------[Locals]-------------------------------!
-  integer   :: Nprob, p, c, n
-  real      :: N_p(10000)
-  character :: namPro*80
-  character :: answer*80
-!======================================================================!
+!----------------------------------[Calling]-----------------------------------! 
+  include "Approx.int"
+!-----------------------------------[Locals]-----------------------------------!
+  integer           :: n_prob, p, c, n
+  real              :: n_p(10000)
+  character(len=80) :: name_prob
+  character(len=80) :: answer
+!==============================================================================!
 
   write(*,*) '#==========================================='
   write(*,*) '# Creating 1D file with the node '
@@ -35,38 +31,48 @@
   call To_Upper_Case(answer)
   if(answer=='SKIP') return
  
-  NProb = 0
-  N_p   = 0.0
+  n_prob = 0
+  n_p    = 0.0
 
+  !-----------------------------!
+  !   Browse through all nodes  !
+  !-----------------------------!
   do n =  1, NN 
-!---- try to find the cell among the probes
-    do p=1,Nprob
-        if(answer == 'X') then
-          if( Approx(x_node(n), N_p(p)) ) go to 1
-        else if(answer == 'Y') then
-          if( Approx(y_node(n), N_p(p)) ) go to 1
-        else if(answer == 'Z') then
-          if( Approx(z_node(n), N_p(p)) ) go to 1
-        else if(answer == 'RX') then
-          if( Approx( (z_node(n)**2.0 + y_node(n)**2.0)**0.5, N_p(p)) ) go to 1
-        else if(answer == 'RY') then
-          if( Approx( (x_node(n)**2.0 + z_node(n)**2.0)**0.5, N_p(p)) ) go to 1
-        else if(answer == 'RZ') then
-          if( Approx( (x_node(n)**2.0 + y_node(n)**2.0)**0.5, N_p(p)) ) go to 1
-        end if
+
+    ! Try to find the cell among the probes
+    do p=1,n_prob
+      if(answer == 'X') then
+        if( Approx(grid % nodes(n) % x, n_p(p)) ) go to 1
+      else if(answer == 'Y') then
+        if( Approx(grid % nodes(n) % y, n_p(p)) ) go to 1
+      else if(answer == 'Z') then
+        if( Approx(grid % nodes(n) % z, n_p(p)) ) go to 1
+      else if(answer == 'RX') then
+        if( Approx( (grid % nodes(n) % z**2 +   &
+                     grid % nodes(n) % y**2)**.5, n_p(p)) ) go to 1
+      else if(answer == 'RY') then
+        if( Approx( (grid % nodes(n) % x**2 +   &
+                     grid % nodes(n) % z**2)**.5, n_p(p)) ) go to 1
+      else if(answer == 'RZ') then
+        if( Approx( (grid % nodes(n) % x**2 +   &
+                     grid % nodes(n) % y**2)**.5, n_p(p)) ) go to 1
+      end if
     end do 
   
-!---- couldn't find a cell among the probes, add a new one
-    Nprob = Nprob+1
-    if(answer=='X') N_p(Nprob)=x_node(n)
-    if(answer=='Y') N_p(Nprob)=y_node(n)
-    if(answer=='Z') N_p(Nprob)=z_node(n)
+    ! Couldn't find a cell among the probes, add a new one
+    n_prob = n_prob+1
+    if(answer=='X') n_p(n_prob)= grid % nodes(n) % x
+    if(answer=='Y') n_p(n_prob)= grid % nodes(n) % y
+    if(answer=='Z') n_p(n_prob)= grid % nodes(n) % z
 
-    if(answer=='RX') N_p(Nprob)=(z_node(n)**2.0 + y_node(n)**2.0)**0.5
-    if(answer=='RY') N_p(Nprob)=(x_node(n)**2.0 + z_node(n)**2.0)**0.5
-    if(answer=='RZ') N_p(Nprob)=(x_node(n)*x_node(n) + y_node(n)*y_node(n))**0.5
+    if(answer=='RX') n_p(n_prob)= (grid % nodes(n) % z**2.0 +      &
+                                   grid % nodes(n) % y**2.0)**0.5
+    if(answer=='RY') n_p(n_prob)= (grid % nodes(n) % x**2.0 +      &
+                                   grid % nodes(n) % z**2.0)**0.5
+    if(answer=='RZ') n_p(n_prob)= (grid % nodes(n) % x**2.0 +      &
+                                   grid % nodes(n) % y**2.0)**0.5
 
-    if(Nprob == 10000) then
+    if(n_prob == 10000) then
       write(*,*) '# Probe 1D: Not a 1D (channel flow) problem.'
       isit = .false.
       return
@@ -78,20 +84,20 @@
   !--------------------!
   !   Create 1D file   !
   !--------------------!
-  namPro = name
-  namPro(len_trim(name)+1:len_trim(name)+3) = '.1D'
-  write(6, *) 'Now creating the file:', namPro
-  open(9, file=namPro)
+  name_prob = name
+  name_prob(len_trim(name)+1:len_trim(name)+3) = '.1D'
+  write(6, *) 'Now creating the file:', name_prob
+  open(9, file=name_prob)
   ! Write the number of probes 
-  write(9,'(I8)') Nprob
+  write(9,'(I8)') n_prob
 
-!  call SSORT (N_p, 1, Nprob*3, 1)
-!  call  RISort(N_p, Nprob, Nprob*6,2)
-  call SORT2(N_p, Nprob*2, Nprob)
+!  call SSORT (n_p, 1, n_prob*3, 1)
+!  call  RISort(n_p, n_prob, n_prob*6,2)
+  call SORT2(n_p, n_prob*2, n_prob)
 
   ! Write the probe coordinates out
-  do p=1, Nprob
-    write(9,'(I8,1E17.8)') p, N_p(p)
+  do p=1, n_prob
+    write(9,'(I8,1E17.8)') p, n_p(p)
   end do
 
   close(9)

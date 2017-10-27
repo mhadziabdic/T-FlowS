@@ -6,52 +6,58 @@
   use all_mod 
   use neu_mod 
   use gen_mod 
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !------------------------------------------------------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
-  integer             :: c, c1, c2, n1, n2, n3, n4
+  integer             :: c, c1, c2, n1, n2, n3, f_nod(4), n_f_nod
   integer             :: Nmatch, j, MatchNodes(-1:8) 
-  integer             :: i1, i2, Nuber
-  integer             :: Broj
+  integer             :: i1, i2, k, Nuber
   integer             :: fn(6,4)
-  real   ,allocatable :: SideCoor(:) 
-  integer,allocatable :: SideCell(:), Starts(:), Ends(:) 
-  real                :: VeryBig
+  real   ,allocatable :: face_coor(:) 
+  integer,allocatable :: face_cell(:), Starts(:), Ends(:) 
+  real                :: very_big
 !==============================================================================!
 
-  VeryBig = max(NN,NC)
+  very_big = max(NN,NC)
 
-  allocate(SideCoor(NC*6)); SideCoor = NN*1E+30
-  allocate(SideCell(NC*6)); SideCell = 0    
+  allocate(face_coor(NC*6)); face_coor = NN*1E+30
+  allocate(face_cell(NC*6)); face_cell = 0    
   allocate(Starts(NC*6)); Starts = 0    
   allocate(Ends(NC*6));   Ends = 0    
-  allocate(CellC(NC,6));  CellC = 0
+! allocate(CellC(NC,6));  CellC = 0
 
   !---------------------------------------------------!
   !   Fill the generic coordinates with some values   !
   !---------------------------------------------------!
   do c=1,NC
-    if(CellN(c,0) == 4) fn = f4n
-    if(CellN(c,0) == 5) fn = f5n
-    if(CellN(c,0) == 6) fn = f6n
-    if(CellN(c,0) == 8) fn = f8n 
+    if(grid % cells(c) % n_nodes == 4) fn = f4n
+    if(grid % cells(c) % n_nodes == 5) fn = f5n
+    if(grid % cells(c) % n_nodes == 6) fn = f6n
+    if(grid % cells(c) % n_nodes == 8) fn = f8n 
     do j=1,6
       if(BCtype(c,j) == 0) then 
-        n1 = CellN(c, fn(j,1))
-        n2 = CellN(c, fn(j,2))
-        n3 = CellN(c, fn(j,3))
-        n4 = CellN(c, fn(j,4))
-        if( max(n1,n2,n3,n4)  >  0 ) then
-          if(n4 > 0) then
-            SideCoor((c-1)*6+j) =  VeryBig*(max(n1 , n2 , n3 , n4))   &
-                                +           min(n1 , n2,  n3 , n4)
+
+        n_f_nod = 0
+        f_nod = -1
+        do k=1,4
+          if(fn(j,k) > 0) then
+            f_nod(k) = grid % cells(c) % n( fn(j,k))
+            n_f_nod = n_f_nod + 1
+          end if
+        end do
+
+        if( n_f_nod >  0 ) then
+          if(f_nod(4) > 0) then
+            face_coor((c-1)*6+j) =  very_big*(max(f_nod(1), f_nod(2), f_nod(3), f_nod(4)))   &
+                                 +            min(f_nod(1), f_nod(2), f_nod(3), f_nod(4))
           else
-            SideCoor((c-1)*6+j) =  VeryBig*(max(n1 , n2 , n3))   &
-                                +           min(n1 , n2,  n3)
+            face_coor((c-1)*6+j) =  very_big*(max(f_nod(1), f_nod(2), f_nod(3)))   &
+                                 +            min(f_nod(1), f_nod(2), f_nod(3))
            end if
-          SideCell((c-1)*6+j) = c 
+          face_cell((c-1)*6+j) = c 
         end if 
       end if
     end do
@@ -60,7 +66,7 @@
   !--------------------------------------------------!
   !   Sort the cell faces according to coordinares   !
   !--------------------------------------------------!
-  call Sort_Real_By_Index(SideCoor,SideCell,NC*6,2)
+  call Sort_Real_By_Index(face_coor,face_cell,NC*6,2)
 
   !------------------------------------------------!
   !   Anotate cell faces with same coordinates     !
@@ -70,7 +76,7 @@
   Nuber = 1
   Starts(1) = 1
   do c=2,NC*6
-    if( SideCoor(c) /= SideCoor(c-1) ) then
+    if( face_coor(c) /= face_coor(c-1) ) then
       Nuber = Nuber + 1
       Starts(Nuber) = c
       Ends(Nuber-1) = c-1
@@ -86,8 +92,8 @@
     if(Starts(n3) /= Ends(n3)) then
       do i1=Starts(n3),Ends(n3)
         do i2=i1+1,Ends(n3)
-          c1 = min(SideCell(i1),SideCell(i2))
-          c2 = max(SideCell(i1),SideCell(i2))
+          c1 = min(face_cell(i1),face_cell(i2))
+          c2 = max(face_cell(i1),face_cell(i2))
           if(c1 /= c2) then
 
             !------------------------------!
@@ -95,9 +101,9 @@
             !------------------------------!
             Nmatch     = 0
             MatchNodes = 0 
-            do n1=1,CellN(c1,0)
-              do n2=1,CellN(c2,0)
-                if(CellN(c1,n1)==CellN(c2,n2)) then
+            do n1=1,grid % cells(c1) % n_nodes
+              do n2=1,grid % cells(c2) % n_nodes
+                if(grid % cells(c1) % n(n1)==grid % cells(c2) % n(n2)) then
                   Nmatch = Nmatch + 1 
                   MatchNodes(n1) = 1
                 end if
@@ -109,12 +115,12 @@
             !     c1        c2      !
             !-----------------------!
             if(Nmatch > 2) then 
-              if(CellN(c1,0) == 4) fn = f4n
-              if(CellN(c1,0) == 5) fn = f5n
-              if(CellN(c1,0) == 6) fn = f6n
-              if(CellN(c1,0) == 8) fn = f8n
+              if(grid % cells(c1) % n_nodes == 4) fn = f4n
+              if(grid % cells(c1) % n_nodes == 5) fn = f5n
+              if(grid % cells(c1) % n_nodes == 6) fn = f6n
+              if(grid % cells(c1) % n_nodes == 8) fn = f8n
               do j=1,6
-                if(   CellC(c1,j) == 0  .and.        & ! not set yet         
+                if(   grid % cells(c1) % c(j) == 0  .and.   & ! not set yet
                     ( max( MatchNodes(fn(j,1)),0 ) + &
                       max( MatchNodes(fn(j,2)),0 ) + &
                       max( MatchNodes(fn(j,3)),0 ) + &
@@ -123,11 +129,12 @@
                   SideC(1,NS) = c1
                   SideC(2,NS) = c2
                   SideN(NS,0) = Nmatch 
-                  SideN(NS,1) = CellN(c1, fn(j,1))                
-                  SideN(NS,2) = CellN(c1, fn(j,2))                
-                  SideN(NS,3) = CellN(c1, fn(j,3))
-                  SideN(NS,4) = CellN(c1, fn(j,4))
-                  CellC(c1,j) = 1 !  -> means: set
+                  do k=1,4
+                    if(fn(j,k) > 0) then
+                      SideN(NS,k) = grid % cells(c1) % n(fn(j,k))                
+                    end if
+                  end do
+                  grid % cells(c1) % c(j) = 1 !  -> means: set
                 end if
               end do
             end if   ! Nmatch /= 2

@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -14,15 +15,16 @@
   integer :: i, j
 !==============================================================================!
 
-  Which_Node=0
+  Which_Node = 0
+
   if (c  < 0) then 
-    write(*,*) 'Which node: Cell non existent !'
+    write(*,*) '# Which node: Cell non existent !'
     return
   endif
 
   ! Try the node only 
   do i=1,8
-    if( CellN(c,i)  ==  n) then
+    if( grid % cells(c) % n(i)  ==  n) then
       goto 1
     end if 
   end do     
@@ -30,16 +32,18 @@
   ! If it failed try his twins also
   do j=1,TwinN(n,0)
     do i=1,8
-      if( CellN(c,i)  ==  TwinN(n,j)) then
+      if( grid % cells(c) % n(i)  ==  TwinN(n,j)) then
         goto 1
       end if 
     end do     
   end do
 
   Which_Node = 0
-  write(*,*) 'Which node: Trouble, node not found !'
-  write(*,*) 'x, y, z = ', x_node(n), y_node(n), z_node(n)
-  write(*,*) 'cell    = ', c, level(c)
+  write(*,*) '# Which node: Trouble, node not found !'
+  write(*,*) '# x, y, z = ', grid % nodes(n) % x,  &
+                             grid % nodes(n) % y,  &
+                             grid % nodes(n) % z
+  write(*,*) '# cell    = ', c, level(c)
   return
 
 1 Which_Node = i

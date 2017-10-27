@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -21,7 +22,10 @@
   integer :: nF1, nF2, nF3, nF4, nF5, nF6, n0
   integer :: del   ! number of deleted nodes 
   integer :: nA, nA0, nA1, nA2, nB, nB0, nB1, nB2
-  integer :: NN2, NN4, NN8
+  integer :: nn_2, nn_4, nn_8
+  integer, allocatable :: node_n2(:,:)    
+  integer, allocatable :: node_n4(:,:)  
+  integer, allocatable :: node_n8(:,:)    
 !==============================================================================!
 !                                                                              !
 !                               c6      c3                                     !
@@ -49,9 +53,13 @@
 
   n_cells_old = NC 
   n_nodes_old = NN
-  NN2 = 0 
-  NN4 = 0
-  NN8 = 0
+  nn_2 = 0 
+  nn_4 = 0
+  nn_8 = 0
+
+  allocate (node_n2(MAXN,0:2));   node_n2=0 
+  allocate (node_n4(MAXN,0:4));   node_n4=0
+  allocate (node_n8(MAXN,0:8));   node_n8=0
 
   !---------------------!
   !                     !
@@ -59,7 +67,7 @@
   !                     !
   !---------------------!
   do c=1,n_cells_old
-    if(CelMar(c)  ==  -1) then 
+    if(CelMar(c) == -1) then 
       NC = NC + 8
       CelMar(c) = NC   ! now points to cr8
     end if
@@ -67,28 +75,28 @@
 
   do c=1,n_cells_old
 
-    c1=CellC(c,1)
-    c2=CellC(c,2)
-    c3=CellC(c,3)
-    c4=CellC(c,4)
-    c5=CellC(c,5)
-    c6=CellC(c,6)
+    c1 = grid % cells(c) % c(1)
+    c2 = grid % cells(c) % c(2)
+    c3 = grid % cells(c) % c(3)
+    c4 = grid % cells(c) % c(4)
+    c5 = grid % cells(c) % c(5)
+    c6 = grid % cells(c) % c(6)
 
-    n1=CellN(c,1)
-    n2=CellN(c,2)
-    n3=CellN(c,3)
-    n4=CellN(c,4)
-    n5=CellN(c,5)
-    n6=CellN(c,6)
-    n7=CellN(c,7)
-    n8=CellN(c,8)
+    n1 = grid % cells(c) % n(1)
+    n2 = grid % cells(c) % n(2)
+    n3 = grid % cells(c) % n(3)
+    n4 = grid % cells(c) % n(4)
+    n5 = grid % cells(c) % n(5)
+    n6 = grid % cells(c) % n(6)
+    n7 = grid % cells(c) % n(7)
+    n8 = grid % cells(c) % n(8)
 
     !-------------------!
     !                   !
     !   Refined cells   !
     !                   !
     !-------------------!
-    if(CelMar(c)   >  0) then  ! only refined
+    if( CelMar(c) > 0 ) then  ! only refined
 
       !------------------------------------!
       !   Take care of neighboring cells   !
@@ -116,40 +124,40 @@
       !-----------------------------------------------!
 
       ! 6
-      CellC(cr1,6) = cr5
-      CellC(cr2,6) = cr6
-      CellC(cr3,6) = cr7
-      CellC(cr4,6) = cr8
+      grid % cells(cr1) % c(6) = cr5
+      grid % cells(cr2) % c(6) = cr6
+      grid % cells(cr3) % c(6) = cr7
+      grid % cells(cr4) % c(6) = cr8
 
       ! 5
-      CellC(cr2,5) = cr1
-      CellC(cr4,5) = cr3
-      CellC(cr6,5) = cr5
-      CellC(cr8,5) = cr7
+      grid % cells(cr2) % c(5) = cr1
+      grid % cells(cr4) % c(5) = cr3
+      grid % cells(cr6) % c(5) = cr5
+      grid % cells(cr8) % c(5) = cr7
 
       ! 4
-      CellC(cr1,4) = cr3
-      CellC(cr2,4) = cr4
-      CellC(cr5,4) = cr7
-      CellC(cr6,4) = cr8
+      grid % cells(cr1) % c(4) = cr3
+      grid % cells(cr2) % c(4) = cr4
+      grid % cells(cr5) % c(4) = cr7
+      grid % cells(cr6) % c(4) = cr8
 
       ! 3
-      CellC(cr1,3) = cr2
-      CellC(cr3,3) = cr4
-      CellC(cr5,3) = cr6
-      CellC(cr7,3) = cr8
+      grid % cells(cr1) % c(3) = cr2
+      grid % cells(cr3) % c(3) = cr4
+      grid % cells(cr5) % c(3) = cr6
+      grid % cells(cr7) % c(3) = cr8
 
       ! 2
-      CellC(cr3,2) = cr1
-      CellC(cr4,2) = cr2
-      CellC(cr7,2) = cr5
-      CellC(cr8,2) = cr6
+      grid % cells(cr3) % c(2) = cr1
+      grid % cells(cr4) % c(2) = cr2
+      grid % cells(cr7) % c(2) = cr5
+      grid % cells(cr8) % c(2) = cr6
 
       ! 1
-      CellC(cr5,1) = cr1
-      CellC(cr6,1) = cr2
-      CellC(cr7,1) = cr3
-      CellC(cr8,1) = cr4
+      grid % cells(cr5) % c(1) = cr1
+      grid % cells(cr6) % c(1) = cr2
+      grid % cells(cr7) % c(1) = cr3
+      grid % cells(cr8) % c(1) = cr4
 
       !-------------------------!
       !   Level of refinement   !
@@ -166,76 +174,76 @@
       !----------------------------------------!         
       !   External links depend on neighbors   !
       !----------------------------------------!
-      if(CelMar(c1)  ==  0) then  ! neighbor 1 not refined
-        CellC(cr1,1) = c1
-        CellC(cr2,1) = c1
-        CellC(cr3,1) = c1
-        CellC(cr4,1) = c1
+      if(CelMar(c1) == 0) then  ! neighbor 1 not refined
+        grid % cells(cr1) % c(1) = c1
+        grid % cells(cr2) % c(1) = c1
+        grid % cells(cr3) % c(1) = c1
+        grid % cells(cr4) % c(1) = c1
       else                        ! neighbor 1 refined
-        CellC(cr1,1) = CelMar(c1) - 8 + Which_Node(c1,n1)
-        CellC(cr2,1) = CelMar(c1) - 8 + Which_Node(c1,n2)
-        CellC(cr3,1) = CelMar(c1) - 8 + Which_Node(c1,n3)
-        CellC(cr4,1) = CelMar(c1) - 8 + Which_Node(c1,n4)
+        grid % cells(cr1) % c(1) = CelMar(c1) - 8 + Which_Node(c1,n1)
+        grid % cells(cr2) % c(1) = CelMar(c1) - 8 + Which_Node(c1,n2)
+        grid % cells(cr3) % c(1) = CelMar(c1) - 8 + Which_Node(c1,n3)
+        grid % cells(cr4) % c(1) = CelMar(c1) - 8 + Which_Node(c1,n4)
       endif           
 
-      if(CelMar(c2)  ==  0) then  ! neighbor 2 not refined
-        CellC(cr1,2) = c2
-        CellC(cr2,2) = c2
-        CellC(cr5,2) = c2
-        CellC(cr6,2) = c2
+      if(CelMar(c2) == 0) then  ! neighbor 2 not refined
+        grid % cells(cr1) % c(2) = c2
+        grid % cells(cr2) % c(2) = c2
+        grid % cells(cr5) % c(2) = c2
+        grid % cells(cr6) % c(2) = c2
       else                        ! neighbor 2 refined
-        CellC(cr1,2) = CelMar(c2) - 8 + Which_Node(c2, n1)
-        CellC(cr2,2) = CelMar(c2) - 8 + Which_Node(c2, n2)
-        CellC(cr5,2) = CelMar(c2) - 8 + Which_Node(c2, n5)
-        CellC(cr6,2) = CelMar(c2) - 8 + Which_Node(c2, n6)
+        grid % cells(cr1) % c(2) = CelMar(c2) - 8 + Which_Node(c2, n1)
+        grid % cells(cr2) % c(2) = CelMar(c2) - 8 + Which_Node(c2, n2)
+        grid % cells(cr5) % c(2) = CelMar(c2) - 8 + Which_Node(c2, n5)
+        grid % cells(cr6) % c(2) = CelMar(c2) - 8 + Which_Node(c2, n6)
       endif           
 
-      if(CelMar(c3)  ==  0) then  ! neighbor 3 not refined
-        CellC(cr2,3) = c3
-        CellC(cr4,3) = c3
-        CellC(cr6,3) = c3
-        CellC(cr8,3) = c3
+      if(CelMar(c3) == 0) then  ! neighbor 3 not refined
+        grid % cells(cr2) % c(3) = c3
+        grid % cells(cr4) % c(3) = c3
+        grid % cells(cr6) % c(3) = c3
+        grid % cells(cr8) % c(3) = c3
       else                        ! neighbor 3 refined
-        CellC(cr2,3) = CelMar(c3) - 8 + Which_Node(c3, n2)
-        CellC(cr4,3) = CelMar(c3) - 8 + Which_Node(c3, n4)
-        CellC(cr6,3) = CelMar(c3) - 8 + Which_Node(c3, n6)
-        CellC(cr8,3) = CelMar(c3) - 8 + Which_Node(c3, n8)
+        grid % cells(cr2) % c(3) = CelMar(c3) - 8 + Which_Node(c3, n2)
+        grid % cells(cr4) % c(3) = CelMar(c3) - 8 + Which_Node(c3, n4)
+        grid % cells(cr6) % c(3) = CelMar(c3) - 8 + Which_Node(c3, n6)
+        grid % cells(cr8) % c(3) = CelMar(c3) - 8 + Which_Node(c3, n8)
       endif           
 
-      if(CelMar(c4)  ==  0) then  ! neighbor 4 not refine
-        CellC(cr3,4) = c4
-        CellC(cr4,4) = c4
-        CellC(cr7,4) = c4
-        CellC(cr8,4) = c4
+      if(CelMar(c4) == 0) then  ! neighbor 4 not refine
+        grid % cells(cr3) % c(4) = c4
+        grid % cells(cr4) % c(4) = c4
+        grid % cells(cr7) % c(4) = c4
+        grid % cells(cr8) % c(4) = c4
       else                        ! neighbor 4 refine
-        CellC(cr3,4) = CelMar(c4) - 8 + Which_Node(c4, n3)
-        CellC(cr4,4) = CelMar(c4) - 8 + Which_Node(c4, n4)
-        CellC(cr7,4) = CelMar(c4) - 8 + Which_Node(c4, n7)
-        CellC(cr8,4) = CelMar(c4) - 8 + Which_Node(c4, n8)
+        grid % cells(cr3) % c(4) = CelMar(c4) - 8 + Which_Node(c4, n3)
+        grid % cells(cr4) % c(4) = CelMar(c4) - 8 + Which_Node(c4, n4)
+        grid % cells(cr7) % c(4) = CelMar(c4) - 8 + Which_Node(c4, n7)
+        grid % cells(cr8) % c(4) = CelMar(c4) - 8 + Which_Node(c4, n8)
       endif           
 
-      if(CelMar(c5)  ==  0) then  ! neighbor 5 not refined
-        CellC(cr1,5) = c5
-        CellC(cr3,5) = c5
-        CellC(cr5,5) = c5
-        CellC(cr7,5) = c5
+      if(CelMar(c5) == 0) then  ! neighbor 5 not refined
+        grid % cells(cr1) % c(5) = c5
+        grid % cells(cr3) % c(5) = c5
+        grid % cells(cr5) % c(5) = c5
+        grid % cells(cr7) % c(5) = c5
       else                        ! neighbor 5 refined
-        CellC(cr1,5) = CelMar(c5) - 8 + Which_Node(c5, n1)
-        CellC(cr3,5) = CelMar(c5) - 8 + Which_Node(c5, n3)
-        CellC(cr5,5) = CelMar(c5) - 8 + Which_Node(c5, n5)
-        CellC(cr7,5) = CelMar(c5) - 8 + Which_Node(c5, n7)
+        grid % cells(cr1) % c(5) = CelMar(c5) - 8 + Which_Node(c5, n1)
+        grid % cells(cr3) % c(5) = CelMar(c5) - 8 + Which_Node(c5, n3)
+        grid % cells(cr5) % c(5) = CelMar(c5) - 8 + Which_Node(c5, n5)
+        grid % cells(cr7) % c(5) = CelMar(c5) - 8 + Which_Node(c5, n7)
       endif
 
-      if(CelMar(c6)  ==  0) then  ! neighbor 6 not refined
-        CellC(cr5,6) = c6
-        CellC(cr6,6) = c6
-        CellC(cr7,6) = c6
-        CellC(cr8,6) = c6
+      if(CelMar(c6) == 0) then  ! neighbor 6 not refined
+        grid % cells(cr5) % c(6) = c6
+        grid % cells(cr6) % c(6) = c6
+        grid % cells(cr7) % c(6) = c6
+        grid % cells(cr8) % c(6) = c6
       else                        ! neighbor 6 refined
-        CellC(cr5,6) = CelMar(c6) - 8 + Which_Node(c6, n5)
-        CellC(cr6,6) = CelMar(c6) - 8 + Which_Node(c6, n6)
-        CellC(cr7,6) = CelMar(c6) - 8 + Which_Node(c6, n7)
-        CellC(cr8,6) = CelMar(c6) - 8 + Which_Node(c6, n8)
+        grid % cells(cr5) % c(6) = CelMar(c6) - 8 + Which_Node(c6, n5)
+        grid % cells(cr6) % c(6) = CelMar(c6) - 8 + Which_Node(c6, n6)
+        grid % cells(cr7) % c(6) = CelMar(c6) - 8 + Which_Node(c6, n7)
+        grid % cells(cr8) % c(6) = CelMar(c6) - 8 + Which_Node(c6, n8)
       endif           
 
     !------------------------!
@@ -259,231 +267,231 @@
     n78 = 0     !     3-----n13-----1
 
     ! n12
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n1 .and. NodeN2(n,2) == n2 ) .or.  &
-          ( NodeN2(n,1) == n2 .and. NodeN2(n,2) == n1) ) then
-        n12 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n1 .and. node_n2(n,2) == n2 ) .or.  &
+          ( node_n2(n,1) == n2 .and. node_n2(n,2) == n1) ) then
+        n12 = node_n2(n,0) 
       end if
     end do
     if (n12 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n12 = NN
-      NodeN2(NN2,0) = n12
-      NodeN2(NN2,1) = n1
-      NodeN2(NN2,2) = n2
-      x_node(n12) = 0.5 * (x_node(n1)+x_node(n2))
-      y_node(n12) = 0.5 * (y_node(n1)+y_node(n2))
-      z_node(n12) = 0.5 * (z_node(n1)+z_node(n2))
+      node_n2(nn_2,0) = n12
+      node_n2(nn_2,1) = n1
+      node_n2(nn_2,2) = n2
+      grid % nodes(n12) % x = .5 * (grid % nodes(n1) % x + grid % nodes(n2) % x)
+      grid % nodes(n12) % y = .5 * (grid % nodes(n1) % y + grid % nodes(n2) % y)
+      grid % nodes(n12) % z = .5 * (grid % nodes(n1) % z + grid % nodes(n2) % z)
     end if 
 
     ! n13
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n1 .and. NodeN2(n,2) == n3 ) .or.  &
-          ( NodeN2(n,1) == n3 .and. NodeN2(n,2) == n1) ) then
-        n13 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n1 .and. node_n2(n,2) == n3 ) .or.  &
+          ( node_n2(n,1) == n3 .and. node_n2(n,2) == n1) ) then
+        n13 = node_n2(n,0) 
       end if
     end do
     if (n13 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n13 = NN
-      NodeN2(NN2,0) = n13
-      NodeN2(NN2,1) = n1
-      NodeN2(NN2,2) = n3
-      x_node(n13) = 0.5 * (x_node(n1)+x_node(n3))
-      y_node(n13) = 0.5 * (y_node(n1)+y_node(n3))
-      z_node(n13) = 0.5 * (z_node(n1)+z_node(n3))
+      node_n2(nn_2,0) = n13
+      node_n2(nn_2,1) = n1
+      node_n2(nn_2,2) = n3
+      grid % nodes(n13) % x = .5 * (grid % nodes(n1) % x + grid % nodes(n3) % x)
+      grid % nodes(n13) % y = .5 * (grid % nodes(n1) % y + grid % nodes(n3) % y)
+      grid % nodes(n13) % z = .5 * (grid % nodes(n1) % z + grid % nodes(n3) % z)
     end if 
 
     ! n24
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n2 .and. NodeN2(n,2) == n4 ) .or.  &
-          ( NodeN2(n,1) == n4 .and. NodeN2(n,2) == n2) ) then
-        n24 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n2 .and. node_n2(n,2) == n4 ) .or.  &
+          ( node_n2(n,1) == n4 .and. node_n2(n,2) == n2) ) then
+        n24 = node_n2(n,0) 
       end if
     end do
     if (n24 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n24 = NN
-      NodeN2(NN2,0) = n24
-      NodeN2(NN2,1) = n2
-      NodeN2(NN2,2) = n4
-      x_node(n24) = 0.5 * (x_node(n2)+x_node(n4))
-      y_node(n24) = 0.5 * (y_node(n2)+y_node(n4))
-      z_node(n24) = 0.5 * (z_node(n2)+z_node(n4))
+      node_n2(nn_2,0) = n24
+      node_n2(nn_2,1) = n2
+      node_n2(nn_2,2) = n4
+      grid % nodes(n24) % x = .5 * (grid % nodes(n2) % x + grid % nodes(n4) % x)
+      grid % nodes(n24) % y = .5 * (grid % nodes(n2) % y + grid % nodes(n4) % y)
+      grid % nodes(n24) % z = .5 * (grid % nodes(n2) % z + grid % nodes(n4) % z)
     end if 
 
     ! n34
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n3 .and. NodeN2(n,2) == n4 ) .or.  &
-          ( NodeN2(n,1) == n4 .and. NodeN2(n,2) == n3) ) then
-        n34 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n3 .and. node_n2(n,2) == n4 ) .or.  &
+          ( node_n2(n,1) == n4 .and. node_n2(n,2) == n3) ) then
+        n34 = node_n2(n,0) 
       end if
     end do
     if (n34 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n34 = NN
-      NodeN2(NN2,0) = n34
-      NodeN2(NN2,1) = n3
-      NodeN2(NN2,2) = n4
-      x_node(n34) = 0.5 * (x_node(n3)+x_node(n4))
-      y_node(n34) = 0.5 * (y_node(n3)+y_node(n4))
-      z_node(n34) = 0.5 * (z_node(n3)+z_node(n4))
+      node_n2(nn_2,0) = n34
+      node_n2(nn_2,1) = n3
+      node_n2(nn_2,2) = n4
+      grid % nodes(n34) % x = .5 * (grid % nodes(n3) % x + grid % nodes(n4) % x)
+      grid % nodes(n34) % y = .5 * (grid % nodes(n3) % y + grid % nodes(n4) % y)
+      grid % nodes(n34) % z = .5 * (grid % nodes(n3) % z + grid % nodes(n4) % z)
     end if 
 
     ! n15
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n1 .and. NodeN2(n,2) == n5 ) .or.  &
-          ( NodeN2(n,1) == n5 .and. NodeN2(n,2) == n1) ) then
-        n15 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n1 .and. node_n2(n,2) == n5 ) .or.  &
+          ( node_n2(n,1) == n5 .and. node_n2(n,2) == n1) ) then
+        n15 = node_n2(n,0) 
       end if
     end do
     if (n15 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n15 = NN
-      NodeN2(NN2,0) = n15
-      NodeN2(NN2,1) = n1
-      NodeN2(NN2,2) = n5
-      x_node(n15) = 0.5 * (x_node(n1)+x_node(n5))
-      y_node(n15) = 0.5 * (y_node(n1)+y_node(n5))
-      z_node(n15) = 0.5 * (z_node(n1)+z_node(n5))
+      node_n2(nn_2,0) = n15
+      node_n2(nn_2,1) = n1
+      node_n2(nn_2,2) = n5
+      grid % nodes(n15) % x = .5 * (grid % nodes(n1) % x + grid % nodes(n5) % x)
+      grid % nodes(n15) % y = .5 * (grid % nodes(n1) % y + grid % nodes(n5) % y)
+      grid % nodes(n15) % z = .5 * (grid % nodes(n1) % z + grid % nodes(n5) % z)
     end if 
 
     ! n26
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n2 .and. NodeN2(n,2) == n6 ) .or.  &
-          ( NodeN2(n,1) == n6 .and. NodeN2(n,2) == n2) ) then
-        n26 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n2 .and. node_n2(n,2) == n6 ) .or.  &
+          ( node_n2(n,1) == n6 .and. node_n2(n,2) == n2) ) then
+        n26 = node_n2(n,0) 
       end if
     end do
     if (n26 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n26 = NN
-      NodeN2(NN2,0) = n26
-      NodeN2(NN2,1) = n2
-      NodeN2(NN2,2) = n6
-      x_node(n26) = 0.5 * (x_node(n2)+x_node(n6))
-      y_node(n26) = 0.5 * (y_node(n2)+y_node(n6))
-      z_node(n26) = 0.5 * (z_node(n2)+z_node(n6))
+      node_n2(nn_2,0) = n26
+      node_n2(nn_2,1) = n2
+      node_n2(nn_2,2) = n6
+      grid % nodes(n26) % x = .5 * (grid % nodes(n2) % x + grid % nodes(n6) % x)
+      grid % nodes(n26) % y = .5 * (grid % nodes(n2) % y + grid % nodes(n6) % y)
+      grid % nodes(n26) % z = .5 * (grid % nodes(n2) % z + grid % nodes(n6) % z)
     end if 
 
     ! n37
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n3 .and. NodeN2(n,2) == n7 ) .or.  &
-          ( NodeN2(n,1) == n7 .and. NodeN2(n,2) == n3) ) then
-        n37 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n3 .and. node_n2(n,2) == n7 ) .or.  &
+          ( node_n2(n,1) == n7 .and. node_n2(n,2) == n3) ) then
+        n37 = node_n2(n,0) 
       end if
     end do
     if (n37 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n37 = NN
-      NodeN2(NN2,0) = n37
-      NodeN2(NN2,1) = n3
-      NodeN2(NN2,2) = n7
-      x_node(n37) = 0.5 * (x_node(n3)+x_node(n7))
-      y_node(n37) = 0.5 * (y_node(n3)+y_node(n7))
-      z_node(n37) = 0.5 * (z_node(n3)+z_node(n7))
+      node_n2(nn_2,0) = n37
+      node_n2(nn_2,1) = n3
+      node_n2(nn_2,2) = n7
+      grid % nodes(n37) % x = .5 * (grid % nodes(n3) % x + grid % nodes(n7) % x)
+      grid % nodes(n37) % y = .5 * (grid % nodes(n3) % y + grid % nodes(n7) % y)
+      grid % nodes(n37) % z = .5 * (grid % nodes(n3) % z + grid % nodes(n7) % z)
     end if 
 
     ! n48
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n4 .and. NodeN2(n,2) == n8 ) .or.  &
-          ( NodeN2(n,1) == n8 .and. NodeN2(n,2) == n4) ) then
-        n48 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n4 .and. node_n2(n,2) == n8 ) .or.  &
+          ( node_n2(n,1) == n8 .and. node_n2(n,2) == n4) ) then
+        n48 = node_n2(n,0) 
       end if
     end do
     if (n48 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n48 = NN
-      NodeN2(NN2,0) = n48
-      NodeN2(NN2,1) = n4
-      NodeN2(NN2,2) = n8
-      x_node(n48) = 0.5 * (x_node(n4)+x_node(n8))
-      y_node(n48) = 0.5 * (y_node(n4)+y_node(n8))
-      z_node(n48) = 0.5 * (z_node(n4)+z_node(n8))
+      node_n2(nn_2,0) = n48
+      node_n2(nn_2,1) = n4
+      node_n2(nn_2,2) = n8
+      grid % nodes(n48) % x = .5 * (grid % nodes(n4) % x + grid % nodes(n8) % x)
+      grid % nodes(n48) % y = .5 * (grid % nodes(n4) % y + grid % nodes(n8) % y)
+      grid % nodes(n48) % z = .5 * (grid % nodes(n4) % z + grid % nodes(n8) % z)
     end if 
 
     ! n56
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n5 .and. NodeN2(n,2) == n6 ) .or.  &
-          ( NodeN2(n,1) == n6 .and. NodeN2(n,2) == n5) ) then
-        n56 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n5 .and. node_n2(n,2) == n6 ) .or.  &
+          ( node_n2(n,1) == n6 .and. node_n2(n,2) == n5) ) then
+        n56 = node_n2(n,0) 
       end if
     end do
     if (n56 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n56 = NN
-      NodeN2(NN2,0) = n56
-      NodeN2(NN2,1) = n5
-      NodeN2(NN2,2) = n6
-      x_node(n56) = 0.5 * (x_node(n5)+x_node(n6))
-      y_node(n56) = 0.5 * (y_node(n5)+y_node(n6))
-      z_node(n56) = 0.5 * (z_node(n5)+z_node(n6))
+      node_n2(nn_2,0) = n56
+      node_n2(nn_2,1) = n5
+      node_n2(nn_2,2) = n6
+      grid % nodes(n56) % x = .5 * (grid % nodes(n5) % x + grid % nodes(n6) % x)
+      grid % nodes(n56) % y = .5 * (grid % nodes(n5) % y + grid % nodes(n6) % y)
+      grid % nodes(n56) % z = .5 * (grid % nodes(n5) % z + grid % nodes(n6) % z)
     end if 
 
     ! n57
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n5 .and. NodeN2(n,2) == n7 ) .or.  &
-          ( NodeN2(n,1) == n7 .and. NodeN2(n,2) == n5) ) then
-        n57 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n5 .and. node_n2(n,2) == n7 ) .or.  &
+          ( node_n2(n,1) == n7 .and. node_n2(n,2) == n5) ) then
+        n57 = node_n2(n,0) 
       end if
     end do
     if (n57 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n57 = NN
-      NodeN2(NN2,0) = n57
-      NodeN2(NN2,1) = n5
-      NodeN2(NN2,2) = n7
-      x_node(n57) = 0.5 * (x_node(n5)+x_node(n7))
-      y_node(n57) = 0.5 * (y_node(n5)+y_node(n7))
-      z_node(n57) = 0.5 * (z_node(n5)+z_node(n7))
+      node_n2(nn_2,0) = n57
+      node_n2(nn_2,1) = n5
+      node_n2(nn_2,2) = n7
+      grid % nodes(n57) % x = .5 * (grid % nodes(n5) % x + grid % nodes(n7) % x)
+      grid % nodes(n57) % y = .5 * (grid % nodes(n5) % y + grid % nodes(n7) % y)
+      grid % nodes(n57) % z = .5 * (grid % nodes(n5) % z + grid % nodes(n7) % z)
     end if 
 
     ! n68 
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n6 .and. NodeN2(n,2) == n8 ) .or.  &
-          ( NodeN2(n,1) == n8 .and. NodeN2(n,2) == n6) ) then
-        n68 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n6 .and. node_n2(n,2) == n8 ) .or.  &
+          ( node_n2(n,1) == n8 .and. node_n2(n,2) == n6) ) then
+        n68 = node_n2(n,0) 
       end if
     end do
     if (n68 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n68 = NN
-      NodeN2(NN2,0) = n68
-      NodeN2(NN2,1) = n6
-      NodeN2(NN2,2) = n8
-      x_node(n68) = 0.5 * (x_node(n6)+x_node(n8))
-      y_node(n68) = 0.5 * (y_node(n6)+y_node(n8))
-      z_node(n68) = 0.5 * (z_node(n6)+z_node(n8))
+      node_n2(nn_2,0) = n68
+      node_n2(nn_2,1) = n6
+      node_n2(nn_2,2) = n8
+      grid % nodes(n68) % x = .5 * (grid % nodes(n6) % x + grid % nodes(n8) % x)
+      grid % nodes(n68) % y = .5 * (grid % nodes(n6) % y + grid % nodes(n8) % y)
+      grid % nodes(n68) % z = .5 * (grid % nodes(n6) % z + grid % nodes(n8) % z)
     end if 
 
     ! n78
-    do n=1,NN2
-      if( ( NodeN2(n,1) == n7 .and. NodeN2(n,2) == n8 ) .or.  &
-          ( NodeN2(n,1) == n8 .and. NodeN2(n,2) == n7) ) then
-        n78 = NodeN2(n,0) 
+    do n=1,nn_2
+      if( ( node_n2(n,1) == n7 .and. node_n2(n,2) == n8 ) .or.  &
+          ( node_n2(n,1) == n8 .and. node_n2(n,2) == n7) ) then
+        n78 = node_n2(n,0) 
       end if
     end do
     if (n78 == 0) then
-      NN2 = NN2 + 1
+      nn_2 = nn_2 + 1
       NN  = NN  + 1
       n78 = NN
-      NodeN2(NN2,0) = n78
-      NodeN2(NN2,1) = n7
-      NodeN2(NN2,2) = n8
-      x_node(n78) = 0.5 * (x_node(n7)+x_node(n8))
-      y_node(n78) = 0.5 * (y_node(n7)+y_node(n8))
-      z_node(n78) = 0.5 * (z_node(n7)+z_node(n8))
+      node_n2(nn_2,0) = n78
+      node_n2(nn_2,1) = n7
+      node_n2(nn_2,2) = n8
+      grid % nodes(n78) % x = .5 * (grid % nodes(n7) % x + grid % nodes(n8) % x)
+      grid % nodes(n78) % y = .5 * (grid % nodes(n7) % y + grid % nodes(n8) % y)
+      grid % nodes(n78) % z = .5 * (grid % nodes(n7) % z + grid % nodes(n8) % z)
     end if 
 
     !-------------------------!
@@ -497,248 +505,290 @@
     nF6 = 0
 
     ! nF1
-    do n=1,NN4
-      if( ( NodeN4(n,1) == n1 .and. NodeN4(n,4) == n4 ) .or.  &
-          ( NodeN4(n,1) == n4 .and. NodeN4(n,4) == n1 ) .or.  &
-          ( NodeN4(n,1) == n2 .and. NodeN4(n,4) == n3 ) .or.  &
-          ( NodeN4(n,1) == n3 .and. NodeN4(n,4) == n2 ) ) then
-        nF1 = NodeN4(n,0) 
+    do n=1,nn_4
+      if( ( node_n4(n,1) == n1 .and. node_n4(n,4) == n4 ) .or.  &
+          ( node_n4(n,1) == n4 .and. node_n4(n,4) == n1 ) .or.  &
+          ( node_n4(n,1) == n2 .and. node_n4(n,4) == n3 ) .or.  &
+          ( node_n4(n,1) == n3 .and. node_n4(n,4) == n2 ) ) then
+        nF1 = node_n4(n,0) 
       end if
     end do
     if (nF1 == 0) then
-      NN4 = NN4 + 1
+      nn_4 = nn_4 + 1
       NN  = NN  + 1
       nF1 = NN
-      NodeN4(NN4,0) = nF1
-      NodeN4(NN4,1) = n1
-      NodeN4(NN4,2) = n2
-      NodeN4(NN4,3) = n3
-      NodeN4(NN4,4) = n4
-      x_node(nF1) = 0.25 * (x_node(n1)+x_node(n2)+x_node(n3)+x_node(n4))
-      y_node(nF1) = 0.25 * (y_node(n1)+y_node(n2)+y_node(n3)+y_node(n4))
-      z_node(nF1) = 0.25 * (z_node(n1)+z_node(n2)+z_node(n3)+z_node(n4))
+      node_n4(nn_4,0) = nF1
+      node_n4(nn_4,1) = n1
+      node_n4(nn_4,2) = n2
+      node_n4(nn_4,3) = n3
+      node_n4(nn_4,4) = n4
+      grid % nodes(nf1) % x = 0.25 * (                                        &
+                               grid % nodes(n1) % x + grid % nodes(n2) % x +  &
+                               grid % nodes(n3) % x + grid % nodes(n4) % x)
+      grid % nodes(nf1) % y = 0.25 * (                                        &
+                               grid % nodes(n1) % y + grid % nodes(n2) % y +  &
+                               grid % nodes(n3) % y + grid % nodes(n4) % y)
+      grid % nodes(nf1) % z = 0.25 * (                                        &
+                               grid % nodes(n1) % z + grid % nodes(n2) % z +  &
+                               grid % nodes(n3) % z + grid % nodes(n4) % z)
     end if 
 
     ! nF2
-    do n=1,NN4
-      if( ( NodeN4(n,1) == n1 .and. NodeN4(n,4) == n6 ) .or.  &
-          ( NodeN4(n,1) == n6 .and. NodeN4(n,4) == n1 ) .or.  &
-          ( NodeN4(n,1) == n2 .and. NodeN4(n,4) == n5 ) .or.  &
-          ( NodeN4(n,1) == n5 .and. NodeN4(n,4) == n2 ) ) then
-        nF2 = NodeN4(n,0) 
+    do n=1,nn_4
+      if( ( node_n4(n,1) == n1 .and. node_n4(n,4) == n6 ) .or.  &
+          ( node_n4(n,1) == n6 .and. node_n4(n,4) == n1 ) .or.  &
+          ( node_n4(n,1) == n2 .and. node_n4(n,4) == n5 ) .or.  &
+          ( node_n4(n,1) == n5 .and. node_n4(n,4) == n2 ) ) then
+        nF2 = node_n4(n,0) 
       end if
     end do
     if (nF2 == 0) then
-      NN4 = NN4 + 1
+      nn_4 = nn_4 + 1
       NN  = NN  + 1
       nF2 = NN
-      NodeN4(NN4,0) = nF2
-      NodeN4(NN4,1) = n1
-      NodeN4(NN4,2) = n2
-      NodeN4(NN4,3) = n5
-      NodeN4(NN4,4) = n6
-      x_node(nF2) = 0.25 * (x_node(n1)+x_node(n2)+x_node(n5)+x_node(n6))
-      y_node(nF2) = 0.25 * (y_node(n1)+y_node(n2)+y_node(n5)+y_node(n6))
-      z_node(nF2) = 0.25 * (z_node(n1)+z_node(n2)+z_node(n5)+z_node(n6))
+      node_n4(nn_4,0) = nF2
+      node_n4(nn_4,1) = n1
+      node_n4(nn_4,2) = n2
+      node_n4(nn_4,3) = n5
+      node_n4(nn_4,4) = n6
+      grid % nodes(nf2) % x = 0.25 * (                                        &
+                               grid % nodes(n1) % x + grid % nodes(n2) % x +  &
+                               grid % nodes(n5) % x + grid % nodes(n6) % x)
+      grid % nodes(nf2) % y = 0.25 * (                                        &
+                               grid % nodes(n1) % y + grid % nodes(n2) % y +  &
+                               grid % nodes(n5) % y + grid % nodes(n6) % y)
+      grid % nodes(nf2) % z = 0.25 * (                                        &
+                               grid % nodes(n1) % z + grid % nodes(n2) % z +  &
+                               grid % nodes(n5) % z + grid % nodes(n6) % z)
     end if 
 
     ! nF3
-    do n=1,NN4
-      if( ( NodeN4(n,1) == n2 .and. NodeN4(n,4) == n8 ) .or.  &
-          ( NodeN4(n,1) == n8 .and. NodeN4(n,4) == n2 ) .or.  &
-          ( NodeN4(n,1) == n4 .and. NodeN4(n,4) == n6 ) .or.  &
-          ( NodeN4(n,1) == n6 .and. NodeN4(n,4) == n4 ) ) then
-        nF3 = NodeN4(n,0) 
+    do n=1,nn_4
+      if( ( node_n4(n,1) == n2 .and. node_n4(n,4) == n8 ) .or.  &
+          ( node_n4(n,1) == n8 .and. node_n4(n,4) == n2 ) .or.  &
+          ( node_n4(n,1) == n4 .and. node_n4(n,4) == n6 ) .or.  &
+          ( node_n4(n,1) == n6 .and. node_n4(n,4) == n4 ) ) then
+        nF3 = node_n4(n,0) 
       end if
     end do
     if (nF3 == 0) then
-      NN4 = NN4 + 1
+      nn_4 = nn_4 + 1
       NN  = NN  + 1
       nF3 = NN
-      NodeN4(NN4,0) = nF3
-      NodeN4(NN4,1) = n2
-      NodeN4(NN4,2) = n4
-      NodeN4(NN4,3) = n6
-      NodeN4(NN4,4) = n8
-      x_node(nF3) = 0.25 * (x_node(n2)+x_node(n4)+x_node(n6)+x_node(n8))
-      y_node(nF3) = 0.25 * (y_node(n2)+y_node(n4)+y_node(n6)+y_node(n8))
-      z_node(nF3) = 0.25 * (z_node(n2)+z_node(n4)+z_node(n6)+z_node(n8))
+      node_n4(nn_4,0) = nF3
+      node_n4(nn_4,1) = n2
+      node_n4(nn_4,2) = n4
+      node_n4(nn_4,3) = n6
+      node_n4(nn_4,4) = n8
+      grid % nodes(nf3) % x = 0.25 * (                                        &
+                               grid % nodes(n2) % x + grid % nodes(n4) % x +  &
+                               grid % nodes(n6) % x + grid % nodes(n8) % x)
+      grid % nodes(nf3) % y = 0.25 * (                                        &
+                               grid % nodes(n2) % y + grid % nodes(n4) % y +  &
+                               grid % nodes(n6) % y + grid % nodes(n8) % y)
+      grid % nodes(nf3) % z = 0.25 * (                                        &
+                               grid % nodes(n2) % z + grid % nodes(n4) % z +  &
+                               grid % nodes(n6) % z + grid % nodes(n8) % z)
     end if 
 
     ! nF4
-    do n=1,NN4
-      if( ( NodeN4(n,1) == n3 .and. NodeN4(n,4) == n8 ) .or.  &
-          ( NodeN4(n,1) == n8 .and. NodeN4(n,4) == n3 ) .or.  &
-          ( NodeN4(n,1) == n4 .and. NodeN4(n,4) == n7 ) .or.  &
-          ( NodeN4(n,1) == n7 .and. NodeN4(n,4) == n4 ) ) then
-        nF4 = NodeN4(n,0) 
+    do n=1,nn_4
+      if( ( node_n4(n,1) == n3 .and. node_n4(n,4) == n8 ) .or.  &
+          ( node_n4(n,1) == n8 .and. node_n4(n,4) == n3 ) .or.  &
+          ( node_n4(n,1) == n4 .and. node_n4(n,4) == n7 ) .or.  &
+          ( node_n4(n,1) == n7 .and. node_n4(n,4) == n4 ) ) then
+        nF4 = node_n4(n,0) 
       end if
     end do
     if (nF4 == 0) then
-      NN4 = NN4 + 1
+      nn_4 = nn_4 + 1
       NN  = NN  + 1
       nF4 = NN
-      NodeN4(NN4,0) = nF4
-      NodeN4(NN4,1) = n3
-      NodeN4(NN4,2) = n4
-      NodeN4(NN4,3) = n7
-      NodeN4(NN4,4) = n8
-      x_node(nF4) = 0.25 * (x_node(n3)+x_node(n4)+x_node(n7)+x_node(n8))
-      y_node(nF4) = 0.25 * (y_node(n3)+y_node(n4)+y_node(n7)+y_node(n8))
-      z_node(nF4) = 0.25 * (z_node(n3)+z_node(n4)+z_node(n7)+z_node(n8))
+      node_n4(nn_4,0) = nF4
+      node_n4(nn_4,1) = n3
+      node_n4(nn_4,2) = n4
+      node_n4(nn_4,3) = n7
+      node_n4(nn_4,4) = n8
+      grid % nodes(nf4) % x = 0.25 * (                                        &
+                               grid % nodes(n3) % x + grid % nodes(n4) % x +  &
+                               grid % nodes(n7) % x + grid % nodes(n8) % x)
+      grid % nodes(nf4) % y = 0.25 * (                                        &
+                               grid % nodes(n3) % y + grid % nodes(n4) % y +  &
+                               grid % nodes(n7) % y + grid % nodes(n8) % y)
+      grid % nodes(nf4) % z = 0.25 * (                                        &
+                               grid % nodes(n3) % z + grid % nodes(n4) % z +  &
+                               grid % nodes(n7) % z + grid % nodes(n8) % z)
     end if 
 
     ! nF5
-    do n=1,NN4
-      if( ( NodeN4(n,1) == n1 .and. NodeN4(n,4) == n7 ) .or.  &
-          ( NodeN4(n,1) == n7 .and. NodeN4(n,4) == n1 ) .or.  &
-          ( NodeN4(n,1) == n3 .and. NodeN4(n,4) == n5 ) .or.  &
-          ( NodeN4(n,1) == n5 .and. NodeN4(n,4) == n3 ) ) then
-        nF5 = NodeN4(n,0) 
+    do n=1,nn_4
+      if( ( node_n4(n,1) == n1 .and. node_n4(n,4) == n7 ) .or.  &
+          ( node_n4(n,1) == n7 .and. node_n4(n,4) == n1 ) .or.  &
+          ( node_n4(n,1) == n3 .and. node_n4(n,4) == n5 ) .or.  &
+          ( node_n4(n,1) == n5 .and. node_n4(n,4) == n3 ) ) then
+        nF5 = node_n4(n,0) 
       end if
     end do
     if (nF5 == 0) then
-      NN4 = NN4 + 1
+      nn_4 = nn_4 + 1
       NN  = NN  + 1
       nF5 = NN
-      NodeN4(NN4,0) = nF5
-      NodeN4(NN4,1) = n1
-      NodeN4(NN4,2) = n3
-      NodeN4(NN4,3) = n5
-      NodeN4(NN4,4) = n7
-      x_node(nF5) = 0.25 * (x_node(n1)+x_node(n3)+x_node(n5)+x_node(n7))
-      y_node(nF5) = 0.25 * (y_node(n1)+y_node(n3)+y_node(n5)+y_node(n7))
-      z_node(nF5) = 0.25 * (z_node(n1)+z_node(n3)+z_node(n5)+z_node(n7))
+      node_n4(nn_4,0) = nF5
+      node_n4(nn_4,1) = n1
+      node_n4(nn_4,2) = n3
+      node_n4(nn_4,3) = n5
+      node_n4(nn_4,4) = n7
+      grid % nodes(nf5) % x = 0.25 * (                                        &
+                               grid % nodes(n1) % x + grid % nodes(n3) % x +  &
+                               grid % nodes(n5) % x + grid % nodes(n7) % x)
+      grid % nodes(nf5) % y = 0.25 * (                                        &
+                               grid % nodes(n1) % y + grid % nodes(n3) % y +  &
+                               grid % nodes(n5) % y + grid % nodes(n7) % y)
+      grid % nodes(nf5) % z = 0.25 * (                                        &
+                               grid % nodes(n1) % z + grid % nodes(n3) % z +  &
+                               grid % nodes(n5) % z + grid % nodes(n7) % z)
     end if 
 
     ! nF6
-    do n=1,NN4
-      if( ( NodeN4(n,1) == n5 .and. NodeN4(n,4) == n8 ) .or.  &
-          ( NodeN4(n,1) == n8 .and. NodeN4(n,4) == n5 ) .or.  &
-          ( NodeN4(n,1) == n6 .and. NodeN4(n,4) == n7 ) .or.  &
-          ( NodeN4(n,1) == n7 .and. NodeN4(n,4) == n6 ) ) then
-        nF6 = NodeN4(n,0) 
+    do n=1,nn_4
+      if( ( node_n4(n,1) == n5 .and. node_n4(n,4) == n8 ) .or.  &
+          ( node_n4(n,1) == n8 .and. node_n4(n,4) == n5 ) .or.  &
+          ( node_n4(n,1) == n6 .and. node_n4(n,4) == n7 ) .or.  &
+          ( node_n4(n,1) == n7 .and. node_n4(n,4) == n6 ) ) then
+        nF6 = node_n4(n,0) 
       end if
     end do
     if (nF6 == 0) then
-      NN4 = NN4 + 1
+      nn_4 = nn_4 + 1
       NN  = NN  + 1
       nF6 = NN
-      NodeN4(NN4,0) = nF6
-      NodeN4(NN4,1) = n5
-      NodeN4(NN4,2) = n6
-      NodeN4(NN4,3) = n7
-      NodeN4(NN4,4) = n8
-      x_node(nF6) = 0.25 * (x_node(n5)+x_node(n6)+x_node(n7)+x_node(n8))
-      y_node(nF6) = 0.25 * (y_node(n5)+y_node(n6)+y_node(n7)+y_node(n8))
-      z_node(nF6) = 0.25 * (z_node(n5)+z_node(n6)+z_node(n7)+z_node(n8))
+      node_n4(nn_4,0) = nF6
+      node_n4(nn_4,1) = n5
+      node_n4(nn_4,2) = n6
+      node_n4(nn_4,3) = n7
+      node_n4(nn_4,4) = n8
+      grid % nodes(nf6) % x = 0.25 * (                                        &
+                               grid % nodes(n5) % x + grid % nodes(n6) % x +  &
+                               grid % nodes(n7) % x + grid % nodes(n8) % x)
+      grid % nodes(nf6) % y = 0.25 * (                                        &
+                               grid % nodes(n5) % y + grid % nodes(n6) % y +  &
+                               grid % nodes(n7) % y + grid % nodes(n8) % y)
+      grid % nodes(nf6) % z = 0.25 * (                                        &
+                               grid % nodes(n5) % z + grid % nodes(n6) % z +  &
+                               grid % nodes(n7) % z + grid % nodes(n8) % z)
     end if 
 
     !----------------------------------------!
     !   Eventually, the node in the middle   !
     !----------------------------------------!
-    NN8 = NN8 + 1
+    nn_8 = nn_8 + 1
     NN  = NN + 1
     n0  = NN
-    NodeN8(NN8,0) = n0 
-    NodeN8(NN8,1) = n1
-    NodeN8(NN8,2) = n2
-    NodeN8(NN8,3) = n3
-    NodeN8(NN8,4) = n4
-    NodeN8(NN8,5) = n5
-    NodeN8(NN8,6) = n6
-    NodeN8(NN8,7) = n7
-    NodeN8(NN8,8) = n8
-    x_node(n0) = 0.125*(x_node(n1)+x_node(n2)+x_node(n3)+x_node(n4)+  &
-                        x_node(n5)+x_node(n6)+x_node(n7)+x_node(n8))
-    y_node(n0) = 0.125*(y_node(n1)+y_node(n2)+y_node(n3)+y_node(n4)+  &
-                        y_node(n5)+y_node(n6)+y_node(n7)+y_node(n8))
-    z_node(n0) = 0.125*(z_node(n1)+z_node(n2)+z_node(n3)+z_node(n4)+  &
-                        z_node(n5)+z_node(n6)+z_node(n7)+z_node(n8))
+    node_n8(nn_8,0) = n0 
+    node_n8(nn_8,1) = n1
+    node_n8(nn_8,2) = n2
+    node_n8(nn_8,3) = n3
+    node_n8(nn_8,4) = n4
+    node_n8(nn_8,5) = n5
+    node_n8(nn_8,6) = n6
+    node_n8(nn_8,7) = n7
+    node_n8(nn_8,8) = n8
+    grid % nodes(n0) % x = .125*(grid % nodes(n1) % x + grid % nodes(n2) % x + &
+                                 grid % nodes(n3) % x + grid % nodes(n4) % x + &
+                                 grid % nodes(n5) % x + grid % nodes(n6) % x + &
+                                 grid % nodes(n7) % x + grid % nodes(n8) % x)
+    grid % nodes(n0) % y = .125*(grid % nodes(n1) % y + grid % nodes(n2) % y + &
+                                 grid % nodes(n3) % y + grid % nodes(n4) % y + &
+                                 grid % nodes(n5) % y + grid % nodes(n6) % y + &
+                                 grid % nodes(n7) % y + grid % nodes(n8) % y)
+    grid % nodes(n0) % z = .125*(grid % nodes(n1) % z + grid % nodes(n2) % z + &
+                                 grid % nodes(n3) % z + grid % nodes(n4) % z + &
+                                 grid % nodes(n5) % z + grid % nodes(n6) % z + &
+                                 grid % nodes(n7) % z + grid % nodes(n8) % z)
 
     !----------------------------!
     !   Set nodes to new cells   !
     !----------------------------!
 
     ! cr1 -!
-    CellN(cr1,1) = n1
-    CellN(cr1,2) = n12
-    CellN(cr1,3) = n13
-    CellN(cr1,4) = nF1
-    CellN(cr1,5) = n15
-    CellN(cr1,6) = nF2
-    CellN(cr1,7) = nF5
-    CellN(cr1,8) = n0 
+    grid % cells(cr1) % n(1) = n1
+    grid % cells(cr1) % n(2) = n12
+    grid % cells(cr1) % n(3) = n13
+    grid % cells(cr1) % n(4) = nF1
+    grid % cells(cr1) % n(5) = n15
+    grid % cells(cr1) % n(6) = nF2
+    grid % cells(cr1) % n(7) = nF5
+    grid % cells(cr1) % n(8) = n0 
 
     ! cr2 -!
-    CellN(cr2,1) = n12
-    CellN(cr2,2) = n2 
-    CellN(cr2,3) = nF1
-    CellN(cr2,4) = n24
-    CellN(cr2,5) = nF2
-    CellN(cr2,6) = n26 
-    CellN(cr2,7) = n0 
-    CellN(cr2,8) = nF3
+    grid % cells(cr2) % n(1) = n12
+    grid % cells(cr2) % n(2) = n2 
+    grid % cells(cr2) % n(3) = nF1
+    grid % cells(cr2) % n(4) = n24
+    grid % cells(cr2) % n(5) = nF2
+    grid % cells(cr2) % n(6) = n26 
+    grid % cells(cr2) % n(7) = n0 
+    grid % cells(cr2) % n(8) = nF3
 
     ! cr3 -!
-    CellN(cr3,1) = n13
-    CellN(cr3,2) = nF1
-    CellN(cr3,3) = n3 
-    CellN(cr3,4) = n34
-    CellN(cr3,5) = nF5
-    CellN(cr3,6) = n0  
-    CellN(cr3,7) = n37
-    CellN(cr3,8) = nF4
+    grid % cells(cr3) % n(1) = n13
+    grid % cells(cr3) % n(2) = nF1
+    grid % cells(cr3) % n(3) = n3 
+    grid % cells(cr3) % n(4) = n34
+    grid % cells(cr3) % n(5) = nF5
+    grid % cells(cr3) % n(6) = n0  
+    grid % cells(cr3) % n(7) = n37
+    grid % cells(cr3) % n(8) = nF4
 
     ! cr4 -!
-    CellN(cr4,1) = nF1
-    CellN(cr4,2) = n24
-    CellN(cr4,3) = n34
-    CellN(cr4,4) = n4 
-    CellN(cr4,5) = n0 
-    CellN(cr4,6) = nF3 
-    CellN(cr4,7) = nF4
-    CellN(cr4,8) = n48
+    grid % cells(cr4) % n(1) = nF1
+    grid % cells(cr4) % n(2) = n24
+    grid % cells(cr4) % n(3) = n34
+    grid % cells(cr4) % n(4) = n4 
+    grid % cells(cr4) % n(5) = n0 
+    grid % cells(cr4) % n(6) = nF3 
+    grid % cells(cr4) % n(7) = nF4
+    grid % cells(cr4) % n(8) = n48
 
     ! cr5 -!
-    CellN(cr5,1) = n15
-    CellN(cr5,2) = nF2
-    CellN(cr5,3) = nF5
-    CellN(cr5,4) = n0 
-    CellN(cr5,5) = n5 
-    CellN(cr5,6) = n56 
-    CellN(cr5,7) = n57
-    CellN(cr5,8) = nF6
+    grid % cells(cr5) % n(1) = n15
+    grid % cells(cr5) % n(2) = nF2
+    grid % cells(cr5) % n(3) = nF5
+    grid % cells(cr5) % n(4) = n0 
+    grid % cells(cr5) % n(5) = n5 
+    grid % cells(cr5) % n(6) = n56 
+    grid % cells(cr5) % n(7) = n57
+    grid % cells(cr5) % n(8) = nF6
 
     ! cr6 -!
-    CellN(cr6,1) = nF2
-    CellN(cr6,2) = n26
-    CellN(cr6,3) = n0 
-    CellN(cr6,4) = nF3
-    CellN(cr6,5) = n56
-    CellN(cr6,6) = n6  
-    CellN(cr6,7) = nF6
-    CellN(cr6,8) = n68
+    grid % cells(cr6) % n(1) = nF2
+    grid % cells(cr6) % n(2) = n26
+    grid % cells(cr6) % n(3) = n0 
+    grid % cells(cr6) % n(4) = nF3
+    grid % cells(cr6) % n(5) = n56
+    grid % cells(cr6) % n(6) = n6  
+    grid % cells(cr6) % n(7) = nF6
+    grid % cells(cr6) % n(8) = n68
 
     ! cr7 -!
-    CellN(cr7,1) = nF5
-    CellN(cr7,2) = n0 
-    CellN(cr7,3) = n37
-    CellN(cr7,4) = nF4
-    CellN(cr7,5) = n57
-    CellN(cr7,6) = nF6 
-    CellN(cr7,7) = n7 
-    CellN(cr7,8) = n78
+    grid % cells(cr7) % n(1) = nF5
+    grid % cells(cr7) % n(2) = n0 
+    grid % cells(cr7) % n(3) = n37
+    grid % cells(cr7) % n(4) = nF4
+    grid % cells(cr7) % n(5) = n57
+    grid % cells(cr7) % n(6) = nF6 
+    grid % cells(cr7) % n(7) = n7 
+    grid % cells(cr7) % n(8) = n78
 
     ! cr8 -!
-    CellN(cr8,1) = n0 
-    CellN(cr8,2) = nF3
-    CellN(cr8,3) = nF4
-    CellN(cr8,4) = n48
-    CellN(cr8,5) = nF6
-    CellN(cr8,6) = n68 
-    CellN(cr8,7) = n78
-    CellN(cr8,8) = n8 
+    grid % cells(cr8) % n(1) = n0 
+    grid % cells(cr8) % n(2) = nF3
+    grid % cells(cr8) % n(3) = nF4
+    grid % cells(cr8) % n(4) = n48
+    grid % cells(cr8) % n(5) = nF6
+    grid % cells(cr8) % n(6) = n68 
+    grid % cells(cr8) % n(7) = n78
+    grid % cells(cr8) % n(8) = n8 
 
     !-----------------------!
     !                       !
@@ -747,46 +797,46 @@
     !-----------------------!
     else
 
-      if(CelMar(c1)   >  0) then  ! neighbor 1 refined
-        CellC(c, 1) = CelMar(c1) - 8 + Which_Node(c1,n1)
-        CellC(c, 7) = CelMar(c1) - 8 + Which_Node(c1,n2)
-        CellC(c,13) = CelMar(c1) - 8 + Which_Node(c1,n3)
-        CellC(c,19) = CelMar(c1) - 8 + Which_Node(c1,n4)
+      if(CelMar(c1) > 0) then  ! neighbor 1 refined
+        grid % cells(c) % c( 1) = CelMar(c1) - 8 + Which_Node(c1,n1)
+        grid % cells(c) % c( 7) = CelMar(c1) - 8 + Which_Node(c1,n2)
+        grid % cells(c) % c(13) = CelMar(c1) - 8 + Which_Node(c1,n3)
+        grid % cells(c) % c(19) = CelMar(c1) - 8 + Which_Node(c1,n4)
       endif           
 
-      if(CelMar(c2)   >  0) then  ! neighbor 2 refined
-        CellC(c, 2) = CelMar(c2) - 8 + Which_Node(c2, n1)
-        CellC(c, 8) = CelMar(c2) - 8 + Which_Node(c2, n2)
-        CellC(c,14) = CelMar(c2) - 8 + Which_Node(c2, n5)
-        CellC(c,20) = CelMar(c2) - 8 + Which_Node(c2, n6)
+      if(CelMar(c2) > 0) then  ! neighbor 2 refined
+        grid % cells(c) % c( 2) = CelMar(c2) - 8 + Which_Node(c2, n1)
+        grid % cells(c) % c( 8) = CelMar(c2) - 8 + Which_Node(c2, n2)
+        grid % cells(c) % c(14) = CelMar(c2) - 8 + Which_Node(c2, n5)
+        grid % cells(c) % c(20) = CelMar(c2) - 8 + Which_Node(c2, n6)
       endif           
 
-      if(CelMar(c3)   >  0) then  ! neighbor 3 refined
-        CellC(c, 3) = CelMar(c3) - 8 + Which_Node(c3, n2)
-        CellC(c, 9) = CelMar(c3) - 8 + Which_Node(c3, n4)
-        CellC(c,15) = CelMar(c3) - 8 + Which_Node(c3, n6)
-        CellC(c,21) = CelMar(c3) - 8 + Which_Node(c3, n8)
+      if(CelMar(c3) > 0) then  ! neighbor 3 refined
+        grid % cells(c) % c( 3) = CelMar(c3) - 8 + Which_Node(c3, n2)
+        grid % cells(c) % c( 9) = CelMar(c3) - 8 + Which_Node(c3, n4)
+        grid % cells(c) % c(15) = CelMar(c3) - 8 + Which_Node(c3, n6)
+        grid % cells(c) % c(21) = CelMar(c3) - 8 + Which_Node(c3, n8)
       endif           
 
-      if(CelMar(c4)   >  0) then  ! neighbor 4 refined
-        CellC(c, 4) = CelMar(c4) - 8 + Which_Node(c4, n3)
-        CellC(c,10) = CelMar(c4) - 8 + Which_Node(c4, n4)
-        CellC(c,16) = CelMar(c4) - 8 + Which_Node(c4, n7)
-        CellC(c,22) = CelMar(c4) - 8 + Which_Node(c4, n8)
+      if(CelMar(c4) > 0) then  ! neighbor 4 refined
+        grid % cells(c) % c( 4) = CelMar(c4) - 8 + Which_Node(c4, n3)
+        grid % cells(c) % c(10) = CelMar(c4) - 8 + Which_Node(c4, n4)
+        grid % cells(c) % c(16) = CelMar(c4) - 8 + Which_Node(c4, n7)
+        grid % cells(c) % c(22) = CelMar(c4) - 8 + Which_Node(c4, n8)
       endif           
 
-      if(CelMar(c5)   >  0) then  ! neighbor 5 refined
-        CellC(c, 5) = CelMar(c5) - 8 + Which_Node(c5, n1)
-        CellC(c,11) = CelMar(c5) - 8 + Which_Node(c5, n3)
-        CellC(c,17) = CelMar(c5) - 8 + Which_Node(c5, n5)
-        CellC(c,23) = CelMar(c5) - 8 + Which_Node(c5, n7)
+      if(CelMar(c5) > 0) then  ! neighbor 5 refined
+        grid % cells(c) % c( 5) = CelMar(c5) - 8 + Which_Node(c5, n1)
+        grid % cells(c) % c(11) = CelMar(c5) - 8 + Which_Node(c5, n3)
+        grid % cells(c) % c(17) = CelMar(c5) - 8 + Which_Node(c5, n5)
+        grid % cells(c) % c(23) = CelMar(c5) - 8 + Which_Node(c5, n7)
       endif
 
-      if(CelMar(c6)   >  0) then  ! neighbor 6 refined
-        CellC(c, 6) = CelMar(c6) - 8 + Which_Node(c6, n5)
-        CellC(c,12) = CelMar(c6) - 8 + Which_Node(c6, n6)
-        CellC(c,18) = CelMar(c6) - 8 + Which_Node(c6, n7)
-        CellC(c,24) = CelMar(c6) - 8 + Which_Node(c6, n8)
+      if(CelMar(c6) > 0) then  ! neighbor 6 refined
+        grid % cells(c) % c( 6) = CelMar(c6) - 8 + Which_Node(c6, n5)
+        grid % cells(c) % c(12) = CelMar(c6) - 8 + Which_Node(c6, n6)
+        grid % cells(c) % c(18) = CelMar(c6) - 8 + Which_Node(c6, n7)
+        grid % cells(c) % c(24) = CelMar(c6) - 8 + Which_Node(c6, n8)
       endif           
 
     end if   
@@ -801,17 +851,17 @@
   !                                          !
   !------------------------------------------!  
 
-  do nA=1,NN2
-    nA0=NodeN2(nA,0)
-    nA1=NodeN2(nA,1)
-    nA2=NodeN2(nA,2)
+  do nA=1,nn_2
+    nA0=node_n2(nA,0)
+    nA1=node_n2(nA,1)
+    nA2=node_n2(nA,2)
 
     if( (TwinN(nA1,0) /= 0).and.(TwinN(nA2,0) /= 0) ) then
 
-      do nB=nA+1,NN2
-        nB0=NodeN2(nB,0)
-        nB1=NodeN2(nB,1)
-        nB2=NodeN2(nB,2)
+      do nB=nA+1,nn_2
+        nB0=node_n2(nB,0)
+        nB1=node_n2(nB,1)
+        nB2=node_n2(nB,2)
 
         if( (TwinN(nB1,0) /= 0).and.(TwinN(nB2,0) /= 0) ) then
 
@@ -829,17 +879,17 @@
     end if
   end do
 
-  do nA=1,NN4
-    nA0=NodeN4(nA,0)
-    nA1=NodeN4(nA,1)
-    nA2=NodeN4(nA,4) ! diagonal
+  do nA=1,nn_4
+    nA0=node_n4(nA,0)
+    nA1=node_n4(nA,1)
+    nA2=node_n4(nA,4) ! diagonal
 
     if( (TwinN(nA1,0) /= 0).and.(TwinN(nA2,0) /= 0) ) then
 
-      do nB=nA+1,NN4
-        nB0=NodeN4(nB,0)
-        nB1=NodeN4(nB,1)
-        nB2=NodeN4(nB,4) ! diagonal
+      do nB=nA+1,nn_4
+        nB0=node_n4(nB,0)
+        nB1=node_n4(nB,1)
+        nB2=node_n4(nB,4) ! diagonal
 
         if( (TwinN(nB1,0) /= 0).and.(TwinN(nB2,0) /= 0) ) then
 
@@ -885,12 +935,12 @@
       ! Update the cell numbers. Watch out ! The numbers you are
       ! updating are old, so double indexing is needed
       do n=1,24  ! n is neighbour now
-        CellC( NewN(c),n ) = NewN(CellC( c,n ))
+        grid % cells( NewN(c) ) % c(n) = NewN( grid % cells(c) % c(n) )
       end do
 
       ! Update the node numbers
       do n=1,8   ! n is node now
-        CellN( NewN(c),n ) = CellN( c,n ) 
+        grid % cells( NewN(c) ) % n(n) = grid % cells(c) % n(n)
       end do
 
       material( NewN(c) ) = material( c )  ! -> never checked !
@@ -900,12 +950,16 @@
 
   do c=NC-del+1, MAXN   ! erase old data
     do n=1,24           ! n is neighbour now
-      CellC(c,n ) = 0
+      grid % cells(c) % c(n) = 0
     end do
   end do
 
   NC = NC - del    
 
   write(*,*) 'Number of cells after the renumeration: ', NC 
+
+  deallocate(node_n2)
+  deallocate(node_n4)
+  deallocate(node_n8)
 
   end subroutine Refine_Marked_Cells

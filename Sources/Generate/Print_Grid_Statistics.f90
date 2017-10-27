@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
@@ -26,7 +27,7 @@
   do i = 1,NC
     stencw=1            ! it used to be zero
     do j=1,24
-      if( CellC(i,j) > 0 ) stencw=stencw + 1
+      if( grid % cells(i) % c(j) > 0 ) stencw=stencw + 1
     end do
     nonz = nonz + stencw
   end do
@@ -43,7 +44,7 @@
     do i=1,NC
       stencw=0
       do k=1,24
-        if( CellC(i,k)  > 0 ) stencw=stencw+1
+        if( grid % cells(i) % c(k)  > 0 ) stencw=stencw+1
       end do
       if(stencw  ==  j) numb=numb+1
     end do

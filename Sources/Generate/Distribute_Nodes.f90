@@ -6,7 +6,8 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-  use Block_Mod
+  use Domain_Mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -19,16 +20,16 @@
   real    :: x0, y0, z0, delx, dely, delz, t, dt, ddt, pr, xi
 !==============================================================================!
 
-  ni = blocks(b) % resolutions(1)
-  nj = blocks(b) % resolutions(2)
-  nk = blocks(b) % resolutions(3)   
+  ni = dom % blocks(b) % resolutions(1)
+  nj = dom % blocks(b) % resolutions(2)
+  nk = dom % blocks(b) % resolutions(3)   
 
-  x0   = x_node(NN+(ks-1)*ni*nj+(js-1)*ni+is)
-  y0   = y_node(NN+(ks-1)*ni*nj+(js-1)*ni+is)
-  z0   = z_node(NN+(ks-1)*ni*nj+(js-1)*ni+is)
-  delx = x_node(NN+(ke-1)*ni*nj+(je-1)*ni+ie)-x0
-  dely = y_node(NN+(ke-1)*ni*nj+(je-1)*ni+ie)-y0
-  delz = z_node(NN+(ke-1)*ni*nj+(je-1)*ni+ie)-z0
+  x0   = grid % nodes(NN+(ks-1)*ni*nj+(js-1)*ni+is) % x
+  y0   = grid % nodes(NN+(ks-1)*ni*nj+(js-1)*ni+is) % y
+  z0   = grid % nodes(NN+(ks-1)*ni*nj+(js-1)*ni+is) % z
+  delx = grid % nodes(NN+(ke-1)*ni*nj+(je-1)*ni+ie) % x - x0
+  dely = grid % nodes(NN+(ke-1)*ni*nj+(je-1)*ni+ie) % y - y0
+  delz = grid % nodes(NN+(ke-1)*ni*nj+(je-1)*ni+ie) % z - z0
 
   n = max( (ie-is), (je-js),  (ke-ks) )
 
@@ -45,30 +46,30 @@
             dt=1.0/(1.0*n)+(1.0*i-0.5*(1.0*n+1)) * ddt
             t=t+dt
             node = NN + (k-1)*ni*nj + (j-1)*ni + i+1
-            if( (i  < ie).and.(x_node(node) == HUGE) ) then 
-              x_node(node) = x0 + t*delx
-              y_node(node) = y0 + t*dely
-              z_node(node) = z0 + t*delz
+            if( (i  < ie).and.(grid % nodes(node) % x == HUGE) ) then 
+              grid % nodes(node) % x = x0 + t*delx
+              grid % nodes(node) % y = y0 + t*dely
+              grid % nodes(node) % z = z0 + t*delz
             endif
           end if 
           if( je /= js ) then
             dt=1.0/(1.0*n)+(1.0*j-0.5*(1.0*n+1)) * ddt
             t=t+dt
             node = NN + (k-1)*ni*nj + (j-0)*ni + i 
-            if( (j  < je).and.(x_node(node) == HUGE) ) then 
-              x_node(node) = x0 + t*delx
-              y_node(node) = y0 + t*dely
-              z_node(node) = z0 + t*delz
+            if( (j  < je).and.(grid % nodes(node) % x == HUGE) ) then 
+              grid % nodes(node) % x = x0 + t*delx
+              grid % nodes(node) % y = y0 + t*dely
+              grid % nodes(node) % z = z0 + t*delz
             endif
           end if 
           if( ke /= ks ) then
             dt=1.0/(1.0*n)+(1.0*k-0.5*(1.0*n+1)) * ddt
             t=t+dt
             node = NN + (k-0)*ni*nj + (j-1)*ni + i 
-            if( (k  < ke).and.(x_node(node) == HUGE) ) then 
-              x_node(node) = x0 + t*delx
-              y_node(node) = y0 + t*dely
-              z_node(node) = z0 + t*delz
+            if( (k  < ke).and.(grid % nodes(node) % x == HUGE) ) then 
+              grid % nodes(node) % x = x0 + t*delx
+              grid % nodes(node) % y = y0 + t*dely
+              grid % nodes(node) % z = z0 + t*delz
             endif
           end if 
         end do
@@ -99,19 +100,25 @@
             if(case == 2) xi =  1.0 - 1.0*(1.0*i)/(1.0*n)
             if(case == 3) xi = -1.0 + 2.0*(1.0*i)/(1.0*n)
             node = NN + (k-1)*ni*nj + (j-1)*ni + i+1
-            if( (i  < ie).and.(x_node(node) == HUGE) ) then 
+            if( (i  < ie).and.(grid % nodes(node) % x == HUGE) ) then 
               if    (case == 1) then
-                x_node(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
-                y_node(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
-                z_node(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
+                grid % nodes(node) % x = x0 - (tanh(xi*atanh(pr))/pr)*delx
+                grid % nodes(node) % y = y0 - (tanh(xi*atanh(pr))/pr)*dely
+                grid % nodes(node) % z = z0 - (tanh(xi*atanh(pr))/pr)*delz
               elseif(case == 2) then
-                x_node(node) = x0 + delx - (tanh(xi*atanh(pr))/pr)*delx
-                y_node(node) = y0 + dely - (tanh(xi*atanh(pr))/pr)*dely
-                z_node(node) = z0 + delz - (tanh(xi*atanh(pr))/pr)*delz
+                grid % nodes(node) % x = x0  & 
+                                       + delx - (tanh(xi*atanh(pr))/pr)*delx
+                grid % nodes(node) % y = y0  &
+                                       + dely - (tanh(xi*atanh(pr))/pr)*dely
+                grid % nodes(node) % z = z0  &
+                                       + delz - (tanh(xi*atanh(pr))/pr)*delz
               elseif(case == 3) then
-                x_node(node) = x0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
-                y_node(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
-                z_node(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
+                grid % nodes(node) % x = x0  &
+                                       + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
+                grid % nodes(node) % y = y0  &
+                                       + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
+                grid % nodes(node) % z = z0  &
+                                       + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
               endif 
             endif
           end if 
@@ -120,19 +127,25 @@
             if(case == 2) xi =  1.0 - 1.0*(1.0*j)/(1.0*n)
             if(case == 3) xi = -1.0 + 2.0*(1.0*j)/(1.0*n)
             node = NN + (k-1)*ni*nj + (j-0)*ni + i 
-            if( (j  < je).and.(x_node(node) == HUGE) ) then 
+            if( (j  < je).and.(grid % nodes(node) % x == HUGE) ) then 
               if    (case == 1) then
-                x_node(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
-                y_node(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
-                z_node(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
+                grid % nodes(node) % x = x0 - (tanh(xi*atanh(pr))/pr)*delx
+                grid % nodes(node) % y = y0 - (tanh(xi*atanh(pr))/pr)*dely
+                grid % nodes(node) % z = z0 - (tanh(xi*atanh(pr))/pr)*delz
               elseif(case == 2) then
-                x_node(node) = x0 + delx - (tanh(xi*atanh(pr))/pr)*delx
-                y_node(node) = y0 + dely - (tanh(xi*atanh(pr))/pr)*dely
-                z_node(node) = z0 + delz - (tanh(xi*atanh(pr))/pr)*delz
+                grid % nodes(node) % x = x0  &
+                                       + delx - (tanh(xi*atanh(pr))/pr)*delx
+                grid % nodes(node) % y = y0  &
+                                       + dely - (tanh(xi*atanh(pr))/pr)*dely
+                grid % nodes(node) % z = z0  &
+                                       + delz - (tanh(xi*atanh(pr))/pr)*delz
               elseif(case == 3) then
-                x_node(node) = x0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
-                y_node(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
-                z_node(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
+                grid % nodes(node) % x = x0  &
+                                       + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
+                grid % nodes(node) % y = y0  &
+                                       + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
+                grid % nodes(node) % z = z0  &
+                                       + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
               endif 
             endif
           end if 
@@ -141,19 +154,25 @@
             if(case == 2) xi =  1.0 - 1.0*(1.0*k)/(1.0*n)
             if(case == 3) xi = -1.0 + 2.0*(1.0*k)/(1.0*n)
             node = NN + (k-0)*ni*nj + (j-1)*ni + i 
-            if( (k  < ke).and.(x_node(node) == HUGE) ) then 
+            if( (k  < ke).and.(grid % nodes(node) % x == HUGE) ) then 
               if    (case == 1) then
-                x_node(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
-                y_node(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
-                z_node(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
+                grid % nodes(node) % x = x0 - (tanh(xi*atanh(pr))/pr)*delx
+                grid % nodes(node) % y = y0 - (tanh(xi*atanh(pr))/pr)*dely
+                grid % nodes(node) % z = z0 - (tanh(xi*atanh(pr))/pr)*delz
               elseif(case == 2) then
-                x_node(node) = x0 + delx - (tanh(xi*atanh(pr))/pr)*delx
-                y_node(node) = y0 + dely - (tanh(xi*atanh(pr))/pr)*dely
-                z_node(node) = z0 + delz - (tanh(xi*atanh(pr))/pr)*delz
+                grid % nodes(node) % x = x0  &
+                                       + delx - (tanh(xi*atanh(pr))/pr)*delx
+                grid % nodes(node) % y = y0  &
+                                       + dely - (tanh(xi*atanh(pr))/pr)*dely
+                grid % nodes(node) % z = z0  &
+                                       + delz - (tanh(xi*atanh(pr))/pr)*delz
               elseif(case == 3) then
-                x_node(node) = x0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
-                y_node(node) = y0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
-                z_node(node) = z0 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
+                grid % nodes(node) % x = x0  &
+                                       + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
+                grid % nodes(node) % y = y0  &
+                                       + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*dely
+                grid % nodes(node) % z = z0  &
+                                       + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delz
               endif 
             endif
           end if 

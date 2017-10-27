@@ -1,11 +1,12 @@
 !==============================================================================!
-  subroutine Save_Gmv_Mesh(sub, NNsub, NCsub)
+  subroutine Save_Gmv_Grid(sub, NNsub, NCsub)
 !------------------------------------------------------------------------------!
 ! Writes: NAME.gmv, NAME.faces.gmv, NAME.shadow.gmv                            !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -35,13 +36,13 @@
   write(9,*) 'nodes', NNsub
 
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') x_node(n)
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % nodes(n) % x
   end do
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') y_node(n)
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % nodes(n) % y
   end do
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') z_node(n)
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % nodes(n) % z
   end do
 
   !-----------!
@@ -50,32 +51,33 @@
   write(9,*) 'cells', NCsub
   do c=1,NC
     if(NewC(c) /= 0) then
-      if(CellN(c,0) == 8) then
+      if(grid % cells(c) % n_nodes == 8) then
         write(9,*) 'hex 8'
-        write(9,'(8I9)')                        &
-          NewN(CellN(c,1)), NewN(CellN(c,2)),   &
-          NewN(CellN(c,4)), NewN(CellN(c,3)),   &
-          NewN(CellN(c,5)), NewN(CellN(c,6)),   &
-          NewN(CellN(c,8)), NewN(CellN(c,7))
-      else if(CellN(c,0) == 6) then
+        write(9,'(8I9)')                                                &
+          NewN(grid % cells(c) % n(1)), NewN(grid % cells(c) % n(2)),   &
+          NewN(grid % cells(c) % n(4)), NewN(grid % cells(c) % n(3)),   &
+          NewN(grid % cells(c) % n(5)), NewN(grid % cells(c) % n(6)),   &
+          NewN(grid % cells(c) % n(8)), NewN(grid % cells(c) % n(7))
+      else if(grid % cells(c) % n_nodes == 6) then
         write(9,*) 'prism 6'
-        write(9,'(6I9)')                        &
-          NewN(CellN(c,1)), NewN(CellN(c,2)),   &
-          NewN(CellN(c,3)), NewN(CellN(c,4)),   &
-          NewN(CellN(c,5)), NewN(CellN(c,6))
-      else if(CellN(c,0) == 4) then
+        write(9,'(6I9)')                                                &
+          NewN(grid % cells(c) % n(1)), NewN(grid % cells(c) % n(2)),   &
+          NewN(grid % cells(c) % n(3)), NewN(grid % cells(c) % n(4)),   &
+          NewN(grid % cells(c) % n(5)), NewN(grid % cells(c) % n(6))
+      else if(grid % cells(c) % n_nodes == 4) then
         write(9,*) 'tet 4'
-        write(9,'(4I9)')                        &
-          NewN(CellN(c,1)), NewN(CellN(c,2)),   &
-          NewN(CellN(c,3)), NewN(CellN(c,4))
-      else if(CellN(c,0) == 5) then
+        write(9,'(4I9)')                                                &
+          NewN(grid % cells(c) % n(1)), NewN(grid % cells(c) % n(2)),   &
+          NewN(grid % cells(c) % n(3)), NewN(grid % cells(c) % n(4))
+      else if(grid % cells(c) % n_nodes == 5) then
         write(9,*) 'pyramid 5'
-        write(9,'(5I9)')                        &
-          NewN(CellN(c,5)), NewN(CellN(c,1)),   &
-          NewN(CellN(c,2)), NewN(CellN(c,4)),   &
-          NewN(CellN(c,3))
+        write(9,'(5I9)')                                                &
+          NewN(grid % cells(c) % n(5)), NewN(grid % cells(c) % n(1)),   &
+          NewN(grid % cells(c) % n(2)), NewN(grid % cells(c) % n(4)),   &
+          NewN(grid % cells(c) % n(3))
       else
-        write(*,*) '# Unsupported cell type ', CellN(c,0), ' nodes.'
+        write(*,*) '# Unsupported cell type with ',  &
+                    grid % cells(c) % n_nodes, ' nodes.'
         write(*,*) '# Exiting'
         stop 
       end if 
@@ -120,13 +122,13 @@
   write(9,*) 'nodes', NNsub
 
   do n=1,NN
-    write(9, '(1PE14.7)') x_node(n)
+    write(9, '(1PE14.7)') grid % nodes(n) % x
   end do
   do n=1,NN
-    write(9, '(1PE14.7)') y_node(n)
+    write(9, '(1PE14.7)') grid % nodes(n) % y
   end do
   do n=1,NN
-    write(9, '(1PE14.7)') z_node(n)
+    write(9, '(1PE14.7)') grid % nodes(n) % z
   end do
 
   !-----------!
@@ -147,7 +149,8 @@
         SideN(s,1), SideN(s,2),  &
         SideN(s,3)
     else
-      write(*,*) '# Unsupported cell type ', CellN(c,0), ' nodes.'
+      write(*,*) '# Unsupported cell type ',  &
+                 grid % cells(c) % n_nodes, ' nodes.'
       write(*,*) '# Exiting'
       stop 
     end if
@@ -207,4 +210,4 @@
 
   close(9)
 
-  end subroutine Save_Gmv_Mesh
+  end subroutine Save_Gmv_Grid

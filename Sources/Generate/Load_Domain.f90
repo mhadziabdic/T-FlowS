@@ -3,10 +3,11 @@
 !------------------------------------------------------------------------------!
 !   Reads: name.d                                                              !
 !----------------------------------[Modules]-----------------------------------!
-  use Block_Mod
   use all_mod
   use gen_mod
   use par_mod
+  use Domain_Mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !----------------------------------[Calling]-----------------------------------!
@@ -20,7 +21,7 @@
   character(len=12) :: answer
   real              :: xt(8), yt(8), zt(8)
   integer           :: face_nodes(6,4)
-  integer           :: n_points, n_blocks
+  integer           :: n_points, n_blocks, n_lines
 !==============================================================================!
   data face_nodes / 1, 1, 2, 4, 3, 5,                               &
                     2, 5, 6, 8, 7, 7,                               &
@@ -80,10 +81,11 @@
 
   allocate (BCmark(-MAXB-1:-1)); BCmark=0;
 
+  ! Variables in Gen_Mod
+  call Allocate_Grid_Nodes(grid, MAXN) 
+  call Allocate_Grid_Cells(grid, MAXB, MAXN) 
+
   ! Variables declared in gen_mod.h90:
-  allocate (x_node(MAXN));     x_node=0 
-  allocate (y_node(MAXN));     y_node=0
-  allocate (z_node(MAXN));     z_node=0
   allocate (walln(MAXN)); walln=0
   allocate (xsp(MAXS));   xsp=0
   allocate (ysp(MAXS));   ysp=0
@@ -91,19 +93,13 @@
 
   allocate (SideN(MAXS,0:4));       SideN =0 
   allocate (SideCc(MAXS,2));        SideCc=0 
-  allocate (CellC(-MAXB:MAXN,24));  CellC =0
 
   allocate (NewN(-MAXB:MAXN));   NewN=0
   allocate (NewC(-MAXB:MAXN));   NewC=0
   allocate (NewS(MAXS));         NewS=0
   allocate (CelMar(-MAXB:MAXN)); CelMar=0
 
-  allocate (CellN(MAXN,0:8));    CellN=0
   allocate (TwinN(MAXN,0:8));    TwinN=0
-
-  allocate (NodeN2(MAXN,0:2));   NodeN2=0 
-  allocate (NodeN4(MAXN,0:4));   NodeN4=0
-  allocate (NodeN8(MAXN,0:8));   NodeN8=0
 
   allocate (level(MAXN)); level=0
 
@@ -121,13 +117,13 @@
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_points  ! number of points
 
-  allocate (x_point(n_points))
-  allocate (y_point(n_points))
-  allocate (z_point(n_points))
+  allocate(points(n_points))
 
-  do i = 1, n_points
+  do i = 1, size(points)
     call ReadC(9,inp,tn,ts,te)
-    read(inp(ts(2):te(4)),*) x_point(i), y_point(i), z_point(i)
+    read(inp(ts(2):te(4)),*) points(i) % x,  &
+                             points(i) % y,  &
+                             points(i) % z
   end do
 
   !------------!
@@ -136,63 +132,69 @@
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_blocks  ! number of blocks 
 
-  allocate (blocks(n_blocks))
+  allocate(dom % blocks(n_blocks))
 
   ! Initialize weights 
-  do b=1, size(blocks)
-    blocks(b) % weights      = 1.0
-    blocks(b) % face_weights = 1.0
+  do b=1, size(dom % blocks)
+    dom % blocks(b) % weights      = 1.0
+    dom % blocks(b) % face_weights = 1.0
   end do
 
-  do b = 1, size(blocks)
-    blocks(b) % points(0)=1       ! suppose it is properly oriented
+  do b = 1, size(dom % blocks)
+    dom % blocks(b) % points(0)=1       ! suppose it is properly oriented
 
     call ReadC(9,inp,tn,ts,te)
-    read(inp(ts(2):te(4)),*)          &  ! ni, nj, nk  for a block
-         blocks(b) % resolutions(1),  &
-         blocks(b) % resolutions(2),  &
-         blocks(b) % resolutions(3) 
+    read(inp(ts(2):te(4)),*)                &  ! ni, nj, nk  for a block
+         dom % blocks(b) % resolutions(1),  &
+         dom % blocks(b) % resolutions(2),  &
+         dom % blocks(b) % resolutions(3) 
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*)  &            ! Block weights 
-         blocks(b) % weights(1),blocks(b) % weights(2),blocks(b) % weights(3)
+    read(inp,*)                         &  ! Block weights 
+         dom % blocks(b) % weights(1),  &
+         dom % blocks(b) % weights(2),  &
+         dom % blocks(b) % weights(3)
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*)                       &
-         blocks(b) % points( 1), blocks(b) % points( 2),  &
-         blocks(b) % points( 3), blocks(b) % points( 4),  &
-         blocks(b) % points( 5), blocks(b) % points( 6),  &
-         blocks(b) % points( 7), blocks(b) % points( 8)
+    read(inp,*)                                                     &
+         dom % blocks(b) % points(1), dom % blocks(b) % points(2),  &
+         dom % blocks(b) % points(3), dom % blocks(b) % points(4),  &
+         dom % blocks(b) % points(5), dom % blocks(b) % points(6),  &
+         dom % blocks(b) % points(7), dom % blocks(b) % points(8)
 
     !---------------------------!
     !   Check if the block is   ! 
     !     properly oriented     !
     !---------------------------!
     do n=1,8
-      xt(n)=x_point(blocks(b) % points( n))
-      yt(n)=y_point(blocks(b) % points( n))
-      zt(n)=z_point(blocks(b) % points( n))
+      xt(n) = points(dom % blocks(b) % points(n)) % x
+      yt(n) = points(dom % blocks(b) % points(n)) % y
+      zt(n) = points(dom % blocks(b) % points(n)) % z
     end do
 
     if(Tet_Volume( xt(2),yt(2),zt(2), xt(5),yt(5),zt(5),  &
                    xt(3),yt(3),zt(3), xt(1),yt(1),zt(1) )  < 0) then
-      blocks(b) % points(0)=-1            !  It's nor properly oriented
-      call Swap_Integers(blocks(b) % points(2),blocks(b) % points(3))
-      call Swap_Integers(blocks(b) % points(6),blocks(b) % points(7))
-      call Swap_Reals(blocks(b) % weights(1),blocks(b) % weights(2))
-      blocks(b) % weights(1)=1.0/blocks(b) % weights(1)
-      blocks(b) % weights(2)=1.0/blocks(b) % weights(2)
-      call Swap_Integers(blocks(b) % resolutions(1),blocks(b) % resolutions(2))
+      dom % blocks(b) % points(0)=-1            !  It's nor properly oriented
+      call Swap_Integers(dom % blocks(b) % points(2),  &
+                         dom % blocks(b) % points(3))
+      call Swap_Integers(dom % blocks(b) % points(6),  &
+                         dom % blocks(b) % points(7))
+      call Swap_Reals(dom % blocks(b) % weights(1),dom % blocks(b) % weights(2))
+      dom % blocks(b) % weights(1)=1.0/dom % blocks(b) % weights(1)
+      dom % blocks(b) % weights(2)=1.0/dom % blocks(b) % weights(2)
+      call Swap_Integers(dom % blocks(b) % resolutions(1),  &
+                         dom % blocks(b) % resolutions(2))
       write(*,*) 'Warning: Block ',b,' was not properly oriented'
     end if
-  end do                 ! through blocks
+  end do                 ! through dom % blocks
 
   !-----------------------------!
   !   Set the corners of each   !
   !      face of the block      !
   !-----------------------------!
-  do b = 1, size(blocks)
+  do b = 1, size(dom % blocks)
     do fc = 1,6
       do n = 1,4
-        blocks(b) % faces(fc, n)=blocks(b) % points(face_nodes(fc,n))
+        dom % blocks(b) % faces(fc, n) =  &
+        dom % blocks(b) % points(face_nodes(fc,n))
       end do
     end do
   end do
@@ -204,35 +206,37 @@
   !   or with just a weighting factor.           !
   !----------------------------------------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*)       Nline     ! number of defined lines
-  do l=1, Nline
+  read(inp,*) n_lines     ! number of defined dom % lines
+
+  allocate(dom % lines(n_lines))
+
+  do l=1, size(dom % lines)
     call ReadC(9,inp,tn,ts,te)
 
-    read(inp(ts(1):te(3)),*) dum, LinPnt(l,1), LinPnt(l,2)
+    read(inp(ts(1):te(3)),*) dum, dom % lines(l) % points(1),  &
+                                  dom % lines(l) % points(2)
 
-    call Find_Line(LinPnt(l,1),LinPnt(l,2),LinRes(l))
+    call Find_Line(dom % lines(l) % points(1),  &
+                   dom % lines(l) % points(2),  &
+                   dom % lines(l) % resolution)
 
-    if(LinRes(l)  > MAXL) then
-      write(*,*) 'ERROR MESSAGE FROM TFlowS:'
-      write(*,*) 'You tried to define ', LinRes(l), ' points on'
-      write(*,*) 'the line ', l, ' and the limit is: ', MAXL
-      write(*,*) 'Increase the parameter MAXL in the file param.all'
-      write(*,*) 'and recompile the code. Good Luck !'
-      stop
-    end if 
+    allocate(dom % lines(l) % x( dom % lines(l) % resolution ))
+    allocate(dom % lines(l) % y( dom % lines(l) % resolution ))
+    allocate(dom % lines(l) % z( dom % lines(l) % resolution ))
 
     ! Point by point
-    if(dum  > 0) then
-      do n=1,LinRes(l)
+    if(dum > 0) then
+      do n=1,dom % lines(l) % resolution
         call ReadC(9,inp,tn,ts,te)
-        read(inp(ts(2):te(4)),*) xl(l,n), yl(l,n), zl(l,n)
-        write(*,*)  xl(l,n), yl(l,n), zl(l,n)
+        read(inp(ts(2):te(4)),*) dom % lines(l) % x(n),  &
+                                 dom % lines(l) % y(n),  &
+                                 dom % lines(l) % z(n)
       end do
 
     ! Weight factor
     else
       call ReadC(9,inp,tn,ts,te)
-      read(inp,*) LinWgt(l)
+      read(inp,*) dom % lines(l) % weight
     endif 
 
   end do
@@ -240,11 +244,11 @@
   !----------------------------------------!
   !   Copy block weights to face weights   !
   !----------------------------------------!
-  do b = 1, size(blocks)
+  do b = 1, size(dom % blocks)
     do fc = 1,6                          !  face of the block
-      blocks(b) % face_weights(fc,1) = blocks(b) % weights(1)
-      blocks(b) % face_weights(fc,2) = blocks(b) % weights(2)
-      blocks(b) % face_weights(fc,3) = blocks(b) % weights(3)
+      dom % blocks(b) % face_weights(fc, 1) = dom % blocks(b) % weights(1)
+      dom % blocks(b) % face_weights(fc, 2) = dom % blocks(b) % weights(2)
+      dom % blocks(b) % face_weights(fc, 3) = dom % blocks(b) % weights(3)
     end do
   end do
 
@@ -262,9 +266,9 @@
     n = (b-1)*6 + fc         ! surface number
 
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*) blocks(b) % face_weights(fc,1), &
-                blocks(b) % face_weights(fc,2), &
-                blocks(b) % face_weights(fc,2)
+    read(inp,*) dom % blocks(b) % face_weights(fc,1), &
+                dom % blocks(b) % face_weights(fc,2), &
+                dom % blocks(b) % face_weights(fc,2)
   end do
 
   !---------------------------------------!
@@ -274,10 +278,10 @@
   ! Nodes & faces
   n_nodes_check = 0
   n_faces_check = 0
-  do b = 1,size(blocks)
-    ni = blocks(b) % resolutions(1)
-    nj = blocks(b) % resolutions(2)
-    nk = blocks(b) % resolutions(3)
+  do b = 1,size(dom % blocks)
+    ni = dom % blocks(b) % resolutions(1)
+    nj = dom % blocks(b) % resolutions(2)
+    nk = dom % blocks(b) % resolutions(3)
     n_nodes_check=n_nodes_check + ni*nj*nk
     n_faces_check=n_faces_check + ni*nj*nk + 2*( (ni*nj)+(nj*nk)+(ni*nk) )
   end do
@@ -329,7 +333,7 @@
     read(inp,*)       &  
          b_cond(n,7),  &  ! block,  
          b_cond(n,8)      ! mark         
-  if( blocks(b_cond(n,7)) % points(0) == -1 ) then
+  if( dom % blocks(b_cond(n,7)) % points(0) == -1 ) then
     call Swap_Integers( b_cond(n,1),b_cond(n,2) )
     call Swap_Integers( b_cond(n,4),b_cond(n,5) )
   end if
@@ -388,9 +392,9 @@
   do l=1,n_refine_levels
     write(*,*) 'Level: ', l
     call ReadC(9,inp,tn,ts,te)
-    inp = inp(ts(2):te(2)) ! this is the only way Microsoft Fortran
-                           ! compiles this part (two lines) of the code
-    read(inp,*) n_refined_regions(l)      ! number of regions in level n
+    inp = inp(ts(2):te(2))  ! this is the only way Microsoft Fortran
+                            ! compiles this part (two lines) of the code
+    read(inp,*) n_refined_regions(l)  ! number of regions in level n
 
     do n=1, n_refined_regions(l)
       call ReadC(9,inp,tn,ts,te)

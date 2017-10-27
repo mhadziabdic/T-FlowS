@@ -7,6 +7,7 @@
   use gen_mod 
   use div_mod
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
@@ -59,13 +60,11 @@
   allocate (NewC(-NbC-1:NC)); NewC=0 
   allocate (NewS(NS));        NewS=0
 
-  allocate (x_node(NN)); x_node=0
-  allocate (y_node(NN)); y_node=0
-  allocate (z_node(NN)); z_node=0
+  call Allocate_Grid_Nodes(grid, NN) 
+  call Allocate_Grid_Cells(grid, NbC, NC) 
 
   allocate (NewN(NN)); NewN=0 
 
-  allocate (CellN(NC,0:8)); CellN=0
   allocate (SideN(NS+NSsh,0:4)); SideN=0
 
   ! Variables declared in div.h90:
@@ -85,13 +84,13 @@
 
   ! Read node coordinates
   do n=1,NN
-    read(9,*) x_node(n)
+    read(9,*) grid % nodes(n) % x
   end do
   do n=1,NN
-    read(9,*) y_node(n)
+    read(9,*) grid % nodes(n) % y
   end do
   do n=1,NN
-    read(9,*) z_node(n)
+    read(9,*) grid % nodes(n) % z
   end do
 
   ! Read cell nodes 
@@ -100,27 +99,33 @@
     call ReadC(9,inp,tn,ts,te)
     read(inp(ts(1):te(1)),*) dum_s
     if(dum_s  ==  'hex') then
-      CellN(c,0) = 8
+      grid % cells(c) % n_nodes = 8
       call ReadC(9,inp,tn,ts,te)
-      read(inp,*) &
-           CellN(c,1), CellN(c,2), CellN(c,4), CellN(c,3),          &
-           CellN(c,5), CellN(c,6), CellN(c,8), CellN(c,7) 
+      read(inp,*)                                           &
+           grid % cells(c) % n(1), grid % cells(c) % n(2),  &
+           grid % cells(c) % n(4), grid % cells(c) % n(3),  &
+           grid % cells(c) % n(5), grid % cells(c) % n(6),  &
+           grid % cells(c) % n(8), grid % cells(c) % n(7) 
     else if(dum_s  ==  'prism') then
-      CellN(c,0) = 6
+      grid % cells(c) % n_nodes = 6
       call ReadC(9,inp,tn,ts,te)
-      read(inp,*)                             &
-         CellN(c,1), CellN(c,2), CellN(c,3),  &
-         CellN(c,4), CellN(c,5), CellN(c,6)
+      read(inp,*)                                         &
+         grid % cells(c) % n(1), grid % cells(c) % n(2),  &
+         grid % cells(c) % n(3), grid % cells(c) % n(4),  &
+         grid % cells(c) % n(5), grid % cells(c) % n(6)
     else if(dum_s  ==  'tet') then
-      CellN(c,0) = 4
+      grid % cells(c) % n_nodes = 4
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
-         CellN(c,1), CellN(c,2), CellN(c,3), CellN(c,4)
+         grid % cells(c) % n(1), grid % cells(c) % n(2),  &
+         grid % cells(c) % n(3), grid % cells(c) % n(4)
     else if(dum_s  ==  'pyramid') then
-      CellN(c,0) = 5
+      grid % cells(c) % n_nodes = 5
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
-         CellN(c,5), CellN(c,1), CellN(c,2), CellN(c,4), CellN(c,3)
+         grid % cells(c) % n(5), grid % cells(c) % n(1),  &
+         grid % cells(c) % n(2), grid % cells(c) % n(4),  &
+         grid % cells(c) % n(3)
     else
       write(*,*) '# Unsupported cell type: ', dum_s
       write(*,*) '# Exiting'

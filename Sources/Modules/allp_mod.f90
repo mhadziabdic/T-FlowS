@@ -10,6 +10,9 @@ module allp_mod
 
   implicit none
 
+  integer, parameter :: YES =  0
+  integer, parameter :: NO  = -1
+
   integer, parameter ::          & 
     MAXL     = 1000,             &
     MAXPRO   = 1024,             & ! max. n. of processors    

@@ -6,19 +6,21 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, lev, reg, n1, n2, n3, n4, n5, n6, n7, n8
-  real    :: x1, y1, z1, x8, y8, z8, x0, y0, z0
+  integer              :: c, lev, reg, n1, n2, n3, n4, n5, n6, n7, n8
+  real                 :: x1, y1, z1, x8, y8, z8, x0, y0, z0
 !==============================================================================!
 
-  do c=-MAXB,MAXN
-    CelMar(c) = 0
-  end do 
+  ! Set no cell for refinement, intially
+  CelMar = 0
 
-  do lev = 1,NRL
+  do lev = 1,n_refine_levels
+
     do reg = 1,n_refined_regions(lev) 
+
       x1=refined_regions(lev,reg,1)
       y1=refined_regions(lev,reg,2)
       z1=refined_regions(lev,reg,3)
@@ -27,21 +29,27 @@
       z8=refined_regions(lev,reg,6)
 
       do c=1,NC
-        n1=CellN(c,1)
-        n2=CellN(c,2)
-        n3=CellN(c,3)
-        n4=CellN(c,4)
-        n5=CellN(c,5)
-        n6=CellN(c,6)
-        n7=CellN(c,7)
-        n8=CellN(c,8)
+        n1 = grid % cells(c) % n(1)
+        n2 = grid % cells(c) % n(2)
+        n3 = grid % cells(c) % n(3)
+        n4 = grid % cells(c) % n(4)
+        n5 = grid % cells(c) % n(5)
+        n6 = grid % cells(c) % n(6)
+        n7 = grid % cells(c) % n(7)
+        n8 = grid % cells(c) % n(8)
 
-        x0=1.25e-1*(x_node(n1)+x_node(n2)+x_node(n3)+x_node(n4)+  &
-                    x_node(n5)+x_node(n6)+x_node(n7)+x_node(n8))
-        y0=1.25e-1*(y_node(n1)+y_node(n2)+y_node(n3)+y_node(n4)+  &
-                    y_node(n5)+y_node(n6)+y_node(n7)+y_node(n8))
-        z0=1.25e-1*(z_node(n1)+z_node(n2)+z_node(n3)+z_node(n4)+  &
-                    z_node(n5)+z_node(n6)+z_node(n7)+z_node(n8))
+        x0=1.25e-1*(grid % nodes(n1) % x + grid % nodes(n2) % x +   &
+                    grid % nodes(n3) % x + grid % nodes(n4) % x +   &
+                    grid % nodes(n5) % x + grid % nodes(n6) % x +   &
+                    grid % nodes(n7) % x + grid % nodes(n8) % x)
+        y0=1.25e-1*(grid % nodes(n1) % y + grid % nodes(n2) % y +   &
+                    grid % nodes(n3) % y + grid % nodes(n4) % y +   &
+                    grid % nodes(n5) % y + grid % nodes(n6) % y +   &
+                    grid % nodes(n7) % y + grid % nodes(n8) % y)
+        z0=1.25e-1*(grid % nodes(n1) % z + grid % nodes(n2) % z +   &
+                    grid % nodes(n3) % z + grid % nodes(n4) % z +   &
+                    grid % nodes(n5) % z + grid % nodes(n6) % z +   &
+                    grid % nodes(n7) % z + grid % nodes(n8) % z)
 
         if(refined_regions(lev,reg,0) == ELIPSOID) then
           if(  ( ((x1-x0)/x8)**2 +                                  &
@@ -63,11 +71,10 @@
       end do   ! cells
 
     end do   ! reg
+
     call Refine_Marked_Cells(lev)
 
-    do c=-MAXB,MAXN
-       CelMar(c) = 0
-    enddo 
+    CelMar = 0
 
   end do  ! lev
 

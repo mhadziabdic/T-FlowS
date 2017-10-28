@@ -71,16 +71,16 @@
                 ((n21 == p23).and.(n23 == p21)) .or.                &
                 ((n21 == p22).and.(n23 == p24)) ) ) then
 
-              ! Nadji lokalne cvorove (1-8) blokova 1 i 2 na generickoj povrsini
+              ! Find local nodes (1-8) from blocks 1 and 2 on generic surface
               do n=1,8
-                if(dom % blocks(b1) % points(n) == p11) l11=n
-                if(dom % blocks(b1) % points(n) == p12) l12=n
-                if(dom % blocks(b1) % points(n) == p13) l13=n
-                if(dom % blocks(b1) % points(n) == p14) l14=n
-                if(dom % blocks(b2) % points(n) == p21) l21=n
-                if(dom % blocks(b2) % points(n) == p22) l22=n
-                if(dom % blocks(b2) % points(n) == p23) l23=n
-                if(dom % blocks(b2) % points(n) == p24) l24=n
+                if(dom % blocks(b1) % corners(n) == p11) l11=n
+                if(dom % blocks(b1) % corners(n) == p12) l12=n
+                if(dom % blocks(b1) % corners(n) == p13) l13=n
+                if(dom % blocks(b1) % corners(n) == p14) l14=n
+                if(dom % blocks(b2) % corners(n) == p21) l21=n
+                if(dom % blocks(b2) % corners(n) == p22) l22=n
+                if(dom % blocks(b2) % corners(n) == p23) l23=n
+                if(dom % blocks(b2) % corners(n) == p24) l24=n
               end do
 
               write(*, *) '# Copy_cond dom % blocks: ', b1, b2

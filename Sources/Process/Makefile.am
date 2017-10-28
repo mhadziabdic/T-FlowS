@@ -68,13 +68,13 @@ Process_SOURCES =	 			\
   SourceVisSpalart.f90				\
   UnkAloc.f90
 
-SUBDIRS = ../Modules				\
+SUBDIRS = ../Shared/Modules			\
           Communication				\
           Linear_Solvers			\
           User					\
           ../Shared
 
-LDADD = ../Modules/libModules.a			\
+LDADD = ../Shared/Modules/libSharedModules.a	\
         Communication/libCommunication.a	\
         Linear_Solvers/libLinear_Solvers.a	\
         User/libUser.a				\

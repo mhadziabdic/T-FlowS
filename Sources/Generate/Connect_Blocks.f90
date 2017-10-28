@@ -77,16 +77,16 @@
             g3=n13
             g4=n14
 
-            ! Find local nodes (1-8) from dom % blocks 1 and 2 on generic surface
+            ! Find local nodes (1-8) from blocks 1 and 2 on generic surface
             do n=1,8
-              if(dom % blocks(b1) % points(n) == g1) l11=n
-              if(dom % blocks(b2) % points(n) == g1) l21=n
-              if(dom % blocks(b1) % points(n) == g2) l12=n
-              if(dom % blocks(b2) % points(n) == g2) l22=n
-              if(dom % blocks(b1) % points(n) == g3) l13=n
-              if(dom % blocks(b2) % points(n) == g3) l23=n
-              if(dom % blocks(b1) % points(n) == g4) l14=n
-              if(dom % blocks(b2) % points(n) == g4) l24=n
+              if(dom % blocks(b1) % corners(n) == g1) l11=n
+              if(dom % blocks(b2) % corners(n) == g1) l21=n
+              if(dom % blocks(b1) % corners(n) == g2) l12=n
+              if(dom % blocks(b2) % corners(n) == g2) l22=n
+              if(dom % blocks(b1) % corners(n) == g3) l13=n
+              if(dom % blocks(b2) % corners(n) == g3) l23=n
+              if(dom % blocks(b1) % corners(n) == g4) l14=n
+              if(dom % blocks(b2) % corners(n) == g4) l24=n
             end do
 
             ! Direction ig, block 1

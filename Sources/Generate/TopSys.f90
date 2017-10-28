@@ -164,11 +164,11 @@
   !--------------------------------------!
   !   Is there enough allocated memory   !
   !--------------------------------------!
-  if( NS  > MAXS ) then
+  if( NS  > grid % max_n_faces ) then
     write(*,*) '# Error message from Generator'
     write(*,*) '# The number sides is: ', NS
-    write(*,*) '# There is space available only for:', MAXS
-    write(*,*) '# Increase the parameter MAXS in the file: all.p'
+    write(*,*) '# There is space available only for:', grid % max_n_faces
+    write(*,*) '# Increase the number of faces in .dom file'
     write(*,*) '# and recompile the code. Good Luck !'
     stop
   end if 

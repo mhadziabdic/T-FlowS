@@ -57,9 +57,9 @@
   nn_4 = 0
   nn_8 = 0
 
-  allocate (node_n2(MAXN,0:2));   node_n2=0 
-  allocate (node_n4(MAXN,0:4));   node_n4=0
-  allocate (node_n8(MAXN,0:8));   node_n8=0
+  allocate (node_n2(grid % max_n_nodes,0:2));   node_n2=0 
+  allocate (node_n4(grid % max_n_nodes,0:4));   node_n4=0
+  allocate (node_n8(grid % max_n_nodes,0:8));   node_n8=0
 
   !---------------------!
   !                     !
@@ -865,8 +865,10 @@
 
         if( (TwinN(nB1,0) /= 0).and.(TwinN(nB2,0) /= 0) ) then
 
-          if( (Are_Nodes_Twins(nA1,nB1) .and. Are_Nodes_Twins(nA2,nB2)) .or.          &
-              (Are_Nodes_Twins(nA1,nB2) .and. Are_Nodes_Twins(nA2,nB1))  ) then
+          if( (Are_Nodes_Twins(nA1,nB1) .and.   &
+               Are_Nodes_Twins(nA2,nB2)) .or.   &
+              (Are_Nodes_Twins(nA1,nB2) .and.   &
+               Are_Nodes_Twins(nA2,nB1))  ) then
             if (.not. Are_Nodes_Twins(nA0,nB0)) then
               TwinN(nA0,0)=TwinN(nA0,0)+1
               TwinN(nA0,TwinN(nA0,0))=nB0
@@ -948,8 +950,8 @@
     end if
   end do
 
-  do c=NC-del+1, MAXN   ! erase old data
-    do n=1,24           ! n is neighbour now
+  do c=NC-del+1, grid % max_n_nodes   ! erase old data
+    do n=1,24                         ! n is neighbour now
       grid % cells(c) % c(n) = 0
     end do
   end do

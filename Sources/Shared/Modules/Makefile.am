@@ -1,10 +1,10 @@
-noinst_LIBRARIES = libModules.a
+noinst_LIBRARIES = libSharedModules.a
 
-libModules_a_SOURCES = 		\
+libSharedModules_a_SOURCES = 	\
   Point_Mod.f90			\
   Line_Mod.f90			\
   Block_Mod.f90			\
-  Range_Mod.f90			\
+  Region_Mod.f90		\
   Material_Mod.f90 		\
   Boundary_Condition_Mod.f90	\
   Domain_Mod.f90		\

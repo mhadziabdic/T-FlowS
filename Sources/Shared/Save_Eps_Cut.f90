@@ -1,7 +1,8 @@
 !==============================================================================!
-  subroutine Save_Eps_Cut(sidegDx,sidegDy,dir)
+  subroutine Save_Eps_Cut(face_g_dx,face_g_dy,dir)
 !------------------------------------------------------------------------------!
-! Writes: Grid in encapsulated postscript format.                              !
+!   Writes grid in encapsulated postscript format.                             !
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
@@ -9,7 +10,11 @@
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  real      :: xg(MAXN),yg(MAXN),zg(MAXN),sidegDx(MAXS),sidegDy(MAXS)
+  real      :: xg(grid % max_n_nodes),  &
+               yg(grid % max_n_nodes),  &
+               zg(grid % max_n_nodes)
+  real      :: face_g_dx(grid % max_n_faces),  &
+               face_g_dy(grid % max_n_faces) 
   character :: dir
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c1, c2, count, lw
@@ -174,10 +179,10 @@
       if( Dx(s) /= 0.0 .or. Dy(s) /= 0.0 ) then
         write(9,'(A6,I2,A5,2I8,A3,2I8,A3,A8)')                      &
                   'gs np ',lw,' slw ',                              &
-                  int(sclf*(xin(1)-sidegDx(s))),                    &
-                  int(sclf*(yin(1)-sidegDy(s))), ' m ',             &
-                  int(sclf*(xin(2)-sidegDx(s))),                    &
-                  int(sclf*(yin(2)-sidegDy(s))), ' l ',             &
+                  int(sclf*(xin(1)-face_g_dx(s))),                  &
+                  int(sclf*(yin(1)-face_g_dy(s))), ' m ',           &
+                  int(sclf*(xin(2)-face_g_dx(s))),                  &
+                  int(sclf*(yin(2)-face_g_dy(s))), ' l ',           &
                   ' cp s gr' 
       end if
     end if

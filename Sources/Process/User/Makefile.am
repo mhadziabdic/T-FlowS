@@ -15,8 +15,8 @@ libUser_a_SOURCES =	\
   UserCutLines_RB_conv.f90     \
   UserCutLines_Point_Cart.f90
 
-SUBDIRS = ../../Modules
+SUBDIRS = ../../Shared/Modules
 
-LDADD = ../../Modules/libModules.a
+LDADD = ../../SharedModules/libSharedModules.a
 
 INCLUDE = -I@top_srcdir@/

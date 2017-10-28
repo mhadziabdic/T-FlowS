@@ -28,8 +28,8 @@
 !==============================================================================!
 
   ! Allocate the memory
-  allocate(indx(max(NS+NSsh0,MAXS))); indx=0
-  allocate(work(max(NS+NSsh0,MAXS))); work=0
+  allocate(indx(max(NS+NSsh0, grid % max_n_faces))); indx=0
+  allocate(work(max(NS+NSsh0, grid % max_n_faces))); work=0
 
   BCcount = 0
 

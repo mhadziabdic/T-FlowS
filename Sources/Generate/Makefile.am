@@ -2,13 +2,13 @@ bin_PROGRAMS = Generate
 
 Generate_SOURCES =	 	\
   Are_Nodes_Twins.f90		\
-  Atanh.f90			\
   Compute_Node_Coordinates.f90	\
   Compute_Grid_Geometry.f90	\
   Connect_Blocks.f90		\
   Connect_Periodicity.f90	\
   Connect_Copy.f90		\
   Distribute_Nodes.f90		\
+  Distribute_Regions.f90	\
   Find_Line.f90			\
   Find_Surface.f90		\
   Is_Line_In_Block.f90		\
@@ -25,10 +25,10 @@ Generate_SOURCES =	 	\
   TopSys.f90			\
   Which_Node.f90
 
-SUBDIRS = ../Modules		\
+SUBDIRS = ../Shared/Modules	\
           ../Shared
 
-LDADD = ../Modules/libModules.a	\
+LDADD = ../Shared/Modules/libSharedModules.a	\
         ../Shared/libShared.a
 
 INCLUDE = -I@top_srcdir@/

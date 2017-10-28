@@ -8,7 +8,7 @@
   use par_mod
   use Domain_Mod
   use Grid_Mod
-!------------------------------------------------------------------------------! 
+!------------------------------------------------------------------------------!
   implicit none
 !----------------------------------[Calling]-----------------------------------!
   real :: Tet_Volume   
@@ -21,7 +21,6 @@
   character(len=12) :: answer
   real              :: xt(8), yt(8), zt(8)
   integer           :: face_nodes(6,4)
-  integer           :: n_points, n_blocks, n_lines
 !==============================================================================!
   data face_nodes / 1, 1, 2, 4, 3, 5,                               &
                     2, 5, 6, 8, 7, 7,                               &
@@ -44,70 +43,107 @@
   !   Max. number of nodes (cells), boundary faces and cell faces   ! 
   !-----------------------------------------------------------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) MAXN, MAXB, MAXS  
+  read(inp,*) grid % max_n_nodes,           &
+              grid % max_n_boundary_cells,  &
+              grid % max_n_faces  
 
   !---------------------!
   !   Allocate memory   !
   !---------------------!
   write(*,*) '# Allocating memory for: ' 
-  write(*,*) '#', MAXN, ' nodes and cells' 
-  write(*,*) '#', MAXB, ' boundary cells'         
-  write(*,*) '#', MAXS, ' cell faces' 
+  write(*,*) '#', grid % max_n_nodes, ' nodes and cells' 
+  write(*,*) '#', grid % max_n_boundary_cells, ' boundary cells'         
+  write(*,*) '#', grid % max_n_faces, ' cell faces' 
 
   ! Variables declared in all_mod.h90:
-  allocate (xc(-MAXB:MAXN)); xc=0.0
-  allocate (yc(-MAXB:MAXN)); yc=0.0
-  allocate (zc(-MAXB:MAXN)); zc=0.0
+  allocate (xc(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  xc=0.0
+  allocate (yc(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  yc=0.0
+  allocate (zc(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  zc=0.0
 
-  allocate (Sx(MAXS)); Sx=0.0
-  allocate (Sy(MAXS)); Sy=0.0
-  allocate (Sz(MAXS)); Sz=0.0
+  allocate (Sx(grid % max_n_faces))
+  Sx=0.0
+  allocate (Sy(grid % max_n_faces))
+  Sy=0.0
+  allocate (Sz(grid % max_n_faces))
+  Sz=0.0
 
-  allocate (Dx(MAXS)); Dx=0.0
-  allocate (Dy(MAXS)); Dy=0.0
-  allocate (Dz(MAXS)); Dz=0.0
+  allocate (Dx(grid % max_n_faces))
+  Dx=0.0
+  allocate (Dy(grid % max_n_faces))
+  Dy=0.0
+  allocate (Dz(grid % max_n_faces))
+  Dz=0.0
 
-  allocate (volume(-MAXB:MAXN)); volume=0.0
-  allocate (delta(-MAXB:MAXN));  delta=0.0
+  allocate (volume(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  volume=0.0
+  allocate (delta (-grid % max_n_boundary_cells:grid % max_n_nodes))
+  delta=0.0
 
-  allocate (WallDs(MAXN)); WallDs=0.0
-  allocate (f(MAXS)); f=0.0
+  allocate (WallDs(grid % max_n_nodes))
+  WallDs=0.0
+  allocate (f(grid % max_n_faces))
+  f=0.0
 
-  allocate (material(-MAXB:MAXN));  material=0
-  allocate (SideC(0:2,MAXS)); SideC   =0
+  allocate (material(-grid % max_n_boundary_cells:grid % max_n_nodes)) 
+  material=0
+  allocate (SideC(0:2,grid % max_n_faces))
+  SideC = 0
 
-  allocate (CopyC(-MAXB:MAXN)); CopyC=0
-  allocate (CopyS(2,MAXB));     CopyS=0    
+  allocate (CopyC(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  CopyC=0
+  allocate (CopyS(2,grid % max_n_boundary_cells))
+  CopyS=0    
 
-  allocate (BCmark(-MAXB-1:-1)); BCmark=0;
+  allocate (BCmark(-grid % max_n_boundary_cells-1:-1))
+  BCmark=0;
 
   ! Variables in Gen_Mod
-  call Allocate_Grid_Nodes(grid, MAXN) 
-  call Allocate_Grid_Cells(grid, MAXB, MAXN) 
+  call Allocate_Grid_Nodes(grid, grid % max_n_nodes) 
+  call Allocate_Grid_Cells(grid, grid % max_n_boundary_cells,  &
+                                 grid % max_n_nodes) 
 
   ! Variables declared in gen_mod.h90:
-  allocate (walln(MAXN)); walln=0
-  allocate (xsp(MAXS));   xsp=0
-  allocate (ysp(MAXS));   ysp=0
-  allocate (zsp(MAXS));   zsp=0
+  allocate (walln(grid % max_n_nodes))
+  walln=0
+  allocate (xsp  (grid % max_n_faces))
+  xsp=0
+  allocate (ysp  (grid % max_n_faces))
+  ysp=0
+  allocate (zsp  (grid % max_n_faces))
+  zsp=0
 
-  allocate (SideN(MAXS,0:4));       SideN =0 
-  allocate (SideCc(MAXS,2));        SideCc=0 
+  allocate (SideN (grid % max_n_faces,0:4))
+  SideN =0 
+  allocate (SideCc(grid % max_n_faces,2))
+  SideCc=0 
 
-  allocate (NewN(-MAXB:MAXN));   NewN=0
-  allocate (NewC(-MAXB:MAXN));   NewC=0
-  allocate (NewS(MAXS));         NewS=0
-  allocate (CelMar(-MAXB:MAXN)); CelMar=0
+  allocate (NewN(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  NewN=0
+  allocate (NewC(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  NewC=0
+  allocate (NewS( grid % max_n_faces))
+  NewS=0
+  allocate (CelMar(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  CelMar=0
 
-  allocate (TwinN(MAXN,0:8));    TwinN=0
+  allocate (TwinN(grid % max_n_nodes,0:8))
+  TwinN=0
 
-  allocate (level(MAXN)); level=0
+  allocate (level(grid % max_n_nodes))
+  level=0
 
   ! Variables declared in pro_mod.h90:
-  allocate (proces(MAXN)); proces=0
-  allocate (BuSeIn(MAXS)); BuSeIn=0
-  allocate (BuReIn(MAXS)); BuReIn=0
-  allocate (BufPos(MAXS)); BufPos=0
+  allocate (proces(grid % max_n_nodes))
+  proces=0
+  allocate (BuSeIn(grid % max_n_faces))
+  BuSeIn=0
+  allocate (BuReIn(grid % max_n_faces))
+  BuReIn=0
+  allocate (BufPos(grid % max_n_faces))
+  BufPos=0
 
   write(*,*) '# Allocation successfull !'
 
@@ -115,33 +151,33 @@
   !   Corners   !
   !-------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) n_points  ! number of points
+  read(inp,*) dom % n_points  ! number of points
 
-  allocate(points(n_points))
+  call Domain_Mod_Allocate_Points(dom, dom % n_points)
 
-  do i = 1, size(points)
+  do i = 1, dom % n_points
     call ReadC(9,inp,tn,ts,te)
-    read(inp(ts(2):te(4)),*) points(i) % x,  &
-                             points(i) % y,  &
-                             points(i) % z
+    read(inp(ts(2):te(4)),*) dom % points(i) % x,  &
+                             dom % points(i) % y,  &
+                             dom % points(i) % z
   end do
 
   !------------!
   !   Blocks   !
   !------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) n_blocks  ! number of blocks 
+  read(inp,*) dom % n_blocks  ! number of blocks 
 
-  allocate(dom % blocks(n_blocks))  ! <----= This should move to Domain
+  call Domain_Mod_Allocate_Blocks(dom, dom % n_blocks)
 
   ! Initialize weights 
-  do b=1, size(dom % blocks)
+  do b=1, dom % n_blocks
     dom % blocks(b) % weights      = 1.0
     dom % blocks(b) % face_weights = 1.0
   end do
 
-  do b = 1, size(dom % blocks)
-    dom % blocks(b) % points(0)=1       ! suppose it is properly oriented
+  do b = 1, dom % n_blocks
+    dom % blocks(b) % corners(0)=1       ! suppose it is properly oriented
 
     call ReadC(9,inp,tn,ts,te)
     read(inp(ts(2):te(4)),*)                &  ! ni, nj, nk  for a block
@@ -154,29 +190,29 @@
          dom % blocks(b) % weights(2),  &
          dom % blocks(b) % weights(3)
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*)                                                     &
-         dom % blocks(b) % points(1), dom % blocks(b) % points(2),  &
-         dom % blocks(b) % points(3), dom % blocks(b) % points(4),  &
-         dom % blocks(b) % points(5), dom % blocks(b) % points(6),  &
-         dom % blocks(b) % points(7), dom % blocks(b) % points(8)
+    read(inp,*)                                                       &
+         dom % blocks(b) % corners(1), dom % blocks(b) % corners(2),  &
+         dom % blocks(b) % corners(3), dom % blocks(b) % corners(4),  &
+         dom % blocks(b) % corners(5), dom % blocks(b) % corners(6),  &
+         dom % blocks(b) % corners(7), dom % blocks(b) % corners(8)
 
     !---------------------------!
     !   Check if the block is   ! 
     !     properly oriented     !
     !---------------------------!
     do n=1,8
-      xt(n) = points(dom % blocks(b) % points(n)) % x
-      yt(n) = points(dom % blocks(b) % points(n)) % y
-      zt(n) = points(dom % blocks(b) % points(n)) % z
+      xt(n) = dom % points(dom % blocks(b) % corners(n)) % x
+      yt(n) = dom % points(dom % blocks(b) % corners(n)) % y
+      zt(n) = dom % points(dom % blocks(b) % corners(n)) % z
     end do
 
     if(Tet_Volume( xt(2),yt(2),zt(2), xt(5),yt(5),zt(5),  &
                    xt(3),yt(3),zt(3), xt(1),yt(1),zt(1) )  < 0) then
-      dom % blocks(b) % points(0)=-1            !  It's nor properly oriented
-      call Swap_Integers(dom % blocks(b) % points(2),  &
-                         dom % blocks(b) % points(3))
-      call Swap_Integers(dom % blocks(b) % points(6),  &
-                         dom % blocks(b) % points(7))
+      dom % blocks(b) % corners(0)=-1            !  It's nor properly oriented
+      call Swap_Integers(dom % blocks(b) % corners(2),  &
+                         dom % blocks(b) % corners(3))
+      call Swap_Integers(dom % blocks(b) % corners(6),  &
+                         dom % blocks(b) % corners(7))
       call Swap_Reals(dom % blocks(b) % weights(1),dom % blocks(b) % weights(2))
       dom % blocks(b) % weights(1)=1.0/dom % blocks(b) % weights(1)
       dom % blocks(b) % weights(2)=1.0/dom % blocks(b) % weights(2)
@@ -190,11 +226,11 @@
   !   Set the corners of each   !
   !      face of the block      !
   !-----------------------------!
-  do b = 1, size(dom % blocks)
+  do b = 1, dom % n_blocks
     do fc = 1,6
       do n = 1,4
         dom % blocks(b) % faces(fc, n) =  &
-        dom % blocks(b) % points(face_nodes(fc,n))
+        dom % blocks(b) % corners(face_nodes(fc,n))
       end do
     end do
   end do
@@ -206,11 +242,11 @@
   !   or with just a weighting factor.           !
   !----------------------------------------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) n_lines     ! number of defined dom % lines
+  read(inp,*) dom % n_lines     ! number of defined dom % lines
 
-  allocate(dom % lines(n_lines))
+  call Domain_Mod_Allocate_Lines(dom, dom % n_lines)
 
-  do l=1, size(dom % lines)
+  do l=1, dom % n_lines
     call ReadC(9,inp,tn,ts,te)
 
     read(inp(ts(1):te(3)),*) npnt, dom % lines(l) % points(1),  &
@@ -220,6 +256,7 @@
                    dom % lines(l) % points(2),  &
                    dom % lines(l) % resolution)
 
+    ! Does this need a more elegant solution?
     allocate(dom % lines(l) % x( dom % lines(l) % resolution ))
     allocate(dom % lines(l) % y( dom % lines(l) % resolution ))
     allocate(dom % lines(l) % z( dom % lines(l) % resolution ))
@@ -244,7 +281,7 @@
   !----------------------------------------!
   !   Copy block weights to face weights   !
   !----------------------------------------!
-  do b = 1, size(dom % blocks)
+  do b = 1, dom % n_blocks
     do fc = 1,6                          !  face of the block
       dom % blocks(b) % face_weights(fc, 1) = dom % blocks(b) % weights(1)
       dom % blocks(b) % face_weights(fc, 2) = dom % blocks(b) % weights(2)
@@ -278,7 +315,7 @@
   ! Nodes & faces
   n_nodes_check = 0
   n_faces_check = 0
-  do b = 1,size(dom % blocks)
+  do b = 1, dom % n_blocks
     ni = dom % blocks(b) % resolutions(1)
     nj = dom % blocks(b) % resolutions(2)
     nk = dom % blocks(b) % resolutions(3)
@@ -286,25 +323,27 @@
     n_faces_check=n_faces_check + ni*nj*nk + 2*( (ni*nj)+(nj*nk)+(ni*nk) )
   end do
 
-  if( (n_faces_check  > MAXS).or.(n_nodes_check  > MAXN) ) then
+  if( (n_faces_check > grid % max_n_faces) .or.  &
+      (n_nodes_check > grid % max_n_nodes) ) then
     write(*,*) '# Error message from TFlowS:'
   end if
 
-  if( n_faces_check  > MAXS ) then
+  if( n_faces_check  > grid % max_n_faces ) then
     write(*,*) '# The estimated number of sides is :', n_faces_check
-    write(*,*) '# There is space available only for:', MAXS
-    write(*,*) '# Increase the parameter MAXS in the input file'
+    write(*,*) '# There is space available only for:', grid % max_n_faces
+    write(*,*) '# Increase the parameter grid % max_n_faces in the input file'
     write(*,*) '# and re-run the code !'
   end if
 
-  if( n_nodes_check  > MAXN ) then
+  if( n_nodes_check  > grid % max_n_nodes ) then
     write(*,*) '# The estimated number of nodes is :', n_nodes_check
-    write(*,*) '# There is space available only for:', MAXN
-    write(*,*) '# Increase the parameter MAXN in the input file'
+    write(*,*) '# There is space available only for:', grid % max_n_nodes
+    write(*,*) '# Increase the parameter grid % max_n_nodes in the input file'
     write(*,*) '# and re-run the code !'
   end if 
 
-  if( (n_faces_check  > MAXS).or.(n_nodes_check  > MAXN) ) then
+  if( (n_faces_check > grid % max_n_faces) .or.  &
+      (n_nodes_check > grid % max_n_nodes) ) then
     stop
   end if
 
@@ -312,38 +351,37 @@
   !   Boundary conditions and materials   !
   !---------------------------------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) n_ranges      ! number of regions (can be boundary 
-                            ! conditions or materials)
+  read(inp,*) dom % n_regions  ! number of regions (can be boundary 
+                               ! conditions or materials)
 
-  ! Allocate memory for ranges, be it boundary conditions or material regions
-  allocate(dom % ranges(n_ranges))  ! <----= This should move to Domain
+  call Domain_Mod_Allocate_Regions(dom, dom % n_regions)
 
-  do n=1,n_ranges
-    dom % ranges(n) % face=''
+  do n=1, dom % n_regions
+    dom % regions(n) % face=''
 
     call ReadC(9,inp,tn,ts,te)
     if(tn == 7) then
       read(inp,*)  dum,                    &  
-                   dom % ranges(n) % is,   &
-                   dom % ranges(n) % js,   &
-                   dom % ranges(n) % ks,   & 
-                   dom % ranges(n) % ie,   &
-                   dom % ranges(n) % je,   &
-                   dom % ranges(n) % ke   
+                   dom % regions(n) % is,   &
+                   dom % regions(n) % js,   &
+                   dom % regions(n) % ks,   & 
+                   dom % regions(n) % ie,   &
+                   dom % regions(n) % je,   &
+                   dom % regions(n) % ke   
     else if(tn == 2) then
       read(inp(ts(1):te(1)),*)       dum           
-      read(inp(ts(2):te(2)),'(A4)')  dom % ranges(n) % face
-      call To_Upper_Case(dom % ranges(n) % face)           
+      read(inp(ts(2):te(2)),'(A4)')  dom % regions(n) % face
+      call To_Upper_Case(dom % regions(n) % face)           
     end if
 
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*) dom % ranges(n) % block,  & 
-                dom % ranges(n) % name    
-    call To_Upper_Case(dom % ranges(n) % name)           
+    read(inp,*) dom % regions(n) % block,  & 
+                dom % regions(n) % name    
+    call To_Upper_Case(dom % regions(n) % name)           
 
     ! if( dom % blocks(b_cond(n,7)) % points(0) == -1 ) then
-    !   call Swap_Integers( dom % ranges(n) % is,dom % ranges(n) % js )
-    !   call Swap_Integers( dom % ranges(n) % ie,dom % ranges(n) % je )
+    !   call Swap_Integers( dom % regions(n) % is,dom % regions(n) % js )
+    !   call Swap_Integers( dom % regions(n) % ie,dom % regions(n) % je )
     ! end if
 
   end do

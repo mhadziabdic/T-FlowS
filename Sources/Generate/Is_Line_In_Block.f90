@@ -4,8 +4,6 @@
 !   Checks if the line defined n1 and n2 is inside the block b.                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
-  use gen_mod
   use Domain_Mod
 !------------------------------------------------------------------------------! 
   implicit none
@@ -17,8 +15,8 @@
 
   do l1=1,8
     do l2=1,8
-      if( (dom % blocks(b) % points(l1) == n1) .and.   &
-          (dom % blocks(b) % points(l2) == n2) ) then
+      if( (dom % blocks(b) % corners(l1) == n1) .and.   &
+          (dom % blocks(b) % corners(l2) == n2) ) then
            goto 1
       end if 
     end do

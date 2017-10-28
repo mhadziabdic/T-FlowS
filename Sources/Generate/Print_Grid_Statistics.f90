@@ -34,8 +34,8 @@
 
   write(*,*) '# Number of non zero matrix entries:', nonz
   write(*,*) '# Average stencil size:', real(nonz)/real(NC)
-  write(*,*) '# Max number of nodes and cells:',   MAXN
-  write(*,*) '# Max number of boundary cells:',    MAXB
+  write(*,*) '# Max number of nodes and cells:',   grid % max_n_nodes
+  write(*,*) '# Max number of boundary cells:',    grid % max_n_boundary_cells
   write(*,*) '#---------------------------------------------------------------'
 
   ! Neighbours

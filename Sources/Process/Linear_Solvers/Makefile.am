@@ -9,8 +9,8 @@ libLinear_Solvers_a_SOURCES =	\
   Prec_Solve.f90		\
   Resid.f90    
 
-SUBDIRS = ../../Modules
+SUBDIRS = ../../Shared/Modules
 
-LDADD = ../../Modules/libModules.a
+LDADD = ../../SharedModules/libSharedModules.a
 
 INCLUDE = -I@top_srcdir@/

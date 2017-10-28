@@ -27,9 +27,9 @@
   nk = dom % blocks(b) % resolutions(3)   
 
   do n=1,8
-    xt(n) = points( dom % blocks(b) % points(n) ) % x
-    yt(n) = points( dom % blocks(b) % points(n) ) % y
-    zt(n) = points( dom % blocks(b) % points(n) ) % z
+    xt(n) = dom % points( dom % blocks(b) % corners(n) ) % x
+    yt(n) = dom % points( dom % blocks(b) % corners(n) ) % y
+    zt(n) = dom % points( dom % blocks(b) % corners(n) ) % z
   end do  
 
   n = NN + (k-1)*ni*nj + (j-1)*ni + i

@@ -21,6 +21,7 @@
 
   call Load_Domain
   call Compute_Node_Coordinates
+  call Distribute_Regions
   call Connect_Blocks
   call Connect_Periodicity
   call CopyBC

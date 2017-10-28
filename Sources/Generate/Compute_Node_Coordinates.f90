@@ -15,15 +15,14 @@
 !---------------------------------[Interface]----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: fc, b, bl, i, j, k, n, c, ig, r
+  integer :: fc, b, bl, i, j, k, n, c, ig
   integer :: l, l1, l2
-  integer :: is, js, ks, ie, je, ke, face 
+  integer :: is, js, ks, ie, je, ke
   integer :: ni, nj, nk, ci, cj, ck
   integer :: trans(3,2)
-  logical :: found
 !==============================================================================!
 
-  do n=1,MAXN
+  do n = 1, grid % max_n_nodes
     grid % nodes(n) % x = HUGE
   end do 
 
@@ -42,51 +41,51 @@
 
     ! ( 1 )
     n = nn + ( 1-1)*ni*nj + ( 1-1)*ni +  1
-    grid % nodes(n) % x = points(dom % blocks(b) % points(1)) % x
-    grid % nodes(n) % y = points(dom % blocks(b) % points(1)) % y 
-    grid % nodes(n) % z = points(dom % blocks(b) % points(1)) % z 
+    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(1)) % x
+    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(1)) % y 
+    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(1)) % z 
 
     ! ( 2 )
     n = nn + ( 1-1)*ni*nj + ( 1-1)*ni + ni
-    grid % nodes(n) % x = points(dom % blocks(b) % points(2)) % x
-    grid % nodes(n) % y = points(dom % blocks(b) % points(2)) % y
-    grid % nodes(n) % z = points(dom % blocks(b) % points(2)) % z
+    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(2)) % x
+    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(2)) % y
+    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(2)) % z
 
     ! ( 3 )
     n = nn + ( 1-1)*ni*nj + (nj-1)*ni +  1
-    grid % nodes(n) % x = points(dom % blocks(b) % points(3)) % x
-    grid % nodes(n) % y = points(dom % blocks(b) % points(3)) % y
-    grid % nodes(n) % z = points(dom % blocks(b) % points(3)) % z
+    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(3)) % x
+    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(3)) % y
+    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(3)) % z
 
     ! ( 4 )
     n = nn + ( 1-1)*ni*nj + (nj-1)*ni + ni
-    grid % nodes(n) % x = points(dom % blocks(b) % points(4)) % x
-    grid % nodes(n) % y = points(dom % blocks(b) % points(4)) % y
-    grid % nodes(n) % z = points(dom % blocks(b) % points(4)) % z
+    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(4)) % x
+    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(4)) % y
+    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(4)) % z
 
     ! ( 5 ) !
     n = nn + (nk-1)*ni*nj + ( 1-1)*ni +  1
-    grid % nodes(n) % x = points(dom % blocks(b) % points(5)) % x
-    grid % nodes(n) % y = points(dom % blocks(b) % points(5)) % y
-    grid % nodes(n) % z = points(dom % blocks(b) % points(5)) % z
+    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(5)) % x
+    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(5)) % y
+    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(5)) % z
 
     ! ( 6 ) !
     n = nn + (nk-1)*ni*nj + ( 1-1)*ni + ni
-    grid % nodes(n) % x = points(dom % blocks(b) % points(6)) % x
-    grid % nodes(n) % y = points(dom % blocks(b) % points(6)) % y
-    grid % nodes(n) % z = points(dom % blocks(b) % points(6)) % z
+    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(6)) % x
+    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(6)) % y
+    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(6)) % z
 
     ! ( 7 ) !
     n = nn + (nk-1)*ni*nj + (nj-1)*ni +  1
-    grid % nodes(n) % x = points(dom % blocks(b) % points(7)) % x
-    grid % nodes(n) % y = points(dom % blocks(b) % points(7)) % y
-    grid % nodes(n) % z = points(dom % blocks(b) % points(7)) % z
+    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(7)) % x
+    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(7)) % y
+    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(7)) % z
 
     ! ( 8 ) !
     n = nn + (nk-1)*ni*nj + (nj-1)*ni + ni
-    grid % nodes(n) % x = points(dom % blocks(b) % points(8)) % x
-    grid % nodes(n) % y = points(dom % blocks(b) % points(8)) % y
-    grid % nodes(n) % z = points(dom % blocks(b) % points(8)) % z
+    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(8)) % x
+    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(8)) % y
+    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(8)) % z
 
     !------------------------------!
     !   First on the dom % lines   !
@@ -101,8 +100,8 @@
       if(bl == b) then
 
         do n=1,8
-          if( dom % lines(l) % points(1) == dom % blocks(b) % points(n)  ) l1=n
-          if( dom % lines(l) % points(2) == dom % blocks(b) % points(n)  ) l2=n
+          if( dom % lines(l) % points(1) == dom % blocks(b) % corners(n) ) l1=n
+          if( dom % lines(l) % points(2) == dom % blocks(b) % corners(n) ) l2=n
         end do
 
         ! Line is defined in the +i direction
@@ -444,145 +443,5 @@
     nc = nc + ci*cj*ck
 
   end do   ! through dom % blocks 
-
-  !-----------------------------------------!
-  !   Insertion of the boundary condition   ! 
-  !        and materials information        !
-  !-----------------------------------------!
-
-  ! Initialize all the material markers to 1 
-  do c=1,nc
-    material(c) = 1
-  end do
-
-  ! This is too much memory but that's OK 
-  !  (+1 is to store the default values)
-  allocate(grid % materials          (n_ranges + 1))
-  allocate(grid % boundary_conditions(n_ranges + 1))
-
-  ! Set the bare bones - minimal materials and boundary conditions
-  Nmat = 1
-  Nbnd = 1
-  grid % materials(Nmat)           % name = "FLUID"
-  grid % boundary_conditions(Nbnd) % name = "WALL"
-
-  do n=1,n_ranges
-
-    b = dom % ranges(n) % block
-
-    ! Block resolution
-    ci = dom % blocks(b) % resolutions(1)-1
-    cj = dom % blocks(b) % resolutions(2)-1
-    ck = dom % blocks(b) % resolutions(3)-1
-
-    ! Default values
-    is = 1
-    ie = ci
-    js = 1
-    je = cj
-    ks = 1
-    ke = ck
-
-    ! Boundary conditions prescribed with mnemonics
-    if(dom % ranges(n) % face == 'IMIN') then
-      ie=1 
-      face = 5
-    else if(dom % ranges(n) % face == 'IMAX') then 
-      is=ci
-      face = 3
-    else if(dom % ranges(n) % face == 'JMIN') then 
-      je=1
-      face = 2
-    else if(dom % ranges(n) % face == 'JMAX') then 
-      js=cj
-      face = 4
-    else if(dom % ranges(n) % face == 'KMIN') then 
-      ke=1
-      face = 1
-    else if(dom % ranges(n) % face == 'KMAX') then 
-      ks=ck
-      face = 6
-
-    ! Boundary conditions (materials) prescribed explicitly
-    !  (error prone and difficult, but might be usefull)
-    else   
-      is = dom % ranges(n) % is
-      js = dom % ranges(n) % js
-      ks = dom % ranges(n) % ks
-      ie = dom % ranges(n) % ie
-      je = dom % ranges(n) % je
-      ke = dom % ranges(n) % ke
-      face = 0
-      if( (is == ie).and.(is ==  1) ) face=5
-      if( (is == ie).and.(is == ci) ) face=3
-      if( (js == je).and.(js ==  1) ) face=2
-      if( (js == je).and.(js == cj) ) face=4
-      if( (ks == ke).and.(ks ==  1) ) face=1
-      if( (ks == ke).and.(ks == ck) ) face=6
-    end if
-
-    ! Store boundary condition 
-    if(face /= 0) then  
-
-      found = .false. 
-      do r=1,Nbnd
-        if( grid % boundary_conditions(r) % name ==   &
-            dom % ranges(n) % name ) found = .true.
-      end do
-      if( .not. found) then
-        Nbnd = Nbnd + 1
-        grid % boundary_conditions(Nbnd) % name = dom % ranges(n) % name
-      end if
-
-      do i=is,ie
-        do j=js,je
-          do k=ks,ke
-            c = dom % blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
-            grid % cells(c) % c(face) = -Nbnd
-          end do
-        end do
-      end do
-
-     ! Store material
-     else 
-
-      found = .false. 
-      do r=1,Nmat
-        if(grid % materials(r) % name ==  &
-           dom % ranges(n) % name) found = .true.
-      end do
-      if( .not. found) then
-        Nmat = Nmat + 1
-        grid % materials(Nmat) % name = dom % ranges(n) % name
-      end if
-
-      do i=is,ie
-        do j=js,je
-          do k=ks,ke
-            c = dom % blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
-            material(c) = Nmat
-          end do
-        end do
-      end do
-
-    end if 
-
-  end do  !  n_ranges
-
-  write(*,*) '#==================================================='
-  write(*,*) '# Found following boundary conditions:'
-  write(*,*) '#---------------------------------------------------'
-  do n=1,Nbnd
-    write(*,*) '# ', grid % boundary_conditions(n) % name
-  end do
-  write(*,*) '#---------------------------------------------------'
-
-  write(*,*) '#==================================================='
-  write(*,*) '# Found following materials:'
-  write(*,*) '#---------------------------------------------------'
-  do n=1,Nmat
-    write(*,*) '# ', grid % materials(n) % name
-  end do
-  write(*,*) '#---------------------------------------------------'
 
   end subroutine Compute_Node_Coordinates

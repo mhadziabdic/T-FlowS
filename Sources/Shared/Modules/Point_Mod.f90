@@ -18,9 +18,4 @@
 
   end type Point_Type
 
-  !-----------------------------------------------------------------------!
-  !   All points in the grid (is this a good idea to define them here?)   !
-  !-----------------------------------------------------------------------!
-  type(Point_Type), allocatable :: points(:)
-
   end module Point_Mod

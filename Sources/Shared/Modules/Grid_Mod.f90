@@ -16,6 +16,12 @@
   !---------------!
   type Grid_Type
 
+    ! Maximum number of cells, boundary cells and faces
+    !  (They are used for tentative memory allocation)
+    integer :: max_n_nodes
+    integer :: max_n_boundary_cells
+    integer :: max_n_faces
+
     type(Point_Type),              allocatable :: nodes(:)
     type(Cell_Type),               allocatable :: cells(:)  
 

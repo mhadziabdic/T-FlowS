@@ -5,6 +5,8 @@
 !------------------------------------------------------------------------------!
   use Point_Mod
   use Cell_Mod
+  use Material_Mod
+  use Boundary_Condition_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !==============================================================================!
@@ -13,8 +15,13 @@
   !   Grid type   !
   !---------------!
   type Grid_Type
-    type(Point_Type), allocatable :: nodes(:)
-    type(Cell_Type),  allocatable :: cells(:)  
+
+    type(Point_Type),              allocatable :: nodes(:)
+    type(Cell_Type),               allocatable :: cells(:)  
+
+    type(Material_Type),           allocatable :: materials(:)
+    type(Boundary_Condition_Type), allocatable :: boundary_conditions(:)
+
   end type Grid_Type
 
   ! If defined like this, one can easily think of multiple grids

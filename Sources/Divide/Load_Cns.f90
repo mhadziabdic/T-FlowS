@@ -7,6 +7,7 @@
   use gen_mod 
   use div_mod
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
@@ -30,6 +31,15 @@
   read(9) NS
   read(9) NSsh
   read(9) Nmat
+  read(9) Nbnd
+  allocate(grid % materials(Nmat))
+  allocate(grid % boundary_conditions(Nbnd))
+  do n=1,Nmat
+    read(9) grid % materials(n) % name
+  end do
+  do n=1,Nbnd
+    read(9) grid % boundary_conditions(n) % name
+  end do
 
   allocate (material(-NbC:NC))
   read(9) (material(c), c=1,NC)

@@ -45,9 +45,6 @@
     NewS(s)=s
   end do
 
-  ! Count the materials in the grid
-  call Count_Materials
-
   ! Save the grid
   call Save_Gmv_Grid(0, NN, NC)            ! save grid for postprocessing
   call Save_Cns_Geo(0, NC, NS, NBC, 0, 0)  ! saved data for processing

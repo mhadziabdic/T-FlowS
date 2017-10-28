@@ -37,6 +37,7 @@ module all_mod
   integer   :: MNBS
   integer   :: n_copy                    ! number of copy cells/faces
   integer   :: Nmat                      ! number of materials
+  integer   :: Nbnd                      ! number of boundary conditions
   logical   :: Mater(1024)               ! is the material present ?
 
   integer,allocatable :: material(:)     ! material markers

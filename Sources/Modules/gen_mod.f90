@@ -39,16 +39,14 @@ module gen_mod
   integer, allocatable :: smooth_iters(:)   
   real,    allocatable :: smooth_regions(:,:), smooth_relax(:)
 
-  integer, allocatable :: b_cond(:,:),             &  
+  integer, allocatable ::                          &  
                           periodic_cond(:,:),      &                         
                           copy_cond(:,:)
 
-  integer :: Nsurf, n_b_cond, n_periodic_cond, n_copy_cond, n_refine_levels
+  integer :: Nsurf, n_ranges, n_periodic_cond, n_copy_cond, n_refine_levels
   integer :: NN
   integer :: NSsh                  ! number of shadow faces
 
   integer :: WallFacFst, WallFacLst 
-
-  character(len=4), allocatable :: BndFac(:)
 
 end module

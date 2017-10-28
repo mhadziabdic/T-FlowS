@@ -46,11 +46,11 @@
 #-----------------------#
   3
     1     Kmax
-        1   2
+        1   moving_wall
     2     Jmin
-        1   3
+        1   symmetry
     3     Jmax
-        1   3
+        1   symmetry
 #-----------------------#
 #  Periodic boundaries  #
 #-----------------------#

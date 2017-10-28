@@ -201,18 +201,18 @@
     call Save_Gmv_Links(sub, n_nodes_sub, n_cells_sub, n_faces_sub,   &
                         n_b_cells_sub, n_buff_sub)
 
-    write(*,*) 'Test:'
-    write(*,*) 'n_nodes_sub   =', n_nodes_sub
-    write(*,*) 'n_cells_sub   =', n_cells_sub
-    write(*,*) 'n_faces_sub   =', n_faces_sub
-    write(*,*) 'n_b_cells_sub =', n_b_cells_sub
+    write(*,*) '# Test:'
+    write(*,*) '# n_nodes_sub   =', n_nodes_sub
+    write(*,*) '# n_cells_sub   =', n_cells_sub
+    write(*,*) '# n_faces_sub   =', n_faces_sub
+    write(*,*) '# n_b_cells_sub =', n_b_cells_sub
 
-    write(*,*) '====================================' 
-    write(*,*) 'Subdomain   ', sub
-    write(*,*) 'Buffer size ', n_buff_sub
+    write(*,*) '# ====================================' 
+    write(*,*) '# Subdomain   ', sub
+    write(*,*) '# Buffer size ', n_buff_sub
     do subo=1,n_sub
       if(subo /= sub) then
-        write(*,*) 'Connections with ', subo ,' : ',                &
+        write(*,*) '# Connections with ', subo ,' : ',              &
           NBBe(subo)-NBBs(subo)+1,                                  &
           n_b_cells_sub+NBBs(subo),                                 &
           n_b_cells_sub+NBBe(subo) 

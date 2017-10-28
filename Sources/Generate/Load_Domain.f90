@@ -15,8 +15,8 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: b, i, l, s, fc, n, n1,n2,n3,n4
   integer           :: n_faces_check, n_nodes_check
-  integer           :: ni, nj, nk
-  integer           :: dum
+  integer           :: ni, nj, nk, npnt
+  character(len=12) :: dum
   character(len=80) :: domain_name
   character(len=12) :: answer
   real              :: xt(8), yt(8), zt(8)
@@ -132,7 +132,7 @@
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_blocks  ! number of blocks 
 
-  allocate(dom % blocks(n_blocks))
+  allocate(dom % blocks(n_blocks))  ! <----= This should move to Domain
 
   ! Initialize weights 
   do b=1, size(dom % blocks)
@@ -213,8 +213,8 @@
   do l=1, size(dom % lines)
     call ReadC(9,inp,tn,ts,te)
 
-    read(inp(ts(1):te(3)),*) dum, dom % lines(l) % points(1),  &
-                                  dom % lines(l) % points(2)
+    read(inp(ts(1):te(3)),*) npnt, dom % lines(l) % points(1),  &
+                                   dom % lines(l) % points(2)
 
     call Find_Line(dom % lines(l) % points(1),  &
                    dom % lines(l) % points(2),  &
@@ -225,7 +225,7 @@
     allocate(dom % lines(l) % z( dom % lines(l) % resolution ))
 
     ! Point by point
-    if(dum > 0) then
+    if(npnt > 0) then
       do n=1,dom % lines(l) % resolution
         call ReadC(9,inp,tn,ts,te)
         read(inp(ts(2):te(4)),*) dom % lines(l) % x(n),  &
@@ -312,31 +312,39 @@
   !   Boundary conditions and materials   !
   !---------------------------------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*)     n_b_cond      ! number of boundary conditions 
+  read(inp,*) n_ranges      ! number of regions (can be boundary 
+                            ! conditions or materials)
 
-  allocate (b_cond(n_b_cond,8))
-  allocate (BndFac(n_b_cond))
+  ! Allocate memory for ranges, be it boundary conditions or material regions
+  allocate(dom % ranges(n_ranges))  ! <----= This should move to Domain
 
-  do n=1,n_b_cond
-    BndFac(n)=''
+  do n=1,n_ranges
+    dom % ranges(n) % face=''
+
     call ReadC(9,inp,tn,ts,te)
     if(tn == 7) then
-      read(inp,*)  dum,                         &  
-           b_cond(n,1), b_cond(n,2), b_cond(n,3),  &  ! is, js, ks 
-           b_cond(n,4), b_cond(n,5), b_cond(n,6)      ! ie, je, ke
+      read(inp,*)  dum,                    &  
+                   dom % ranges(n) % is,   &
+                   dom % ranges(n) % js,   &
+                   dom % ranges(n) % ks,   & 
+                   dom % ranges(n) % ie,   &
+                   dom % ranges(n) % je,   &
+                   dom % ranges(n) % ke   
     else if(tn == 2) then
       read(inp(ts(1):te(1)),*)       dum           
-      read(inp(ts(2):te(2)),'(A4)')  BndFac(n)
-      call To_Upper_Case(BndFac(n))           
+      read(inp(ts(2):te(2)),'(A4)')  dom % ranges(n) % face
+      call To_Upper_Case(dom % ranges(n) % face)           
     end if
+
     call ReadC(9,inp,tn,ts,te)
-    read(inp,*)       &  
-         b_cond(n,7),  &  ! block,  
-         b_cond(n,8)      ! mark         
-  if( dom % blocks(b_cond(n,7)) % points(0) == -1 ) then
-    call Swap_Integers( b_cond(n,1),b_cond(n,2) )
-    call Swap_Integers( b_cond(n,4),b_cond(n,5) )
-  end if
+    read(inp,*) dom % ranges(n) % block,  & 
+                dom % ranges(n) % name    
+    call To_Upper_Case(dom % ranges(n) % name)           
+
+    ! if( dom % blocks(b_cond(n,7)) % points(0) == -1 ) then
+    !   call Swap_Integers( dom % ranges(n) % is,dom % ranges(n) % js )
+    !   call Swap_Integers( dom % ranges(n) % ie,dom % ranges(n) % je )
+    ! end if
 
   end do
 

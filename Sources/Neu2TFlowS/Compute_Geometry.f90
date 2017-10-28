@@ -708,8 +708,8 @@
       NewS(s) = -1
     end if
   end do
-  write(*,'(A21,I9,Z9)') '# Old number of sides: ', NS, NS
-  write(*,'(A21,I9,Z9)') '# New number of sides: ', &
+  write(*,'(A22,I9,Z9)') ' # Old number of sides: ', NS, NS
+  write(*,'(A22,I9,Z9)') ' # New number of sides: ', &
                           number_sides-NSsh,number_sides-NSsh
   
   !--------------------------------------!

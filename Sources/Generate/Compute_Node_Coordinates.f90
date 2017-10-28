@@ -15,11 +15,12 @@
 !---------------------------------[Interface]----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: fc, b, bl, i, j, k, n, c, ig
+  integer :: fc, b, bl, i, j, k, n, c, ig, r
   integer :: l, l1, l2
   integer :: is, js, ks, ie, je, ke, face 
   integer :: ni, nj, nk, ci, cj, ck
   integer :: trans(3,2)
+  logical :: found
 !==============================================================================!
 
   do n=1,MAXN
@@ -449,57 +450,68 @@
   !        and materials information        !
   !-----------------------------------------!
 
-  ! Initialize all the material markers to 1
+  ! Initialize all the material markers to 1 
   do c=1,nc
-    material(c) =1
+    material(c) = 1
   end do
 
-  do n=1,n_b_cond
+  ! This is too much memory but that's OK 
+  !  (+1 is to store the default values)
+  allocate(grid % materials          (n_ranges + 1))
+  allocate(grid % boundary_conditions(n_ranges + 1))
 
-    b  = abs(b_cond(n,7))   ! block
+  ! Set the bare bones - minimal materials and boundary conditions
+  Nmat = 1
+  Nbnd = 1
+  grid % materials(Nmat)           % name = "FLUID"
+  grid % boundary_conditions(Nbnd) % name = "WALL"
+
+  do n=1,n_ranges
+
+    b = dom % ranges(n) % block
 
     ! Block resolution
-    ci=dom % blocks(b) % resolutions(1)-1
-    cj=dom % blocks(b) % resolutions(2)-1
-    ck=dom % blocks(b) % resolutions(3)-1
+    ci = dom % blocks(b) % resolutions(1)-1
+    cj = dom % blocks(b) % resolutions(2)-1
+    ck = dom % blocks(b) % resolutions(3)-1
 
     ! Default values
-    is=1
-    ie=ci
-    js=1
-    je=cj
-    ks=1
-    ke=ck
+    is = 1
+    ie = ci
+    js = 1
+    je = cj
+    ks = 1
+    ke = ck
 
     ! Boundary conditions prescribed with mnemonics
-    if(BndFac(n) == 'IMIN') then
+    if(dom % ranges(n) % face == 'IMIN') then
       ie=1 
       face = 5
-    else if(BndFac(n) == 'IMAX') then 
+    else if(dom % ranges(n) % face == 'IMAX') then 
       is=ci
       face = 3
-    else if(BndFac(n) == 'JMIN') then 
+    else if(dom % ranges(n) % face == 'JMIN') then 
       je=1
       face = 2
-    else if(BndFac(n) == 'JMAX') then 
+    else if(dom % ranges(n) % face == 'JMAX') then 
       js=cj
       face = 4
-    else if(BndFac(n) == 'KMIN') then 
+    else if(dom % ranges(n) % face == 'KMIN') then 
       ke=1
       face = 1
-    else if(BndFac(n) == 'KMAX') then 
+    else if(dom % ranges(n) % face == 'KMAX') then 
       ks=ck
       face = 6
 
     ! Boundary conditions (materials) prescribed explicitly
     !  (error prone and difficult, but might be usefull)
     else   
-      is = b_cond(n,1)
-      js = b_cond(n,2)
-      ks = b_cond(n,3)
-      ie = b_cond(n,4)
-      je = b_cond(n,5)
-      ke = b_cond(n,6)
+      is = dom % ranges(n) % is
+      js = dom % ranges(n) % js
+      ks = dom % ranges(n) % ks
+      ie = dom % ranges(n) % ie
+      je = dom % ranges(n) % je
+      ke = dom % ranges(n) % ke
       face = 0
       if( (is == ie).and.(is ==  1) ) face=5
       if( (is == ie).and.(is == ci) ) face=3
@@ -509,19 +521,68 @@
       if( (ks == ke).and.(ks == ck) ) face=6
     end if
 
-    do i=is,ie
-      do j=js,je
-        do k=ks,ke
-          c = dom % blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
-          if(face /= 0) then 
-            grid % cells(c) % c(face) = -b_cond(n,8) ! marker
-          else
-            material(c) = b_cond(n,8)    ! material
-          end if
+    ! Store boundary condition 
+    if(face /= 0) then  
+
+      found = .false. 
+      do r=1,Nbnd
+        if( grid % boundary_conditions(r) % name ==   &
+            dom % ranges(n) % name ) found = .true.
+      end do
+      if( .not. found) then
+        Nbnd = Nbnd + 1
+        grid % boundary_conditions(Nbnd) % name = dom % ranges(n) % name
+      end if
+
+      do i=is,ie
+        do j=js,je
+          do k=ks,ke
+            c = dom % blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
+            grid % cells(c) % c(face) = -Nbnd
+          end do
         end do
       end do
-    end do
 
-  end do  !  n_b_cond
+     ! Store material
+     else 
+
+      found = .false. 
+      do r=1,Nmat
+        if(grid % materials(r) % name ==  &
+           dom % ranges(n) % name) found = .true.
+      end do
+      if( .not. found) then
+        Nmat = Nmat + 1
+        grid % materials(Nmat) % name = dom % ranges(n) % name
+      end if
+
+      do i=is,ie
+        do j=js,je
+          do k=ks,ke
+            c = dom % blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
+            material(c) = Nmat
+          end do
+        end do
+      end do
+
+    end if 
+
+  end do  !  n_ranges
+
+  write(*,*) '#==================================================='
+  write(*,*) '# Found following boundary conditions:'
+  write(*,*) '#---------------------------------------------------'
+  do n=1,Nbnd
+    write(*,*) '# ', grid % boundary_conditions(n) % name
+  end do
+  write(*,*) '#---------------------------------------------------'
+
+  write(*,*) '#==================================================='
+  write(*,*) '# Found following materials:'
+  write(*,*) '#---------------------------------------------------'
+  do n=1,Nmat
+    write(*,*) '# ', grid % materials(n) % name
+  end do
+  write(*,*) '#---------------------------------------------------'
 
   end subroutine Compute_Node_Coordinates

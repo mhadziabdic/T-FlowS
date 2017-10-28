@@ -7,4 +7,6 @@
 *.cas
 *.cns
 *.geo
+*.buf
 *.gmv
+*.real

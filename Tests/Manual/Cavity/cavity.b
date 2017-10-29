@@ -1,6 +1,6 @@
 %-- phisical properties
   1
-  1  Fluid  0.01  1.00  
+  fluid  Fluid  0.01  1.00  
 %-- boundary conditions 
    3 
    WALL          INFLOW    0.0      0.0   0.0

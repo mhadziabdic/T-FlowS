@@ -128,10 +128,10 @@
                   NS = NS + 1 
                   SideC(1,NS) = c1
                   SideC(2,NS) = c2
-                  SideN(NS,0) = Nmatch 
+                  grid % faces_n_nodes(NS) = Nmatch 
                   do k=1,4
                     if(fn(j,k) > 0) then
-                      SideN(NS,k) = grid % cells_n(fn(j,k), c1)                
+                      grid % faces_n(k,NS) = grid % cells_n(fn(j,k), c1)                
                     end if
                   end do
                   grid % cells_c(j, c1) = 1 !  -> means: set

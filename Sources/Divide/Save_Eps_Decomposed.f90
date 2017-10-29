@@ -186,20 +186,20 @@
     if(c2 < 0 .or. &
       ( abs(Dx(s))+abs(Dy(s))+abs(Dz(s)) ) > 0. ) then 
 
-      x1 = grid % xn(SideN(s,1))
-      x2 = grid % xn(SideN(s,2))
-      x3 = grid % xn(SideN(s,3))
-      x4 = grid % xn(SideN(s,4))
+      x1 = grid % xn(grid % faces_n(1,s))
+      x2 = grid % xn(grid % faces_n(2,s))
+      x3 = grid % xn(grid % faces_n(3,s))
+      x4 = grid % xn(grid % faces_n(4,s))
 
-      y1 = grid % yn(SideN(s,1))
-      y2 = grid % yn(SideN(s,2))
-      y3 = grid % yn(SideN(s,3))
-      y4 = grid % yn(SideN(s,4))
+      y1 = grid % yn(grid % faces_n(1,s))
+      y2 = grid % yn(grid % faces_n(2,s))
+      y3 = grid % yn(grid % faces_n(3,s))
+      y4 = grid % yn(grid % faces_n(4,s))
 
-      z1 = grid % zn(SideN(s,1))
-      z2 = grid % zn(SideN(s,2))
-      z3 = grid % zn(SideN(s,3))
-      z4 = grid % zn(SideN(s,4))
+      z1 = grid % zn(grid % faces_n(1,s))
+      z2 = grid % zn(grid % faces_n(2,s))
+      z3 = grid % zn(grid % faces_n(3,s))
+      z4 = grid % zn(grid % faces_n(4,s))
 
       if(xk  < 0.0 .and. yk  > 0.0) then
         xp1=-x1*sin(alfa)-y1*sin(beta)
@@ -228,7 +228,7 @@
       yp3=(-x3*cos(alfa)-y3*cos(beta))*cos(gama) + z3*sin(gama)
       yp4=(-x4*cos(alfa)-y4*cos(beta))*cos(gama) + z4*sin(gama)
 
-      if(SideN(s,0) == 4)                                             &
+      if(grid % faces_n_nodes(s) == 4)                                &
       write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')       &
                 'gs np 0 slw ',                                       &
                 int(sclf*xp1),int(sclf*yp1), ' m ',                   & 
@@ -241,7 +241,7 @@
                 blue(proces(NewC(c1))),                               &
                 ' srgb f gr s gr'
 
-      if(SideN(s,0) == 3)                                             &
+      if(grid % faces_n_nodes(s) == 3)                                &
       write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')              &
                 'gs np 0 slw ',                                       &
                 int(sclf*xp1),int(sclf*yp1), ' m ',                   & 

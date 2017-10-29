@@ -10,7 +10,6 @@ module gen_mod
 
 
   real,    allocatable :: walln(:)           ! node distance from the wall 
-  integer, allocatable :: SideN(:,:)         ! numb, n1, n2, n3, n4
   integer, allocatable :: SideCc(:,:)
                                                 
   integer, allocatable :: TwinN(:,:)

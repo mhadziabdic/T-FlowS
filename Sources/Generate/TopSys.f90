@@ -84,21 +84,21 @@
         ! Nodes of a side NS
         if(c2  > 0) then
           if(level(c2)  > level(c1)) then
-            SideN(NS,1) = grid % cells_n( lfn(SideCc(NS,2),4), c2 )
-            SideN(NS,2) = grid % cells_n( lfn(SideCc(NS,2),3), c2 )
-            SideN(NS,3) = grid % cells_n( lfn(SideCc(NS,2),2), c2 )
-            SideN(NS,4) = grid % cells_n( lfn(SideCc(NS,2),1), c2 )
+            grid % faces_n(1,NS) = grid % cells_n( lfn(SideCc(NS,2),4), c2 )
+            grid % faces_n(2,NS) = grid % cells_n( lfn(SideCc(NS,2),3), c2 )
+            grid % faces_n(3,NS) = grid % cells_n( lfn(SideCc(NS,2),2), c2 )
+            grid % faces_n(4,NS) = grid % cells_n( lfn(SideCc(NS,2),1), c2 )
           else
-            SideN(NS,1) = grid % cells_n( lfn(m,1), c1 )
-            SideN(NS,2) = grid % cells_n( lfn(m,2), c1 )
-            SideN(NS,3) = grid % cells_n( lfn(m,3), c1 )
-            SideN(NS,4) = grid % cells_n( lfn(m,4), c1 )
+            grid % faces_n(1,NS) = grid % cells_n( lfn(m,1), c1 )
+            grid % faces_n(2,NS) = grid % cells_n( lfn(m,2), c1 )
+            grid % faces_n(3,NS) = grid % cells_n( lfn(m,3), c1 )
+            grid % faces_n(4,NS) = grid % cells_n( lfn(m,4), c1 )
           end if
         else
-          SideN(NS,1) = grid % cells_n( lfn(m,1), c1 )
-          SideN(NS,2) = grid % cells_n( lfn(m,2), c1 )
-          SideN(NS,3) = grid % cells_n( lfn(m,3), c1 )
-          SideN(NS,4) = grid % cells_n( lfn(m,4), c1 )
+          grid % faces_n(1,NS) = grid % cells_n( lfn(m,1), c1 )
+          grid % faces_n(2,NS) = grid % cells_n( lfn(m,2), c1 )
+          grid % faces_n(3,NS) = grid % cells_n( lfn(m,3), c1 )
+          grid % faces_n(4,NS) = grid % cells_n( lfn(m,4), c1 )
         end if 
 
       end if

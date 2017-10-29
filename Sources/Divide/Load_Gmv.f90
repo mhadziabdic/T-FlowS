@@ -60,12 +60,11 @@
   allocate (NewC(-NbC-1:NC)); NewC=0 
   allocate (NewS(NS));        NewS=0
 
-  call Allocate_Grid_Nodes(grid, NN) 
-  call Allocate_Grid_Cells(grid, NbC, NC) 
+  call Grid_Mod_Allocate_Nodes(grid, NN) 
+  call Grid_Mod_Allocate_Cells(grid, NbC, NC) 
+  call Grid_Mod_Allocate_Faces(grid, NS) 
 
   allocate (NewN(NN)); NewN=0 
-
-  allocate (SideN(NS+NSsh,0:4)); SideN=0
 
   ! Variables declared in div.h90:
   allocate (ix(-NbC:NC));  ix=0

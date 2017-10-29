@@ -88,11 +88,11 @@
           grid % cells_n(3,-NbC) = grid % cells_n(f8n(j,3), i)
           grid % cells_n(4,-NbC) = grid % cells_n(f8n(j,4), i)
 
-          SideN(NS,0) = 4
-          SideN(NS,1) = grid % cells_n(1,-NbC)
-          SideN(NS,2) = grid % cells_n(2,-NbC)
-          SideN(NS,3) = grid % cells_n(3,-NbC)
-          SideN(NS,4) = grid % cells_n(4,-NbC)
+          grid % faces_n_nodes(NS) = 4
+          grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
+          grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
+          grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
+          grid % faces_n(4,NS) = grid % cells_n(4,-NbC)
         end if
 
         ! Prisms:
@@ -104,21 +104,21 @@
             grid % cells_n(3,-NbC) = grid % cells_n(f6n(j,3), i)
             grid % cells_n(4,-NbC) = grid % cells_n(f6n(j,4), i)
 
-            SideN(NS,0) = 4
-            SideN(NS,1) = grid % cells_n(1,-NbC)
-            SideN(NS,2) = grid % cells_n(2,-NbC)
-            SideN(NS,3) = grid % cells_n(3,-NbC)
-            SideN(NS,4) = grid % cells_n(4,-NbC)
+            grid % faces_n_nodes(NS) = 4
+            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
+            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
+            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
+            grid % faces_n(4,NS) = grid % cells_n(4,-NbC)
           else if(j <= 5) then
             grid % cells_n_nodes(-NbC) = 3 
             grid % cells_n(1,-NbC) = grid % cells_n(f6n(j,1), i)
             grid % cells_n(2,-NbC) = grid % cells_n(f6n(j,2), i)
             grid % cells_n(3,-NbC) = grid % cells_n(f6n(j,3), i)
 
-            SideN(NS,0) = 3
-            SideN(NS,1) = grid % cells_n(1,-NbC)
-            SideN(NS,2) = grid % cells_n(2,-NbC)
-            SideN(NS,3) = grid % cells_n(3,-NbC)
+            grid % faces_n_nodes(NS) = 3
+            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
+            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
+            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
           end if
         end if
 
@@ -130,10 +130,10 @@
             grid % cells_n(2,-NbC) = grid % cells_n(f4n(j,2), i)
             grid % cells_n(3,-NbC) = grid % cells_n(f4n(j,3), i)
 
-            SideN(NS,0) = 3
-            SideN(NS,1) = grid % cells_n(1,-NbC)
-            SideN(NS,2) = grid % cells_n(2,-NbC)
-            SideN(NS,3) = grid % cells_n(3,-NbC)
+            grid % faces_n_nodes(NS) = 3
+            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
+            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
+            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
           end if
         end if
 
@@ -146,21 +146,21 @@
             grid % cells_n(3,-NbC) = grid % cells_n(f5n(j,3), i)
             grid % cells_n(4,-NbC) = grid % cells_n(f5n(j,4), i)
  
-            SideN(NS,0) = 4
-            SideN(NS,1) = grid % cells_n(1,-NbC)
-            SideN(NS,2) = grid % cells_n(2,-NbC)
-            SideN(NS,3) = grid % cells_n(3,-NbC)
-            SideN(NS,4) = grid % cells_n(4,-NbC)
+            grid % faces_n_nodes(NS) = 4
+            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
+            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
+            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
+            grid % faces_n(4,NS) = grid % cells_n(4,-NbC)
           else if(j <= 5) then
             grid % cells_n_nodes(-NbC) = 3
             grid % cells_n(1,-NbC) = grid % cells_n(f5n(j,1), i)
             grid % cells_n(2,-NbC) = grid % cells_n(f5n(j,2), i)
             grid % cells_n(3,-NbC) = grid % cells_n(f5n(j,3), i)
  
-            SideN(NS,0) = 3
-            SideN(NS,1) = grid % cells_n(1,-NbC)
-            SideN(NS,2) = grid % cells_n(2,-NbC)
-            SideN(NS,3) = grid % cells_n(3,-NbC)
+            grid % faces_n_nodes(NS) = 3
+            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
+            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
+            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
           end if
         end if
 

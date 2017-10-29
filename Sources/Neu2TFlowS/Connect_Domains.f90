@@ -75,21 +75,21 @@
 
             yc_12 = 0.0
             zc_12 = 0.0
-            do i=1,SideN(s1,0)
-              yc_12 = yc_12 + grid % yn(SideN(s1,i))
-              zc_12 = zc_12 + grid % zn(SideN(s1,i))
+            do i=1,grid % faces_n_nodes(s1)
+              yc_12 = yc_12 + grid % yn(grid % faces_n(i,s1))
+              zc_12 = zc_12 + grid % zn(grid % faces_n(i,s1))
             end do
-            yc_12 = yc_12 / (real(SideN(s1,0)))
-            zc_12 = zc_12 / (real(SideN(s1,0)))
+            yc_12 = yc_12 / (real(grid % faces_n_nodes(s1)))
+            zc_12 = zc_12 / (real(grid % faces_n_nodes(s1)))
 
             yc_22 = 0.0
             zc_22 = 0.0
-            do i=1,SideN(s2,0)
-              yc_22 = yc_22 + grid % yn(SideN(s2,i))
-              zc_22 = zc_22 + grid % zn(SideN(s2,i))
+            do i=1,grid % faces_n_nodes(s2)
+              yc_22 = yc_22 + grid % yn(grid % faces_n(i,s2))
+              zc_22 = zc_22 + grid % zn(grid % faces_n(i,s2))
             end do
-            yc_22 = yc_22 / (real(SideN(s2,0)))
-            zc_22 = zc_22 / (real(SideN(s2,0)))
+            yc_22 = yc_22 / (real(grid % faces_n_nodes(s2)))
+            zc_22 = zc_22 / (real(grid % faces_n_nodes(s2)))
               
             if( Approx( yc_22, yc_12, tol=1.e-4 ) .and. &
                 Approx( zc_22, zc_12, tol=1.e-4 ) ) then
@@ -125,21 +125,21 @@
 
             xc_12 = 0.0
             zc_12 = 0.0
-            do i=1,SideN(s1,0)
-              xc_12 = xc_12 + grid % xn(SideN(s1,i))
-              zc_12 = zc_12 + grid % zn(SideN(s1,i))
+            do i=1,grid % faces_n_nodes(s1)
+              xc_12 = xc_12 + grid % xn(grid % faces_n(i,s1))
+              zc_12 = zc_12 + grid % zn(grid % faces_n(i,s1))
             end do
-            xc_12 = xc_12 / (real(SideN(s1,0)))
-            zc_12 = zc_12 / (real(SideN(s1,0)))
+            xc_12 = xc_12 / (real(grid % faces_n_nodes(s1)))
+            zc_12 = zc_12 / (real(grid % faces_n_nodes(s1)))
 
             xc_22 = 0.0
             zc_22 = 0.0
-            do i=1,SideN(s2,0)
-              xc_22 = xc_22 + grid % xn(SideN(s2,i))
-              zc_22 = zc_22 + grid % zn(SideN(s2,i))
+            do i=1,grid % faces_n_nodes(s2)
+              xc_22 = xc_22 + grid % xn(grid % faces_n(i,s2))
+              zc_22 = zc_22 + grid % zn(grid % faces_n(i,s2))
             end do
-            xc_22 = xc_22 / (real(SideN(s2,0)))
-            zc_22 = zc_22 / (real(SideN(s2,0)))
+            xc_22 = xc_22 / (real(grid % faces_n_nodes(s2)))
+            zc_22 = zc_22 / (real(grid % faces_n_nodes(s2)))
               
             if( Approx( xc_22, xc_12, tol=1.e-4 ) .and. &
                 Approx( zc_22, zc_12, tol=1.e-4 ) ) then
@@ -175,21 +175,21 @@
 
             yc_12 = 0.0
             xc_12 = 0.0
-            do i=1,SideN(s1,0)
-              yc_12 = yc_12 + grid % yn(SideN(s1,i))
-              xc_12 = xc_12 + grid % xn(SideN(s1,i))
+            do i=1,grid % faces_n_nodes(s1)
+              yc_12 = yc_12 + grid % yn(grid % faces_n(i,s1))
+              xc_12 = xc_12 + grid % xn(grid % faces_n(i,s1))
             end do
-            yc_12 = yc_12 / (real(SideN(s1,0)))
-            xc_12 = xc_12 / (real(SideN(s1,0)))
+            yc_12 = yc_12 / (real(grid % faces_n_nodes(s1)))
+            xc_12 = xc_12 / (real(grid % faces_n_nodes(s1)))
 
             yc_22 = 0.0
             xc_22 = 0.0
-            do i=1,SideN(s2,0)
-              yc_22 = yc_22 + grid % yn(SideN(s2,i))
-              xc_22 = xc_22 + grid % xn(SideN(s2,i))
+            do i=1,grid % faces_n_nodes(s2)
+              yc_22 = yc_22 + grid % yn(grid % faces_n(i,s2))
+              xc_22 = xc_22 + grid % xn(grid % faces_n(i,s2))
             end do
-            yc_22 = yc_22 / (real(SideN(s2,0)))
-            xc_22 = xc_22 / (real(SideN(s2,0)))
+            yc_22 = yc_22 / (real(grid % faces_n_nodes(s2)))
+            xc_22 = xc_22 / (real(grid % faces_n_nodes(s2)))
               
             if( Approx( yc_22, yc_12, tol=1.e-4 ) .and. &
                 Approx( xc_22, xc_12, tol=1.e-4 ) ) then

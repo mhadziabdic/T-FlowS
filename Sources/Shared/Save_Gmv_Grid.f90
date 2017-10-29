@@ -138,18 +138,18 @@
   ! Count the cell faces on the periodic boundaries
   write(9,*) 'cells', NS
   do s=1,NS
-    if(SideN(s,0) == 4) then
+    if(grid % faces_n_nodes(s) == 4) then
       write(9,*) 'quad 4'
-      write(9,'(4I9)')           &
-        SideN(s,1), SideN(s,2),  &
-        SideN(s,3), SideN(s,4)
-    else if(SideN(s,0) == 3) then
+      write(9,'(4I9)')                             &
+        grid % faces_n(1,s), grid % faces_n(2,s),  &
+        grid % faces_n(3,s), grid % faces_n(4,s)
+    else if(grid % faces_n_nodes(s) == 3) then
       write(9,*) 'tri 3'
-      write(9,'(3I9)')           &
-        SideN(s,1), SideN(s,2),  &
-        SideN(s,3)
+      write(9,'(3I9)')                             &
+        grid % faces_n(1,s), grid % faces_n(2,s),  &
+        grid % faces_n(3,s)
     else
-      write(*,*) '# Unsupported cell type ',  &
+      write(*,*) '# Unsupported cell type ',       &
                  grid % cells_n_nodes(c), ' nodes.'
       write(*,*) '# Exiting'
       stop 
@@ -198,12 +198,17 @@
   write(6, *) '# Now creating the file:', name_out
 
   do s=NS+1,NS+NSsh
-    write(9,*) SideN(s,0) 
-    if(SideN(s,0)==3) then
-      write(9,*) SideN(s,1), SideN(s,2), SideN(s,3),             &
+    write(9,*) grid % faces_n_nodes(s) 
+    if(grid % faces_n_nodes(s)==3) then
+      write(9,*) grid % faces_n(1,s),  &
+                 grid % faces_n(2,s),  &
+                 grid % faces_n(3,s),  &
                  SideC(1,s), SideC(2,s) 
-    else if(SideN(s,0)==4) then
-      write(9,*) SideN(s,1), SideN(s,2), SideN(s,3), SideN(s,4), &
+    else if(grid % faces_n_nodes(s)==4) then
+      write(9,*) grid % faces_n(1,s),  &
+                 grid % faces_n(2,s),  &
+                 grid % faces_n(3,s),  &
+                 grid % faces_n(4,s),  &
                  SideC(1,s), SideC(2,s) 
     end if
   end do  

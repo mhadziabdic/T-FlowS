@@ -69,15 +69,15 @@
   end do 
 
   ! Allocate memory =--> carefull, there is no checking!
-  call Allocate_Grid_Nodes(grid, NN) 
-  call Allocate_Grid_Cells(grid, NbC, NC) 
+  call Grid_Mod_Allocate_Nodes(grid, NN) 
+  call Grid_Mod_Allocate_Cells(grid, NbC, NC) 
+  call Grid_Mod_Allocate_Faces(grid, NC*5) 
 
   allocate(material(-NbC:NC));     material=0 
   allocate(BCtype(NC,6));          BCtype=0
   allocate(BCmark(-NbC-1:-1));     BCmark=0
 ! WARNING:  allocate(CellN(-NbC-1:NC,-1:8)); CellN=0
   allocate(SideC(0:2,NC*5));       SideC=0    
-  allocate(SideN(NC*5,0:4));       SideN=0
   n_copy = 1000000 
   allocate(CopyC(-NbC:-1));  CopyC=0
   allocate(CopyS(2,n_copy));  CopyS=0

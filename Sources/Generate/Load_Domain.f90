@@ -100,10 +100,14 @@
   allocate (BCmark(-grid % max_n_boundary_cells-1:-1))
   BCmark=0;
 
-  ! Variables in Gen_Mod
-  call Allocate_Grid_Nodes(grid, grid % max_n_nodes) 
-  call Allocate_Grid_Cells(grid, grid % max_n_boundary_cells,  &
-                                 grid % max_n_nodes) 
+  ! Variables in Grid_Mod
+  call Grid_Mod_Allocate_Nodes(grid,  &
+                               grid % max_n_nodes) 
+  call Grid_Mod_Allocate_Cells(grid,                         &
+                               grid % max_n_boundary_cells,  &
+                               grid % max_n_nodes) 
+  call Grid_Mod_Allocate_Faces(grid,  &
+                               grid % max_n_faces) 
 
   ! Variables declared in gen_mod.h90:
   allocate (walln(grid % max_n_nodes))
@@ -115,8 +119,6 @@
   allocate (zsp  (grid % max_n_faces))
   zsp=0
 
-  allocate (SideN (grid % max_n_faces,0:4))
-  SideN =0 
   allocate (SideCc(grid % max_n_faces,2))
   SideCc=0 
 

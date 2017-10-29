@@ -104,15 +104,19 @@
           c2 = SideC(2,s)
           if(c2 < 0) then  
             if(BCmark(c2) == n) then 
-              if(SideN(s,0) == 3) then
-                write(9,'(6Z9)')                                           &
-                  3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
-                  NewC(c1), 0  ! <-- set c2 to zero 
-              else if(SideN(s,0) == 4) then
-                write(9,'(7Z9)')                          &
-                  4, NewN(SideN(s,1)), NewN(SideN(s,2)),  & 
-                     NewN(SideN(s,3)), NewN(SideN(s,4)),  &
-                  NewC(c1), 0  ! <-- set c2 to zero  
+              if(grid % faces_n_nodes(s) == 3) then
+                write(9,'(6Z9)')                 &
+                  3, NewN(grid % faces_n(1,s)),  &
+                     NewN(grid % faces_n(2,s)),  &
+                     NewN(grid % faces_n(3,s)),  &
+                     NewC(c1), 0  ! <-- set c2 to zero 
+              else if(grid % faces_n_nodes(s) == 4) then
+                write(9,'(7Z9)')                 &
+                  4, NewN(grid % faces_n(1,s)),  &
+                     NewN(grid % faces_n(2,s)),  & 
+                     NewN(grid % faces_n(3,s)),  &
+                     NewN(grid % faces_n(4,s)),  &
+                     NewC(c1), 0  ! <-- set c2 to zero  
               end if 
             end if
           end if
@@ -134,15 +138,19 @@
     c2 = SideC(2,s)
     if(c2 < 0) then
       if(BCmark(c2) == n) then
-        if(SideN(s,0) == 3) then
-          write(9,'(6Z9)')                                           &
-            3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
+        if(grid % faces_n_nodes(s) == 3) then
+          write(9,'(6Z9)')                 &
+            3, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
                NewC(c1), 0  ! <-- set c2 to zero
-        else if(SideN(s,0) == 4) then
-           write(9,'(7Z9)')                          &
-             4, NewN(SideN(s,1)), NewN(SideN(s,2)),  &
-                NewN(SideN(s,3)), NewN(SideN(s,4)),  &
-                NewC(c1), 0  ! <-- set c2 to zero
+        else if(grid % faces_n_nodes(s) == 4) then
+          write(9,'(7Z9)')                 &
+            4, NewN(grid % faces_n(1,s)),  & 
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
+               NewN(grid % faces_n(4,s)),  &
+               NewC(c1), 0  ! <-- set c2 to zero
         end if
       end if
     end if
@@ -157,14 +165,18 @@
       c2 = SideC(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == n) then
-          if(SideN(s,0) == 3) then
-            write(9,'(6Z9)')                                           &
-              3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
+          if(grid % faces_n_nodes(s) == 3) then
+            write(9,'(6Z9)')                 &
+              3, NewN(grid % faces_n(1,s)),  &
+                 NewN(grid % faces_n(2,s)),  &
+                 NewN(grid % faces_n(3,s)),  &
                  NewC(c1), 0  ! <-- set c2 to zero
-          else if(SideN(s,0) == 4) then
-            write(9,'(7Z9)')                          &
-              4, NewN(SideN(s,1)), NewN(SideN(s,2)),  &
-                 NewN(SideN(s,3)), NewN(SideN(s,4)),  &
+          else if(grid % faces_n_nodes(s) == 4) then
+            write(9,'(7Z9)')                 &
+              4, NewN(grid % faces_n(1,s)),  &
+                 NewN(grid % faces_n(2,s)),  &
+                 NewN(grid % faces_n(3,s)),  &
+                 NewN(grid % faces_n(4,s)),  &
                  NewC(c1), 0  ! <-- set c2 to zero
           end if
         end if
@@ -201,15 +213,19 @@
       c1 = SideC(1,s)
       c2 = SideC(2,s)
       if(c2 > 0 .and. (material(NewC(c1)) /= material(NewC(c2))) ) then
-        if(SideN(s,0) == 3) then
-          write(9,'(6Z9)')                                           &
-            3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
-            NewC(c1), NewC(c2)
-        else if(SideN(s,0) == 4) then
-          write(9,'(7Z9)')                          &
-            4, NewN(SideN(s,1)), NewN(SideN(s,2)),  & 
-               NewN(SideN(s,3)), NewN(SideN(s,4)),  &
-            NewC(c1), NewC(c2)
+        if(grid % faces_n_nodes(s) == 3) then
+          write(9,'(6Z9)')                 &
+            3, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
+               NewC(c1), NewC(c2)
+        else if(grid % faces_n_nodes(s) == 4) then
+          write(9,'(7Z9)')                 &
+            4, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  & 
+               NewN(grid % faces_n(3,s)),  &
+               NewN(grid % faces_n(4,s)),  &
+               NewC(c1), NewC(c2)
         end if 
       end if
   end do
@@ -225,15 +241,19 @@
       if(c2 < 0) c2=0
       if(c2 > 0 .and. (material(NewC(c1)) == material(NewC(c2))) .and. &
          Dx(s)==0.0 .and. Dy(s)==0.0 .and. Dz(s)==0 ) then
-        if(SideN(s,0) == 3) then
-          write(9,'(6Z9)')                                           &
-            3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
-            NewC(c1), NewC(c2)
-        else if(SideN(s,0) == 4) then
-          write(9,'(7Z9)')                          &
-            4, NewN(SideN(s,1)), NewN(SideN(s,2)),  &
-               NewN(SideN(s,3)), NewN(SideN(s,4)),  &
-            NewC(c1), NewC(c2)
+        if(grid % faces_n_nodes(s) == 3) then
+          write(9,'(6Z9)')                 &
+            3, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
+               NewC(c1), NewC(c2)
+        else if(grid % faces_n_nodes(s) == 4) then
+          write(9,'(7Z9)')                 &
+            4, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
+               NewN(grid % faces_n(4,s)),  &
+               NewC(c1), NewC(c2)
         end if
       end if
   end do

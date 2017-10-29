@@ -101,21 +101,21 @@
     c1 = SideC(1,s)
     c2 = SideC(2,s)
 
-    x1 = xg(SideN(s,1))
-    y1 = yg(SideN(s,1))
-    z1 = zg(SideN(s,1))
+    x1 = xg(grid % faces_n(1,s))
+    y1 = yg(grid % faces_n(1,s))
+    z1 = zg(grid % faces_n(1,s))
 
-    x2 = xg(SideN(s,2))
-    y2 = yg(SideN(s,2))
-    z2 = zg(SideN(s,2))
+    x2 = xg(grid % faces_n(2,s))
+    y2 = yg(grid % faces_n(2,s))
+    z2 = zg(grid % faces_n(2,s))
 
-    x3 = xg(SideN(s,3))
-    y3 = yg(SideN(s,3))
-    z3 = zg(SideN(s,3))
+    x3 = xg(grid % faces_n(3,s))
+    y3 = yg(grid % faces_n(3,s))
+    z3 = zg(grid % faces_n(3,s))
 
-    x4 = xg(SideN(s,4))
-    y4 = yg(SideN(s,4))
-    z4 = zg(SideN(s,4))
+    x4 = xg(grid % faces_n(4,s))
+    y4 = yg(grid % faces_n(4,s))
+    z4 = zg(grid % faces_n(4,s))
 
     count=0
     ! 1-2
@@ -140,7 +140,7 @@
       yin(count) = fc*y2+(1.0-fc)*y3
     end if
     ! For quadrilateral faces
-    if(SideN(s,0)==4) then
+    if(grid % faces_n_nodes(s)==4) then
       ! 1-4
       if(z1<=z0 .and. z4>=z0 .or. z1>=z0 .and. z4<=z0) then 
         count=count+1

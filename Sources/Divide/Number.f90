@@ -262,15 +262,13 @@
   end do
   write(*,*) 'Number of sides: ', NS, n_faces_sub
 
+  ! It is not sorting nodes ... is it good?  I doubt
   call Grid_Mod_Sort_Cells_By_Index(grid, NewC(1), NC)
+  call Grid_Mod_Sort_Faces_By_Index(grid, NewS(1), NS)
+
   call Sort_Int_By_Index(proces(1),  NewC(1),NC)
   call Sort_Int_By_Index(material(1),NewC(1),NC)
 
-  call Sort_Int_By_Index(SideN(1,0), NewS(1),NS)
-  call Sort_Int_By_Index(SideN(1,1), NewS(1),NS)
-  call Sort_Int_By_Index(SideN(1,2), NewS(1),NS)
-  call Sort_Int_By_Index(SideN(1,3), NewS(1),NS)
-  call Sort_Int_By_Index(SideN(1,4), NewS(1),NS)
   call RNSort(Dx(1), NewS(1), NS)  ! this is important
   call RNSort(Dy(1), NewS(1), NS)  ! for plotting the
   call RNSort(Dz(1), NewS(1), NS)  ! grid with EpsPar()

@@ -155,14 +155,14 @@
   allocate(Dz(NS+max(NC,NBC))); Dz=0.0
 
   do s=1,NS
-    do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-      xt(n)=grid % xn(SideN(s,n))
-      yt(n)=grid % yn(SideN(s,n))
-      zt(n)=grid % zn(SideN(s,n))
+    do n=1,grid % faces_n_nodes(s)    ! for quadrilateral an triangular faces
+      xt(n)=grid % xn(grid % faces_n(n,s))
+      yt(n)=grid % yn(grid % faces_n(n,s))
+      zt(n)=grid % zn(grid % faces_n(n,s))
     end do                       
 
     ! Cell side components
-    if( SideN(s,0)  ==  4 ) then
+    if( grid % faces_n_nodes(s)  ==  4 ) then
       Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
                     +(yt(3)-yt(2))*(zt(2)+zt(3))   &
                     +(yt(4)-yt(3))*(zt(3)+zt(4))   &
@@ -175,7 +175,7 @@
                     +(xt(3)-xt(2))*(yt(2)+yt(3))   &
                     +(xt(4)-xt(3))*(yt(3)+yt(4))   &
                     +(xt(1)-xt(4))*(yt(4)+yt(1)) )
-    else if( SideN(s,0)  ==  3 ) then 
+    else if( grid % faces_n_nodes(s)  ==  3 ) then 
       Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
                     +(yt(3)-yt(2))*(zt(2)+zt(3))   &
                     +(yt(1)-yt(3))*(zt(3)+zt(1)) )
@@ -191,11 +191,11 @@
     end if
 
     ! Barycenters
-    if(SideN(s,0) == 4) then  
+    if(grid % faces_n_nodes(s) == 4) then  
       xsp(s) = (xt(1)+xt(2)+xt(3)+xt(4))/4.0
       ysp(s) = (yt(1)+yt(2)+yt(3)+yt(4))/4.0
       zsp(s) = (zt(1)+zt(2)+zt(3)+zt(4))/4.0
-    else if(SideN(s,0) == 3) then  
+    else if(grid % faces_n_nodes(s) == 3) then  
       xsp(s) = (xt(1)+xt(2)+xt(3))/3.0
       ysp(s) = (yt(1)+yt(2)+yt(3))/3.0
       zsp(s) = (zt(1)+zt(2)+zt(3))/3.0
@@ -615,7 +615,7 @@
         NSsh = NSsh + 2
 
         ! Find the coordinates of ...
-        if(SideN(s,0) == 4) then
+        if(grid % faces_n_nodes(s) == 4) then
 
           ! Coordinates of the shadow face
           xs2=xsp(SideC(0,s))
@@ -623,33 +623,33 @@
           zs2=zsp(SideC(0,s))
 
           ! Add shadow faces
-          SideN(NS+NSsh-1,0) = 4
+          grid % faces_n_nodes(NS+NSsh-1) = 4
           SideC(1,NS+NSsh-1) = c1
           SideC(2,NS+NSsh-1) = -NbC-1
-          SideN(NS+NSsh-1,1) = SideN(s,1)
-          SideN(NS+NSsh-1,2) = SideN(s,2)
-          SideN(NS+NSsh-1,3) = SideN(s,3)
-          SideN(NS+NSsh-1,4) = SideN(s,4)
+          grid % faces_n(1,NS+NSsh-1) = grid % faces_n(1,s)
+          grid % faces_n(2,NS+NSsh-1) = grid % faces_n(2,s)
+          grid % faces_n(3,NS+NSsh-1) = grid % faces_n(3,s)
+          grid % faces_n(4,NS+NSsh-1) = grid % faces_n(4,s)
           Sx(NS+NSsh-1) = Sx(s)
           Sy(NS+NSsh-1) = Sy(s)
           Sz(NS+NSsh-1) = Sz(s)
           xsp(NS+NSsh-1) = xsp(s)
           ysp(NS+NSsh-1) = ysp(s)
           zsp(NS+NSsh-1) = zsp(s)
-          SideN(NS+NSsh,0) = 4
+          grid % faces_n_nodes(NS+NSsh) = 4
           SideC(1,NS+NSsh) = c2
           SideC(2,NS+NSsh) = -NbC-1
-          SideN(NS+NSsh,1) = SideN(SideC(0,s),1) 
-          SideN(NS+NSsh,2) = SideN(SideC(0,s),2)
-          SideN(NS+NSsh,3) = SideN(SideC(0,s),3)
-          SideN(NS+NSsh,4) = SideN(SideC(0,s),4)
+          grid % faces_n(1,NS+NSsh) = grid % faces_n(1,SideC(0,s)) 
+          grid % faces_n(2,NS+NSsh) = grid % faces_n(2,SideC(0,s))
+          grid % faces_n(3,NS+NSsh) = grid % faces_n(3,SideC(0,s))
+          grid % faces_n(4,NS+NSsh) = grid % faces_n(4,SideC(0,s))
           Sx(NS+NSsh) = Sx(s)
           Sy(NS+NSsh) = Sy(s)
           Sz(NS+NSsh) = Sz(s)
           xsp(NS+NSsh) = xs2
           ysp(NS+NSsh) = ys2
           zsp(NS+NSsh) = zs2
-        else if(SideN(s,0) == 3) then
+        else if(grid % faces_n_nodes(s) == 3) then
 
           ! Coordinates of the shadow face
           xs2=xsp(SideC(0,s))
@@ -657,24 +657,24 @@
           zs2=zsp(SideC(0,s))
  
           ! Add shadow faces
-          SideN(NS+NSsh-1,0) = 3
+          grid % faces_n_nodes(NS+NSsh-1) = 3
           SideC(1,NS+NSsh-1) = c1
           SideC(2,NS+NSsh-1) = -NbC-1
-          SideN(NS+NSsh-1,1) = SideN(s,1)
-          SideN(NS+NSsh-1,2) = SideN(s,2)
-          SideN(NS+NSsh-1,3) = SideN(s,3)
+          grid % faces_n(1,NS+NSsh-1) = grid % faces_n(1,s)
+          grid % faces_n(2,NS+NSsh-1) = grid % faces_n(2,s)
+          grid % faces_n(3,NS+NSsh-1) = grid % faces_n(3,s)
           Sx(NS+NSsh-1) = Sx(s)
           Sy(NS+NSsh-1) = Sy(s)
           Sz(NS+NSsh-1) = Sz(s)
           xsp(NS+NSsh-1) = xsp(s)
           ysp(NS+NSsh-1) = ysp(s)
           zsp(NS+NSsh-1) = zsp(s)
-          SideN(NS+NSsh,0) = 3
+          grid % faces_n_nodes(NS+NSsh) = 3
           SideC(1,NS+NSsh) = c2
           SideC(2,NS+NSsh) = -NbC-1
-          SideN(NS+NSsh,1) = SideN(SideC(0,s),1) 
-          SideN(NS+NSsh,2) = SideN(SideC(0,s),2)
-          SideN(NS+NSsh,3) = SideN(SideC(0,s),3)
+          grid % faces_n(1,NS+NSsh) = grid % faces_n(1,SideC(0,s)) 
+          grid % faces_n(2,NS+NSsh) = grid % faces_n(2,SideC(0,s))
+          grid % faces_n(3,NS+NSsh) = grid % faces_n(3,SideC(0,s))
           Sx(NS+NSsh) = Sx(s)
           Sy(NS+NSsh) = Sy(s)
           Sz(NS+NSsh) = Sz(s)
@@ -721,11 +721,11 @@
     if(NewS(s) > 0) then
       SideC(1,NewS(s)) = SideC(1,s) 
       SideC(2,NewS(s)) = SideC(2,s)
-      SideN(NewS(s),0) = SideN(s,0)
-      SideN(NewS(s),1) = SideN(s,1)
-      SideN(NewS(s),2) = SideN(s,2)
-      SideN(NewS(s),3) = SideN(s,3)
-      SideN(NewS(s),4) = SideN(s,4)
+      grid % faces_n_nodes(NewS(s)) = grid % faces_n_nodes(s)
+      grid % faces_n(1,NewS(s)) = grid % faces_n(1,s)
+      grid % faces_n(2,NewS(s)) = grid % faces_n(2,s)
+      grid % faces_n(3,NewS(s)) = grid % faces_n(3,s)
+      grid % faces_n(4,NewS(s)) = grid % faces_n(4,s)
       xsp(NewS(s)) = xsp(s)
       ysp(NewS(s)) = ysp(s)
       zsp(NewS(s)) = zsp(s)

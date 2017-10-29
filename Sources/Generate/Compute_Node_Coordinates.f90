@@ -22,8 +22,9 @@
   integer :: trans(3,2)
 !==============================================================================!
 
+  ! Why on Earth is this?
   do n = 1, grid % max_n_nodes
-    grid % nodes(n) % x = HUGE
+    grid % xn(n) = HUGE
   end do 
 
   !------------------------------------!
@@ -41,51 +42,51 @@
 
     ! ( 1 )
     n = nn + ( 1-1)*ni*nj + ( 1-1)*ni +  1
-    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(1)) % x
-    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(1)) % y 
-    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(1)) % z 
+    grid % xn(n) = dom % points(dom % blocks(b) % corners(1)) % x
+    grid % yn(n) = dom % points(dom % blocks(b) % corners(1)) % y 
+    grid % zn(n) = dom % points(dom % blocks(b) % corners(1)) % z 
 
     ! ( 2 )
     n = nn + ( 1-1)*ni*nj + ( 1-1)*ni + ni
-    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(2)) % x
-    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(2)) % y
-    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(2)) % z
+    grid % xn(n) = dom % points(dom % blocks(b) % corners(2)) % x
+    grid % yn(n) = dom % points(dom % blocks(b) % corners(2)) % y
+    grid % zn(n) = dom % points(dom % blocks(b) % corners(2)) % z
 
     ! ( 3 )
     n = nn + ( 1-1)*ni*nj + (nj-1)*ni +  1
-    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(3)) % x
-    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(3)) % y
-    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(3)) % z
+    grid % xn(n) = dom % points(dom % blocks(b) % corners(3)) % x
+    grid % yn(n) = dom % points(dom % blocks(b) % corners(3)) % y
+    grid % zn(n) = dom % points(dom % blocks(b) % corners(3)) % z
 
     ! ( 4 )
     n = nn + ( 1-1)*ni*nj + (nj-1)*ni + ni
-    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(4)) % x
-    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(4)) % y
-    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(4)) % z
+    grid % xn(n) = dom % points(dom % blocks(b) % corners(4)) % x
+    grid % yn(n) = dom % points(dom % blocks(b) % corners(4)) % y
+    grid % zn(n) = dom % points(dom % blocks(b) % corners(4)) % z
 
     ! ( 5 ) !
     n = nn + (nk-1)*ni*nj + ( 1-1)*ni +  1
-    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(5)) % x
-    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(5)) % y
-    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(5)) % z
+    grid % xn(n) = dom % points(dom % blocks(b) % corners(5)) % x
+    grid % yn(n) = dom % points(dom % blocks(b) % corners(5)) % y
+    grid % zn(n) = dom % points(dom % blocks(b) % corners(5)) % z
 
     ! ( 6 ) !
     n = nn + (nk-1)*ni*nj + ( 1-1)*ni + ni
-    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(6)) % x
-    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(6)) % y
-    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(6)) % z
+    grid % xn(n) = dom % points(dom % blocks(b) % corners(6)) % x
+    grid % yn(n) = dom % points(dom % blocks(b) % corners(6)) % y
+    grid % zn(n) = dom % points(dom % blocks(b) % corners(6)) % z
 
     ! ( 7 ) !
     n = nn + (nk-1)*ni*nj + (nj-1)*ni +  1
-    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(7)) % x
-    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(7)) % y
-    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(7)) % z
+    grid % xn(n) = dom % points(dom % blocks(b) % corners(7)) % x
+    grid % yn(n) = dom % points(dom % blocks(b) % corners(7)) % y
+    grid % zn(n) = dom % points(dom % blocks(b) % corners(7)) % z
 
     ! ( 8 ) !
     n = nn + (nk-1)*ni*nj + (nj-1)*ni + ni
-    grid % nodes(n) % x = dom % points(dom % blocks(b) % corners(8)) % x
-    grid % nodes(n) % y = dom % points(dom % blocks(b) % corners(8)) % y
-    grid % nodes(n) % z = dom % points(dom % blocks(b) % corners(8)) % z
+    grid % xn(n) = dom % points(dom % blocks(b) % corners(8)) % x
+    grid % yn(n) = dom % points(dom % blocks(b) % corners(8)) % y
+    grid % zn(n) = dom % points(dom % blocks(b) % corners(8)) % z
 
     !------------------------------!
     !   First on the dom % lines   !
@@ -219,9 +220,9 @@
             k=trans(3,1)+trans(3,2)*ig
 
             n = nn + (k-1)*ni*nj + (j-1)*ni + i
-            grid % nodes(n) % x = dom % lines(l) % x(ig)
-            grid % nodes(n) % y = dom % lines(l) % y(ig)
-            grid % nodes(n) % z = dom % lines(l) % z(ig)
+            grid % xn(n) = dom % lines(l) % x(ig)
+            grid % yn(n) = dom % lines(l) % y(ig)
+            grid % zn(n) = dom % lines(l) % z(ig)
           end do
 
         ! Line is defined with a weight factor

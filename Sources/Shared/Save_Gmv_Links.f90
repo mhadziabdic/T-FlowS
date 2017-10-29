@@ -42,7 +42,7 @@
 
   ! X
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % nodes(n) % x
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % xn(n)
   end do
   do c=1,NC
     if(NewC(c)  > 0) write(9, '(1PE14.7)') xc(c)
@@ -56,7 +56,7 @@
 
   ! Y
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % nodes(n) % y
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % yn(n)
   end do
   do c=1,NC
     if(NewC(c)  > 0) write(9, '(1PE14.7)') yc(c)
@@ -70,7 +70,7 @@
 
   ! Z
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % nodes(n) % z
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % zn(n)
   end do
   do c=1,NC
     if(NewC(c)  > 0) write(9, '(1PE14.7)') zc(c)

@@ -38,18 +38,18 @@
         n7 = grid % cells_n(7,c)
         n8 = grid % cells_n(8,c)
 
-        x0=1.25e-1*(grid % nodes(n1) % x + grid % nodes(n2) % x +   &
-                    grid % nodes(n3) % x + grid % nodes(n4) % x +   &
-                    grid % nodes(n5) % x + grid % nodes(n6) % x +   &
-                    grid % nodes(n7) % x + grid % nodes(n8) % x)
-        y0=1.25e-1*(grid % nodes(n1) % y + grid % nodes(n2) % y +   &
-                    grid % nodes(n3) % y + grid % nodes(n4) % y +   &
-                    grid % nodes(n5) % y + grid % nodes(n6) % y +   &
-                    grid % nodes(n7) % y + grid % nodes(n8) % y)
-        z0=1.25e-1*(grid % nodes(n1) % z + grid % nodes(n2) % z +   &
-                    grid % nodes(n3) % z + grid % nodes(n4) % z +   &
-                    grid % nodes(n5) % z + grid % nodes(n6) % z +   &
-                    grid % nodes(n7) % z + grid % nodes(n8) % z)
+        x0=1.25e-1*(grid % xn(n1) + grid % xn(n2) +   &
+                    grid % xn(n3) + grid % xn(n4) +   &
+                    grid % xn(n5) + grid % xn(n6) +   &
+                    grid % xn(n7) + grid % xn(n8))
+        y0=1.25e-1*(grid % yn(n1) + grid % yn(n2) +   &
+                    grid % yn(n3) + grid % yn(n4) +   &
+                    grid % yn(n5) + grid % yn(n6) +   &
+                    grid % yn(n7) + grid % yn(n8))
+        z0=1.25e-1*(grid % zn(n1) + grid % zn(n2) +   &
+                    grid % zn(n3) + grid % zn(n4) +   &
+                    grid % zn(n5) + grid % zn(n6) +   &
+                    grid % zn(n7) + grid % zn(n8))
 
         if(refined_regions(lev,reg,0) == ELIPSOID) then
           if(  ( ((x1-x0)/x8)**2 +                                  &

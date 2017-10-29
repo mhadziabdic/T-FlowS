@@ -15,8 +15,6 @@
   integer :: i, j
 !==============================================================================!
 
-  write(*,*) '@ Which_Node; n = ', n
-
   Which_Node = 0
 
   if (c  < 0) then 
@@ -42,9 +40,9 @@
 
   Which_Node = 0
   write(*,*) '# Which node: Trouble, node not found !'
-  write(*,*) '# x, y, z = ', grid % nodes(n) % x,  &
-                             grid % nodes(n) % y,  &
-                             grid % nodes(n) % z
+  write(*,*) '# x, y, z = ', grid % xn(n),  &
+                             grid % yn(n),  &
+                             grid % zn(n)
   write(*,*) '# cell    = ', c, level(c)
   return
 

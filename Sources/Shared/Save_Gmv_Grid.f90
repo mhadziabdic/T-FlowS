@@ -36,13 +36,13 @@
   write(9,*) 'nodes', NNsub
 
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % nodes(n) % x
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % xn(n)
   end do
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % nodes(n) % y
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % yn(n)
   end do
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % nodes(n) % z
+    if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % zn(n)
   end do
 
   !-----------!
@@ -53,25 +53,25 @@
     if(NewC(c) /= 0) then
       if(grid % cells_n_nodes(c) == 8) then
         write(9,*) 'hex 8'
-        write(9,'(8I9)')                                                &
+        write(9,'(8I9)')                                          &
           NewN(grid % cells_n(1,c)), NewN(grid % cells_n(2,c)),   &
           NewN(grid % cells_n(4,c)), NewN(grid % cells_n(3,c)),   &
           NewN(grid % cells_n(5,c)), NewN(grid % cells_n(6,c)),   &
           NewN(grid % cells_n(8,c)), NewN(grid % cells_n(7,c))
       else if(grid % cells_n_nodes(c) == 6) then
         write(9,*) 'prism 6'
-        write(9,'(6I9)')                                                &
+        write(9,'(6I9)')                                          &
           NewN(grid % cells_n(1,c)), NewN(grid % cells_n(2,c)),   &
           NewN(grid % cells_n(3,c)), NewN(grid % cells_n(4,c)),   &
           NewN(grid % cells_n(5,c)), NewN(grid % cells_n(6,c))
       else if(grid % cells_n_nodes(c) == 4) then
         write(9,*) 'tet 4'
-        write(9,'(4I9)')                                                &
+        write(9,'(4I9)')                                          &
           NewN(grid % cells_n(1,c)), NewN(grid % cells_n(2,c)),   &
           NewN(grid % cells_n(3,c)), NewN(grid % cells_n(4,c))
       else if(grid % cells_n_nodes(c) == 5) then
         write(9,*) 'pyramid 5'
-        write(9,'(5I9)')                                                &
+        write(9,'(5I9)')                                          &
           NewN(grid % cells_n(5,c)), NewN(grid % cells_n(1,c)),   &
           NewN(grid % cells_n(2,c)), NewN(grid % cells_n(4,c)),   &
           NewN(grid % cells_n(3,c))
@@ -122,13 +122,13 @@
   write(9,*) 'nodes', NNsub
 
   do n=1,NN
-    write(9, '(1PE14.7)') grid % nodes(n) % x
+    write(9, '(1PE14.7)') grid % xn(n)
   end do
   do n=1,NN
-    write(9, '(1PE14.7)') grid % nodes(n) % y
+    write(9, '(1PE14.7)') grid % yn(n)
   end do
   do n=1,NN
-    write(9, '(1PE14.7)') grid % nodes(n) % z
+    write(9, '(1PE14.7)') grid % zn(n)
   end do
 
   !-----------!

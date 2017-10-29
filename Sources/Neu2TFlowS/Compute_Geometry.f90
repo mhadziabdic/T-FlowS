@@ -126,11 +126,11 @@
 
   do c=1,NC
     do n=1,grid % cells_n_nodes(c)
-      xc(c) = xc(c) + grid % nodes(grid % cells_n(n,c)) % x  &
+      xc(c) = xc(c) + grid % xn(grid % cells_n(n,c))  &
                     / (1.0*grid % cells_n_nodes(c))
-      yc(c) = yc(c) + grid % nodes(grid % cells_n(n,c)) % y  &
+      yc(c) = yc(c) + grid % yn(grid % cells_n(n,c))  &
                     / (1.0*grid % cells_n_nodes(c))
-      zc(c) = zc(c) + grid % nodes(grid % cells_n(n,c)) % z  &
+      zc(c) = zc(c) + grid % zn(grid % cells_n(n,c))  &
                     / (1.0*grid % cells_n_nodes(c))
     end do
   end do
@@ -156,9 +156,9 @@
 
   do s=1,NS
     do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-      xt(n)=grid % nodes(SideN(s,n)) % x
-      yt(n)=grid % nodes(SideN(s,n)) % y
-      zt(n)=grid % nodes(SideN(s,n)) % z
+      xt(n)=grid % xn(SideN(s,n))
+      yt(n)=grid % yn(SideN(s,n))
+      zt(n)=grid % zn(SideN(s,n))
     end do                       
 
     ! Cell side components
@@ -811,12 +811,12 @@
     ymax = -HUGE
     zmax = -HUGE
     do n=1,grid % cells_n_nodes(c)
-      xmin = min(xmin, grid % nodes(grid % cells_n(n,c)) % x)
-      ymin = min(ymin, grid % nodes(grid % cells_n(n,c)) % y)
-      zmin = min(zmin, grid % nodes(grid % cells_n(n,c)) % z)
-      xmax = max(xmax, grid % nodes(grid % cells_n(n,c)) % x)
-      ymax = max(ymax, grid % nodes(grid % cells_n(n,c)) % y)
-      zmax = max(zmax, grid % nodes(grid % cells_n(n,c)) % z)
+      xmin = min(xmin, grid % xn(grid % cells_n(n,c)))
+      ymin = min(ymin, grid % yn(grid % cells_n(n,c)))
+      zmin = min(zmin, grid % zn(grid % cells_n(n,c)))
+      xmax = max(xmax, grid % xn(grid % cells_n(n,c)))
+      ymax = max(ymax, grid % yn(grid % cells_n(n,c)))
+      zmax = max(zmax, grid % zn(grid % cells_n(n,c)))
     end do
     delta(c) = xmax-xmin
     delta(c) = max(delta(c), (ymax-ymin))

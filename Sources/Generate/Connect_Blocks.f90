@@ -271,9 +271,9 @@
 
 
   do n=1,NN
-    grid % nodes(NewN(n)) % x = grid % nodes(n) % x
-    grid % nodes(NewN(n)) % y = grid % nodes(n) % y
-    grid % nodes(NewN(n)) % z = grid % nodes(n) % z
+    grid % xn(NewN(n)) = grid % xn(n)
+    grid % yn(NewN(n)) = grid % yn(n)
+    grid % zn(NewN(n)) = grid % zn(n)
   end do
 
   NN=NN-del

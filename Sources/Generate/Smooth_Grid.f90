@@ -38,12 +38,12 @@
   y_min=+HUGE
   z_min=+HUGE
   do n=1,Nn
-    x_max=max(grid % nodes(n) % x, x_max) 
-    y_max=max(grid % nodes(n) % y, y_max) 
-    z_max=max(grid % nodes(n) % z, z_max) 
-    x_min=min(grid % nodes(n) % x, x_min) 
-    y_min=min(grid % nodes(n) % y, y_min) 
-    z_min=min(grid % nodes(n) % z, z_min) 
+    x_max=max(grid % xn(n), x_max) 
+    y_max=max(grid % yn(n), y_max) 
+    z_max=max(grid % zn(n), z_max) 
+    x_min=min(grid % xn(n), x_min) 
+    y_min=min(grid % yn(n), y_min) 
+    z_min=min(grid % zn(n), z_min) 
   end do 
 
   !-----------------------!
@@ -79,9 +79,9 @@
         x8=smooth_regions(reg,4)
         y8=smooth_regions(reg,5)
         z8=smooth_regions(reg,6)
-        if( (x1<=grid % nodes(n) % x) .and. (grid % nodes(n) % x<=x8) .and. &
-            (y1<=grid % nodes(n) % y) .and. (grid % nodes(n) % y<=y8) .and. &
-            (z1<=grid % nodes(n) % z) .and. (grid % nodes(n) % z<=z8) ) then
+        if( (x1<=grid % xn(n)) .and. (grid % xn(n)<=x8) .and. &
+            (y1<=grid % yn(n)) .and. (grid % yn(n)<=y8) .and. &
+            (z1<=grid % zn(n)) .and. (grid % zn(n)<=z8) ) then
           node_to_nodes(n,0) = 0
         endif
       end do
@@ -104,24 +104,24 @@
           y_new_tmp=0.0
           z_new_tmp=0.0
           do i=1,node_to_nodes(n,0)
-            x_new_tmp = x_new_tmp + grid % nodes(node_to_nodes(n,i)) % x
-            y_new_tmp = y_new_tmp + grid % nodes(node_to_nodes(n,i)) % y
-            z_new_tmp = z_new_tmp + grid % nodes(node_to_nodes(n,i)) % z
+            x_new_tmp = x_new_tmp + grid % xn(node_to_nodes(n,i))
+            y_new_tmp = y_new_tmp + grid % yn(node_to_nodes(n,i))
+            z_new_tmp = z_new_tmp + grid % zn(node_to_nodes(n,i))
           end do
           x_new_tmp = x_new_tmp / (1.0*node_to_nodes(n,0)) 
           y_new_tmp = y_new_tmp / (1.0*node_to_nodes(n,0)) 
           z_new_tmp = z_new_tmp / (1.0*node_to_nodes(n,0)) 
-          if(grid % nodes(n) % x  > 0.001*x_min .and.  &
-             grid % nodes(n) % x  < 0.999*x_max)       &
-          x_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*grid % nodes(n) % x &
+          if(grid % xn(n) > 0.001*x_min .and.  &
+             grid % xn(n) < 0.999*x_max)       &
+          x_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*grid % xn(n) &
                         +      smooth_relax(reg)*walln(n) *x_new_tmp
-          if(grid % nodes(n) % y  > 0.001*y_min .and.  &
-             grid % nodes(n) % y  < 0.999*y_max)       &
-          y_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*grid % nodes(n) % y &
+          if(grid % yn(n) > 0.001*y_min .and.  &
+             grid % yn(n) < 0.999*y_max)       &
+          y_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*grid % yn(n) &
                         +      smooth_relax(reg)*walln(n) *y_new_tmp
-          if(grid % nodes(n) % z  > 0.001*z_min .and.  &
-             grid % nodes(n) % z  < 0.999*z_max)       &
-          z_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*grid % nodes(n) % z &
+          if(grid % zn(n) > 0.001*z_min .and.  &
+             grid % zn(n) < 0.999*z_max)       &
+          z_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*grid % zn(n) &
                         +      smooth_relax(reg)*walln(n)* z_new_tmp
         end if
       end do
@@ -137,29 +137,29 @@
           y8=smooth_regions(reg,5)
           z8=smooth_regions(reg,6)
 
-          if( (x1 <= grid % nodes(n) % x) .and.  &
-              (grid % nodes(n) % x <= x8) .and.  &
-              (y1 <= grid % nodes(n) % y) .and.  &
-              (grid % nodes(n) % y <= y8) .and.  &
-              (z1 <= grid % nodes(n) % z) .and.  &
-              (grid % nodes(n) % z <= z8) ) then
+          if( (x1 <= grid % xn(n)) .and.  &
+              (grid % xn(n) <= x8) .and.  &
+              (y1 <= grid % yn(n)) .and.  &
+              (grid % yn(n) <= y8) .and.  &
+              (z1 <= grid % zn(n)) .and.  &
+              (grid % zn(n) <= z8) ) then
 
             if(smooth_in_x(reg)) then
-              if(grid % nodes(n) % x > 0.001*x_min .and. &
-                 grid % nodes(n) % x < 0.999*x_max)  &
-              grid % nodes(n) % x=x_node_new(n)
+              if(grid % xn(n) > 0.001*x_min .and. &
+                 grid % xn(n) < 0.999*x_max)  &
+              grid % xn(n)=x_node_new(n)
             end if
 
             if(smooth_in_y(reg)) then
-              if(grid % nodes(n) % y > 0.001*y_min .and.  &
-                 grid % nodes(n) % y < 0.999*y_max)  &
-              grid % nodes(n) % y=y_node_new(n)
+              if(grid % yn(n) > 0.001*y_min .and.  &
+                 grid % yn(n) < 0.999*y_max)  &
+              grid % yn(n)=y_node_new(n)
             end if 
 
             if(smooth_in_z(reg)) then
-              if(grid % nodes(n) % z > 0.001*z_min .and.  &
-                 grid % nodes(n) % z < 0.999*z_max)  &
-              grid % nodes(n) % z=z_node_new(n)
+              if(grid % zn(n) > 0.001*z_min .and.  &
+                 grid % zn(n) < 0.999*z_max)  &
+              grid % zn(n)=z_node_new(n)
             end if 
 
           end if  ! if the point belongs to region

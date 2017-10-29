@@ -84,13 +84,13 @@
 
   ! Read node coordinates
   do n=1,NN
-    read(9,*) grid % nodes(n) % x
+    read(9,*) grid % xn(n)
   end do
   do n=1,NN
-    read(9,*) grid % nodes(n) % y
+    read(9,*) grid % yn(n)
   end do
   do n=1,NN
-    read(9,*) grid % nodes(n) % z
+    read(9,*) grid % zn(n)
   end do
 
   ! Read cell nodes 

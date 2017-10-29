@@ -76,8 +76,8 @@
             yc_12 = 0.0
             zc_12 = 0.0
             do i=1,SideN(s1,0)
-              yc_12 = yc_12 + grid % nodes(SideN(s1,i)) % y
-              zc_12 = zc_12 + grid % nodes(SideN(s1,i)) % z
+              yc_12 = yc_12 + grid % yn(SideN(s1,i))
+              zc_12 = zc_12 + grid % zn(SideN(s1,i))
             end do
             yc_12 = yc_12 / (real(SideN(s1,0)))
             zc_12 = zc_12 / (real(SideN(s1,0)))
@@ -85,8 +85,8 @@
             yc_22 = 0.0
             zc_22 = 0.0
             do i=1,SideN(s2,0)
-              yc_22 = yc_22 + grid % nodes(SideN(s2,i)) % y
-              zc_22 = zc_22 + grid % nodes(SideN(s2,i)) % z
+              yc_22 = yc_22 + grid % yn(SideN(s2,i))
+              zc_22 = zc_22 + grid % zn(SideN(s2,i))
             end do
             yc_22 = yc_22 / (real(SideN(s2,0)))
             zc_22 = zc_22 / (real(SideN(s2,0)))
@@ -126,8 +126,8 @@
             xc_12 = 0.0
             zc_12 = 0.0
             do i=1,SideN(s1,0)
-              xc_12 = xc_12 + grid % nodes(SideN(s1,i)) % x
-              zc_12 = zc_12 + grid % nodes(SideN(s1,i)) % z
+              xc_12 = xc_12 + grid % xn(SideN(s1,i))
+              zc_12 = zc_12 + grid % zn(SideN(s1,i))
             end do
             xc_12 = xc_12 / (real(SideN(s1,0)))
             zc_12 = zc_12 / (real(SideN(s1,0)))
@@ -135,8 +135,8 @@
             xc_22 = 0.0
             zc_22 = 0.0
             do i=1,SideN(s2,0)
-              xc_22 = xc_22 + grid % nodes(SideN(s2,i)) % x
-              zc_22 = zc_22 + grid % nodes(SideN(s2,i)) % z
+              xc_22 = xc_22 + grid % xn(SideN(s2,i))
+              zc_22 = zc_22 + grid % zn(SideN(s2,i))
             end do
             xc_22 = xc_22 / (real(SideN(s2,0)))
             zc_22 = zc_22 / (real(SideN(s2,0)))
@@ -176,8 +176,8 @@
             yc_12 = 0.0
             xc_12 = 0.0
             do i=1,SideN(s1,0)
-              yc_12 = yc_12 + grid % nodes(SideN(s1,i)) % y
-              xc_12 = xc_12 + grid % nodes(SideN(s1,i)) % x
+              yc_12 = yc_12 + grid % yn(SideN(s1,i))
+              xc_12 = xc_12 + grid % xn(SideN(s1,i))
             end do
             yc_12 = yc_12 / (real(SideN(s1,0)))
             xc_12 = xc_12 / (real(SideN(s1,0)))
@@ -185,8 +185,8 @@
             yc_22 = 0.0
             xc_22 = 0.0
             do i=1,SideN(s2,0)
-              yc_22 = yc_22 + grid % nodes(SideN(s2,i)) % y
-              xc_22 = xc_22 + grid % nodes(SideN(s2,i)) % x
+              yc_22 = yc_22 + grid % yn(SideN(s2,i))
+              xc_22 = xc_22 + grid % xn(SideN(s2,i))
             end do
             yc_22 = yc_22 / (real(SideN(s2,0)))
             xc_22 = xc_22 / (real(SideN(s2,0)))

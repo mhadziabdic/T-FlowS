@@ -134,11 +134,11 @@
       yc(c)=0.0
       zc(c)=0.0
       do n=1,grid % cells_n_nodes(c)
-        xc(c) = xc(c) + grid % nodes(grid % cells_n(n,c)) % x  &
+        xc(c) = xc(c) + grid % xn(grid % cells_n(n,c))  &
               / (1.0*grid % cells_n_nodes(c))
-        yc(c) = yc(c) + grid % nodes(grid % cells_n(n,c)) % y  &
+        yc(c) = yc(c) + grid % yn(grid % cells_n(n,c))  &
               / (1.0*grid % cells_n_nodes(c))
-        zc(c) = zc(c) + grid % nodes(grid % cells_n(n,c)) % z  &
+        zc(c) = zc(c) + grid % zn(grid % cells_n(n,c))  &
               / (1.0*grid % cells_n_nodes(c))
       end do
     end do
@@ -158,12 +158,12 @@
       y_max = -HUGE  
       z_max = -HUGE  
       do n=1,grid % cells_n_nodes(c)
-        x_min = min(x_min, grid % nodes(grid % cells_n(n,c)) % x)
-        y_min = min(y_min, grid % nodes(grid % cells_n(n,c)) % y)
-        z_min = min(z_min, grid % nodes(grid % cells_n(n,c)) % z)
-        x_max = max(x_max, grid % nodes(grid % cells_n(n,c)) % x)
-        y_max = max(y_max, grid % nodes(grid % cells_n(n,c)) % y)
-        z_max = max(z_max, grid % nodes(grid % cells_n(n,c)) % z)
+        x_min = min(x_min, grid % xn(grid % cells_n(n,c)))
+        y_min = min(y_min, grid % yn(grid % cells_n(n,c)))
+        z_min = min(z_min, grid % zn(grid % cells_n(n,c)))
+        x_max = max(x_max, grid % xn(grid % cells_n(n,c)))
+        y_max = max(y_max, grid % yn(grid % cells_n(n,c)))
+        z_max = max(z_max, grid % zn(grid % cells_n(n,c)))
       end do
       delta(c) = x_max-x_min
       delta(c) = max(delta(c), (y_max-y_min))
@@ -179,9 +179,9 @@
     !-----------------------------------------------------!
     do s=1,NS
       do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-        local_x_node(n) = grid % nodes(SideN(s,n)) % x
-        local_y_node(n) = grid % nodes(SideN(s,n)) % y
-        local_z_node(n) = grid % nodes(SideN(s,n)) % z
+        local_x_node(n) = grid % xn(SideN(s,n))
+        local_y_node(n) = grid % yn(SideN(s,n))
+        local_z_node(n) = grid % zn(SideN(s,n))
       end do                       
 
       ! Cell side components
@@ -304,20 +304,20 @@
           if(SideN(s,0) == 4) then   
 
             ! Coordinates of the shadow face
-            xs2=.25*(  grid % nodes(grid % cells_n(f4n(m,1), c2)) % x  &
-                     + grid % nodes(grid % cells_n(f4n(m,2), c2)) % x  &
-                     + grid % nodes(grid % cells_n(f4n(m,3), c2)) % x  &
-                     + grid % nodes(grid % cells_n(f4n(m,4), c2)) % x)
+            xs2=.25*(  grid % xn(grid % cells_n(f4n(m,1), c2))  &
+                     + grid % xn(grid % cells_n(f4n(m,2), c2))  &
+                     + grid % xn(grid % cells_n(f4n(m,3), c2))  &
+                     + grid % xn(grid % cells_n(f4n(m,4), c2)))
 
-            ys2=.25*(  grid % nodes(grid % cells_n(f4n(m,1), c2)) % y  &
-                     + grid % nodes(grid % cells_n(f4n(m,2), c2)) % y  &
-                     + grid % nodes(grid % cells_n(f4n(m,3), c2)) % y  &
-                     + grid % nodes(grid % cells_n(f4n(m,4), c2)) % y)
+            ys2=.25*(  grid % yn(grid % cells_n(f4n(m,1), c2))  &
+                     + grid % yn(grid % cells_n(f4n(m,2), c2))  &
+                     + grid % yn(grid % cells_n(f4n(m,3), c2))  &
+                     + grid % yn(grid % cells_n(f4n(m,4), c2)))
 
-            zs2=.25*(  grid % nodes(grid % cells_n(f4n(m,1), c2)) % z  &
-                     + grid % nodes(grid % cells_n(f4n(m,2), c2)) % z  &
-                     + grid % nodes(grid % cells_n(f4n(m,3), c2)) % z  &
-                     + grid % nodes(grid % cells_n(f4n(m,4), c2)) % z)
+            zs2=.25*(  grid % zn(grid % cells_n(f4n(m,1), c2))  &
+                     + grid % zn(grid % cells_n(f4n(m,2), c2))  &
+                     + grid % zn(grid % cells_n(f4n(m,3), c2))  &
+                     + grid % zn(grid % cells_n(f4n(m,4), c2)))
  
             ! Add shadow faces
             SideN(NS+NSsh-1,0) = 4
@@ -349,17 +349,17 @@
           else if(SideN(s,0) == 3) then  
 
             ! Coordinates of the shadow face
-            xs2=.33333333 * (grid % nodes(grid % cells_n(f3n(m,1), c2)) % x  &
-                           + grid % nodes(grid % cells_n(f3n(m,2), c2)) % x  &
-                           + grid % nodes(grid % cells_n(f3n(m,3), c2)) % x )
+            xs2=.33333333 * (grid % xn(grid % cells_n(f3n(m,1), c2))  &
+                           + grid % xn(grid % cells_n(f3n(m,2), c2))  &
+                           + grid % xn(grid % cells_n(f3n(m,3), c2)) )
 
-            ys2=.33333333 * (grid % nodes(grid % cells_n(f3n(m,1), c2)) % y  &
-                           + grid % nodes(grid % cells_n(f3n(m,2), c2)) % y  &
-                           + grid % nodes(grid % cells_n(f3n(m,3), c2)) % y )
+            ys2=.33333333 * (grid % yn(grid % cells_n(f3n(m,1), c2))  &
+                           + grid % yn(grid % cells_n(f3n(m,2), c2))  &
+                           + grid % yn(grid % cells_n(f3n(m,3), c2)) )
 
-            zs2=.33333333 * (grid % nodes(grid % cells_n(f3n(m,1), c2)) % z  &
-                           + grid % nodes(grid % cells_n(f3n(m,2), c2)) % z  &
-                           + grid % nodes(grid % cells_n(f3n(m,3), c2)) % z )
+            zs2=.33333333 * (grid % zn(grid % cells_n(f3n(m,1), c2))  &
+                           + grid % zn(grid % cells_n(f3n(m,2), c2))  &
+                           + grid % zn(grid % cells_n(f3n(m,3), c2)) )
 
             ! Add shadow faces
             SideN(NS+NSsh-1,0) = 3
@@ -416,9 +416,9 @@
     c2=SideC(2,s)   
 
     do n=1,SideN(s,0)      ! for quadrilateral an triangular faces
-      local_x_node(n) = grid % nodes(SideN(s,n)) % x
-      local_y_node(n) = grid % nodes(SideN(s,n)) % y
-      local_z_node(n) = grid % nodes(SideN(s,n)) % z
+      local_x_node(n) = grid % xn(SideN(s,n))
+      local_y_node(n) = grid % yn(SideN(s,n))
+      local_z_node(n) = grid % zn(SideN(s,n))
     end do   
 
     ! First cell

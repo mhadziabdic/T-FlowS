@@ -3,7 +3,6 @@
 !------------------------------------------------------------------------------!
 !   Grids defining blocks used in "Generator"                                  !
 !------------------------------------------------------------------------------!
-  use Point_Mod
   use Material_Mod
   use Boundary_Condition_Mod
 !------------------------------------------------------------------------------!
@@ -31,7 +30,8 @@
     ! Number of nodes at each cell (determines cell's shape really)
     integer, allocatable :: cells_n_nodes(:)
 
-    type(Point_Type),              allocatable :: nodes(:)
+    ! Node coordinates
+    real, allocatable :: xn(:), yn(:), zn(:)
 
     type(Material_Type),           allocatable :: materials(:)
     type(Boundary_Condition_Type), allocatable :: boundary_conditions(:)

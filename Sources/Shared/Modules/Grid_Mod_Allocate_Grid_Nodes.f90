@@ -7,10 +7,9 @@
   integer         :: n
 !==============================================================================!
 
-  allocate(grid % nodes(n))
-
-  grid % nodes(1:n) % x = 0.0 
-  grid % nodes(1:n) % y = 0.0 
-  grid % nodes(1:n) % z = 0.0 
+  ! Allocate memory for node coordinates
+  allocate(grid % xn(1:n));  grid % xn = 0.0 
+  allocate(grid % yn(1:n));  grid % yn = 0.0 
+  allocate(grid % zn(1:n));  grid % zn = 0.0 
 
   end subroutine

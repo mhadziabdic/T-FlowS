@@ -89,12 +89,12 @@
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
   write(*, *) '# Now creating the file:', name_eps
 
-  xmax=maxval(grid % nodes(1:NN) % x)
-  ymax=maxval(grid % nodes(1:NN) % y)
-  zmax=maxval(grid % nodes(1:NN) % z)
-  xmin=minval(grid % nodes(1:NN) % x)
-  ymin=minval(grid % nodes(1:NN) % y)
-  zmin=minval(grid % nodes(1:NN) % z)
+  xmax=maxval(grid % xn(1:NN))
+  ymax=maxval(grid % yn(1:NN))
+  zmax=maxval(grid % zn(1:NN))
+  xmin=minval(grid % xn(1:NN))
+  ymin=minval(grid % yn(1:NN))
+  zmin=minval(grid % zn(1:NN))
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin),(zmax-zmin))
   sclp = 0.005 
 
@@ -105,21 +105,21 @@
   ymaxb=-1000000
   do n=1,Nn
     if(xk  < 0.0 .and. yk  > 0.0) then
-      xp1=-grid % nodes(n) % x*sin(alfa)-grid % nodes(n) % y*sin(beta)
+      xp1=-grid % xn(n)*sin(alfa)-grid % yn(n)*sin(beta)
     else if(xk  > 0.0 .and. yk  < 0.0) then
-      xp1=grid % nodes(n) % x*sin(alfa)+grid % nodes(n) % y*sin(beta)
+      xp1= grid % xn(n)*sin(alfa)+grid % yn(n)*sin(beta)
     else if(xk  > 0.0 .and. yk  > 0.0) then
-      xp1=-grid % nodes(n) % x*sin(alfa)+grid % nodes(n) % y*sin(beta)
+      xp1=-grid % xn(n)*sin(alfa)+grid % yn(n)*sin(beta)
     else
-      xp1=grid % nodes(n) % x*sin(alfa)-grid % nodes(n) % y*sin(beta)
+      xp1= grid % xn(n)*sin(alfa)-grid % yn(n)*sin(beta)
     end if
     xp1=xp1*sclf*sclp
     xmaxb=max(xmaxb,int(xp1))
     xminb=min(xminb,int(xp1))
 
-    yp1=( - grid % nodes(n) % x * cos(alfa)                &
-          - grid % nodes(n) % y * cos(beta) ) * cos(gama)  &
-          + grid % nodes(n) % z * sin(gama) 
+    yp1=( - grid % xn(n) * cos(alfa)                &
+          - grid % yn(n) * cos(beta) ) * cos(gama)  &
+          + grid % zn(n) * sin(gama) 
 
     yp1=yp1*sclf*sclp
     ymaxb=max(ymaxb,int(yp1))
@@ -187,20 +187,20 @@
 
       BCcount(BCmark(c2)) = BCcount(BCmark(c2)) + 1
 
-      x1 = grid % nodes( SideN(s,1) ) % x
-      x2 = grid % nodes( SideN(s,2) ) % x
-      x3 = grid % nodes( SideN(s,3) ) % x
-      x4 = grid % nodes( SideN(s,4) ) % x
+      x1 = grid % xn( SideN(s,1) )
+      x2 = grid % xn( SideN(s,2) )
+      x3 = grid % xn( SideN(s,3) )
+      x4 = grid % xn( SideN(s,4) )
 
-      y1 = grid % nodes( SideN(s,1) ) % y
-      y2 = grid % nodes( SideN(s,2) ) % y
-      y3 = grid % nodes( SideN(s,3) ) % y
-      y4 = grid % nodes( SideN(s,4) ) % y
+      y1 = grid % yn( SideN(s,1) )
+      y2 = grid % yn( SideN(s,2) )
+      y3 = grid % yn( SideN(s,3) )
+      y4 = grid % yn( SideN(s,4) )
 
-      z1 = grid % nodes( SideN(s,1) ) % z
-      z2 = grid % nodes( SideN(s,2) ) % z
-      z3 = grid % nodes( SideN(s,3) ) % z
-      z4 = grid % nodes( SideN(s,4) ) % z
+      z1 = grid % zn( SideN(s,1) )
+      z2 = grid % zn( SideN(s,2) )
+      z3 = grid % zn( SideN(s,3) )
+      z4 = grid % zn( SideN(s,4) )
 
       if(xk  < 0.0 .and. yk  > 0.0) then
         xp1=-x1*sin(alfa)-y1*sin(beta)

@@ -99,9 +99,9 @@
   call Read_Line(9,inp,tn,ts,te)          ! NODAL COORDINATES
   do i=1,NN
     call Read_Line(9,inp,tn,ts,te)
-    read(inp(ts(2):te(2)),*) grid % nodes(i) % x 
-    read(inp(ts(3):te(3)),*) grid % nodes(i) % y
-    read(inp(ts(4):te(4)),*) grid % nodes(i) % z
+    read(inp(ts(2):te(2)),*) grid % xn(i) 
+    read(inp(ts(3):te(3)),*) grid % yn(i)
+    read(inp(ts(4):te(4)),*) grid % zn(i)
   end do
   call Read_Line(9,inp,tn,ts,te)          ! ENDOFSECTION
 

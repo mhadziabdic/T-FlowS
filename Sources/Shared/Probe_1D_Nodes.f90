@@ -42,39 +42,39 @@
 
       ! Try to find the cell among the probes
       do p=1,n_prob
-          if(answer == 'X') then
-            if( Approx(grid % nodes(grid % cells_n(n,c)) % x, n_p(p)) ) go to 1
-          else if(answer == 'Y') then
-            if( Approx(grid % nodes(grid % cells_n(n,c)) % y, n_p(p)) ) go to 1
-          else if(answer == 'Z') then
-            if( Approx(grid % nodes(grid % cells_n(n,c)) % z, n_p(p)) ) go to 1
-          else if(answer == 'RX') then
-            if( Approx( (grid % nodes(grid % cells_n(n,c)) % z**2 +   &
-                         grid % nodes(grid % cells_n(n,c)) % y**2)**.5, n_p(p)) ) go to 1
-          else if(answer == 'RY') then
-            if( Approx( (grid % nodes(grid % cells_n(n,c)) % x**2 +   &
-                         grid % nodes(grid % cells_n(n,c)) % z**2)**.5, n_p(p)) ) go to 1
-          else if(answer == 'RZ') then
-            if( Approx( (grid % nodes(grid % cells_n(n,c)) % x**2 +   &
-                         grid % nodes(grid % cells_n(n,c)) % y**2)**.5, n_p(p)) ) go to 1
-          end if
+        if(answer == 'X') then
+          if( Approx(grid % xn(grid % cells_n(n,c)), n_p(p)) ) go to 1
+        else if(answer == 'Y') then
+          if( Approx(grid % yn(grid % cells_n(n,c)), n_p(p)) ) go to 1
+        else if(answer == 'Z') then
+          if( Approx(grid % zn(grid % cells_n(n,c)), n_p(p)) ) go to 1
+        else if(answer == 'RX') then
+          if( Approx( (grid % zn(grid % cells_n(n,c))**2 +   &
+                       grid % yn(grid % cells_n(n,c))**2)**.5, n_p(p)) ) go to 1
+        else if(answer == 'RY') then
+          if( Approx( (grid % xn(grid % cells_n(n,c))**2 +   &
+                       grid % zn(grid % cells_n(n,c))**2)**.5, n_p(p)) ) go to 1
+        else if(answer == 'RZ') then
+          if( Approx( (grid % xn(grid % cells_n(n,c))**2 +   &
+                       grid % yn(grid % cells_n(n,c))**2)**.5, n_p(p)) ) go to 1
+        end if
       end do 
   
       ! Couldn't find a cell among the probes, add a new one
       n_prob = n_prob+1
-      if(answer=='X') n_p(n_prob) = grid % nodes(grid % cells_n(n,c)) % x
-      if(answer=='Y') n_p(n_prob) = grid % nodes(grid % cells_n(n,c)) % y
-      if(answer=='Z') n_p(n_prob) = grid % nodes(grid % cells_n(n,c)) % z
+      if(answer=='X') n_p(n_prob) = grid % xn(grid % cells_n(n,c))
+      if(answer=='Y') n_p(n_prob) = grid % yn(grid % cells_n(n,c))
+      if(answer=='Z') n_p(n_prob) = grid % zn(grid % cells_n(n,c))
 
-      if(answer=='RX') n_p(n_prob) =                                           &
-                         (grid % nodes(grid % cells_n(n,c)) % z**2.0 +      &
-                          grid % nodes(grid % cells_n(n,c)) % y**2.0)**0.5
-      if(answer=='RY') n_p(n_prob) =                                           &
-                         (grid % nodes(grid % cells_n(n,c)) % x**2.0 +      &
-                          grid % nodes(grid % cells_n(n,c)) % z**2.0)**0.5
-      if(answer=='RZ') n_p(n_prob) =                                           &
-                         (grid % nodes(grid % cells_n(n,c)) % x**2.0 +      &
-                          grid % nodes(grid % cells_n(n,c)) % y**2.0)**0.5
+      if(answer=='RX') n_p(n_prob) =                               &
+                         (grid % zn(grid % cells_n(n,c))**2 +      &
+                          grid % yn(grid % cells_n(n,c))**2)**0.5
+      if(answer=='RY') n_p(n_prob) =                               &
+                         (grid % xn(grid % cells_n(n,c))**2 +      &
+                          grid % zn(grid % cells_n(n,c))**2)**0.5
+      if(answer=='RZ') n_p(n_prob) =                               &
+                         (grid % xn(grid % cells_n(n,c))**2 +      &
+                          grid % yn(grid % cells_n(n,c))**2)**0.5
 
       if(n_prob == 10000) then
         write(*,*) '# Probe 1D: Not a 1D (channel flow) problem.'

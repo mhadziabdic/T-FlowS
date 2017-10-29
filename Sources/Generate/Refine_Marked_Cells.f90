@@ -280,9 +280,9 @@
       node_n2(nn_2,0) = n12
       node_n2(nn_2,1) = n1
       node_n2(nn_2,2) = n2
-      grid % nodes(n12) % x = .5 * (grid % nodes(n1) % x + grid % nodes(n2) % x)
-      grid % nodes(n12) % y = .5 * (grid % nodes(n1) % y + grid % nodes(n2) % y)
-      grid % nodes(n12) % z = .5 * (grid % nodes(n1) % z + grid % nodes(n2) % z)
+      grid % xn(n12) = .5 * (grid % xn(n1) + grid % xn(n2))
+      grid % yn(n12) = .5 * (grid % yn(n1) + grid % yn(n2))
+      grid % zn(n12) = .5 * (grid % zn(n1) + grid % zn(n2))
     end if 
 
     ! n13
@@ -299,9 +299,9 @@
       node_n2(nn_2,0) = n13
       node_n2(nn_2,1) = n1
       node_n2(nn_2,2) = n3
-      grid % nodes(n13) % x = .5 * (grid % nodes(n1) % x + grid % nodes(n3) % x)
-      grid % nodes(n13) % y = .5 * (grid % nodes(n1) % y + grid % nodes(n3) % y)
-      grid % nodes(n13) % z = .5 * (grid % nodes(n1) % z + grid % nodes(n3) % z)
+      grid % xn(n13) = .5 * (grid % xn(n1) + grid % xn(n3))
+      grid % yn(n13) = .5 * (grid % yn(n1) + grid % yn(n3))
+      grid % zn(n13) = .5 * (grid % zn(n1) + grid % zn(n3))
     end if 
 
     ! n24
@@ -318,9 +318,9 @@
       node_n2(nn_2,0) = n24
       node_n2(nn_2,1) = n2
       node_n2(nn_2,2) = n4
-      grid % nodes(n24) % x = .5 * (grid % nodes(n2) % x + grid % nodes(n4) % x)
-      grid % nodes(n24) % y = .5 * (grid % nodes(n2) % y + grid % nodes(n4) % y)
-      grid % nodes(n24) % z = .5 * (grid % nodes(n2) % z + grid % nodes(n4) % z)
+      grid % xn(n24) = .5 * (grid % xn(n2) + grid % xn(n4))
+      grid % yn(n24) = .5 * (grid % yn(n2) + grid % yn(n4))
+      grid % zn(n24) = .5 * (grid % zn(n2) + grid % zn(n4))
     end if 
 
     ! n34
@@ -337,9 +337,9 @@
       node_n2(nn_2,0) = n34
       node_n2(nn_2,1) = n3
       node_n2(nn_2,2) = n4
-      grid % nodes(n34) % x = .5 * (grid % nodes(n3) % x + grid % nodes(n4) % x)
-      grid % nodes(n34) % y = .5 * (grid % nodes(n3) % y + grid % nodes(n4) % y)
-      grid % nodes(n34) % z = .5 * (grid % nodes(n3) % z + grid % nodes(n4) % z)
+      grid % xn(n34) = .5 * (grid % xn(n3) + grid % xn(n4))
+      grid % yn(n34) = .5 * (grid % yn(n3) + grid % yn(n4))
+      grid % zn(n34) = .5 * (grid % zn(n3) + grid % zn(n4))
     end if 
 
     ! n15
@@ -356,9 +356,9 @@
       node_n2(nn_2,0) = n15
       node_n2(nn_2,1) = n1
       node_n2(nn_2,2) = n5
-      grid % nodes(n15) % x = .5 * (grid % nodes(n1) % x + grid % nodes(n5) % x)
-      grid % nodes(n15) % y = .5 * (grid % nodes(n1) % y + grid % nodes(n5) % y)
-      grid % nodes(n15) % z = .5 * (grid % nodes(n1) % z + grid % nodes(n5) % z)
+      grid % xn(n15) = .5 * (grid % xn(n1) + grid % xn(n5))
+      grid % yn(n15) = .5 * (grid % yn(n1) + grid % yn(n5))
+      grid % zn(n15) = .5 * (grid % zn(n1) + grid % zn(n5))
     end if 
 
     ! n26
@@ -375,9 +375,9 @@
       node_n2(nn_2,0) = n26
       node_n2(nn_2,1) = n2
       node_n2(nn_2,2) = n6
-      grid % nodes(n26) % x = .5 * (grid % nodes(n2) % x + grid % nodes(n6) % x)
-      grid % nodes(n26) % y = .5 * (grid % nodes(n2) % y + grid % nodes(n6) % y)
-      grid % nodes(n26) % z = .5 * (grid % nodes(n2) % z + grid % nodes(n6) % z)
+      grid % xn(n26) = .5 * (grid % xn(n2) + grid % xn(n6))
+      grid % yn(n26) = .5 * (grid % yn(n2) + grid % yn(n6))
+      grid % zn(n26) = .5 * (grid % zn(n2) + grid % zn(n6))
     end if 
 
     ! n37
@@ -394,9 +394,9 @@
       node_n2(nn_2,0) = n37
       node_n2(nn_2,1) = n3
       node_n2(nn_2,2) = n7
-      grid % nodes(n37) % x = .5 * (grid % nodes(n3) % x + grid % nodes(n7) % x)
-      grid % nodes(n37) % y = .5 * (grid % nodes(n3) % y + grid % nodes(n7) % y)
-      grid % nodes(n37) % z = .5 * (grid % nodes(n3) % z + grid % nodes(n7) % z)
+      grid % xn(n37) = .5 * (grid % xn(n3) + grid % xn(n7))
+      grid % yn(n37) = .5 * (grid % yn(n3) + grid % yn(n7))
+      grid % zn(n37) = .5 * (grid % zn(n3) + grid % zn(n7))
     end if 
 
     ! n48
@@ -413,9 +413,9 @@
       node_n2(nn_2,0) = n48
       node_n2(nn_2,1) = n4
       node_n2(nn_2,2) = n8
-      grid % nodes(n48) % x = .5 * (grid % nodes(n4) % x + grid % nodes(n8) % x)
-      grid % nodes(n48) % y = .5 * (grid % nodes(n4) % y + grid % nodes(n8) % y)
-      grid % nodes(n48) % z = .5 * (grid % nodes(n4) % z + grid % nodes(n8) % z)
+      grid % xn(n48) = .5 * (grid % xn(n4) + grid % xn(n8))
+      grid % yn(n48) = .5 * (grid % yn(n4) + grid % yn(n8))
+      grid % zn(n48) = .5 * (grid % zn(n4) + grid % zn(n8))
     end if 
 
     ! n56
@@ -432,9 +432,9 @@
       node_n2(nn_2,0) = n56
       node_n2(nn_2,1) = n5
       node_n2(nn_2,2) = n6
-      grid % nodes(n56) % x = .5 * (grid % nodes(n5) % x + grid % nodes(n6) % x)
-      grid % nodes(n56) % y = .5 * (grid % nodes(n5) % y + grid % nodes(n6) % y)
-      grid % nodes(n56) % z = .5 * (grid % nodes(n5) % z + grid % nodes(n6) % z)
+      grid % xn(n56) = .5 * (grid % xn(n5) + grid % xn(n6))
+      grid % yn(n56) = .5 * (grid % yn(n5) + grid % yn(n6))
+      grid % zn(n56) = .5 * (grid % zn(n5) + grid % zn(n6))
     end if 
 
     ! n57
@@ -451,9 +451,9 @@
       node_n2(nn_2,0) = n57
       node_n2(nn_2,1) = n5
       node_n2(nn_2,2) = n7
-      grid % nodes(n57) % x = .5 * (grid % nodes(n5) % x + grid % nodes(n7) % x)
-      grid % nodes(n57) % y = .5 * (grid % nodes(n5) % y + grid % nodes(n7) % y)
-      grid % nodes(n57) % z = .5 * (grid % nodes(n5) % z + grid % nodes(n7) % z)
+      grid % xn(n57) = .5 * (grid % xn(n5) + grid % xn(n7))
+      grid % yn(n57) = .5 * (grid % yn(n5) + grid % yn(n7))
+      grid % zn(n57) = .5 * (grid % zn(n5) + grid % zn(n7))
     end if 
 
     ! n68 
@@ -470,9 +470,9 @@
       node_n2(nn_2,0) = n68
       node_n2(nn_2,1) = n6
       node_n2(nn_2,2) = n8
-      grid % nodes(n68) % x = .5 * (grid % nodes(n6) % x + grid % nodes(n8) % x)
-      grid % nodes(n68) % y = .5 * (grid % nodes(n6) % y + grid % nodes(n8) % y)
-      grid % nodes(n68) % z = .5 * (grid % nodes(n6) % z + grid % nodes(n8) % z)
+      grid % xn(n68) = .5 * (grid % xn(n6) + grid % xn(n8))
+      grid % yn(n68) = .5 * (grid % yn(n6) + grid % yn(n8))
+      grid % zn(n68) = .5 * (grid % zn(n6) + grid % zn(n8))
     end if 
 
     ! n78
@@ -489,9 +489,9 @@
       node_n2(nn_2,0) = n78
       node_n2(nn_2,1) = n7
       node_n2(nn_2,2) = n8
-      grid % nodes(n78) % x = .5 * (grid % nodes(n7) % x + grid % nodes(n8) % x)
-      grid % nodes(n78) % y = .5 * (grid % nodes(n7) % y + grid % nodes(n8) % y)
-      grid % nodes(n78) % z = .5 * (grid % nodes(n7) % z + grid % nodes(n8) % z)
+      grid % xn(n78) = .5 * (grid % xn(n7) + grid % xn(n8))
+      grid % yn(n78) = .5 * (grid % yn(n7) + grid % yn(n8))
+      grid % zn(n78) = .5 * (grid % zn(n7) + grid % zn(n8))
     end if 
 
     !-------------------------!
@@ -522,15 +522,12 @@
       node_n4(nn_4,2) = n2
       node_n4(nn_4,3) = n3
       node_n4(nn_4,4) = n4
-      grid % nodes(nf1) % x = 0.25 * (                                        &
-                               grid % nodes(n1) % x + grid % nodes(n2) % x +  &
-                               grid % nodes(n3) % x + grid % nodes(n4) % x)
-      grid % nodes(nf1) % y = 0.25 * (                                        &
-                               grid % nodes(n1) % y + grid % nodes(n2) % y +  &
-                               grid % nodes(n3) % y + grid % nodes(n4) % y)
-      grid % nodes(nf1) % z = 0.25 * (                                        &
-                               grid % nodes(n1) % z + grid % nodes(n2) % z +  &
-                               grid % nodes(n3) % z + grid % nodes(n4) % z)
+      grid % xn(nf1) = 0.25 * (grid % xn(n1) + grid % xn(n2) +  &
+                               grid % xn(n3) + grid % xn(n4))
+      grid % yn(nf1) = 0.25 * (grid % yn(n1) + grid % yn(n2) +  &
+                               grid % yn(n3) + grid % yn(n4))
+      grid % zn(nf1) = 0.25 * (grid % zn(n1) + grid % zn(n2) +  &
+                               grid % zn(n3) + grid % zn(n4))
     end if 
 
     ! nF2
@@ -551,15 +548,12 @@
       node_n4(nn_4,2) = n2
       node_n4(nn_4,3) = n5
       node_n4(nn_4,4) = n6
-      grid % nodes(nf2) % x = 0.25 * (                                        &
-                               grid % nodes(n1) % x + grid % nodes(n2) % x +  &
-                               grid % nodes(n5) % x + grid % nodes(n6) % x)
-      grid % nodes(nf2) % y = 0.25 * (                                        &
-                               grid % nodes(n1) % y + grid % nodes(n2) % y +  &
-                               grid % nodes(n5) % y + grid % nodes(n6) % y)
-      grid % nodes(nf2) % z = 0.25 * (                                        &
-                               grid % nodes(n1) % z + grid % nodes(n2) % z +  &
-                               grid % nodes(n5) % z + grid % nodes(n6) % z)
+      grid % xn(nf2) = 0.25 * (grid % xn(n1) + grid % xn(n2) +  &
+                               grid % xn(n5) + grid % xn(n6))
+      grid % yn(nf2) = 0.25 * (grid % yn(n1) + grid % yn(n2) +  &
+                               grid % yn(n5) + grid % yn(n6))
+      grid % zn(nf2) = 0.25 * (grid % zn(n1) + grid % zn(n2) +  &
+                               grid % zn(n5) + grid % zn(n6))
     end if 
 
     ! nF3
@@ -580,15 +574,12 @@
       node_n4(nn_4,2) = n4
       node_n4(nn_4,3) = n6
       node_n4(nn_4,4) = n8
-      grid % nodes(nf3) % x = 0.25 * (                                        &
-                               grid % nodes(n2) % x + grid % nodes(n4) % x +  &
-                               grid % nodes(n6) % x + grid % nodes(n8) % x)
-      grid % nodes(nf3) % y = 0.25 * (                                        &
-                               grid % nodes(n2) % y + grid % nodes(n4) % y +  &
-                               grid % nodes(n6) % y + grid % nodes(n8) % y)
-      grid % nodes(nf3) % z = 0.25 * (                                        &
-                               grid % nodes(n2) % z + grid % nodes(n4) % z +  &
-                               grid % nodes(n6) % z + grid % nodes(n8) % z)
+      grid % xn(nf3) = 0.25 * (grid % xn(n2) + grid % xn(n4) +  &
+                               grid % xn(n6) + grid % xn(n8))
+      grid % yn(nf3) = 0.25 * (grid % yn(n2) + grid % yn(n4) +  &
+                               grid % yn(n6) + grid % yn(n8))
+      grid % zn(nf3) = 0.25 * (grid % zn(n2) + grid % zn(n4) +  &
+                               grid % zn(n6) + grid % zn(n8))
     end if 
 
     ! nF4
@@ -609,15 +600,12 @@
       node_n4(nn_4,2) = n4
       node_n4(nn_4,3) = n7
       node_n4(nn_4,4) = n8
-      grid % nodes(nf4) % x = 0.25 * (                                        &
-                               grid % nodes(n3) % x + grid % nodes(n4) % x +  &
-                               grid % nodes(n7) % x + grid % nodes(n8) % x)
-      grid % nodes(nf4) % y = 0.25 * (                                        &
-                               grid % nodes(n3) % y + grid % nodes(n4) % y +  &
-                               grid % nodes(n7) % y + grid % nodes(n8) % y)
-      grid % nodes(nf4) % z = 0.25 * (                                        &
-                               grid % nodes(n3) % z + grid % nodes(n4) % z +  &
-                               grid % nodes(n7) % z + grid % nodes(n8) % z)
+      grid % xn(nf4) = 0.25 * (grid % xn(n3) + grid % xn(n4) +  &
+                               grid % xn(n7) + grid % xn(n8))
+      grid % yn(nf4) = 0.25 * (grid % yn(n3) + grid % yn(n4) +  &
+                               grid % yn(n7) + grid % yn(n8))
+      grid % zn(nf4) = 0.25 * (grid % zn(n3) + grid % zn(n4) +  &
+                               grid % zn(n7) + grid % zn(n8))
     end if 
 
     ! nF5
@@ -638,15 +626,12 @@
       node_n4(nn_4,2) = n3
       node_n4(nn_4,3) = n5
       node_n4(nn_4,4) = n7
-      grid % nodes(nf5) % x = 0.25 * (                                        &
-                               grid % nodes(n1) % x + grid % nodes(n3) % x +  &
-                               grid % nodes(n5) % x + grid % nodes(n7) % x)
-      grid % nodes(nf5) % y = 0.25 * (                                        &
-                               grid % nodes(n1) % y + grid % nodes(n3) % y +  &
-                               grid % nodes(n5) % y + grid % nodes(n7) % y)
-      grid % nodes(nf5) % z = 0.25 * (                                        &
-                               grid % nodes(n1) % z + grid % nodes(n3) % z +  &
-                               grid % nodes(n5) % z + grid % nodes(n7) % z)
+      grid % xn(nf5) = 0.25 * (grid % xn(n1) + grid % xn(n3) +  &
+                               grid % xn(n5) + grid % xn(n7))
+      grid % yn(nf5) = 0.25 * (grid % yn(n1) + grid % yn(n3) +  &
+                               grid % yn(n5) + grid % yn(n7))
+      grid % zn(nf5) = 0.25 * (grid % zn(n1) + grid % zn(n3) +  &
+                               grid % zn(n5) + grid % zn(n7))
     end if 
 
     ! nF6
@@ -667,15 +652,12 @@
       node_n4(nn_4,2) = n6
       node_n4(nn_4,3) = n7
       node_n4(nn_4,4) = n8
-      grid % nodes(nf6) % x = 0.25 * (                                        &
-                               grid % nodes(n5) % x + grid % nodes(n6) % x +  &
-                               grid % nodes(n7) % x + grid % nodes(n8) % x)
-      grid % nodes(nf6) % y = 0.25 * (                                        &
-                               grid % nodes(n5) % y + grid % nodes(n6) % y +  &
-                               grid % nodes(n7) % y + grid % nodes(n8) % y)
-      grid % nodes(nf6) % z = 0.25 * (                                        &
-                               grid % nodes(n5) % z + grid % nodes(n6) % z +  &
-                               grid % nodes(n7) % z + grid % nodes(n8) % z)
+      grid % xn(nf6) = 0.25 * (grid % xn(n5) + grid % xn(n6) +  &
+                               grid % xn(n7) + grid % xn(n8))
+      grid % yn(nf6) = 0.25 * (grid % yn(n5) + grid % yn(n6) +  &
+                               grid % yn(n7) + grid % yn(n8))
+      grid % zn(nf6) = 0.25 * (grid % zn(n5) + grid % zn(n6) +  &
+                               grid % zn(n7) + grid % zn(n8))
     end if 
 
     !----------------------------------------!
@@ -693,18 +675,18 @@
     node_n8(nn_8,6) = n6
     node_n8(nn_8,7) = n7
     node_n8(nn_8,8) = n8
-    grid % nodes(n0) % x = .125*(grid % nodes(n1) % x + grid % nodes(n2) % x + &
-                                 grid % nodes(n3) % x + grid % nodes(n4) % x + &
-                                 grid % nodes(n5) % x + grid % nodes(n6) % x + &
-                                 grid % nodes(n7) % x + grid % nodes(n8) % x)
-    grid % nodes(n0) % y = .125*(grid % nodes(n1) % y + grid % nodes(n2) % y + &
-                                 grid % nodes(n3) % y + grid % nodes(n4) % y + &
-                                 grid % nodes(n5) % y + grid % nodes(n6) % y + &
-                                 grid % nodes(n7) % y + grid % nodes(n8) % y)
-    grid % nodes(n0) % z = .125*(grid % nodes(n1) % z + grid % nodes(n2) % z + &
-                                 grid % nodes(n3) % z + grid % nodes(n4) % z + &
-                                 grid % nodes(n5) % z + grid % nodes(n6) % z + &
-                                 grid % nodes(n7) % z + grid % nodes(n8) % z)
+    grid % xn(n0) = .125*(grid % xn(n1) + grid % xn(n2) + &
+                          grid % xn(n3) + grid % xn(n4) + &
+                          grid % xn(n5) + grid % xn(n6) + &
+                          grid % xn(n7) + grid % xn(n8))
+    grid % yn(n0) = .125*(grid % yn(n1) + grid % yn(n2) + &
+                          grid % yn(n3) + grid % yn(n4) + &
+                          grid % yn(n5) + grid % yn(n6) + &
+                          grid % yn(n7) + grid % yn(n8))
+    grid % zn(n0) = .125*(grid % zn(n1) + grid % zn(n2) + &
+                          grid % zn(n3) + grid % zn(n4) + &
+                          grid % zn(n5) + grid % zn(n6) + &
+                          grid % zn(n7) + grid % zn(n8))
 
     !----------------------------!
     !   Set nodes to new cells   !

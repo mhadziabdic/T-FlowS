@@ -8,7 +8,6 @@ libSharedModules_a_SOURCES = 	\
   Material_Mod.f90 		\
   Boundary_Condition_Mod.f90	\
   Domain_Mod.f90		\
-  Cell_Mod.f90			\
   Grid_Mod.f90			\
   allp_mod.f90			\
   allt_mod.f90			\

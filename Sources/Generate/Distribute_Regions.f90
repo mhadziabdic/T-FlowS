@@ -113,7 +113,7 @@
         do j=js,je
           do k=ks,ke
             c = dom % blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
-            grid % cells(c) % c(face) = -Nbnd
+            grid % cells_c(face,c) = -Nbnd
           end do
         end do
       end do

@@ -81,86 +81,86 @@
         SideC(2,NS) = -NbC
 
         ! Hexahedra:
-        if(grid % cells(i) % n_nodes == 8) then
-          grid % cells(-NBc) % n_nodes = 4 
-          grid % cells(-NBc) % n(1) = grid % cells(i) % n(f8n(j,1))
-          grid % cells(-NBc) % n(2) = grid % cells(i) % n(f8n(j,2))
-          grid % cells(-NBc) % n(3) = grid % cells(i) % n(f8n(j,3))
-          grid % cells(-NBc) % n(4) = grid % cells(i) % n(f8n(j,4))
+        if(grid % cells_n_nodes(i) == 8) then
+          grid % cells_n_nodes(-NbC) = 4 
+          grid % cells_n(1,-NbC) = grid % cells_n(f8n(j,1), i)
+          grid % cells_n(2,-NbC) = grid % cells_n(f8n(j,2), i)
+          grid % cells_n(3,-NbC) = grid % cells_n(f8n(j,3), i)
+          grid % cells_n(4,-NbC) = grid % cells_n(f8n(j,4), i)
 
           SideN(NS,0) = 4
-          SideN(NS,1) = grid % cells(-NBc) % n(1)
-          SideN(NS,2) = grid % cells(-NBc) % n(2)
-          SideN(NS,3) = grid % cells(-NBc) % n(3)
-          SideN(NS,4) = grid % cells(-NBc) % n(4)
+          SideN(NS,1) = grid % cells_n(1,-NbC)
+          SideN(NS,2) = grid % cells_n(2,-NbC)
+          SideN(NS,3) = grid % cells_n(3,-NbC)
+          SideN(NS,4) = grid % cells_n(4,-NbC)
         end if
 
         ! Prisms:
-        if(grid % cells(i) % n_nodes == 6) then
+        if(grid % cells_n_nodes(i) == 6) then
           if(j <= 3) then    ! faces (1), (2) and (3)
-            grid % cells(-NBc) % n_nodes = 4 
-            grid % cells(-NBc) % n(1) = grid % cells(i) % n(f6n(j,1))
-            grid % cells(-NBc) % n(2) = grid % cells(i) % n(f6n(j,2))
-            grid % cells(-NBc) % n(3) = grid % cells(i) % n(f6n(j,3))
-            grid % cells(-NBc) % n(4) = grid % cells(i) % n(f6n(j,4))
+            grid % cells_n_nodes(-NbC) = 4 
+            grid % cells_n(1,-NbC) = grid % cells_n(f6n(j,1), i)
+            grid % cells_n(2,-NbC) = grid % cells_n(f6n(j,2), i)
+            grid % cells_n(3,-NbC) = grid % cells_n(f6n(j,3), i)
+            grid % cells_n(4,-NbC) = grid % cells_n(f6n(j,4), i)
 
             SideN(NS,0) = 4
-            SideN(NS,1) = grid % cells(-NBc) % n(1)
-            SideN(NS,2) = grid % cells(-NBc) % n(2)
-            SideN(NS,3) = grid % cells(-NBc) % n(3)
-            SideN(NS,4) = grid % cells(-NBc) % n(4)
+            SideN(NS,1) = grid % cells_n(1,-NbC)
+            SideN(NS,2) = grid % cells_n(2,-NbC)
+            SideN(NS,3) = grid % cells_n(3,-NbC)
+            SideN(NS,4) = grid % cells_n(4,-NbC)
           else if(j <= 5) then
-            grid % cells(-NBc) % n_nodes = 3 
-            grid % cells(-NBc) % n(1) = grid % cells(i) % n(f6n(j,1))
-            grid % cells(-NBc) % n(2) = grid % cells(i) % n(f6n(j,2))
-            grid % cells(-NBc) % n(3) = grid % cells(i) % n(f6n(j,3))
+            grid % cells_n_nodes(-NbC) = 3 
+            grid % cells_n(1,-NbC) = grid % cells_n(f6n(j,1), i)
+            grid % cells_n(2,-NbC) = grid % cells_n(f6n(j,2), i)
+            grid % cells_n(3,-NbC) = grid % cells_n(f6n(j,3), i)
 
             SideN(NS,0) = 3
-            SideN(NS,1) = grid % cells(-NBc) % n(1)
-            SideN(NS,2) = grid % cells(-NBc) % n(2)
-            SideN(NS,3) = grid % cells(-NBc) % n(3)
+            SideN(NS,1) = grid % cells_n(1,-NbC)
+            SideN(NS,2) = grid % cells_n(2,-NbC)
+            SideN(NS,3) = grid % cells_n(3,-NbC)
           end if
         end if
 
         ! Tetrahedra:
-        if(grid % cells(i) % n_nodes == 4) then
+        if(grid % cells_n_nodes(i) == 4) then
           if(j <= 4) then
-            grid % cells(-NBc) % n_nodes = 3 
-            grid % cells(-NBc) % n(1) = grid % cells(i) % n(f4n(j,1))
-            grid % cells(-NBc) % n(2) = grid % cells(i) % n(f4n(j,2))
-            grid % cells(-NBc) % n(3) = grid % cells(i) % n(f4n(j,3))
+            grid % cells_n_nodes(-NbC) = 3 
+            grid % cells_n(1,-NbC) = grid % cells_n(f4n(j,1), i)
+            grid % cells_n(2,-NbC) = grid % cells_n(f4n(j,2), i)
+            grid % cells_n(3,-NbC) = grid % cells_n(f4n(j,3), i)
 
             SideN(NS,0) = 3
-            SideN(NS,1) = grid % cells(-NBc) % n(1)
-            SideN(NS,2) = grid % cells(-NBc) % n(2)
-            SideN(NS,3) = grid % cells(-NBc) % n(3)
+            SideN(NS,1) = grid % cells_n(1,-NbC)
+            SideN(NS,2) = grid % cells_n(2,-NbC)
+            SideN(NS,3) = grid % cells_n(3,-NbC)
           end if
         end if
 
         ! Pyramides:
-        if(grid % cells(i) % n_nodes == 5) then
+        if(grid % cells_n_nodes(i) == 5) then
           if(j == 1) then    ! face (1)
-            grid % cells(-NBc) % n_nodes = 4
-            grid % cells(-NBc) % n(1) = grid % cells(i) % n(f5n(j,1))
-            grid % cells(-NBc) % n(2) = grid % cells(i) % n(f5n(j,2))
-            grid % cells(-NBc) % n(3) = grid % cells(i) % n(f5n(j,3))
-            grid % cells(-NBc) % n(4) = grid % cells(i) % n(f5n(j,4))
+            grid % cells_n_nodes(-NbC) = 4
+            grid % cells_n(1,-NbC) = grid % cells_n(f5n(j,1), i)
+            grid % cells_n(2,-NbC) = grid % cells_n(f5n(j,2), i)
+            grid % cells_n(3,-NbC) = grid % cells_n(f5n(j,3), i)
+            grid % cells_n(4,-NbC) = grid % cells_n(f5n(j,4), i)
  
             SideN(NS,0) = 4
-            SideN(NS,1) = grid % cells(-NBc) % n(1)
-            SideN(NS,2) = grid % cells(-NBc) % n(2)
-            SideN(NS,3) = grid % cells(-NBc) % n(3)
-            SideN(NS,4) = grid % cells(-NBc) % n(4)
+            SideN(NS,1) = grid % cells_n(1,-NbC)
+            SideN(NS,2) = grid % cells_n(2,-NbC)
+            SideN(NS,3) = grid % cells_n(3,-NbC)
+            SideN(NS,4) = grid % cells_n(4,-NbC)
           else if(j <= 5) then
-            grid % cells(-NBc) % n_nodes = 3
-            grid % cells(-NBc) % n(1) = grid % cells(i) % n(f5n(j,1))
-            grid % cells(-NBc) % n(2) = grid % cells(i) % n(f5n(j,2))
-            grid % cells(-NBc) % n(3) = grid % cells(i) % n(f5n(j,3))
+            grid % cells_n_nodes(-NbC) = 3
+            grid % cells_n(1,-NbC) = grid % cells_n(f5n(j,1), i)
+            grid % cells_n(2,-NbC) = grid % cells_n(f5n(j,2), i)
+            grid % cells_n(3,-NbC) = grid % cells_n(f5n(j,3), i)
  
             SideN(NS,0) = 3
-            SideN(NS,1) = grid % cells(-NBc) % n(1)
-            SideN(NS,2) = grid % cells(-NBc) % n(2)
-            SideN(NS,3) = grid % cells(-NBc) % n(3)
+            SideN(NS,1) = grid % cells_n(1,-NbC)
+            SideN(NS,2) = grid % cells_n(2,-NbC)
+            SideN(NS,3) = grid % cells_n(3,-NbC)
           end if
         end if
 

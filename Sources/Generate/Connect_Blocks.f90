@@ -219,8 +219,8 @@
                    + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
                 c2 = dom % blocks(b2) % n_cells  &
                    + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
-                grid % cells(c1) % c(f1) = c2
-                grid % cells(c2) % c(f2) = c1
+                grid % cells_c(f1,c1) = c2
+                grid % cells_c(f2,c2) = c1
               end do
             end do
 
@@ -281,7 +281,7 @@
   ! Skip the merged points in the node() structure
   do i=1,NC
     do n=1,8
-      grid % cells(i) % n(n) = NewN(grid % cells(i) % n(n))
+      grid % cells_n(n,i) = NewN(grid % cells_n(n,i))
     end do
   end do
 

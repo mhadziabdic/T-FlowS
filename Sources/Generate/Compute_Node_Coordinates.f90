@@ -408,30 +408,30 @@
           n = nn + (k-1)*ni*nj + (j-1)*ni + i ! 1st node
 
           ! Nodes
-          grid % cells(c) % n(1) =n
-          grid % cells(c) % n(2) =n+1
-          grid % cells(c) % n(3) =n+ni
-          grid % cells(c) % n(4) =n+ni+1
-          grid % cells(c) % n(5) =grid % cells(c) % n(1)+ni*nj
-          grid % cells(c) % n(6) =grid % cells(c) % n(2)+ni*nj
-          grid % cells(c) % n(7) =grid % cells(c) % n(3)+ni*nj
-          grid % cells(c) % n(8) =grid % cells(c) % n(4)+ni*nj
+          grid % cells_n(1,c) = n
+          grid % cells_n(2,c) = n+1
+          grid % cells_n(3,c) = n+ni
+          grid % cells_n(4,c) = n+ni+1
+          grid % cells_n(5,c) = grid % cells_n(1,c)+ni*nj
+          grid % cells_n(6,c) = grid % cells_n(2,c)+ni*nj
+          grid % cells_n(7,c) = grid % cells_n(3,c)+ni*nj
+          grid % cells_n(8,c) = grid % cells_n(4,c)+ni*nj
 
           ! Neighbours
-          grid % cells(c) % c(1) = c-ci*cj
-          grid % cells(c) % c(2) = c-ci 
-          grid % cells(c) % c(3) = c+1
-          grid % cells(c) % c(4) = c+ci
-          grid % cells(c) % c(5) = c-1
-          grid % cells(c) % c(6) = c+ci*cj
+          grid % cells_c(1,c) = c-ci*cj
+          grid % cells_c(2,c) = c-ci 
+          grid % cells_c(3,c) = c+1
+          grid % cells_c(4,c) = c+ci
+          grid % cells_c(5,c) = c-1
+          grid % cells_c(6,c) = c+ci*cj
 
           ! This value (-1) is also the default boundary marker
-          if(i == 1)  grid % cells(c) % c(5) =-1
-          if(i == ci) grid % cells(c) % c(3) =-1
-          if(j == 1)  grid % cells(c) % c(2) =-1
-          if(j == cj) grid % cells(c) % c(4) =-1
-          if(k == 1)  grid % cells(c) % c(1) =-1
-          if(k == ck) grid % cells(c) % c(6) =-1
+          if(i == 1)  grid % cells_c(5,c) =-1
+          if(i == ci) grid % cells_c(3,c) =-1
+          if(j == 1)  grid % cells_c(2,c) =-1
+          if(j == cj) grid % cells_c(4,c) =-1
+          if(k == 1)  grid % cells_c(1,c) =-1
+          if(k == ck) grid % cells_c(6,c) =-1
 
         end do
       end do

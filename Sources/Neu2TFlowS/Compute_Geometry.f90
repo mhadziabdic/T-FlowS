@@ -125,13 +125,13 @@
   allocate(volume(NC)); volume=0.0
 
   do c=1,NC
-    do n=1,grid % cells(c) % n_nodes
-      xc(c) = xc(c) + grid % nodes(grid % cells(c) % n(n)) % x  &
-                    / (1.0*grid % cells(c) % n_nodes)
-      yc(c) = yc(c) + grid % nodes(grid % cells(c) % n(n)) % y  &
-                    / (1.0*grid % cells(c) % n_nodes)
-      zc(c) = zc(c) + grid % nodes(grid % cells(c) % n(n)) % z  &
-                    / (1.0*grid % cells(c) % n_nodes)
+    do n=1,grid % cells_n_nodes(c)
+      xc(c) = xc(c) + grid % nodes(grid % cells_n(n,c)) % x  &
+                    / (1.0*grid % cells_n_nodes(c))
+      yc(c) = yc(c) + grid % nodes(grid % cells_n(n,c)) % y  &
+                    / (1.0*grid % cells_n_nodes(c))
+      zc(c) = zc(c) + grid % nodes(grid % cells_n(n,c)) % z  &
+                    / (1.0*grid % cells_n_nodes(c))
     end do
   end do
 
@@ -810,13 +810,13 @@
     xmax = -HUGE
     ymax = -HUGE
     zmax = -HUGE
-    do n=1,grid % cells(c) % n_nodes
-      xmin = min(xmin, grid % nodes(grid % cells(c) % n(n)) % x)
-      ymin = min(ymin, grid % nodes(grid % cells(c) % n(n)) % y)
-      zmin = min(zmin, grid % nodes(grid % cells(c) % n(n)) % z)
-      xmax = max(xmax, grid % nodes(grid % cells(c) % n(n)) % x)
-      ymax = max(ymax, grid % nodes(grid % cells(c) % n(n)) % y)
-      zmax = max(zmax, grid % nodes(grid % cells(c) % n(n)) % z)
+    do n=1,grid % cells_n_nodes(c)
+      xmin = min(xmin, grid % nodes(grid % cells_n(n,c)) % x)
+      ymin = min(ymin, grid % nodes(grid % cells_n(n,c)) % y)
+      zmin = min(zmin, grid % nodes(grid % cells_n(n,c)) % z)
+      xmax = max(xmax, grid % nodes(grid % cells_n(n,c)) % x)
+      ymax = max(ymax, grid % nodes(grid % cells_n(n,c)) % y)
+      zmax = max(zmax, grid % nodes(grid % cells_n(n,c)) % z)
     end do
     delta(c) = xmax-xmin
     delta(c) = max(delta(c), (ymax-ymin))

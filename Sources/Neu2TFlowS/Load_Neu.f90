@@ -111,8 +111,8 @@
   call Read_Line(9,inp,tn,ts,te)          ! ELEMENTS/CELLS
   do i=1,NC
     read(9,'(I8,1X,I2,1X,I2,1X,7I8:/(15X,7I8:))') dum1, dum2, &
-           grid % cells(i) % n_nodes,                         &
-          (grid % cells(i) % n(j), j = 1,grid % cells(i) % n_nodes)
+           grid % cells_n_nodes(i),                           &
+          (grid % cells_n(j,i), j = 1,grid % cells_n_nodes(i))
   end do
   call Read_Line(9,inp,tn,ts,te)          ! ENDOFSECTION
 

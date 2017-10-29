@@ -27,7 +27,7 @@
   do i = 1,NC
     stencw=1            ! it used to be zero
     do j=1,24
-      if( grid % cells(i) % c(j) > 0 ) stencw=stencw + 1
+      if( grid % cells_c(j,i) > 0 ) stencw=stencw + 1
     end do
     nonz = nonz + stencw
   end do
@@ -44,7 +44,7 @@
     do i=1,NC
       stencw=0
       do k=1,24
-        if( grid % cells(i) % c(k)  > 0 ) stencw=stencw+1
+        if( grid % cells_c(k,i)  > 0 ) stencw=stencw+1
       end do
       if(stencw  ==  j) numb=numb+1
     end do

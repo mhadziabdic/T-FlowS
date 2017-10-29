@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
@@ -25,7 +26,6 @@
   call Connect_Blocks
   call Connect_Periodicity
   call CopyBC
-
   call TopSys(.false.)  ! trial run 
   call Compute_Grid_Geometry(.false.)
   call Smooth_Grid

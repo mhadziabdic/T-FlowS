@@ -51,9 +51,9 @@
   !-----------------------!
   do c=1,Nc                        ! through cells
     do i=1,8                       ! through nodes of a cell 
-      n = grid % cells(c) % n(i)   ! first cell
+      n = grid % cells_n(i,c)      ! first cell
       do j=1,8                     ! through nodes of a cell 
-        m = grid % cells(c) % n(j) ! second cell 
+        m = grid % cells_n(j,c)    ! second cell 
         if(n /=  m) then 
           do k=1,node_to_nodes(n,0)
             if(node_to_nodes(n,k) == m) goto 10            

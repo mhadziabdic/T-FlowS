@@ -29,14 +29,14 @@
       z8=refined_regions(lev,reg,6)
 
       do c=1,NC
-        n1 = grid % cells(c) % n(1)
-        n2 = grid % cells(c) % n(2)
-        n3 = grid % cells(c) % n(3)
-        n4 = grid % cells(c) % n(4)
-        n5 = grid % cells(c) % n(5)
-        n6 = grid % cells(c) % n(6)
-        n7 = grid % cells(c) % n(7)
-        n8 = grid % cells(c) % n(8)
+        n1 = grid % cells_n(1,c)
+        n2 = grid % cells_n(2,c)
+        n3 = grid % cells_n(3,c)
+        n4 = grid % cells_n(4,c)
+        n5 = grid % cells_n(5,c)
+        n6 = grid % cells_n(6,c)
+        n7 = grid % cells_n(7,c)
+        n8 = grid % cells_n(8,c)
 
         x0=1.25e-1*(grid % nodes(n1) % x + grid % nodes(n2) % x +   &
                     grid % nodes(n3) % x + grid % nodes(n4) % x +   &

@@ -99,33 +99,33 @@
     call ReadC(9,inp,tn,ts,te)
     read(inp(ts(1):te(1)),*) dum_s
     if(dum_s  ==  'hex') then
-      grid % cells(c) % n_nodes = 8
+      grid % cells_n_nodes(c) = 8
       call ReadC(9,inp,tn,ts,te)
       read(inp,*)                                           &
-           grid % cells(c) % n(1), grid % cells(c) % n(2),  &
-           grid % cells(c) % n(4), grid % cells(c) % n(3),  &
-           grid % cells(c) % n(5), grid % cells(c) % n(6),  &
-           grid % cells(c) % n(8), grid % cells(c) % n(7) 
+           grid % cells_n(1,c), grid % cells_n(2,c),  &
+           grid % cells_n(4,c), grid % cells_n(3,c),  &
+           grid % cells_n(5,c), grid % cells_n(6,c),  &
+           grid % cells_n(8,c), grid % cells_n(7,c) 
     else if(dum_s  ==  'prism') then
-      grid % cells(c) % n_nodes = 6
+      grid % cells_n_nodes(c) = 6
       call ReadC(9,inp,tn,ts,te)
       read(inp,*)                                         &
-         grid % cells(c) % n(1), grid % cells(c) % n(2),  &
-         grid % cells(c) % n(3), grid % cells(c) % n(4),  &
-         grid % cells(c) % n(5), grid % cells(c) % n(6)
+         grid % cells_n(1,c), grid % cells_n(2,c),  &
+         grid % cells_n(3,c), grid % cells_n(4,c),  &
+         grid % cells_n(5,c), grid % cells_n(6,c)
     else if(dum_s  ==  'tet') then
-      grid % cells(c) % n_nodes = 4
+      grid % cells_n_nodes(c) = 4
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
-         grid % cells(c) % n(1), grid % cells(c) % n(2),  &
-         grid % cells(c) % n(3), grid % cells(c) % n(4)
+         grid % cells_n(1,c), grid % cells_n(2,c),  &
+         grid % cells_n(3,c), grid % cells_n(4,c)
     else if(dum_s  ==  'pyramid') then
-      grid % cells(c) % n_nodes = 5
+      grid % cells_n_nodes(c) = 5
       call ReadC(9,inp,tn,ts,te)
       read(inp,*) &
-         grid % cells(c) % n(5), grid % cells(c) % n(1),  &
-         grid % cells(c) % n(2), grid % cells(c) % n(4),  &
-         grid % cells(c) % n(3)
+         grid % cells_n(5,c), grid % cells_n(1,c),  &
+         grid % cells_n(2,c), grid % cells_n(4,c),  &
+         grid % cells_n(3,c)
     else
       write(*,*) '# Unsupported cell type: ', dum_s
       write(*,*) '# Exiting'

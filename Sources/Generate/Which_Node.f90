@@ -15,6 +15,8 @@
   integer :: i, j
 !==============================================================================!
 
+  write(*,*) '@ Which_Node; n = ', n
+
   Which_Node = 0
 
   if (c  < 0) then 
@@ -24,7 +26,7 @@
 
   ! Try the node only 
   do i=1,8
-    if( grid % cells(c) % n(i)  ==  n) then
+    if( grid % cells_n(i,c)  ==  n) then
       goto 1
     end if 
   end do     
@@ -32,7 +34,7 @@
   ! If it failed try his twins also
   do j=1,TwinN(n,0)
     do i=1,8
-      if( grid % cells(c) % n(i)  ==  TwinN(n,j)) then
+      if( grid % cells_n(i,c)  ==  TwinN(n,j)) then
         goto 1
       end if 
     end do     

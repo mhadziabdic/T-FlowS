@@ -70,8 +70,8 @@
     end do
     do c=1,NC
       if(proces(c) == sub) then
-        do ln=1,grid % cells(c) % n_nodes
-          NewN(grid % cells(c) % n(ln))=-1
+        do ln=1,grid % cells_n_nodes(c)
+          NewN(grid % cells_n(ln,c))=-1
         end do
       end if
     end do
@@ -262,7 +262,7 @@
   end do
   write(*,*) 'Number of sides: ', NS, n_faces_sub
 
-  call Sort_Cells_By_Index(grid % cells, NewC(1), NC)
+  call Grid_Mod_Sort_Cells_By_Index(grid, NewC(1), NC)
   call Sort_Int_By_Index(proces(1),  NewC(1),NC)
   call Sort_Int_By_Index(material(1),NewC(1),NC)
 

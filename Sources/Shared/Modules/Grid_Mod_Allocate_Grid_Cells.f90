@@ -10,18 +10,16 @@
   integer :: c
 !==============================================================================!
 
-  allocate(grid % cells(-nb:ni))
+  ! Allocate cell center coordinates and initialize to zero
+  allocate(grid % xc(-nb:ni));  grid % xc = 0.0
+  allocate(grid % yc(-nb:ni));  grid % yc = 0.0
+  allocate(grid % zc(-nb:ni));  grid % zc = 0.0
 
-  ! Initialize nodes and cells
-  do c = -nb, ni
-    grid % cells(c) % n_nodes = 0 
-    grid % cells(c) % n       = 0 
-    grid % cells(c) % c       = 0 
-  end do
+  ! Cells' nodes and neigboring cells
+  allocate(grid % cells_n( 8, -nb:ni));    grid % cells_n       = 0
+  allocate(grid % cells_c(24, -nb:ni));    grid % cells_c       = 0
 
-  ! Initialize coordinates
-  grid % cells(-nb:ni) % x = 0 
-  grid % cells(-nb:ni) % y = 0 
-  grid % cells(-nb:ni) % z = 0 
+  ! Number of nodes at each cell (determines cell's shape really)
+  allocate(grid % cells_n_nodes(-nb:ni));  grid % cells_n_nodes = 0
 
   end subroutine

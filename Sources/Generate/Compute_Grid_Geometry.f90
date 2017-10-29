@@ -117,7 +117,7 @@
 
     ! Without the following six lines, this procedure works for any grid
     do c=1,NC
-      grid % cells(c) % n_nodes=8
+      grid % cells_n_nodes(c)=8
     end do
     do s=1,NS
       SideN(s,0)=4 
@@ -133,13 +133,13 @@
       xc(c)=0.0
       yc(c)=0.0
       zc(c)=0.0
-      do n=1,grid % cells(c) % n_nodes
-        xc(c) = xc(c) + grid % nodes(grid % cells(c) % n(n)) % x  &
-              / (1.0*grid % cells(c) % n_nodes)
-        yc(c) = yc(c) + grid % nodes(grid % cells(c) % n(n)) % y  &
-              / (1.0*grid % cells(c) % n_nodes)
-        zc(c) = zc(c) + grid % nodes(grid % cells(c) % n(n)) % z  &
-              / (1.0*grid % cells(c) % n_nodes)
+      do n=1,grid % cells_n_nodes(c)
+        xc(c) = xc(c) + grid % nodes(grid % cells_n(n,c)) % x  &
+              / (1.0*grid % cells_n_nodes(c))
+        yc(c) = yc(c) + grid % nodes(grid % cells_n(n,c)) % y  &
+              / (1.0*grid % cells_n_nodes(c))
+        zc(c) = zc(c) + grid % nodes(grid % cells_n(n,c)) % z  &
+              / (1.0*grid % cells_n_nodes(c))
       end do
     end do
 
@@ -157,13 +157,13 @@
       x_max = -HUGE  
       y_max = -HUGE  
       z_max = -HUGE  
-      do n=1,grid % cells(c) % n_nodes
-        x_min = min(x_min, grid % nodes(grid % cells(c) % n(n)) % x)
-        y_min = min(y_min, grid % nodes(grid % cells(c) % n(n)) % y)
-        z_min = min(z_min, grid % nodes(grid % cells(c) % n(n)) % z)
-        x_max = max(x_max, grid % nodes(grid % cells(c) % n(n)) % x)
-        y_max = max(y_max, grid % nodes(grid % cells(c) % n(n)) % y)
-        z_max = max(z_max, grid % nodes(grid % cells(c) % n(n)) % z)
+      do n=1,grid % cells_n_nodes(c)
+        x_min = min(x_min, grid % nodes(grid % cells_n(n,c)) % x)
+        y_min = min(y_min, grid % nodes(grid % cells_n(n,c)) % y)
+        z_min = min(z_min, grid % nodes(grid % cells_n(n,c)) % z)
+        x_max = max(x_max, grid % nodes(grid % cells_n(n,c)) % x)
+        y_max = max(y_max, grid % nodes(grid % cells_n(n,c)) % y)
+        z_max = max(z_max, grid % nodes(grid % cells_n(n,c)) % z)
       end do
       delta(c) = x_max-x_min
       delta(c) = max(delta(c), (y_max-y_min))
@@ -304,20 +304,20 @@
           if(SideN(s,0) == 4) then   
 
             ! Coordinates of the shadow face
-            xs2=.25*(  grid % nodes(grid % cells(c2) % n(f4n(m,1))) % x  &
-                     + grid % nodes(grid % cells(c2) % n(f4n(m,2))) % x  &
-                     + grid % nodes(grid % cells(c2) % n(f4n(m,3))) % x  &
-                     + grid % nodes(grid % cells(c2) % n(f4n(m,4))) % x)
+            xs2=.25*(  grid % nodes(grid % cells_n(f4n(m,1), c2)) % x  &
+                     + grid % nodes(grid % cells_n(f4n(m,2), c2)) % x  &
+                     + grid % nodes(grid % cells_n(f4n(m,3), c2)) % x  &
+                     + grid % nodes(grid % cells_n(f4n(m,4), c2)) % x)
 
-            ys2=.25*(  grid % nodes(grid % cells(c2) % n(f4n(m,1))) % y  &
-                     + grid % nodes(grid % cells(c2) % n(f4n(m,2))) % y  &
-                     + grid % nodes(grid % cells(c2) % n(f4n(m,3))) % y  &
-                     + grid % nodes(grid % cells(c2) % n(f4n(m,4))) % y)
+            ys2=.25*(  grid % nodes(grid % cells_n(f4n(m,1), c2)) % y  &
+                     + grid % nodes(grid % cells_n(f4n(m,2), c2)) % y  &
+                     + grid % nodes(grid % cells_n(f4n(m,3), c2)) % y  &
+                     + grid % nodes(grid % cells_n(f4n(m,4), c2)) % y)
 
-            zs2=.25*(  grid % nodes(grid % cells(c2) % n(f4n(m,1))) % z  &
-                     + grid % nodes(grid % cells(c2) % n(f4n(m,2))) % z  &
-                     + grid % nodes(grid % cells(c2) % n(f4n(m,3))) % z  &
-                     + grid % nodes(grid % cells(c2) % n(f4n(m,4))) % z)
+            zs2=.25*(  grid % nodes(grid % cells_n(f4n(m,1), c2)) % z  &
+                     + grid % nodes(grid % cells_n(f4n(m,2), c2)) % z  &
+                     + grid % nodes(grid % cells_n(f4n(m,3), c2)) % z  &
+                     + grid % nodes(grid % cells_n(f4n(m,4), c2)) % z)
  
             ! Add shadow faces
             SideN(NS+NSsh-1,0) = 4
@@ -336,10 +336,10 @@
             SideN(NS+NSsh,0) = 4
             SideC(1,NS+NSsh) = c2 
             SideC(2,NS+NSsh) = -NbC-1
-            SideN(NS+NSsh,1) = grid % cells(c2) % n(f4n(m,1)) 
-            SideN(NS+NSsh,2) = grid % cells(c2) % n(f4n(m,2))
-            SideN(NS+NSsh,3) = grid % cells(c2) % n(f4n(m,3))
-            SideN(NS+NSsh,4) = grid % cells(c2) % n(f4n(m,4))
+            SideN(NS+NSsh,1) = grid % cells_n(f4n(m,1), c2) 
+            SideN(NS+NSsh,2) = grid % cells_n(f4n(m,2), c2)
+            SideN(NS+NSsh,3) = grid % cells_n(f4n(m,3), c2)
+            SideN(NS+NSsh,4) = grid % cells_n(f4n(m,4), c2)
             Sx(NS+NSsh) = Sx(s)
             Sy(NS+NSsh) = Sy(s)
             Sz(NS+NSsh) = Sz(s)
@@ -349,17 +349,17 @@
           else if(SideN(s,0) == 3) then  
 
             ! Coordinates of the shadow face
-            xs2=.33333333 * (grid % nodes(grid % cells(c2) % n(f3n(m,1))) % x  &
-                           + grid % nodes(grid % cells(c2) % n(f3n(m,2))) % x  &
-                           + grid % nodes(grid % cells(c2) % n(f3n(m,3))) % x )
+            xs2=.33333333 * (grid % nodes(grid % cells_n(f3n(m,1), c2)) % x  &
+                           + grid % nodes(grid % cells_n(f3n(m,2), c2)) % x  &
+                           + grid % nodes(grid % cells_n(f3n(m,3), c2)) % x )
 
-            ys2=.33333333 * (grid % nodes(grid % cells(c2) % n(f3n(m,1))) % y  &
-                           + grid % nodes(grid % cells(c2) % n(f3n(m,2))) % y  &
-                           + grid % nodes(grid % cells(c2) % n(f3n(m,3))) % y )
+            ys2=.33333333 * (grid % nodes(grid % cells_n(f3n(m,1), c2)) % y  &
+                           + grid % nodes(grid % cells_n(f3n(m,2), c2)) % y  &
+                           + grid % nodes(grid % cells_n(f3n(m,3), c2)) % y )
 
-            zs2=.33333333 * (grid % nodes(grid % cells(c2) % n(f3n(m,1))) % z  &
-                           + grid % nodes(grid % cells(c2) % n(f3n(m,2))) % z  &
-                           + grid % nodes(grid % cells(c2) % n(f3n(m,3))) % z )
+            zs2=.33333333 * (grid % nodes(grid % cells_n(f3n(m,1), c2)) % z  &
+                           + grid % nodes(grid % cells_n(f3n(m,2), c2)) % z  &
+                           + grid % nodes(grid % cells_n(f3n(m,3), c2)) % z )
 
             ! Add shadow faces
             SideN(NS+NSsh-1,0) = 3
@@ -377,9 +377,9 @@
             SideN(NS+NSsh,0) = 3
             SideC(1,NS+NSsh) = c2 
             SideC(2,NS+NSsh) = -NbC-1
-            SideN(NS+NSsh,1) = grid % cells(c2) % n(f3n(m,1)) 
-            SideN(NS+NSsh,2) = grid % cells(c2) % n(f3n(m,2))
-            SideN(NS+NSsh,3) = grid % cells(c2) % n(f3n(m,3))
+            SideN(NS+NSsh,1) = grid % cells_n(f3n(m,1), c2) 
+            SideN(NS+NSsh,2) = grid % cells_n(f3n(m,2), c2)
+            SideN(NS+NSsh,3) = grid % cells_n(f3n(m,3), c2)
             Sx(NS+NSsh) = Sx(s)
             Sy(NS+NSsh) = Sy(s)
             Sz(NS+NSsh) = Sz(s)
@@ -538,8 +538,8 @@
   end do
 
   do c=1,NC
-    do n=1,grid % cells(c) % n_nodes
-      walln(grid % cells(c) % n(n))=min(WallDs(c),walln(grid % cells(c) % n(n)))
+    do n=1,grid % cells_n_nodes(c)
+      walln(grid % cells_n(n,c))=min(WallDs(c),walln(grid % cells_n(n,c)))
     end do
   end do
 

@@ -255,17 +255,17 @@
   write(9,'(A7,Z9,Z9,A6)') '(12 (1 ', 1, NCsub, ' 1 0)('
   do c=1,NC
     if(NewC(c) /= 0) then
-      if(grid % cells(c) % n_nodes == 8) then       ! hexahedra   
+      if(grid % cells_n_nodes(c) == 8) then       ! hexahedra   
         write(9, *) ' 4 ' 
-      else if(grid % cells(c) % n_nodes == 6) then  ! prism
+      else if(grid % cells_n_nodes(c) == 6) then  ! prism
         write(9, *) ' 6 '
-      else if(grid % cells(c) % n_nodes == 4) then  ! tetrahedra
+      else if(grid % cells_n_nodes(c) == 4) then  ! tetrahedra
         write(9, *) ' 2 '
-      else if(grid % cells(c) % n_nodes == 5) then  ! pyramid    
+      else if(grid % cells_n_nodes(c) == 5) then  ! pyramid    
         write(9, *) ' 5 '
       else
         write(*,*) 'Unsupported cell type with ', &
-                    grid % cells(c) % n_nodes, ' nodes.'
+                    grid % cells_n_nodes(c), ' nodes.'
         write(*,*) 'Exiting'
         stop 
       end if 

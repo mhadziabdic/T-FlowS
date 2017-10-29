@@ -33,10 +33,10 @@
   !   Fill the generic coordinates with some values   !
   !---------------------------------------------------!
   do c=1,NC
-    if(grid % cells(c) % n_nodes == 4) fn = f4n
-    if(grid % cells(c) % n_nodes == 5) fn = f5n
-    if(grid % cells(c) % n_nodes == 6) fn = f6n
-    if(grid % cells(c) % n_nodes == 8) fn = f8n 
+    if(grid % cells_n_nodes(c) == 4) fn = f4n
+    if(grid % cells_n_nodes(c) == 5) fn = f5n
+    if(grid % cells_n_nodes(c) == 6) fn = f6n
+    if(grid % cells_n_nodes(c) == 8) fn = f8n 
     do j=1,6
       if(BCtype(c,j) == 0) then 
 
@@ -44,7 +44,7 @@
         f_nod = -1
         do k=1,4
           if(fn(j,k) > 0) then
-            f_nod(k) = grid % cells(c) % n( fn(j,k))
+            f_nod(k) = grid % cells_n(fn(j,k), c)
             n_f_nod = n_f_nod + 1
           end if
         end do
@@ -101,9 +101,9 @@
             !------------------------------!
             Nmatch     = 0
             MatchNodes = 0 
-            do n1=1,grid % cells(c1) % n_nodes
-              do n2=1,grid % cells(c2) % n_nodes
-                if(grid % cells(c1) % n(n1)==grid % cells(c2) % n(n2)) then
+            do n1=1,grid % cells_n_nodes(c1)
+              do n2=1,grid % cells_n_nodes(c2)
+                if(grid % cells_n(n1,c1)==grid % cells_n(n2,c2)) then
                   Nmatch = Nmatch + 1 
                   MatchNodes(n1) = 1
                 end if
@@ -115,12 +115,12 @@
             !     c1        c2      !
             !-----------------------!
             if(Nmatch > 2) then 
-              if(grid % cells(c1) % n_nodes == 4) fn = f4n
-              if(grid % cells(c1) % n_nodes == 5) fn = f5n
-              if(grid % cells(c1) % n_nodes == 6) fn = f6n
-              if(grid % cells(c1) % n_nodes == 8) fn = f8n
+              if(grid % cells_n_nodes(c1) == 4) fn = f4n
+              if(grid % cells_n_nodes(c1) == 5) fn = f5n
+              if(grid % cells_n_nodes(c1) == 6) fn = f6n
+              if(grid % cells_n_nodes(c1) == 8) fn = f8n
               do j=1,6
-                if(   grid % cells(c1) % c(j) == 0  .and.   & ! not set yet
+                if(grid % cells_c(j, c1) == 0  .and.   & ! not set yet
                     ( max( MatchNodes(fn(j,1)),0 ) + &
                       max( MatchNodes(fn(j,2)),0 ) + &
                       max( MatchNodes(fn(j,3)),0 ) + &
@@ -131,10 +131,10 @@
                   SideN(NS,0) = Nmatch 
                   do k=1,4
                     if(fn(j,k) > 0) then
-                      SideN(NS,k) = grid % cells(c1) % n(fn(j,k))                
+                      SideN(NS,k) = grid % cells_n(fn(j,k), c1)                
                     end if
                   end do
-                  grid % cells(c1) % c(j) = 1 !  -> means: set
+                  grid % cells_c(j, c1) = 1 !  -> means: set
                 end if
               end do
             end if   ! Nmatch /= 2

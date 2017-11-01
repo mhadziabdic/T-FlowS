@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Load_Domain
+  subroutine Load_Domain(dom)
 !------------------------------------------------------------------------------!
 !   Reads: name.d                                                              !
 !----------------------------------[Modules]-----------------------------------!
@@ -10,6 +10,8 @@
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Domain_Type) :: dom
 !----------------------------------[Calling]-----------------------------------!
   real :: Tet_Volume   
 !-----------------------------------[Locals]-----------------------------------!
@@ -254,7 +256,8 @@
     read(inp(ts(1):te(3)),*) npnt, dom % lines(l) % points(1),  &
                                    dom % lines(l) % points(2)
 
-    call Find_Line(dom % lines(l) % points(1),  &
+    call Find_Line(dom,                         &
+                   dom % lines(l) % points(1),  &
                    dom % lines(l) % points(2),  &
                    dom % lines(l) % resolution)
 
@@ -300,8 +303,8 @@
   do s=1,Nsurf
     call ReadC(9,inp,tn,ts,te)
     read(inp,*) dum, n1,n2,n3,n4
-    call Find_Surface(n1,n2,n3,n4,b,fc)
-    write(*,*) 'block: ', b, ' surf: ', fc
+    call Find_Surface(dom, n1, n2, n3, n4, b, fc)
+    write(*,*) '# block: ', b, ' surf: ', fc
     n = (b-1)*6 + fc         ! surface number
 
     call ReadC(9,inp,tn,ts,te)

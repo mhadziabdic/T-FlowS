@@ -6,11 +6,13 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Domain_Mod  ! domain as defined in ".d" file.
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c,s,n
+  type(Domain_Type) :: dom  ! domain to be used
+  integer           :: c,s,n
 !==============================================================================!
 
   ! Test the precision
@@ -20,12 +22,12 @@
 
   call Logo
 
-  call Load_Domain
-  call Compute_Node_Coordinates
-  call Distribute_Regions
-  call Connect_Blocks
-  call Connect_Periodicity
-  call CopyBC
+  call Load_Domain(dom)
+  call Compute_Node_Coordinates(dom)
+  call Distribute_Regions(dom)
+  call Connect_Blocks(dom)
+  call Connect_Periodicity(dom)
+  call Connect_Copy(dom)
   call TopSys(.false.)  ! trial run 
   call Compute_Grid_Geometry(.false.)
   call Smooth_Grid
@@ -72,4 +74,4 @@
   ! Write something on the screen
   call Print_Grid_Statistics
 
-  end PROGRAM Generator 
+  end program

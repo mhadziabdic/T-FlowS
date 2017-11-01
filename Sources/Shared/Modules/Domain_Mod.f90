@@ -28,9 +28,6 @@
 
   end type Domain_Type
 
-  ! If defined like this, one can easily think of multiple domains
-  type(Domain_Type) :: dom
-
   !---------------------------!
   !   Member-like functions   !
   !---------------------------!

@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine Laplac(b,i,j,k,wx16,wx24,wx35,                         &
-                            wy16,wy24,wy35,                         &
-                            wz16,wz24,wz35)
+  subroutine Laplac(dom, b,i,j,k,wx16,wx24,wx35,                         &
+                                 wy16,wy24,wy35,                         &
+                                 wz16,wz24,wz35)
 !------------------------------------------------------------------------------!
 !   Places the nodes inside the block using Laplace-like function              !
 !------------------------------------------------------------------------------!
@@ -13,8 +13,9 @@
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer :: b, i, j, k
-  real    :: wx16, wx24, wx35, wy16, wy24, wy35, wz16, wz24, wz35 
+  type(Domain_Type) :: dom
+  integer           :: b, i, j, k
+  real              :: wx16, wx24, wx35, wy16, wy24, wy35, wz16, wz24, wz35 
 !-----------------------------------[Locals]-----------------------------------!
   real    :: xt(8), yt(8), zt(8)
   integer :: ni, nj, nk, n, n1, n2, n3, n4, n5, n6
@@ -140,4 +141,4 @@
                  + ( zf3*(nj-j) + zf5*(j-1) ) * wz35 / (nj-1) 
   end if
 
-  end subroutine Laplac
+  end subroutine

@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
@@ -19,10 +20,10 @@
 !==============================================================================!
 
   ! Allocate memory for additional arrays
-  allocate(x_node_new(MAXN)); x_node_new=0
-  allocate(y_node_new(MAXN)); y_node_new=0
-  allocate(z_node_new(MAXN)); z_node_new=0
-  allocate(node_to_nodes(MAXN,0:40)); node_to_nodes=0
+  allocate(x_node_new(grid % max_n_nodes)); x_node_new=0
+  allocate(y_node_new(grid % max_n_nodes)); y_node_new=0
+  allocate(z_node_new(grid % max_n_nodes)); z_node_new=0
+  allocate(node_to_nodes(grid % max_n_nodes,0:40)); node_to_nodes=0
 
   write(*,*) '# Now smoothing the cells. This may take a while !' 
 
@@ -37,23 +38,23 @@
   y_min=+HUGE
   z_min=+HUGE
   do n=1,Nn
-    x_max=max(x_node(n),x_max) 
-    y_max=max(y_node(n),y_max) 
-    z_max=max(z_node(n),z_max) 
-    x_min=min(x_node(n),x_min) 
-    y_min=min(y_node(n),y_min) 
-    z_min=min(z_node(n),z_min) 
+    x_max=max(grid % xn(n), x_max) 
+    y_max=max(grid % yn(n), y_max) 
+    z_max=max(grid % zn(n), z_max) 
+    x_min=min(grid % xn(n), x_min) 
+    y_min=min(grid % yn(n), y_min) 
+    z_min=min(grid % zn(n), z_min) 
   end do 
 
   !-----------------------!
   !   Connect the nodes   !
   !-----------------------!
-  do c=1,Nc            ! through cells
-    do i=1,8           ! through nodes of a cell 
-      n = CellN(c,i)   ! first cell
-      do j=1,8         ! through nodes of a cell 
-        m = CellN(c,j) ! second cell 
-        if(n  /=  m) then 
+  do c=1,Nc                        ! through cells
+    do i=1,8                       ! through nodes of a cell 
+      n = grid % cells_n(i,c)      ! first cell
+      do j=1,8                     ! through nodes of a cell 
+        m = grid % cells_n(j,c)    ! second cell 
+        if(n /=  m) then 
           do k=1,node_to_nodes(n,0)
             if(node_to_nodes(n,k) == m) goto 10            
           end do
@@ -78,9 +79,9 @@
         x8=smooth_regions(reg,4)
         y8=smooth_regions(reg,5)
         z8=smooth_regions(reg,6)
-        if( (x1 <= x_node(n)) .and. (x_node(n) <= x8) .and.  &
-            (y1 <= y_node(n)) .and. (y_node(n) <= y8) .and.  &
-            (z1 <= z_node(n)) .and. (z_node(n) <= z8) ) then
+        if( (x1<=grid % xn(n)) .and. (grid % xn(n)<=x8) .and. &
+            (y1<=grid % yn(n)) .and. (grid % yn(n)<=y8) .and. &
+            (z1<=grid % zn(n)) .and. (grid % zn(n)<=z8) ) then
           node_to_nodes(n,0) = 0
         endif
       end do
@@ -96,30 +97,32 @@
 
     do j=1,smooth_iters(reg)         
 
-      ! Calculate new coordinates using the 
-      ! old values (x_node(),y_node(),z_node())
+      ! Calculate new coordinates using the old values 
       do n=1,Nn
         if(node_to_nodes(n,0)   >  0) then
           x_new_tmp=0.0
           y_new_tmp=0.0
           z_new_tmp=0.0
           do i=1,node_to_nodes(n,0)
-            x_new_tmp = x_new_tmp + x_node(node_to_nodes(n,i))
-            y_new_tmp = y_new_tmp + y_node(node_to_nodes(n,i))
-            z_new_tmp = z_new_tmp + z_node(node_to_nodes(n,i))
+            x_new_tmp = x_new_tmp + grid % xn(node_to_nodes(n,i))
+            y_new_tmp = y_new_tmp + grid % yn(node_to_nodes(n,i))
+            z_new_tmp = z_new_tmp + grid % zn(node_to_nodes(n,i))
           end do
           x_new_tmp = x_new_tmp / (1.0*node_to_nodes(n,0)) 
           y_new_tmp = y_new_tmp / (1.0*node_to_nodes(n,0)) 
           z_new_tmp = z_new_tmp / (1.0*node_to_nodes(n,0)) 
-          if(x_node(n)  > 0.001*x_min .and. x_node(n)  < 0.999*x_max)           &
-          x_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*x_node(n)                &
-                  +      smooth_relax(reg)*walln(n) *x_new_tmp
-          if(y_node(n)  > 0.001*y_min .and. y_node(n)  < 0.999*y_max)           &
-          y_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*y_node(n)                &
-                  +      smooth_relax(reg)*walln(n) *y_new_tmp
-          if(z_node(n)  > 0.001*z_min .and. z_node(n)  < 0.999*z_max)           &
-          z_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*z_node(n)                &
-                  +      smooth_relax(reg)*walln(n)* z_new_tmp
+          if(grid % xn(n) > 0.001*x_min .and.  &
+             grid % xn(n) < 0.999*x_max)       &
+          x_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*grid % xn(n) &
+                        +      smooth_relax(reg)*walln(n) *x_new_tmp
+          if(grid % yn(n) > 0.001*y_min .and.  &
+             grid % yn(n) < 0.999*y_max)       &
+          y_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*grid % yn(n) &
+                        +      smooth_relax(reg)*walln(n) *y_new_tmp
+          if(grid % zn(n) > 0.001*z_min .and.  &
+             grid % zn(n) < 0.999*z_max)       &
+          z_node_new(n) = (1.0-smooth_relax(reg)*walln(n))*grid % zn(n) &
+                        +      smooth_relax(reg)*walln(n)* z_new_tmp
         end if
       end do
 
@@ -134,23 +137,29 @@
           y8=smooth_regions(reg,5)
           z8=smooth_regions(reg,6)
 
-          if( (x1 <= x_node(n)) .and. (x_node(n) <= x8) .and.                 &
-              (y1 <= y_node(n)) .and. (y_node(n) <= y8) .and.                 &
-              (z1 <= z_node(n)) .and. (z_node(n) <= z8) ) then
+          if( (x1 <= grid % xn(n)) .and.  &
+              (grid % xn(n) <= x8) .and.  &
+              (y1 <= grid % yn(n)) .and.  &
+              (grid % yn(n) <= y8) .and.  &
+              (z1 <= grid % zn(n)) .and.  &
+              (grid % zn(n) <= z8) ) then
 
             if(smooth_in_x(reg)) then
-              if(x_node(n)  > 0.001*x_min .and. x_node(n)  < 0.999*x_max)       &
-              x_node(n)=x_node_new(n)
+              if(grid % xn(n) > 0.001*x_min .and. &
+                 grid % xn(n) < 0.999*x_max)  &
+              grid % xn(n)=x_node_new(n)
             end if
 
             if(smooth_in_y(reg)) then
-              if(y_node(n)  > 0.001*y_min .and. y_node(n)  < 0.999*y_max)       &
-              y_node(n)=y_node_new(n)
+              if(grid % yn(n) > 0.001*y_min .and.  &
+                 grid % yn(n) < 0.999*y_max)  &
+              grid % yn(n)=y_node_new(n)
             end if 
 
             if(smooth_in_z(reg)) then
-              if(z_node(n)  > 0.001*z_min .and. z_node(n)  < 0.999*z_max)       &
-              z_node(n)=z_node_new(n)
+              if(grid % zn(n) > 0.001*z_min .and.  &
+                 grid % zn(n) < 0.999*z_max)  &
+              grid % zn(n)=z_node_new(n)
             end if 
 
           end if  ! if the point belongs to region

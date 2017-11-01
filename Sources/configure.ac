@@ -9,7 +9,7 @@ AC_PROG_RANLIB
 
 AC_OUTPUT( 
   Makefile				\
-  Modules/Makefile			\
+  Shared/Modules/Makefile		\
   Shared/Makefile			\
   Generate/Makefile			\
   Divide/Makefile			\

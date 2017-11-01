@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use gen_mod 
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !------------------------------------------------------------------------------!
@@ -18,7 +19,7 @@
   integer              :: c, c1, c2, n, s, ss, cc2, c_max, nnn, hh, mm
   integer              :: c11, c12, c21, c22, s1, s2, bou_cen
   integer              :: type_per, n_per, number_sides, dir, option
-  integer              :: wall_mark, rot_dir, dir_face
+  integer              :: wall_mark, rot_dir
   real                 :: xt(4), yt(4), zt(4), angle_face
   real                 :: xs2, ys2, zs2, x_a, y_a, z_a, x_b, y_b, z_b
   real                 :: x_c, y_c, z_c, Det
@@ -28,7 +29,7 @@
   real                 :: xc1, yc1, zc1, xc2, yc2, zc2 
   real                 :: max_dis, tot_vol, min_vol, max_vol
   real                 :: xmin, xmax, ymin, ymax, zmin, zmax 
-  real, allocatable    :: xnr(:), ynr(:), znr(:), xspr(:), yspr(:), zspr(:)
+  real, allocatable    :: xspr(:), yspr(:), zspr(:)
   real, allocatable    :: b_coor(:), phi_face(:)
   integer, allocatable :: b_face(:)
 !==============================================================================!
@@ -124,10 +125,13 @@
   allocate(volume(NC)); volume=0.0
 
   do c=1,NC
-    do n=1,CellN(c,0)
-      xc(c) = xc(c) + x_node(CellN(c,n))/(1.0*CellN(c,0))
-      yc(c) = yc(c) + y_node(CellN(c,n))/(1.0*CellN(c,0))
-      zc(c) = zc(c) + z_node(CellN(c,n))/(1.0*CellN(c,0))
+    do n=1,grid % cells_n_nodes(c)
+      xc(c) = xc(c) + grid % xn(grid % cells_n(n,c))  &
+                    / (1.0*grid % cells_n_nodes(c))
+      yc(c) = yc(c) + grid % yn(grid % cells_n(n,c))  &
+                    / (1.0*grid % cells_n_nodes(c))
+      zc(c) = zc(c) + grid % zn(grid % cells_n(n,c))  &
+                    / (1.0*grid % cells_n_nodes(c))
     end do
   end do
 
@@ -151,14 +155,14 @@
   allocate(Dz(NS+max(NC,NBC))); Dz=0.0
 
   do s=1,NS
-    do n=1,SideN(s,0)    ! for quadrilateral an triangular faces
-      xt(n)=x_node(SideN(s,n))
-      yt(n)=y_node(SideN(s,n))
-      zt(n)=z_node(SideN(s,n))
+    do n=1,grid % faces_n_nodes(s)    ! for quadrilateral an triangular faces
+      xt(n)=grid % xn(grid % faces_n(n,s))
+      yt(n)=grid % yn(grid % faces_n(n,s))
+      zt(n)=grid % zn(grid % faces_n(n,s))
     end do                       
 
     ! Cell side components
-    if( SideN(s,0)  ==  4 ) then
+    if( grid % faces_n_nodes(s)  ==  4 ) then
       Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
                     +(yt(3)-yt(2))*(zt(2)+zt(3))   &
                     +(yt(4)-yt(3))*(zt(3)+zt(4))   &
@@ -171,7 +175,7 @@
                     +(xt(3)-xt(2))*(yt(2)+yt(3))   &
                     +(xt(4)-xt(3))*(yt(3)+yt(4))   &
                     +(xt(1)-xt(4))*(yt(4)+yt(1)) )
-    else if( SideN(s,0)  ==  3 ) then 
+    else if( grid % faces_n_nodes(s)  ==  3 ) then 
       Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
                     +(yt(3)-yt(2))*(zt(2)+zt(3))   &
                     +(yt(1)-yt(3))*(zt(3)+zt(1)) )
@@ -187,11 +191,11 @@
     end if
 
     ! Barycenters
-    if(SideN(s,0) == 4) then  
+    if(grid % faces_n_nodes(s) == 4) then  
       xsp(s) = (xt(1)+xt(2)+xt(3)+xt(4))/4.0
       ysp(s) = (yt(1)+yt(2)+yt(3)+yt(4))/4.0
       zsp(s) = (zt(1)+zt(2)+zt(3)+zt(4))/4.0
-    else if(SideN(s,0) == 3) then  
+    else if(grid % faces_n_nodes(s) == 3) then  
       xsp(s) = (xt(1)+xt(2)+xt(3))/3.0
       ysp(s) = (yt(1)+yt(2)+yt(3))/3.0
       zsp(s) = (zt(1)+zt(2)+zt(3))/3.0
@@ -286,10 +290,6 @@
   !   Phase I  ->  find the sides on periodic boundaries   !
   !                                                        !
   !--------------------------------------------------------!
-! write(*,*) 'Type 1 for fast but unreliable algorithm for periodic cells search.'
-! write(*,*) 'Type 2 for slow but reliable algorithm for periodic cells search.'
-! read(*,*) option
-
   option = 2
 
 2 n_per = 0 
@@ -356,24 +356,6 @@
       z_c = 0.0       
     end if        
 
-!   write(*,*) 
-!   write(*,*) '# Enter the coordinates of three points that define'
-!   write(*,*) '# periodic plane'
-!   write(*,*) 
-!   write(*,*) 'Point 1:'
-!   read(*,*) x_a, y_a, z_a  !angle 
-!   write(*,*) 
-!   write(*,*) 'Point 2:'
-!   read(*,*) x_b, y_b, z_b  !angle 
-!   write(*,*) 
-!   write(*,*) 'Point 3:'
-!   read(*,*) x_c, y_c, z_c  !angle 
-
-!   write(*,*) 
-!   write(*,*) 'Enter approximative distance between the periodic faces'
-!   read(*,*) per_max
-
-
     ab_i = x_b - x_a 
     ab_j = y_b - y_a 
     ab_k = z_b - z_a 
@@ -425,7 +407,6 @@
   ymax = -HUGE
   zmax = -HUGE
 
-
   b_coor=0.0
   b_face=0
 
@@ -472,7 +453,8 @@
       c2 = SideC(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
-          Det = (p_i*(xsp(s)) + p_j*(ysp(s)) + p_k*(zsp(s)))/sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
+          Det = (p_i*(xsp(s)) + p_j*(ysp(s)) + p_k*(zsp(s)))  &
+              / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
           per_min = min(per_min, Det)          
           per_max = max(per_max, Det)          
         end if
@@ -633,7 +615,7 @@
         NSsh = NSsh + 2
 
         ! Find the coordinates of ...
-        if(SideN(s,0) == 4) then
+        if(grid % faces_n_nodes(s) == 4) then
 
           ! Coordinates of the shadow face
           xs2=xsp(SideC(0,s))
@@ -641,33 +623,33 @@
           zs2=zsp(SideC(0,s))
 
           ! Add shadow faces
-          SideN(NS+NSsh-1,0) = 4
+          grid % faces_n_nodes(NS+NSsh-1) = 4
           SideC(1,NS+NSsh-1) = c1
           SideC(2,NS+NSsh-1) = -NbC-1
-          SideN(NS+NSsh-1,1) = SideN(s,1)
-          SideN(NS+NSsh-1,2) = SideN(s,2)
-          SideN(NS+NSsh-1,3) = SideN(s,3)
-          SideN(NS+NSsh-1,4) = SideN(s,4)
+          grid % faces_n(1,NS+NSsh-1) = grid % faces_n(1,s)
+          grid % faces_n(2,NS+NSsh-1) = grid % faces_n(2,s)
+          grid % faces_n(3,NS+NSsh-1) = grid % faces_n(3,s)
+          grid % faces_n(4,NS+NSsh-1) = grid % faces_n(4,s)
           Sx(NS+NSsh-1) = Sx(s)
           Sy(NS+NSsh-1) = Sy(s)
           Sz(NS+NSsh-1) = Sz(s)
           xsp(NS+NSsh-1) = xsp(s)
           ysp(NS+NSsh-1) = ysp(s)
           zsp(NS+NSsh-1) = zsp(s)
-          SideN(NS+NSsh,0) = 4
+          grid % faces_n_nodes(NS+NSsh) = 4
           SideC(1,NS+NSsh) = c2
           SideC(2,NS+NSsh) = -NbC-1
-          SideN(NS+NSsh,1) = SideN(SideC(0,s),1) 
-          SideN(NS+NSsh,2) = SideN(SideC(0,s),2)
-          SideN(NS+NSsh,3) = SideN(SideC(0,s),3)
-          SideN(NS+NSsh,4) = SideN(SideC(0,s),4)
+          grid % faces_n(1,NS+NSsh) = grid % faces_n(1,SideC(0,s)) 
+          grid % faces_n(2,NS+NSsh) = grid % faces_n(2,SideC(0,s))
+          grid % faces_n(3,NS+NSsh) = grid % faces_n(3,SideC(0,s))
+          grid % faces_n(4,NS+NSsh) = grid % faces_n(4,SideC(0,s))
           Sx(NS+NSsh) = Sx(s)
           Sy(NS+NSsh) = Sy(s)
           Sz(NS+NSsh) = Sz(s)
           xsp(NS+NSsh) = xs2
           ysp(NS+NSsh) = ys2
           zsp(NS+NSsh) = zs2
-        else if(SideN(s,0) == 3) then
+        else if(grid % faces_n_nodes(s) == 3) then
 
           ! Coordinates of the shadow face
           xs2=xsp(SideC(0,s))
@@ -675,24 +657,24 @@
           zs2=zsp(SideC(0,s))
  
           ! Add shadow faces
-          SideN(NS+NSsh-1,0) = 3
+          grid % faces_n_nodes(NS+NSsh-1) = 3
           SideC(1,NS+NSsh-1) = c1
           SideC(2,NS+NSsh-1) = -NbC-1
-          SideN(NS+NSsh-1,1) = SideN(s,1)
-          SideN(NS+NSsh-1,2) = SideN(s,2)
-          SideN(NS+NSsh-1,3) = SideN(s,3)
+          grid % faces_n(1,NS+NSsh-1) = grid % faces_n(1,s)
+          grid % faces_n(2,NS+NSsh-1) = grid % faces_n(2,s)
+          grid % faces_n(3,NS+NSsh-1) = grid % faces_n(3,s)
           Sx(NS+NSsh-1) = Sx(s)
           Sy(NS+NSsh-1) = Sy(s)
           Sz(NS+NSsh-1) = Sz(s)
           xsp(NS+NSsh-1) = xsp(s)
           ysp(NS+NSsh-1) = ysp(s)
           zsp(NS+NSsh-1) = zsp(s)
-          SideN(NS+NSsh,0) = 3
+          grid % faces_n_nodes(NS+NSsh) = 3
           SideC(1,NS+NSsh) = c2
           SideC(2,NS+NSsh) = -NbC-1
-          SideN(NS+NSsh,1) = SideN(SideC(0,s),1) 
-          SideN(NS+NSsh,2) = SideN(SideC(0,s),2)
-          SideN(NS+NSsh,3) = SideN(SideC(0,s),3)
+          grid % faces_n(1,NS+NSsh) = grid % faces_n(1,SideC(0,s)) 
+          grid % faces_n(2,NS+NSsh) = grid % faces_n(2,SideC(0,s))
+          grid % faces_n(3,NS+NSsh) = grid % faces_n(3,SideC(0,s))
           Sx(NS+NSsh) = Sx(s)
           Sy(NS+NSsh) = Sy(s)
           Sz(NS+NSsh) = Sz(s)
@@ -726,8 +708,8 @@
       NewS(s) = -1
     end if
   end do
-  write(*,'(A21,I9,Z9)') '# Old number of sides: ', NS, NS
-  write(*,'(A21,I9,Z9)') '# New number of sides: ', &
+  write(*,'(A22,I9,Z9)') ' # Old number of sides: ', NS, NS
+  write(*,'(A22,I9,Z9)') ' # New number of sides: ', &
                           number_sides-NSsh,number_sides-NSsh
   
   !--------------------------------------!
@@ -739,11 +721,11 @@
     if(NewS(s) > 0) then
       SideC(1,NewS(s)) = SideC(1,s) 
       SideC(2,NewS(s)) = SideC(2,s)
-      SideN(NewS(s),0) = SideN(s,0)
-      SideN(NewS(s),1) = SideN(s,1)
-      SideN(NewS(s),2) = SideN(s,2)
-      SideN(NewS(s),3) = SideN(s,3)
-      SideN(NewS(s),4) = SideN(s,4)
+      grid % faces_n_nodes(NewS(s)) = grid % faces_n_nodes(s)
+      grid % faces_n(1,NewS(s)) = grid % faces_n(1,s)
+      grid % faces_n(2,NewS(s)) = grid % faces_n(2,s)
+      grid % faces_n(3,NewS(s)) = grid % faces_n(3,s)
+      grid % faces_n(4,NewS(s)) = grid % faces_n(4,s)
       xsp(NewS(s)) = xsp(s)
       ysp(NewS(s)) = ysp(s)
       zsp(NewS(s)) = zsp(s)
@@ -803,8 +785,8 @@
   write(*,*) '# Cell volumes calculated !'
 
   if(min_vol < 0.0) then
-    write(*,*) '# Negative volume occured! Another, slower, algoritham should be run !'
-    write(*,*) '# Execution will be halt now! '
+    write(*,*) '# Negative volume occured! Slower, algoritham should be run !'
+    write(*,*) '# Execution will halt now! '
     stop
   end if 
  
@@ -812,34 +794,34 @@
   deallocate(b_face)
  
 
-    !------------------------------------------!
-    !     Calculate delta                      !
-    !------------------------------------------!
-    !     => depends on: x_node,y_node,z_node  !
-    !     <= gives:      delta                 !
-    !------------------------------------------!
-    allocate(delta(-NbC:NC));  delta=0.0
+  !------------------------------------------!
+  !     Calculate delta                      !
+  !------------------------------------------!
+  !     => depends on: x_node,y_node,z_node  !
+  !     <= gives:      delta                 !
+  !------------------------------------------!
+  allocate(delta(-NbC:NC));  delta=0.0
 
-    do c=1,NC
-      delta(c)=0.0
-      xmin = +HUGE
-      ymin = +HUGE
-      zmin = +HUGE
-      xmax = -HUGE
-      ymax = -HUGE
-      zmax = -HUGE
-      do n=1,CellN(c,0)
-        xmin = min(xmin, x_node(CellN(c,n)))
-        ymin = min(ymin, y_node(CellN(c,n)))
-        zmin = min(zmin, z_node(CellN(c,n)))
-        xmax = max(xmax, x_node(CellN(c,n)))
-        ymax = max(ymax, y_node(CellN(c,n)))
-        zmax = max(zmax, z_node(CellN(c,n)))
-      end do
-      delta(c) = xmax-xmin
-      delta(c) = max(delta(c), (ymax-ymin))
-      delta(c) = max(delta(c), (zmax-zmin))
+  do c=1,NC
+    delta(c)=0.0
+    xmin = +HUGE
+    ymin = +HUGE
+    zmin = +HUGE
+    xmax = -HUGE
+    ymax = -HUGE
+    zmax = -HUGE
+    do n=1,grid % cells_n_nodes(c)
+      xmin = min(xmin, grid % xn(grid % cells_n(n,c)))
+      ymin = min(ymin, grid % yn(grid % cells_n(n,c)))
+      zmin = min(zmin, grid % zn(grid % cells_n(n,c)))
+      xmax = max(xmax, grid % xn(grid % cells_n(n,c)))
+      ymax = max(ymax, grid % yn(grid % cells_n(n,c)))
+      zmax = max(zmax, grid % zn(grid % cells_n(n,c)))
     end do
+    delta(c) = xmax-xmin
+    delta(c) = max(delta(c), (ymax-ymin))
+    delta(c) = max(delta(c), (zmax-zmin))
+  end do
 
   !------------------------------------------------------------------!
   !   Calculate distance from the cell center to the nearest wall.   !
@@ -879,7 +861,6 @@
     write(*,*) '# Distance to the wall calculated !'
   end if
 
-
   !------------------------------------------------------------!
   !   Calculate the interpolation factors for the cell sides   !
   !------------------------------------------------------------!
@@ -889,28 +870,27 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
 
-!----- first cell
+    ! First cell
     xc1  = xc(c1)
     yc1  = yc(c1)
     zc1  = zc(c1)
     dsc1 = Distance(xc1, yc1, zc1, xsp(s), ysp(s), zsp(s))
 
-!----- second cell (pls. check if xsi=xc on the boundary)
+    ! Second cell (pls. check if xsi=xc on the boundary)
     xc2  = xc(c2)+Dx(s)
     yc2  = yc(c2)+Dy(s)
     zc2  = zc(c2)+Dz(s)
     dsc2 = Distance(xc2, yc2, zc2, xsp(s), ysp(s), zsp(s))
 
-!----- interpolation factor
+    ! Interpolation factor
     f(s) = dsc2 / (dsc1+dsc2)   ! not checked
   end do 
 
   write(*,*) '# Interpolation factors calculated !'
 
-
   return
 
-3 write(*,*) '# Horror ! Negative volume between cells ', c1, ' and ', c2
+  write(*,*) '# Horror ! Negative volume between cells ', c1, ' and ', c2
   stop
 
   end subroutine Compute_Geometry

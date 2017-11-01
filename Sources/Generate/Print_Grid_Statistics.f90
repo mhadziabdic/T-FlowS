@@ -6,36 +6,37 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, k, numb, nonz, stencw
 !==============================================================================!
 
-  write(*,*) '#================================='
+  write(*,*) '#==============================================================='
   write(*,*) '# Grid statistics'
-  write(*,*) '#---------------------------------'
-  write(*,*) '# number of nodes         :', NN
-  write(*,*) '# number of cells         :', NC
-  write(*,*) '# number of sides         :', NS
-  write(*,*) '# number of boundary cells:', NbC
-  write(*,*) '#---------------------------------'
+  write(*,*) '#---------------------------------------------------------------'
+  write(*,*) '# Number of nodes         :', NN
+  write(*,*) '# Number of cells         :', NC
+  write(*,*) '# Number of sides         :', NS
+  write(*,*) '# Number of boundary cells:', NbC
+  write(*,*) '#---------------------------------------------------------------'
 
   ! Find the number of non zero entries
   nonz=0
   do i = 1,NC
     stencw=1            ! it used to be zero
     do j=1,24
-      if( CellC(i,j) > 0 ) stencw=stencw + 1
+      if( grid % cells_c(j,i) > 0 ) stencw=stencw + 1
     end do
     nonz = nonz + stencw
   end do
 
-  write(*,*) '# number of non zero matrix entries:', nonz
-  write(*,*) '# average stencil size:', real(nonz)/real(NC)
-  write(*,*) '# max number of nodes and cells:',   MAXN
-  write(*,*) '# max number of boundary cells:',    MAXB
-  write(*,*) '#---------------------------------'
+  write(*,*) '# Number of non zero matrix entries:', nonz
+  write(*,*) '# Average stencil size:', real(nonz)/real(NC)
+  write(*,*) '# Max number of nodes and cells:',   grid % max_n_nodes
+  write(*,*) '# Max number of boundary cells:',    grid % max_n_boundary_cells
+  write(*,*) '#---------------------------------------------------------------'
 
   ! Neighbours
   do j=1,24
@@ -43,12 +44,12 @@
     do i=1,NC
       stencw=0
       do k=1,24
-        if( CellC(i,k)  > 0 ) stencw=stencw+1
+        if( grid % cells_c(k,i)  > 0 ) stencw=stencw+1
       end do
       if(stencw  ==  j) numb=numb+1
     end do
     if(numb /= 0) then
-      write(*,*) '# number of cells with ',j, ' neighbours: ',numb
+      write(*,*) '# Number of cells with ',j, ' neighbours: ',numb
     endif
   end do
 
@@ -59,10 +60,10 @@
       if(TwinN(i,0)  ==  j) numb=numb+1
     end do
     if(numb /= 0) then
-      write(*,*) '# number of nodes with ',j, ' twins: ',numb
+      write(*,*) '# Number of nodes with ',j, ' twins: ',numb
     endif 
   end do
 
-  write(*,*) '#---------------------------------'
+  write(*,*) '#---------------------------------------------------------------'
 
   end subroutine Print_Grid_Statistics

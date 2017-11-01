@@ -7,6 +7,7 @@
   use all_mod
   use gen_mod
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !----------------------------------[Calling]-----------------------------------!
@@ -89,12 +90,12 @@
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
   write(6, *) 'Now creating the file:', name_eps
 
-  xmax=maxval(x_node(1:NN))
-  ymax=maxval(y_node(1:NN))
-  zmax=maxval(z_node(1:NN))
-  xmin=minval(x_node(1:NN))
-  ymin=minval(y_node(1:NN))
-  zmin=minval(z_node(1:NN))
+  xmax=maxval(grid % xn(1:NN))
+  ymax=maxval(grid % yn(1:NN))
+  zmax=maxval(grid % zn(1:NN))
+  xmin=minval(grid % xn(1:NN))
+  ymin=minval(grid % yn(1:NN))
+  zmin=minval(grid % zn(1:NN))
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin),(zmax-zmin))
   sclp = 0.005 
 
@@ -105,19 +106,21 @@
   ymaxb=-1000000
   do n=1,Nn
     if(xk  < 0.0 .and. yk  > 0.0) then
-      xp1=-x_node(n)*sin(alfa)-y_node(n)*sin(beta)
+      xp1= - grid % xn(n) * sin(alfa) - grid % yn(n) * sin(beta)
     else if(xk  > 0.0 .and. yk  < 0.0) then
-      xp1=x_node(n)*sin(alfa)+y_node(n)*sin(beta)
+      xp1=   grid % xn(n) * sin(alfa) + grid % yn(n) * sin(beta)
     else if(xk  > 0.0 .and. yk  > 0.0) then
-      xp1=-x_node(n)*sin(alfa)+y_node(n)*sin(beta)
+      xp1= - grid % xn(n) * sin(alfa) + grid % yn(n) * sin(beta)
     else
-      xp1=x_node(n)*sin(alfa)-y_node(n)*sin(beta)
+      xp1=   grid % xn(n) * sin(alfa) - grid % yn(n) * sin(beta)
     end if
     xp1=xp1*sclf*sclp
     xmaxb=max(xmaxb,int(xp1))
     xminb=min(xminb,int(xp1))
 
-    yp1=(-x_node(n)*cos(alfa)-y_node(n)*cos(beta))*cos(gama)+z_node(n)*sin(gama) 
+    yp1=( - grid % xn(n) * cos(alfa)                  &
+          - grid % yn(n) * cos(beta) ) * cos(gama) +  &
+            grid % zn(n) * sin(gama) 
     yp1=yp1*sclf*sclp
     ymaxb=max(ymaxb,int(yp1))
     yminb=min(yminb,int(yp1))
@@ -183,20 +186,20 @@
     if(c2 < 0 .or. &
       ( abs(Dx(s))+abs(Dy(s))+abs(Dz(s)) ) > 0. ) then 
 
-      x1 = x_node(SideN(s,1))
-      x2 = x_node(SideN(s,2))
-      x3 = x_node(SideN(s,3))
-      x4 = x_node(SideN(s,4))
+      x1 = grid % xn(grid % faces_n(1,s))
+      x2 = grid % xn(grid % faces_n(2,s))
+      x3 = grid % xn(grid % faces_n(3,s))
+      x4 = grid % xn(grid % faces_n(4,s))
 
-      y1 = y_node(SideN(s,1))
-      y2 = y_node(SideN(s,2))
-      y3 = y_node(SideN(s,3))
-      y4 = y_node(SideN(s,4))
+      y1 = grid % yn(grid % faces_n(1,s))
+      y2 = grid % yn(grid % faces_n(2,s))
+      y3 = grid % yn(grid % faces_n(3,s))
+      y4 = grid % yn(grid % faces_n(4,s))
 
-      z1 = z_node(SideN(s,1))
-      z2 = z_node(SideN(s,2))
-      z3 = z_node(SideN(s,3))
-      z4 = z_node(SideN(s,4))
+      z1 = grid % zn(grid % faces_n(1,s))
+      z2 = grid % zn(grid % faces_n(2,s))
+      z3 = grid % zn(grid % faces_n(3,s))
+      z4 = grid % zn(grid % faces_n(4,s))
 
       if(xk  < 0.0 .and. yk  > 0.0) then
         xp1=-x1*sin(alfa)-y1*sin(beta)
@@ -225,7 +228,7 @@
       yp3=(-x3*cos(alfa)-y3*cos(beta))*cos(gama) + z3*sin(gama)
       yp4=(-x4*cos(alfa)-y4*cos(beta))*cos(gama) + z4*sin(gama)
 
-      if(SideN(s,0) == 4)                                             &
+      if(grid % faces_n_nodes(s) == 4)                                &
       write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')       &
                 'gs np 0 slw ',                                       &
                 int(sclf*xp1),int(sclf*yp1), ' m ',                   & 
@@ -238,7 +241,7 @@
                 blue(proces(NewC(c1))),                               &
                 ' srgb f gr s gr'
 
-      if(SideN(s,0) == 3)                                             &
+      if(grid % faces_n_nodes(s) == 3)                                &
       write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')              &
                 'gs np 0 slw ',                                       &
                 int(sclf*xp1),int(sclf*yp1), ' m ',                   & 

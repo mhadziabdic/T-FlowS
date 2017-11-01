@@ -12,8 +12,8 @@ libCommunication_a_SOURCES =	\
   Timex.f90			\
   Wait.f90
 
-SUBDIRS = ../../Modules
+SUBDIRS = ../../Shared/Modules
 
-LDADD = ../../Modules/libModules.a
+LDADD = ../../SharedModules/libSharedModules.a
 
 INCLUDE = -I@top_srcdir@/

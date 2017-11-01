@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
@@ -21,10 +22,10 @@
 
   call Load_Domain
   call Compute_Node_Coordinates
+  call Distribute_Regions
   call Connect_Blocks
   call Connect_Periodicity
   call CopyBC
-
   call TopSys(.false.)  ! trial run 
   call Compute_Grid_Geometry(.false.)
   call Smooth_Grid
@@ -45,12 +46,9 @@
     NewS(s)=s
   end do
 
-  ! Count the materials in the grid
-  call Count_Materials
-
   ! Save the grid
-  call Save_Gmv_Mesh(0, NN, NC)            ! save grid for postprocessing
-  call Save_Cns_Geo(0, NC, NS, NBC, 0, 0) ! saved data for processing
+  call Save_Gmv_Grid(0, NN, NC)            ! save grid for postprocessing
+  call Save_Cns_Geo(0, NC, NS, NBC, 0, 0)  ! saved data for processing
 
   call Save_Gmv_Links(0, NN, NC, NS, NbC, 0)
 
@@ -65,9 +63,9 @@
   call Save_Cas(0, NN, NC, NS+NSsh) ! save grid for postprocessing
                                     ! with Fluent
   ! Make eps figures
-  call Save_Eps_Cut(y_node,z_node,x_node,Dy,Dz,'x') 
-  call Save_Eps_Cut(z_node,x_node,y_node,Dz,Dx,'y') 
-  call Save_Eps_Cut(x_node,y_node,z_node,Dx,Dy,'z') 
+  call Save_Eps_Cut(Dy,Dz,'x') 
+  call Save_Eps_Cut(Dz,Dx,'y') 
+  call Save_Eps_Cut(Dx,Dy,'z') 
 
   call Save_Eps_Whole(NSsh)  ! draw the domain with shadows
 

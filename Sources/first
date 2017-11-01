@@ -107,34 +107,36 @@ else
   # GNU
   if [ $1 = "GNU" ]; then
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Sequential/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -I'$PWD'/Shared/Modules '$OPTIMIZE
+#   ./configure FC=$COMPILER  FCFLAGS='-g -fcheck=all -Wall -fdefault-real-8 -I'$PWD'/Shared/Modules '$OPTIMIZE
 
   # GNU-MPI
   elif [ $1 = "GNU-MPI" ]; then
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Parallel/Double/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -I'$PWD'/Shared/Modules '$OPTIMIZE
+#   ./configure FC=$COMPILER  FCFLAGS='-g -fcheck=all -Wall -fdefault-real-8 -I'$PWD'/Shared/Modules '$OPTIMIZE
 
   # INTEL
   elif [ $1 = "INTEL" ]; then
     echo $OPTIMIZE
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Sequential/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Shared/Modules '$OPTIMIZE
 
   # INTEL-MPI
   elif [ $1 = "INTEL-MPI" ]; then
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Parallel/Double/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Shared/Modules '$OPTIMIZE
 
   # PG
   elif [ $1 = "PG" ]; then
     echo $OPTIMIZE
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Sequential/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Shared/Modules '$OPTIMIZE
 
   # PG-MPI
   elif [ $1 = "PG-MPI" ]; then
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Parallel/Double/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Shared/Modules '$OPTIMIZE
 
   fi
 

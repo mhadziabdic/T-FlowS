@@ -8,10 +8,11 @@
   use pro_mod
   use par_mod,  only: this_proc
   use rans_mod, only: grav_x, grav_y, grav_z, Zo
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, s, it
+  integer           :: c, s, n, it
   character(len=80) :: name_in
   character(len=8)  :: answer
 !==============================================================================!
@@ -34,7 +35,18 @@
   read(9) NbC
   read(9) NS
   read(9) c   ! NSsh is not used in Processor. 
+
+  ! Boundary condition and material keys
   read(9) Nmat
+  read(9) Nbnd
+  allocate(grid % materials(Nmat))
+  allocate(grid % boundary_conditions(Nbnd))
+  do n=1,Nmat
+    read(9) grid % materials(n) % name
+  end do
+  do n=1,Nbnd
+    read(9) grid % boundary_conditions(n) % name
+  end do
 
   ! Cell materials
   allocate (material(-NbC:NC))

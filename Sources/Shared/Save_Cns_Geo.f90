@@ -6,12 +6,13 @@
   use all_mod
   use gen_mod
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer :: sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: b, c, s, c1, c2, count, var, subo 
+  integer              :: b, c, s, n, c1, c2, count, var, subo 
   character(len=80)    :: name_out
   integer, allocatable :: iwork(:,:)
   real, allocatable    :: work(:)
@@ -46,6 +47,13 @@
   write(9) NSsub+NBFsub-NCFsub
   write(9) NSsh
   write(9) Nmat
+  write(9) Nbnd  
+  do n=1,Nmat
+    write(9) grid % materials(n) % name
+  end do
+  do n=1,Nbnd
+    write(9) grid % boundary_conditions(n) % name
+  end do
 
   !-----------! 
   !   Cells   ! 
@@ -116,14 +124,16 @@
       ! nekad bio i: NewC(c)
       iwork(count,1) = BCmark(c)   
       iwork(count,2) = NewC(CopyC(c)) 
-      if(CopyC(c) /= 0 .and. proces(CopyC(c)) /= sub) then
-        do b=1,NBFsub
-          if(BuReIn(b) == CopyC(c)) then
-            write(*,*) BufPos(b) 
-            write(*,*) xc(CopyC(c)), yc(CopyC(c)), zc(CopyC(c))  
-            iwork(count,2)=-BufPos(b) ! - sign, copy buffer
-          end if
-        end do
+      if(CopyC(c) /= 0) then
+        if(proces(CopyC(c)) /= sub) then
+          do b=1,NBFsub
+            if(BuReIn(b) == CopyC(c)) then
+              write(*,*) BufPos(b) 
+              write(*,*) xc(CopyC(c)), yc(CopyC(c)), zc(CopyC(c))  
+              iwork(count,2)=-BufPos(b) ! - sign, copy buffer
+            end if
+          end do
+        endif
       endif
     end if
   end do 
@@ -149,10 +159,22 @@
     iwork(count,2) = CopyS(2,s) 
   end do
 
-  write(*,*) 'n_copy ', count 
   write(9) count 
   write(9) (iwork(c,1), c=1,count)
   write(9) (iwork(c,2), c=1,count)
+
+  !------------------------------------------------------------!
+  !   Append boundary condition and material keys at the end   !
+  !------------------------------------------------------------!
+! write(*,*) 'Nbnd ', Nbnd 
+! write(9) Nbnd  
+! do n=1,Nbnd
+!   write(9) grid % boundary_conditions(n) % name
+! end do
+! write(9) Nmat  
+! do n=1,Nmat
+!   write(9) grid % materials(n) % name
+! end do
 
   close(9)
 

@@ -7,14 +7,15 @@
   use all_mod
   use gen_mod 
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: b, c, n, s, c1, c2, sub, subo
+  integer              :: b, c, n, s, c1, c2, sub, subo, ln
   integer              :: n_nodes_sub, n_cells_sub, n_faces_sub,  &
                           n_b_cells_sub,n_buff_sub,NCSsub,NCFsub
   character(len=80)    :: name_out
-  integer,allocatable  :: SideCell(:,:)
+  integer,allocatable  :: side_cell(:,:)
 !==============================================================================!
 !   Each subdomain needs two buffers: a send buffer and a receive buffer.
 !   A receive buffer will be stored as aditional boundary cells for each
@@ -69,14 +70,9 @@
     end do
     do c=1,NC
       if(proces(c) == sub) then
-        NewN(CellN(c,1))=-1
-        NewN(CellN(c,2))=-1
-        NewN(CellN(c,3))=-1
-        NewN(CellN(c,4))=-1
-        NewN(CellN(c,5))=-1
-        NewN(CellN(c,6))=-1
-        NewN(CellN(c,7))=-1
-        NewN(CellN(c,8))=-1
+        do ln=1,grid % cells_n_nodes(c)
+          NewN(grid % cells_n(ln,c))=-1
+        end do
       end if
     end do
     do n=1,NN
@@ -87,8 +83,8 @@
     end do
 
     ! Faces & real boundary cells
-    n_faces_sub  = 0     ! number of sides in subdomain
-    n_b_cells_sub = 0     ! number of real boundary cells in subdomain
+    n_faces_sub   = 0  ! number of sides in subdomain
+    n_b_cells_sub = 0  ! number of real boundary cells in subdomain
     NCSsub = 0
     do s=1,NS
       NewS(s)=0
@@ -107,7 +103,7 @@
       else ! c2 < 0
         if( proces(c1) == sub ) then
           n_faces_sub =n_faces_sub+1
-          NewS(s)=n_faces_sub   ! new number for the side
+          NewS(s)=n_faces_sub     ! new number for the side
           n_b_cells_sub=n_b_cells_sub+1
           NewC(c2)=-n_b_cells_sub ! new number for the boundary cell
         end if
@@ -147,7 +143,7 @@
             if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
               n_buff_sub = n_buff_sub+1
               BuSeIn(n_buff_sub)=NewC(c1) ! Buffer Send Index 
-              BuReIn(n_buff_sub)=c2 ! important for coordinate
+              BuReIn(n_buff_sub)=c2       ! important for coordinate
               BufPos(n_buff_sub)=-n_b_cells_sub-n_buff_sub
 
               NewS(s)=n_faces_sub+n_buff_sub
@@ -155,7 +151,7 @@
             if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
               n_buff_sub = n_buff_sub+1
               BuSeIn(n_buff_sub)=NewC(c2) ! Buffer Send Index
-              BuReIn(n_buff_sub)=c1 ! important for coordinate
+              BuReIn(n_buff_sub)=c1       ! important for coordinate
               BufPos(n_buff_sub)=-n_b_cells_sub-n_buff_sub
 
               NewS(s)=n_faces_sub+n_buff_sub
@@ -172,14 +168,14 @@
             NCFsub = NCFsub+1
             BuSeIn(n_buff_sub)=NewC(c1) ! Buffer Send Index 
             BuReIn(n_buff_sub)=c2 
-            BufPos(n_buff_sub)= - (-n_b_cells_sub-n_buff_sub) ! watch out - sign
+            BufPos(n_buff_sub)= - (-n_b_cells_sub-n_buff_sub) ! watch the sign
           end if
           if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
             n_buff_sub = n_buff_sub+1
             NCFsub = NCFsub+1
             BuSeIn(n_buff_sub)=NewC(c2) ! Buffer Send Index
             BuReIn(n_buff_sub)=c1 
-            BufPos(n_buff_sub)= - (-n_b_cells_sub-n_buff_sub) ! watch out - sign
+            BufPos(n_buff_sub)= - (-n_b_cells_sub-n_buff_sub) ! watch the sign
           end if
         end do    ! through sides
         NBBe(subo)=n_buff_sub
@@ -199,24 +195,24 @@
 
     end do ! for subo
 
-    call Save_Gmv_Mesh(sub, n_nodes_sub, n_cells_sub)
+    call Save_Gmv_Grid(sub, n_nodes_sub, n_cells_sub)
     call Save_Cns_Geo(sub, n_cells_sub, n_faces_sub, n_b_cells_sub,  &
                       n_buff_sub,NCFsub)
     call Save_Gmv_Links(sub, n_nodes_sub, n_cells_sub, n_faces_sub,   &
                         n_b_cells_sub, n_buff_sub)
 
-    write(*,*) 'Test:'
-    write(*,*) 'n_nodes_sub   =', n_nodes_sub
-    write(*,*) 'n_cells_sub   =', n_cells_sub
-    write(*,*) 'n_faces_sub   =', n_faces_sub
-    write(*,*) 'n_b_cells_sub =', n_b_cells_sub
+    write(*,*) '# Test:'
+    write(*,*) '# n_nodes_sub   =', n_nodes_sub
+    write(*,*) '# n_cells_sub   =', n_cells_sub
+    write(*,*) '# n_faces_sub   =', n_faces_sub
+    write(*,*) '# n_b_cells_sub =', n_b_cells_sub
 
-    write(*,*) '====================================' 
-    write(*,*) 'Subdomain   ', sub
-    write(*,*) 'Buffer size ', n_buff_sub
+    write(*,*) '# ====================================' 
+    write(*,*) '# Subdomain   ', sub
+    write(*,*) '# Buffer size ', n_buff_sub
     do subo=1,n_sub
       if(subo /= sub) then
-        write(*,*) 'Connections with ', subo ,' : ',                &
+        write(*,*) '# Connections with ', subo ,' : ',              &
           NBBe(subo)-NBBs(subo)+1,                                  &
           n_b_cells_sub+NBBs(subo),                                 &
           n_b_cells_sub+NBBe(subo) 
@@ -266,42 +262,32 @@
   end do
   write(*,*) 'Number of sides: ', NS, n_faces_sub
 
-  call Sort_Int_By_Index(CellN(1,0), NewC(1),NC)
-  call Sort_Int_By_Index(CellN(1,1), NewC(1),NC)
-  call Sort_Int_By_Index(CellN(1,2), NewC(1),NC)
-  call Sort_Int_By_Index(CellN(1,3), NewC(1),NC)
-  call Sort_Int_By_Index(CellN(1,4), NewC(1),NC)
-  call Sort_Int_By_Index(CellN(1,5), NewC(1),NC)
-  call Sort_Int_By_Index(CellN(1,6), NewC(1),NC)
-  call Sort_Int_By_Index(CellN(1,7), NewC(1),NC)
-  call Sort_Int_By_Index(CellN(1,8), NewC(1),NC)
+  ! It is not sorting nodes ... is it good?  I doubt
+  call Grid_Mod_Sort_Cells_By_Index(grid, NewC(1), NC)
+  call Grid_Mod_Sort_Faces_By_Index(grid, NewS(1), NS)
+
   call Sort_Int_By_Index(proces(1),  NewC(1),NC)
   call Sort_Int_By_Index(material(1),NewC(1),NC)
 
-  call Sort_Int_By_Index(SideN(1,0), NewS(1),NS)
-  call Sort_Int_By_Index(SideN(1,1), NewS(1),NS)
-  call Sort_Int_By_Index(SideN(1,2), NewS(1),NS)
-  call Sort_Int_By_Index(SideN(1,3), NewS(1),NS)
-  call Sort_Int_By_Index(SideN(1,4), NewS(1),NS)
   call RNSort(Dx(1), NewS(1), NS)  ! this is important
   call RNSort(Dy(1), NewS(1), NS)  ! for plotting the
   call RNSort(Dz(1), NewS(1), NS)  ! grid with EpsPar()
-  allocate(SideCell(NS,2))
+  allocate(side_cell(NS,2))
   do s=1,NS
-    SideCell(s,1) = SideC(1,s)
-    SideCell(s,2) = SideC(2,s)
+    side_cell(s,1) = SideC(1,s)
+    side_cell(s,2) = SideC(2,s)
   end do
-  call Sort_Int_By_Index(SideCell(1,1), NewS(1),NS)
-  call Sort_Int_By_Index(SideCell(1,2), NewS(1),NS)
+  call Sort_Int_By_Index(side_cell(1,1), NewS(1),NS)
+  call Sort_Int_By_Index(side_cell(1,2), NewS(1),NS)
   do s=1,NS
-    SideC(1,s) = SideCell(s,1)
-    SideC(2,s) = SideCell(s,2)
+    SideC(1,s) = side_cell(s,1)
+    SideC(2,s) = side_cell(s,2)
   end do
-  deallocate(SideCell)
+  deallocate(side_cell)
 
   call Count_Materials
 
-  call Save_Gmv_Mesh(0, NN, NC)
+  call Save_Gmv_Grid(0, NN, NC)
 
   call Save_Cas(0, NN, NC, NS+NSsh)
 

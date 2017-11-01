@@ -245,7 +245,9 @@
     open(3,file=JetIn)
     do i = 1, Nprob
       if(Ncount(i) /= 0) then
-        write(3,'(9E15.7)') (z_p(i)+z_p(i+1))/4.0, Ump(i)/Uaver, Vmp(i)/Uaver, Wmp(i)/Uaver, uup(i)/Uaver**2, vvp(i), wwp(i), uvp(i), Tmp(i) 
+        write(3,'(9E15.7)') (z_p(i)+z_p(i+1))/4.0,                            &
+                             Ump(i)/Uaver, Vmp(i)/Uaver, Wmp(i)/Uaver,        &
+                             uup(i)/Uaver**2, vvp(i), wwp(i), uvp(i), Tmp(i) 
       end if
     end do 
     close(3)

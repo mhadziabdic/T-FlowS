@@ -7,6 +7,7 @@
   use pro_mod
   use rans_mod
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -14,8 +15,9 @@
 !----------------------------------[Calling]-----------------------------------!
   real          :: Distance
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, n, dum1, n_bnd_cond, n_points, n_initial_cond, m, c1, c2, s 
-  character(len=80) :: name_bou, name_prof(128), dir
+  integer           :: c, n, n_bnd_cond, n_points, n_initial_cond, s
+  integer           :: m, c1, c2, bc, mt, i
+  character(len=80) :: name_bou, name_prof(128), dir, bc_name, mt_name
   integer           :: typBou(128)
   real              :: xyz(10024)
   real              :: wi
@@ -36,9 +38,18 @@
   !-------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) Nmat
-  do n = 1,Nmat
+  do mt = 1,Nmat
+
     call ReadC(9,inp,tn,ts,te)
+    call To_Upper_Case(  inp(ts(1):te(1))  )
     call To_Upper_Case(  inp(ts(2):te(2))  )
+    read(inp(ts(1):te(1)),*) mt_name
+
+    ! Find material index
+    do i=1, size(grid % materials) 
+      if(mt_name == grid % materials(i) % name) n=i      
+    end do
+
     if( inp(ts(2):te(2))  ==  'FLUID') then 
       StateMat(n)=FLUID
     else if( inp(ts(2):te(2))  ==  'SOLID') then 
@@ -53,16 +64,25 @@
     if(HOT==YES) read(inp(ts(6):te(6)),*) CAPc(n)
   end do
   
-  !-------------------------!
-  !   Boundary conditions   !
-  !-------------------------!
+  !-----------------------------------------------------!
+  !   Boundary conditions 1 - read them from the file   !
+  !-----------------------------------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_bnd_cond
-  do n = 1,n_bnd_cond  ! number of boundary conditions
+
+  do bc = 1,n_bnd_cond  ! number of boundary conditions
+
     call ReadC(9,inp,tn,ts,te)
+    call To_Upper_Case(  inp(ts(1):te(1))  )
     call To_Upper_Case(  inp(ts(2):te(2))  )
     call To_Upper_Case(  inp(ts(3):te(3))  )
-    read(inp(ts(1):te(1)),*) dum1
+    read(inp(ts(1):te(1)),*) bc_name
+
+    ! Find b.c. index
+    do i=1, size(grid % boundary_conditions) 
+      if(bc_name == grid % boundary_conditions(i) % name) n=i      
+    end do
+
     if( inp(ts(2):te(2)) == 'INFLOW') then 
       typBou(n)=INFLOW
       PER_BC = NO
@@ -84,6 +104,8 @@
     end if
     if( inp(ts(3):te(3))  ==  'FILE') then
       read(inp(ts(4):te(4)),'(A80)') name_prof(n)
+      write(*,*) 'n =            ', n
+      write(*,*) 'name_prof(n) = ', name_prof(n)
     else
       read(inp(ts(3):te(3)),*) U % bound(n)
       read(inp(ts(4):te(4)),*) V % bound(n)
@@ -214,6 +236,7 @@
   !------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_initial_cond
+  write(*,*) '# Number of initial conditions: ', n_initial_cond
   if(n_initial_cond > Nmat) then
     if(this_proc < 2) write(*,*) 'Warning: there are more initial conditions then materials'
   end if
@@ -295,9 +318,9 @@
 
   close(9)
 
-  !-------------------------------------------------------------!
-  !  I wanted to write something here, but I can't recall what  |
-  !-------------------------------------------------------------!
+  !----------------------------------------------------------------------!
+  !   Boundary conditions 2 - distribute them over computational cells   !
+  !----------------------------------------------------------------------!
   do n=1,n_bnd_cond
 
     ! Boundary condition is given by a single constant

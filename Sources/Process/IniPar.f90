@@ -25,8 +25,6 @@
   FRACT      =  7
   AVS        =  8
   GMV        =  9
-  YES        = 10
-  NO         = 11
   LES        = 12
   DNS        = 13
   K_EPS      = 14

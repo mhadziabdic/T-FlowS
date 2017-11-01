@@ -7,13 +7,13 @@ Neu2TFlowS_SOURCES =		\
   Logo.f90			\
   Main.f90			\
   Load_Neu.f90			\
-  Mesh_Topology.f90		\
+  Grid_Topology.f90		\
   Read_Line.f90
 
-SUBDIRS = ../Modules		\
+SUBDIRS = ../Shared/Modules	\
           ../Shared
 
-LDADD = ../Modules/libModules.a	\
+LDADD = ../Shared/Modules/libSharedModules.a	\
         ../Shared/libShared.a
 
 INCLUDE = -I@top_srcdir@/

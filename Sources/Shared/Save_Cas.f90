@@ -8,6 +8,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -58,7 +59,9 @@
   ! Regular node section
   write(9,'(A7,Z9,Z9,A4)') '(10 (7 ', 1, NNsub, ' 1)('
   do n=1,NN
-    if(NewN(n) /= 0) write(9, '(3E15.7)') x_node(n), y_node(n), z_node(n)
+    if(NewN(n) /= 0) write(9, '(3E15.7)') grid % xn(n),  &
+                                          grid % yn(n),  &
+                                          grid % zn(n)
   end do
   write(9,'(A2)') '))'
 
@@ -101,15 +104,19 @@
           c2 = SideC(2,s)
           if(c2 < 0) then  
             if(BCmark(c2) == n) then 
-              if(SideN(s,0) == 3) then
-                write(9,'(6Z9)')                                           &
-                  3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
-                  NewC(c1), 0  ! <-- set c2 to zero 
-              else if(SideN(s,0) == 4) then
-                write(9,'(7Z9)')                          &
-                  4, NewN(SideN(s,1)), NewN(SideN(s,2)),  & 
-                     NewN(SideN(s,3)), NewN(SideN(s,4)),  &
-                  NewC(c1), 0  ! <-- set c2 to zero  
+              if(grid % faces_n_nodes(s) == 3) then
+                write(9,'(6Z9)')                 &
+                  3, NewN(grid % faces_n(1,s)),  &
+                     NewN(grid % faces_n(2,s)),  &
+                     NewN(grid % faces_n(3,s)),  &
+                     NewC(c1), 0  ! <-- set c2 to zero 
+              else if(grid % faces_n_nodes(s) == 4) then
+                write(9,'(7Z9)')                 &
+                  4, NewN(grid % faces_n(1,s)),  &
+                     NewN(grid % faces_n(2,s)),  & 
+                     NewN(grid % faces_n(3,s)),  &
+                     NewN(grid % faces_n(4,s)),  &
+                     NewC(c1), 0  ! <-- set c2 to zero  
               end if 
             end if
           end if
@@ -118,7 +125,7 @@
     end if
 
     ! Prepare for next boundary
-    write(*,*) 'Number of faces:', Nfac, NtotFac+1, NtotFac+Nfac
+    write(*,*) '# Number of faces:', Nfac, NtotFac+1, NtotFac+Nfac
     NtotFac = NtotFac+Nfac
 
   end do   ! n -> boundary condition types 
@@ -131,15 +138,19 @@
     c2 = SideC(2,s)
     if(c2 < 0) then
       if(BCmark(c2) == n) then
-        if(SideN(s,0) == 3) then
-          write(9,'(6Z9)')                                           &
-            3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
+        if(grid % faces_n_nodes(s) == 3) then
+          write(9,'(6Z9)')                 &
+            3, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
                NewC(c1), 0  ! <-- set c2 to zero
-        else if(SideN(s,0) == 4) then
-           write(9,'(7Z9)')                          &
-             4, NewN(SideN(s,1)), NewN(SideN(s,2)),  &
-                NewN(SideN(s,3)), NewN(SideN(s,4)),  &
-                NewC(c1), 0  ! <-- set c2 to zero
+        else if(grid % faces_n_nodes(s) == 4) then
+          write(9,'(7Z9)')                 &
+            4, NewN(grid % faces_n(1,s)),  & 
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
+               NewN(grid % faces_n(4,s)),  &
+               NewC(c1), 0  ! <-- set c2 to zero
         end if
       end if
     end if
@@ -154,14 +165,18 @@
       c2 = SideC(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == n) then
-          if(SideN(s,0) == 3) then
-            write(9,'(6Z9)')                                           &
-              3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
+          if(grid % faces_n_nodes(s) == 3) then
+            write(9,'(6Z9)')                 &
+              3, NewN(grid % faces_n(1,s)),  &
+                 NewN(grid % faces_n(2,s)),  &
+                 NewN(grid % faces_n(3,s)),  &
                  NewC(c1), 0  ! <-- set c2 to zero
-          else if(SideN(s,0) == 4) then
-            write(9,'(7Z9)')                          &
-              4, NewN(SideN(s,1)), NewN(SideN(s,2)),  &
-                 NewN(SideN(s,3)), NewN(SideN(s,4)),  &
+          else if(grid % faces_n_nodes(s) == 4) then
+            write(9,'(7Z9)')                 &
+              4, NewN(grid % faces_n(1,s)),  &
+                 NewN(grid % faces_n(2,s)),  &
+                 NewN(grid % faces_n(3,s)),  &
+                 NewN(grid % faces_n(4,s)),  &
                  NewC(c1), 0  ! <-- set c2 to zero
           end if
         end if
@@ -190,7 +205,7 @@
         NFac = NFac+1 
       end if
   end do
-  write(*,*) 'Number of cell faces at interface: ', Nfac
+  write(*,*) '# Number of cell faces at interface: ', Nfac
 
   write(9,'(A33)') '(0 "Sides on material interface")'
   write(9,'(A7,Z9,Z9,A6)') '(13 (3 ', NtotFac+1, NtotFac+Nfac, ' 2 0)('
@@ -198,15 +213,19 @@
       c1 = SideC(1,s)
       c2 = SideC(2,s)
       if(c2 > 0 .and. (material(NewC(c1)) /= material(NewC(c2))) ) then
-        if(SideN(s,0) == 3) then
-          write(9,'(6Z9)')                                           &
-            3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
-            NewC(c1), NewC(c2)
-        else if(SideN(s,0) == 4) then
-          write(9,'(7Z9)')                          &
-            4, NewN(SideN(s,1)), NewN(SideN(s,2)),  & 
-               NewN(SideN(s,3)), NewN(SideN(s,4)),  &
-            NewC(c1), NewC(c2)
+        if(grid % faces_n_nodes(s) == 3) then
+          write(9,'(6Z9)')                 &
+            3, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
+               NewC(c1), NewC(c2)
+        else if(grid % faces_n_nodes(s) == 4) then
+          write(9,'(7Z9)')                 &
+            4, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  & 
+               NewN(grid % faces_n(3,s)),  &
+               NewN(grid % faces_n(4,s)),  &
+               NewC(c1), NewC(c2)
         end if 
       end if
   end do
@@ -222,15 +241,19 @@
       if(c2 < 0) c2=0
       if(c2 > 0 .and. (material(NewC(c1)) == material(NewC(c2))) .and. &
          Dx(s)==0.0 .and. Dy(s)==0.0 .and. Dz(s)==0 ) then
-        if(SideN(s,0) == 3) then
-          write(9,'(6Z9)')                                           &
-            3, NewN(SideN(s,1)), NewN(SideN(s,2)), NewN(SideN(s,3)), &
-            NewC(c1), NewC(c2)
-        else if(SideN(s,0) == 4) then
-          write(9,'(7Z9)')                          &
-            4, NewN(SideN(s,1)), NewN(SideN(s,2)),  &
-               NewN(SideN(s,3)), NewN(SideN(s,4)),  &
-            NewC(c1), NewC(c2)
+        if(grid % faces_n_nodes(s) == 3) then
+          write(9,'(6Z9)')                 &
+            3, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
+               NewC(c1), NewC(c2)
+        else if(grid % faces_n_nodes(s) == 4) then
+          write(9,'(7Z9)')                 &
+            4, NewN(grid % faces_n(1,s)),  &
+               NewN(grid % faces_n(2,s)),  &
+               NewN(grid % faces_n(3,s)),  &
+               NewN(grid % faces_n(4,s)),  &
+               NewC(c1), NewC(c2)
         end if
       end if
   end do
@@ -252,16 +275,17 @@
   write(9,'(A7,Z9,Z9,A6)') '(12 (1 ', 1, NCsub, ' 1 0)('
   do c=1,NC
     if(NewC(c) /= 0) then
-      if(CellN(c,0) == 8) then       ! hexahedra   
+      if(grid % cells_n_nodes(c) == 8) then       ! hexahedra   
         write(9, *) ' 4 ' 
-      else if(CellN(c,0) == 6) then  ! prism
+      else if(grid % cells_n_nodes(c) == 6) then  ! prism
         write(9, *) ' 6 '
-      else if(CellN(c,0) == 4) then  ! tetrahedra
+      else if(grid % cells_n_nodes(c) == 4) then  ! tetrahedra
         write(9, *) ' 2 '
-      else if(CellN(c,0) == 5) then  ! pyramid    
+      else if(grid % cells_n_nodes(c) == 5) then  ! pyramid    
         write(9, *) ' 5 '
       else
-        write(*,*) 'Unsupported cell type ', CellN(c,0), ' nodes.'
+        write(*,*) 'Unsupported cell type with ', &
+                    grid % cells_n_nodes(c), ' nodes.'
         write(*,*) 'Exiting'
         stop 
       end if 

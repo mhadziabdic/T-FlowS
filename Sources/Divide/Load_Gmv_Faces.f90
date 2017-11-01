@@ -8,6 +8,7 @@
   use gen_mod 
   use div_mod
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
@@ -42,13 +43,16 @@
     c2 = SideC(2,s)
     read(9,*) dum_s, dum_i
     if(dum_s == 'tri') then 
-      SideN(s,0) = 3
-      read(9,*) &
-        SideN(s,1), SideN(s,2), SideN(s,3)
+      grid % faces_n_nodes(s) = 3
+      read(9,*) grid % faces_n(1,s),  &
+                grid % faces_n(2,s),  &
+                grid % faces_n(3,s)
     else if(dum_s == 'quad') then
-      SideN(s,0) = 4
-      read(9,*) &
-        SideN(s,1), SideN(s,2), SideN(s,3), SideN(s,4)  
+      grid % faces_n_nodes(s) = 4
+      read(9,*) grid % faces_n(1,s),  &
+                grid % faces_n(2,s),  &
+                grid % faces_n(3,s),  &
+                grid % faces_n(4,s)  
     else
       write(*,*) 'Unsupported cell-face type:', dum_s
       write(*,*) 'Exiting'
@@ -66,12 +70,17 @@
   write(6, *) 'Now reading the file:', name_in
 
   do s=NS+1,NS+NSsh
-    read(9,*) SideN(s,0)
-    if(SideN(s,0)==3) then
-      read(9,*) SideN(s,1), SideN(s,2), SideN(s,3),             &
+    read(9,*) grid % faces_n_nodes(s)
+    if(grid % faces_n_nodes(s)==3) then
+      read(9,*) grid % faces_n(1,s),  &
+                grid % faces_n(2,s),  &
+                grid % faces_n(3,s),  &
                 SideC(1,s), SideC(2,s)
-    else if(SideN(s,0)==4) then
-      read(9,*) SideN(s,1), SideN(s,2), SideN(s,3), SideN(s,4), &
+    else if(grid % faces_n_nodes(s)==4) then
+      read(9,*) grid % faces_n(1,s),  &
+                grid % faces_n(2,s),  &
+                grid % faces_n(3,s),  &
+                grid % faces_n(4,s),  &
                 SideC(1,s), SideC(2,s)
     end if
   end do

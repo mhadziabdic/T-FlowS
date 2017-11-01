@@ -1,13 +1,8 @@
 noinst_LIBRARIES = libSharedModules.a
 
 libSharedModules_a_SOURCES = 	\
-  Point_Mod.f90			\
-  Line_Mod.f90			\
-  Block_Mod.f90			\
-  Region_Mod.f90		\
   Material_Mod.f90 		\
   Boundary_Condition_Mod.f90	\
-  Domain_Mod.f90		\
   Grid_Mod.f90			\
   allp_mod.f90			\
   allt_mod.f90			\

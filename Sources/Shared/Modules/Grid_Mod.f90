@@ -1,7 +1,8 @@
 !==============================================================================!
   module Grid_Mod
 !------------------------------------------------------------------------------!
-!   Grids defining blocks used in "Generator"                                  !
+!   Grids module is used throughout all programs                               !
+!   (that means in "Generate", "Divide", "Neu2TflowS", "Process".              !
 !------------------------------------------------------------------------------!
   use Material_Mod
   use Boundary_Condition_Mod

@@ -1,6 +1,11 @@
 bin_PROGRAMS = Generate
 
 Generate_SOURCES =	 	\
+  Point_Mod.f90			\
+  Line_Mod.f90			\
+  Block_Mod.f90			\
+  Region_Mod.f90		\
+  Domain_Mod.f90		\
   Are_Nodes_Twins.f90		\
   Compute_Node_Coordinates.f90	\
   Compute_Grid_Geometry.f90	\

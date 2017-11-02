@@ -61,7 +61,7 @@
   end type Grid_Type
 
   ! If defined like this, one can easily think of multiple grids
-  type(Grid_Type) :: grid
+  ! type(Grid_Type) :: grid
 
   contains
  

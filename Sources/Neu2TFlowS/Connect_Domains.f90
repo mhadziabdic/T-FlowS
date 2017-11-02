@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Connect_Domains 
+  subroutine Connect_Domains(grid)
 !------------------------------------------------------------------------------!
 !   Connects two problem domains, one with periodic streamwise boundary        !
 !   conditions and another with inflow-outflow.                                !
@@ -27,6 +27,8 @@
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
@@ -214,4 +216,4 @@
 
   goto 1
 
-  end subroutine Connect_Domains
+  end subroutine

@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Eps_Cut(face_g_dx,face_g_dy,dir)
+  subroutine Save_Eps_Cut(grid, face_g_dx, face_g_dy, dir)
 !------------------------------------------------------------------------------!
 !   Writes grid in encapsulated postscript format.                             !
 !------------------------------------------------------------------------------!
@@ -10,12 +10,13 @@
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  real      :: xg(grid % max_n_nodes),  &
-               yg(grid % max_n_nodes),  &
-               zg(grid % max_n_nodes)
-  real      :: face_g_dx(grid % max_n_faces),  &
-               face_g_dy(grid % max_n_faces) 
-  character :: dir
+  type(Grid_Type) :: grid
+  real            :: xg(grid % max_n_nodes),  &  ! if I recall correctly (BN)
+                     yg(grid % max_n_nodes),  &  ! these were supposed to be
+                     zg(grid % max_n_nodes)      ! general coordnates
+  real            :: face_g_dx(grid % max_n_faces),  &
+                     face_g_dy(grid % max_n_faces) 
+  character       :: dir
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c1, c2, count, lw
   character(len=80) :: name_eps, answer

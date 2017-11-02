@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine Save_Cas(sub, NNsub, NCsub, NSsub)
+  subroutine Save_Cas(grid, sub, NNsub, NCsub, NSsub)
 !------------------------------------------------------------------------------!
-!   Writes: NAME.cas                                                           !
+!   Writes: ".cas" file                                                        !
 !                                                                              !
 !   See also: number                                                           !
 !   NSsub holds (has to hold) NS + NSsh                                        !
@@ -12,7 +12,8 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer   :: sub, NNsub, NCsub, NSsub
+  type(Grid_Type) :: grid
+  integer         :: sub, NNsub, NCsub, NSsub
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c,  c1,  c2,  n, s, Nfac, NtotFac 
   character(len=80) :: name_out

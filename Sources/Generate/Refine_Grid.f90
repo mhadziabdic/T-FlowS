@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Refine_Grid
+  subroutine Refine_Grid(grid)
 !------------------------------------------------------------------------------!
 !   Mark the region of the domain for local refinement and refine the grid!    !
 !------------------------------------------------------------------------------!
@@ -9,9 +9,11 @@
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: c, lev, reg, n1, n2, n3, n4, n5, n6, n7, n8
-  real                 :: x1, y1, z1, x8, y8, z8, x0, y0, z0
+  integer :: c, lev, reg, n1, n2, n3, n4, n5, n6, n7, n8
+  real    :: x1, y1, z1, x8, y8, z8, x0, y0, z0
 !==============================================================================!
 
   ! Set no cell for refinement, intially
@@ -72,10 +74,10 @@
 
     end do   ! reg
 
-    call Refine_Marked_Cells(lev)
+    call Refine_Marked_Cells(grid, lev)
 
     CelMar = 0
 
   end do  ! lev
 
-  end subroutine Refine_Grid
+  end subroutine

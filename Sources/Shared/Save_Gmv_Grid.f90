@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Gmv_Grid(sub, NNsub, NCsub)
+  subroutine Save_Gmv_Grid(grid, sub, NNsub, NCsub)
 !------------------------------------------------------------------------------!
 ! Writes: NAME.gmv, NAME.faces.gmv, NAME.shadow.gmv                            !
 !----------------------------------[Modules]-----------------------------------!
@@ -10,7 +10,8 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer :: sub, NNsub, NCsub, NmaterBC
+  type(Grid_Type) :: grid
+  integer         :: sub, NNsub, NCsub, NmaterBC
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c,  c1,  c2,  n, s
   character(len=80) :: name_out

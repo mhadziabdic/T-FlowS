@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Cns_Geo(sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub)
+  subroutine Save_Cns_Geo(grid, sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub)
 !------------------------------------------------------------------------------!
 !   Writes: name.cns, name.geo                                                 !
 !----------------------------------[Modules]-----------------------------------!
@@ -10,7 +10,8 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer :: sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub
+  type(Grid_Type) :: grid
+  integer         :: sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: b, c, s, n, c1, c2, count, var, subo 
   character(len=80)    :: name_out

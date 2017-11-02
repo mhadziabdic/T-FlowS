@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Smooth_Grid
+  subroutine Smooth_Grid(grid)
 !------------------------------------------------------------------------------!
 !   Smooths the grid lines by a Laplacian-like algorythm.                      !
 !------------------------------------------------------------------------------!
@@ -9,6 +9,8 @@
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: c, n, i, j, k, m
   real                 :: x_new_tmp, y_new_tmp, z_new_tmp    
@@ -173,4 +175,4 @@
   deallocate(z_node_new)
   deallocate(node_to_nodes)
 
-  end subroutine Smooth_Grid
+  end subroutine

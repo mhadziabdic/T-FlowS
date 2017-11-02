@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Eps_Whole(NSsh0)
+  subroutine Save_Eps_Whole(grid, NSsh0)
 !------------------------------------------------------------------------------!
 !   Saves the whole grid in encapsulated postscript.                           !
 !------------------------------------------------------------------------------!
@@ -12,7 +12,8 @@
 !----------------------------------[Calling]-----------------------------------!
   real :: Distance
 !---------------------------------[Arguments]----------------------------------!
-  integer :: NSsh0  ! if 0, shadow will not be drawn 
+  type(Grid_Type) :: grid
+  integer         :: NSsh0  ! if 0, shadow will not be drawn 
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: n, s, s0, c1, c2
   integer             :: xmaxb, xminb, ymaxb, yminb, xlegend

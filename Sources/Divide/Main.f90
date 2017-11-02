@@ -8,11 +8,13 @@
   use gen_mod 
   use div_mod
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer          :: n_sub_tot            ! total number of subdomains
-  integer          :: n_div                ! total number of divisions
+  type(Grid_Type)  :: grid         ! grid to be divided
+  integer          :: n_sub_tot    ! total number of subdomains
+  integer          :: n_div        ! total number of divisions
   integer          :: chunks(128)
   integer          :: i, j, c
   character(len=8) :: answer
@@ -33,10 +35,10 @@
   read(inp, '(A80)')  name
 
   ! Load the finite volume grid
-  call Load_Cns
-  call Load_Gmv
-  call Load_Geo
-  call BCelLoa
+  call Load_Cns(grid)
+  call Load_Gmv(grid)
+  call Load_Geo(grid)
+  call Load_Gmv_Faces(grid)
 
   ! Initialize processor numbers
   do c=1,NC
@@ -62,7 +64,7 @@
   call Sort_Real_By_Index(criter(1),iz(1),NC,2)
   write(*,*) '# Finished sorting'
 
-  call Load_Geo
+  call Load_Geo(grid)
 
   write(*,*) '# Number of subdomains:'
   read(*,*)  n_sub_tot
@@ -113,7 +115,7 @@
     write(*,*) '# Processor:', j, ' cells:', subNC(j)
   end do
 
-  call Number 
+  call Create_Buffers_And_Save(grid)
 
   call Save_Com
   call Save_Scripts
@@ -121,4 +123,4 @@
   call cpu_time(finish)
   print '("# Time = ",f14.3," seconds.")',finish-start
 
-  end program Divisor
+  end program

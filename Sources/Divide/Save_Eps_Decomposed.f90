@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Eps_Decomposed()
+  subroutine Save_Eps_Decomposed(grid)
 !------------------------------------------------------------------------------!
 !   Saves the whole grid in encapsulated postscript.                           !
 !------------------------------------------------------------------------------!
@@ -10,6 +10,8 @@
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------!
   real :: Distance
 !-----------------------------------[Locals]-----------------------------------!
@@ -62,7 +64,7 @@
   !------------------------------!
   !   Input camera coordinates   !
   !------------------------------!
-1 write(6,*) 'Enter the camera coordinates (skip to exit): '
+1 write(*,*) '# Enter the camera coordinates (skip to exit): '
   call ReadC(5,inp,tn,ts,te)
   if(tn == 1) then
     read(inp, *) answer
@@ -84,11 +86,11 @@
   !   Create .eps file   !
   !                      !
   !----------------------!
-  write(6,*) 'Enter the file name (without extension): '
+  write(6,*) '# Enter the file name (without extension): '
   call ReadC(5,inp,tn,ts,te)
   read(inp, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
-  write(6, *) 'Now creating the file:', name_eps
+  write(6, *) '# Now creating the file:', name_eps
 
   xmax=maxval(grid % xn(1:NN))
   ymax=maxval(grid % yn(1:NN))
@@ -287,4 +289,4 @@
   deallocate(indx)
   deallocate(work)
 
-  end subroutine Save_Eps_Decomposed
+  end subroutine

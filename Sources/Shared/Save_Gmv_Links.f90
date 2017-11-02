@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Gmv_Links(sub, NNsub, NCsub, NSsub, NBCsub, NBFsub) 
+  subroutine Save_Gmv_Links(grid, sub, NNsub, NCsub, NSsub, NBCsub, NBFsub) 
 !------------------------------------------------------------------------------!
 !   Creates the file "name.ln.gmv" to check the cell connections.              !
 !                                                                              !
@@ -16,7 +16,8 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer :: sub, NNsub, NCsub, NSsub, NBCsub, NBFsub
+  type(Grid_Type) :: grid
+  integer         :: sub, NNsub, NCsub, NSsub, NBCsub, NBFsub
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: n, c, c1, c2, s 
   integer           :: nf_sub_non_per, nf_sub_per

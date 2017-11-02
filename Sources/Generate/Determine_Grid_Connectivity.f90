@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine TopSys(rrun) 
+  subroutine Determine_Grid_Connectivity(grid, rrun) 
 !------------------------------------------------------------------------------!
 !   Determines the topology of the cells, faces and boundary cells.            !
 !------------------------------------------------------------------------------!
@@ -11,7 +11,8 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  logical :: rrun
+  type(Grid_Type) :: grid
+  logical         :: rrun
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, s, i
   integer :: c1, c2, m, pass
@@ -173,4 +174,4 @@
     stop
   end if 
 
-  end subroutine TopSys
+  end subroutine

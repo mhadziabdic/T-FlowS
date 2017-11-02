@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Probe_1D_Nodes
+  subroutine Probe_1D_Nodes(grid)
 !------------------------------------------------------------------------------!
 !   This subroutine finds the coordinate of cell-centers in non-homogeneous    !
 !   direction and write them in file called "name.1D"                          !
@@ -10,7 +10,7 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  logical :: isit
+  type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------! 
   include "Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
@@ -18,6 +18,7 @@
   real              :: n_p(10000)
   character(len=80) :: name_prob
   character(len=80) :: answer
+  logical           :: isit
 !==============================================================================!
 
   write(*,*) '#==========================================='
@@ -108,4 +109,4 @@
 
   close(9)
 
-  end subroutine Probe_1D_Nodes
+  end subroutine

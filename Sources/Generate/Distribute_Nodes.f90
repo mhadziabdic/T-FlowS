@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Distribute_Nodes(dom, b, w, is, js, ks, ie, je, ke)
+  subroutine Distribute_Nodes(dom, grid, b, w, is, js, ks, ie, je, ke)
 !------------------------------------------------------------------------------!
 !   Places the nodes on the line defined with local block position             !
 !------------------------------------------------------------------------------!
@@ -12,6 +12,7 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Domain_Type)   :: dom
+  type(Grid_Type)     :: grid
   integer, intent(in) :: b, is, js, ks, ie, je, ke
   real,    intent(in) :: w
 !----------------------------------[Calling]-----------------------------------!

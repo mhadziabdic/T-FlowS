@@ -3,7 +3,7 @@ bin_PROGRAMS = Neu2TFlowS
 Neu2TFlowS_SOURCES =		\
   Compute_Geometry.f90		\
   Connect_Domains.f90		\
-  Find_Sides.f90		\
+  Find_Faces.f90		\
   Logo.f90			\
   Main.f90			\
   Load_Neu.f90			\

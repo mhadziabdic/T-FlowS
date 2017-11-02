@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Distribute_Regions(dom)
+  subroutine Distribute_Regions(dom, grid)
 !------------------------------------------------------------------------------!
 !   Distribute regions (which are defined in .dom file) to materials and       !
 !   boundary conditions.                                                       !
@@ -13,6 +13,7 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Domain_Type) :: dom
+  type(Grid_Type)   :: grid
 !---------------------------------[Interface]----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------!

@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Connect_Blocks(dom)
+  subroutine Connect_Blocks(dom, grid)
 !------------------------------------------------------------------------------!
 !   Solve the cell connectivity after block by block grid generation           !
 !------------------------------------------------------------------------------!
@@ -12,6 +12,7 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Domain_Type) :: dom
+  type(Grid_Type)   :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, n                         ! counters
   integer :: b1, b2                          ! block 1 and 2
@@ -289,4 +290,4 @@
 
   write(*, '(I8)') del       
 
-  end subroutine Connect_Blocks   
+  end subroutine

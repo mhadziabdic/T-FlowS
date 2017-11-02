@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Number
+  subroutine Create_Buffers_And_Save(grid)
 !------------------------------------------------------------------------------!
 !   Number the cells in each subdomain for subsequent separate saving.         !
 !------------------------------------------------------------------------------!
@@ -10,6 +10,8 @@
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: b, c, n, s, c1, c2, sub, subo, ln
   integer              :: n_nodes_sub, n_cells_sub, n_faces_sub,  &
@@ -195,11 +197,23 @@
 
     end do ! for subo
 
-    call Save_Gmv_Grid(sub, n_nodes_sub, n_cells_sub)
-    call Save_Cns_Geo(sub, n_cells_sub, n_faces_sub, n_b_cells_sub,  &
-                      n_buff_sub,NCFsub)
-    call Save_Gmv_Links(sub, n_nodes_sub, n_cells_sub, n_faces_sub,   &
-                        n_b_cells_sub, n_buff_sub)
+    call Save_Gmv_Grid(grid,         &
+                       sub,          &
+                       n_nodes_sub,  &
+                       n_cells_sub)
+    call Save_Cns_Geo(grid,              &
+                      sub, n_cells_sub,  &
+                      n_faces_sub,       &
+                      n_b_cells_sub,     &
+                      n_buff_sub,        &
+                      NCFsub)
+    call Save_Gmv_Links(grid,            &
+                        sub,             &
+                        n_nodes_sub,     &
+                        n_cells_sub,     &
+                        n_faces_sub,     &
+                        n_b_cells_sub,   &
+                        n_buff_sub)
 
     write(*,*) '# Test:'
     write(*,*) '# n_nodes_sub   =', n_nodes_sub
@@ -287,10 +301,10 @@
 
   call Count_Materials
 
-  call Save_Gmv_Grid(0, NN, NC)
+  call Save_Gmv_Grid(grid, 0, NN, NC)
 
-  call Save_Cas(0, NN, NC, NS+NSsh)
+  call Save_Cas(grid, 0, NN, NC, NS+NSsh)
 
-  call Save_Eps_Decomposed
+  call Save_Eps_Decomposed(grid)
 
-  end subroutine Number
+  end subroutine

@@ -3,10 +3,12 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use gen_mod 
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, n, s
+  type(Grid_Type) :: grid     ! grid to be converted
+  integer         :: c, n, s
 !==============================================================================!
 
   call Logo
@@ -21,12 +23,12 @@
   write(*,*) '#------------------------------------------------------'
   read(*,*) name
 
-  call Load_Neu
-  call Grid_Topology
-  call Find_Sides
-  call Compute_Geometry
+  call Load_Neu(grid)
+  call Grid_Topology(grid)
+  call Find_Faces(grid)
+  call Compute_Geometry(grid)
   
-  call Connect_Domains
+  call Connect_Domains(grid)
 
   do n=1,NN
     NewN(n) = n 
@@ -39,27 +41,27 @@
   end do  
 
   ! Count all materials
-  call Count_Materials
+  call Count_Materials(grid)
 
-  call Save_Gmv_Grid(0, NN, NC, NS, NbC)
-  call Save_Cns_Geo(0, NC, NS, NBC, 0, 0) 
-  call Save_Gmv_Links(0, NN, NC, NS, NbC, 0)
+  call Save_Gmv_Grid(grid, 0, NN, NC, NS, NbC)
+  call Save_Cns_Geo(grid, 0, NC, NS, NBC, 0, 0) 
+  call Save_Gmv_Links(grid, 0, NN, NC, NS, NbC, 0)
 
   ! Create output for Fluent
   NewC(-NBC-1) = -NBC-1
-! call Save_Cas(0, NN, NC, NS+NSsh, NBC) ! save grid for postprocessing
-                                         ! with Fluent
+  call Save_Cas(grid, 0, NN, NC, NS+NSsh, NBC)  ! save grid for postprocessing
+                                                ! with Fluent
 
   ! Create 1D file (used for channel or pipe flow) 
-  call Probe_1D_Nodes
+  call Probe_1D_Nodes(grid)
 
   ! Make .eps figures
   write(*,*) '# Making three .eps cuts through the domain.'
-  call Save_Eps_Cut(Dy, Dz, 'x')
-  call Save_Eps_Cut(Dz, Dx, 'y')
-  call Save_Eps_Cut(Dx, Dy, 'z')
+  call Save_Eps_Cut(grid, Dy, Dz, 'x')
+  call Save_Eps_Cut(grid, Dz, Dx, 'y')
+  call Save_Eps_Cut(grid, Dx, Dy, 'z')
  
   write(*,*) '# Making a 3D shaded .eps figure of the domain.'
-  call Save_Eps_Whole(NSsh)   ! Draw the domain with shadows
+  call Save_Eps_Whole(grid, NSsh)   ! Draw the domain with shadows
 
-  end program Neu2TFlowS 
+  end program

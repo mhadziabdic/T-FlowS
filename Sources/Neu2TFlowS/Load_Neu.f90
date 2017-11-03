@@ -122,8 +122,13 @@
   !   Read block (material?) data   !
   !---------------------------------!
   allocate(grid % materials(n_blocks))
-  Nmat = 1
-  grid % materials(Nmat) % name = "FLUID"
+  if(n_blocks .gt. 1) then
+    write(*,*) '# Multiple materials from .neu file not been implemented yet!'
+    write(*,*) '# Exiting!'
+  end if
+
+  grid % n_materials = 1
+  grid % materials(1) % name = "FLUID"
 
   do j=1,n_blocks
     call Read_Line(9,inp,tn,ts,te)        ! ELEMENT GROUP
@@ -141,7 +146,7 @@
   !-------------------------!
   !   Boundary conditions   !
   !-------------------------!
-  Nbnd = n_bnd_sect
+  grid % n_boundary_conditions = n_bnd_sect
   allocate(grid % boundary_conditions(n_bnd_sect))
 
   do j=1,n_bnd_sect

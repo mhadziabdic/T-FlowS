@@ -1,17 +1,20 @@
-!======================================================================!
-  subroutine UnkAloc
-!----------------------------------------------------------------------!
-! Allocates memory for variables. It is called either from LoaRes      !
-! or from Processor.                                                   !
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Allocate_Variables(grid)
+!------------------------------------------------------------------------------!
+!   Allocates memory for variables. It is called either from LoaRes            !
+!   or from Processor.                                                         !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use par_mod
   use rans_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!======================================================================!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+!==============================================================================!
 
   allocate (U % n(-NbC:NC)); U % n=0.
   allocate (V % n(-NbC:NC)); V % n=0.
@@ -105,30 +108,30 @@
 
   allocate (Flux(NS));     Flux=0.
 
-  allocate (PdropX(Nmat)); PdropX=0.0
-  allocate (PdropY(Nmat)); PdropY=0.0 
-  allocate (PdropZ(Nmat)); PdropZ=0.0 
+  allocate (PdropX(grid % n_materials)); PdropX=0.0
+  allocate (PdropY(grid % n_materials)); PdropY=0.0 
+  allocate (PdropZ(grid % n_materials)); PdropZ=0.0 
 
-  allocate (Utau(Nmat));   Utau=0.0
-  allocate (Vtau(Nmat));   Vtau=0.0
-  allocate (Wtau(Nmat));   Wtau=0.0
+  allocate (Utau(grid % n_materials));   Utau=0.0
+  allocate (Vtau(grid % n_materials));   Vtau=0.0
+  allocate (Wtau(grid % n_materials));   Wtau=0.0
 
-  allocate (FLUXx(Nmat));  FLUXx=0.0
-  allocate (FLUXy(Nmat));  FLUXy=0.0
-  allocate (FLUXz(Nmat));  FLUXz=0.0
+  allocate (FLUXx(grid % n_materials));  FLUXx=0.0
+  allocate (FLUXy(grid % n_materials));  FLUXy=0.0
+  allocate (FLUXz(grid % n_materials));  FLUXz=0.0
 
-  allocate (FLUXoX(Nmat)); FLUXoX=0.0
-  allocate (FLUXoY(Nmat)); FLUXoY=0.0
-  allocate (FLUXoZ(Nmat)); FLUXoZ=0.0
+  allocate (FLUXoX(grid % n_materials)); FLUXoX=0.0
+  allocate (FLUXoY(grid % n_materials)); FLUXoY=0.0
+  allocate (FLUXoZ(grid % n_materials)); FLUXoZ=0.0
 
-  allocate (Ubulk(Nmat));  Ubulk=0.0
-  allocate (Vbulk(Nmat));  Vbulk=0.0
-  allocate (Wbulk(Nmat));  Wbulk=0.0
+  allocate (Ubulk(grid % n_materials));  Ubulk=0.0
+  allocate (Vbulk(grid % n_materials));  Vbulk=0.0
+  allocate (Wbulk(grid % n_materials));  Wbulk=0.0
 
-  allocate (MassIn(Nmat)); MassIn=0.0
-  allocate (MasOut(Nmat)); MasOut=0.0
+  allocate (MassIn(grid % n_materials)); MassIn=0.0
+  allocate (MasOut(grid % n_materials)); MasOut=0.0
 
-  allocate (BadForG(NC));  BadForG = .FALSE.
+  allocate (BadForG(NC));  BadForG = .false.
   allocate (NumGood(NC));  NumGood = 0          
   allocate (NumNeig(NC));  NumNeig = 0         
 
@@ -689,4 +692,4 @@
 !??????????????????????????????????????????!
 ! Do something !  
 
-  end subroutine UnkAloc
+  end subroutine

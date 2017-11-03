@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Load_Cns
+  subroutine Load_Cns(grid)
 !------------------------------------------------------------------------------!
 !   Reads name.cns and first part of T-FlowS.cmn                               !
 !----------------------------------[Modules]-----------------------------------!
@@ -11,6 +11,8 @@
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, s, n, it
   character(len=80) :: name_in
@@ -36,15 +38,18 @@
   read(9) NS
   read(9) c   ! NSsh is not used in Processor. 
 
-  ! Boundary condition and material keys
-  read(9) Nmat
-  read(9) Nbnd
-  allocate(grid % materials(Nmat))
-  allocate(grid % boundary_conditions(Nbnd))
-  do n=1,Nmat
+  ! Number of materials and boundary conditions
+  read(9) grid % n_materials
+  read(9) grid % n_boundary_conditions
+
+  allocate(grid % materials(grid % n_materials))
+  allocate(grid % boundary_conditions(grid % n_boundary_conditions))
+
+  ! Materials' and boundary conditions' keys
+  do n=1,grid % n_materials
     read(9) grid % materials(n) % name
   end do
-  do n=1,Nbnd
+  do n=1,grid % n_boundary_conditions
     read(9) grid % boundary_conditions(n) % name
   end do
 

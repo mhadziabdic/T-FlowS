@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Restart(name_aut)
+  subroutine Save_Restart(grid, name_aut)
 !------------------------------------------------------------------------------!
 !   Writes restart files. name.restart                                         !
 !----------------------------------[Modules]-----------------------------------!
@@ -8,12 +8,15 @@
   use les_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type)     :: grid
+  character, optional :: name_aut*(*)
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: c, s, m
   character(len=80)   :: name_out, answer
-  character, optional :: name_aut*(*)
 !==============================================================================!
 
   if(PRESENT(name_aut)) then
@@ -102,14 +105,13 @@
   write(9) (Pz(c),   c=-NbC,NC)
 
   ! Pressure drops in each material (domain)
-  do m=1,Nmat
+  do m=1,grid % n_materials
     write(9) PdropX(m), PdropY(m), PdropZ(m)
     write(9) FLUXoX(m), FLUXoY(m), FLUXoZ(m)
     write(9) FLUXx(m),  FLUXy(m),  FLUXz(m)
     write(9) AreaX(m),  AreaY(m),  AreaZ(m)
     write(9) Ubulk(m),  Vbulk(m),  Wbulk(m)
   end do
-
 
   ! Fluxes 
   write(9) (Flux(s), s=1,NS)

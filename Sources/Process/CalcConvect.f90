@@ -1,25 +1,28 @@
-!======================================================================!
-  subroutine CalcConvect
-!----------------------------------------------------------------------!
-!   Extrapoloate variables on the boundaries where needed              !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine CalcConvect(grid)
+!------------------------------------------------------------------------------!
+!   Extrapoloate variables on the boundaries where needed.                     !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use rans_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c1, c2, s
-!======================================================================!
+!==============================================================================!
 
-  call CalcFlux   
+  call Compute_Fluxes(grid)
 
   do s=1,NS
     c1=SideC(1,s)
     c2=SideC(2,s)
 
-!---- on the boundary perform the extrapolation
+    ! On the boundary perform the extrapolation
     if(c2  < 0) then
       if( (TypeBC(c2) == CONVECT) ) then
         U % n(c2) = U % n(c2) - ( Ubulk(material(c1)) * Ux(c1)        & 
@@ -36,15 +39,15 @@
   end do
 
   if(HOT==YES) then
-    call GraPhi(T % n,1,PHIx,.TRUE.)     ! dT/dx
-    call GraPhi(T % n,2,PHIy,.TRUE.)     ! dT/dy
-    call GraPhi(T % n,3,PHIz,.TRUE.)     ! dT/dz
+    call GraPhi(T % n,1,PHIx,.true.)     ! dT/dx
+    call GraPhi(T % n,2,PHIy,.true.)     ! dT/dy
+    call GraPhi(T % n,3,PHIz,.true.)     ! dT/dz
     call GraCorNew(T % n,PHIx,PHIy,PHIz) ! needed ?
     do s=1,NS
       c1=SideC(1,s)
       c2=SideC(2,s)
 
-!---- on the boundary perform the extrapolation
+      ! On the boundary perform the extrapolation
       if(c2  < 0) then
         if( (TypeBC(c2) == CONVECT) ) then
           T % n(c2) = T % n(c2) - ( Ubulk(material(c1)) * PHIx(c1)        & 
@@ -57,4 +60,4 @@
 
   RETURN 
 
-  end subroutine CalcConvect
+  end subroutine

@@ -2,7 +2,6 @@ noinst_LIBRARIES = libShared.a
 
 libShared_a_SOURCES = 		\
   Approx.f90			\
-  Count_Materials.f90		\
   Distance.f90			\
   Distance_Squared.f90		\
   Load_Geo.f90			\
@@ -18,7 +17,9 @@ libShared_a_SOURCES = 		\
   Save_Eps_Cut.f90		\
   Save_Eps_Whole.f90		\
   Save_Gmv_Links.f90		\
-  Save_Gmv_Grid.f90		\
+  Save_Gmv_Cells.f90		\
+  Save_Gmv_Faces.f90		\
+  Save_Shadows.f90		\
   Sort_Double_Carry_Int.f90	\
   Sort_Int_By_Index.f90		\
   Sort_Int_Carry_Int.f90	\

@@ -1,34 +1,40 @@
-!======================================================================!
-  subroutine CalcFlux()
-!----------------------------------------------------------------------!
-!   Calculate mass fluxes through whole domain.                        !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Compute_Fluxes(grid)
+!------------------------------------------------------------------------------!
+!   Compute mass fluxes through whole domain.                                  !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c1, c2, s, m
   real    :: xc1, yc1, zc1, xc2, yc2, zc2
-!======================================================================!
+!==============================================================================!
 
-  do m=1,Nmat
+  do m = 1, grid % n_materials
+
     FLUXx(m) = 0.0
     FLUXy(m) = 0.0
     FLUXz(m) = 0.0
+
     do s=1,NS
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2 > 0) then
-        if( (material(c1)==m) .and. (material(c1) == material(c2)) ) then
+        if( (material(c1) == m) .and.  &
+            (material(c1) == material(c2)) ) then
           xc1=xc(c1) 
           yc1=yc(c1) 
           zc1=zc(c1) 
-          xc2=xc(c1)+Dx(s) 
-          yc2=yc(c1)+Dy(s) 
-          zc2=zc(c1)+Dz(s)
+          xc2=xc(c1) + Dx(s) 
+          yc2=yc(c1) + Dy(s) 
+          zc2=zc(c1) + Dz(s)
 
           if((xc1 <= xp(m)).and.(xc2 > xp(m))) FLUXx(m) = FLUXx(m) + Flux(s)
           if((yc1 <= yp(m)).and.(yc2 > yp(m))) FLUXy(m) = FLUXy(m) + Flux(s)
@@ -57,12 +63,15 @@
         end if ! material 1&2
       end if   ! c2 > 0
     end do
+
     call glosum(FLUXx(m))
     call glosum(FLUXy(m))
     call glosum(FLUXz(m))
+
     Ubulk(m) = FLUXx(m) / (AreaX(m) + TINY)
     Vbulk(m) = FLUXy(m) / (AreaY(m) + TINY)
     Wbulk(m) = FLUXz(m) / (AreaZ(m) + TINY)
+
   end do ! m
 
-  end subroutine CalcFlux
+  end subroutine

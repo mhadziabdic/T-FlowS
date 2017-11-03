@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine CalcSc(var, phi, phi_x, phi_y, phi_z)
+  subroutine Compute_Scalar(grid, var, phi, phi_x, phi_y, phi_z)
 !------------------------------------------------------------------------------!
 !   Purpose: Solve transport equation for scalar (such as temperature)         !
 !------------------------------------------------------------------------------!
@@ -8,13 +8,14 @@
   use pro_mod
   use rans_mod
   use par_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Arguments]--------------------------------!
-  integer       :: var
-  type(Unknown) :: phi
-  real          :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
-
+  type(Grid_Type) :: grid
+  integer         :: var
+  type(Unknown)   :: phi
+  real            :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
 !----------------------------------[Calling]-----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------! 
@@ -101,7 +102,7 @@
   !---------------!
   
   ! Compute phimax and phimin
-  do mat=1,Nmat
+  do mat = 1, grid % n_materials
     if(BLEND_TEM(mat) /= NO) then
       call CalMinMax(phi % n)  ! or phi % o ???
       goto 1
@@ -559,4 +560,4 @@
 
   call Exchng(phi % n)
 
-  end subroutine CalcSc
+  end subroutine

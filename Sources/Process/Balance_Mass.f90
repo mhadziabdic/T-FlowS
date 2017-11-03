@@ -1,22 +1,25 @@
-!======================================================================!
-  subroutine ModOut 
-!----------------------------------------------------------------------!
-!   Modifies the fluxes at outflow boundaries to conserve the mass.    ! 
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Balance_Mass(grid)
+!------------------------------------------------------------------------------!
+!   Modifies the fluxes at outflow boundaries to conserve the mass.            ! 
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+!-----------------------------------[Locals]-----------------------------------!
   integer :: m, s, c1, c2
   real    :: fac(256) 
-!======================================================================!
+!==============================================================================!
 
-!------------------------------------------!
-!     Calculate the inflow mass fluxes     !
-!------------------------------------------!
-  do m=1,Nmat
+  !--------------------------------------!
+  !   Calculate the inflow mass fluxes   !
+  !--------------------------------------!
+  do m=1,grid % n_materials
     MassIn(m) = 0.0
     do s=1,NS
       c1=SideC(1,s)
@@ -39,14 +42,14 @@
     call glosum(MASSIN(m))
   end do                    
 
-!-------------------------------------------!
-!     Calculate the outflow mass fluxes     !
-!       then correct it to satisfy the      ! 
-!            overall mass balance           !
-!-------------------------------------------!
-  do m=1,Nmat
+  !---------------------------------------!
+  !   Calculate the outflow mass fluxes   !
+  !     then correct it to satisfy the    ! 
+  !          overall mass balance         !
+  !---------------------------------------!
+  do m=1,grid % n_materials
     MASOUT(m) = 0.0
-    do s=1, NS
+    do s = 1, NS
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2  < 0) then
@@ -78,12 +81,12 @@
     call glosum(MASOUT(m))  ! not checked
   end do
 
-  do m=1,Nmat
+  do m = 1, grid % n_materials
     fac(m) = MASSIN(m)/(MASOUT(m)+TINY)
   end do
 
-  do m=1,Nmat
-    do s=1, NS
+  do m = 1, grid % n_materials
+    do s =1, NS
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2  < 0) then
@@ -101,4 +104,4 @@
     end do
   end do
 
-  end subroutine ModOut
+  end subroutine

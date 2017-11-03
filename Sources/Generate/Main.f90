@@ -53,7 +53,10 @@
   end do
 
   ! Save the grid
-  call Save_Gmv_Grid(grid, 0, NN, NC)            ! save grid for postprocessing
+  call Save_Gmv_Cells(grid, 0, NN, NC)  ! save grid for postprocessing
+  call Save_Gmv_Faces(grid, 0, NN, NC)  ! save grid for checking b.c. 
+  call Save_Shadows  (grid, 0, NN, NC)  ! save shadows 
+
   call Save_Cns_Geo(grid, 0, NC, NS, NBC, 0, 0)  ! saved data for processing
 
   ! Save links for checking

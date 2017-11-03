@@ -197,10 +197,18 @@
 
     end do ! for subo
 
-    call Save_Gmv_Grid(grid,         &
-                       sub,          &
-                       n_nodes_sub,  &
-                       n_cells_sub)
+    call Save_Gmv_Cells(grid,         &
+                        sub,          &
+                        n_nodes_sub,  &
+                        n_cells_sub)
+    call Save_Gmv_Faces(grid,         &
+                        sub,          &
+                        n_nodes_sub,  &
+                        n_cells_sub)
+    call Save_Shadows(grid,         &
+                      sub,          &
+                      n_nodes_sub,  &
+                      n_cells_sub)
     call Save_Cns_Geo(grid,              &
                       sub, n_cells_sub,  &
                       n_faces_sub,       &
@@ -299,9 +307,9 @@
   end do
   deallocate(side_cell)
 
-  call Count_Materials
-
-  call Save_Gmv_Grid(grid, 0, NN, NC)
+  call Save_Gmv_Cells(grid, 0, NN, NC)
+  call Save_Gmv_Faces(grid, 0, NN, NC)
+  call Save_Shadows  (grid, 0, NN, NC)
 
   call Save_Cas(grid, 0, NN, NC, NS+NSsh)
 

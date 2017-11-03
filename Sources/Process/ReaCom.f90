@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine ReaCom(restar) 
+  subroutine ReaCom(grid, restar) 
 !------------------------------------------------------------------------------!
 !   Reads second part of T-FlowS.cmn file.                                     ! 
 !------------------------------------------------------------------------------!
@@ -9,10 +9,12 @@
   use les_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  logical   :: restar
+  type(Grid_Type) :: grid
+  logical         :: restar
 !----------------------------------[Calling]-----------------------------------!
   real      :: Distance
 !-----------------------------------[Locals]-----------------------------------!
@@ -26,8 +28,10 @@
 
   ! The number of time steps
   if(this_proc  < 2) then 
+    write(*,*) '#==============================================='
     write(*,*) '# Enter the number of time steps: (',Ndt,') '
     write(*,*) '# (type 0 if you just want to analyse results)'
+    write(*,*) '#-----------------------------------------------'
   end if
   call ReadC(CMN_FILE,inp,tn,ts,te)
   read(inp,*)  Ndt
@@ -99,7 +103,7 @@
   end do
 
   ! Plane for calcution of overall mass fluxes
-  do m=1,Nmat
+  do m = 1, grid % n_materials
     if(this_proc  < 2)  then
       write(*,*) '# Enter the coordinates of monitoring plane: (', &
                   xp(m), yp(m), zp(m), ' )'
@@ -202,7 +206,7 @@
   endif 
 
     
-  do m=1,Nmat
+  do m=1,grid % n_materials
     if(SIMULA  ==  LES .or. SIMULA == DNS .or. SIMULA == DES_SPA &
       .or.SIMULA  ==  HYB_PITM .or. SIMULA == HYB_ZETA) then
       if(this_proc  < 2) then
@@ -237,7 +241,7 @@
     endif 
   end do
 
-  if(.not. restar) call UnkAloc
+  if(.not. restar) call Allocate_Variables(grid)
   if(SIMULA  ==  K_EPS.or.SIMULA  ==  HYB_PITM) then
     Ce1 = 1.44
     Ce2 = 1.92
@@ -513,7 +517,7 @@
   endif
 
   ! Upwind blending
-  do m=1,Nmat
+  do m=1,grid % n_materials
     URFC(m) = 1.0
     if(this_proc  < 2) then
       write(*,*) '# Convetive schemes for momentum equation:'
@@ -564,7 +568,7 @@
   end do
 
   if(HOT==YES) then
-    do m=1,Nmat
+    do m=1,grid % n_materials
       URFC_Tem(m) = 1.0
       if(this_proc  < 2) then
         write(*,*) '# Convetive schemes for energy equation:'
@@ -607,7 +611,7 @@
   end if
 
   if(SIMULA/=LES.and.SIMULA/=DNS) then
-    do m=1,Nmat
+    do m=1,grid % n_materials
       URFC_Tur(m) = 1.0
       if(this_proc  < 2) then
         write(*,*) '# Convetive schemes for transport equation:'
@@ -719,7 +723,7 @@
   read(inp,*)   dt
 
   ! Wall velocity 
-  do m=1,Nmat
+  do m=1,grid % n_materials
     if(this_proc  < 2)  &
       write(*,*) '# Enter Pdrop (x, y, z) for domain ', m
     call ReadC(CMN_FILE,inp,tn,ts,te) 
@@ -734,7 +738,7 @@
   end do
 
   ! Mass fluxes
-  do m=1,Nmat
+  do m=1,grid % n_materials
     if(this_proc  < 2) then
       write(*,*) '# Enter the wanted mass flux through domain ', m
       write(*,*) '# (type 0.0 to keep the pressure drop constant)'

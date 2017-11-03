@@ -1,29 +1,31 @@
-!======================================================================!
-  subroutine NewUVW(var, Ui,                                &
-                dUidi, dUidj, dUidk,                            &
-                Si, Sj, Sk,                                     &
-                Di, Dj, Dk,                                     &
-                Hi, dUjdi, dUkdi)
-!----------------------------------------------------------------------!
-!   Discretizes and solves momentum conservation equations             !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine NewUVW(grid, var, Ui,                                  &
+                    dUidi, dUidj, dUidk,                            &
+                    Si, Sj, Sk,                                     &
+                    Di, Dj, Dk,                                     &
+                    Hi, dUjdi, dUkdi)
+!------------------------------------------------------------------------------!
+!   Discretizes and solves momentum conservation equations                     !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use rans_mod
   use par_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
-  integer       :: var
-  type(Unknown) :: Ui
-  real          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
-  real          :: Si(NS), Sj(NS), Sk(NS) 
-  real          :: Di(NS), Dj(NS), Dk(NS) 
-  real          :: Hi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
-  real          :: uuS, vvS, wwS, uvS, uwS, vwS
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+  integer         :: var
+  type(Unknown)   :: Ui
+  real            :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
+  real            :: Si(NS), Sj(NS), Sk(NS) 
+  real            :: Di(NS), Dj(NS), Dk(NS) 
+  real            :: Hi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
+  real            :: uuS, vvS, wwS, uvS, uwS, vwS
+!-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter, mat
   real    :: Fex, Fim 
   real    :: Uis
@@ -31,7 +33,7 @@
   real    :: error
   real    :: VISeff, VIStS, Fstress 
   real    :: dUidiS,dUidjS,dUidkS,dUjdiS,dUkdiS
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
 !
 !  Stress tensor on the face s:
 !
@@ -61,7 +63,7 @@
 !
 !    Fz = Tzx*Sx + Tzy*Sy + Tzz*Sz
 !
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
 !     
 !  The form of equations which I am solving:    
 !     
@@ -86,23 +88,23 @@
 !     DU*, DV*, DW*  [kgm/s^2]   [N]
 !     XU*, XV*, XW*  [kgm/s^2]   [N]
 !
-!======================================================================!
+!==============================================================================!
 
   b = 0.0
   A % val = 0.0
   Fstress = 0.0
 
 
-!----- This is important for "copy" boundary conditions. Find out why !
+  ! This is important for "copy" boundary conditions. Find out why !
   do c=-NbC,-1
     A % bou(c)=0.0
   end do
 
-!-----------------------------------------! 
-!     Initialize variables and fluxes     !
-!-----------------------------------------! 
+  !-------------------------------------! 
+  !   Initialize variables and fluxes   !
+  !-------------------------------------! 
 
-!----- old values (o and oo)
+  ! Old values (o) and older than old (oo)
   if(ini == 1) then
     do c=1,NC
       Ui % oo(c)  = Ui % o(c)
@@ -116,36 +118,35 @@
     end do
   end if
 
-!====================!
-!                    !
-!     Convection     !
-!                    !
-!====================!
+  !---------------!
+  !               !
+  !   Advection   !
+  !               !
+  !---------------!
 
-!----- Compute PHImax and PHImin
-  do mat=1,Nmat
+  ! Compute phimax and phimin
+  do mat=1,grid % n_materials
     if(BLEND(mat) /= NO) then
       call CalMinMax(Ui % n)  ! or Ui % o ???
       goto 1
     end if
   end do
 
-!----- new values
+  ! New values
 1 do c=1,NC
     Ui % C(c)    = 0.0
     Ui % X(c)    = 0.0
   end do
 
-!--------------------------------!
-!     Spatial Discretization     !
-!--------------------------------!
-
+  !----------------------------!
+  !   Spatial Discretization   !
+  !----------------------------!
   do s=1,NS
 
     c1=SideC(1,s)
     c2=SideC(2,s) 
 
-!---- Central differencing
+    ! Central differencing
     Uis=f(s)*Ui % n(c1) + (1.0-f(s))*Ui % n(c2)
 
     if(BLEND(material(c1)) /= NO .or. BLEND(material(c2)) /= NO) then
@@ -153,7 +154,7 @@
                            max(BLEND(material(c1)),BLEND(material(c2))) ) 
     end if 
     
-!---- Central differencing for convection 
+    ! Central differencing for advection
     if(ini == 1) then 
       if(c2  > 0) then
         Ui % Co(c1)=Ui % Co(c1)-Flux(s)*Uis
@@ -170,7 +171,7 @@
       Ui % C(c1)=Ui % C(c1)-Flux(s)*Uis
     endif 
 
-!---- Upwind 
+    ! Upwind 
     if(BLEND(material(c1)) /= NO .or. BLEND(material(c2)) /= NO) then
       if(Flux(s)  < 0) then   ! from c2 to c1
         Ui % X(c1)=Ui % X(c1)-Flux(s)*Ui % n(c2)
@@ -186,11 +187,11 @@
     end if   ! BLEND 
   end do    ! through sides
 
-!---------------------------------!
-!     Temporal discretization     !
-!---------------------------------!
+  !-----------------------------!
+  !   Temporal discretization   !
+  !-----------------------------!
 
-!----- Adams-Bashforth scheeme for convective fluxes
+  ! Adams-Bashforth scheeme for convective fluxes
   if(CONVEC == AB) then
     do c=1,NC
       b(c) = b(c) + URFC(material(c)) * & 
@@ -198,7 +199,7 @@
     end do  
   endif
 
-!----- Crank-Nicholson scheeme for convective fluxes
+  ! Crank-Nicholson scheeme for convective fluxes
   if(CONVEC == CN) then
     do c=1,NC
       b(c) = b(c) + URFC(material(c)) * & 
@@ -206,7 +207,7 @@
     end do  
   endif
 
-!----- Fully implicit treatment of convective fluxes 
+  ! Fully implicit treatment of convective fluxes 
   if(CONVEC == FI) then
     do c=1,NC
       b(c) = b(c) + URFC(material(c)) * & 
@@ -214,24 +215,20 @@
     end do  
   end if     
           
-!----------------------------------------------------!
-!     Browse through all the faces, where else ?     !
-!----------------------------------------------------!
-
-!----- new values
+  ! New values
   do c=1,NC
     Ui % X(c) = 0.0
   end do
 
-!==================!
-!                  !
-!     Difusion     !
-!                  !
-!==================!
+  !------------------!
+  !                  !
+  !     Difusion     !
+  !                  !
+  !------------------!
 
-!--------------------------------!
-!     Spatial Discretization     !
-!--------------------------------!
+  !----------------------------!
+  !   Spatial discretization   !
+  !----------------------------!
   do s=1,NS       
 
     c1=SideC(1,s)
@@ -255,7 +252,7 @@
       end if
     end if
 
-!---- Add influence of Re stresses for EBM
+    ! Add influence of Re stresses for EBM
     if(SIMULA == EBM.or.SIMULA == HJ) then
       if(MODE /= HYB) then        
         if(var == 1) then
@@ -283,31 +280,31 @@
     dUjdiS = fF(s)*dUjdi(c1) + (1.0-fF(s))*dUjdi(c2)
     dUkdiS = fF(s)*dUkdi(c1) + (1.0-fF(s))*dUkdi(c2)
 
-!---- total (exact) diffusive flux
-    Fex=VISeff*( 2.0*dUidiS*Si(s)                                 &
+    ! total (exact) viscous stress 
+    Fex=VISeff*( 2.0*dUidiS*Si(s)                               &
                 + (dUidjS+dUjdiS)*Sj(s)                         &
                 + (dUidkS+dUkdiS)*Sk(s) )
 
     A0 = VISeff * Scoef(s)
 
-!---- implicit diffusive flux
-!.... this is a very crude approximation: Scoef is not
-!.... corrected at interface between materials
-    Fim=( dUidiS*Di(s)                                      &
+    ! Implicit viscous stress
+    ! this is a very crude approximation: Scoef is not
+    ! corrected at interface between materials
+    Fim=( dUidiS*Di(s)                                    &
        +dUidjS*Dj(s)                                      &
        +dUidkS*Dk(s))*A0
 
-!---- this is yet another crude approximation:
-!.... A0 is calculated approximatelly
-!    if( StateMat(material(c1))==FLUID .and.  &  ! 2mat
-!        StateMat(material(c2))==SOLID        &  ! 2mat
-!        .or.                                 &  ! 2mat 
-!        StateMat(material(c1))==SOLID .and.  &  ! 2mat
-!        StateMat(material(c2))==FLUID ) then    ! 2mat
-!      A0 = A0 + A0                              ! 2mat
-!    end if                                      ! 2mat
+    ! This is yet another crude approximation:
+    ! A0 is calculated approximatelly
+    !    if( StateMat(material(c1))==FLUID .and.  &  ! 2mat
+    !        StateMat(material(c2))==SOLID        &  ! 2mat
+    !        .or.                                 &  ! 2mat 
+    !        StateMat(material(c1))==SOLID .and.  &  ! 2mat
+    !        StateMat(material(c2))==FLUID ) then    ! 2mat
+    !      A0 = A0 + A0                              ! 2mat
+    !    end if                                      ! 2mat
 
-!---- straight diffusion part 
+    ! Straight diffusion part 
     if(ini == 1) then
       if(c2  > 0) then
         Ui % Do(c1) = Ui % Do(c1) + (Ui % n(c2)-Ui % n(c1))*A0   
@@ -319,13 +316,13 @@
       end if 
     end if
 
-!---- cross diffusion part
+    ! Cross diffusion part
     Ui % X(c1) = Ui % X(c1) + Fex - Fim + Fstress
     if(c2  > 0) then
       Ui % X(c2) = Ui % X(c2) - Fex + Fim - Fstress
     end if 
 
-!----- calculate the coefficients for the sysytem matrix
+     ! Compute the coefficients for the sysytem matrix
     if( (DIFFUS == CN) .or. (DIFFUS == FI) ) then  
       if(DIFFUS  ==  CN) then       ! Crank Nicholson
         A12 = 0.5 * A0 
@@ -342,65 +339,64 @@
         A21 = A21  + max(Flux(s), real(0.0))
       endif
 
-!----- fill the system matrix
+      ! Fill the system matrix
       if(c2  > 0) then
         A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - A12
         A % val(A % dia(c1))    = A % val(A % dia(c1))    + A12
         A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - A21
         A % val(A % dia(c2))    = A % val(A % dia(c2))    + A21
       else if(c2  < 0) then
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -!
-! Outflow is not included because it was causing problems     !
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -! 
+
+        ! Outflow is not included because it was causing problems     
         if((TypeBC(c2) == INFLOW).or.                                &
            (TypeBC(c2) == WALL).or.                                  &
            (TypeBC(c2) == CONVECT).or.                               &
            (TypeBC(c2) == WALLFL)) then                                
-!---------  (TypeBC(c2) == OUTFLOW) ) then   
+           ! (TypeBC(c2) == OUTFLOW) ) then   
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * Ui % n(c2)
         else if(TypeBC(c2) == BUFFER) then  
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
-          A % bou(c2) = - A12  ! cool parallel stuff
+          A % bou(c2) = -A12  ! cool parallel stuff
         endif
       end if     
     end if
   end do  ! through sides
 
-!---------------------------------!
-!     Temporal discretization     !
-!---------------------------------!
-!---------------------------------!
-!
-! Add Re stress influence on momentum
-! This is an alternative way to implement RSM. 
-!
-!  if(SIMULA == EBM.or.SIMULA == HJ) then
-!    if(var == 1) then
-!      call GraPhi(uu%n,1,VAR2x,.TRUE.)
-!      call GraPhi(uv%n,2,VAR2y,.TRUE.)
-!      call GraPhi(uw%n,3,VAR2z,.TRUE.)
-!      do c = 1, NC
-!        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
-!      end do
-!    else if(var == 2) then
-!      call GraPhi(uv%n,1,VAR2x,.TRUE.)
-!      call GraPhi(vv%n,2,VAR2y,.TRUE.)
-!      call GraPhi(vw%n,3,VAR2z,.TRUE.)
-!      do c = 1, NC
-!        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
-!      end do
-!    else if(var == 3) then
-!      call GraPhi(uw%n,1,VAR2x,.TRUE.)
-!      call GraPhi(vw%n,2,VAR2y,.TRUE.)
-!      call GraPhi(ww%n,3,VAR2z,.TRUE.)
-!      do c = 1, NC
-!        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
-!      end do
-!    end if
-!
-! Here we clean up momentum from the false diffusion
-!
+  !-----------------------------!
+  !   Temporal discretization   !
+  !-----------------------------!
+
+  !---------------------------------!
+  !
+  ! Add Re stress influence on momentum
+  ! This is an alternative way to implement RSM. 
+  !
+  !  if(SIMULA == EBM.or.SIMULA == HJ) then
+  !    if(var == 1) then
+  !      call GraPhi(uu%n,1,VAR2x,.TRUE.)
+  !      call GraPhi(uv%n,2,VAR2y,.TRUE.)
+  !      call GraPhi(uw%n,3,VAR2z,.TRUE.)
+  !      do c = 1, NC
+  !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
+  !      end do
+  !    else if(var == 2) then
+  !      call GraPhi(uv%n,1,VAR2x,.TRUE.)
+  !      call GraPhi(vv%n,2,VAR2y,.TRUE.)
+  !      call GraPhi(vw%n,3,VAR2z,.TRUE.)
+  !      do c = 1, NC
+  !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
+  !      end do
+  !    else if(var == 3) then
+  !      call GraPhi(uw%n,1,VAR2x,.TRUE.)
+  !      call GraPhi(vw%n,2,VAR2y,.TRUE.)
+  !      call GraPhi(ww%n,3,VAR2z,.TRUE.)
+  !      do c = 1, NC
+  !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
+  !      end do
+  !    end if
+  
+  ! Here we clean up momentum from the false diffusion
   if(SIMULA == EBM.or.SIMULA == HJ) then
     if(MODE /= HYB) then
       do s=1,NS
@@ -417,9 +413,9 @@
         dUjdiS = fF(s)*dUjdi(c1) + (1.0-fF(s))*dUjdi(c2)
         dUkdiS = fF(s)*dUkdi(c1) + (1.0-fF(s))*dUkdi(c2)
 
-        Fex=VISeff*( 2.0*dUidiS*Si(s)                                 &
-              + (dUidjS+dUjdiS)*Sj(s)                         &
-              + (dUidkS+dUkdiS)*Sk(s) )
+        Fex=VISeff*( 2.0*dUidiS*Si(s)                           &
+                      + (dUidjS+dUjdiS)*Sj(s)                   &
+                      + (dUidkS+dUkdiS)*Sk(s) )
 
         Fim=( dUidiS*Di(s)                                      &
              +dUidjS*Dj(s)                                      &
@@ -433,51 +429,51 @@
     end if 
   end if
 
-!----- Adams-Bashfort scheeme for diffusion fluxes
+  ! Adams-Bashfort scheeme for diffusion fluxes
   if(DIFFUS == AB) then 
     do c=1,NC
       b(c) = b(c) + 1.5 * Ui % Do(c) - 0.5 * Ui % Doo(c)
     end do  
   end if
 
-!----- Crank-Nicholson scheme for difusive terms
+  ! Crank-Nicholson scheme for difusive terms
   if(DIFFUS == CN) then 
     do c=1,NC
       b(c) = b(c) + 0.5 * Ui % Do(c)
     end do  
   end if
              
-!----- Fully implicit treatment for difusive terms
-!      is handled via the linear system of equations 
+  ! Fully implicit treatment for difusive terms
+  ! is handled via the linear system of equations 
 
-!----- Adams-Bashfort scheeme for cross diffusion 
+  ! Adams-Bashfort scheeme for cross diffusion 
   if(CROSS == AB) then
     do c=1,NC
       b(c) = b(c) + 1.5 * Ui % Xo(c) - 0.5 * Ui % Xoo(c)
     end do 
   end if
 
-!----- Crank-Nicholson scheme for cross difusive terms
+  ! Crank-Nicholson scheme for cross difusive terms
   if(CROSS == CN) then
     do c=1,NC
       b(c) = b(c) + 0.5 * Ui % X(c) + 0.5 * Ui % Xo(c)
     end do 
   end if
 
-!----- Fully implicit treatment for cross difusive terms
+  ! Fully implicit treatment for cross difusive terms
   if(CROSS == FI) then
     do c=1,NC
       b(c) = b(c) + Ui % X(c)
     end do 
   end if
 
-!========================!
-!                        !
-!     Inertial terms     !
-!                        !
-!========================!
+  !--------------------!
+  !                    !
+  !   Inertial terms   !
+  !                    !
+  !--------------------!
 
-!----- Two time levels; Linear interpolation
+  ! Two time levels; linear interpolation
   if(INERT == LIN) then
     do c=1,NC
       A0 = DENc(material(c))*volume(c)/dt
@@ -486,7 +482,7 @@
     end do
   end if
 
-!----- Three time levels; parabolic interpolation
+  ! Three time levels; parabolic interpolation
   if(INERT == PAR) then
     do c=1,NC
       A0 = DENc(material(c))*volume(c)/dt
@@ -495,15 +491,15 @@
     end do
   end if
 
-!=====================================!
-!                                     !
-!     Pressure term contributions     !
-!                                     !
-!=====================================!
+  !---------------------------------!
+  !                                 !
+  !   Pressure term contributions   !
+  !                                 !
+  !---------------------------------!
 
-!------------------------------!
-!     Global pressure drop     !
-!------------------------------!
+  !--------------------------!
+  !   Global pressure drop   !
+  !--------------------------!
   if(var == 1) then
     do c=1,NC
       b(c) = b(c)  + PdropX(material(c)) * volume(c)
@@ -518,16 +514,16 @@
     end do
   end if
 
-!-------------------------------------!
-!     Local pressure distribution     !
-!-------------------------------------!
+  !---------------------------------!
+  !   Local pressure distribution   !
+  !---------------------------------!
   do c=1,NC
     b(c) = b(c) - Hi(c)*volume(c)
   end do
 
-!--------------------------------------------!
-!     All other terms defined by the user    !
-!--------------------------------------------!
+  !----------------------------------------!
+  !   All other terms defined by the user  !
+  !----------------------------------------!
   if(HOT == YES) call UserForce(var)
 
 !  do c=1,NC                                         ! 2mat
@@ -543,27 +539,27 @@
 !    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
 !      if(c2 > 0) then ! => not buffer               ! 2mat
 !        if(StateMat(material(c1)) == SOLID) then    ! 2mat
-!          A % val(A % pos(1,s)) = 0.0                   ! 2mat 
-!          A % val(A % pos(2,s)) = 0.0                   ! 2mat
+!          A % val(A % pos(1,s)) = 0.0               ! 2mat 
+!          A % val(A % pos(2,s)) = 0.0               ! 2mat
 !        end if                                      ! 2mat 
 !        if(StateMat(material(c2)) == SOLID) then    ! 2mat
-!          A % val(A % pos(2,s)) = 0.0                   ! 2mat
-!          A % val(A % pos(1,s)) = 0.0                   ! 2mat 
+!          A % val(A % pos(2,s)) = 0.0               ! 2mat
+!          A % val(A % pos(1,s)) = 0.0               ! 2mat 
 !        end if                                      ! 2mat 
 !      else            ! => buffer region            ! 2mat 
 !        if(StateMat(material(c1)) == SOLID .or.  &  ! 2mat
 !           StateMat(material(c2)) == SOLID) then    ! 2mat
-!          A % bou(c2) = 0.0                            ! 2mat
+!          A % bou(c2) = 0.0                         ! 2mat
 !        end if                                      ! 2mat 
 !      end if                                        ! 2mat
 !    end if                                          ! 2mat
 !  end do                                            ! 2mat
 
-!=======================================!
-!                                       !
-!     Solve the equations for U,V,W     !
-!                                       !    
-!=======================================!
+  !-----------------------------------!
+  !                                   !
+  !   Solve the equations for u,v,w   !
+  !                                   !    
+  !-----------------------------------!
   do c=1,NC
     A % sav(c) = A % val(A % dia(c))
     b(c) = b(c) + A % val(A % dia(c)) * (1.0-U % URF)*Ui % n(c) / U % URF
@@ -594,4 +590,4 @@
 
   call Exchng(Ui % n)
 
-  end subroutine NewUVW
+  end subroutine

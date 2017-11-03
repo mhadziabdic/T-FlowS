@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Load_Restart_Ini
+  subroutine Load_Restart_Ini(grid)
 !------------------------------------------------------------------------------!
 ! Reads: name.restart                                                          !
 !----------------------------------[Modules]-----------------------------------!
@@ -8,9 +8,11 @@
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, s, m
   integer           :: i_1, i_2, i_3, i_4, i_5, i_6
@@ -148,7 +150,7 @@
   read(9) (Pz(c),   c=-NbC,NC)
 
   ! Pressure drops in each material (domain)
-  do m=1,Nmat
+  do m=1,grid % n_materials
     read(9) PdropX(m), PdropY(m), PdropZ(m)
     read(9) FLUXoX(m), FLUXoY(m), FLUXoZ(m)
     read(9) FLUXx(m),  FLUXy(m),  FLUXz(m)

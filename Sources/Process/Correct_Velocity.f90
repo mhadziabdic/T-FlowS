@@ -1,37 +1,40 @@
-!======================================================================!
-  real function CorUVW()
-!----------------------------------------------------------------------!
-!   Corrects the velocities, and mass fluxes on the cell faces.        !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  real function Correct_Velocity(grid)
+!------------------------------------------------------------------------------!
+!   Corrects the velocities, and mass fluxes on the cell faces.                !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Arguments]--------------------------------!
+  type(Grid_Type) :: grid
+!-----------------------------------[Locals]-----------------------------------!
   integer   :: c, c1, c2, s, m
-  real      :: CFLmax(256), PeMax(256)
+  real      :: cfl_max(256), pe_max(256)
   real      :: CFLs, PeS
   real      :: Pdrop, FluxM
-!======================================================================!
+!==============================================================================!
 
-!--------------------------------------------!
-!     Correct velocities and fluxes with     !
-!      periodic part of the pressure to      !
-!      obtain divergence free velocity       !
-!- - - - - - - - - - - - - - - - - - - - - - !
-!     For SOLIDs, Px, Py and Pz are zero     !
-!     so this loop will not correct SOLID    !
-!     velocities.                            !
-!--------------------------------------------!
+  !-----------------------------------------!
+  !   Correct velocities and fluxes with    !
+  !    periodic part of the pressure to     !
+  !    obtain divergence free velocity      !
+  !- - - - - - - - - - - - - - - - - - - -  !
+  !   For SOLIDs, Px, Py and Pz are zero    !
+  !   so this loop will not correct SOLID   !
+  !   velocities.                           !
+  !-----------------------------------------!
   if(ALGOR == FRACT) then
     do c=1,NC
       U % n(c) = U % n(c) - Px(c) * volume(c) / A % sav(c)
       V % n(c) = V % n(c) - Py(c) * volume(c) / A % sav(c)
       W % n(c) = W % n(c) - Pz(c) * volume(c) / A % sav(c)
     end do 
-  else ! Algorythm is SIMPLE
+  else ! algorythm is SIMPLE
     do c=1,NC
       U % n(c) = U % n(c) - Px(c) * volume(c) / A % sav(c)
       V % n(c) = V % n(c) - Py(c) * volume(c) / A % sav(c)
@@ -51,17 +54,18 @@
       end if
     end if
   end do 
-!----------------------------------------------------------------------!
-!     Look at the following equation and you will understand why       !
-!     is the matrix for pressure corrections in SIMPLE algorythm       !
-!     formed from the coefficients of the velocity matrix.             !
-!     Moreover, it should also be clear that pressure correction       !
-!     matrix must be formed from underrelaxed velocity coefficients    !
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-!     Note that for FLUID-SOLID interaction, FLUX correctin is zero    !
-!     because A % val(A % pos(1,s)) is also zero.                       !  
-!     What will happen with parallel version ... only god knows.       !
-!----------------------------------------------------------------------!
+
+  !-------------------------------------------------------------------!
+  !   Look at the following equation and you will understand why      !
+  !   is the matrix for pressure corrections in SIMPLE algorythm      !
+  !   formed from the coefficients of the velocity matrix.            !
+  !   Moreover, it should also be clear that pressure correction      !
+  !   matrix must be formed from underrelaxed velocity coefficients   !
+  !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  !
+  !   Note that for FLUID-SOLID interaction, FLUX correctin is zero   !
+  !   because A % val(A % pos(1,s)) is also zero.                     !  
+  !   What will happen with parallel version ... only god knows.      !
+  !-------------------------------------------------------------------!
   do s=1,NS
     c1=SideC(1,s)
     c2=SideC(2,s)
@@ -74,10 +78,10 @@
     end if             !                                          !
   end do               !<---------- this is correction ---------->!
 
-!-----------------------------------------!
-!      Calculate the max mass error       !
-!     with the new (corrected) fluxes     !
-!-----------------------------------------!
+  !-------------------------------------!
+  !    Calculate the max mass error     !
+  !   with the new (corrected) fluxes   !
+  !-------------------------------------!
 1 do c=1,NC
     b(c) = 0.0 
   end do
@@ -103,13 +107,13 @@
   end do
   call glomax(errmax)
 
-!----------------------------------!
-!     Calculate the CFL number     !
-!       and the Peclet number      !
-!----------------------------------!
-  do m=1,Nmat
-    CFLmax(m) = 0.0
-    PeMax(m)  = 0.0
+  !------------------------------!
+  !   Calculate the CFL number   !
+  !     and the Peclet number    !
+  !------------------------------!
+  do m=1,grid % n_materials
+    cfl_max(m) = 0.0
+    pe_max(m)  = 0.0
     do s=1,NS
       c1=SideC(1,s)
       c2=SideC(2,s)
@@ -119,48 +123,48 @@
                       ( Scoef(s) *                 &
                       (Dx(s)*Dx(s)+Dy(s)*Dy(s)+Dz(s)*Dz(s)) ) )
           PeS  = abs( Flux(s) / Scoef(s) / (VISc+TINY) )
-          CFLmax(m) = max( CFLmax(m), CFLs ) 
-          PeMax(m)  = max( PeMax(m),  PeS  ) 
+          cfl_max(m) = max( cfl_max(m), CFLs ) 
+          pe_max(m)  = max( pe_max(m),  PeS  ) 
         end if
       end if
     end do
-    call glomax(CFLmax(m))
-    call glomax(PeMax(m))
+    call glomax(cfl_max(m))
+    call glomax(pe_max(m))
   end do
-!->>>      
+
   if(Cm(1) /= 0) then     
     write(LinMon0( 19: 66), '(1PE12.3,1PE12.3,1PE12.3,1PE12.3)')  &
           U % n(Cm(1)),  V % n(Cm(1)),  W % n(Cm(1)),  P % n(Cm(1))
     if(HOT==YES) then
       write(LinMon0( 67: 78), '(1PE12.3)') T % n(Cm(1)) 
     end if
-    do m=1,Nmat
+    do m = 1, grid % n_materials
       if(m .eq. 1) then
         FluxM = max(abs(FLUXx(m)),  abs(FLUXy(m)),  abs(FLUXz(m)))
         Pdrop = max(abs(PdropX(m)), abs(PdropY(m)), abs(PdropZ(m)))
         write(LinMon1( 79: 90), '(1PE12.3)') FluxM 
         write(LinMon1( 91:102), '(1PE12.3)') Pdrop    
         write(LinMon1(103:126), '(1PE12.3,1PE12.3)')  &
-        CFLmax(m), PeMax(m)
+        cfl_max(m), pe_max(m)
       else if(m .eq. 2) then
         FluxM = max(abs(FLUXx(m)),  abs(FLUXy(m)),  abs(FLUXz(m)))
         Pdrop = max(abs(PdropX(m)), abs(PdropY(m)), abs(PdropZ(m)))
         write(LinMon2( 79: 90), '(1PE12.3)') FluxM 
         write(LinMon2( 91:102), '(1PE12.3)') Pdrop    
         write(LinMon2(103:126), '(1PE12.3,1PE12.3)')  &
-        CFLmax(m), PeMax(m)
+        cfl_max(m), pe_max(m)
       else if(m .eq. 3) then
         FluxM = max(abs(FLUXx(m)),  abs(FLUXy(m)),  abs(FLUXz(m)))
         Pdrop = max(abs(PdropX(m)), abs(PdropY(m)), abs(PdropZ(m)))
         write(LinMon3( 79: 90), '(1PE12.3)') FluxM 
         write(LinMon3( 91:102), '(1PE12.3)') Pdrop    
         write(LinMon3(103:126), '(1PE12.3,1PE12.3)')  &
-        CFLmax(m), PeMax(m)
+        cfl_max(m), pe_max(m)
       end if
     end do
     write(LineRes(  5: 16), '(1PE12.3)') errmax 
   end if 
 
-  CorUVW = errmax ! /(velmax+TINY)
+  Correct_Velocity = errmax ! /(velmax+TINY)
 
-  end function CorUVW 
+  end function

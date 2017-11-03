@@ -47,12 +47,20 @@
   write(9) NBCsub+NBFsub 
   write(9) NSsub+NBFsub-NCFsub
   write(9) NSsh
-  write(9) Nmat
-  write(9) Nbnd  
-  do n=1,Nmat
+  write(9) grid % n_materials
+  write(9) grid % n_boundary_conditions
+
+  !---------------! 
+  !   Materials   !
+  !---------------! 
+  do n = 1, grid % n_materials
     write(9) grid % materials(n) % name
   end do
-  do n=1,Nbnd
+
+  !-------------------------! 
+  !   Boundary conditions   !
+  !-------------------------! 
+  do n = 1, grid % n_boundary_conditions
     write(9) grid % boundary_conditions(n) % name
   end do
 

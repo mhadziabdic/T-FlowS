@@ -40,11 +40,13 @@
     NewS(s) = s
   end do  
 
-  ! Count all materials
-  call Count_Materials(grid)
+  call Save_Gmv_Cells(grid, 0, NN, NC, NS, NbC)
+  call Save_Gmv_Faces(grid, 0, NN, NC)  ! save grid for checking b.c. 
+  call Save_Shadows  (grid, 0, NN, NC)             ! save shadows 
 
-  call Save_Gmv_Grid(grid, 0, NN, NC, NS, NbC)
   call Save_Cns_Geo(grid, 0, NC, NS, NBC, 0, 0) 
+
+  ! Save links for checking
   call Save_Gmv_Links(grid, 0, NN, NC, NS, NbC, 0)
 
   ! Create output for Fluent

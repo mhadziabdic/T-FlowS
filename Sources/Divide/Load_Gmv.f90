@@ -136,9 +136,10 @@
 
   ! Read cell materials
   call ReadC(9,inp,tn,ts,te)  ! materials, number of materials 
-  read(inp(ts(2):te(2)),*) Nmat
-  do n=1,Nmat
+  read(inp(ts(2):te(2)),*) grid % n_materials
+  do n = 1, grid % n_materials
     call ReadC(9,inp,tn,ts,te)  
+    grid % materials(n) % name = inp(ts(1):te(1))
   end do 
   do c=1,NC
     read(9,*) material(c)

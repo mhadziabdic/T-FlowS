@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Load_Restart(restart)
+  subroutine Load_Restart(grid, restart)
 !------------------------------------------------------------------------------!
 ! Reads restart files name.restart                                             !
 !----------------------------------[Modules]-----------------------------------!
@@ -8,10 +8,12 @@
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  logical   :: restart 
+  type(Grid_Type) :: grid
+  logical         :: restart 
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, s, m
   integer           :: i_1, i_2, i_3, i_4, i_5, i_6
@@ -70,7 +72,7 @@
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6   
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6   
 
-  call UnkAloc
+  call Allocate_Variables(grid)
 
   read(9) (U % n(c),   c=-NbC,NC)
   read(9) (V % n(c),   c=-NbC,NC)
@@ -105,14 +107,13 @@
   read(9) (Pz(c),   c=-NbC,NC)
 
   ! Pressure drops in each material (domain)
-  do m=1,Nmat
+  do m = 1, grid % n_materials
     read(9) PdropX(m), PdropY(m), PdropZ(m)
     read(9) FLUXoX(m), FLUXoY(m), FLUXoZ(m)
     read(9) FLUXx(m),  FLUXy(m),  FLUXz(m)
     read(9) AreaX(m),  AreaY(m),  AreaZ(m)
     read(9) Ubulk(m),  Vbulk(m),  Wbulk(m)
   end do
-
 
   ! Fluxes 
   read(9) (Flux(s), s=1,NS)

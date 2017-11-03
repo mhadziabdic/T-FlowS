@@ -17,6 +17,9 @@
   !---------------!
   type Grid_Type
 
+    integer :: n_materials            ! number of materials
+    integer :: n_boundary_conditions  ! number of boundary conditions
+
     !-------------------------!
     !  Cell-based variables   !
     !-------------------------!

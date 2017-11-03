@@ -1,25 +1,29 @@
-!======================================================================!
-  subroutine IniVar 
-!----------------------------------------------------------------------!
-!   Initialize dependent variables                                     !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Initialize_Variables(grid)
+!------------------------------------------------------------------------------!
+!   Initialize dependent variables.                                            !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use par_mod
   use rans_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!------------------------------[Calling]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+!----------------------------------[Calling]-----------------------------------!
   real    :: UserUPlus, Uta, Stot
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, m, s, n
-  integer :: N1, N2, N3, N4, N5, N6
-!======================================================================!
+  integer :: n1, n2, n3, n4, n5, n6
+!==============================================================================!
+
   Area  = 0.0
   Uaver = 0.0
-  do n=1,Nmat
+  do n=1,grid % n_materials
     do c=1,NC
       U % mean(c) = 0.0
       V % mean(c) = 0.0
@@ -81,7 +85,7 @@
         VIS % oo(c)   = VIS % init(material(c))
       end if
     end do 
-  end do   !end do n=1,Nmat
+  end do   !end do n=1,grid % n_materials
 
   if(TGV == YES) then
     do c=1,NC
@@ -98,55 +102,55 @@
     end do
   end if
 
-!=====================================!
-!        Calculate the inflow         !
-!     and initializes the Flux(s)     ! 
-!     at both inflow and outflow      !
-!=====================================!
-  N1 = 0
-  N2 = 0
-  N3 = 0
-  N4 = 0
-  N5 = 0
-  N6 = 0
-  do m=1,Nmat
+  !---------------------------------!
+  !      Calculate the inflow       !
+  !   and initializes the Flux(s)   ! 
+  !   at both inflow and outflow    !
+  !---------------------------------!
+  n1 = 0
+  n2 = 0
+  n3 = 0
+  n4 = 0
+  n5 = 0
+  n6 = 0
+  do m=1,grid % n_materials
     MassIn(m) = 0.0
-    do s=1,NS
+    do s=1,nS
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2  < 0) then 
-        Flux(s) = DENc(material(c1))*( U % n(c2) * Sx(s) + &
+        Flux(s) = DEnc(material(c1))*( U % n(c2) * Sx(s) + &
                                        V % n(c2) * Sy(s) + &
                                        W % n(c2) * Sz(s) )
                                        
-        if(TypeBC(c2)  ==  INFLOW) then
+        if(TypeBC(c2)  ==  InFLOW) then
           if(material(c1) == m) MassIn(m) = MassIn(m) - Flux(s) 
           Stot  = sqrt(Sx(s)**2 + Sy(s)**2 + Sz(s)**2)
           Area  = Area  + Stot
         endif
-        if(TypeBC(c2)  ==  WALL)     N1=N1+1 
-        if(TypeBC(c2)  ==  INFLOW)   N2=N2+1  
-        if(TypeBC(c2)  ==  OUTFLOW)  N3=N3+1 
-        if(TypeBC(c2)  ==  SYMMETRY) N4=N4+1 
-        if(TypeBC(c2)  ==  WALLFL)   N5=N5+1 
-        if(TypeBC(c2)  ==  CONVECT)  N6=N6+1 
+        if(TypeBC(c2)  ==  WALL)     n1=n1+1 
+        if(TypeBC(c2)  ==  InFLOW)   n2=n2+1  
+        if(TypeBC(c2)  ==  OUTFLOW)  n3=n3+1 
+        if(TypeBC(c2)  ==  SYMMETRY) n4=n4+1 
+        if(TypeBC(c2)  ==  WALLFL)   n5=n5+1 
+        if(TypeBC(c2)  ==  COnVECT)  n6=n6+1 
       else
         Flux(s) = 0.0 
       end if
     end do
-    call iglsum(N1)
-    call iglsum(N2)
-    call iglsum(N3)
-    call iglsum(N4)
-    call iglsum(N5)
-    call iglsum(N6)
+    call iglsum(n1)
+    call iglsum(n2)
+    call iglsum(n3)
+    call iglsum(n4)
+    call iglsum(n5)
+    call iglsum(n6)
     call glosum(MassIn(m))
     call glosum(Area)
   end do                  
 
-!==========================!
-!     Initializes Time     ! 
-!==========================!
+  !----------------------!
+  !   Initializes time   ! 
+  !----------------------!
   Time   = 0.0   
   Uaver  = MassIn(1)/Area 
 !   write(*,*) MassIn, Area, MassIn/Area 
@@ -154,16 +158,14 @@
   if(this_proc  < 2) then
     write(*,*) '# MassIn=', MassIn(1)
     write(*,*) '# Average inflow velocity =', MassIn(1)/Area
-    write(*,*) '# Number of faces on the wall        : ',N1
-    write(*,*) '# Number of inflow faces             : ',N2
-    write(*,*) '# Number of outflow faces            : ',N3
-    write(*,*) '# Number of symetry faces            : ',N4
-    write(*,*) '# Number of faces on the heated wall : ',N5
-    write(*,*) '# Number of convective outflow faces : ',N6
+    write(*,*) '# number of faces on the wall        : ',n1
+    write(*,*) '# number of inflow faces             : ',n2
+    write(*,*) '# number of outflow faces            : ',n3
+    write(*,*) '# number of symetry faces            : ',n4
+    write(*,*) '# number of faces on the heated wall : ',n5
+    write(*,*) '# number of convective outflow faces : ',n6
 
     write(*,*) '# Variables initialized !'
   end if
 
-  RETURN
-
-  end subroutine IniVar
+  end subroutine

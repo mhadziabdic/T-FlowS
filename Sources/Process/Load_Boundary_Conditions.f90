@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Load_Boundary_Conditions(in_out)
+  subroutine Load_Boundary_Conditions(grid, in_out)
 !------------------------------------------------------------------------------!
 !   Reads: name.b                                                              !
 !----------------------------------[Modules]-----------------------------------!
@@ -11,11 +11,12 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  logical       :: in_out
+  type(Grid_Type) :: grid
+  logical         :: in_out
 !----------------------------------[Calling]-----------------------------------!
-  real          :: Distance
+  real :: Distance
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, n, n_bnd_cond, n_points, n_initial_cond, s
+  integer           :: c, n, n_points, n_initial_cond, s
   integer           :: m, c1, c2, bc, mt, i
   character(len=80) :: name_bou, name_prof(128), dir, bc_name, mt_name
   integer           :: typBou(128)
@@ -37,8 +38,8 @@
   !   Phisical properties   !
   !-------------------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) Nmat
-  do mt = 1,Nmat
+  read(inp,*) grid % n_materials
+  do mt = 1,grid % n_materials
 
     call ReadC(9,inp,tn,ts,te)
     call To_Upper_Case(  inp(ts(1):te(1))  )
@@ -68,9 +69,9 @@
   !   Boundary conditions 1 - read them from the file   !
   !-----------------------------------------------------!
   call ReadC(9,inp,tn,ts,te)
-  read(inp,*) n_bnd_cond
+  read(inp,*) grid % n_boundary_conditions
 
-  do bc = 1,n_bnd_cond  ! number of boundary conditions
+  do bc = 1,grid % n_boundary_conditions  ! number of boundary conditions
 
     call ReadC(9,inp,tn,ts,te)
     call To_Upper_Case(  inp(ts(1):te(1))  )
@@ -237,7 +238,7 @@
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) n_initial_cond
   write(*,*) '# Number of initial conditions: ', n_initial_cond
-  if(n_initial_cond > Nmat) then
+  if(n_initial_cond > grid % n_materials) then
     if(this_proc < 2) write(*,*) 'Warning: there are more initial conditions then materials'
   end if
 
@@ -321,7 +322,7 @@
   !----------------------------------------------------------------------!
   !   Boundary conditions 2 - distribute them over computational cells   !
   !----------------------------------------------------------------------!
-  do n=1,n_bnd_cond
+  do n=1,grid % n_boundary_conditions
 
     ! Boundary condition is given by a single constant
     if(name_prof(n) == '') then 
@@ -596,4 +597,4 @@
     if(bcmark(c) == BUFFER) TypeBC(c)=BUFFER 
   end do
 
-  end subroutine Load_Boundary_Conditions
+  end subroutine

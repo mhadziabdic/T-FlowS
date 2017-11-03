@@ -1,6 +1,6 @@
-noinst_LIBRARIES = libLinear_Solvers.a
+noinst_LIBRARIES = libSolvers.a
 
-libLinear_Solvers_a_SOURCES =	\
+libSolvers_a_SOURCES =		\
   BiCG.f90			\
   CG.f90			\
   CGS.f90			\

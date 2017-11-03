@@ -16,7 +16,8 @@ AC_OUTPUT(
   Neu2TFlowS/Makefile			\
   Process/Makefile			\
   Process/Communication/Makefile	\
-  Process/Linear_Solvers/Makefile	\
+  Process/Solvers/Makefile		\
+  Process/Turbulence/Makefile		\
   Process/User/Makefile			\
   Utilities/Makefile
 )

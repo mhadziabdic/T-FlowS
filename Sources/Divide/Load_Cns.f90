@@ -32,14 +32,19 @@
   read(9) NbC
   read(9) NS
   read(9) NSsh
-  read(9) Nmat
-  read(9) Nbnd
-  allocate(grid % materials(Nmat))
-  allocate(grid % boundary_conditions(Nbnd))
-  do n=1,Nmat
+  read(9) grid % n_materials
+  read(9) grid % n_boundary_conditions
+
+  allocate(grid % materials          (grid % n_materials))
+  allocate(grid % boundary_conditions(grid % n_boundary_conditions))
+
+  ! Materials
+  do n = 1, grid % n_materials
     read(9) grid % materials(n) % name
   end do
-  do n=1,Nbnd
+
+  ! Boundary conditions
+  do n = 1, grid % n_boundary_conditions
     read(9) grid % boundary_conditions(n) % name
   end do
 

@@ -2,7 +2,7 @@
   subroutine cg(N, NB,           &
                 A, x, r1,        &
                 prec,niter,tol,  &
-                IniRes,FinRes)
+                ini_res,fin_res)
 !------------------------------------------------------------------------------!
 !   Solves the linear systems of equations by a precond. CG Method.            !
 !------------------------------------------------------------------------------!
@@ -15,18 +15,18 @@
 !   incomplete Cholesky preconditioning)                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allt_mod, only: Matrix
-  use sol_mod
+  use Matrix_Mod
+  use Solver_Mod
   use par_mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer      :: N, NB
-  type(Matrix) :: A
-  real         :: x(-NB:N), r1(N)                !  [A]{x}={r1}
-  integer      :: prec,  niter                   !  preconditioning
-  real         :: tol                            !  tolerance
-  real         :: IniRes, FinRes                 !  residual
+  integer           :: N, NB
+  type(Matrix_Type) :: A
+  real              :: x(-NB:N), r1(N)    !  [A]{x}={r1}
+  integer           :: prec,  niter       !  preconditioning
+  real              :: tol                !  tolerance
+  real              :: ini_res, fin_res   !  residual
 !-----------------------------------[Locals]-----------------------------------!
   real    :: alfa, beta, rho, rhoold, bnrm2, sum1, sum2, error
   integer :: i, j, k, iter, sub
@@ -56,7 +56,7 @@
   !----------------!
   !   r = b - Ax   !
   !----------------!
-  call Resid(N, NB, A, x, r1) 
+  call Residual(N, NB, A, x, r1) 
 
   !-----------!
   !   p = r   !
@@ -78,7 +78,7 @@
   !---------------------------------------------------------------!
   !   Residual after the correction and before the new solution   !
   !---------------------------------------------------------------!
-  IniRes=error
+  ini_res=error
 
   if(error < tol) then
     iter=0
@@ -173,9 +173,7 @@
 
   end do                ! iter 
 
-1 FinRes = error
+1 fin_res = error
   niter = iter
 
-  RETURN
-
-  end subroutine cg
+  end subroutine

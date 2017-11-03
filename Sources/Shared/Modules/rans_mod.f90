@@ -7,75 +7,72 @@
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 
-module rans_mod
+  module rans_mod
 
-  use allt_mod, only: Unknown
+  use Var_Mod
 
   implicit none
 
-!----- Turbulence models variables
-  type(Unknown) :: KIN
-  type(Unknown) :: EPS
-  type(Unknown) :: V_2
-  type(Unknown) :: F22
-  type(Unknown) :: VIS
+  ! Turbulence models variables
+  type(Var_Type) :: KIN
+  type(Var_Type) :: EPS
+  type(Var_Type) :: V_2
+  type(Var_Type) :: F22
+  type(Var_Type) :: VIS
 
-  type(Unknown) :: uu
-  type(Unknown) :: vv
-  type(Unknown) :: ww
-  type(Unknown) :: uv
-  type(Unknown) :: uw
-  type(Unknown) :: vw
+  type(Var_Type) :: uu
+  type(Var_Type) :: vv
+  type(Var_Type) :: ww
+  type(Var_Type) :: uv
+  type(Var_Type) :: uw
+  type(Var_Type) :: vw
  
-!----- Constants for the k-eps model:
+  ! Constants for the k-eps model:
   real :: Ce1, Ce2, Ce3, Cmu, Cmu25, Cmu75, kappa, Elog, Zo
  
-!----- Constants for the k-eps-v2f model:
+  ! Constants for the k-eps-v2f model:
   real :: CmuD, Cl, Ct, alpha, Cni, cf1, cf2, cf3, Cf_1, Cf_2
   real :: Lim
   real :: g1, g1_star, g2, g3, g3_star, g4, g5 
 
-!----- Constants for the Spalart-Allmaras model:
+  ! Constants for the Spalart-Allmaras model:
   real :: Cb1, Cb2, SIGMAv, Cw1, Cw2, Cw3, Cvis1
 
-!----- Vorticity
+  ! Vorticity
   real,allocatable :: Vort(:), VortMean(:)
 
-!----- Turbulent viscosity
+  ! Turbulent viscosity
   real,allocatable :: VISt(:), CmuS(:)
  
-!----- Turbulent conductivity
+  ! Turbulent conductivity
   real,allocatable :: CONt(:)
  
-!----- Lenght and Time Scales
+  ! Lenght and Time Scales
   real,allocatable :: Lsc(:)
   real,allocatable :: Tsc(:)   
 
-!----- Production of turbulent kinetic energy
+  ! Production of turbulent kinetic energy
   real,allocatable :: Pk(:)
-!----- Buoyancy production
+  ! Buoyancy production
   real,allocatable :: Gbuoy(:)
   real,allocatable :: buoyBeta(:)
   real,allocatable :: Pbuoy(:)
  
-!----- Non-dimensional distance
+  ! Non-dimensional distance
   real,allocatable :: Ynd(:)
  
-!----- Friction velocity
+  ! Friction velocity
   real,allocatable :: Uf(:)
   real,allocatable :: Ufmean(:)
 
-!----- Gravity
+  ! Gravity
   real :: grav_x, grav_y, grav_z
 
-!----- Wall viscosity (wall function approuch)
+  ! Wall viscosity (wall function approuch)
   real,allocatable :: VISwall(:)
   real,allocatable :: CONwall(:)
 
-!  real,allocatable :: AA(:)
-!  real,allocatable :: EE(:)
   real,allocatable :: Fs(:)
-!  real,allocatable :: Feps(:)
 
   real,allocatable :: nn1(:)
   real,allocatable :: nn2(:)
@@ -98,4 +95,4 @@ module rans_mod
   real,allocatable :: uw_star(:)
   real,allocatable :: vw_star(:)
 
-end module 
+  end module 

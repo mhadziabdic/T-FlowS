@@ -5,14 +5,13 @@
 !   It relies only on SideC structure. Try to keep it that way.                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allt_mod, only: Matrix
   use all_mod,  only: NC, NS, SideC
-  use sol_mod
   use par_mod
+  use Matrix_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Matrix) :: M
+  type(Matrix_Type) :: M
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: c, s, pos, pos1, pos2, n
   integer              :: c1, c2  ! cell 1 and 2
@@ -122,6 +121,4 @@
  
   deallocate(stencw)
 
-  RETURN
-
-  end subroutine Matrix_Topology
+  end subroutine

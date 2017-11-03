@@ -1,11 +1,11 @@
 !======================================================================!
-  subroutine GraPhiCor(PHI, PHI_x, PHI_y, PHI_z)
+  subroutine GraPhiCor(phi, phi_x, phi_y, phi_z)
 !----------------------------------------------------------------------!
 ! Calculates gradient in the cells adjencent to material interface     !
 ! boundaries. Assumes that "tentative" gradients are just calculated   !
-! and stored in "PHI_x", "PHI_y" and "PHI_z" arrays.                   !
+! and stored in "phi_x", "phi_y" and "phi_z" arrays.                   !
 !                                                                      !
-! It also assumes that the gradients "PHI_x", "PHI_y" and "PHI_z"      !
+! It also assumes that the gradients "phi_x", "phi_y" and "phi_z"      !
 ! are fresh in buffers.                                                !
 !                                                                      !
 ! This entire procedure is for two materials.                          !
@@ -26,18 +26,18 @@
 !------------------------------[Modules]-------------------------------!
   use all_mod
   use pro_mod
-  use sol_mod  ! needed for p1 and p2 arrays
+  use Solver_Mod, only: p1, p2  ! bad practice
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
-  real :: PHI(-NbC:NC),    &
-          PHI_x(-NbC:NC),  &
-          PHI_y(-NbC:NC),  &
-          PHI_z(-NbC:NC)
+  real :: phi(-NbC:NC),    &
+          phi_x(-NbC:NC),  &
+          phi_y(-NbC:NC),  &
+          phi_z(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
   integer :: s, c, c1, c2
-  real    :: DPHI1, DPHI2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
-  real    :: f1, f2, PHIs
+  real    :: Dphi1, Dphi2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
+  real    :: f1, f2, phi_f
 !======================================================================!
 
   do s=1,NS
@@ -89,15 +89,15 @@
 
 !---- Flux from cell 1 towards the material interface
       f1 = CONc(material(c1)) *  &
-           (PHI_x(c1)*Sx(s) + PHI_y(c1)*Sy(s) + PHI_z(c1)*Sz(s))
+           (phi_x(c1)*Sx(s) + phi_y(c1)*Sy(s) + phi_z(c1)*Sz(s))
 
 !---- Flux from cell 2 towards the material interface
       f2 = CONc(material(c2)) *  &
-           (PHI_x(c2)*Sx(s) + PHI_y(c2)*Sy(s) + PHI_z(c2)*Sz(s))
+           (phi_x(c2)*Sx(s) + phi_y(c2)*Sy(s) + phi_z(c2)*Sz(s))
 
 !---- The two fluxes (q1 and q2) should be the same
-      PHIs = (f2 - f1) / (p1(c1) - p2(c2) + TINY)
-      PHIside(s) = PHIs
+      phi_f = (f2 - f1) / (p1(c1) - p2(c2) + TINY)
+      phiside(s) = phi_f
 
       Dxc1 = xsp(s)-xc(c1)                     
       Dyc1 = ysp(s)-yc(c1)                     
@@ -107,21 +107,21 @@
       Dzc2 = zsp(s)-zc(c2)                     
 
 !---- Now update the gradients
-      PHI_x(c1)=PHI_x(c1)+PHIs*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1)
-      PHI_y(c1)=PHI_y(c1)+PHIs*(G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) 
-      PHI_z(c1)=PHI_z(c1)+PHIs*(G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1)
+      phi_x(c1)=phi_x(c1)+phi_f*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1)
+      phi_y(c1)=phi_y(c1)+phi_f*(G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) 
+      phi_z(c1)=phi_z(c1)+phi_f*(G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1)
 
       if(c2 > 0) then
-       PHI_x(c2)=PHI_x(c2)+PHIs*(G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2)
-       PHI_y(c2)=PHI_y(c2)+PHIs*(G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2)
-       PHI_z(c2)=PHI_z(c2)+PHIs*(G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2)
+       phi_x(c2)=phi_x(c2)+phi_f*(G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2)
+       phi_y(c2)=phi_y(c2)+phi_f*(G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2)
+       phi_z(c2)=phi_z(c2)+phi_f*(G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2)
       end if
 
     end if    
   end do
 
-  call Exchng(PHI_x)
-  call Exchng(PHI_y)
-  call Exchng(PHI_z)
+  call Exchng(phi_x)
+  call Exchng(phi_y)
+  call Exchng(phi_z)
 
   end subroutine GraPhiCor

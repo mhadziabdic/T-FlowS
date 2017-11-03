@@ -1,12 +1,12 @@
 !==============================================================================!
-  module Unknown_Mod
+  module Var_Mod
 !------------------------------------------------------------------------------!
   implicit none
 
-  !------------------!
-  !   Unknown type   !
-  !------------------!
-  type Unknown          
+  !--------------!
+  !   Var type   !
+  !--------------!
+  type Var_Type         
     real, allocatable :: n(:)                ! new value
     real, allocatable :: o(:), oo(:)         ! old and older then old
     real, allocatable :: C(:), Co(:), Coo(:) ! convective fluxes
@@ -22,12 +22,12 @@
     real              :: init(128)           ! initial values
     real              :: pro(11024)          ! inlfow profile
     real              :: Sigma               ! sigma
-  end type Unknown
+  end type Var_Type
 
   contains 
 
-  include 'Unknown_Mod_Allocate_Unknown.f90'
-  include 'Unknown_Mod_Allocate_Unknown_New_Value_Only.f90'
-  include 'Unknown_Mod_Allocate_Unknown_Statistics.f90'
+  include 'Var_Mod_Allocate_New.f90'
+  include 'Var_Mod_Allocate_Solution.f90'
+  include 'Var_Mod_Allocate_Statistics.f90'
 
   end module 

@@ -7,7 +7,7 @@ libSolvers_a_SOURCES =		\
   Matrix_Topology.f90           \
   Prec_Form.f90			\
   Prec_Solve.f90		\
-  Resid.f90    
+  Residual.f90    
 
 SUBDIRS = ../../Shared/Modules
 

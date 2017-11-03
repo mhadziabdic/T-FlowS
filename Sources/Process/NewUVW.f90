@@ -1,9 +1,9 @@
 !==============================================================================!
   subroutine NewUVW(grid, var, Ui,                                  &
-                    dUidi, dUidj, dUidk,                            &
+                    ui_i, ui_j, ui_k,                            &
                     Si, Sj, Sk,                                     &
                     Di, Dj, Dk,                                     &
-                    Hi, dUjdi, dUkdi)
+                    Hi, uj_i, uk_i)
 !------------------------------------------------------------------------------!
 !   Discretizes and solves momentum conservation equations                     !
 !------------------------------------------------------------------------------!
@@ -14,16 +14,17 @@
   use rans_mod
   use par_mod
   use Grid_Mod
+  use Var_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   integer         :: var
-  type(Unknown)   :: Ui
-  real            :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
+  type(Var_Type)  :: Ui
+  real            :: ui_i(-NbC:NC), ui_j(-NbC:NC), ui_k(-NbC:NC)
   real            :: Si(NS), Sj(NS), Sk(NS) 
   real            :: Di(NS), Dj(NS), Dk(NS) 
-  real            :: Hi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
+  real            :: Hi(-NbC:NC), uj_i(-NbC:NC), uk_i(-NbC:NC) 
   real            :: uuS, vvS, wwS, uvS, uwS, vwS
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter, mat
@@ -32,7 +33,7 @@
   real    :: A0, A12, A21
   real    :: error
   real    :: VISeff, VIStS, Fstress 
-  real    :: dUidiS,dUidjS,dUidkS,dUjdiS,dUkdiS
+  real    :: ui_iS,ui_jS,ui_kS,uj_iS,uk_iS
 !------------------------------------------------------------------------------!
 !
 !  Stress tensor on the face s:
@@ -150,7 +151,7 @@
     Uis=f(s)*Ui % n(c1) + (1.0-f(s))*Ui % n(c2)
 
     if(BLEND(material(c1)) /= NO .or. BLEND(material(c2)) /= NO) then
-      call ConvScheme(Uis, s, Ui % n, dUidi, dUidj, dUidk, Di, Dj, Dk, &
+      call ConvScheme(Uis, s, Ui % n, ui_i, ui_j, ui_k, Di, Dj, Dk, &
                            max(BLEND(material(c1)),BLEND(material(c2))) ) 
     end if 
     
@@ -274,25 +275,25 @@
       end if 
     end if
 
-    dUidiS = fF(s)*dUidi(c1) + (1.0-fF(s))*dUidi(c2)
-    dUidjS = fF(s)*dUidj(c1) + (1.0-fF(s))*dUidj(c2)
-    dUidkS = fF(s)*dUidk(c1) + (1.0-fF(s))*dUidk(c2)
-    dUjdiS = fF(s)*dUjdi(c1) + (1.0-fF(s))*dUjdi(c2)
-    dUkdiS = fF(s)*dUkdi(c1) + (1.0-fF(s))*dUkdi(c2)
+    ui_iS = fF(s)*ui_i(c1) + (1.0-fF(s))*ui_i(c2)
+    ui_jS = fF(s)*ui_j(c1) + (1.0-fF(s))*ui_j(c2)
+    ui_kS = fF(s)*ui_k(c1) + (1.0-fF(s))*ui_k(c2)
+    uj_iS = fF(s)*uj_i(c1) + (1.0-fF(s))*uj_i(c2)
+    uk_iS = fF(s)*uk_i(c1) + (1.0-fF(s))*uk_i(c2)
 
     ! total (exact) viscous stress 
-    Fex=VISeff*( 2.0*dUidiS*Si(s)                               &
-                + (dUidjS+dUjdiS)*Sj(s)                         &
-                + (dUidkS+dUkdiS)*Sk(s) )
+    Fex=VISeff*( 2.0*ui_iS*Si(s)                               &
+                + (ui_jS+uj_iS)*Sj(s)                         &
+                + (ui_kS+uk_iS)*Sk(s) )
 
     A0 = VISeff * Scoef(s)
 
     ! Implicit viscous stress
     ! this is a very crude approximation: Scoef is not
     ! corrected at interface between materials
-    Fim=( dUidiS*Di(s)                                    &
-       +dUidjS*Dj(s)                                      &
-       +dUidkS*Dk(s))*A0
+    Fim=( ui_iS*Di(s)                                    &
+       +ui_jS*Dj(s)                                      &
+       +ui_kS*Dk(s))*A0
 
     ! This is yet another crude approximation:
     ! A0 is calculated approximatelly
@@ -407,19 +408,19 @@
         A0 = Scoef(s)*VIStS 
         VISeff = VIStS
 
-        dUidiS = fF(s)*dUidi(c1) + (1.0-fF(s))*dUidi(c2)
-        dUidjS = fF(s)*dUidj(c1) + (1.0-fF(s))*dUidj(c2)
-        dUidkS = fF(s)*dUidk(c1) + (1.0-fF(s))*dUidk(c2)
-        dUjdiS = fF(s)*dUjdi(c1) + (1.0-fF(s))*dUjdi(c2)
-        dUkdiS = fF(s)*dUkdi(c1) + (1.0-fF(s))*dUkdi(c2)
+        ui_iS = fF(s)*ui_i(c1) + (1.0-fF(s))*ui_i(c2)
+        ui_jS = fF(s)*ui_j(c1) + (1.0-fF(s))*ui_j(c2)
+        ui_kS = fF(s)*ui_k(c1) + (1.0-fF(s))*ui_k(c2)
+        uj_iS = fF(s)*uj_i(c1) + (1.0-fF(s))*uj_i(c2)
+        uk_iS = fF(s)*uk_i(c1) + (1.0-fF(s))*uk_i(c2)
 
-        Fex=VISeff*( 2.0*dUidiS*Si(s)                           &
-                      + (dUidjS+dUjdiS)*Sj(s)                   &
-                      + (dUidkS+dUkdiS)*Sk(s) )
+        Fex=VISeff*( 2.0*ui_iS*Si(s)                           &
+                      + (ui_jS+uj_iS)*Sj(s)                   &
+                      + (ui_kS+uk_iS)*Sk(s) )
 
-        Fim=( dUidiS*Di(s)                                      &
-             +dUidjS*Dj(s)                                      &
-             +dUidkS*Dk(s))*VISeff*Scoef(s)
+        Fim=( ui_iS*Di(s)                                      &
+             +ui_jS*Dj(s)                                      &
+             +ui_kS*Dk(s))*VISeff*Scoef(s)
 
         b(c1) = b(c1) - VISeff*(Ui%n(c2)-Ui%n(c1))*Scoef(s)- Fex + Fim
         if(c2  > 0) then

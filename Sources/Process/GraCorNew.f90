@@ -1,11 +1,11 @@
 !======================================================================!
-  subroutine GraCorNew(PHI, PHI_x, PHI_y, PHI_z)
+  subroutine GraCorNew(phi, phi_x, phi_y, phi_z)
 !----------------------------------------------------------------------!
 ! Calculates gradient in the cells adjencent to material interface     !
 ! boundaries. Assumes that "tentative" gradients are just calculated   !
-! and stored in "PHI_x", "PHI_y" and "PHI_z" arrays.                   !
+! and stored in "phi_x", "phi_y" and "phi_z" arrays.                   !
 !                                                                      !
-! It also assumes that the gradients "PHI_x", "PHI_y" and "PHI_z"      !
+! It also assumes that the gradients "phi_x", "phi_y" and "phi_z"      !
 ! are fresh in buffers.                                                !
 !                                                                      !
 ! This entire procedure is for two materials.                          !
@@ -26,18 +26,18 @@
 !------------------------------[Modules]-------------------------------!
   use all_mod
   use pro_mod
-  use sol_mod  ! needed for p1 and p2 arrays
+  use Solver_Mod, only: p1, p2  ! bad practice
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
-  real :: PHI(-NbC:NC),    &
-          PHI_x(-NbC:NC),  &
-          PHI_y(-NbC:NC),  &
-          PHI_z(-NbC:NC)
+  real :: phi(-NbC:NC),    &
+          phi_x(-NbC:NC),  &
+          phi_y(-NbC:NC),  &
+          phi_z(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
   integer :: s, c1, c2
   real    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
-  real    :: f1, f2, PHIs
+  real    :: f1, f2, phi_f
   real    :: L1, L2, D1, D2
 !======================================================================!
 
@@ -45,7 +45,7 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
 
-!---- Take care of material interfaces          
+    ! Take care of material interfaces          
     if( StateMat(material(c1))==FLUID .and. &  
         StateMat(material(c2))==SOLID       &  
         .or.                                &  
@@ -59,7 +59,7 @@
       Dyc2 = ysp(s)-yc(c2)                     
       Dzc2 = zsp(s)-zc(c2)                     
 
-!---- Missing parts of the gradient vector
+      ! Missing parts of the gradient vector
       p1(c1) = CONc(material(c1)) *  &
            ( (G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1) * Sx(s) + &
              (G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) * Sy(s) + & 
@@ -81,25 +81,25 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
 
-!---- Take care of material interfaces          
+    ! Take care of material interfaces          
     if( StateMat(material(c1))==FLUID .and. &  
         StateMat(material(c2))==SOLID       &  
         .or.                                &  
         StateMat(material(c1))==SOLID .and. &  
         StateMat(material(c2))==FLUID ) then   
 
-!---- Flux from cell 1 towards the material interface
+      ! Flux from cell 1 towards the material interface
       f1 = CONc(material(c1)) *  &
-           (PHI_x(c1)*Sx(s) + PHI_y(c1)*Sy(s) + PHI_z(c1)*Sz(s))
+           (phi_x(c1)*Sx(s) + phi_y(c1)*Sy(s) + phi_z(c1)*Sz(s))
 
-!---- Flux from cell 2 towards the material interface
+      ! Flux from cell 2 towards the material interface
       f2 = CONc(material(c2)) *  &
-           (PHI_x(c2)*Sx(s) + PHI_y(c2)*Sy(s) + PHI_z(c2)*Sz(s))
+           (phi_x(c2)*Sx(s) + phi_y(c2)*Sy(s) + phi_z(c2)*Sz(s))
 
-!---- The two fluxes (q1 and q2) should be the same
-      PHIs = (f2 - f1) / (p1(c1) - p2(c2) + TINY)
+      ! The two fluxes (q1 and q2) should be the same
+      phi_f = (f2 - f1) / (p1(c1) - p2(c2) + TINY)
       
-      PHIs = 0.5*(PHI(c1)+PHI(c2)) ! good if lambda1=lambda2 
+      phi_f = 0.5*(phi(c1)+phi(c2)) ! good if lambda1=lambda2 
 
       Dxc1 = xsp(s)-xc(c1)                     
       Dyc1 = ysp(s)-yc(c1)                     
@@ -114,10 +114,10 @@
       L1 = CONc(material(c1))
       L2 = CONc(material(c2))
 
-      PHIs = (L1/D1*PHI(c1) + L2/D2*PHI(c2)) / (L1/D1 + L2/D2)
+      phi_f = (L1/D1*phi(c1) + L2/D2*phi(c2)) / (L1/D1 + L2/D2)
 
-!--- remember it !
-      PHIside(s) = PHIs
+      ! Remember it !
+      phiside(s) = phi_f
 
       Dxc1 = xsp(s)-xc(c1)                     
       Dyc1 = ysp(s)-yc(c1)                     
@@ -126,22 +126,22 @@
       Dyc2 = ysp(s)-yc(c2)                     
       Dzc2 = zsp(s)-zc(c2)                     
 
-!---- Now update the gradients
-      PHI_x(c1)=PHI_x(c1)+PHIs*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1)
-      PHI_y(c1)=PHI_y(c1)+PHIs*(G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) 
-      PHI_z(c1)=PHI_z(c1)+PHIs*(G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1)
+      ! Now update the gradients
+      phi_x(c1)=phi_x(c1)+phi_f*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1)
+      phi_y(c1)=phi_y(c1)+phi_f*(G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) 
+      phi_z(c1)=phi_z(c1)+phi_f*(G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1)
 
       if(c2 > 0) then
-       PHI_x(c2)=PHI_x(c2)+PHIs*(G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2)
-       PHI_y(c2)=PHI_y(c2)+PHIs*(G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2)
-       PHI_z(c2)=PHI_z(c2)+PHIs*(G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2)
+       phi_x(c2)=phi_x(c2)+phi_f*(G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2)
+       phi_y(c2)=phi_y(c2)+phi_f*(G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2)
+       phi_z(c2)=phi_z(c2)+phi_f*(G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2)
       end if
 
     end if    
   end do
 
-  call Exchng(PHI_x)
-  call Exchng(PHI_y)
-  call Exchng(PHI_z)
+  call Exchng(phi_x)
+  call Exchng(phi_y)
+  call Exchng(phi_z)
 
   end subroutine GraCorNew

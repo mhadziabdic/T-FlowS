@@ -1,18 +1,18 @@
 !==============================================================================!
   subroutine Prec_Form(N, A, D, prec) 
 !------------------------------------------------------------------------------!
-! Forms preconditioning matrix "D" from provided matrix "A".                   !
+!   Forms preconditioning matrix "D" from provided matrix "A".                 !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allt_mod, only: Matrix
   use par_mod
+  use Matrix_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer      :: N
-  type(Matrix) :: A
-  type(Matrix) :: D    
-  integer      :: prec
+  integer           :: N
+  type(Matrix_Type) :: A
+  type(Matrix_Type) :: D    
+  integer           :: prec
 !-----------------------------------[Locals]-----------------------------------!
   real     :: sum1
   integer  :: i, j, k
@@ -48,4 +48,4 @@
     end do
   end if 
 
-  end subroutine Prec_Form
+  end subroutine

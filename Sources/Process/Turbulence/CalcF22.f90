@@ -1,6 +1,6 @@
 !======================================================================!
   subroutine CalcF22(var, phi,             &
-                      dphidx, dphidy, dphidz)
+                      phi_x, phi_y, phi_z)
 !----------------------------------------------------------------------!
 ! Discretizes and solves eliptic relaxation equations for f22          !
 !----------------------------------------------------------------------!
@@ -10,18 +10,19 @@
   use les_mod
   use rans_mod
   use par_mod
+  use Var_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
-  integer       :: var
-  type(Unknown) :: phi
-  real          :: dphidx(-NbC:NC), dphidy(-NbC:NC), dphidz(-NbC:NC)
+  integer        :: var
+  type(Var_Type) :: phi
+  real           :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
 !-------------------------------[Locals]-------------------------------!
   integer :: s, c, c1, c2, niter, miter
   real    :: Fex, Fim 
   real    :: A0, A12, A21
   real    :: error
-  real    :: dphidxS, dphidyS, dphidzS
+  real    :: phi_xS, phi_yS, phi_zS
 !======================================================================! 
 !  The form of equations which are solved:
 !
@@ -92,22 +93,22 @@
     c1=SideC(1,s)
     c2=SideC(2,s)   
 
-    dphidxS = fF(s)*dphidx(c1) + (1.0-fF(s))*dphidx(c2)
-    dphidyS = fF(s)*dphidy(c1) + (1.0-fF(s))*dphidy(c2)
-    dphidzS = fF(s)*dphidz(c1) + (1.0-fF(s))*dphidz(c2)
+    phi_xS = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
+    phi_yS = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
+    phi_zS = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
 
 
 !---- total (exact) diffusive flux
-    Fex=( dphidxS*Sx(s) + dphidyS*Sy(s) + dphidzS*Sz(s) )
+    Fex=( phi_xS*Sx(s) + phi_yS*Sy(s) + phi_zS*Sz(s) )
 
     A0 =  Scoef(s)
 
 !---- implicit diffusive flux
 !.... this_proc is a very crude approximation: Scoef is not
 !.... corrected at interface between materials
-    Fim=( dphidxS*Dx(s)                      &
-         +dphidyS*Dy(s)                      &
-         +dphidzS*Dz(s))*A0
+    Fim=( phi_xS*Dx(s)                      &
+         +phi_yS*Dy(s)                      &
+         +phi_zS*Dz(s))*A0
 
 !---- this_proc is yet another crude approximation:
 !.... A0 is calculated approximatelly

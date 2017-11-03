@@ -7,11 +7,12 @@
 !------------------------------[Modules]-------------------------------!
   use all_mod
   use pro_mod
-  use sol_mod, only: D
   use les_mod
   use par_mod
   use rans_mod
   use Grid_Mod
+  use Var_Mod
+  use Solver_Mod, only: D
 !----------------------------------------------------------------------!
   implicit none
 !------------------------------[Calling]-------------------------------!
@@ -34,7 +35,7 @@
       implicit none
       type(Grid_Type) :: grid
       integer         :: var
-      type(Unknown)   :: Ui
+      type(Var_Type)  :: Ui
       real            :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
       real            :: Si(NS), Sj(NS), Sk(NS) 
       real            :: Di(NS), Dj(NS), Dk(NS) 
@@ -49,7 +50,7 @@
       implicit none
       type(Grid_Type) :: grid
       integer         :: var
-      type(Unknown)   :: phi
+      type(Var_Type)  :: phi
       real            :: dphidx(-NbC:NC),dphidy(-NbC:NC),dphidz(-NbC:NC)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
@@ -60,9 +61,9 @@
       use Grid_Mod
       implicit none
       type(Grid_Type) :: grid
-      integer       :: var, Nstep
-      type(Unknown) :: phi
-      real          :: dphidx(-NbC:NC),dphidy(-NbC:NC),dphidz(-NbC:NC)
+      integer        :: var, Nstep
+      type(Var_Type) :: phi
+      real           :: dphidx(-NbC:NC),dphidy(-NbC:NC),dphidz(-NbC:NC)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Save_Gmv_Results(namAut)  

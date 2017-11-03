@@ -12,12 +12,13 @@
   use rans_mod
   use par_mod
   use Grid_Mod
+  use Var_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   integer         :: var
-  type(Unknown)   :: phi
+  type(Var_Type)  :: phi
   real            :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter, mat

@@ -12,17 +12,16 @@
 !   incomplete Cholesky preconditioning)                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allt_mod, only: Matrix
-! use sol_mod
   use par_mod
+  use Matrix_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer      :: N, NB
-  type(Matrix) :: A
-  type(Matrix) :: D
-  real         :: x(-NB:N), b(N)
-  integer      :: prec
+  integer           :: N, NB
+  type(Matrix_Type) :: A
+  type(Matrix_Type) :: D    
+  real              :: x(-NB:N), b(N)
+  integer           :: prec
 !-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, k
   real    :: sum1
@@ -74,4 +73,4 @@
     end do
   end if
 
-  end subroutine Prec_Solve
+  end subroutine

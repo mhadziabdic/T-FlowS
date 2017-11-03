@@ -9,13 +9,14 @@
 module pro_mod
 
   use allp_mod, only: YES, NO
-  use allt_mod
+  use Var_Mod
+  use Matrix_Mod
 
   implicit none
 
   ! Right hand side for velocity and pressure equations 
-  type(Matrix)     :: A  ! system matrix for all variables
-  real,allocatable :: b(:)
+  type(Matrix_Type) :: A  ! system matrix for all variables
+  real,allocatable  :: b(:)
 
   ! Used in Dynamic Smgaorinsky model 
   real,allocatable    :: Aval_dif(:)
@@ -71,33 +72,33 @@ module pro_mod
   real,allocatable :: PHImax(:), PHImin(:) 
 
   ! Velocity components
-  type(Unknown) :: U
-  type(Unknown) :: V
-  type(Unknown) :: W
+  type(Var_Type) :: U
+  type(Var_Type) :: V
+  type(Var_Type) :: W
 
   ! Temperature
-  type(Unknown) :: T
-  type(Unknown) :: tt
-  type(Unknown) :: ut
-  type(Unknown) :: vt
-  type(Unknown) :: wt
+  type(Var_Type) :: T
+  type(Var_Type) :: tt
+  type(Var_Type) :: ut
+  type(Var_Type) :: vt
+  type(Var_Type) :: wt
 
   ! Pressure 
-  type(Unknown) :: P  
-  type(Unknown) :: PP
+  type(Var_Type) :: P  
+  type(Var_Type) :: PP
 
 !=====================================================================!
 !        Hybrid apriori variables
 !=====================================================================!
 
   ! Velocity components
-  type(Unknown) :: U_r
-  type(Unknown) :: V_r
-  type(Unknown) :: W_r
+  type(Var_Type) :: U_r
+  type(Var_Type) :: V_r
+  type(Var_Type) :: W_r
 
   ! Pressure
-  type(Unknown) :: P_r
-  type(Unknown) :: PP_r
+  type(Var_Type) :: P_r
+  type(Var_Type) :: PP_r
 
   ! Turbulent viscosity
   real,allocatable :: VISt_sgs(:)
@@ -105,7 +106,7 @@ module pro_mod
   real,allocatable :: Ptt(:)
 
   ! Reynolds stresses
-  type(Unknown) :: uu_r, vv_r, ww_r, uv_r, uw_r, vw_r
+  type(Var_Type) :: uu_r, vv_r, ww_r, uv_r, uw_r, vw_r
 
   ! Mass fluxes throught cell faces
   real,allocatable :: Flux_r(:), Alfa_lim(:)

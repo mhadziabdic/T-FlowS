@@ -1,13 +1,13 @@
 !==============================================================================!
-  subroutine Allocate_Unknown_Statistics(phi, n_bnd_cells, n_cells)
+  subroutine Var_Mod_Allocate_Statistics(phi, n_bnd_cells, n_cells)
 !------------------------------------------------------------------------------!
 !   This is to allocate additional values for statistics.                      !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Unknown) :: phi
-  integer       :: n_bnd_cells
-  integer       :: n_cells
+  type(Var_Type) :: phi
+  integer        :: n_bnd_cells
+  integer        :: n_cells
 !------------------------------------------------------------------------------!
 
   ! Terms for statistics

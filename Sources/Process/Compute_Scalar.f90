@@ -9,12 +9,13 @@
   use rans_mod
   use par_mod
   use Grid_Mod
+  use Var_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Arguments]--------------------------------!
   type(Grid_Type) :: grid
   integer         :: var
-  type(Unknown)   :: phi
+  type(Var_Type)  :: phi
   real            :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
 !----------------------------------[Calling]-----------------------------------!
   include "../Shared/Approx.int"

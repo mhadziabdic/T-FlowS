@@ -1,14 +1,14 @@
 !==============================================================================!
-  subroutine Allocate_Unknown(phi, n_bnd_cells, n_cells)
+  subroutine Var_Mod_Allocate_Solution(phi, n_bnd_cells, n_cells)
 !------------------------------------------------------------------------------!
-!   This is to allocate an uknown for a normal time-integration algorithm.     !
-!   Unknowns such as velocities and pressures should be allocated with it.     !
+!   This is to allocate a variable for a solution with usual algorithm.        !
+!   Variables such as velocities and pressures should be allocated with it.    !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Unknown) :: phi
-  integer       :: n_bnd_cells
-  integer       :: n_cells
+  type(Var_Type) :: phi
+  integer        :: n_bnd_cells
+  integer        :: n_cells
 !------------------------------------------------------------------------------!
 
   ! Values new (n), old (o), and older than old (oo)

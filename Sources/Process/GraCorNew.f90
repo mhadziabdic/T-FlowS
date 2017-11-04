@@ -26,7 +26,7 @@
 !------------------------------[Modules]-------------------------------!
   use all_mod
   use pro_mod
-  use Solver_Mod, only: p1, p2  ! bad practice
+  use Solvers_Mod, only: p1, p2  ! bad practice
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!

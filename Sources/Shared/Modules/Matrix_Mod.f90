@@ -43,4 +43,9 @@
     integer, allocatable :: mir(:)    ! mirror positions   
   end type 
 
+  contains
+
+  include 'Matrix_Mod_Topology.f90'
+  include 'Matrix_Mod_Allocate.f90'
+
   end module 

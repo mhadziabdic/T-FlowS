@@ -12,7 +12,7 @@
   use rans_mod
   use Grid_Mod
   use Var_Mod
-  use Solver_Mod, only: D
+  use Solvers_Mod, only: D
 !----------------------------------------------------------------------!
   implicit none
 !------------------------------[Calling]-------------------------------!
@@ -112,7 +112,8 @@
   end interface
 !======================================================================!
 
-  type(Grid_Type) :: grid
+  ! Grid used in computations
+  type(Grid_Type) :: grid  
 
   call cpu_time(start)
 
@@ -152,8 +153,8 @@
 
   call wait   
 
-  call Matrix_Topology(A)
-  call Matrix_Topology(D)
+  call Matrix_Mod_Topology(A)
+  call Matrix_Mod_Topology(D)
 
   call Wait   
 

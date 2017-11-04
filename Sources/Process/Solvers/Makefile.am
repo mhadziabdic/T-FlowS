@@ -4,10 +4,9 @@ libSolvers_a_SOURCES =		\
   BiCG.f90			\
   CG.f90			\
   CGS.f90			\
-  Matrix_Topology.f90           \
   Prec_Form.f90			\
   Prec_Solve.f90		\
-  Residual.f90    
+  Residual.f90
 
 SUBDIRS = ../../Shared/Modules
 

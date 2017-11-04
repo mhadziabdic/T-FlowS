@@ -47,15 +47,13 @@ Process_SOURCES =	 			\
   SavParView.f90				\
   Scale.f90
 
-SUBDIRS = ../Shared/Modules			\
-          Communication				\
+SUBDIRS = Communication				\
           Solvers				\
           Turbulence				\
           User					\
           ../Shared
 
-LDADD = ../Shared/Modules/libSharedModules.a	\
-        Communication/libCommunication.a	\
+LDADD = Communication/libCommunication.a	\
         Solvers/libSolvers.a			\
         Turbulence/libTurbulence.a		\
         User/libUser.a				\

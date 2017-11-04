@@ -1,6 +1,8 @@
 noinst_LIBRARIES = libTurbulence.a
 
 libTurbulence_a_SOURCES =	\
+  les_mod.f90			\
+  rans_mod.f90			\
   CalcF22.f90			\
   CalcSGS_Dynamic.f90		\
   CalcSGS.f90			\
@@ -23,8 +25,8 @@ libTurbulence_a_SOURCES =	\
   SourceV2KEPSV2F.f90		\
   SourceVisSpalart.f90
 
-SUBDIRS = ../../Shared/Modules
+SUBDIRS = ../../Shared
 
-LDADD = ../../SharedModules/libSharedModules.a
+LDADD = ../../Shared/libShared.a
 
 INCLUDE = -I@top_srcdir@/

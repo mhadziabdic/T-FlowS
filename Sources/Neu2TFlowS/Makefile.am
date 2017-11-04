@@ -10,10 +10,8 @@ Neu2TFlowS_SOURCES =		\
   Grid_Topology.f90		\
   Read_Line.f90
 
-SUBDIRS = ../Shared/Modules	\
-          ../Shared
+SUBDIRS = ../Shared
 
-LDADD = ../Shared/Modules/libSharedModules.a	\
-        ../Shared/libShared.a
+LDADD = ../Shared/libShared.a
 
 INCLUDE = -I@top_srcdir@/

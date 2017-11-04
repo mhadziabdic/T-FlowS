@@ -30,10 +30,8 @@ Generate_SOURCES =	 		\
   Swap_Reals.f90			\
   Which_Node.f90
 
-SUBDIRS = ../Shared/Modules	\
-          ../Shared
+SUBDIRS = ../Shared
 
-LDADD = ../Shared/Modules/libSharedModules.a	\
-        ../Shared/libShared.a
+LDADD = ../Shared/libShared.a
 
 INCLUDE = -I@top_srcdir@/

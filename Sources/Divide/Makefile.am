@@ -15,10 +15,8 @@ Divide_SOURCES =		\
   Save_Scripts.f90		\
   Split_Subdomain.f90
 
-SUBDIRS = ../Shared/Modules	\
-          ../Shared
+SUBDIRS = ../Shared
 
-LDADD = ../Shared/Modules/libSharedModules.a	\
-        ../Shared/libShared.a
+LDADD = ../Shared/libShared.a
 
 INCLUDE = -I@top_srcdir@/

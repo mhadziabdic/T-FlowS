@@ -8,8 +8,8 @@ libSolvers_a_SOURCES =		\
   Prec_Solve.f90		\
   Residual.f90
 
-SUBDIRS = ../../Shared/Modules
+SUBDIRS = ../../Shared
 
-LDADD = ../../SharedModules/libSharedModules.a
+LDADD = ../../Shared/libShared.a
 
 INCLUDE = -I@top_srcdir@/

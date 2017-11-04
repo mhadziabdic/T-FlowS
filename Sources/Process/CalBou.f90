@@ -60,7 +60,7 @@
       end if
 
       if(SIMULA==EBM.or.SIMULA==HJ) then
-        if ( TypeBC(c2) == WALL) then
+        if(TypeBC(c2) == WALL.or.SIMULA==WALLFL) then
           uu % n(c2) = 0.0 
           vv % n(c2) = 0.0 
           ww % n(c2) = 0.0 

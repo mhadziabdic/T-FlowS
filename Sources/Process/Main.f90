@@ -17,11 +17,11 @@
 !----------------------------------[Calling]-----------------------------------!
   real :: Correct_Velocity
 !-----------------------------------[Locals]-----------------------------------!
-  integer          :: i, m, n, Ndtt_temp, HOTtemp, SIMULAtemp, c, Nproc 
-  real             :: Mres, CPUtim
-  real             :: start, finish
-  character        :: namSav*10
-  logical          :: restar, multiple 
+  integer           :: i, m, n, Ndtt_temp, HOTtemp, SIMULAtemp, c, Nproc 
+  real              :: Mres, CPUtim
+  real              :: start, finish
+  character(len=10) :: namSav
+  logical           :: restar, multiple 
 !---------------------------------[Interfaces]---------------------------------!
   interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
@@ -572,17 +572,13 @@
       if( FLUXoZ(m)  /=  0.0 ) then
         PdropZ(m) = (FLUXoZ(m)-FLUXz(m)) / (dt*AreaZ(m)+TINY) 
       end if
-      write(*,*) PdropX(m)
-      write(*,*) PdropY(m)
-      write(*,*) PdropZ(m)
     end do
-    stop
 
     ! Regular savings, each 1000 time steps            
     if(mod(n,1000) == 0) then                                
       Ndtt_temp = Ndtt
       Ndtt      = n
-      namSav = 'SAVExxxxxx'
+      namSav = 'savexxxxxx'
       write(namSav(5:10),'(I6.6)') n
       call Save_Restart(grid, namSav)                          
       Ndtt = Ndtt_temp
@@ -602,7 +598,7 @@
       if(this_proc < 2) close(1, status='delete')
       Ndtt_temp = Ndtt
       Ndtt      = n
-      namSav = 'SAVExxxxxx'
+      namSav = 'savexxxxxx'
       write(namSav(5:10),'(I6.6)') n
       call Save_Restart(grid, namSav)                          
       call Save_Dat_Results(grid, namSav)

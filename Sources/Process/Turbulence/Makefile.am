@@ -3,7 +3,6 @@ noinst_LIBRARIES = libTurbulence.a
 libTurbulence_a_SOURCES =	\
   les_mod.f90			\
   rans_mod.f90			\
-  CalcF22.f90			\
   CalcSGS_Dynamic.f90		\
   CalcSGS.f90			\
   CalcSGS_hybrid.f90		\
@@ -12,6 +11,7 @@ libTurbulence_a_SOURCES =	\
   CalcVISt_KEPSV2F.f90		\
   CalcVISt_SPA_ALL.f90		\
   CalcWALE.f90			\
+  Compute_F22.f90		\
   Compute_Stresses.f90		\
   Compute_Turbulent.f90		\
   SourceEpsKEps.f90		\

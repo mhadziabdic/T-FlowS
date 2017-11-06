@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine UserCutLines_jet(namAut) 
+  subroutine UserCutLines_jet(grid, namAut) 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
@@ -12,9 +12,11 @@
   use pro_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
+  type(Grid_Type) :: grid
   real :: y(-NbC:NC)
   real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
@@ -97,8 +99,8 @@
 !+++++++++++++++++++++++++++++!
 
     do c =  1, NC
-      R  = (xc(c)*xc(c) + yc(c)*yc(c))**0.5 + tiny
-      PP % n(c)   = (U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R)
+      R  = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5 + tiny
+      PP % n(c)   = (U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R)
     end do
     call GraPhi(PP % n, 1, Ux,.TRUE.)    ! dU/dx
     call GraPhi(PP % n, 2, Uy,.TRUE.)    ! dU/dx
@@ -110,9 +112,9 @@
    call GraPhi(W % n, 2, Wy,.TRUE.)    ! dU/dx
    call CalcShear(U % n, V % n, W % n, Shear)
     do c =  1, NC
-      R  = (xc(c)*xc(c) + yc(c)*yc(c))**0.5
-      PP % n(c)   = Wx(c) * xc(c) / R  + Wy(c) * yc(c) / R
-      PP % n(c)   = (Ux(c) * xc(c) / R + Uy(c) * yc(c) / R)
+      R  = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5
+      PP % n(c)   = Wx(c) * grid % xc(c) / R  + Wy(c) * grid % yc(c) / R
+      PP % n(c)   = (Ux(c) * grid % xc(c) / R + Uy(c) * grid % yc(c) / R)
       PP % n(c)   = -2.0*VISt(c)*PP % n(c) + 2.0/3.0 * Kin % n(c) &
                     -2.0*VISt(c)*Wz(c) + 2.0/3.0 * Kin % n(c)
     end do
@@ -158,14 +160,14 @@
 
     do i = 1, Nprob-1
       do c=1,NC
-        Rad_2 = (xc(c)*xc(c) + yc(c)*yc(c))**0.5 + tiny
+        Rad_2 = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5 + tiny
         if(Rad_2 < R1 .and. Rad_2 > R2) then
-          if(zc(c) < z_p(i) .and. zc(c) > z_p(i+1)) then
-            R           = (xc(c)*xc(c) + yc(c)*yc(c))**0.5 + tiny
-            Urad_mean   = (U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R)
-            Utan_mean   = (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R) 
-            Urad   = (U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R)
-            Utan   = (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R) 
+          if(grid % zc(c) < z_p(i) .and. grid % zc(c) > z_p(i+1)) then
+            R           = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5 + tiny
+            Urad_mean   = (U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R)
+            Utan_mean   = (-U % n(c) * grid % yc(c) / R  + V % n(c) * grid % xc(c) / R) 
+            Urad   = (U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R)
+            Utan   = (-U % n(c) * grid % yc(c) / R  + V % n(c) * grid % xc(c) / R) 
  
             Ump(i)   = Ump(i) + Urad_mean 
             if(k == 0) then
@@ -177,8 +179,8 @@
             uuP(i)   = uup(i) + Kin % n(c) 
             vvp(i)   = vvp(i) + Eps % n(c)
             wwp(i)   = wwp(i) + VISt(c)
-            uvp(i)   = uvp(i) + & !+ max(0.07,0.22*(sin(pi*0.5*(1.0/max(zc(c),1.0))**1.5)))
-                       T % n(c) !max(0.07,0.22*(sin(pi*0.5*(1.0/max(zc(c),1.0))**1.5))) * v_2%n(c)*Kin % n(c)*Tsc(c)
+            uvp(i)   = uvp(i) + & !+ max(0.07,0.22*(sin(pi*0.5*(1.0/max(grid % zc(c),1.0))**1.5)))
+                       T % n(c) !max(0.07,0.22*(sin(pi*0.5*(1.0/max(grid % zc(c),1.0))**1.5))) * v_2%n(c)*Kin % n(c)*Tsc(c)
 
 
 !            uuP(i)   = uup(i) + W % C(c) 
@@ -195,7 +197,7 @@
               Tmp(i)   = Tmp(i) + T % n(c)
             end if
        
-            Rad_mp(i) = Rad_mp(i) + (xc(c)*xc(c) + yc(c)*yc(c))**0.5
+            Rad_mp(i) = Rad_mp(i) + (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5
             Ncount(i) = Ncount(i) + 1
           end if
         end if

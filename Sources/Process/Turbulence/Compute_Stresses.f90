@@ -316,7 +316,7 @@
   !   Turbulent diffusion term   !
   !------------------------------!
   if(MODE/=HYB) then
-    if(var==13) then
+    if(phi % name == 'EPS') then
       CmuD = 0.18        
     else
       CmuD = 0.22
@@ -479,9 +479,9 @@
   !  end do                                            ! 2mat
 
    if(SIMULA==EBM) then 
-     call SourcesEBM(var)
+     call SourcesEBM(phi % name)
    else
-     call SourcesHJ(var)        
+     call SourcesHJ(phi % name)        
    end if                
 
   !---------------------------------!
@@ -508,18 +508,20 @@
   !k-eps    write(LineRes(77:80), '(I4)')      niter 
   !k-eps  end if
 
-  if(this_proc < 2) write(*,*) 'Var ', var, res(var), niter 
+  if(this_proc < 2) write(*,*) '#', phi % name, res(var), niter 
 
-  if(var == 13) then
+  if(phi % name == 'EPS') then
     do c= 1, NC
-      phi%n(c) = phi%n(c) 
-     if( phi%n(c)<0.0)then
-       phi%n(c) = phi%o(c)
+      phi % n(c) = phi % n(c) 
+     if( phi % n(c) < 0.0) then
+       phi % n(c) = phi % o(c)
      end if
     end do
   end if
 
-  if(var == 6.or.var == 7.or.var == 8) then
+  if(phi % name == "UU" .or.  &
+     phi % name == "VV" .or.  &
+     phi % name == "WW") then
     do c= 1, NC
       phi % n(c) = phi % n(c) 
       if(phi % n(c) < 0.0) then

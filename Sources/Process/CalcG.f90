@@ -1,15 +1,17 @@
 !======================================================================!
-  subroutine CalcG(Boundary)
+  subroutine CalcG(grid, Boundary)
 !----------------------------------------------------------------------!
 !   Calculates gradient matrix.                                        !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
   use all_mod
   use pro_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
-  logical :: Boundary
+  type(Grid_Type) :: grid
+  logical         :: Boundary
 !-------------------------------[Locals]-------------------------------!
   integer :: c, c1, c2, s
   real    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2
@@ -45,12 +47,12 @@
         .or.                                &  ! 2mat
         StateMat(material(c1))==SOLID .and. &  ! 2mat
         StateMat(material(c2))==FLUID ) then   ! 2mat
-      Dxc1 = xsp(s)-xc(c1)                     ! 2mat
-      Dyc1 = ysp(s)-yc(c1)                     ! 2mat
-      Dzc1 = zsp(s)-zc(c1)                     ! 2mat 
-      Dxc2 = xsp(s)-xc(c2)                     ! 2mat
-      Dyc2 = ysp(s)-yc(c2)                     ! 2mat 
-      Dzc2 = zsp(s)-zc(c2)                     ! 2mat
+      Dxc1 = xsp(s)-grid % xc(c1)              ! 2mat
+      Dyc1 = ysp(s)-grid % yc(c1)              ! 2mat
+      Dzc1 = zsp(s)-grid % zc(c1)              ! 2mat 
+      Dxc2 = xsp(s)-grid % xc(c2)              ! 2mat
+      Dyc2 = ysp(s)-grid % yc(c2)              ! 2mat 
+      Dzc2 = zsp(s)-grid % zc(c2)              ! 2mat
     end if                                     ! 2mat
 
 !---- With boundary cells, velocities, temperatures
@@ -95,10 +97,10 @@
 !--------------------------------------!
   do c=1,NC
     Jac  =         G(1,c) * G(2,c) * G(3,c)                         &
-	   -       G(1,c) * G(6,c) * G(6,c)                         &
-	   -       G(4,c) * G(4,c) * G(3,c)                         &
-	   + 2.0 * G(4,c) * G(5,c) * G(6,c)                         &
-	   -       G(5,c) * G(5,c) * G(2,c)
+           -       G(1,c) * G(6,c) * G(6,c)                         &
+           -       G(4,c) * G(4,c) * G(3,c)                         &
+           + 2.0 * G(4,c) * G(5,c) * G(6,c)                         &
+           -       G(5,c) * G(5,c) * G(2,c)
 
     Ginv(1) = +( G(2,c)*G(3,c) - G(6,c)*G(6,c) ) / (Jac+TINY)
     Ginv(2) = +( G(1,c)*G(3,c) - G(5,c)*G(5,c) ) / (Jac+TINY)

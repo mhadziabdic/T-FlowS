@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine UserCutLines_RB_conv() 
+  subroutine UserCutLines_RB_conv(grid) 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
@@ -12,10 +12,12 @@
   use pro_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
 !  real :: y(-NbC:NC)
+  type(Grid_Type) :: grid
   real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
   integer             :: Nprob, pl, c, dummy, i, count, k, c1, c2, s, N_hor
@@ -81,7 +83,7 @@
 
     do i = 1, Nprob-1
       do c=1,NC
-        Rad_2 = zc(c) 
+        Rad_2 = grid % zc(c) 
         if(Rad_2 > z_p(i) .and. Rad_2 < z_p(i+1)) then
           if(SIMULA==LES) then      
             Ump(i)   = Ump(i) + U % mean(c)
@@ -101,7 +103,7 @@
             uTp(i)   = uTp(i) + (ut % mean(c) - U%mean(c)*T % mean(c)) 
             vTp(i)   = vTp(i) + (vt % mean(c) - V%mean(c)*T % mean(c))
             wTp(i)   = wTp(i) + (wt % mean(c) - W%mean(c)*T % mean(c)) 
-            Rad_mp(i)= Rad_mp(i) + zc(c) 
+            Rad_mp(i)= Rad_mp(i) + grid % zc(c) 
             Ncount(i)= Ncount(i) + 1
           else
             Ump(i)   = Ump(i) + U % n(c)
@@ -121,7 +123,7 @@
             uTp(i)   = uTp(i) + ut % n(c) !- U%mean(c)*T % mean(c)) 
             vTp(i)   = vTp(i) + vt % n(c) !- V%mean(c)*T % mean(c))
             wTp(i)   = wTp(i) + wt % n(c) !- W%mean(c)*T % mean(c)) 
-            Rad_mp(i)= Rad_mp(i) + zc(c) 
+            Rad_mp(i)= Rad_mp(i) + grid % zc(c) 
             Ncount(i)= Ncount(i) + 1
           end if
         end if

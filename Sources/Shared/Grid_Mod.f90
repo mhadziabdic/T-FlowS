@@ -17,6 +17,10 @@
   !---------------!
   type Grid_Type
 
+    integer :: n_nodes
+    integer :: n_cells
+    integer :: n_faces
+    integer :: n_boundary_cells
     integer :: n_materials            ! number of materials
     integer :: n_boundary_conditions  ! number of boundary conditions
 

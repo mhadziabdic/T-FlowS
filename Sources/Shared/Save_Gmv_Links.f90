@@ -46,13 +46,13 @@
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % xn(n)
   end do
   do c=1,NC
-    if(NewC(c)  > 0) write(9, '(1PE14.7)') xc(c)
+    if(NewC(c)  > 0) write(9, '(1PE14.7)') grid % xc(c)
   end do 
   do c=-1,-NBC,-1
-    if(NewC(c) /= 0) write(9, '(1PE14.7)') xc(c)
+    if(NewC(c) /= 0) write(9, '(1PE14.7)') grid % xc(c)
   end do 
   do c=1,NBFsub
-    write(9, '(1PE14.7)') xc(BuReIn(c))
+    write(9, '(1PE14.7)') grid % xc(BuReIn(c))
   end do
 
   ! Y
@@ -60,13 +60,13 @@
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % yn(n)
   end do
   do c=1,NC
-    if(NewC(c)  > 0) write(9, '(1PE14.7)') yc(c)
+    if(NewC(c)  > 0) write(9, '(1PE14.7)') grid % yc(c)
   end do 
   do c=-1,-NBC,-1
-    if(NewC(c) /= 0) write(9, '(1PE14.7)') yc(c)
+    if(NewC(c) /= 0) write(9, '(1PE14.7)') grid % yc(c)
   end do 
   do c=1,NBFsub
-    write(9, '(1PE14.7)') yc(BuReIn(c))
+    write(9, '(1PE14.7)') grid % yc(BuReIn(c))
   end do
 
   ! Z
@@ -74,13 +74,13 @@
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % zn(n)
   end do
   do c=1,NC
-    if(NewC(c)  > 0) write(9, '(1PE14.7)') zc(c)
+    if(NewC(c)  > 0) write(9, '(1PE14.7)') grid % zc(c)
   end do 
   do c=-1,-NBC,-1
-    if(NewC(c) /= 0) write(9, '(1PE14.7)') zc(c)
+    if(NewC(c) /= 0) write(9, '(1PE14.7)') grid % zc(c)
   end do 
   do c=1,NBFsub
-    write(9, '(1PE14.7)') zc(BuReIn(c))
+    write(9, '(1PE14.7)') grid % zc(BuReIn(c))
   end do
 
   !-----------!
@@ -132,9 +132,9 @@
 
     if( (NewS(s) > 0) .and. (NewS(s) <= NSsub) ) then
 
-      if( (Sx(s) * (xc(c2)-xc(c1) )+               &
-           Sy(s) * (yc(c2)-yc(c1) )+               &
-           Sz(s) * (zc(c2)-zc(c1) ))  > 0.0 ) then 
+      if( (Sx(s) * (grid % xc(c2)-grid % xc(c1) )+               &
+           Sy(s) * (grid % yc(c2)-grid % yc(c1) )+               &
+           Sz(s) * (grid % zc(c2)-grid % zc(c1) ))  > 0.0 ) then 
 
         nf_sub_non_per = nf_sub_non_per + 1
 
@@ -162,9 +162,9 @@
 
     if( (NewS(s) > 0) .and. (NewS(s) <= NSsub) ) then
 
-      if( (Sx(s) * (xc(c2)-xc(c1) )+               &
-           Sy(s) * (yc(c2)-yc(c1) )+               &
-           Sz(s) * (zc(c2)-zc(c1) ))  < 0.0 ) then 
+      if( (Sx(s) * (grid % xc(c2)-grid % xc(c1) )+               &
+           Sy(s) * (grid % yc(c2)-grid % yc(c1) )+               &
+           Sz(s) * (grid % zc(c2)-grid % zc(c1) ))  < 0.0 ) then 
 
         nf_sub_per = nf_sub_per + 1
 

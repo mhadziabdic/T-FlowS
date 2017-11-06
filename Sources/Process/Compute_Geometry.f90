@@ -30,13 +30,13 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
 
-    xc1=xc(c1)
-    yc1=yc(c1)
-    zc1=zc(c1) 
+    xc1=grid % xc(c1)
+    yc1=grid % yc(c1)
+    zc1=grid % zc(c1) 
 
-    xc2=xc(c2) + Dx(s)
-    yc2=yc(c2) + Dy(s)
-    zc2=zc(c2) + Dz(s)
+    xc2=grid % xc(c2) + Dx(s)
+    yc2=grid % yc(c2) + Dy(s)
+    zc2=grid % zc(c2) + Dz(s)
 
     Dx(s) = xc2-xc1
     Dy(s) = yc2-yc1
@@ -107,12 +107,12 @@
       c2=SideC(2,s)
       if(c2  > 0 .or. c2 < 0.and.TypeBC(c2) == BUFFER) then
         if( (material(c1) == m) .and. (material(c1) == material(c2)) ) then
-          xc1=xc(c1)
-          yc1=yc(c1)
-          zc1=zc(c1)
-          xc2=xc(c1)+Dx(s)
-          yc2=yc(c1)+Dy(s)
-          zc2=zc(c1)+Dz(s)
+          xc1=grid % xc(c1)
+          yc1=grid % yc(c1)
+          zc1=grid % zc(c1)
+          xc2=grid % xc(c1)+Dx(s)
+          yc2=grid % yc(c1)+Dy(s)
+          zc2=grid % zc(c1)+Dz(s)
  
           AreaTx = abs(Sx(s))
           AreaTy = abs(Sy(s))

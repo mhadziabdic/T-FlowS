@@ -49,17 +49,17 @@
   write(*,*) '# Sorting the cells'
   do i=1,NC
     ix(i) = i
-    criter(i) = xc(i) + 0.01 * yc(i) + 0.0001 * zc(i)
+    criter(i) = grid % xc(i) + 0.01 * grid % yc(i) + 0.0001 * grid % zc(i)
   end do
   call Sort_Real_By_Index(criter(1),ix(1),NC,2)
   do i=1,NC
     iy(i) = i
-    criter(i) = yc(i) + 0.01 * zc(i) + 0.0001 * xc(i)
+    criter(i) = grid % yc(i) + 0.01 * grid % zc(i) + 0.0001 * grid % xc(i)
   end do
   call Sort_Real_By_Index(criter(1),iy(1),NC,2)
   do i=1,NC
     iz(i) = i
-    criter(i) = zc(i) + 0.01 * xc(i) + 0.0001 * yc(i)
+    criter(i) = grid % zc(i) + 0.01 * grid % xc(i) + 0.0001 * grid % yc(i)
   end do
   call Sort_Real_By_Index(criter(1),iz(1),NC,2)
   write(*,*) '# Finished sorting'
@@ -106,7 +106,7 @@
 
     do j=1,n_sub
       write(*,*) '# Dividing', j, ' into', chunks(i), ' chunks'
-      call Split_Subdomain(j, chunks(i))
+      call Split_Subdomain(grid, j, chunks(i))
     end do
 
   end do     

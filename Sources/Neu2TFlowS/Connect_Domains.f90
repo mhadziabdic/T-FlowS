@@ -97,8 +97,10 @@
                 Approx( zc_22, zc_12, tol=1.e-4 ) ) then
               n_copy = n_copy + 1
               x_copy = x_copy + 1
-              if( abs(xc(c11)-xc(c22)) < abs(xc(c12)-xc(c22))) c1 = c11
-              if( abs(xc(c11)-xc(c22)) > abs(xc(c12)-xc(c22))) c1 = c12
+              if( abs(grid % xc(c11)-grid % xc(c22)) <  &
+                  abs(grid % xc(c12)-grid % xc(c22))) c1 = c11
+              if( abs(grid % xc(c11)-grid % xc(c22)) >  &
+                  abs(grid % xc(c12)-grid % xc(c22))) c1 = c12
               CopyS(1, n_copy) = c1
               CopyS(2, n_copy) = c21           !   inside the domain
               CopyC(c22) = c1
@@ -147,8 +149,10 @@
                 Approx( zc_22, zc_12, tol=1.e-4 ) ) then
               n_copy = n_copy + 1 
               y_copy = y_copy + 1
-              if( abs(yc(c11)-yc(c22)) < abs(yc(c12)-yc(c22))) c1 = c11
-              if( abs(yc(c11)-yc(c22)) > abs(yc(c12)-yc(c22))) c1 = c12
+              if( abs(grid % yc(c11)-grid % yc(c22)) <  &
+                  abs(grid % yc(c12)-grid % yc(c22))) c1 = c11
+              if( abs(grid % yc(c11)-grid % yc(c22)) >  &
+                  abs(grid % yc(c12)-grid % yc(c22))) c1 = c12
               CopyS(1, n_copy) = c1
               CopyS(2, n_copy) = c21           !   inside the domain
               CopyC(c22) = c1
@@ -197,8 +201,10 @@
                 Approx( xc_22, xc_12, tol=1.e-4 ) ) then
               n_copy = n_copy + 1 
               z_copy = z_copy + 1
-              if( abs(zc(c11)-zc(c22)) < abs(zc(c12)-zc(c22))) c1 = c11
-              if( abs(zc(c11)-zc(c22)) > abs(zc(c12)-zc(c22))) c1 = c12
+              if( abs(grid % zc(c11)-grid % zc(c22)) <  &
+                  abs(grid % zc(c12)-grid % zc(c22))) c1 = c11
+              if( abs(grid % zc(c11)-grid % zc(c22)) >  &
+                  abs(grid % zc(c12)-grid % zc(c22))) c1 = c12
               CopyS(1, n_copy) = c1
               CopyS(2, n_copy) = c21           !   inside the domain
               CopyC(c22) = c1

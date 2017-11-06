@@ -23,13 +23,13 @@
   open(9, file=name_in, FORM='unformatted')
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 
-  read(9) (xc(c), c=1,NC)
-  read(9) (yc(c), c=1,NC) 
-  read(9) (zc(c), c=1,NC)
+  read(9) (grid % xc(c), c=1,NC)
+  read(9) (grid % yc(c), c=1,NC) 
+  read(9) (grid % zc(c), c=1,NC)
 
-  read(9) (xc(c), c=-1,-NBC,-1)  
-  read(9) (yc(c), c=-1,-NBC,-1)
-  read(9) (zc(c), c=-1,-NBC,-1) 
+  read(9) (grid % xc(c), c=-1,-NBC,-1)  
+  read(9) (grid % yc(c), c=-1,-NBC,-1)
+  read(9) (grid % zc(c), c=-1,-NBC,-1) 
 
   read(9) (volume(c), c=1,NC)
   read(9) (delta(c),  c=1,NC)

@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Load_Ini()
+  subroutine Load_Ini(grid)
 !------------------------------------------------------------------------------!
 ! This version of Load_Ini is optimised for very large meshes
 ! Program SUB_INI needs to be used to create files needed by this_proc
@@ -10,8 +10,10 @@
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+  type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------!
   real             :: Distance
 !-----------------------------------[Locals]-----------------------------------!
@@ -191,8 +193,8 @@
       end if
       old_distance = HUGE
       do k = 1, j
-        if(Distance(Xold(k),Yold(k),Zold(k),xc(c),yc(c),zc(c)) < old_distance) then
-          old_distance = Distance(Xold(k),Yold(k),Zold(k),xc(c),yc(c),zc(c))       
+        if(Distance(Xold(k),Yold(k),Zold(k),grid % xc(c),grid % yc(c),grid % zc(c)) < old_distance) then
+          old_distance = Distance(Xold(k),Yold(k),Zold(k),grid % xc(c),grid % yc(c),grid % zc(c))       
           nearest_cell =  k
         end if 
       end do  

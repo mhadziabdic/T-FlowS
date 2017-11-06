@@ -5,9 +5,10 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   integer         :: nf        ! number of faces in the grid   
-!-----------------------------------[Locals]-----------------------------------!
-  integer :: c
 !==============================================================================!
+
+  ! Store the number of faces for the grid
+  grid % n_faces = nf
 
   ! Number of nodes at each face (determines face's shape really)
   allocate(grid % faces_n_nodes(nf));  grid % faces_n_nodes = 0

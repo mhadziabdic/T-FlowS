@@ -1,7 +1,7 @@
 !======================================================================!
-  subroutine GraPhi(PHI, i, PHIi, Boundary)
+  subroutine GraPhi(phi, i, phii, Boundary)
 !----------------------------------------------------------------------!
-! Calculates gradient of generic variable PHI by a least squares       !
+! Calculates gradient of generic variable phi by a least squares       !
 ! method.                                                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
@@ -11,20 +11,17 @@
   implicit none
 !-----------------------------[Arguments]------------------------------!
   integer :: i
-  real    :: PHI(-NbC:NC), PHIi(-NbC:NC) 
+  real    :: phi(-NbC:NC), phii(-NbC:NC) 
   logical :: Boundary
 !-------------------------------[Locals]-------------------------------!
   integer :: s, c, c1, c2
-  real    :: DPHI1, DPHI2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
+  real    :: Dphi1, Dphi2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
 !======================================================================!
 
-!  return
-
-  call Exchng(PHI)
-
+  call Exchng(phi)
 
   do c=1,NC
-    PHIi(c)=0.0
+    phii(c)=0.0
   end do
 
   if(i == 1) then
@@ -37,11 +34,11 @@
       Dxc2 = Dx(s)
       Dyc2 = Dy(s)
       Dzc2 = Dz(s)
-      DPHI1 = PHI(c2)-PHI(c1) 
-      DPHI2 = PHI(c2)-PHI(c1) 
+      Dphi1 = phi(c2)-phi(c1) 
+      Dphi2 = phi(c2)-phi(c1) 
       if(c2 < 0 .and. TypeBC(c2) == SYMMETRY) then
-        DPHI1 = 0.0  
-        DPHI2 = 0.0  
+        Dphi1 = 0.0  
+        Dphi2 = 0.0  
       end if
 
 !---- Take care of material interfaces           ! 2mat
@@ -56,19 +53,19 @@
 !        Dxc2 = xsp(s)-xc(c2)                     ! 2mat
 !        Dyc2 = ysp(s)-yc(c2)                     ! 2mat
 !        Dzc2 = zsp(s)-zc(c2)                     ! 2mat
-!        DPHI1 = 0.0-PHI(c1)                      ! 2mat
-!        DPHI2 = 0.0-PHI(c2)                      ! 2mat 
+!        Dphi1 = 0.0-phi(c1)                      ! 2mat
+!        Dphi2 = 0.0-phi(c2)                      ! 2mat 
 !      end if                                     ! 2mat
               
       if(Boundary) then
-        PHIi(c1)=PHIi(c1)+DPHI1*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1) 
+        phii(c1)=phii(c1)+Dphi1*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1) 
         if(c2 > 0) then
-	  PHIi(c2)=PHIi(c2)+DPHI2*(G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2)
+	  phii(c2)=phii(c2)+Dphi2*(G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2)
         end if
       else
         if(c2 > 0 .or. c2 < 0 .and. TypeBC(c2) == BUFFER ) & 
-                    PHIi(c1)=PHIi(c1)+DPHI1*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1) 
-	if(c2 > 0)  PHIi(c2)=PHIi(c2)+DPHI2*(G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2)
+                    phii(c1)=phii(c1)+Dphi1*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1) 
+	if(c2 > 0)  phii(c2)=phii(c2)+Dphi2*(G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2)
       end if ! Boundary
     end do
   end if
@@ -83,11 +80,11 @@
       Dxc2 = Dx(s)
       Dyc2 = Dy(s)
       Dzc2 = Dz(s)
-      DPHI1 = PHI(c2)-PHI(c1) 
-      DPHI2 = PHI(c2)-PHI(c1) 
+      Dphi1 = phi(c2)-phi(c1) 
+      Dphi2 = phi(c2)-phi(c1) 
       if(c2 < 0 .and. TypeBC(c2) == SYMMETRY) then
-        DPHI1 = 0.0  
-        DPHI2 = 0.0  
+        Dphi1 = 0.0  
+        Dphi2 = 0.0  
       end if
 
 !---- Take care of material interfaces           ! 2mat
@@ -102,19 +99,19 @@
 !        Dxc2 = xsp(s)-xc(c2)                     ! 2mat
 !        Dyc2 = ysp(s)-yc(c2)                     ! 2mat
 !        Dzc2 = zsp(s)-zc(c2)                     ! 2mat
-!        DPHI1 = 0.0-PHI(c1)                      ! 2mat
-!        DPHI2 = 0.0-PHI(c2)                      ! 2mat 
+!        Dphi1 = 0.0-phi(c1)                      ! 2mat
+!        Dphi2 = 0.0-phi(c2)                      ! 2mat 
 !      end if                                     ! 2mat
 
       if(Boundary) then
-        PHIi(c1)=PHIi(c1)+DPHI1*(G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) 
+        phii(c1)=phii(c1)+Dphi1*(G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) 
         if(c2  > 0) then
-	  PHIi(c2)=PHIi(c2)+DPHI2*(G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2)
+	  phii(c2)=phii(c2)+Dphi2*(G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2)
         end if
       else
         if(c2 > 0 .or. c2 < 0 .and. TypeBC(c2) == BUFFER ) & 
-                    PHIi(c1)=PHIi(c1)+DPHI1*(G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) 
-        if(c2  > 0) PHIi(c2)=PHIi(c2)+DPHI2*(G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2)
+                    phii(c1)=phii(c1)+Dphi1*(G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) 
+        if(c2  > 0) phii(c2)=phii(c2)+Dphi2*(G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2)
       end if ! Boundary
     end do
   end if
@@ -129,11 +126,11 @@
       Dxc2 = Dx(s)
       Dyc2 = Dy(s)
       Dzc2 = Dz(s)
-      DPHI1 = PHI(c2)-PHI(c1) 
-      DPHI2 = PHI(c2)-PHI(c1) 
+      Dphi1 = phi(c2)-phi(c1) 
+      Dphi2 = phi(c2)-phi(c1) 
       if(c2 < 0 .and. TypeBC(c2) == SYMMETRY) then
-        DPHI1 = 0.0  
-        DPHI2 = 0.0  
+        Dphi1 = 0.0  
+        Dphi2 = 0.0  
       end if
 
 !---- Take care of material interfaces           ! 2mat
@@ -148,25 +145,25 @@
 !        Dxc2 = xsp(s)-xc(c2)                     ! 2mat
 !        Dyc2 = ysp(s)-yc(c2)                     ! 2mat
 !        Dzc2 = zsp(s)-zc(c2)                     ! 2mat
-!        DPHI1 = 0.0-PHI(c1)                      ! 2mat
-!        DPHI2 = 0.0-PHI(c2)                      ! 2mat 
+!        Dphi1 = 0.0-phi(c1)                      ! 2mat
+!        Dphi2 = 0.0-phi(c2)                      ! 2mat 
 !      end if                                     ! 2mat 
 
       if(Boundary) then
-        PHIi(c1)=PHIi(c1)+DPHI1*(G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1) 
+        phii(c1)=phii(c1)+Dphi1*(G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1) 
         if(c2 > 0) then
-	  PHIi(c2)=PHIi(c2)+DPHI2*(G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2)
+	  phii(c2)=phii(c2)+Dphi2*(G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2)
         end if
       else
         if(c2 > 0 .or. c2 < 0 .and. TypeBC(c2) == BUFFER ) & 
-                   PHIi(c1)=PHIi(c1)+DPHI1*(G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1) 
-        if(c2 > 0) PHIi(c2)=PHIi(c2)+DPHI2*(G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2) 
+                   phii(c1)=phii(c1)+Dphi1*(G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1) 
+        if(c2 > 0) phii(c2)=phii(c2)+Dphi2*(G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2) 
       end if ! Boundary
     end do
   end if
 
-  call Exchng(PHIi)
+  call Exchng(phii)
 
-  if(.not. Boundary) call CorBad(PHIi)
+  if(.not. Boundary) call CorBad(phii)
 
   end subroutine GraPhi

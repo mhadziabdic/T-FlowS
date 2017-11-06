@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine SourcesEBM(var)
+  subroutine SourcesEBM(name_phi)
 !----------------------------------------------------------------------!
 ! Purpose:                                                             !
 ! Calculate source terms for transport equations for Re stresses and   !
@@ -11,11 +11,11 @@
   use pro_mod
   use rans_mod
   use les_mod
-
 !----------------------------------------------------------------------!
   implicit none
+  character(len=*) :: name_phi
 !-------------------------------[Locals]-------------------------------!
-  integer :: c, s, c1, c2, i, var
+  integer :: c, s, c1, c2, i
   real    :: Prod, Diss, PHI_hom, PHI_wall, mag, PHI_tot, Esor
   real    :: a11, a22, a33, a12, a13, a21, a31, a23, a32
   real    :: b11, b22, b33, b12, b13, b21, b31, b23, b32
@@ -84,8 +84,8 @@
                + uw % n(c)*n3*n1+vw % n(c)*n3*n2+ww % n(c)*n3*n3)
 
 
-!------- uu stress
-    if(var == 6) then
+    ! uu stress
+    if(name_phi == 'UU') then
       PHI_wall = -5.0*Eps % n(c)/Kin % n(c) * &
                  (-uu % n(c)+2.0*uu % n(c)*n1*n1 + 2.0*uv % n(c)*n1*n2 + 2.0*uw % n(c)*n1*n3 &
                  - 0.5*(n1*n1+1.0)*uu_nn)
@@ -111,8 +111,8 @@
                       f22%n(c)*f22%n(c)*(Diss_hom/max(uu%n(c),1.0e-12)+g1*Eps%n(c)/(2.0*Kin%n(c))&
                       +g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
 
-!------- vv stress
-    else if(var == 7) then
+    ! vv stress
+    else if(name_phi == 'VV') then
       PHI_wall = -5.0*Eps % n(c)/Kin % n(c) * &
                  (-vv % n(c)+2.0*uv % n(c)*n2*n1 + 2.0*vv % n(c)*n2*n2 + 2.0*vw % n(c)*n2*n3 &
                  - 0.5*(n2*n2+1.0)*uu_nn)
@@ -140,8 +140,8 @@
                     + f22%n(c)*f22%n(c)*(Diss_hom/max(vv%n(c),1.0e-12)+g1*Eps%n(c)/(2.0*Kin%n(c))&
                     +g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
 
-!------- ww stress
-    else if(var == 8) then
+    ! ww stress
+    else if(name_phi == 'WW') then
       PHI_wall = -5.0*Eps % n(c)/Kin % n(c) * &
                  (-ww % n(c)+2.0*uw % n(c)*n3*n1 + 2.0*vw % n(c)*n3*n2 + 2.0*ww % n(c)*n3*n3 &
                  - 0.5*(n3*n3+1.0)*uu_nn)
@@ -167,8 +167,8 @@
                     + f22%n(c)*f22%n(c)*(Diss_hom/max(ww%n(c),1.0e-12)+g1*Eps%n(c)/(2.0*Kin%n(c))&
                     +g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
 
-!------- uv stress
-    else if(var == 9) then
+    ! uv stress
+    else if(name_phi == 'UV') then
       PHI_wall = -5.0*Eps % n(c)/Kin % n(c) * &
                  (-uv % n(c)+uu % n(c)*n2*n1 + uv % n(c)*n2*n2 + uw % n(c)*n2*n3 + &
                   uv % n(c)*n1*n1 + vv % n(c)*n1*n2 + vw % n(c)*n1*n3   &
@@ -198,8 +198,8 @@
                     +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
 
 
-!------- uw stress
-    else if(var == 10) then
+    ! uw stress
+    else if(name_phi == 'UW') then
       PHI_wall = -5.0*Eps % n(c)/Kin % n(c) * &
                  (-uw % n(c)+uu % n(c)*n3*n1 + uv % n(c)*n3*n2 + uw % n(c)*n3*n3 + &
                   uw % n(c)*n1*n1 + vw % n(c)*n1*n2 + ww % n(c)*n1*n3   &
@@ -228,8 +228,8 @@
                     + f22%n(c)*f22%n(c)*(&
                     +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
 
-!------- vw stress
-    else if(var == 11) then
+    ! vw stress
+    else if(name_phi == 'VW') then
       PHI_wall = -5.0*Eps % n(c)/Kin % n(c) * &
                  (-vw % n(c)+uv % n(c)*n3*n1 + vv % n(c)*n3*n2 + vw % n(c)*n3*n3 + &
                              uw % n(c)*n2*n1 + vw % n(c)*n2*n2 + ww % n(c)*n2*n3   &
@@ -257,8 +257,9 @@
                       6.0*Eps%n(c)/Kin%n(c) &           
                     + f22%n(c)*f22%n(c)*(&
                     +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
-!------- Eps eq.
-    else if(var == 13) then
+
+    ! Eps equation
+    else if(name_phi == 'EPS') then
       Esor = volume(c)/max(Tsc(c),1.0e-12)
 !
 !     Ce11 = Ce1*(1.0 + 0.03*(1. - f22%n(c)*f22%n(c))*sqrt(Kin%n(c)/max(uu_nn,1.e-12)))  
@@ -266,17 +267,17 @@
       Ce11 = Ce1*(1.0 + 0.1*(1.0-f22%n(c)**3.0)*Pk(c)/Eps%n(c))  
       b(c) = b(c) + Ce11*Pk(c)*Esor 
 
-!----- Fill in a diagonal of coefficient matrix
+      ! Fill in a diagonal of coefficient matrix
       A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
     end if
   end do
 
-  if(var == 13) then
+  if(name_phi == 'EPS') then
     do s=1,NS
       c1=SideC(1,s)
       c2=SideC(2,s)
 
-!---- Calculate a values of dissipation  on wall
+      ! Calculate values of dissipation on wall
       if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
         if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
           Eps%n(c2) = VISc*(uu%n(c1)+vv%n(c1)+ww%n(c1))/WallDs(c1)**2
@@ -284,5 +285,5 @@
       end if    ! end if of c2<0
     end do
   end if
-  RETURN
-  end subroutine SourcesEBM   
+
+  end subroutine

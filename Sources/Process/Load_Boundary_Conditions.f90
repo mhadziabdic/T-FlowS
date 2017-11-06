@@ -47,7 +47,7 @@
     read(inp(ts(1):te(1)),*) mt_name
 
     ! Find material index
-    do i=1, size(grid % materials) 
+    do i=1, grid % n_materials 
       if(mt_name == grid % materials(i) % name) n=i      
     end do
 
@@ -80,7 +80,7 @@
     read(inp(ts(1):te(1)),*) bc_name
 
     ! Find b.c. index
-    do i=1, size(grid % boundary_conditions) 
+    do i=1, grid % n_boundary_conditions 
       if(bc_name == grid % boundary_conditions(i) % name) n=i      
     end do
 
@@ -413,18 +413,18 @@
               Mres = HUGE
               do s=1,n_points
                 if(dir=="XPL") then
-                  if(Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0) < Mres) then
-                    Mres = Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0)
+                  if(Distance(x1(s),x2(s),0.0,grid % yc(c),grid % zc(c),0.0) < Mres) then
+                    Mres = Distance(x1(s),x2(s),0.0,grid % yc(c),grid % zc(c),0.0)
                     c1 = s
                   end if
                 else if(dir=="YPL") then
-                  if(Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0) < Mres) then
-                    Mres = Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0)
+                  if(Distance(x1(s),x2(s),0.0,grid % xc(c),grid % zc(c),0.0) < Mres) then
+                    Mres = Distance(x1(s),x2(s),0.0,grid % xc(c),grid % zc(c),0.0)
                     c1 = s
                   end if
                 else if(dir=="ZPL") then
-                  if(Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0) < Mres) then
-                    Mres = Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0)
+                  if(Distance(x1(s),x2(s),0.0,grid % xc(c),grid % yc(c),0.0) < Mres) then
+                    Mres = Distance(x1(s),x2(s),0.0,grid % xc(c),grid % yc(c),0.0)
                     c1 = s
                   end if
                 end if
@@ -526,33 +526,33 @@
 
                 ! Compute the weight factors
                 if( (dir == 'X' .or. dir == 'x') .and.                  &
-                   xc(c) >= xyz(m) .and. xc(c) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1)-xc(c) ) / ( xyz(m+1) - xyz(m) )
+                   grid % xc(c) >= xyz(m) .and. grid % xc(c) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1)-grid % xc(c) ) / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 else if( (dir == 'Y' .or. dir == 'y') .and.             &
-                     yc(c) >= xyz(m) .and. yc(c) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1)-yc(c) ) / ( xyz(m+1) - xyz(m) )
+                     grid % yc(c) >= xyz(m) .and. grid % yc(c) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1)-grid % yc(c) ) / ( xyz(m+1) - xyz(m) )
                     here = .TRUE.
                 else if( (dir == 'Z' .or. dir == 'z') .and.             &
-                     zc(c) >= xyz(m) .and. zc(c) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1)-zc(c) ) / ( xyz(m+1) - xyz(m) )
+                     grid % zc(c) >= xyz(m) .and. grid % zc(c) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1)-grid % zc(c) ) / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 else if( (dir == 'RX' .or. dir == 'rx') .and.           &
-                       sqrt(yc(c)*yc(c)+zc(c)*zc(c)) >= xyz(m) .and.      &
-                     sqrt(yc(c)*yc(c)+zc(c)*zc(c)) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1) - sqrt(yc(c)*yc(c)+zc(c)*zc(c)) )     &
+                       sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) >= xyz(m) .and.      &
+                     sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1) - sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) )     &
                      / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 else if( (dir == 'RY' .or. dir == 'ry') .and.           &
-                     sqrt(xc(c)*xc(c)+zc(c)*zc(c)) >= xyz(m) .and.      &
-                     sqrt(xc(c)*xc(c)+zc(c)*zc(c)) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1) - sqrt(xc(c)*xc(c)+zc(c)*zc(c)) )     &
+                     sqrt(grid % xc(c)*grid % xc(c)+grid % zc(c)*grid % zc(c)) >= xyz(m) .and.      &
+                     sqrt(grid % xc(c)*grid % xc(c)+grid % zc(c)*grid % zc(c)) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1) - sqrt(grid % xc(c)*grid % xc(c)+grid % zc(c)*grid % zc(c)) )     &
                      / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 else if( (dir == 'RZ' .or. dir == 'rz') .and.           &
-                     sqrt(xc(c)*xc(c)+yc(c)*yc(c)) <= xyz(m) .and.      &
-                     sqrt(xc(c)*xc(c)+yc(c)*yc(c)) >= xyz(m+1) ) then
-                    wi = ( xyz(m+1) - sqrt(xc(c)*xc(c)+yc(c)*yc(c)) )     &
+                     sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) <= xyz(m) .and.      &
+                     sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) >= xyz(m+1) ) then
+                    wi = ( xyz(m+1) - sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) )     &
                      / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 end if

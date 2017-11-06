@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine UserCutLines_pipe() 
+  subroutine UserCutLines_pipe(grid) 
 !----------------------------------------------------------------------!
 ! This program reads name.1D file created by NEU or GEN and averages    
 ! the results in the homogeneous direction directions.            
@@ -11,9 +11,11 @@
     use pro_mod
     use par_mod
     use rans_mod
+    use Grid_Mod
 !----------------------------------------------------------------------!
     implicit none
 !-----------------------------[Arguments]------------------------------!
+    type(Grid_Type) :: grid
     real :: Ufric, Wall_near 
 !------------------------------[Calling]-------------------------------!
     interface
@@ -115,15 +117,17 @@
         if(R > abs(z_p(i+1)) .and. R < abs(z_p(i))) then
                 
           Wall_p(i) = Wall_p(i) + WallDs(c) 
-            R = sqrt(xc(c)**2+yc(c)**2)      
-            b11 = xc(c)/R
-            b12 = yc(c)/R
-            b21 = -yc(c)/R
-            b22 = xc(c)/R
+            R = sqrt(grid % xc(c)**2+grid % yc(c)**2)      
+            b11 = grid % xc(c)/R
+            b12 = grid % yc(c)/R
+            b21 = -grid % yc(c)/R
+            b22 = grid % xc(c)/R
           if(SIMULA==EBM.or.SIMULA==HJ) then
 
-            Ump(i)   = Ump(i) + U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R
-            Vmp(i)   = Vmp(i) + (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R)
+            Ump(i)   = Ump(i) +   U % n(c) * grid % xc(c) / R   &
+                              +   V % n(c) * grid % yc(c) / R
+            Vmp(i)   = Vmp(i) + (-U % n(c) * grid % yc(c) / R   &
+                              +   V % n(c) * grid % xc(c) / R)
             Wmp(i)   = Wmp(i) + W % n(c)
             uup(i)   = uup(i) + b11*b11*uu%n(c) + b11*b12*uv%n(c) &
                               + b12*b11*uv%n(c) + b12*b12*vv%n(c) 
@@ -134,14 +138,19 @@
                               + b12*b21*uv%n(c) + b12*b22*vv%n(c)
             uwp(i)   = uwp(i) + b11*uw%n(c) + b12*vw%n(c) 
             vwp(i)   = vwp(i) + b21*uw%n(c) + b22*vw%n(c) 
-            var_1(i)   = var_1(i) + Kin % n(c) 
-            var_2(i)   = var_2(i) + Eps % n(c) 
+            var_1(i) = var_1(i) + Kin % n(c) 
+            var_2(i) = var_2(i) + Eps % n(c) 
             if(IsNearWall(c)) then
-              Ufric_p(i) = Ufric_p(i) + (VISc * (U % n(c)**2 + V % n(c)**2 + W % n(c)**2)**0.5/WallDs(c))**0.5
+              Ufric_p(i) = Ufric_p(i)  &
+                         + sqrt(VISc * sqrt(U % n(c)**2 +   &
+                                            V % n(c)**2 +   &
+                                            W % n(c)**2) / WallDs(c))
             end if
           else if(SIMULA==K_EPS_VV) then
-            Ump(i)   = Ump(i) + U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R
-            Vmp(i)   = Vmp(i) + (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R)
+            Ump(i)   = Ump(i) +   U % n(c) * grid % xc(c) / R    &
+                              +   V % n(c) * grid % yc(c) / R
+            Vmp(i)   = Vmp(i) + (-U % n(c) * grid % yc(c) / R    &
+                                + V % n(c) * grid % xc(c) / R)
             Wmp(i)   = Wmp(i) + W % n(c)
             uup(i)   = uup(i) + Kin % n(c) 
             vvp(i)   = vvp(i) + Eps % n(c) 
@@ -149,23 +158,26 @@
             uvp(i)   = uvp(i) + f22 % n(c) 
             uwp(i)   = uwp(i) + 0.0 
             if(IsNearWall(c)) then
-              Ufric_p(i) = Ufric_p(i) + (VISc * (U % n(c)**2 + V % n(c)**2 + W % n(c)**2)**0.5/WallDs(c))**0.5
+              Ufric_p(i) = Ufric_p(i)   &
+                         + sqrt(VISc * sqrt(U % n(c)**2 +   &
+                                            V % n(c)**2 +   &
+                                            W % n(c)**2) / WallDs(c))
             end if
           else if(SIMULA==ZETA) then
-            Ump(i)   = Ump(i) + U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R
-            Vmp(i)   = Vmp(i) + (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R)
+            Ump(i)   = Ump(i) + U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R
+            Vmp(i)   = Vmp(i) + (-U % n(c) * grid % yc(c) / R  + V % n(c) * grid % xc(c) / R)
             Wmp(i)   = Wmp(i) + W % n(c)
             uup(i)   = uup(i) + Kin % n(c) 
             vvp(i)   = vvp(i) + Eps % n(c) 
             wwp(i)   = wwp(i) + v_2 % n(c) 
             uvp(i)   = uvp(i) + f22 % n(c) 
-            uwp(i)   = uwp(i) + VISt(c)*(Wx(c) * xc(c) / R  + Wy(c) * yc(c) / R)
+            uwp(i)   = uwp(i) + VISt(c)*(Wx(c) * grid % xc(c) / R  + Wy(c) * grid % yc(c) / R)
             if(IsNearWall(c)) then
               Ufric_p(i) = Ufric_p(i) + (VISc * (U % n(c)**2 + V % n(c)**2 + W % n(c)**2)**0.5/WallDs(c))**0.5
             end if
           else if(SIMULA==K_EPS) then
-            Ump(i)   = Ump(i) + U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R
-            Vmp(i)   = Vmp(i) + (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R)
+            Ump(i)   = Ump(i) + U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R
+            Vmp(i)   = Vmp(i) + (-U % n(c) * grid % yc(c) / R  + V % n(c) * grid % xc(c) / R)
             Wmp(i)   = Wmp(i) + W % n(c)
             uup(i)   = uup(i) + Kin % n(c) 
             vvp(i)   = vvp(i) + Eps % n(c) 
@@ -182,8 +194,8 @@
               end if
             end if
           else if(SIMULA==SPA_ALL) then
-            Ump(i)   = Ump(i) + U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R
-            Vmp(i)   = Vmp(i) + (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R)
+            Ump(i)   = Ump(i) + U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R
+            Vmp(i)   = Vmp(i) + (-U % n(c) * grid % yc(c) / R  + V % n(c) * grid % xc(c) / R)
             Wmp(i)   = Wmp(i) + W % n(c)
             uup(i)   = uup(i) + VISt(c)
             vvp(i)   = vvp(i) + 0.0 
@@ -194,16 +206,16 @@
               Ufric_p(i) = Ufric_p(i) + (VISc * (U % n(c)**2 + V % n(c)**2 + W % n(c)**2)**0.5/WallDs(c))**0.5
             end if
           else if(SIMULA==LES.or.SIMULA==DES_SPA.or.SIMULA == DNS) then
-            Ump(i)   = Ump(i) + U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R
-            Vmp(i)   = Vmp(i) + (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R)
+            Ump(i)   = Ump(i) + U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R
+            Vmp(i)   = Vmp(i) + (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R)
             Wmp(i)   = Wmp(i) + W % mean(c)
-            uup(i)   = uup(i) + (uu % mean(c)- (U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R)**2.0)
-            vvp(i)   = vvp(i) + (vv % mean(c)- (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R)**2.0)
+            uup(i)   = uup(i) + (uu % mean(c)- (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R)**2.0)
+            vvp(i)   = vvp(i) + (vv % mean(c)- (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R)**2.0)
             wwp(i)   = wwp(i) + (ww % mean(c)- W % mean(c) * W % mean(c))
-            uvp(i)   = uvp(i) + (uv % mean(c)- (U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R)* &
-                                (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R)   )
-            uwp(i)   = uwp(i) + (uw % mean(c)- (U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R) * W % mean(c))
-            vwp(i)   = uwp(i) + (vw % mean(c)- (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R) * W % mean(c))
+            uvp(i)   = uvp(i) + (uv % mean(c)- (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R)* &
+                                (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R)   )
+            uwp(i)   = uwp(i) + (uw % mean(c)- (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R) * W % mean(c))
+            vwp(i)   = uwp(i) + (vw % mean(c)- (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R) * W % mean(c))
             if(IsNearWall(c)) then
               Ufric_p(i) = Ufric_p(i) + (VISc * (U % mean(c)**2 + V % mean(c)**2 + W % mean(c)**2)**0.5/WallDs(c))**0.5
             end if
@@ -213,8 +225,8 @@
             if(SIMULA == LES.or.SIMULA == DES_SPA.or.SIMULA == DNS) then
               Tmp(i)   = Tmp(i) + T % mean(c)
               TTp(i)   = TTp(i) + (TT % mean(c) - T % mean(c) * T % mean(c))
-              uTp(i)   = uTp(i) + (uT % mean(c) - (U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R) * T % mean(c))
-              vTp(i)   = vTp(i) + (vT % mean(c) - (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R) * T % mean(c))
+              uTp(i)   = uTp(i) + (uT % mean(c) - (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R) * T % mean(c))
+              vTp(i)   = vTp(i) + (vT % mean(c) - (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R) * T % mean(c))
               wTp(i)   = wTp(i) + (wT % mean(c) - w % mean(c) * T % mean(c))
             else
               Tmp(i)   = Tmp(i) + T % n(c)

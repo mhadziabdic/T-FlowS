@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine UserCutLines_annulus(namAut) 
+  subroutine UserCutLines_annulus(grid, namAut) 
 !----------------------------------------------------------------------!
 ! This program reads name.1D file created by NEU or GEN and averages    
 ! the results in the homogeneous direction directions.            
@@ -11,9 +11,11 @@
     use pro_mod
     use par_mod
     use rans_mod
+    use Grid_Mod
 !----------------------------------------------------------------------!
     implicit none
 !-----------------------------[Arguments]------------------------------!
+    type(Grid_Type) :: grid
     real :: Ufric, Wall_near 
 !------------------------------[Calling]-------------------------------!
     interface
@@ -119,52 +121,52 @@
 
 !    do c=-1,-NbC,-1 
 !      if(bcmark(c) == 1) then
-!        R = sqrt(xc(c)**2+yc(c)**2)
-!        Vwall = (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R)
+!        R = sqrt(grid % xc(c)**2+grid % yc(c)**2)
+!        Vwall = (-U % n(c) * grid % yc(c) / R  + V % n(c) * grid % xc(c) / R)
 !      end if 
 !    end do
 
     Vwall = 1.0
 
     do c =  1, NC
-      R  = (xc(c)*xc(c) + yc(c)*yc(c))**0.5 + tiny
+      R  = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5 + tiny
       PHIx(c)   = W % mean(c)
-      PHIy(c)   = (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R)
+      PHIy(c)   = (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R)
     end do
     call GraPhi(PHIx, 1, Ux,.TRUE.)    ! dU/dx
     call GraPhi(PHIx, 2, Uy,.TRUE.)    ! dU/dx
     call GraPhi(PHIy, 1, Vx,.TRUE.)    ! dU/dx
     call GraPhi(PHIy, 2, Vy,.TRUE.)    ! dU/dx
     do c =  1, NC
-      R  = (xc(c)*xc(c) + yc(c)*yc(c))**0.5 + tiny
-      PHIx(c)   = (Ux(c) * xc(c) / R  + Uy(c) * yc(c) / R)
-      PHIy(c)   = (Vx(c) * xc(c) / R  + Vy(c) * yc(c) / R)
+      R  = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5 + tiny
+      PHIx(c)   = (Ux(c) * grid % xc(c) / R  + Uy(c) * grid % yc(c) / R)
+      PHIy(c)   = (Vx(c) * grid % xc(c) / R  + Vy(c) * grid % yc(c) / R)
     end do
 
     do i = 1, Nprob-1
       do c=1, NC
         Lscale = max(Lscale,WallDs(c))
-        R = sqrt(xc(c)**2+yc(c)**2)
+        R = sqrt(grid % xc(c)**2+grid % yc(c)**2)
            write(*,*) R, z_p(i+1), z_p(i)
         if(R > abs(z_p(i+1)) .and. R < abs(z_p(i))) then
           Wall_p(i) = Wall_p(i) + R 
           if(SIMULA==LES) then
-            Ump(i)   = Ump(i) + U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R
-            Vmp(i)   = Vmp(i) + (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R)
+            Ump(i)   = Ump(i) + U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R
+            Vmp(i)   = Vmp(i) + (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R)
             Wmp(i)   = Wmp(i) + W % mean(c)
-            var_1(i)   = var_1(i) + U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R
-            var_2(i)   = var_2(i) + (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R)
+            var_1(i)   = var_1(i) + U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R
+            var_2(i)   = var_2(i) + (-U % n(c) * grid % yc(c) / R  + V % n(c) * grid % xc(c) / R)
             var_3(i)   = var_3(i) + W % n(c)
             var_4(i)   = var_4(i) + VISt(c)/VISc
             var_5(i)   = var_5(i) + Ksgs(c)/VISc
             var_6(i)   = var_6(i) + atan(PHIy(c)/PHIx(c))
-            uup(i)   = uup(i) + (uu % mean(c)- (U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R)**2.0)
-            vvp(i)   = vvp(i) + (vv % mean(c)- (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R)**2.0)
+            uup(i)   = uup(i) + (uu % mean(c)- (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R)**2.0)
+            vvp(i)   = vvp(i) + (vv % mean(c)- (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R)**2.0)
             wwp(i)   = wwp(i) + (ww % mean(c)- W % mean(c) * W % mean(c))
-            uvp(i)   = uvp(i) + (uv % mean(c)- (U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R)* &
-                                (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R)   )
-            uwp(i)   = uwp(i) + (uw % mean(c)- (U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R) * W % mean(c))
-            vwp(i)   = vwp(i) + (vw % mean(c)- (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R) * W % mean(c))
+            uvp(i)   = uvp(i) + (uv % mean(c)- (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R)* &
+                                (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R)   )
+            uwp(i)   = uwp(i) + (uw % mean(c)- (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R) * W % mean(c))
+            vwp(i)   = vwp(i) + (vw % mean(c)- (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R) * W % mean(c))
             if(IsNearWall(c)) then
               Ufric_p(i) = Ufric_p(i) + (VISc * (U % mean(c)**2 + V % mean(c)**2 + W % mean(c)**2)**0.5/WallDs(c))**0.5
             end if
@@ -174,8 +176,8 @@
             if(SIMULA == LES.or.SIMULA == DES_SPA.or.SIMULA == DNS) then
               Tmp(i)   = Tmp(i) + T % mean(c)
               TTp(i)   = TTp(i) + (TT % mean(c) - T % mean(c) * T % mean(c))
-              uTp(i)   = uTp(i) + (uT % mean(c) - (U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R) * T % mean(c))
-              vTp(i)   = vTp(i) + (vT % mean(c) - (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R) * T % mean(c))
+              uTp(i)   = uTp(i) + (uT % mean(c) - (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R) * T % mean(c))
+              vTp(i)   = vTp(i) + (vT % mean(c) - (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R) * T % mean(c))
               wTp(i)   = wTp(i) + (wT % mean(c) - w % mean(c) * T % mean(c))
             else
               Tmp(i)   = Tmp(i) + T % n(c)

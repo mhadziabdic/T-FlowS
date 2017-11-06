@@ -11,7 +11,6 @@ module all_mod
   !----------------------------------------------------!
   !   Geometrical quantities for describing the grid   !
   !----------------------------------------------------!
-  real,allocatable :: xc(:),yc(:),zc(:) 
   real,allocatable :: Sx(:),Sy(:),Sz(:)
   real,allocatable :: volume(:)            ! cell's volume
   real,allocatable :: delta(:)             ! delta (max(dx,dy,dz))

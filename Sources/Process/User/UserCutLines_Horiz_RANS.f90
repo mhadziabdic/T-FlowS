@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine UserCutLines_Horiz_RANS() 
+  subroutine UserCutLines_Horiz_RANS(grid) 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
@@ -12,9 +12,11 @@
   use pro_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
+  type(Grid_Type) :: grid
 !  real :: y(-NbC:NC)
   real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
@@ -93,8 +95,8 @@
   do k = 1, N_hor
     do i = 1, Nprob-1
       do c=1,NC
-        Rad_2 = zc(c) 
-        if(xc(c) < r1_p(k) .and. xc(c) > r2_p(k)) then
+        Rad_2 = grid % zc(c) 
+        if(grid % xc(c) < r1_p(k) .and. grid % xc(c) > r2_p(k)) then
           if(Rad_2 > z_p(i) .and. Rad_2 < z_p(i+1)) then
  
             Ump(i)   = Ump(i) + U%n(c) 
@@ -112,7 +114,7 @@
 !            var_4(i) = var_4(i) + VISt(c) 
 !            var_5(i) = var_5(i) 
        
-            Rad_mp(i) = Rad_mp(i) + zc(c) 
+            Rad_mp(i) = Rad_mp(i) + grid % zc(c) 
             Ncount(i) = Ncount(i) + 1
           end if
         end if

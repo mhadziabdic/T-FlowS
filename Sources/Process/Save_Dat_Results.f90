@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Dat_Results(name_aut)
+  subroutine Save_Dat_Results(grid, name_aut)
 !------------------------------------------------------------------------------!
 ! Writes: name.dat                                                             !
 !----------------------------------[Modules]-----------------------------------!
@@ -7,8 +7,10 @@
   use pro_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: c,  c2,  n, s, Nadd
   integer             :: Nfac(10), NtotFac
@@ -109,7 +111,7 @@
   !-------------------!
   if(TGV == YES) then
     do c =  1, NC
-      R   = R + (U % n(c) - (-sin(xc(c))*cos(yc(c))*exp(-2.0*VISc*Time)))**2.0
+      R   = R + (U % n(c) - (-sin(grid % xc(c))*cos(grid % yc(c))*exp(-2.0*VISc*Time)))**2.0
       RR  = RR + U % n(c)*U % n(c)
       PP % n(c) = sqrt(R/RR) 
     end do
@@ -275,4 +277,4 @@
   ! Restore the name
   name = store_name  
 
-  end subroutine Save_Dat_Results
+  end subroutine

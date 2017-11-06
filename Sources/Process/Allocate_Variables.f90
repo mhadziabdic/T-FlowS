@@ -16,17 +16,20 @@
   type(Grid_Type) :: grid
 !==============================================================================!
 
-  allocate (U % n(-NbC:NC)); U % n=0.
-  allocate (V % n(-NbC:NC)); V % n=0.
-  allocate (W % n(-NbC:NC)); W % n=0.
+  ! Allocate memory for velocity components
+  call Var_Mod_Allocate_Solution("U", u, grid)
+  call Var_Mod_Allocate_Solution("V", v, grid)
+  call Var_Mod_Allocate_Solution("W", w, grid)
+
+  ! Allocate memory for pressure correction and pressure
+  call Var_Mod_Allocate_New_Only("P",  p,  grid)
+  call Var_Mod_Allocate_New_Only("PP", pp, grid)
 
   allocate (U % mean(-NbC:NC));  U % mean =0.
   allocate (V % mean(-NbC:NC));  V % mean =0.
   allocate (W % mean(-NbC:NC));  W % mean =0.
 
-  allocate (P % n(-NbC:NC));  P % n=0.
   allocate (P % mean(-NbC:NC));  P % mean=0.
-  allocate (PP % n(-NbC:NC)); PP % n=0.
 
   allocate (Px(-NbC:NC)); Px=0.
   allocate (Py(-NbC:NC)); Py=0.
@@ -72,40 +75,6 @@
 
   allocate (G(6,NC)); G=0
 
-  allocate (U % o(NC));  U % o=0.
-  allocate (V % o(NC));  V % o=0.
-  allocate (W % o(NC));  V % o=0.
-  allocate (U % oo(NC)); U % oo=0.
-  allocate (V % oo(NC)); V % oo=0.
-  allocate (W % oo(NC)); W % oo=0.
-
-  allocate (U % C(NC));   U % C=0.
-  allocate (V % C(NC));   V % C=0.
-  allocate (W % C(NC));   W % C=0.
-  allocate (U % Co(NC));  U % Co=0.
-  allocate (V % Co(NC));  V % Co=0.
-  allocate (W % Co(NC));  W % Co=0.
-  allocate (U % Coo(NC)); U % Coo=0.
-  allocate (V % Coo(NC)); V % Coo=0.
-  allocate (W % Coo(NC)); W % Coo=0.
-
-  allocate (U % Do(NC));  U % Do=0.
-  allocate (V % Do(NC));  V % Do=0.
-  allocate (W % Do(NC));  W % Do=0.
-  allocate (U % Doo(NC)); U % Doo=0.
-  allocate (V % Doo(NC)); V % Doo=0.
-  allocate (W % Doo(NC)); W % Doo=0.
-
-  allocate (U % X(NC));   U % X=0.
-  allocate (V % X(NC));   V % X=0.
-  allocate (W % X(NC));   W % X=0.
-  allocate (U % Xo(NC));  U % Xo=0.
-  allocate (V % Xo(NC));  V % Xo=0.
-  allocate (W % Xo(NC));  W % Xo=0.
-  allocate (U % Xoo(NC)); U % Xoo=0.
-  allocate (V % Xoo(NC)); V % Xoo=0.
-  allocate (W % Xoo(NC)); W % Xoo=0.
-
   allocate (Flux(NS));     Flux=0.
 
   allocate (PdropX(grid % n_materials)); PdropX=0.0
@@ -138,23 +107,15 @@
   allocate (near(-NbC:NC));  near  = 0.
   allocate (VISwall(-NbC:NC)); VISwall =0.0
 
-!---- variables for temperature
+  ! For solution of temperature
   if(HOT==YES) then
-    allocate (T % n(-NbC:NC)); T % n=0.
-    allocate (T % o(NC));      T % o=0.
-    allocate (T % oo(NC));     T % oo=0.
-    allocate (T % C(NC));      T % C=0.
-    allocate (T % Co(NC));     T % Co=0.
-    allocate (T % Coo(NC));    T % Coo=0.
-    allocate (T % Do(NC));     T % Do=0.
-    allocate (T % Doo(NC));    T % Doo=0.
-    allocate (T % X(NC));      T % X=0.
-    allocate (T % Xo(NC));     T % Xo=0.
-    allocate (T % Xoo(NC));    T % Xoo=0.
-    allocate (T % q(-NbC:-1)); T % q=0.
+    call Var_Mod_Allocate_Solution("T", t, grid)
     allocate (CONwall(-NbC:NC)); CONwall =0.0
   end if
 
+  !----------------------------!
+  !   Reynolds stress models   !
+  !----------------------------!
   if(SIMULA==EBM.or.SIMULA==HJ) then
     allocate (VAR1x(-NbC:NC)); VAR1x=0.
     allocate (VAR1y(-NbC:NC)); VAR1y=0.
@@ -204,110 +165,30 @@
 !      allocate (VAR12x(-NbC:NC)); VAR12x=0.
 !      allocate (VAR12y(-NbC:NC)); VAR12y=0.
 !      allocate (VAR12z(-NbC:NC)); VAR12z=0.
-    end if
+    end if  ! SIMULA == HJ
 
+    ! Reynolds stresses
+    call Var_Mod_Allocate_Solution("UU", uu, grid)
+    call Var_Mod_Allocate_Solution("VV", vv, grid)
+    call Var_Mod_Allocate_Solution("WW", ww, grid)
+    call Var_Mod_Allocate_Solution("UV", uv, grid)
+    call Var_Mod_Allocate_Solution("UW", uw, grid)
+    call Var_Mod_Allocate_Solution("VW", vw, grid)
 
-    allocate (uu % n(-NbC:NC)); uu % n=0.
-    allocate (uu % o(NC));      uu % o=0.
-    allocate (uu % oo(NC));     uu % oo=0.
-    allocate (uu % C(NC));      uu % C=0.
-    allocate (uu % Co(NC));     uu % Co=0.
-    allocate (uu % Coo(NC));    uu % Coo=0.
-    allocate (uu % Do(NC));     uu % Do=0.
-    allocate (uu % Doo(NC));    uu % Doo=0.
-    allocate (uu % X(NC));      uu % X=0.
-    allocate (uu % Xo(NC));     uu % Xo=0.
-    allocate (uu % Xoo(NC));    uu % Xoo=0.
+    call Var_Mod_Allocate_New_Only("KIN", kin, grid)
+    call Var_Mod_Allocate_Solution("EPS", eps, grid)
 
-    allocate (vv % n(-NbC:NC)); vv % n=0.
-    allocate (vv % o(NC));      vv % o=0.
-    allocate (vv % oo(NC));     vv % oo=0.
-    allocate (vv % C(NC));      vv % C=0.
-    allocate (vv % Co(NC));     vv % Co=0.
-    allocate (vv % Coo(NC));    vv % Coo=0.
-    allocate (vv % Do(NC));     vv % Do=0.
-    allocate (vv % Doo(NC));    vv % Doo=0.
-    allocate (vv % X(NC));      vv % X=0.
-    allocate (vv % Xo(NC));     vv % Xo=0.
-    allocate (vv % Xoo(NC));    vv % Xoo=0.
-
-    allocate (ww % n(-NbC:NC)); ww % n=0.
-    allocate (ww % o(NC));      ww % o=0.
-    allocate (ww % oo(NC));     ww % oo=0.
-    allocate (ww % C(NC));      ww % C=0.
-    allocate (ww % Co(NC));     ww % Co=0.
-    allocate (ww % Coo(NC));    ww % Coo=0.
-    allocate (ww % Do(NC));     ww % Do=0.
-    allocate (ww % Doo(NC));    ww % Doo=0.
-    allocate (ww % X(NC));      ww % X=0.
-    allocate (ww % Xo(NC));     ww % Xo=0.
-    allocate (ww % Xoo(NC));    ww % Xoo=0.
-
-    allocate (uv % n(-NbC:NC)); uv % n=0.
-    allocate (uv % o(NC));      uv % o=0.
-    allocate (uv % oo(NC));     uv % oo=0.
-    allocate (uv % C(NC));      uv % C=0.
-    allocate (uv % Co(NC));     uv % Co=0.
-    allocate (uv % Coo(NC));    uv % Coo=0.
-    allocate (uv % Do(NC));     uv % Do=0.
-    allocate (uv % Doo(NC));    uv % Doo=0.
-    allocate (uv % X(NC));      uv % X=0.
-    allocate (uv % Xo(NC));     uv % Xo=0.
-    allocate (uv % Xoo(NC));    uv % Xoo=0.
-
-    allocate (uw % n(-NbC:NC)); uw % n=0.
-    allocate (uw % o(NC));      uw % o=0.
-    allocate (uw % oo(NC));     uw % oo=0.
-    allocate (uw % C(NC));      uw % C=0.
-    allocate (uw % Co(NC));     uw % Co=0.
-    allocate (uw % Coo(NC));    uw % Coo=0.
-    allocate (uw % Do(NC));     uw % Do=0.
-    allocate (uw % Doo(NC));    uw % Doo=0.
-    allocate (uw % X(NC));      uw % X=0.
-    allocate (uw % Xo(NC));     uw % Xo=0.
-    allocate (uw % Xoo(NC));    uw % Xoo=0.
-
-    allocate (vw % n(-NbC:NC)); vw % n=0.
-    allocate (vw % o(NC));      vw % o=0.
-    allocate (vw % oo(NC));     vw % oo=0.
-    allocate (vw % C(NC));      vw % C=0.
-    allocate (vw % Co(NC));     vw % Co=0.
-    allocate (vw % Coo(NC));    vw % Coo=0.
-    allocate (vw % Do(NC));     vw % Do=0.
-    allocate (vw % Doo(NC));    vw % Doo=0.
-    allocate (vw % X(NC));      vw % X=0.
-    allocate (vw % Xo(NC));     vw % Xo=0.
-    allocate (vw % Xoo(NC));    vw % Xoo=0.
-
-    allocate (Tsc(-NbC:NC));     Tsc   =0.0
-    allocate (Lsc(-NbC:NC));     Lsc   =0.0
-    allocate (Kin % n(-NbC:NC)); Kin%n =0.0
-    allocate (Pk(-NbC:NC));      Pk    =0.0
-
-    allocate (f22 % n(-NbC:NC)); f22 % n=0.
+    ! Time scale, length scale and production
+    allocate (Tsc(-NbC:NC));     Tsc = 0.0
+    allocate (Lsc(-NbC:NC));     Lsc = 0.0
+    allocate (Pk(-NbC:NC));      Pk  = 0.0
 
     if(SIMULA==EBM) then
-      allocate (f22 % o(NC));      f22 % o=0.
-      allocate (f22 % oo(NC));     f22 % oo=0.
-      allocate (f22 % Do(NC));     f22 % Do=0.
-      allocate (f22 % Doo(NC));    f22 % Doo=0.
-      allocate (f22 % X(NC));      f22 % X=0.
-      allocate (f22 % Xo(NC));     f22 % Xo=0.
-      allocate (f22 % Xoo(NC));    f22 % Xoo=0.
+      call Var_Mod_Allocate_Solution("F22", f22, grid)
+    else
+      call Var_Mod_Allocate_New_Only("F22", f22, grid)
     end if
 
-    allocate (Eps % n(-NbC:NC)); Eps % n=0.
-    allocate (Eps % o(NC));      Eps % o=0.
-    allocate (Eps % oo(NC));     Eps % oo=0.
-    allocate (Eps % C(NC));      Eps % C=0.
-    allocate (Eps % Co(NC));     Eps % Co=0.
-    allocate (Eps % Coo(NC));    Eps % Coo=0.
-    allocate (Eps % Do(NC));     Eps % Do=0.
-    allocate (Eps % Doo(NC));    Eps % Doo=0.
-    allocate (Eps % X(NC));      Eps % X=0.
-    allocate (Eps % Xo(NC));     Eps % Xo=0.
-    allocate (Eps % Xoo(NC));    Eps % Xoo=0.
-     
     if(URANS == YES) then
       allocate (uu % mean(NC));   uu % mean=0.
       allocate (vv % mean(NC));   vv % mean=0.
@@ -317,34 +198,13 @@
       allocate (vw % mean(NC));   vw % mean=0.
       allocate (Kin % mean(NC));   Kin % mean=0.
     end if
-  end if
+  end if  ! SIMULA == EBM or HJ
 
-!---- variables for Rans models
+  ! Variables for Rans models
   if(SIMULA==K_EPS.or.SIMULA == HYB_PITM) then
-    allocate (Kin % n(-NbC:NC)); Kin % n=0.
-    allocate (Kin % o(NC));      Kin % o=0.
-    allocate (Kin % oo(NC));     Kin % oo=0.
-    allocate (Kin % C(NC));      Kin % C=0.
-    allocate (Kin % Co(NC));     Kin % Co=0.
-    allocate (Kin % Coo(NC));    Kin % Coo=0.
-    allocate (Kin % Do(NC));     Kin % Do=0.
-    allocate (Kin % Doo(NC));    Kin % Doo=0.
-    allocate (Kin % X(NC));      Kin % X=0.
-    allocate (Kin % Xo(NC));     Kin % Xo=0.
-    allocate (Kin % Xoo(NC));    Kin % Xoo=0.
 
-
-    allocate (Eps % n(-NbC:NC)); Eps % n=0.
-    allocate (Eps % o(NC));      Eps % o=0.
-    allocate (Eps % oo(NC));     Eps % oo=0.
-    allocate (Eps % C(NC));      Eps % C=0.
-    allocate (Eps % Co(NC));     Eps % Co=0.
-    allocate (Eps % Coo(NC));    Eps % Coo=0.
-    allocate (Eps % Do(NC));     Eps % Do=0.
-    allocate (Eps % Doo(NC));    Eps % Doo=0.
-    allocate (Eps % X(NC));      Eps % X=0.
-    allocate (Eps % Xo(NC));     Eps % Xo=0.
-    allocate (Eps % Xoo(NC));    Eps % Xoo=0.
+    call Var_Mod_Allocate_Solution("KIN", kin, grid)
+    call Var_Mod_Allocate_Solution("EPS", eps, grid)
 
     allocate (Uf(-NbC:NC));      Uf    =0.0
     allocate (Ufmean(-NbC:NC));  Ufmean=0.0
@@ -358,54 +218,11 @@
   end if
 
   if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
-    allocate (Kin % n(-NbC:NC)); Kin % n=0.
-    allocate (Kin % o(NC));      Kin % o=0.
-    allocate (Kin % oo(NC));     Kin % oo=0.
-    allocate (Kin % C(NC));      Kin % C=0.
-    allocate (Kin % Co(NC));     Kin % Co=0.
-    allocate (Kin % Coo(NC));    Kin % Coo=0.
-    allocate (Kin % Do(NC));     Kin % Do=0.
-    allocate (Kin % Doo(NC));    Kin % Doo=0.
-    allocate (Kin % X(NC));      Kin % X=0.
-    allocate (Kin % Xo(NC));     Kin % Xo=0.
-    allocate (Kin % Xoo(NC));    Kin % Xoo=0.
- 
-    allocate (Eps % n(-NbC:NC)); Eps % n=0.
-    allocate (Eps % o(NC));      Eps % o=0.
-    allocate (Eps % oo(NC));     Eps % oo=0.
-    allocate (Eps % C(NC));      Eps % C=0.
-    allocate (Eps % Co(NC));     Eps % Co=0.
-    allocate (Eps % Coo(NC));    Eps % Coo=0.
-    allocate (Eps % Do(NC));     Eps % Do=0.
-    allocate (Eps % Doo(NC));    Eps % Doo=0.
-    allocate (Eps % X(NC));      Eps % X=0.
-    allocate (Eps % Xo(NC));     Eps % Xo=0.
-    allocate (Eps % Xoo(NC));    Eps % Xoo=0.
+    call Var_Mod_Allocate_Solution("KIN", kin, grid)
+    call Var_Mod_Allocate_Solution("EPS", eps, grid)
+    call Var_Mod_Allocate_Solution("V^2", v_2, grid)
+    call Var_Mod_Allocate_Solution("F22", f22, grid)
 
-    allocate (v_2 % n(-NbC:NC)); v_2 % n=0.
-    allocate (v_2 % o(NC));      v_2 % o=0.
-    allocate (v_2 % oo(NC));     v_2 % oo=0.
-    allocate (v_2 % C(NC));      v_2 % C=0.
-    allocate (v_2 % Co(NC));     v_2 % Co=0.
-    allocate (v_2 % Coo(NC));    v_2 % Coo=0.
-    allocate (v_2 % Do(NC));     v_2 % Do=0.
-    allocate (v_2 % Doo(NC));    v_2 % Doo=0.
-    allocate (v_2 % X(NC));      v_2 % X=0.
-    allocate (v_2 % Xo(NC));     v_2 % Xo=0.
-    allocate (v_2 % Xoo(NC));    v_2 % Xoo=0.
-
-    allocate (f22 % n(-NbC:NC)); f22 % n=0.
-    allocate (f22 % o(NC));      f22 % o=0.
-    allocate (f22 % oo(NC));     f22 % oo=0.
-    allocate (f22 % C(NC));      f22 % C=0.
-    allocate (f22 % Co(NC));     f22 % Co=0.
-    allocate (f22 % Coo(NC));    f22 % Coo=0.
-    allocate (f22 % Do(NC));     f22 % Do=0.
-    allocate (f22 % Doo(NC));    f22 % Doo=0.
-    allocate (f22 % X(NC));      f22 % X=0.
-    allocate (f22 % Xo(NC));     f22 % Xo=0.
-    allocate (f22 % Xoo(NC));    f22 % Xoo=0.
- 
     allocate (Tsc(-NbC:NC));     Tsc   =0.0
     allocate (Lsc(-NbC:NC));     Lsc   =0.0
     allocate (Uf(-NbC:NC));      Uf    =0.0
@@ -452,24 +269,14 @@
   end if
 
   if(SIMULA == SPA_ALL.or.SIMULA == DES_SPA) then
-    allocate (VIS % n(-NbC:NC)); VIS % n=0.
-    allocate (VIS % o(NC));      VIS % o=0.
-    allocate (VIS % oo(NC));     VIS % oo=0.
-    allocate (VIS % C(NC));      VIS % C=0.
-    allocate (VIS % Co(NC));     VIS % Co=0.
-    allocate (VIS % Coo(NC));    VIS % Coo=0.
-    allocate (VIS % Do(NC));     VIS % Do=0.
-    allocate (VIS % Doo(NC));    VIS % Doo=0.
-    allocate (VIS % X(NC));      VIS % X=0.
-    allocate (VIS % Xo(NC));     VIS % Xo=0.
-    allocate (VIS % Xoo(NC));    VIS % Xoo=0.
+    call Var_Mod_Allocate_Solution("VIS", vis, grid)
   end if
 
   if(SIMULA == DES_SPA) then
     allocate (VIS % mean(NC));   VIS % mean=0.
   end if
 
-!---- variables defined in les_mod.h90:
+  ! Variables defined in les_mod.h90:
   if(SIMULA == LES.or.SIMULA==HYB_ZETA) then
     if(MODE == WALE) then 
       allocate (WALEv(-NbC:NC));  WALEv =0.

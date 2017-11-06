@@ -226,25 +226,25 @@
         res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)
   write(LineRes(89:92),  '(I4)')      niter
-!-----------------------------------!
-!     Update the pressure field     !
-!-----------------------------------!
+
+  !-------------------------------!
+  !   Update the pressure field   !
+  !-------------------------------!
   do c = 1, NC
     P % n(c)  =  P % n(c)  +  P % URF  *  PP % n(c)
   end do
-!--------------------------------------!
-!     Normalize the pressure field     !
-!--------------------------------------!
-!  Pmax  = maxval(P % n(1:NC))
-!  Pmin  = minval(P % n(1:NC))
+
+  !------------------------------------!
+  !   Normalize the pressure field     !
+  !------------------------------------!
+  !Pmax  = maxval(P % n(1:NC))
+  !Pmin  = minval(P % n(1:NC))
  
-!  call glomax(Pmax)
-!  call glomin(Pmin)
+  !call glomax(Pmax)
+  !call glomin(Pmin)
  
-!bn003  P % n = P % n - 0.5*(Pmax+Pmin)
+  !P % n = P % n - 0.5*(Pmax+Pmin)
  
   call Exchng(PP % n)
 
-  RETURN 
-
-  end subroutine CalcPS
+  end subroutine

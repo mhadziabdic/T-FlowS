@@ -29,12 +29,12 @@
       if(c2 > 0) then
         if( (material(c1) == m) .and.  &
             (material(c1) == material(c2)) ) then
-          xc1=xc(c1) 
-          yc1=yc(c1) 
-          zc1=zc(c1) 
-          xc2=xc(c1) + Dx(s) 
-          yc2=yc(c1) + Dy(s) 
-          zc2=zc(c1) + Dz(s)
+          xc1=grid % xc(c1) 
+          yc1=grid % yc(c1) 
+          zc1=grid % zc(c1) 
+          xc2=grid % xc(c1) + Dx(s) 
+          yc2=grid % yc(c1) + Dy(s) 
+          zc2=grid % zc(c1) + Dz(s)
 
           if((xc1 <= xp(m)).and.(xc2 > xp(m))) FLUXx(m) = FLUXx(m) + Flux(s)
           if((yc1 <= yp(m)).and.(yc2 > yp(m))) FLUXy(m) = FLUXy(m) + Flux(s)
@@ -46,12 +46,12 @@
         end if ! material 1&2
       else if(c2 < 0.and.TypeBC(c2) == BUFFER) then
         if( (material(c1)==m) .and. (material(c1) == material(c2)) ) then
-          xc1=xc(c1) 
-          yc1=yc(c1) 
-          zc1=zc(c1) 
-          xc2=xc(c1)+Dx(s) 
-          yc2=yc(c1)+Dy(s) 
-          zc2=zc(c1)+Dz(s)
+          xc1=grid % xc(c1) 
+          yc1=grid % yc(c1) 
+          zc1=grid % zc(c1) 
+          xc2=grid % xc(c1)+Dx(s) 
+          yc2=grid % yc(c1)+Dy(s) 
+          zc2=grid % zc(c1)+Dz(s)
 
           if((xc1 <= xp(m)).and.(xc2 > xp(m))) FLUXx(m) = FLUXx(m) + .5*Flux(s)
           if((yc1 <= yp(m)).and.(yc2 > yp(m))) FLUXy(m) = FLUXy(m) + .5*Flux(s)

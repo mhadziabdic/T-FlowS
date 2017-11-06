@@ -17,9 +17,6 @@
 !==============================================================================!
 
   ! Variables defined in all.h90:
-  allocate (xc(-NbC:NC)); xc=0.0       
-  allocate (yc(-NbC:NC)); yc=0.0   
-  allocate (zc(-NbC:NC)); zc=0.0  
   allocate (Sx(NS)); Sx=0.0       
   allocate (Sy(NS)); Sy=0.0       
   allocate (Sz(NS)); Sz=0.0  

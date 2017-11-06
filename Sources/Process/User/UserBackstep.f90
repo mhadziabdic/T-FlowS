@@ -12,10 +12,12 @@
   use pro_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
 !  real :: y(-NbC:NC)
+  type(Grid_Type) :: grid
   real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
   integer             :: Nprob, pl, c, dummy, i, count, k, c1, c2, s, N_hor
@@ -107,7 +109,7 @@
         if(c2 < 0) then
 !          if(TypeBC(c2).eq.WALLFL) then
           if(bcmark(c2).eq.1) then
-            Rad_2 = xc(c1)
+            Rad_2 = grid % xc(c1)
             if(Rad_2 > z_p(i) .and. Rad_2 < z_p(i+1)) then
               Ump(i)   = Ump(i) + U % n(c1)
               Vmp(i)   = Vmp(i) + V % n(c1)
@@ -116,7 +118,7 @@
               Var_2(i) = Var_2(i) + sqrt(abs(U%n(c1))*WallDs(c1)/VISc) 
               Var_3(i) = Var_3(i) + 0.1/((T%n(c2)-20)*11.3) 
               Var_5(i) = Var_5(i) + T % n(c2) 
-              Rad_mp(i) = Rad_mp(i) + zc(c1) 
+              Rad_mp(i) = Rad_mp(i) + grid % zc(c1) 
               Ncount(i) = Ncount(i) + 1
             end if
           end if

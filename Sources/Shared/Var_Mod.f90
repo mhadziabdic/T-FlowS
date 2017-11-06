@@ -7,6 +7,8 @@
   !   Var type   !
   !--------------!
   type Var_Type         
+    character(len=4)  :: name                ! variable name, always make it 
+                                             ! uppercase and keep very short
     real, allocatable :: n(:)                ! new value
     real, allocatable :: o(:), oo(:)         ! old and older then old
     real, allocatable :: C(:), Co(:), Coo(:) ! convective fluxes
@@ -18,15 +20,15 @@
     real, allocatable :: q(:)                ! flux of a variable
     real              :: URF                 ! under relaxation factor
     real              :: Stol                ! solver tolerance
-    real              :: bound(128)          ! boundary values
-    real              :: init(128)           ! initial values
+    real              :: bound(1024)         ! boundary values
+    real              :: init(1024)          ! initial values
     real              :: pro(11024)          ! inlfow profile
     real              :: Sigma               ! sigma
   end type Var_Type
 
   contains 
 
-  include 'Var_Mod_Allocate_New.f90'
+  include 'Var_Mod_Allocate_New_Only.f90'
   include 'Var_Mod_Allocate_Solution.f90'
   include 'Var_Mod_Allocate_Statistics.f90'
 

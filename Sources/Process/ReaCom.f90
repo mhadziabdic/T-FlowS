@@ -70,9 +70,9 @@
     Mres(j)=HUGE
     do i=1,NC
       if(Distance(xm(j),ym(j),zm(j),  &
-              xc(i),yc(i),zc(i))  < Mres(j)) then
+              grid % xc(i),grid % yc(i),grid % zc(i))  < Mres(j)) then
         Cm(j)=i
-        Mres(j)=Distance(xm(j),ym(j),zm(j),xc(i),yc(i),zc(i))
+        Mres(j)=Distance(xm(j),ym(j),zm(j),grid % xc(i),grid % yc(i),grid % zc(i))
       end if
     end do
     MresT=Mres(j)
@@ -98,7 +98,7 @@
       endif
 
       write(10+j,'(A24,3F16.6)')  &
-            '# Monitoring point:',xc(Cm(j)),yc(Cm(j)),zc(Cm(j))
+            '# Monitoring point:',grid % xc(Cm(j)),grid % yc(Cm(j)),grid % zc(Cm(j))
     end if
   end do
 

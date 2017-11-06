@@ -23,6 +23,7 @@
 
   Area  = 0.0
   Uaver = 0.0
+  write(*,*) 'grid % n_materials: ', grid % n_materials
   do n=1,grid % n_materials
     do c=1,NC
       U % mean(c) = 0.0
@@ -89,16 +90,16 @@
 
   if(TGV == YES) then
     do c=1,NC
-      U % n(c)    = -sin(xc(c))*cos(yc(c))
-      U % o(c)    = -sin(xc(c))*cos(yc(c))
-      U % oo(c)   = -sin(xc(c))*cos(yc(c))
-      V % n(c)    = cos(xc(c))*sin(yc(c))
-      V % o(c)    = cos(xc(c))*sin(yc(c))
-      V % oo(c)   = cos(xc(c))*sin(yc(c))
+      U % n(c)    = -sin(grid % xc(c))*cos(grid % yc(c))
+      U % o(c)    = -sin(grid % xc(c))*cos(grid % yc(c))
+      U % oo(c)   = -sin(grid % xc(c))*cos(grid % yc(c))
+      V % n(c)    = cos(grid % xc(c))*sin(grid % yc(c))
+      V % o(c)    = cos(grid % xc(c))*sin(grid % yc(c))
+      V % oo(c)   = cos(grid % xc(c))*sin(grid % yc(c))
       W % n(c)    = 0.0
       W % o(c)    = 0.0
       W % oo(c)   = 0.0
-      P % n(c)    = 0.25*(cos(2*xc(c)) + cos(2*yc(c)))
+      P % n(c)    = 0.25*(cos(2*grid % xc(c)) + cos(2*grid % yc(c)))
     end do
   end if
 
@@ -152,7 +153,7 @@
   !   Initializes time   ! 
   !----------------------!
   Time   = 0.0   
-  Uaver  = MassIn(1)/Area 
+  Uaver  = MassIn(1)/(Area + TINY) 
 !   write(*,*) MassIn, Area, MassIn/Area 
 !>>> This is very handy test to perform 
   if(this_proc  < 2) then

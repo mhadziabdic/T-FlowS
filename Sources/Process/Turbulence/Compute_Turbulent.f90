@@ -1,8 +1,8 @@
 !==============================================================================!
   subroutine Compute_Turbulent(grid, var, phi, phi_x, phi_y, phi_z, Nstep)
 !------------------------------------------------------------------------------!
-! Discretizes and solves transport equations for different turbulent 
-! variables. 
+!   Discretizes and solves transport equations for different turbulent         !
+!   variables.                                                                 !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -212,9 +212,9 @@
     phi_yS = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
     phi_zS = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
 
-!---- this implements zero gradient for k
+    ! This implements zero gradient for k
     if(SIMULA==K_EPS.and.MODE==HRe) then
-      if(c2 < 0 .and. var==6) then
+      if(c2 < 0 .and. phi % name == 'KIN') then
         if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then  
           phi_xS = 0.0 
           phi_yS = 0.0
@@ -225,7 +225,7 @@
     end if
 
     if(SIMULA==ZETA.or.SIMULA==K_EPS_VV.or.SIMULA==HYB_ZETA) then
-      if(c2 < 0.and.var==6) then
+      if(c2 < 0 .and. phi % name == 'KIN') then
         if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
           if(sqrt(TauWall(c1))*WallDs(c1)/VISc>2.0) then      
             phi_xS = 0.0
@@ -391,20 +391,18 @@
   !    before the under relaxation ?)   !
   !                                     !
   !-------------------------------------!
-  if(SIMULA==K_EPS.and.var == 6) call SourceKinKEps
-  if(SIMULA==K_EPS.and.var == 7) call SourceEpsKEps
+  if(SIMULA == K_EPS) then 
+    if(phi % name == 'KIN') call SourceKinKEps
+    if(phi % name == 'EPS') call SourceEpsKEps
+  end if
 
-  if(SIMULA==HYB_ZETA.and.var == 6) call SourceKinKEPSV2F()
-  if(SIMULA==HYB_ZETA.and.var == 7) call SourceEpsKEPSV2F()
-  if(SIMULA==HYB_ZETA.and.var == 9) call SourceV2KEPSV2F(Nstep)
-
-  if(SIMULA==ZETA.and.var == 6) call SourceKinKEPSV2F()
-  if(SIMULA==ZETA.and.var == 7) call SourceEpsKEPSV2F()
-  if(SIMULA==ZETA.and.var == 9) call SourceV2KEPSV2F(Nstep)
-
-  if(SIMULA==K_EPS_VV.and.var == 6) call SourceKinKEPSV2F()
-  if(SIMULA==K_EPS_VV.and.var == 7) call SourceEpsKEPSV2F()
-  if(SIMULA==K_EPS_VV.and.var == 9) call SourceV2KEPSV2F(Nstep)
+  if(SIMULA == K_EPS_VV .or.  &
+     SIMULA == ZETA     .or.  &
+     SIMULA == HYB_ZETA) then
+    if(phi % name == 'KIN') call SourceKinKEPSV2F()
+    if(phi % name == 'EPS') call SourceEpsKEPSV2F()
+    if(phi % name == 'V^2') call SourceV2KEPSV2F(Nstep)
+  end if
 
   if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA)                                &
   call SourceVisSpalart(phi_x,phi_y,phi_z)
@@ -428,21 +426,14 @@
          phi % n, b, PREC,      &
          niter,phi % STol, res(var), error)
 
-  !k-eps  if(var == 1) then
-  !k-eps    write(LineRes(17:28), '(1PE12.3)') res(var) 
-  !k-eps    write(LineRes(77:80), '(I4)')      niter 
-  !k-eps  end if
-
   do c= 1, NC
     if( phi%n(c)<0.0)then
       phi%n(c) = phi%o(c)
     end if
   end do 
 
-  if(this_proc < 2) write(*,*) 'Var ', var, res(var), niter 
+  if(this_proc < 2) write(*,*) '# ', phi % name, res(var), niter 
 
   call Exchng(phi % n)
-
-  RETURN
 
   end subroutine

@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine UserCutLines_Nu()     
+  subroutine UserCutLines_Nu(grid)     
 !----------------------------------------------------------------------!
 ! This program reads name.1D file created by NEU or GEN and averages    
 ! the results in the homogeneous direction directions.            
@@ -11,9 +11,11 @@
     use pro_mod
     use par_mod
     use rans_mod
+    use Grid_Mod
 !----------------------------------------------------------------------!
     implicit none
 !-----------------------------[Arguments]------------------------------!
+    type(Grid_Type) :: grid
     real :: Ufric, Wall_near
 !------------------------------[Calling]-------------------------------!
     interface
@@ -107,15 +109,15 @@
         c2=SideC(2,s)
         if(c2 < 0) then
           if(TypeBC(c2).eq.WALLFL) then
-            Rad_2 = (xc(c1)*xc(c1) + yc(c1)*yc(c1))**0.5 + tiny
-            if(Rad_2 < Rad_1(i+1) .and. Rad_2 > Rad_1(i).and.zc(c1) < 0.5) then
-              R           = (xc(c1)*xc(c1) + yc(c1)*yc(c1))**0.5 + tiny
-              Rad_mp(i)= Rad_mp(i) + (xc(c1)*xc(c1) + yc(c1)*yc(c1))**0.5
-              Ump(i)   = Ump(i) + U % n(c1) * xc(c1) / R  + V % n(c1) * yc(c1) / R
-              Vmp(i)   = Vmp(i) + (-U % n(c1) * yc(c1) / R  + V % n(c1) * xc(c1) / R)
+            Rad_2 = (grid % xc(c1)*grid % xc(c1) + grid % yc(c1)*grid % yc(c1))**0.5 + tiny
+            if(Rad_2 < Rad_1(i+1) .and. Rad_2 > Rad_1(i).and.grid % zc(c1) < 0.5) then
+              R           = (grid % xc(c1)*grid % xc(c1) + grid % yc(c1)*grid % yc(c1))**0.5 + tiny
+              Rad_mp(i)= Rad_mp(i) + (grid % xc(c1)*grid % xc(c1) + grid % yc(c1)*grid % yc(c1))**0.5
+              Ump(i)   = Ump(i) + U % n(c1) * grid % xc(c1) / R  + V % n(c1) * grid % yc(c1) / R
+              Vmp(i)   = Vmp(i) + (-U % n(c1) * grid % yc(c1) / R  + V % n(c1) * grid % xc(c1) / R)
               Wmp(i)   = Wmp(i) + W % n(c1)
               Tmp(i)   = Tmp(i) + T%n(c2) !+ 0.2*WallDs(c1)/CONwall(c1) !T % n(c1)
-              var_1(i) = var_1(i) + zc(c1)
+              var_1(i) = var_1(i) + grid % zc(c1)
               var_2(i) = var_2(i) + TauWall(c1)**0.5 !T % n(c1) !Uz(c1)
               var_3(i) = var_3(i) + (Cmu**0.25*Kin%n(c1)**0.5) !sqrt(U % n(c1)**2 + V % n(c1)**2 + W % n(c1)**2)
               var_4(i) = var_4(i) + Kin %n(c1)

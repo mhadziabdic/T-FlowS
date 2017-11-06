@@ -138,7 +138,9 @@
           do b=1,NBFsub
             if(BuReIn(b) == CopyC(c)) then
               write(*,*) BufPos(b) 
-              write(*,*) xc(CopyC(c)), yc(CopyC(c)), zc(CopyC(c))  
+              write(*,*) grid % xc(CopyC(c)),  &
+                         grid % yc(CopyC(c)),  &
+                         grid % zc(CopyC(c))  
               iwork(count,2)=-BufPos(b) ! - sign, copy buffer
             end if
           end do
@@ -204,9 +206,9 @@
     do c=1,NC
       if(NewC(c)  > 0) then
         count=count+1
-        if(var == 1) work(count) = xc(c)
-        if(var == 2) work(count) = yc(c)
-        if(var == 3) work(count) = zc(c)
+        if(var == 1) work(count) = grid % xc(c)
+        if(var == 2) work(count) = grid % yc(c)
+        if(var == 3) work(count) = grid % zc(c)
       end if
     end do 
     write(9) (work(c), c=1,count)
@@ -222,18 +224,18 @@
     do c=-1,-NBC, -1
       if(NewC(c) /= 0) then
         count=count+1
-        if(var == 1) work(count) = xc(c)
-        if(var == 2) work(count) = yc(c)
-        if(var == 3) work(count) = zc(c)
+        if(var == 1) work(count) = grid % xc(c)
+        if(var == 2) work(count) = grid % yc(c)
+        if(var == 3) work(count) = grid % zc(c)
       end if
     end do 
 
     ! Buffer boundary cell centers
     do s=1,NBFsub
       count=count+1
-      if(var ==  1) work(count) = xc(BuReIn(s))
-      if(var ==  2) work(count) = yc(BuReIn(s))
-      if(var ==  3) work(count) = zc(BuReIn(s))
+      if(var ==  1) work(count) = grid % xc(BuReIn(s))
+      if(var ==  2) work(count) = grid % yc(BuReIn(s))
+      if(var ==  3) work(count) = grid % zc(BuReIn(s))
     end do
     write(9) (work(c), c=1,count)
   end do

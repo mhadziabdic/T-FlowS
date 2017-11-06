@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine GraCorNew(phi, phi_x, phi_y, phi_z)
+  subroutine GraCorNew(grid, phi, phi_x, phi_y, phi_z)
 !----------------------------------------------------------------------!
 ! Calculates gradient in the cells adjencent to material interface     !
 ! boundaries. Assumes that "tentative" gradients are just calculated   !
@@ -27,9 +27,11 @@
   use all_mod
   use pro_mod
   use Solvers_Mod, only: p1, p2  ! bad practice
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
+  type(Grid_Type) :: grid
   real :: phi(-NbC:NC),    &
           phi_x(-NbC:NC),  &
           phi_y(-NbC:NC),  &
@@ -52,12 +54,12 @@
         StateMat(material(c1))==SOLID .and. &  
         StateMat(material(c2))==FLUID ) then   
 
-      Dxc1 = xsp(s)-xc(c1)                     
-      Dyc1 = ysp(s)-yc(c1)                     
-      Dzc1 = zsp(s)-zc(c1)                     
-      Dxc2 = xsp(s)-xc(c2)                     
-      Dyc2 = ysp(s)-yc(c2)                     
-      Dzc2 = zsp(s)-zc(c2)                     
+      Dxc1 = xsp(s)-grid % xc(c1)                     
+      Dyc1 = ysp(s)-grid % yc(c1)                     
+      Dzc1 = zsp(s)-grid % zc(c1)                     
+      Dxc2 = xsp(s)-grid % xc(c2)                     
+      Dyc2 = ysp(s)-grid % yc(c2)                     
+      Dzc2 = zsp(s)-grid % zc(c2)                     
 
       ! Missing parts of the gradient vector
       p1(c1) = CONc(material(c1)) *  &
@@ -101,12 +103,12 @@
       
       phi_f = 0.5*(phi(c1)+phi(c2)) ! good if lambda1=lambda2 
 
-      Dxc1 = xsp(s)-xc(c1)                     
-      Dyc1 = ysp(s)-yc(c1)                     
-      Dzc1 = zsp(s)-zc(c1)                     
-      Dxc2 = xsp(s)-xc(c2)                     
-      Dyc2 = ysp(s)-yc(c2)                     
-      Dzc2 = zsp(s)-zc(c2)                     
+      Dxc1 = xsp(s)-grid % xc(c1)                     
+      Dyc1 = ysp(s)-grid % yc(c1)                     
+      Dzc1 = zsp(s)-grid % zc(c1)                     
+      Dxc2 = xsp(s)-grid % xc(c2)                     
+      Dyc2 = ysp(s)-grid % yc(c2)                     
+      Dzc2 = zsp(s)-grid % zc(c2)                     
 
       D1 = sqrt(Dxc1*Dxc1 + Dyc1*Dyc1 + Dzc1*Dzc1)
       D2 = sqrt(Dxc2*Dxc2 + Dyc2*Dyc2 + Dzc2*Dzc2)
@@ -119,12 +121,12 @@
       ! Remember it !
       phiside(s) = phi_f
 
-      Dxc1 = xsp(s)-xc(c1)                     
-      Dyc1 = ysp(s)-yc(c1)                     
-      Dzc1 = zsp(s)-zc(c1)                     
-      Dxc2 = xsp(s)-xc(c2)                     
-      Dyc2 = ysp(s)-yc(c2)                     
-      Dzc2 = zsp(s)-zc(c2)                     
+      Dxc1 = xsp(s)-grid % xc(c1)                     
+      Dyc1 = ysp(s)-grid % yc(c1)                     
+      Dzc1 = zsp(s)-grid % zc(c1)                     
+      Dxc2 = xsp(s)-grid % xc(c2)                     
+      Dyc2 = ysp(s)-grid % yc(c2)                     
+      Dzc2 = zsp(s)-grid % zc(c2)                     
 
       ! Now update the gradients
       phi_x(c1)=phi_x(c1)+phi_f*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1)
@@ -144,4 +146,4 @@
   call Exchng(phi_y)
   call Exchng(phi_z)
 
-  end subroutine GraCorNew
+  end subroutine

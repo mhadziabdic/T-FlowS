@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine UserProbe1D_Nusselt_jet()
+  subroutine UserProbe1D_Nusselt_jet(grid)
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
@@ -12,9 +12,11 @@
   use pro_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
+  type(Grid_Type) :: grid
   real :: y(-NbC:NC)
   real :: Rad_2, Ufric, dummy 
 !------------------------------[Calling]-------------------------------!
@@ -165,13 +167,13 @@
     do i = 1, Nprob-1
 
       do c = 1, NC
-        Rad_2 = (xc(c)*xc(c) + yc(c)*yc(c))**0.5  + tiny
+        Rad_2 = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5  + tiny
         if(Rad_2 > Rad_1(i) .and. Rad_2 < Rad_1(i+1)) then
-            R           = (xc(c)*xc(c) + yc(c)*yc(c))**0.5
-            Urad_n   = (U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R)
+            R           = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5
+            Urad_n   = (U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R)
             Rad_mp(i)   = Rad_mp(i) + R  
             Ncount(i)= Ncount(i) + 1
-          if(zc(c) < 11.5.and.zc(c) > 11.0)then
+          if(grid % zc(c) < 11.5.and.grid % zc(c) > 11.0)then
             Ump1(i)   = Ump1(i) + (U % n(c) * U % n(c)            &
                        + V % n(c) * V % n(c) + W % n(c)*W % n(c))**0.5 
             Vmp1(i)   = Vmp1(i) + Urad_n 
@@ -182,7 +184,7 @@
             uwp1(i)   = uwp1(i) + VISt(c)/VISc
             Ncount1(i)= Ncount1(i) + 1
           end if
-          if(zc(c) < 10.0.and.zc(c) > 9.999)then
+          if(grid % zc(c) < 10.0.and.grid % zc(c) > 9.999)then
             Ump2(i)   = Ump2(i) + (U % n(c) * U % n(c)            &
                        + V % n(c) * V % n(c) + W % n(c)*W % n(c))**0.5 
             Vmp2(i)   = Vmp2(i) + Urad_n 
@@ -193,7 +195,7 @@
             uwp2(i)   = uwp2(i) + VISt(c)/VISc
             Ncount2(i)= Ncount2(i) + 1
           end if
-          if(zc(c) < 0.97965869E+01.and.zc(c) > 0.97836972E+01)then
+          if(grid % zc(c) < 0.97965869E+01.and.grid % zc(c) > 0.97836972E+01)then
             Ump3(i)   = Ump3(i) + (U % n(c) * U % n(c)            &
                        + V % n(c) * V % n(c) + W % n(c)*W % n(c))**0.5 
             Vmp3(i)   = Vmp3(i) + Urad_n 
@@ -204,7 +206,7 @@
             uwp3(i)   = uwp3(i) + VISt(c)/VISc
             Ncount3(i)= Ncount3(i) + 1
           end if
-          if(zc(c) < 0.95000476E+01.and.zc(c) > 0.94698224E+01)then
+          if(grid % zc(c) < 0.95000476E+01.and.grid % zc(c) > 0.94698224E+01)then
             Ump4(i)   = Ump4(i) + (U % n(c) * U % n(c)            &
                       + V % n(c) * V % n(c) + W % n(c)*W % n(c))**0.5 
             Vmp4(i)   = Vmp4(i) + Urad_n 
@@ -215,7 +217,7 @@
             uwp4(i)   = uwp4(i) + VISt(c)/VISc
             Ncount4(i)= Ncount4(i) + 1
           end if
-          if(zc(c) < 0.81071863E+01.and.zc(c) > 0.79955399E+01)then
+          if(grid % zc(c) < 0.81071863E+01.and.grid % zc(c) > 0.79955399E+01)then
             Ump5(i)   = Ump5(i) + (U % n(c) * U % n(c)            &
                        + V % n(c) * V % n(c) + W % n(c)*W % n(c))**0.5 
             Vmp5(i)   = Vmp5(i) + Urad_n 
@@ -226,7 +228,7 @@
             uwp5(i)   = uwp5(i) + VISt(c)/VISc 
             Ncount5(i)= Ncount5(i) + 1
           end if
-          if(zc(c) < 0.50000000E+01.and.zc(c) > 0.47229170E+01)then
+          if(grid % zc(c) < 0.50000000E+01.and.grid % zc(c) > 0.47229170E+01)then
             Ump6(i)   = Ump6(i) + (U % n(c) * U % n(c)            &
                        + V % n(c) * V % n(c) + W % n(c)*W % n(c))**0.5 
             Vmp6(i)   = Vmp6(i) + Urad_n 
@@ -237,7 +239,7 @@
             uwp6(i)   = uwp6(i) + VISt(c)/VISc 
             Ncount6(i)= Ncount6(i) + 1
           end if
-          if(zc(c) < 0.10052776E+01.and.zc(c) > 0.94881366E+00)then
+          if(grid % zc(c) < 0.10052776E+01.and.grid % zc(c) > 0.94881366E+00)then
             Ump7(i)   = Ump7(i) + (U % n(c) * U % n(c)            &
                        + V % n(c) * V % n(c) + W % n(c)*W % n(c))**0.5 
             Vmp7(i)   = Vmp7(i) + Urad_n 

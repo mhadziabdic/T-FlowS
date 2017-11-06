@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Split_Subdomain(sub, n_parts)
+  subroutine Split_Subdomain(grid, sub, n_parts)
 !------------------------------------------------------------------------------!
 !   Splits a (sub) domain by a selected technique.                             !
 !------------------------------------------------------------------------------!
@@ -8,11 +8,13 @@
   use gen_mod 
   use div_mod
   use par_mod 
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer :: sub      ! subdomain to be splitted
-  integer :: n_parts  ! number of new partitions
+  type(Grid_Type) :: grid
+  integer         :: sub      ! subdomain to be splitted
+  integer         :: n_parts  ! number of new partitions
 !-----------------------------------[Locals]-----------------------------------!
   character :: dir                         ! direction for splitting
   integer   :: c, ic, j
@@ -24,7 +26,7 @@
   !   Find the smallest moment of inertia   !
   !-----------------------------------------! 
   if(division_algorithm == INERTIAL) then
-    call Inertia(sub)
+    call Inertia(grid, sub)
   end if
 
   !----------------------------------------------! 
@@ -39,12 +41,12 @@
     zmin=+HUGE
     do c=1,NC
       if(proces(c) == sub) then
-        xmax=max(xmax, xc(c))
-        ymax=max(ymax, yc(c))
-        zmax=max(zmax, zc(c))
-        xmin=min(xmin, xc(c))
-        ymin=min(ymin, yc(c))
-        zmin=min(zmin, zc(c))
+        xmax=max(xmax, grid % xc(c))
+        ymax=max(ymax, grid % yc(c))
+        zmax=max(zmax, grid % zc(c))
+        xmin=min(xmin, grid % xc(c))
+        ymin=min(ymin, grid % yc(c))
+        zmin=min(zmin, grid % zc(c))
       end if
     end do
     delx = xmax - xmin

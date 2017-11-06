@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine UserCutLines_Point_Cart() 
+  subroutine UserCutLines_Point_Cart(grid) 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
@@ -12,10 +12,12 @@
   use pro_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
 !  real :: y(-NbC:NC)
+  type(Grid_Type) :: grid
   real :: Rad_2, Ufric, Rad_1 
 !------------------------------[Calling]-------------------------------!
   integer             :: Nprob, pl, c, i, count, k, c1, c2, s, N_hor, dir
@@ -100,14 +102,14 @@
     do i = 1, Nprob-1
       do c=1,NC
         if(dir == 1) then  
-          Rad_1 = sqrt((yc(c)-x_p(k))**2 + (zc(c)-y_p(k))**2)
-          Rad_2 = xc(c)
+          Rad_1 = sqrt((grid % yc(c)-x_p(k))**2 + (grid % zc(c)-y_p(k))**2)
+          Rad_2 = grid % xc(c)
         else if(dir == 2) then
-          Rad_1 = sqrt((xc(c)-x_p(k))**2 + (zc(c)-y_p(k))**2)
-          Rad_2 = yc(c)
+          Rad_1 = sqrt((grid % xc(c)-x_p(k))**2 + (grid % zc(c)-y_p(k))**2)
+          Rad_2 = grid % yc(c)
         else if(dir == 3) then
-          Rad_1 = sqrt((xc(c)-x_p(k))**2 + (yc(c)-y_p(k))**2)
-          Rad_2 = zc(c) 
+          Rad_1 = sqrt((grid % xc(c)-x_p(k))**2 + (grid % yc(c)-y_p(k))**2)
+          Rad_2 = grid % zc(c) 
         end if
         if(Rad_1 < R_p(k)) then
           if(Rad_2 > z_p(i) .and. Rad_2 < z_p(i+1)) then

@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine UserBackstep_Y() 
+  subroutine UserBackstep_Y(grid) 
 !----------------------------------------------------------------------!
 ! Reads the ".1D" file created by the "Generator" and averages the     !
 ! results in the planes defined by coordinates in it. Then averages    !
@@ -12,10 +12,12 @@
   use pro_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
 !  real :: y(-NbC:NC)
+  type(Grid_Type) :: grid
   real :: Rad_2, Ufric 
 !------------------------------[Calling]-------------------------------!
   integer             :: Nprob, pl, c, dummy, i, count, k, c1, c2, s, N_hor
@@ -102,8 +104,8 @@
   do k = 1, N_hor
     do i = 1, Nprob-1
       do c=1,NC
-        Rad_2 = zc(c)
-        if(xc(c) < r1_p(k) .and. xc(c) > r2_p(k)) then
+        Rad_2 = grid % zc(c)
+        if(grid % xc(c) < r1_p(k) .and. grid % xc(c) > r2_p(k)) then
           if(Rad_2 > z_p(i) .and. Rad_2 < z_p(i+1)) then
             Ump(i)   = Ump(i) + U % n(c)
             Vmp(i)   = Vmp(i) + V % n(c)
@@ -112,7 +114,7 @@
             vvp(i)   = vvp(i) + Eps%n(c)
             Var_1(i) = Var_1(i) + TauWall(c)/11.3**2 
             Var_2(i) = Var_2(i) + T%n(c)-20.0
-            Rad_mp(i) = Rad_mp(i) + zc(c) 
+            Rad_mp(i) = Rad_mp(i) + grid % zc(c) 
             Ncount(i) = Ncount(i) + 1
             if(SIMULA==ZETA) then      
               wwp(i)   = wwp(i) + v_2%n(c)

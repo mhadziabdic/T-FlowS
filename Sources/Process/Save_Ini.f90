@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Ini()
+  subroutine Save_Ini(grid)
 !------------------------------------------------------------------------------!
 !   
 !------------------------------------------------------------------------------!
@@ -9,8 +9,10 @@
   use les_mod
   use par_mod
   use rans_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, Nvar, var, c1, c2, s, SC, nn
   character(len=80) :: name_out, answer
@@ -40,7 +42,7 @@
   end do    ! through centers 
   write(9,'(I10)') nn
   do c= 1, NC
-    write(9,'(3E25.8)') xc(c),yc(c),zc(c)
+    write(9,'(3E25.8)') grid % xc(c),grid % yc(c),grid % zc(c)
   end do    ! through centers 
   close(9)
 
@@ -151,4 +153,4 @@
 
   name = answer 
 
-  end subroutine Save_Ini
+  end subroutine

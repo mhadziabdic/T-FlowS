@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Probe_1D
+  subroutine Probe_1D(grid)
 !------------------------------------------------------------------------------!
 !   This subroutine finds the coordinate of cell-centers in non-homogeneous    !
 !   direction and write them in file called "name.1D"                          !
@@ -9,6 +9,7 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
   logical :: isit
 !----------------------------------[Calling]-----------------------------------! 
   include "Approx.int"
@@ -38,19 +39,19 @@
     ! Try to find the cell among the probes
     do p=1,n_prob
       if(answer == 'X') then
-        if( Approx(xc(c), zp(p), 1.0e-9)) go to 1
+        if( Approx(grid % xc(c), zp(p), 1.0e-9)) go to 1
       else if(answer == 'Y') then
-        if( Approx(yc(c), zp(p), 1.0e-9)) go to 1
+        if( Approx(grid % yc(c), zp(p), 1.0e-9)) go to 1
       else if(answer == 'Z') then
-        if( Approx(zc(c), zp(p), 1.0e-9)) go to 1
+        if( Approx(grid % zc(c), zp(p), 1.0e-9)) go to 1
       end if
     end do 
 
     ! Couldn't find a cell among the probes, add a new one
     n_prob = n_prob + 1
-    if(answer=='X') zp(n_prob)=xc(c)
-    if(answer=='Y') zp(n_prob)=yc(c)
-    if(answer=='Z') zp(n_prob)=zc(c)
+    if(answer=='X') zp(n_prob) = grid % xc(c)
+    if(answer=='Y') zp(n_prob) = grid % yc(c)
+    if(answer=='Z') zp(n_prob) = grid % zc(c)
 
     if(n_prob == 1000) then
       write(*,*) '# Probe 1D: Not a 1D (channel flow) problem.'

@@ -38,6 +38,10 @@
   read(9) NS
   read(9) c   ! NSsh is not used in Processor. 
 
+  ! Allocate memory =--> carefull, there is no checking!
+  call Grid_Mod_Allocate_Cells(grid, NbC, NC) 
+  call Grid_Mod_Allocate_Faces(grid, NS) 
+
   ! Number of materials and boundary conditions
   read(9) grid % n_materials
   read(9) grid % n_boundary_conditions

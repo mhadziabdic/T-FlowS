@@ -1,10 +1,9 @@
-!======================================================================!
+!==============================================================================!
   program Processor
-!----------------------------------------------------------------------!
-!   Unstructured Finite Volume LES/RANS solver.                        !
-!   Authors: Bojan NICENO & Muhamed HADZIABDIC                         !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Unstructured Finite Volume LES/RANS solver.                                !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
@@ -13,17 +12,17 @@
   use Grid_Mod
   use Var_Mod
   use Solvers_Mod, only: D
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!------------------------------[Calling]-------------------------------!
+!----------------------------------[Calling]-----------------------------------!
   real :: Correct_Velocity
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer          :: i, m, n, Ndtt_temp, HOTtemp, SIMULAtemp, c, Nproc 
   real             :: Mres, CPUtim
   real             :: start, finish
   character        :: namSav*10
   logical          :: restar, multiple 
-!-----------------------------[Interfaces]-----------------------------!
+!---------------------------------[Interfaces]---------------------------------!
   interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine NewUVW(grid, var, Ui, dUidi, dUidj, dUidk,  &
@@ -74,11 +73,13 @@
        character, optional :: namAut*(*)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Save_Dat_Results(namAut)  
+    subroutine Save_Dat_Results(grid, namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
+      use Grid_Mod
       implicit none
+      type(Grid_Type) :: grid
       character, optional :: namAut*(*)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
@@ -182,7 +183,7 @@
   end if   
 
   ! Interpolate between diff. meshes
-  call Load_Ini()
+  call Load_Ini(grid)
 
   if(.not. restar) then
 !BOJAN    do m=1,grid % n_materials
@@ -221,17 +222,17 @@
 
   write(*,*) 'At line: ', cmn_line_count
 
-!----- Loading data from previous computation   
-!  if(this_proc<2) write(*,*)'Reading data from previous computation on the same mesh'
+  ! Loading data from previous computation   
+  !  if(this_proc<2) write(*,*)'Reading data from previous computation on the same mesh'
   call Load_Restart_Ini(grid)
 
-!----- Prepare ...
+  ! Prepare ...
   call Compute_Geometry(grid)
   call FindBad()
-  if(SIMULA==LES.and.MODE==SMAG.and..NOT.restar) call NearWallCell()
+  if(SIMULA==LES.and.MODE==SMAG.and..NOT.restar) call NearWallCell(grid)
 
-!----- Prepare the gradient matrix for velocities
-  call CalcG(.true.) 
+  ! Prepare the gradient matrix for velocities
+  call CalcG(grid, .true.) 
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 !        LET THE TIME        !
@@ -288,9 +289,9 @@
     do ini=1,Nini                   !  FRACTION & SIMPLE  
 
       if(.NOT. multiple) then 
-        call GradP(P % n,Px,Py,Pz)
+        call GradP(grid, P % n,Px,Py,Pz)
       else 
-        call GradP3(P % n,Px,Py,Pz)
+        call GradP3(grid, P % n,Px,Py,Pz)
       end if
       call GraPhi(U % n, 1, Ux,.true.)    ! dU/dx
       call GraPhi(U % n, 2, Uy,.true.)    ! dU/dy
@@ -338,27 +339,28 @@
       end if
 
       if(.NOT. multiple) then 
-        call GradP(PP % n,Px,Py,Pz)
+        call GradP(grid, PP % n,Px,Py,Pz)
       else 
-        call GradP3(PP % n,Px,Py,Pz)
+        call GradP3(grid, PP % n,Px,Py,Pz)
       end if
 
       call Compute_Fluxes(grid)
       Mres = Correct_Velocity(grid) !  project the velocities
 
-!---- Temperature
+      ! Temperature
       if(HOT==YES) then
         call GraPhi(T % n,1,phix,.true.)            ! dT/dx
         call GraPhi(T % n,2,phiy,.true.)            ! dT/dy
         call GraPhi(T % n,3,phiz,.true.)            ! dT/dz
-!!!!        call GraCorNew(T % n,phix,phiy,phiz)    ! 2mat
+!!!!        call GraCorNew(grid, T % n,phix,phiy,phiz)    ! 2mat
         call Compute_Scalar(grid, 5, T,  &
                             phix, phiy, phiz)  ! dT/dx, dT/dy, dT/dz
       end if 
 
-!---- Rans models
+      ! Rans models
       if(SIMULA==K_EPS.or.SIMULA == HYB_PITM) then
-!---- Update the values at boundaries
+
+        ! Update the values at boundaries
         call CalBou
         call CalcShear(U % n, V % n, W % n, Shear)
         call GraPhi(Kin % n,1,phix,.true.)             ! dK/dx
@@ -375,7 +377,9 @@
         call CalcVISt_KEps()
       end if 
 
-      if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA == HYB_ZETA) then
+      if(SIMULA == K_EPS_VV .or.  &
+         SIMULA == ZETA     .or.  &
+         SIMULA == HYB_ZETA) then
         call CalcShear(U % n, V % n, W % n, Shear)
 
         call GraPhi(Kin % n,1,phix,.true.)             ! dK/dx
@@ -395,7 +399,7 @@
         call GraPhi(f22 % n,1,phix,.true.)             ! df22/dx
         call GraPhi(f22 % n,2,phiy,.true.)             ! df22/dy
         call GraPhi(f22 % n,3,phiz,.true.)             ! df22/dz
-        call CalcF22(8, f22, phix, phiy, phiz, n) 
+        call Compute_F22(grid, 8, f22, phix, phiy, phiz, n) 
 
         call GraPhi(v_2 % n,1,phix,.true.)             ! dv_2/dx
         call GraPhi(v_2 % n,2,phiy,.true.)             ! dv_2/dy
@@ -459,7 +463,7 @@
           call GraPhi(f22 % n,1,phix,.true.)             ! df22/dx
           call GraPhi(f22 % n,2,phiy,.true.)             ! df22/dy
           call GraPhi(f22 % n,3,phiz,.true.)             ! df22/dz
-          call CalcF22(12, f22, phix, phiy, phiz) 
+          call Compute_F22(grid, 12, f22, phix, phiy, phiz) 
         end if 
 
         call GraPhi(Eps % n,1,phix,.true.)             ! df22/dx
@@ -521,7 +525,7 @@
     end do  
 
    if(PIPE==YES.or.JET==YES) then 
-     call CalcMn_Cylind(Nstat, n)  !  calculate mean values 
+     call CalcMn_Cylind(grid, Nstat, n)  !  calculate mean values 
 !BOJAN     if(BUDG == YES.and.HOT==YES) call CalcBudgets_cylind(Nbudg, n)
 !BOJAN     if(BUDG == YES.and.HOT==NO)  call CalcBudgets_cylind(Nbudg, n)
    else
@@ -568,7 +572,11 @@
       if( FLUXoZ(m)  /=  0.0 ) then
         PdropZ(m) = (FLUXoZ(m)-FLUXz(m)) / (dt*AreaZ(m)+TINY) 
       end if
+      write(*,*) PdropX(m)
+      write(*,*) PdropY(m)
+      write(*,*) PdropZ(m)
     end do
+    stop
 
     ! Regular savings, each 1000 time steps            
     if(mod(n,1000) == 0) then                                
@@ -597,13 +605,13 @@
       namSav = 'SAVExxxxxx'
       write(namSav(5:10),'(I6.6)') n
       call Save_Restart(grid, namSav)                          
-      call Save_Dat_Results(namSav)
+      call Save_Dat_Results(grid, namSav)
       call Save_Gmv_Results(namSav)
       call SavParView(this_proc,NC,namSav, Nstat, n)
 !BOJAN      if(CHANNEL == YES) then
 !BOJAN  call UserCutLines_channel(zc)
 !BOJAN      else if(PIPE == YES) then
-!BOJAN  call UserCutLines_pipe
+!BOJAN  call UserCutLines_pipe(grid)
 !BOJAN      end if
       Ndtt = Ndtt_temp
 8   continue 
@@ -621,10 +629,10 @@
   !   Save the results   !
   !----------------------!
 6 call Save_Restart(grid)
-  call Save_Ini
-  call Save_Gmv_Results ! Write results in GMV format. 
-  call Save_Dat_Results ! Write results in FLUENT dat format. 
-  namSav = 'SAVExxxxxx'
+  call Save_Ini(grid)
+  call Save_Gmv_Results       ! Write results in GMV format. 
+  call Save_Dat_Results(grid) ! Write results in FLUENT dat format. 
+  namSav = 'savexxxxxx'
   write(namSav(5:10),'(I6.6)') n
   call SavParView(this_proc,NC,namSav, Nstat, n)
   call Wait
@@ -635,7 +643,7 @@
 !  if(CHANNEL == YES) then
 !    call UserCutLines_channel(zc)
 !  else if(PIPE == YES) then
-!    call UserCutLines_pipe
+!    call UserCutLines_pipe(grid)
 !    call UserCutLines_annulus
 !  else if(JET == YES) then
 !    call UserCutLines_Nu

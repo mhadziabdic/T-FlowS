@@ -1,29 +1,30 @@
-!======================================================================!
-  subroutine CalcF22(var, phi,             &
-                      phi_x, phi_y, phi_z)
-!----------------------------------------------------------------------!
-! Discretizes and solves eliptic relaxation equations for f22          !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Compute_F22(grid, var, phi, phi_x, phi_y, phi_z)
+!------------------------------------------------------------------------------!
+! Discretizes and solves eliptic relaxation equations for f22.                 !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use rans_mod
   use par_mod
+  use Grid_Mod
   use Var_Mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
-  integer        :: var
-  type(Var_Type) :: phi
-  real           :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+  integer         :: var
+  type(Var_Type)  :: phi
+  real            :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
+!-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter
   real    :: Fex, Fim 
   real    :: A0, A12, A21
   real    :: error
   real    :: phi_xS, phi_yS, phi_zS
-!======================================================================! 
+!==============================================================================! 
 !  The form of equations which are solved:
 !
 !     /           /              /
@@ -41,23 +42,22 @@
 !     f22            [1/s]
 !     Lsc            [m]
 !
-!======================================================================!
+!==============================================================================!
 
   A % val = 0.0
 
   b=0.0
 
-
-!----- This is important for "copy" boundary conditions. Find out why !
+  ! This is important for "copy" boundary conditions. Find out why !
   do c=-NbC,-1
     A % bou(c)=0.0
   end do
 
-!-----------------------------------------! 
-!     Initialize variables and fluxes     !
-!-----------------------------------------! 
+  !-------------------------------------! 
+  !   Initialize variables and fluxes   !
+  !-------------------------------------! 
 
-!----- old values (o and oo)
+  ! Old values (o) and older than old (oo)
   if(ini == 1) then
     do c=1,NC
       phi % oo(c)  = phi % o(c)
@@ -69,25 +69,20 @@
     end do
   end if
 
-
-!----------------------------------------------------!
-!     Browse through all the faces, where else ?     !
-!----------------------------------------------------!
-
-!----- new values
+  ! New values
   do c=1,NC
     phi % X(c) = 0.0
   end do
 
-!==================!
-!                  !
-!     Difusion     !
-!                  !
-!==================!
+  !------------------!
+  !                  !
+  !     Difusion     !
+  !                  !
+  !------------------!
 
-!--------------------------------!
-!     Spatial Discretization     !
-!--------------------------------!
+  !----------------------------!
+  !   Spatial discretization   !
+  !----------------------------!
   do s=1,NS       
 
     c1=SideC(1,s)
@@ -98,29 +93,29 @@
     phi_zS = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
 
 
-!---- total (exact) diffusive flux
+    ! Total (exact) diffusive flux
     Fex=( phi_xS*Sx(s) + phi_yS*Sy(s) + phi_zS*Sz(s) )
 
     A0 =  Scoef(s)
 
-!---- implicit diffusive flux
-!.... this_proc is a very crude approximation: Scoef is not
-!.... corrected at interface between materials
+    ! Implicit diffusive flux
+    ! (this is a very crude approximation: Scoef is
+    !  not corrected at interface between materials)
     Fim=( phi_xS*Dx(s)                      &
          +phi_yS*Dy(s)                      &
          +phi_zS*Dz(s))*A0
 
-!---- this_proc is yet another crude approximation:
-!.... A0 is calculated approximatelly
-!    if( StateMat(material(c1))==FLUID .and.  &  ! 2mat
-!        StateMat(material(c2))==SOLID        &  ! 2mat
-!        .or.                                 &  ! 2mat 
-!        StateMat(material(c1))==SOLID .and.  &  ! 2mat
-!        StateMat(material(c2))==FLUID ) then    ! 2mat
-!      A0 = A0 + A0                              ! 2mat
-!    end if                                      ! 2mat
+    ! This is yet another crude approximation:
+    ! A0 is calculated approximatelly
+    !    if( StateMat(material(c1))==FLUID .and.  &  ! 2mat
+    !        StateMat(material(c2))==SOLID        &  ! 2mat
+    !        .or.                                 &  ! 2mat 
+    !        StateMat(material(c1))==SOLID .and.  &  ! 2mat
+    !        StateMat(material(c2))==FLUID ) then    ! 2mat
+    !      A0 = A0 + A0                              ! 2mat
+    !    end if                                      ! 2mat
 
-!---- straight diffusion part 
+    ! Straight diffusion part 
     if(ini == 1) then
       if(c2  > 0) then
         phi % Do(c1) = phi % Do(c1) + (phi % n(c2)-phi % n(c1))*A0   
@@ -132,13 +127,13 @@
       end if 
     end if
 
-!---- cross diffusion part
+    ! Cross diffusion part
     phi % X(c1) = phi % X(c1) + Fex - Fim 
     if(c2  > 0) then
       phi % X(c2) = phi % X(c2) - Fex + Fim 
     end if 
 
-!----- calculate the coefficients for the sysytem matrix
+    ! Calculate the coefficients for the sysytem matrix
     if( (DIFFUS == CN) .or. (DIFFUS == FI) ) then  
 
       if(DIFFUS  ==  CN) then       ! Crank Nicholson
@@ -151,7 +146,7 @@
         A21 = A0
       end if
 
-!----- fill the system matrix
+      ! Fill the system matrix
       if(c2  > 0) then
         A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - A12
         A % val(A % dia(c1))  = A % val(A % dia(c1))  + A12
@@ -187,26 +182,24 @@
 
   end do  ! through sides
 
-!---------------------------------!
-!     Temporal discretization     !
-!---------------------------------!
+  !-----------------------------!
+  !   Temporal discretization   !
+  !-----------------------------!
 
-!----- Adams-Bashfort scheeme for diffusion fluxes
+  ! Adams-Bashfort scheeme for diffusion fluxes
   if(DIFFUS == AB) then 
     do c=1,NC
       b(c) = b(c) + 1.5 * phi % Do(c) - 0.5 * phi % Doo(c)
     end do  
   end if
 
-!----- Crank-Nicholson scheme for difusive terms
+  ! Crank-Nicholson scheme for difusive terms
   if(DIFFUS == CN) then 
     do c=1,NC
       b(c) = b(c) + 0.5 * phi % Do(c)
     end do  
   end if
                  
-!----- Fully implicit treatment for difusive terms
-!      is handled via the linear system of equations 
 
 !----- Adams-Bashfort scheeme for cross diffusion 
   if(CROSS == AB) then
@@ -215,44 +208,45 @@
     end do 
   end if
 
-!----- Crank-Nicholson scheme for cross difusive terms
+  ! Fully implicit treatment for difusive terms
+  ! is handled via the linear system of equations 
+
+  ! Crank-Nicholson scheme for cross difusive terms
   if(CROSS == CN) then
     do c=1,NC
       b(c) = b(c) + 0.5 * phi % X(c) + 0.5 * phi % Xo(c)
     end do 
   end if
 
-!----- Fully implicit treatment for cross difusive terms
+  ! Fully implicit treatment for cross difusive terms
   if(CROSS == FI) then
     do c=1,NC
       b(c) = b(c) + phi % X(c)
     end do 
   end if
 
-!========================================!
-!                                        !  
-!     Source terms and wall function     !
-!     (Check if it is good to call it    !
-!      before the under relaxation ?)    !
-!                                        !
-!========================================!
-
+  !-------------------------------------!
+  !                                     !  
+  !   Source terms and wall function    !
+  !   (Check if it is good to call it   !
+  !    before the under relaxation ?)   !
+  !                                     !
+  !-------------------------------------!
   if(SIMULA == EBM) then
     call SourceF22_EBM
   else
     call SourceF22KEPSV2F()
   end if
 
-!=====================================!
-!                                     !
-!     Solve the equations for phi     !
-!                                     !    
-!=====================================!
-    do c=1,NC
-      b(c) = b(c) + A % val(A % dia(c)) * (1.0-phi % URF)*phi % n(c) / phi % URF
-      A % val(A % dia(c)) = A % val(A % dia(c)) / phi % URF
-    end do 
-
+  !---------------------------------!
+  !                                 !
+  !   Solve the equations for phi   !
+  !                                 !    
+  !---------------------------------!
+  do c=1,NC
+    b(c) = b(c) + A % val(A % dia(c)) * (1.0-phi % URF)*phi % n(c) / phi % URF
+    A % val(A % dia(c)) = A % val(A % dia(c)) / phi % URF
+  end do 
 
   if(ALGOR == SIMPLE)   miter=300
   if(ALGOR == FRACT)    miter=5
@@ -261,12 +255,9 @@
   call cg(NC, Nbc, A,           & 
            phi % n, b, PREC,    &
            niter,phi % STol, res(var), error)
-
   
-  if(this_proc < 2) write(*,*) 'Var ', var, res(var), niter 
+  if(this_proc < 2) write(*,*) '# ', phi % name, res(var), niter 
 
   call Exchng(phi % n)
 
-  RETURN
-
-  end subroutine CalcF22
+  end subroutine

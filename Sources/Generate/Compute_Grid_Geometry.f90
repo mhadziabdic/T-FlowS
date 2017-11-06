@@ -131,15 +131,15 @@
     !   <= gives:      xc,yc,zc c>0           !
     !-----------------------------------------!
     do c=1,NC
-      xc(c)=0.0
-      yc(c)=0.0
-      zc(c)=0.0
+      grid % xc(c)=0.0
+      grid % yc(c)=0.0
+      grid % zc(c)=0.0
       do n=1,grid % cells_n_nodes(c)
-        xc(c) = xc(c) + grid % xn(grid % cells_n(n,c))  &
+        grid % xc(c) = grid % xc(c) + grid % xn(grid % cells_n(n,c))  &
               / (1.0*grid % cells_n_nodes(c))
-        yc(c) = yc(c) + grid % yn(grid % cells_n(n,c))  &
+        grid % yc(c) = grid % yc(c) + grid % yn(grid % cells_n(n,c))  &
               / (1.0*grid % cells_n_nodes(c))
-        zc(c) = zc(c) + grid % zn(grid % cells_n(n,c))  &
+        grid % zc(c) = grid % zc(c) + grid % zn(grid % cells_n(n,c))  &
               / (1.0*grid % cells_n_nodes(c))
       end do
     end do
@@ -261,15 +261,17 @@
       c1=SideC(1,s)
       c2=SideC(2,s)
 
-      tot_surf = sqrt(Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))
+      tot_surf = sqrt(Sx(s)*Sx(s) +  &
+                      Sy(s)*Sy(s) +  &
+                      Sz(s)*Sz(s))
 
       if(c2  < 0) then
-        t = (   Sx(s)*(xsp(s)-xc(c1))                               &
-              + Sy(s)*(ysp(s)-yc(c1))                               &
-              + Sz(s)*(zsp(s)-zc(c1)) ) / tot_surf
-        xc(c2) = xc(c1) + Sx(s)*t / tot_surf
-        yc(c2) = yc(c1) + Sy(s)*t / tot_surf
-        zc(c2) = zc(c1) + Sz(s)*t / tot_surf
+        t = (   Sx(s) * (xsp(s)-grid % xc(c1))           &
+              + Sy(s) * (ysp(s)-grid % yc(c1))           &
+              + Sz(s) * (zsp(s)-grid % zc(c1)) ) / tot_surf
+        grid % xc(c2) = grid % xc(c1) + Sx(s)*t / tot_surf
+        grid % yc(c2) = grid % yc(c1) + Sy(s)*t / tot_surf
+        grid % zc(c2) = grid % zc(c1) + Sz(s)*t / tot_surf
       endif 
     end do ! through sides
 
@@ -293,9 +295,9 @@
       if(c2   >  0) then
 
         ! Scalar product of the side with line c1-c2 is a good criterion
-        if( (Sx(s) * (xc(c2)-xc(c1) )+                              &
-             Sy(s) * (yc(c2)-yc(c1) )+                              &
-             Sz(s) * (zc(c2)-zc(c1) ))  < 0.0 ) then
+        if( (Sx(s) * (grid % xc(c2) - grid % xc(c1) ) +              &
+             Sy(s) * (grid % yc(c2) - grid % yc(c1) ) +              &
+             Sz(s) * (grid % zc(c2) - grid % zc(c1) ))  < 0.0 ) then
 
           NSsh = NSsh + 2
  
@@ -423,9 +425,9 @@
     end do   
 
     ! First cell
-    x_cell_tmp=xc(c1)
-    y_cell_tmp=yc(c1)
-    z_cell_tmp=zc(c1)
+    x_cell_tmp = grid % xc(c1)
+    y_cell_tmp = grid % yc(c1)
+    z_cell_tmp = grid % zc(c1)
     dsc1=Distance(x_cell_tmp,y_cell_tmp,z_cell_tmp,xsp(s), ysp(s), zsp(s)) 
     volume(c1)=volume(c1) + Tet_Volume(xsp(s),ysp(s),zsp(s),            &
                    local_x_node(1),local_y_node(1),local_z_node(1),     &
@@ -453,9 +455,9 @@
 
     ! Second cell
     if(c2  > 0) then
-      x_cell_tmp=xc(c2)+Dx(s)
-      y_cell_tmp=yc(c2)+Dy(s)
-      z_cell_tmp=zc(c2)+Dz(s)
+      x_cell_tmp = grid % xc(c2) + Dx(s)
+      y_cell_tmp = grid % yc(c2) + Dy(s)
+      z_cell_tmp = grid % zc(c2) + Dz(s)
       dsc2=Distance(x_cell_tmp,y_cell_tmp,z_cell_tmp,xsp(s), ysp(s), zsp(s)) 
       volume(c2)=volume(c2) -Tet_Volume(xsp(s),ysp(s),zsp(s),           &
                      local_x_node(1),local_y_node(1),local_z_node(1),   &
@@ -520,7 +522,10 @@
         if(c_2 < 0) then
           if(BCmark(c_2) <= wall_mark) then
             WallDs(c1)=min(WallDs(c1), &
-            Distance_Squared(xc(c1),yc(c1),zc(c1),xsp(s),ysp(s),zsp(s)))
+            Distance_Squared(grid % xc(c1),  &
+                             grid % yc(c1),  &
+                             grid % zc(c1),  &
+                             xsp(s),ysp(s),zsp(s)))
           end if
         end if 
       end do
@@ -572,16 +577,16 @@
       c2=SideC(2,s)
   
       ! First cell
-      xc1=xc(c1)
-      yc1=yc(c1)
-      zc1=zc(c1)
-      dsc1=Distance(xc1,yc1,zc1,xsp(s), ysp(s), zsp(s))
+      xc1 = grid % xc(c1)
+      yc1 = grid % yc(c1)
+      zc1 = grid % zc(c1)
+      dsc1=Distance(xc1, yc1, zc1, xsp(s), ysp(s), zsp(s))
 
       ! Second cell (pls. check if xsi=xc on the boundary)
-      xc2=xc(c2)+Dx(s)
-      yc2=yc(c2)+Dy(s)
-      zc2=zc(c2)+Dz(s)
-      dsc2=Distance(xc2,yc2,zc2,xsp(s), ysp(s), zsp(s))
+      xc2 = grid % xc(c2) + Dx(s)
+      yc2 = grid % yc(c2) + Dy(s)
+      zc2 = grid % zc(c2) + Dz(s)
+      dsc2=Distance(xc2, yc2, zc2, xsp(s), ysp(s), zsp(s))
   
       ! Interpolation factor
       f(s) = dsc2 / (dsc1+dsc2)   ! not checked

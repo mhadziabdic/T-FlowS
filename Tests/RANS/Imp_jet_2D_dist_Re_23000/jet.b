@@ -22,7 +22,7 @@
  pipe_wall       WallFlux   0.0    0.0    0.0   0.0    0.0    1.0e-3   0.0    0.0
  top_plane       PRESSURE   0.0    0.0    0.0   0.0   20.0    1.0E-2  1.0E-3  6.6E-2  1.0e-3
  lower_wall      WallFlux   0.0    0.0    0.0   0.1    0.0    1.0e-3   0.0    0.0   
- pipe_inlet      INFLOW     File   InletProfile_zeta_Re23000.dat 
+ pipe_inlet      INFLOW     File   inlet_profile_zeta_re_23000.dat
  cyl_outlet      PRESSURE   0.0    0.0    0.0   0.0   20.0    1.0E-2  1.0E-3  6.6E-2  1.0e-3
 
 #--sides

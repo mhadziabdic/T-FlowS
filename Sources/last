@@ -20,3 +20,4 @@ rm -fR Divide/Divide
 rm -fR Generate/Generate
 rm -fR Neu2TFlowS/Neu2TFlowS
 rm -fR Process/Process
+rm -fR Utilities/.deps

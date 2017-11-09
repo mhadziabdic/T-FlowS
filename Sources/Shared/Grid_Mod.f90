@@ -56,6 +56,10 @@
     ! Node coordinates
     real, allocatable :: xn(:), yn(:), zn(:)
     
+    ! Face surface areas (si) and distances between cells (di)
+    real, allocatable :: sx(:), sy(:), sz(:)
+    real, allocatable :: dx(:), dy(:), dz(:)
+    
     type(Material_Type),           allocatable :: materials(:)
     type(Boundary_Condition_Type), allocatable :: boundary_conditions(:)
 

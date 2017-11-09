@@ -23,12 +23,11 @@
   write(*,*) '#------------------------------------------------------'
   read(*,*) name
 
-  call Load_Neu(grid)
-  call Grid_Topology(grid)
-  call Find_Faces(grid)
+  call Load_Neu        (grid)
+  call Grid_Topology   (grid)
+  call Find_Faces      (grid)
   call Compute_Geometry(grid)
-  
-  call Connect_Domains(grid)
+  call Connect_Domains (grid)
 
   do n=1,NN
     NewN(n) = n 
@@ -43,8 +42,7 @@
   call Save_Gmv_Cells(grid, 0, NN, NC, NS, NbC)
   call Save_Gmv_Faces(grid, 0, NN, NC)  ! save grid for checking b.c. 
   call Save_Shadows  (grid, 0, NN, NC)             ! save shadows 
-
-  call Save_Cns_Geo(grid, 0, NC, NS, NBC, 0, 0) 
+  call Save_Cns_Geo  (grid, 0, NC, NS, NBC, 0, 0) 
 
   ! Save links for checking
   call Save_Gmv_Links(grid, 0, NN, NC, NS, NbC, 0)
@@ -59,9 +57,9 @@
 
   ! Make .eps figures
   write(*,*) '# Making three .eps cuts through the domain.'
-  call Save_Eps_Cut(grid, Dy, Dz, 'x')
-  call Save_Eps_Cut(grid, Dz, Dx, 'y')
-  call Save_Eps_Cut(grid, Dx, Dy, 'z')
+  call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x')
+  call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y')
+  call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z')
  
   write(*,*) '# Making a 3D shaded .eps figure of the domain.'
   call Save_Eps_Whole(grid, NSsh)   ! Draw the domain with shadows

@@ -4,7 +4,6 @@ libTurbulence_a_SOURCES =	\
   les_mod.f90			\
   rans_mod.f90			\
   CalcSGS_Dynamic.f90		\
-  CalcSGS.f90			\
   CalcSGS_hybrid.f90		\
   CalcVISt_EBM.f90		\
   CalcVISt_KEps.f90		\
@@ -12,17 +11,18 @@ libTurbulence_a_SOURCES =	\
   CalcVISt_SPA_ALL.f90		\
   CalcWALE.f90			\
   Compute_F22.f90		\
+  Compute_Sgs.f90		\
   Compute_Stresses.f90		\
   Compute_Turbulent.f90		\
-  SourceEpsKEps.f90		\
-  SourceEpsKEPSV2F.f90		\
-  SourceF22_EBM.f90		\
-  SourceF22KEPSV2F.f90		\
-  SourceKinKEps.f90		\
-  SourceKinKEPSV2F.f90		\
-  SourcesEBM.f90		\
-  SourcesHJ.f90			\
-  SourceV2KEPSV2F.f90		\
+  Source_Kin_K_Eps.f90		\
+  Source_Eps_K_Eps.f90		\
+  Source_Eps_K_Eps_V2_F.f90	\
+  Source_F22_K_Eps_V2_F.f90	\
+  Source_Kin_K_Eps_V2_F.f90	\
+  Source_V2_K_Eps_V2_F.f90	\
+  Source_Ebm.f90		\
+  Source_F22_Ebm.f90		\
+  Source_Hanjalic_Jakirlic.f90	\
   SourceVisSpalart.f90
 
 SUBDIRS = ../../Shared

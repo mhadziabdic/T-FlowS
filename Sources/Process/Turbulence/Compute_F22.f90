@@ -94,16 +94,18 @@
 
 
     ! Total (exact) diffusive flux
-    Fex=( phi_xS*Sx(s) + phi_yS*Sy(s) + phi_zS*Sz(s) )
+    Fex = (  phi_xS * grid % sx(s)   &
+           + phi_yS * grid % sy(s)   &
+           + phi_zS * grid % sz(s) )
 
     A0 =  Scoef(s)
 
     ! Implicit diffusive flux
     ! (this is a very crude approximation: Scoef is
     !  not corrected at interface between materials)
-    Fim=( phi_xS*Dx(s)                      &
-         +phi_yS*Dy(s)                      &
-         +phi_zS*Dz(s))*A0
+    Fim=(   phi_xS * grid % dx(s)        &
+          + phi_yS * grid % dy(s)        &
+          + phi_zS * grid % dz(s)) * A0
 
     ! This is yet another crude approximation:
     ! A0 is calculated approximatelly
@@ -201,7 +203,7 @@
   end if
                  
 
-!----- Adams-Bashfort scheeme for cross diffusion 
+  ! Adams-Bashfort scheeme for cross diffusion 
   if(CROSS == AB) then
     do c=1,NC
       b(c) = b(c) + 1.5 * phi % Xo(c) - 0.5 * phi % Xoo(c)
@@ -235,7 +237,7 @@
   if(SIMULA == EBM) then
     call SourceF22_EBM
   else
-    call SourceF22KEPSV2F()
+    call Source_F22_K_Eps_V2_F(grid)
   end if
 
   !---------------------------------!

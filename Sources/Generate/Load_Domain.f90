@@ -59,20 +59,6 @@
   write(*,*) '#', grid % max_n_faces, ' cell faces' 
 
   ! Variables declared in all_mod.h90:
-  allocate (Sx(grid % max_n_faces))
-  Sx=0.0
-  allocate (Sy(grid % max_n_faces))
-  Sy=0.0
-  allocate (Sz(grid % max_n_faces))
-  Sz=0.0
-
-  allocate (Dx(grid % max_n_faces))
-  Dx=0.0
-  allocate (Dy(grid % max_n_faces))
-  Dy=0.0
-  allocate (Dz(grid % max_n_faces))
-  Dz=0.0
-
   allocate (volume(-grid % max_n_boundary_cells:grid % max_n_nodes))
   volume=0.0
   allocate (delta (-grid % max_n_boundary_cells:grid % max_n_nodes))

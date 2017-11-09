@@ -36,13 +36,13 @@
 
   read(9) (WallDs(c), c=1,NC)
 
-  read(9) (Sx(s), s=1,NS)
-  read(9) (Sy(s), s=1,NS)
-  read(9) (Sz(s), s=1,NS)
+  read(9) (grid % sx(s), s=1,NS)
+  read(9) (grid % sy(s), s=1,NS)
+  read(9) (grid % sz(s), s=1,NS)
 
-  read(9) (Dx(s), s=1,NS)
-  read(9) (Dy(s), s=1,NS)
-  read(9) (Dz(s), s=1,NS)
+  read(9) (grid % dx(s), s=1,NS)
+  read(9) (grid % dy(s), s=1,NS)
+  read(9) (grid % dz(s), s=1,NS)
 
   read(9) (f(s), s=1,NS)
 

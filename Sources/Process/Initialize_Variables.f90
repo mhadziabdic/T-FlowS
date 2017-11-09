@@ -120,13 +120,15 @@
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2  < 0) then 
-        Flux(s) = DEnc(material(c1))*( U % n(c2) * Sx(s) + &
-                                       V % n(c2) * Sy(s) + &
-                                       W % n(c2) * Sz(s) )
+        Flux(s) = DEnc(material(c1))*( U % n(c2) * grid % sx(s) + &
+                                       V % n(c2) * grid % sy(s) + &
+                                       W % n(c2) * grid % sz(s) )
                                        
         if(TypeBC(c2)  ==  InFLOW) then
           if(material(c1) == m) MassIn(m) = MassIn(m) - Flux(s) 
-          Stot  = sqrt(Sx(s)**2 + Sy(s)**2 + Sz(s)**2)
+          Stot  = sqrt(  grid % sx(s)**2  &
+                       + grid % sy(s)**2  &
+                       + grid % sz(s)**2)
           Area  = Area  + Stot
         endif
         if(TypeBC(c2)  ==  WALL)     n1=n1+1 

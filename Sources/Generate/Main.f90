@@ -73,9 +73,9 @@
   call Save_Cas(grid, 0, NN, NC, NS+NSsh) ! save grid for postprocessing
                                     ! with Fluent
   ! Make eps figures
-  call Save_Eps_Cut(grid, Dy,Dz,'x') 
-  call Save_Eps_Cut(grid, Dz,Dx,'y') 
-  call Save_Eps_Cut(grid, Dx,Dy,'z') 
+  call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x') 
+  call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y') 
+  call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z') 
 
   call Save_Eps_Whole(grid, NSsh)  ! draw the domain with shadows
 

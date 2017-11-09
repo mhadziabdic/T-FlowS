@@ -1,26 +1,23 @@
-!======================================================================!
-  subroutine CalcG(grid, Boundary)
-!----------------------------------------------------------------------!
-!   Calculates gradient matrix.                                        !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Compute_Gradient_Matrix(grid, Boundary)
+!------------------------------------------------------------------------------!
+!   Calculates gradient matrix.                                                !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use Grid_Mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   logical         :: Boundary
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, s
   real    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2
   real    :: Jac, Ginv(6)
-!======================================================================!
+!==============================================================================!
 
-!+++++++++++++++++++++++++++++++++++++++++!
-!    Calculate matrix G for all cells     !
-!+++++++++++++++++++++++++++++++++++++++++!
   do c=1,NC
     G(1,c) = 0.0
     G(2,c) = 0.0
@@ -34,14 +31,14 @@
     c1=SideC(1,s)
     c2=SideC(2,s) 
 
-    Dxc1=Dx(s)
-    Dyc1=Dy(s)
-    Dzc1=Dz(s)
-    Dxc2=Dx(s)
-    Dyc2=Dy(s)
-    Dzc2=Dz(s)
+    Dxc1 = grid % dx(s)
+    Dyc1 = grid % dy(s)
+    Dzc1 = grid % dz(s)
+    Dxc2 = grid % dx(s)
+    Dyc2 = grid % dy(s)
+    Dzc2 = grid % dz(s)
 
-!---- Take care of material interfaces         ! 2mat
+    ! Take care of material interfaces         ! 2mat
     if( StateMat(material(c1))==FLUID .and. &  ! 2mat
         StateMat(material(c2))==SOLID       &  ! 2mat 
         .or.                                &  ! 2mat
@@ -71,7 +68,8 @@
         G(5,c2)=G(5,c2) + Dxc2*Dzc2  ! 1,3  &  3,1
         G(6,c2)=G(6,c2) + Dyc2*Dzc2  ! 2,3  &  3,2
       end if
-!---- Without boundary cells => pressure
+
+    ! Without boundary cells => pressure
     else ! Don't use Boundary
       if(c2 > 0 .or. c2 < 0 .and. TypeBC(c2) == BUFFER) then  
         G(1,c1)=G(1,c1) + Dxc1*Dxc1  ! 1,1
@@ -92,9 +90,9 @@
     end if ! Boundary
   end do
 
-!--------------------------------------!
-!     Find the inverse of matrix G     !
-!--------------------------------------!
+  !----------------------------------!
+  !   Find the inverse of matrix G   !
+  !----------------------------------!
   do c=1,NC
     Jac  =         G(1,c) * G(2,c) * G(3,c)                         &
            -       G(1,c) * G(6,c) * G(6,c)                         &
@@ -117,6 +115,4 @@
     G(6,c) = Ginv(6)
   end do 
 
-  RETURN 
-
-  end subroutine CalcG
+  end subroutine

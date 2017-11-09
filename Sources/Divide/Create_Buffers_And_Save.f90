@@ -291,9 +291,9 @@
   call Sort_Int_By_Index(proces(1),  NewC(1),NC)
   call Sort_Int_By_Index(material(1),NewC(1),NC)
 
-  call RNSort(Dx(1), NewS(1), NS)  ! this is important
-  call RNSort(Dy(1), NewS(1), NS)  ! for plotting the
-  call RNSort(Dz(1), NewS(1), NS)  ! grid with EpsPar()
+  call RNSort(grid % dx(1), NewS(1), NS)  ! this is important
+  call RNSort(grid % dy(1), NewS(1), NS)  ! for plotting the
+  call RNSort(grid % dz(1), NewS(1), NS)  ! grid with EpsPar()
   allocate(side_cell(NS,2))
   do s=1,NS
     side_cell(s,1) = SideC(1,s)

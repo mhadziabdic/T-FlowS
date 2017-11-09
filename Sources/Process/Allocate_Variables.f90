@@ -70,8 +70,8 @@
   allocate (PHIz(-NbC:NC)); PHIz=0.
   allocate (PHIside(NS)); PHIside=0.
 
-  allocate (PHImax(-NbC:NC)); PHImax=0.
-  allocate (PHImin(-NbC:NC)); PHImin=0.
+  allocate (phi_max(-NbC:NC)); phi_max=0.
+  allocate (phi_min(-NbC:NC)); phi_min=0.
 
   allocate (G(6,NC)); G=0
 

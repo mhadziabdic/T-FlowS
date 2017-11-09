@@ -175,11 +175,12 @@
   do s0=1,NS+NSsh0
     s=indx(s0)
 
-    shade=                                                          &
-   (Sx(s)*nx+Sy(s)*ny+Sz(s)*nz)                                     &
-    /sqrt(Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))
-    shade=abs(shade)
-    shade=0.4+0.6*shade
+    shade = (grid % sx(s)*nx+grid % sy(s)*ny+grid % sz(s)*nz)  &
+          / sqrt(grid % sx(s)*grid % sx(s) +  &
+                 grid % sy(s)*grid % sy(s) +  &
+                 grid % sz(s)*grid % sz(s))
+    shade = abs(shade)
+    shade = 0.4 + 0.6*shade
 
     c1 = SideC(1,s)
     c2 = SideC(2,s)
@@ -232,25 +233,25 @@
 
       if(s <= NS) then
         if(colour(1:1) == 'G') then
-          if(grid % faces_n_nodes(s) == 4)                                       &
+          if(grid % faces_n_nodes(s) == 4)                          &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A9,F4.2,A15)')  &
-                       'gs np 0 slw ',                                 &
+                       'gs np 0 slw ',                              &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             &
                     int(sclf*xp2),int(sclf*yp2), ' l ',             &
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     int(sclf*xp4),int(sclf*yp4), ' l ',             &
                     ' cp   gs ',shade,' sg f gr   s gr'
-          if(grid % faces_n_nodes(s) == 3)                                       &
+          if(grid % faces_n_nodes(s) == 3)                          &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A9,F4.2,A15)')         &
-                      'gs np 0 slw ',                                 &
+                      'gs np 0 slw ',                               &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             &
                     int(sclf*xp2),int(sclf*yp2), ' l ',             &
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     ' cp   gs ',shade,' sg f gr   s gr'
         else
-          if(grid % faces_n_nodes(s) == 4)                                       &
+          if(grid % faces_n_nodes(s) == 4)                          &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)') &
-                      'gs np 0 slw ',                                 &
+                      'gs np 0 slw ',                               &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             & 
                     int(sclf*xp2),int(sclf*yp2), ' l ',             &
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
@@ -261,7 +262,7 @@
                     blue(BCmark(c2)),                               &
                     ' srgb f gr s gr'
 
-          if(grid % faces_n_nodes(s) == 3)                                       &
+          if(grid % faces_n_nodes(s) == 3)                          &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')        &
                     'gs np 0 slw ',                                 &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             & 
@@ -276,18 +277,18 @@
       else if(s > NS) then
         if(grid % faces_n_nodes(s) == 4) then
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A9)')           &
-                        'gs np 0 slw ',                                 &
+                        'gs np 0 slw ',                             &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             &
                     int(sclf*xp2),int(sclf*yp2), ' l ',             &
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     int(sclf*xp4),int(sclf*yp4), ' l ',             &
                     ' cp s gr '
         else if(grid % faces_n_nodes(s) == 3) then
-          write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A9)')           &
-                      'gs np 0 slw ',                          &
-                    int(sclf*xp1),int(sclf*yp1), ' m ',      &
-                    int(sclf*xp2),int(sclf*yp2), ' l ',      &
-                    int(sclf*xp3),int(sclf*yp3), ' l ',      &
+          write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A9)')                  &
+                      'gs np 0 slw ',                               &
+                    int(sclf*xp1),int(sclf*yp1), ' m ',             &
+                    int(sclf*xp2),int(sclf*yp2), ' l ',             &
+                    int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     ' cp s gr '
         end if
       end if
@@ -307,14 +308,14 @@
       if( BCcount(n) > 0 ) then
         iy1 = iy1 - boxsize
         iy2 = iy2 - boxsize
-        write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)') &
-                  'gs np 0 slw ',                                 &
-                  int(1.0/sclp*ix1),int(1.0/sclp*iy1), ' m ',     &
-                  int(1.0/sclp*ix1),int(1.0/sclp*iy2), ' l ',     &
-                  int(1.0/sclp*ix2),int(1.0/sclp*iy2), ' l ',     &
-                  int(1.0/sclp*ix2),int(1.0/sclp*iy1), ' l ',     &
-                  ' cp gs ',                                      &
-                  red(n), green(n), blue(n),                      &
+        write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')  &
+                  'gs np 0 slw ',                                  &
+                  int(1.0/sclp*ix1),int(1.0/sclp*iy1), ' m ',      &
+                  int(1.0/sclp*ix1),int(1.0/sclp*iy2), ' l ',      &
+                  int(1.0/sclp*ix2),int(1.0/sclp*iy2), ' l ',      &
+                  int(1.0/sclp*ix2),int(1.0/sclp*iy1), ' l ',      &
+                  ' cp gs ',                                       &
+                  red(n), green(n), blue(n),                       &
                   ' srgb f gr s gr'
         write(9,'(A6,2I8,A13,I3, A1, A6)')                         &
                   'gs np ',                                        &
@@ -335,4 +336,4 @@
   deallocate(indx)
   deallocate(work)
 
-  end subroutine Save_Eps_Whole
+  end subroutine

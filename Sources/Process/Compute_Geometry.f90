@@ -20,7 +20,9 @@
   !   Calculate total surface of the cell face   ! 
   !----------------------------------------------!
   do s=1,NS
-    Scoef(s) = (Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))  
+    Scoef(s) = (  grid % sx(s)*grid % sx(s)  &
+                + grid % sy(s)*grid % sy(s)  &
+                + grid % sz(s)*grid % sz(s) )  
   end do
 
   !-------------------------------------------------------!
@@ -34,14 +36,17 @@
     yc1=grid % yc(c1)
     zc1=grid % zc(c1) 
 
-    xc2=grid % xc(c2) + Dx(s)
-    yc2=grid % yc(c2) + Dy(s)
-    zc2=grid % zc(c2) + Dz(s)
+    xc2=grid % xc(c2) + grid % dx(s)
+    yc2=grid % yc(c2) + grid % dy(s)
+    zc2=grid % zc(c2) + grid % dz(s)
 
-    Dx(s) = xc2-xc1
-    Dy(s) = yc2-yc1
-    Dz(s) = zc2-zc1
-    Scoef(s) = Scoef(s)/(Dx(s)*Sx(s) + Dy(s)*Sy(s) + Dz(s)*Sz(s)) 
+    grid % dx(s) = xc2-xc1
+    grid % dy(s) = yc2-yc1
+    grid % dz(s) = zc2-zc1
+    Scoef(s) =    Scoef(s)     &
+             / (  grid % dx(s)*grid % sx(s)  &
+                + grid % dy(s)*grid % sy(s)  &
+                + grid % dz(s)*grid % sz(s)) 
   end do  ! sides 
 
   !----------------------------------------------------------!
@@ -110,13 +115,13 @@
           xc1=grid % xc(c1)
           yc1=grid % yc(c1)
           zc1=grid % zc(c1)
-          xc2=grid % xc(c1)+Dx(s)
-          yc2=grid % yc(c1)+Dy(s)
-          zc2=grid % zc(c1)+Dz(s)
+          xc2=grid % xc(c1) + grid % dx(s)
+          yc2=grid % yc(c1) + grid % dy(s)
+          zc2=grid % zc(c1) + grid % dz(s)
  
-          AreaTx = abs(Sx(s))
-          AreaTy = abs(Sy(s))
-          AreaTz = abs(Sz(s))
+          AreaTx = abs(grid % sx(s))
+          AreaTy = abs(grid % sy(s))
+          AreaTz = abs(grid % sz(s))
 
           !-------!
           !   x   !

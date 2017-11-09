@@ -166,19 +166,20 @@
     c1 = SideC(1,s)
     c2 = SideC(2,s)
     indx(s) = s
-    work(s) = Distance(xk,yk,zk,                                     &
-                f(s)*grid % xc(c1)+(1.-f(s))*(grid % xc(c2)+Dx(s)),  &
-                f(s)*grid % yc(c1)+(1.-f(s))*(grid % yc(c2)+Dy(s)),  &
-                f(s)*grid % zc(c1)+(1.-f(s))*(grid % zc(c2)+Dz(s)) )
+    work(s) = Distance(xk,yk,zk,                                            &
+                f(s)*grid % xc(c1)+(1.-f(s))*(grid % xc(c2)+grid % dx(s)),  &
+                f(s)*grid % yc(c1)+(1.-f(s))*(grid % yc(c2)+grid % dy(s)),  &
+                f(s)*grid % zc(c1)+(1.-f(s))*(grid % zc(c2)+grid % dz(s)) )
   end do
   call Sort_Real_By_Index(work,indx,NS,-2)
 
   do s0=1,NS
     s=indx(s0)
 
-    shade=                                                          &
-   (Sx(s)*nx+Sy(s)*ny+Sz(s)*nz)                                     &
-    /sqrt(Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))
+    shade = (grid % sx(s)*nx + grid % sy(s)*ny + grid % sz(s)*nz)  &
+          / sqrt(  grid % sx(s)*grid % sx(s)                       &
+                 + grid % sy(s)*grid % sy(s)                       &
+                 + grid % sz(s)*grid % sz(s)  )
     shade=abs(shade)
     shade=0.4+0.6*shade
 
@@ -186,7 +187,7 @@
     c2 = SideC(2,s)
 
     if(c2 < 0 .or. &
-      ( abs(Dx(s))+abs(Dy(s))+abs(Dz(s)) ) > 0. ) then 
+      ( abs(grid % dx(s))+abs(grid % dy(s))+abs(grid % dz(s)) ) > 0. ) then 
 
       x1 = grid % xn(grid % faces_n(1,s))
       x2 = grid % xn(grid % faces_n(2,s))

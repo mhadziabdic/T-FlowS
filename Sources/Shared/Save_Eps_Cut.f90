@@ -177,7 +177,7 @@
                 int(sclf*xin(1)),int(sclf*yin(1)), ' m ',           &
                 int(sclf*xin(2)),int(sclf*yin(2)), ' l ',           &
                 ' cp s gr' 
-      if( Dx(s) /= 0.0 .or. Dy(s) /= 0.0 ) then
+      if( grid % dx(s) /= 0.0 .or. grid % dy(s) /= 0.0 ) then
         write(9,'(A6,I2,A5,2I8,A3,2I8,A3,A8)')                      &
                   'gs np ',lw,' slw ',                              &
                   int(sclf*(xin(1)-face_g_dx(s))),                  &
@@ -213,4 +213,4 @@
 
   close(9)
 
-  end subroutine Save_Eps_Cut
+  end subroutine

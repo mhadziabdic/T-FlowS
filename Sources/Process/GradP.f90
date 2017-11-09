@@ -41,9 +41,9 @@
     end if  
   end do
 
-  call GraPhi(phi,1,phi_x,.TRUE.) ! dP/dx
-  call GraPhi(phi,2,phi_y,.TRUE.) ! dP/dy
-  call GraPhi(phi,3,phi_z,.TRUE.) ! dP/dz    
+  call GraPhi(grid, phi, 1, phi_x, .TRUE.)  ! dP/dx
+  call GraPhi(grid, phi, 2, phi_y, .TRUE.)  ! dP/dy
+  call GraPhi(grid, phi, 3, phi_z, .TRUE.)  ! dP/dz    
 
   do iter=1,1 
 
@@ -59,10 +59,10 @@
       end if  
     end do
 
-    call GraPhi(phi,1,phi_x,.TRUE.) ! dP/dx
-    call GraPhi(phi,2,phi_y,.TRUE.) ! dP/dy
-    call GraPhi(phi,3,phi_z,.TRUE.) ! dP/dz 
+    call GraPhi(grid, phi, 1, phi_x, .TRUE.)  ! dP/dx
+    call GraPhi(grid, phi, 2, phi_y, .TRUE.)  ! dP/dy
+    call GraPhi(grid, phi, 3, phi_z, .TRUE.)  ! dP/dz 
 
   end do
 
-  end subroutine GradP
+  end subroutine

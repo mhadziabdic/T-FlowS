@@ -1,20 +1,20 @@
-!======================================================================!
-  subroutine SourcesHJ(name_phi)
-!----------------------------------------------------------------------!
-! Purpose:                                                             !
-! Calculate source terms for transport equations for Re stresses and   !
-! dissipation for HJ model.                                            !  
-! Authors: Muhamed Hadziabdic                                          !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Source_Hanjalic_Jakirlic(grid, name_phi)
+!------------------------------------------------------------------------------!
+!   Calculate source terms for transport equations for Re stresses and         !
+!   dissipation for Hanjalic-Jakirlic model.                                   !  
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use rans_mod
-  use les_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type)  :: grid
   character(len=*) :: name_phi
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c, s, c1, c2, i, icont
   real    :: Prod, Diss, VAR_hom, VAR_wall, mag, VAR_tot, Esor
   real    :: a11, a22, a33, a12, a13, a21, a31, a23, a32
@@ -41,7 +41,7 @@
   real    :: duv_dx,duv_dy,duv_dz,duw_dx,duw_dy,duw_dz,dvw_dx,dvw_dy,dvw_dz
   real    :: dUdx, dUdy, dUdz, dVdx, dVdy, dVdz, dWdx, dWdy, dWdz 
   real,allocatable :: Diss1(:)
-!======================================================================!
+!==============================================================================!
 
   allocate (Diss1(1:NC)); Diss1 = 0.0
   EE = 0.5
@@ -339,7 +339,7 @@
     AA=max(AA,0.0)
     AA=min(AA,1.0)
  
-    Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+tiny)
+    Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+TINY)
     Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
     ff2=min((Ret/150)**1.5, 1.0)
     fd=1.0/(1.0+0.1*Ret)
@@ -463,11 +463,21 @@
     ! uu stress
     if(name_phi == 'UU') then
 !==============================================================================================================================!
-      b(c) = b(c) + (max(P11,0.0)+CC1*Eps%n(c)*r23+max(VAR2_11,0.0)+max(VAR1w_11,0.0)+max(VAR2w_11,0.0))*volume(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n1*n1 + &
-                      fss*Eps%n(c)/Kin%n(c))*volume(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P11,0.0)+max(-VAR2_11,0.0)+max(-VAR1w_11,0.0)+max(-VAR2w_11,0.0) + &
-                      (1.0-fss)*r23*Eps%n(c))/max(uu%n(c),1.0e-10)*volume(c) 
+      b(c) = b(c) + (  max(P11,0.0)+CC1*Eps%n(c)*r23  &
+                     + max(VAR2_11,0.0)               &
+                     + max(VAR1w_11,0.0)              &
+                      +max(VAR2w_11,0.0) )*volume(c) 
+      A % val(A % dia(c)) = A % val(A % dia(c))                      &
+                          + (   CC1 *Eps%n(c)/Kin%n(c)               &
+                              + C1W *fw*Eps%n(c)/Kin%n(c)*3.0*n1*n1  &
+                              + fss*Eps%n(c)/Kin%n(c))*volume(c) 
+      A % val(A % dia(c)) = A % val(A % dia(c))         &
+                          + (  max(-P11,0.0)            &
+                             + max(-VAR2_11,0.0)        &
+                             + max(-VAR1w_11,0.0)       &
+                             + max(-VAR2w_11,0.0)       &
+                             + (1.0-fss)*r23*Eps%n(c))  &
+                             / max(uu%n(c),1.0e-10) * volume(c) 
 !==============================================================================================================================!
     ! vv stress
     else if(name_phi == 'VV') then
@@ -530,7 +540,7 @@
     call GraPhi(VAR6x,2,VAR7y,.TRUE.)             ! dK/dy
     call GraPhi(VAR6x,3,VAR7z,.TRUE.)             ! dK/dz
     do c = 1, NC
-      Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+tiny)
+      Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+TINY)
       Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
       b(c) = b(c) + (Ce2*Feps*Eps%n(c)/Kin%n(c)*(VISc*(VAR7x(c)*VAR7x(c)+&
                     VAR7y(c)*VAR7y(c)+VAR7z(c)*VAR7z(c))))*volume(c)
@@ -542,10 +552,12 @@
       c1=SideC(1,s)
       c2=SideC(2,s)
 
-!---- Calculate a values of dissipation  on wall
+      ! Calculate a values of dissipation  on wall
       if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
         if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
-          Eps%n(c2) = VISc*(VAR7x(c1)*VAR7x(c1)+VAR7y(c1)*VAR7y(c1)+VAR7z(c1)*VAR7z(c1)) 
+          Eps%n(c2) = VISc*(  VAR7x(c1)*VAR7x(c1)  &
+                            + VAR7y(c1)*VAR7y(c1)  &
+                            + VAR7z(c1)*VAR7z(c1) ) 
         end if   ! end if of BC=wall
       end if    ! end if of c2<0
     end do

@@ -143,15 +143,9 @@
   !   => depends on: x_node,y_node,z_node               !
   !   <= gives:      Sx,Sy,Sz,xsp,yzp,zsp               !
   !-----------------------------------------------------!
-  allocate(Sx(NS+max(NC,NBC))); Sx=0.0
-  allocate(Sy(NS+max(NC,NBC))); Sy=0.0
-  allocate(Sz(NS+max(NC,NBC))); Sz=0.0
   allocate(xsp(NS+max(NC,NBC))); xsp=0.0
   allocate(ysp(NS+max(NC,NBC))); ysp=0.0
   allocate(zsp(NS+max(NC,NBC))); zsp=0.0
-  allocate(Dx(NS+max(NC,NBC))); Dx=0.0
-  allocate(Dy(NS+max(NC,NBC))); Dy=0.0
-  allocate(Dz(NS+max(NC,NBC))); Dz=0.0
 
   do s=1,NS
     do n=1,grid % faces_n_nodes(s)    ! for quadrilateral an triangular faces
@@ -162,26 +156,26 @@
 
     ! Cell side components
     if( grid % faces_n_nodes(s)  ==  4 ) then
-      Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
+      grid % sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
                     +(yt(3)-yt(2))*(zt(2)+zt(3))   &
                     +(yt(4)-yt(3))*(zt(3)+zt(4))   &
                     +(yt(1)-yt(4))*(zt(4)+zt(1)) )
-      Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
+      grid % sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
                     +(zt(3)-zt(2))*(xt(2)+xt(3))   &
                     +(zt(4)-zt(3))*(xt(3)+xt(4))   &
                     +(zt(1)-zt(4))*(xt(4)+xt(1)) )
-      Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   & 
+      grid % sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   & 
                     +(xt(3)-xt(2))*(yt(2)+yt(3))   &
                     +(xt(4)-xt(3))*(yt(3)+yt(4))   &
                     +(xt(1)-xt(4))*(yt(4)+yt(1)) )
     else if( grid % faces_n_nodes(s)  ==  3 ) then 
-      Sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
+      grid % sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
                     +(yt(3)-yt(2))*(zt(2)+zt(3))   &
                     +(yt(1)-yt(3))*(zt(3)+zt(1)) )
-      Sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
+      grid % sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
                     +(zt(3)-zt(2))*(xt(2)+xt(3))   & 
                     +(zt(1)-zt(3))*(xt(3)+xt(1)) )
-      Sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   &
+      grid % sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   &
                     +(xt(3)-xt(2))*(yt(2)+yt(3))   & 
                     +(xt(1)-xt(3))*(yt(3)+yt(1)) )
     else
@@ -222,15 +216,15 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
 
-    SurTot = sqrt(Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))
+    SurTot = sqrt(grid % sx(s)*grid % sx(s)+grid % sy(s)*grid % sy(s)+grid % sz(s)*grid % sz(s))
 
     if(c2  < 0) then
-      t = (   Sx(s)*(xsp(s)-grid % xc(c1))                               &
-            + Sy(s)*(ysp(s)-grid % yc(c1))                               &
-            + Sz(s)*(zsp(s)-grid % zc(c1)) ) / SurTot
-      grid % xc(c2) = grid % xc(c1) + Sx(s)*t / SurTot
-      grid % yc(c2) = grid % yc(c1) + Sy(s)*t / SurTot
-      grid % zc(c2) = grid % zc(c1) + Sz(s)*t / SurTot
+      t = (   grid % sx(s)*(xsp(s)-grid % xc(c1))                               &
+            + grid % sy(s)*(ysp(s)-grid % yc(c1))                               &
+            + grid % sz(s)*(zsp(s)-grid % zc(c1)) ) / SurTot
+      grid % xc(c2) = grid % xc(c1) + grid % sx(s)*t / SurTot
+      grid % yc(c2) = grid % yc(c1) + grid % sy(s)*t / SurTot
+      grid % zc(c2) = grid % zc(c1) + grid % sz(s)*t / SurTot
       if(bou_cen == 1) then
         grid % xc(c2) = xsp(s)
         grid % yc(c2) = ysp(s)
@@ -251,12 +245,12 @@
     c2=SideC(2,s)
 
     if(c2 > 0) then
-      Dx(c1) = max( Dx(c1), abs( grid % xc(c2)-grid % xc(c1) ) )
-      Dy(c1) = max( Dy(c1), abs( grid % yc(c2)-grid % yc(c1) ) )
-      Dz(c1) = max( Dz(c1), abs( grid % zc(c2)-grid % zc(c1) ) )
-      Dx(c2) = max( Dx(c2), abs( grid % xc(c2)-grid % xc(c1) ) )
-      Dy(c2) = max( Dy(c2), abs( grid % yc(c2)-grid % yc(c1) ) )
-      Dz(c2) = max( Dz(c2), abs( grid % zc(c2)-grid % zc(c1) ) )
+      grid % dx(c1) = max( grid % dx(c1), abs( grid % xc(c2) - grid % xc(c1) ) )
+      grid % dy(c1) = max( grid % dy(c1), abs( grid % yc(c2) - grid % yc(c1) ) )
+      grid % dz(c1) = max( grid % dz(c1), abs( grid % zc(c2) - grid % zc(c1) ) )
+      grid % dx(c2) = max( grid % dx(c2), abs( grid % xc(c2) - grid % xc(c1) ) )
+      grid % dy(c2) = max( grid % dy(c2), abs( grid % yc(c2) - grid % yc(c1) ) )
+      grid % dz(c2) = max( grid % dz(c2), abs( grid % zc(c2) - grid % zc(c1) ) )
     end if 
   end do ! through sides
 
@@ -265,18 +259,19 @@
     c2=SideC(2,s)
 
     if(c2 < 0) then
-      if( Approx(Dx(c1), 0.0, 1.e-6) )  &
+      if( Approx(grid % dx(c1), 0.0, 1.e-6) )  &
         grid % xc(c1) = 0.75*grid % xc(c1) + 0.25*grid % xc(c2) 
-      if( Approx(Dy(c1), 0.0, 1.e-6) )  &
+      if( Approx(grid % dy(c1), 0.0, 1.e-6) )  &
         grid % yc(c1) = 0.75*grid % yc(c1) + 0.25*grid % yc(c2) 
-      if( Approx(Dz(c1), 0.0, 1.e-6) )  &
+      if( Approx(grid % dz(c1), 0.0, 1.e-6) )  &
         grid % zc(c1) = 0.75*grid % zc(c1) + 0.25*grid % zc(c2) 
     end if 
   end do ! through sides
 
-  Dx = 0.0
-  Dy = 0.0
-  Dz = 0.0
+  ! Why are the following three lines needed?
+  grid % dx = 0.0
+  grid % dy = 0.0
+  grid % dz = 0.0
 
   !--------------------------------------------!
   !   Find the sides on the periodic boundary  !
@@ -601,18 +596,18 @@
   do s=1,NS
 
     ! Initialize
-    Dx(s)=0.0
-    Dy(s)=0.0
-    Dz(s)=0.0
+    grid % dx(s)=0.0
+    grid % dy(s)=0.0
+    grid % dz(s)=0.0
 
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2   >  0) then
 
       ! Scalar product of the side with line c1-c2 is good criteria
-      if( (Sx(s) * (grid % xc(c2)-grid % xc(c1) )+                  &
-           Sy(s) * (grid % yc(c2)-grid % yc(c1) )+                  &
-           Sz(s) * (grid % zc(c2)-grid % zc(c1) ))  < 0.0 ) then
+      if( (grid % sx(s) * (grid % xc(c2)-grid % xc(c1) )+                  &
+           grid % sy(s) * (grid % yc(c2)-grid % yc(c1) )+                  &
+           grid % sz(s) * (grid % zc(c2)-grid % zc(c1) ))  < 0.0 ) then
 
         NSsh = NSsh + 2
 
@@ -632,9 +627,9 @@
           grid % faces_n(2,NS+NSsh-1) = grid % faces_n(2,s)
           grid % faces_n(3,NS+NSsh-1) = grid % faces_n(3,s)
           grid % faces_n(4,NS+NSsh-1) = grid % faces_n(4,s)
-          Sx(NS+NSsh-1) = Sx(s)
-          Sy(NS+NSsh-1) = Sy(s)
-          Sz(NS+NSsh-1) = Sz(s)
+          grid % sx(NS+NSsh-1) = grid % sx(s)
+          grid % sy(NS+NSsh-1) = grid % sy(s)
+          grid % sz(NS+NSsh-1) = grid % sz(s)
           xsp(NS+NSsh-1) = xsp(s)
           ysp(NS+NSsh-1) = ysp(s)
           zsp(NS+NSsh-1) = zsp(s)
@@ -645,9 +640,9 @@
           grid % faces_n(2,NS+NSsh) = grid % faces_n(2,SideC(0,s))
           grid % faces_n(3,NS+NSsh) = grid % faces_n(3,SideC(0,s))
           grid % faces_n(4,NS+NSsh) = grid % faces_n(4,SideC(0,s))
-          Sx(NS+NSsh) = Sx(s)
-          Sy(NS+NSsh) = Sy(s)
-          Sz(NS+NSsh) = Sz(s)
+          grid % sx(NS+NSsh) = grid % sx(s)
+          grid % sy(NS+NSsh) = grid % sy(s)
+          grid % sz(NS+NSsh) = grid % sz(s)
           xsp(NS+NSsh) = xs2
           ysp(NS+NSsh) = ys2
           zsp(NS+NSsh) = zs2
@@ -665,9 +660,9 @@
           grid % faces_n(1,NS+NSsh-1) = grid % faces_n(1,s)
           grid % faces_n(2,NS+NSsh-1) = grid % faces_n(2,s)
           grid % faces_n(3,NS+NSsh-1) = grid % faces_n(3,s)
-          Sx(NS+NSsh-1) = Sx(s)
-          Sy(NS+NSsh-1) = Sy(s)
-          Sz(NS+NSsh-1) = Sz(s)
+          grid % sx(NS+NSsh-1) = grid % sx(s)
+          grid % sy(NS+NSsh-1) = grid % sy(s)
+          grid % sz(NS+NSsh-1) = grid % sz(s)
           xsp(NS+NSsh-1) = xsp(s)
           ysp(NS+NSsh-1) = ysp(s)
           zsp(NS+NSsh-1) = zsp(s)
@@ -677,17 +672,17 @@
           grid % faces_n(1,NS+NSsh) = grid % faces_n(1,SideC(0,s)) 
           grid % faces_n(2,NS+NSsh) = grid % faces_n(2,SideC(0,s))
           grid % faces_n(3,NS+NSsh) = grid % faces_n(3,SideC(0,s))
-          Sx(NS+NSsh) = Sx(s)
-          Sy(NS+NSsh) = Sy(s)
-          Sz(NS+NSsh) = Sz(s)
+          grid % sx(NS+NSsh) = grid % sx(s)
+          grid % sy(NS+NSsh) = grid % sy(s)
+          grid % sz(NS+NSsh) = grid % sz(s)
           xsp(NS+NSsh) = xs2
           ysp(NS+NSsh) = ys2
           zsp(NS+NSsh) = zs2
         end if
 
-        Dx(s)=xsp(s)-xs2  !
-        Dy(s)=ysp(s)-ys2  ! later: xc2 = xc2 + Dx  
-        Dz(s)=zsp(s)-zs2  !
+        grid % dx(s)=xsp(s)-xs2  !
+        grid % dy(s)=ysp(s)-ys2  ! later: xc2 = xc2 + Dx  
+        grid % dz(s)=zsp(s)-zs2  !
 
       endif !  S*(c2-c1) < 0.0
     end if  !  c2 > 0
@@ -731,12 +726,12 @@
       xsp(NewS(s)) = xsp(s)
       ysp(NewS(s)) = ysp(s)
       zsp(NewS(s)) = zsp(s)
-      Sx(NewS(s)) = Sx(s)
-      Sy(NewS(s)) = Sy(s)
-      Sz(NewS(s)) = Sz(s)
-      Dx(NewS(s)) = Dx(s)
-      Dy(NewS(s)) = Dy(s)
-      Dz(NewS(s)) = Dz(s)
+      grid % sx(NewS(s)) = grid % sx(s)
+      grid % sy(NewS(s)) = grid % sy(s)
+      grid % sz(NewS(s)) = grid % sz(s)
+      grid % dx(NewS(s)) = grid % dx(s)
+      grid % dy(NewS(s)) = grid % dy(s)
+      grid % dz(NewS(s)) = grid % dz(s)
     end if
   end do 
   NS = number_sides-NSsh
@@ -746,7 +741,7 @@
   !-----------------------------------!
   max_dis = 0.0 
   do s=1,NS-NSsh
-    max_dis = max(max_dis, (Dx(s)*Dx(s)+Dy(s)*Dy(s)+Dz(s)*Dz(s)))
+    max_dis = max(max_dis, (grid % dx(s)*grid % dx(s)+grid % dy(s)*grid % dy(s)+grid % dz(s)*grid % dz(s)))
   end do
   write(*,*) '# Maximal distance of periodic boundary is:', sqrt(max_dis)
 
@@ -762,13 +757,13 @@
     c1=SideC(1,s)
     c2=SideC(2,s)   
 
-    volume(c1) = volume(c1) + xsp(s)*Sx(s)  &
-                            + ysp(s)*Sy(s)  &
-                            + zsp(s)*Sz(s)
+    volume(c1) = volume(c1) + xsp(s)*grid % sx(s)  &
+                            + ysp(s)*grid % sy(s)  &
+                            + zsp(s)*grid % sz(s)
     if(c2 > 0) then
-      volume(c2) = volume(c2) - (xsp(s)-Dx(s))*Sx(s)  &
-                              - (ysp(s)-Dy(s))*Sy(s)  &
-                              - (zsp(s)-Dz(s))*Sz(s)
+      volume(c2) = volume(c2) - (xsp(s)-grid % dx(s))*grid % sx(s)  &
+                              - (ysp(s)-grid % dy(s))*grid % sy(s)  &
+                              - (zsp(s)-grid % dz(s))*grid % sz(s)
     end if
   end do
   volume = volume/3.0
@@ -880,9 +875,9 @@
     dsc1 = Distance(xc1, yc1, zc1, xsp(s), ysp(s), zsp(s))
 
     ! Second cell (pls. check if xsi=xc on the boundary)
-    xc2  = grid % xc(c2) + Dx(s)
-    yc2  = grid % yc(c2) + Dy(s)
-    zc2  = grid % zc(c2) + Dz(s)
+    xc2  = grid % xc(c2) + grid % dx(s)
+    yc2  = grid % yc(c2) + grid % dy(s)
+    zc2  = grid % zc(c2) + grid % dz(s)
     dsc2 = Distance(xc2, yc2, zc2, xsp(s), ysp(s), zsp(s))
 
     ! Interpolation factor

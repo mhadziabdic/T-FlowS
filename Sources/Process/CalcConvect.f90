@@ -39,10 +39,10 @@
   end do
 
   if(HOT==YES) then
-    call GraPhi(T % n,1,PHIx,.true.)     ! dT/dx
-    call GraPhi(T % n,2,PHIy,.true.)     ! dT/dy
-    call GraPhi(T % n,3,PHIz,.true.)     ! dT/dz
-    call GraCorNew(T % n,PHIx,PHIy,PHIz) ! needed ?
+    call GraPhi(grid, T % n, 1, phix, .TRUE.)     ! dT/dx
+    call GraPhi(grid, T % n, 2, phiy, .TRUE.)     ! dT/dy
+    call GraPhi(grid, T % n, 3, phiz, .TRUE.)     ! dT/dz
+    call GraCorNew(T % n,phix,phiy,phiz) ! needed ?
     do s=1,NS
       c1=SideC(1,s)
       c2=SideC(2,s)
@@ -50,9 +50,9 @@
       ! On the boundary perform the extrapolation
       if(c2  < 0) then
         if( (TypeBC(c2) == CONVECT) ) then
-          T % n(c2) = T % n(c2) - ( Ubulk(material(c1)) * PHIx(c1)        & 
-                                  + Vbulk(material(c1)) * PHIy(c1)        &
-                                  + Wbulk(material(c1)) * PHIz(c1) ) * dt
+          T % n(c2) = T % n(c2) - ( Ubulk(material(c1)) * phix(c1)        & 
+                                  + Vbulk(material(c1)) * phiy(c1)        &
+                                  + Wbulk(material(c1)) * phiz(c1) ) * dt
         end if
       end if
     end do

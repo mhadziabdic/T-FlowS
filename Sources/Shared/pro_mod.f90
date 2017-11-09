@@ -68,8 +68,8 @@ module pro_mod
   real,allocatable :: PHIx(:),   PHIy(:),   PHIz(:)
   real,allocatable :: PHIside(:)
 
-  ! For convective schemes
-  real,allocatable :: PHImax(:), PHImin(:) 
+  ! For advection schemes
+  real,allocatable :: phi_max(:), phi_min(:) 
 
   ! Velocity components
   type(Var_Type) :: U

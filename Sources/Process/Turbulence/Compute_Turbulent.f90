@@ -98,9 +98,12 @@
     if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
       phis=f(s)*phi % n(c1) + (1.0-f(s))*phi % n(c2)
 
-      if(BLEND_TUR(material(c1)) /= NO .or. BLEND_TUR(material(c2)) /= NO) then
-        call ConvScheme(phis, s, phi % n, phi_x, phi_y, phi_z, Dx, Dy, Dz, &
-                      max(BLEND_TUR(material(c1)),BLEND_TUR(material(c2))) ) 
+      if(BLEND_TUR(material(c1)) /= NO .or.  &
+         BLEND_TUR(material(c2)) /= NO) then
+        call ConvScheme(phis, s, phi % n, phi_x, phi_y, phi_z,  &
+                        grid % dx, grid % dy, grid % dz,        &
+                        max(BLEND_TUR(material(c1)),            &
+                            BLEND_TUR(material(c2))) ) 
       end if 
 
       ! Central differencing for advection
@@ -238,16 +241,18 @@
     end if
 
     ! Total (exact) diffusive flux
-    Fex=VISeff*( phi_xS*Sx(s) + phi_yS*Sy(s) + phi_zS*Sz(s) )
+    Fex = VISeff * (  phi_xS * grid % sx(s)  &
+                    + phi_yS * grid % sy(s)  &
+                    + phi_zS * grid % sz(s) )
 
     A0 = VISeff * Scoef(s)
 
     ! Implicit diffusive flux
     ! (this is a very crude approximation: Scoef is
     !  not corrected at interface between materials)
-    Fim=( phi_xS*Dx(s)                      &
-       +phi_yS*Dy(s)                      &
-       +phi_zS*Dz(s))*A0
+    Fim = (  phi_xS * grid % dx(s)                      &
+           + phi_yS * grid % dy(s)                      &
+           + phi_zS * grid % dz(s) ) * A0
 
     ! This is yet another crude approximation:
     ! A0 is calculated approximatelly
@@ -303,11 +308,11 @@
       else if(c2  < 0) then
 
         ! Outflow is not included because it was causing problems     
-        if((TypeBC(c2) == INFLOW).or.                     &
-         (TypeBC(c2) == WALL).or.                     &
-         (TypeBC(c2) == PRESSURE).or.                 &
-         (TypeBC(c2) == CONVECT).or.                  &
-         (TypeBC(c2) == WALLFL) ) then                               
+        if((TypeBC(c2) == INFLOW)  .or.                 &
+           (TypeBC(c2) == WALL)    .or.                 &
+           (TypeBC(c2) == PRESSURE).or.                 &
+           (TypeBC(c2) == CONVECT) .or.                 &
+           (TypeBC(c2) == WALLFL) ) then                               
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * phi % n(c2)
         else if( TypeBC(c2) == BUFFER ) then  
@@ -392,16 +397,16 @@
   !                                     !
   !-------------------------------------!
   if(SIMULA == K_EPS) then 
-    if(phi % name == 'KIN') call SourceKinKEps
-    if(phi % name == 'EPS') call SourceEpsKEps
+    if(phi % name == 'KIN') call Source_Kin_K_Eps(grid)
+    if(phi % name == 'EPS') call Source_Eps_K_Eps(grid)
   end if
 
   if(SIMULA == K_EPS_VV .or.  &
      SIMULA == ZETA     .or.  &
      SIMULA == HYB_ZETA) then
-    if(phi % name == 'KIN') call SourceKinKEPSV2F()
-    if(phi % name == 'EPS') call SourceEpsKEPSV2F()
-    if(phi % name == 'V^2') call SourceV2KEPSV2F(Nstep)
+    if(phi % name == 'KIN') call Source_Kin_K_Eps_V2_F(grid)
+    if(phi % name == 'EPS') call Source_Eps_K_Eps_V2_F(grid)
+    if(phi % name == 'V^2') call Source_V2_K_Eps_V2_F(grid, Nstep)
   end if
 
   if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA)                                &

@@ -241,7 +241,9 @@
       c2 = SideC(2,s)
       if(c2 < 0) c2=0
       if(c2 > 0 .and. (material(NewC(c1)) == material(NewC(c2))) .and. &
-         Dx(s)==0.0 .and. Dy(s)==0.0 .and. Dz(s)==0 ) then
+         grid % dx(s) == 0.0 .and.  &
+         grid % dy(s) == 0.0 .and.  &
+         grid % dz(s) == 0.0 ) then
         if(grid % faces_n_nodes(s) == 3) then
           write(9,'(6Z9)')                 &
             3, NewN(grid % faces_n(1,s)),  &

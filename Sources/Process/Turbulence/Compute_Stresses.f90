@@ -102,9 +102,12 @@
     if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
       phis=f(s)*phi % n(c1) + (1.0-f(s))*phi % n(c2)
 
-      if(BLEND_TUR(material(c1)) /= NO .or. BLEND_TUR(material(c2)) /= NO) then
-        call ConvScheme(phis, s, phi % n, phi_x, phi_y, phi_z, Dx, Dy, Dz, &
-                        max(BLEND_TUR(material(c1)),BLEND_TUR(material(c2))) ) 
+      if( BLEND_TUR(material(c1)) /= NO .or.  &
+          BLEND_TUR(material(c2)) /= NO ) then
+        call ConvScheme(phis, s, phi % n, phi_x, phi_y, phi_z,  &
+                        grid % dx, grid % dy, grid % dz,        &
+                        max(BLEND_TUR(material(c1)),            &
+                            BLEND_TUR(material(c2))) ) 
       end if 
 
       ! Central differencing for advection
@@ -228,16 +231,18 @@
 
 
     ! Total (exact) diffusive flux plus turb. diffusion
-    Fex=VISeff*(phi_xS*Sx(s) + phi_yS*Sy(s) + phi_zS*Sz(s)) 
+    Fex = VISeff * (  phi_xS * grid % sx(s)  &
+                    + phi_yS * grid % sy(s)  &
+                    + phi_zS * grid % sz(s) ) 
 
     A0 = VISeff * Scoef(s) 
 
     ! Implicit diffusive flux
     ! (this is a very crude approximation: Scoef is
     !  not corrected at interface between materials)
-    Fim=( phi_xS*Dx(s)                      &
-         +phi_yS*Dy(s)                      &
-         +phi_zS*Dz(s))*A0
+    Fim=( phi_xS*grid % dx(s)                      &
+         +phi_yS*grid % dy(s)                      &
+         +phi_zS*grid % dz(s))*A0
 
     ! This is yet another crude approximation:
     ! A0 is calculated approximatelly
@@ -369,11 +374,13 @@
         phi_xS = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
         phi_yS = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
         phi_zS = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
-        Fex=VISeff*(phi_xS*Sx(s) + phi_yS*Sy(s) + phi_zS*Sz(s))
+        Fex = VISeff * (  phi_xS * grid % sx(s)  &
+                        + phi_yS * grid % sy(s)  &
+                        + phi_zS * grid % sz(s))
         A0 = VISeff * Scoef(s)
-        Fim = (   phi_xS*Dx(s)      &
-                + phi_yS*Dy(s)      &
-                + phi_zS*Dz(s))*A0
+        Fim = (   phi_xS * grid % dx(s)      &
+                + phi_yS * grid % dy(s)      &
+                + phi_zS * grid % dz(s)) * A0
 
         b(c1) = b(c1) - VISeff*(phi%n(c2)-phi%n(c1))*Scoef(s)- Fex + Fim
         if(c2  > 0) then
@@ -479,9 +486,9 @@
   !  end do                                            ! 2mat
 
    if(SIMULA==EBM) then 
-     call SourcesEBM(phi % name)
+     call Source_Ebm              (grid, phi % name)
    else
-     call SourcesHJ(phi % name)        
+     call Source_Hanjalic_Jakirlic(grid, phi % name)        
    end if                
 
   !---------------------------------!

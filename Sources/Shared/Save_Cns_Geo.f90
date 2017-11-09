@@ -287,12 +287,12 @@
   do s=1,NS
     if(NewS(s)  > 0 .and. NewS(s) <= NSsub) then
       count=count+1
-      if(var ==  1)  work(count) = Sx(s)
-      if(var ==  2)  work(count) = Sy(s)
-      if(var ==  3)  work(count) = Sz(s)
-      if(var ==  4)  work(count) = Dx(s)
-      if(var ==  5)  work(count) = Dy(s)
-      if(var ==  6)  work(count) = Dz(s)
+      if(var ==  1)  work(count) = grid % sx(s)
+      if(var ==  2)  work(count) = grid % sy(s)
+      if(var ==  3)  work(count) = grid % sz(s)
+      if(var ==  4)  work(count) = grid % dx(s)
+      if(var ==  5)  work(count) = grid % dy(s)
+      if(var ==  6)  work(count) = grid % dz(s)
       if(var ==  7)  work(count) = f(s)
       if(var ==  8)  work(count) = xsp(s)
       if(var ==  9)  work(count) = ysp(s)
@@ -309,12 +309,12 @@
         if(c2  > 0) then
           if( (proces(c1) == sub) .and. (proces(c2) == subo) ) then 
             count=count+1
-            if(var ==  1)  work(count) = Sx(s)
-            if(var ==  2)  work(count) = Sy(s)
-            if(var ==  3)  work(count) = Sz(s)
-            if(var ==  4)  work(count) = Dx(s)
-            if(var ==  5)  work(count) = Dy(s)
-            if(var ==  6)  work(count) = Dz(s)
+            if(var ==  1)  work(count) = grid % sx(s)
+            if(var ==  2)  work(count) = grid % sy(s)
+            if(var ==  3)  work(count) = grid % sz(s)
+            if(var ==  4)  work(count) = grid % dx(s)
+            if(var ==  5)  work(count) = grid % dy(s)
+            if(var ==  6)  work(count) = grid % dz(s)
             if(var ==  7)  work(count) = f(s)
             if(var ==  8)  work(count) = xsp(s)
             if(var ==  9)  work(count) = ysp(s)
@@ -322,16 +322,16 @@
           end if  
           if( (proces(c2) == sub) .and. (proces(c1) == subo) ) then 
             count=count+1
-            if(var ==  1)  work(count) = -Sx(s)
-            if(var ==  2)  work(count) = -Sy(s)
-            if(var ==  3)  work(count) = -Sz(s)
-            if(var ==  4)  work(count) = -Dx(s)
-            if(var ==  5)  work(count) = -Dy(s)
-            if(var ==  6)  work(count) = -Dz(s)
+            if(var ==  1)  work(count) = -grid % sx(s)
+            if(var ==  2)  work(count) = -grid % sy(s)
+            if(var ==  3)  work(count) = -grid % sz(s)
+            if(var ==  4)  work(count) = -grid % dx(s)
+            if(var ==  5)  work(count) = -grid % dy(s)
+            if(var ==  6)  work(count) = -grid % dz(s)
             if(var ==  7)  work(count) = 1.0-f(s)
-            if(var ==  8)  work(count) = xsp(s) - Dx(s)
-            if(var ==  9)  work(count) = ysp(s) - Dy(s)
-            if(var == 10)  work(count) = zsp(s) - Dz(s)
+            if(var ==  8)  work(count) = xsp(s) - grid % dx(s)
+            if(var ==  9)  work(count) = ysp(s) - grid % dy(s)
+            if(var == 10)  work(count) = zsp(s) - grid % dz(s)
           end if  
         end if  ! c2 > 0 
       end if    ! I think this is not really necessary 

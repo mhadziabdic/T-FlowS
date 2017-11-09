@@ -260,7 +260,9 @@
     Us = f(s) * U % n(c1) + (1.0-f(s)) * U % n(c2)
     Vs = f(s) * V % n(c1) + (1.0-f(s)) * V % n(c2)
     Ws = f(s) * W % n(c1) + (1.0-f(s)) * W % n(c2)
-    Flux(s) = ( Us*Sx(s) + Vs*Sy(s) + Ws*Sz(s) )
+    Flux(s) = (  Us * grid % sx(s)  &
+               + Vs * grid % sy(s)  &
+               + Ws * grid % sz(s) )
   end do 
 
   name = answer

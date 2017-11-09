@@ -10,7 +10,7 @@
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
-!-----------------------------------[Arguments]--------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer   :: c, c1, c2, s, m
@@ -119,9 +119,11 @@
       c2=SideC(2,s)
       if( (material(c1) .eq. m) .or. (material(c2) .eq. m) ) then
         if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
-          CFLs = abs( dt * Flux(s) /               &
-                      ( Scoef(s) *                 &
-                      (Dx(s)*Dx(s)+Dy(s)*Dy(s)+Dz(s)*Dz(s)) ) )
+          CFLs = abs( dt * Flux(s) /                &
+                      ( Scoef(s) *                  &
+                      (  grid % dx(s)*grid % dx(s)  &
+                       + grid % dy(s)*grid % dy(s)  &
+                       + grid % dz(s)*grid % dz(s)) ) )
           PeS  = abs( Flux(s) / Scoef(s) / (VISc+TINY) )
           cfl_max(m) = max( cfl_max(m), CFLs ) 
           pe_max(m)  = max( pe_max(m),  PeS  ) 

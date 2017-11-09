@@ -260,17 +260,23 @@
           uuS = fF(s)*uu % n(c1)+(1.0-fF(s))*uu % n(c2)
           uvS = fF(s)*uv % n(c1)+(1.0-fF(s))*uv % n(c2)
           uwS = fF(s)*uw % n(c1)+(1.0-fF(s))*uw % n(c2)
-          Fstress = - (uuS*Sx(s)+uvS*Sy(s)+uwS*Sz(s))  
+          Fstress = - (  uuS * grid % sx(s)  &
+                       + uvS * grid % sy(s)  &
+                       + uwS * grid % sz(s) )  
         else if(ui % name == 'V') then 
           uvS = fF(s)*uv % n(c1)+(1.0-fF(s))*uv % n(c2)
           vvS = fF(s)*vv % n(c1)+(1.0-fF(s))*vv % n(c2)
           vwS = fF(s)*vw % n(c1)+(1.0-fF(s))*vw % n(c2)
-          Fstress =  - (uvS*Sx(s)+vvS*Sy(s)+vwS*Sz(s))  
+          Fstress =  - (  uvS * grid % sx(s)  &
+                        + vvS * grid % sy(s)  &
+                        + vwS * grid % sz(s) )  
         else if(ui % name == 'W') then 
           uwS = fF(s)*uw % n(c1)+(1.0-fF(s))*uw % n(c2)
           vwS = fF(s)*vw % n(c1)+(1.0-fF(s))*vw % n(c2)
           wwS = fF(s)*ww % n(c1)+(1.0-fF(s))*ww % n(c2)
-          Fstress =  - (uwS*Sx(s)+vwS*Sy(s)+wwS*Sz(s))  
+          Fstress =  - (  uwS * grid % sx(s)  &
+                        + vwS * grid % sy(s)  &
+                        + wwS * grid % sz(s) )  
         end if 
       end if 
     end if
@@ -282,18 +288,18 @@
     uk_iS = fF(s)*uk_i(c1) + (1.0-fF(s))*uk_i(c2)
 
     ! total (exact) viscous stress 
-    Fex=VISeff*( 2.0*ui_iS*Si(s)                               &
-                + (ui_jS+uj_iS)*Sj(s)                         &
-                + (ui_kS+uk_iS)*Sk(s) )
+    Fex=VISeff*(      2.0*ui_iS   * Si(s)      &
+                  + (ui_jS+uj_iS) * Sj(s)      & 
+                  + (ui_kS+uk_iS) * Sk(s) )
 
     A0 = VISeff * Scoef(s)
 
     ! Implicit viscous stress
     ! this is a very crude approximation: Scoef is not
     ! corrected at interface between materials
-    Fim=( ui_iS*Di(s)                                    &
-       +ui_jS*Dj(s)                                      &
-       +ui_kS*Dk(s))*A0
+    Fim=(   ui_iS*Di(s)                &
+          + ui_jS*Dj(s)                &
+          + ui_kS*Dk(s))*A0
 
     ! This is yet another crude approximation:
     ! A0 is calculated approximatelly

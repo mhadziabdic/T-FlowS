@@ -127,9 +127,13 @@
     phis=f(s)*phi % n(c1) + (1.0-f(s))*phi % n(c2)
 
  
-    if(BLEND_TEM(material(c1)) /= NO .or. BLEND_TEM(material(c2)) /= NO) then
-      call ConvScheme(phis, s, phi % n, phi_x, phi_y, phi_z, Dx, Dy, Dz, &
-                      max(BLEND_TEM(material(c1)),BLEND_TEM(material(c2))) ) 
+    if(BLEND_TEM(material(c1)) /= NO .or.  &
+       BLEND_TEM(material(c2)) /= NO) then
+      call ConvScheme(phis, s, phi % n,                 &
+                      phi_x, phi_y, phi_z,              &
+                      grid % dx, grid % dy, grid % dz,  &
+                      max(BLEND_TEM(material(c1)),      &
+                          BLEND_TEM(material(c2))) ) 
     end if 
 
     CAPs = f(s)       * CAPc(material(c1)) &
@@ -275,28 +279,38 @@
     end if  
 
     ! Total (exact) diffusive flux
-    FUex1 = CONeff1*(phixS1*Sx(s)+phiyS1*Sy(s)+phizS1*Sz(s))
-    FUex2 = CONeff2*(phixS2*Sx(s)+phiyS2*Sy(s)+phizS2*Sz(s))
+    FUex1 = CONeff1*(  phixS1*grid % sx(s)  &
+                     + phiyS1*grid % sy(s)  &
+                     + phizS1*grid % sz(s))
+    FUex2 = CONeff2*(  phixS2*grid % sx(s)  &
+                     + phiyS2*grid % sy(s)  &
+                     + phizS2*grid % sz(s))
 
     ! Implicit diffusive flux
     FUim1 = CONeff1*Scoef(s)*    &
-            (  phixS1*Dx(s)      &
-             + phiyS1*Dy(s)      &
-             + phizS1*Dz(s) )
+            (  phixS1*grid % dx(s)      &
+             + phiyS1*grid % dy(s)      &
+             + phizS1*grid % dz(s) )
     FUim2 = CONeff2*Scoef(s)*    &
-            (  phixS2*Dx(s)      &
-             + phiyS2*Dy(s)      &
-             + phizS2*Dz(s) )
+            (  phixS2*grid % dx(s)      &
+             + phiyS2*grid % dy(s)      &
+             + phizS2*grid % dz(s) )
 
     ! Straight diffusion part 
     if(ini.lt.2) then
       if(c2.gt.0) then
         if(material(c1) == material(c2)) then
-          phi % Do(c1) = phi % Do(c1) + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1)) 
-          phi % Do(c2) = phi % Do(c2) - CONeff2*Scoef(s)*(phi % n(c2) - phi % n(c1))   
+          phi % Do(c1) = phi % Do(c1)  &
+                       + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1)) 
+          phi % Do(c2) = phi % Do(c2)  &
+                       - CONeff2*Scoef(s)*(phi % n(c2) - phi % n(c1))   
         else
-          phi % Do(c1) = phi % Do(c1) + 2.*CONc(material(c1))*Scoef(s)*(phiside(s) - phi % n(c1)) 
-          phi % Do(c2) = phi % Do(c2) - 2.*CONc(material(c2))*Scoef(s)*(phi % n(c2) - phiside(s))   
+          phi % Do(c1) = phi % Do(c1)            &
+                       + 2.*CONc(material(c1))   &
+                       * Scoef(s) * (phiside(s) - phi % n(c1)) 
+          phi % Do(c2) = phi % Do(c2)            &
+                       - 2.*CONc(material(c2))   &
+                       * Scoef(s)*(phi % n(c2) - phiside(s))   
         end if
       else
         if(TypeBC(c2).ne.SYMMETRY) then 
@@ -376,7 +390,9 @@
 
         ! In case of wallflux 
         else if(TypeBC(c2).eq.WALLFL) then
-          Stot  = sqrt(Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))
+          Stot  = sqrt(  grid % sx(s)*grid % sx(s)  &
+                       + grid % sy(s)*grid % sy(s)  &
+                       + grid % sz(s)*grid % sz(s))
           b(c1) = b(c1) + Stot * phi % q(c2)
         endif 
       end if
@@ -515,18 +531,22 @@
         endif
 
         ! Total (exact) diffusive flux
-        FUex1 = CONeff1*(phixS1*Sx(s)+phiyS1*Sy(s)+phizS1*Sz(s))
-        FUex2 = CONeff2*(phixS2*Sx(s)+phiyS2*Sy(s)+phizS2*Sz(s))
+        FUex1 = CONeff1 * (  phixS1*grid % sx(s)  &
+                           + phiyS1*grid % sy(s)  &
+                           + phizS1*grid % sz(s))
+        FUex2 = CONeff2 * (  phixS2*grid % sx(s)  &
+                           + phiyS2*grid % sy(s)  &
+                           + phizS2*grid % sz(s))
 
         ! Implicit diffusive flux
         FUim1 = CONeff1*Scoef(s)*    &
-                (  phixS1*Dx(s)      &
-                 + phiyS1*Dy(s)      &
-                 + phizS1*Dz(s) )
+                (  phixS1*grid % dx(s)      &
+                 + phiyS1*grid % dy(s)      &
+                 + phizS1*grid % dz(s) )
         FUim2 = CONeff2*Scoef(s)*    &
-                (  phixS2*Dx(s)      &
-                 + phiyS2*Dy(s)      &
-                 + phizS2*Dz(s) )
+                (  phixS2*grid % dx(s)      &
+                 + phiyS2*grid % dy(s)      &
+                 + phizS2*grid % dz(s) )
 
         b(c1) = b(c1) - CONeff1*(phi%n(c2)-phi%n(c1))*Scoef(s)- FUex1 + FUim1
         if(c2  > 0) then

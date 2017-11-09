@@ -11,12 +11,10 @@ module all_mod
   !----------------------------------------------------!
   !   Geometrical quantities for describing the grid   !
   !----------------------------------------------------!
-  real,allocatable :: Sx(:),Sy(:),Sz(:)
   real,allocatable :: volume(:)            ! cell's volume
   real,allocatable :: delta(:)             ! delta (max(dx,dy,dz))
   real,allocatable :: a1(:)                ! scotti
   real,allocatable :: a2(:)                ! scotti
-  real,allocatable :: Dx(:),Dy(:),Dz(:)
   real,allocatable :: xsp(:),ysp(:),zsp(:) ! face coordinates    
   real,allocatable :: WallDs(:), f(:)
 

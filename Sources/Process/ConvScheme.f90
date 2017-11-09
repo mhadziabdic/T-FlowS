@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine ConvScheme(Phis, s,                            &
+  subroutine ConvScheme(phi_f, s,                            &
                         Phi,                                &
                         dPhidi, dPhidj, dPhidk, Di, Dj, Dk, &
                         blenda) 
@@ -14,7 +14,7 @@
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
-  real          :: Phis
+  real          :: phi_f
   integer       :: s
   real          :: Phi(-NbC:NC)
   real          :: dPhidi(-NbC:NC), dPhidj(-NbC:NC), dPhidk(-NbC:NC)
@@ -73,7 +73,7 @@
                                +dPhidk(C)*Dk(s) )
   end if
 
-  PhiU = max( PhiMin(C), min(PhiUstar,PhiMax(C)) )
+  PhiU = max( phi_min(C), min(PhiUstar, phi_max(C)) )
 
   rj = ( Phi(C) - PhiU ) / ( Phi(D)-Phi(C) + 1.0e-16 )
 
@@ -105,7 +105,7 @@
     return
   end if
 
-  PhiS = Phi(C) + Phij * sign * (Phi(c2)-Phi(c1))
+  phi_f = Phi(C) + Phij * sign * (Phi(c2)-Phi(c1))
 
   if(blenda == GAMMA) then
     Beta = 0.1
@@ -123,11 +123,11 @@
     GammaC = PhiUstar/Beta
 
     if(PhiUstar < Beta.and.PhiUstar > 0.0) then
-      PhiS = (1.0 - GammaC*(1.0 - f(s)))*Phi(C) + GammaC*(1.0 - f(s))*Phi(D)
+      phi_f = (1.0 - GammaC*(1.0 - f(s)))*Phi(C) + GammaC*(1.0 - f(s))*Phi(D)
     else if(PhiUstar < 1.0.and.PhiUstar >= Beta) then
-       PhiS = f(s)*Phi(C) + (1.0 - f(s))*Phi(D)
+       phi_f = f(s)*Phi(C) + (1.0 - f(s))*Phi(D)
     else
-      PhiS = Phi(C)
+      phi_f = Phi(C)
     end if
   end if 
 

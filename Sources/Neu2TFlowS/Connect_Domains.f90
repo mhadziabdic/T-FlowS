@@ -68,7 +68,7 @@
     end if
     c11 = SideC(1,s1)
     c12 = SideC(2,s1)
-    if( abs(Dx(s1)) > 1.0e-9 ) then
+    if( abs(grid % dx(s1)) > 1.0e-9 ) then
       do s2=1,NS 
         c21 = SideC(1,s2)
         c22 = SideC(2,s2)
@@ -120,7 +120,7 @@
     end if
     c11 = SideC(1,s1)
     c12 = SideC(2,s1)
-    if( abs(Dy(s1)) > 1.0e-9 ) then
+    if( abs(grid % dy(s1)) > 1.0e-9 ) then
       do s2=1,NS 
         c21 = SideC(1,s2)
         c22 = SideC(2,s2)
@@ -172,7 +172,7 @@
     end if
     c11 = SideC(1,s1)
     c12 = SideC(2,s1)
-    if( abs(Dz(s1)) > 1.0e-9 ) then
+    if( abs(grid % dz(s1)) > 1.0e-9 ) then
       do s2=1,NS 
         c21 = SideC(1,s2)
         c22 = SideC(2,s2)

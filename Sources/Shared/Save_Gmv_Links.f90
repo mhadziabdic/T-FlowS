@@ -93,25 +93,25 @@
     if(NewC(c)  > 0) then
       if(grid % cells_n_nodes(c) == 8) then
         write(9,*) 'hex 8'
-        write(9,*)                                                         &
+        write(9,*)                                                   &
               NewN(grid % cells_n(1,c)), NewN(grid % cells_n(2,c)),  &
               NewN(grid % cells_n(4,c)), NewN(grid % cells_n(3,c)),  &
               NewN(grid % cells_n(5,c)), NewN(grid % cells_n(6,c)),  &
               NewN(grid % cells_n(8,c)), NewN(grid % cells_n(7,c))
       else if(grid % cells_n_nodes(c) == 6) then
         write(9,*) 'prism 6'
-        write(9,*)                                                         &
+        write(9,*)                                                   &
               NewN(grid % cells_n(1,c)), NewN(grid % cells_n(2,c)),  &
               NewN(grid % cells_n(3,c)), NewN(grid % cells_n(4,c)),  &
               NewN(grid % cells_n(5,c)), NewN(grid % cells_n(6,c))
       else if(grid % cells_n_nodes(c) == 4) then
         write(9,*) 'tet 4'
-        write(9,*)                                                         &
+        write(9,*)                                                   &
               NewN(grid % cells_n(1,c)), NewN(grid % cells_n(2,c)),  &
               NewN(grid % cells_n(3,c)), NewN(grid % cells_n(4,c))
       else if(grid % cells_n_nodes(c) == 5) then
         write(9,*) 'pyramid 5'
-        write(9,*)                                                         &
+        write(9,*)                                                   &
               NewN(grid % cells_n(5,c)), NewN(grid % cells_n(1,c)),  &
               NewN(grid % cells_n(2,c)), NewN(grid % cells_n(4,c)),  &
               NewN(grid % cells_n(3,c))      
@@ -132,9 +132,9 @@
 
     if( (NewS(s) > 0) .and. (NewS(s) <= NSsub) ) then
 
-      if( (Sx(s) * (grid % xc(c2)-grid % xc(c1) )+               &
-           Sy(s) * (grid % yc(c2)-grid % yc(c1) )+               &
-           Sz(s) * (grid % zc(c2)-grid % zc(c1) ))  > 0.0 ) then 
+      if( (grid % sx(s) * (grid % xc(c2)-grid % xc(c1) ) +  &
+           grid % sy(s) * (grid % yc(c2)-grid % yc(c1) ) +  &
+           grid % sz(s) * (grid % zc(c2)-grid % zc(c1) ))  > 0.0 ) then 
 
         nf_sub_non_per = nf_sub_non_per + 1
 
@@ -162,9 +162,9 @@
 
     if( (NewS(s) > 0) .and. (NewS(s) <= NSsub) ) then
 
-      if( (Sx(s) * (grid % xc(c2)-grid % xc(c1) )+               &
-           Sy(s) * (grid % yc(c2)-grid % yc(c1) )+               &
-           Sz(s) * (grid % zc(c2)-grid % zc(c1) ))  < 0.0 ) then 
+      if( (grid % sx(s) * (grid % xc(c2)-grid % xc(c1) ) +  &
+           grid % sy(s) * (grid % yc(c2)-grid % yc(c1) ) +  &
+           grid % sz(s) * (grid % zc(c2)-grid % zc(c1) ))  < 0.0 ) then 
 
         nf_sub_per = nf_sub_per + 1
 
@@ -221,4 +221,4 @@
   write(9,'(A6)') 'endgmv'            !  end the GMV file
   close(9)
 
-  end subroutine Save_Gmv_Links
+  end subroutine

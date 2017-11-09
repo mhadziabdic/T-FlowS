@@ -1,20 +1,20 @@
-!======================================================================!
-  subroutine SourcesEBM(name_phi)
-!----------------------------------------------------------------------!
-! Purpose:                                                             !
-! Calculate source terms for transport equations for Re stresses and   !
-! dissipation for EBM.                                                 !  
-! Authors: Muhamed Hadziabdic 
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Source_Ebm(grid, name_phi)
+!------------------------------------------------------------------------------!
+!   Calculate source terms for transport equations for Re stresses and         !
+!   dissipation for EBM.                                                       !  
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use rans_mod
-  use les_mod
-!----------------------------------------------------------------------!
+  use grid_mod
+!------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type)  :: grid
   character(len=*) :: name_phi
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c, s, c1, c2, i
   real    :: Prod, Diss, PHI_hom, PHI_wall, mag, PHI_tot, Esor
   real    :: a11, a22, a33, a12, a13, a21, a31, a23, a32
@@ -25,14 +25,13 @@
   real    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, uiujn, Ce11, uu_nn 
   real    :: Diss_wall, Diss_hom, r13, r23
   real,allocatable :: Diss1(:)
-!======================================================================!
+!==============================================================================!
 
+  call GraPhi(f22 % n, 1, VAR2x, .TRUE.)             ! df22/dx
+  call GraPhi(f22 % n, 2, VAR2y, .TRUE.)             ! df22/dy
+  call GraPhi(f22 % n, 3, VAR2z, .TRUE.)             ! df22/dz
 
-  call GraPhi(f22 % n,1,VAR2x,.TRUE.)             ! df22/dx
-  call GraPhi(f22 % n,2,VAR2y,.TRUE.)             ! df22/dy
-  call GraPhi(f22 % n,3,VAR2z,.TRUE.)             ! df22/dz
-
-  call Scale
+  call Scale()
 
   r13 = 1.0/3.0 
   do  c = 1, NC
@@ -45,7 +44,6 @@
     n1 = VAR2x(c)/mag 
     n2 = VAR2y(c)/mag 
     n3 = VAR2z(c)/mag 
-
 
     b11 = uu % n(c)/(2.0*Kin % n(c)) - r13 
     b22 = vv % n(c)/(2.0*Kin % n(c)) - r13

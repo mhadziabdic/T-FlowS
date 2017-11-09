@@ -25,9 +25,9 @@
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2 < 0) then
-        Flux(s) = DENc(material(c1))*( U % n(c2)*Sx(s) + &
-                                       V % n(c2)*Sy(s) + &
-                                       W % n(c2)*Sz(s) )
+        Flux(s) = DENc(material(c1))*( U % n(c2)*grid % sx(s) + &
+                                       V % n(c2)*grid % sy(s) + &
+                                       W % n(c2)*grid % sz(s) )
         if(TypeBC(c2)  ==  INFLOW) then
           if(material(c1) == m) MassIn(m) = MassIn(m) - Flux(s)
         endif
@@ -57,21 +57,21 @@
             U % n(c2) = U % n(c1)
           V % n(c2) = V % n(c1)
           W % n(c2) = W % n(c1)
-          Flux(s) = DENc(material(c1)) * ( U % n(c2)*Sx(s) +  & 
-                                           V % n(c2)*Sy(s) +  &
-                                           W % n(c2)*Sz(s) )
+          Flux(s) = DENc(material(c1)) * ( U % n(c2)*grid % sx(s) +  & 
+                                           V % n(c2)*grid % sy(s) +  &
+                                           W % n(c2)*grid % sz(s) )
           if(material(c1) == m) MASOUT(m) = MASOUT(m) + Flux(s)
         endif
         if(TypeBC(c2) == CONVECT.and.Flux(s) > 0.0) then
-          Flux(s) = DENc(material(c1)) * ( U % n(c2)*Sx(s) +  & 
-                                           V % n(c2)*Sy(s) +  &
-                                           W % n(c2)*Sz(s) )
+          Flux(s) = DENc(material(c1)) * ( U % n(c2)*grid % sx(s) +  & 
+                                           V % n(c2)*grid % sy(s) +  &
+                                           W % n(c2)*grid % sz(s) )
           if(material(c1) == m) MASOUT(m) = MASOUT(m) + Flux(s)
         endif
 
-        Flux(s) = DENc(material(c1)) * ( U % n(c2)*Sx(s) +  & 
-                                         V % n(c2)*Sy(s) +  &
-                                         W % n(c2)*Sz(s) )
+        Flux(s) = DENc(material(c1)) * ( U % n(c2)*grid % sx(s) +  & 
+                                         V % n(c2)*grid % sy(s) +  &
+                                         W % n(c2)*grid % sz(s) )
         if(TypeBC(c2) == PRESSURE.and.Flux(s) > 0.0) then
           if(material(c1) == m) MASOUT(m) = MASOUT(m) + Flux(s)
         endif

@@ -17,6 +17,9 @@
   allocate(grid % yc(-nb:nc));  grid % yc = 0.0
   allocate(grid % zc(-nb:nc));  grid % zc = 0.0
 
+  ! Memory for cells' volumes
+  allocate(grid % vol(-nb:nc));  grid % vol = 0.0
+
   ! Cells' nodes and neigboring cells
   allocate(grid % cells_n( 8, -nb:nc));    grid % cells_n       = 0
   allocate(grid % cells_c(24, -nb:nc));    grid % cells_c       = 0

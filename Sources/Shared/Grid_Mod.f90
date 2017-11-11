@@ -30,6 +30,9 @@
 
     ! Cell center coordinates
     real, allocatable :: xc(:), yc(:), zc(:)  
+
+    ! Cell volumes
+    real, allocatable :: vol(:)
     
     ! Cells' nodes and neigboring cells
     integer, allocatable :: cells_n(:,:)      

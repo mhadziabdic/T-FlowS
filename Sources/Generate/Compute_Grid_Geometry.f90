@@ -411,7 +411,7 @@
   !----------------------------------!
   if(rrun) then
   do c=1,NC
-    volume(c)=0.0
+    grid % vol(c)=0.0
   end do
 
   do s=1,NS
@@ -430,29 +430,29 @@
     z_cell_tmp = grid % zc(c1)
     dsc1 = Distance(x_cell_tmp,   y_cell_tmp,   z_cell_tmp,    &
                     grid % xf(s), grid % yf(s), grid % zf(s)) 
-    volume(c1) = volume(c1)                                                    &
+    grid % vol(c1) = grid % vol(c1)                                            &
                + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),            &
                             local_x_node(1),local_y_node(1),local_z_node(1),   &
                             local_x_node(2),local_y_node(2),local_z_node(2),   &
                             x_cell_tmp,y_cell_tmp,z_cell_tmp)
-    volume(c1) = volume(c1)                                                    &
+    grid % vol(c1) = grid % vol(c1)                                            &
                + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),            &
                             local_x_node(2),local_y_node(2),local_z_node(2),   &
                             local_x_node(3),local_y_node(3),local_z_node(3),   &
                             x_cell_tmp,y_cell_tmp,z_cell_tmp)
     if(grid % faces_n_nodes(s) == 4) then
-      volume(c1) = volume(c1)                                                  &
+      grid % vol(c1) = grid % vol(c1)                                          &
                  + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
                               local_x_node(3),local_y_node(3),local_z_node(3), &
                               local_x_node(4),local_y_node(4),local_z_node(4), &
                               x_cell_tmp,y_cell_tmp,z_cell_tmp)
-      volume(c1) = volume(c1)                                                  &
+      grid % vol(c1) = grid % vol(c1)                                          &
                  + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
                               local_x_node(4),local_y_node(4),local_z_node(4), &
                               local_x_node(1),local_y_node(1),local_z_node(1), &
                               x_cell_tmp,y_cell_tmp,z_cell_tmp)
     else if(grid % faces_n_nodes(s) == 3) then
-      volume(c1) = volume(c1)                                                  &
+      grid % vol(c1) = grid % vol(c1)                                          &
                  + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
                               local_x_node(3),local_y_node(3),local_z_node(3), &
                               local_x_node(1),local_y_node(1),local_z_node(1), &
@@ -466,29 +466,29 @@
       z_cell_tmp = grid % zc(c2) + grid % dz(s)
       dsc2=Distance(x_cell_tmp,   y_cell_tmp,   z_cell_tmp,    &
                     grid % xf(s), grid % yf(s), grid % zf(s)) 
-      volume(c2) = volume(c2)                                                  &
+      grid % vol(c2) = grid % vol(c2)                                          &
                  - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
                               local_x_node(1),local_y_node(1),local_z_node(1), &
                               local_x_node(2),local_y_node(2),local_z_node(2), &
                               x_cell_tmp,y_cell_tmp,z_cell_tmp)
-      volume(c2) = volume(c2)                                                  &
+      grid % vol(c2) = grid % vol(c2)                                          &
                  - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
                               local_x_node(2),local_y_node(2),local_z_node(2), &
                               local_x_node(3),local_y_node(3),local_z_node(3), &
                               x_cell_tmp,y_cell_tmp,z_cell_tmp)
       if(grid % faces_n_nodes(s) == 4) then
-        volume(c2) = volume(c2)                                            &
+        grid % vol(c2) = grid % vol(c2)                                    &
                    - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),    &
                          local_x_node(3),local_y_node(3),local_z_node(3),  &
                          local_x_node(4),local_y_node(4),local_z_node(4),  &
                          x_cell_tmp,y_cell_tmp,z_cell_tmp)
-        volume(c2) = volume(c2)                                            &
+        grid % vol(c2) = grid % vol(c2)                                    &
                    - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),    &
                          local_x_node(4),local_y_node(4),local_z_node(4),  &
                          local_x_node(1),local_y_node(1),local_z_node(1),  &
                          x_cell_tmp,y_cell_tmp,z_cell_tmp)
       else if(grid % faces_n_nodes(s) == 3) then
-        volume(c2) = volume(c2)                                            &
+        grid % vol(c2) = grid % vol(c2)                                    &
                    - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),    &
                          local_x_node(3),local_y_node(3),local_z_node(3),  &
                          local_x_node(1),local_y_node(1),local_z_node(1),  &

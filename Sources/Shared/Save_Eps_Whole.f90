@@ -168,9 +168,9 @@
 
   do s=1,NS+NSsh0
     indx(s) = s
-    work(s)  = Distance(xk,yk,zk,xsp(s),ysp(s),zsp(s))
+    work(s) = Distance(xk, yk, zk, grid % xf(s), grid % yf(s), grid % zf(s))
   end do
-  call Sort_Real_By_Index(work,indx,NS+NSsh0,-2)
+  call Sort_Real_By_Index(work, indx, NS+NSsh0, -2)
 
   do s0=1,NS+NSsh0
     s=indx(s0)

@@ -143,10 +143,6 @@
   !   => depends on: x_node,y_node,z_node               !
   !   <= gives:      Sx,Sy,Sz,xsp,yzp,zsp               !
   !-----------------------------------------------------!
-  allocate(xsp(NS+max(NC,NBC))); xsp=0.0
-  allocate(ysp(NS+max(NC,NBC))); ysp=0.0
-  allocate(zsp(NS+max(NC,NBC))); zsp=0.0
-
   do s=1,NS
     do n=1,grid % faces_n_nodes(s)    ! for quadrilateral an triangular faces
       xt(n)=grid % xn(grid % faces_n(n,s))
@@ -185,13 +181,13 @@
 
     ! Barycenters
     if(grid % faces_n_nodes(s) == 4) then  
-      xsp(s) = (xt(1)+xt(2)+xt(3)+xt(4))/4.0
-      ysp(s) = (yt(1)+yt(2)+yt(3)+yt(4))/4.0
-      zsp(s) = (zt(1)+zt(2)+zt(3)+zt(4))/4.0
+      grid % xf(s) = (xt(1)+xt(2)+xt(3)+xt(4))/4.0
+      grid % yf(s) = (yt(1)+yt(2)+yt(3)+yt(4))/4.0
+      grid % zf(s) = (zt(1)+zt(2)+zt(3)+zt(4))/4.0
     else if(grid % faces_n_nodes(s) == 3) then  
-      xsp(s) = (xt(1)+xt(2)+xt(3))/3.0
-      ysp(s) = (yt(1)+yt(2)+yt(3))/3.0
-      zsp(s) = (zt(1)+zt(2)+zt(3))/3.0
+      grid % xf(s) = (xt(1)+xt(2)+xt(3))/3.0
+      grid % yf(s) = (yt(1)+yt(2)+yt(3))/3.0
+      grid % zf(s) = (zt(1)+zt(2)+zt(3))/3.0
     end if 
 
   end do ! through sides
@@ -216,19 +212,21 @@
     c1=SideC(1,s)
     c2=SideC(2,s)
 
-    SurTot = sqrt(grid % sx(s)*grid % sx(s)+grid % sy(s)*grid % sy(s)+grid % sz(s)*grid % sz(s))
+    SurTot = sqrt(  grid % sx(s)*grid % sx(s)  &
+                  + grid % sy(s)*grid % sy(s)  &
+                  + grid % sz(s)*grid % sz(s) )
 
     if(c2  < 0) then
-      t = (   grid % sx(s)*(xsp(s)-grid % xc(c1))                               &
-            + grid % sy(s)*(ysp(s)-grid % yc(c1))                               &
-            + grid % sz(s)*(zsp(s)-grid % zc(c1)) ) / SurTot
+      t = (   grid % sx(s)*(grid % xf(s) - grid % xc(c1))        &
+            + grid % sy(s)*(grid % yf(s) - grid % yc(c1))        &
+            + grid % sz(s)*(grid % zf(s) - grid % zc(c1)) ) / SurTot
       grid % xc(c2) = grid % xc(c1) + grid % sx(s)*t / SurTot
       grid % yc(c2) = grid % yc(c1) + grid % sy(s)*t / SurTot
       grid % zc(c2) = grid % zc(c1) + grid % sz(s)*t / SurTot
       if(bou_cen == 1) then
-        grid % xc(c2) = xsp(s)
-        grid % yc(c2) = ysp(s)
-        grid % zc(c2) = zsp(s)
+        grid % xc(c2) = grid % xf(s)
+        grid % yc(c2) = grid % yf(s)
+        grid % zc(c2) = grid % zf(s)
       end if
     endif 
   end do ! through sides
@@ -377,19 +375,19 @@
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
           if( Approx(angle, 0.0, 1.e-6) ) then
-            xspr(s) = xsp(s)  
-            yspr(s) = ysp(s)  
-            zspr(s) = zsp(s)  
+            xspr(s) = grid % xf(s)  
+            yspr(s) = grid % yf(s)  
+            zspr(s) = grid % zf(s)  
           else 
             if(rot_dir==3) then
-              xspr(s) = xsp(s)*cos(angle) + ysp(s)*sin(angle) 
-              yspr(s) =-xsp(s)*sin(angle) + ysp(s)*cos(angle)
+              xspr(s) = grid % xf(s)*cos(angle) + grid % yf(s)*sin(angle) 
+              yspr(s) =-grid % xf(s)*sin(angle) + grid % yf(s)*cos(angle)
             else if(rot_dir==2) then
-              xspr(s) = xsp(s)*cos(angle) + zsp(s)*sin(angle) 
-              zspr(s) =-xsp(s)*sin(angle) + zsp(s)*cos(angle)
+              xspr(s) = grid % xf(s)*cos(angle) + grid % zf(s)*sin(angle) 
+              zspr(s) =-grid % xf(s)*sin(angle) + grid % zf(s)*cos(angle)
             else if(rot_dir==1) then
-              yspr(s) = ysp(s)*cos(angle) + zsp(s)*sin(angle) 
-              zspr(s) =-ysp(s)*sin(angle) + zsp(s)*cos(angle)
+              yspr(s) = grid % yf(s)*cos(angle) + grid % zf(s)*sin(angle) 
+              zspr(s) =-grid % yf(s)*sin(angle) + grid % zf(s)*cos(angle)
             end if
           end if
         end if
@@ -415,9 +413,15 @@
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
           c = c + 1
-          if(dir==1) b_coor(c) = xsp(s)*1000000.0 + ysp(s)*10000.0 + zsp(s)
-          if(dir==2) b_coor(c) = ysp(s)*1000000.0 + xsp(s)*10000.0 + zsp(s)
-          if(dir==3) b_coor(c) = zsp(s)*1000000.0 + xsp(s)*10000.0 + ysp(s)
+          if(dir==1) b_coor(c) = grid % xf(s)*1000000.0   &
+                               + grid % yf(s)*10000.0     &
+                               + grid % zf(s)
+          if(dir==2) b_coor(c) = grid % yf(s)*1000000.0   &
+                               + grid % xf(s)*10000.0     &
+                               + grid % zf(s)
+          if(dir==3) b_coor(c) = grid % zf(s)*1000000.0   & 
+                               + grid % xf(s)*10000.0     &
+                               + grid % yf(s)
           b_face(c) = s
         end if
       end if
@@ -437,7 +441,6 @@
     
 10 continue
 
-
     nnn = 0
     hh = 0 
     mm = 0 
@@ -450,7 +453,9 @@
       c2 = SideC(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
-          Det = (p_i*(xsp(s)) + p_j*(ysp(s)) + p_k*(zsp(s)))  &
+          Det = (  p_i*(grid % xf(s))  &
+                 + p_j*(grid % yf(s))  &
+                 + p_k*(grid % zf(s)))  &
               / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
           per_min = min(per_min, Det)          
           per_max = max(per_max, Det)          
@@ -465,7 +470,9 @@
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
           c = c + 1
-          Det = (p_i*(xsp(s)) + p_j*(ysp(s)) + p_k*(zsp(s)))  &
+          Det = (  p_i*(grid % xf(s))   &
+                 + p_j*(grid % yf(s))   &
+                 + p_k*(grid % zf(s)))  &
               / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
 
           if(dir==1) then
@@ -477,11 +484,13 @@
                 cc2 = SideC(2,ss)
                 if(cc2 < 0) then
                   if(BCmark(cc2) == type_per) then 
-                    Det = (p_i*(xsp(ss)) + p_j*(ysp(ss)) + p_k*(zsp(ss)))  &
+                    Det = (  p_i * (grid % xf(ss))   &
+                           + p_j * (grid % yf(ss))   &
+                           + p_k * (grid % zf(ss)))  &
                         / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
                     if((Det) > (per_max)) then
-                      if((abs(zsp(ss)-zsp(s))) < Tol.and.         &
-                         (abs(yspr(ss)-yspr(s))) < Tol) then
+                      if((abs(grid % zf(ss)  - grid % zf(s))) < Tol .and.   &
+                         (abs(yspr(ss) - yspr(s))) < Tol) then
                          mm = hh + c_max/2 
                          b_coor(mm) = mm
                          b_face(mm) = ss
@@ -504,17 +513,22 @@
                 cc2 = SideC(2,ss)
                 if(cc2 < 0) then
                   if(BCmark(cc2) == type_per) then 
-                    Det = (p_i*(xsp(ss)) + p_j*(ysp(ss)) + p_k*(zsp(ss))) &
+
+                    Det = (  p_i * (grid % xf(ss))  &
+                           + p_j * (grid % yf(ss))  &
+                           + p_k * (grid % zf(ss))) &
                         / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
+
                     if((Det) > (per_max)) then
-                      if(abs((zsp(ss)-zsp(s))) < Tol.and.         &
-                        abs((xspr(ss)-xspr(s))) < Tol) then
+                      if(abs((grid % zf(ss)  - grid % zf(s))) < Tol .and.  &
+                         abs((xspr(ss) - xspr(s))) < Tol) then
                         mm = hh + c_max/2 
                         b_coor(mm) = mm
                         b_face(mm) = ss
                         nnn = nnn + 1
                       end if 
                     end if 
+
                   end if
                 end if  
               end do
@@ -530,11 +544,17 @@
                 cc2 = SideC(2,ss)
                 if(cc2 < 0) then
                   if(BCmark(cc2) == type_per) then
-                    Det = (p_i*(xsp(ss)) + p_j*(ysp(ss)) + p_k*(zsp(ss)))  &
+                    Det = (  p_i*(grid % xf(ss))  &
+                           + p_j*(grid % yf(ss))  &
+                           + p_k*(grid % zf(ss)))  &
                         / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
                     if((Det) > (per_max)) then
-                      if(abs((xsp(ss)-xsp(s))) < Tol.and.         &
-                        abs((ysp(ss)-ysp(s))) < Tol) then
+                      write(*,*) '# Warning!  Potentially a bug in ...'
+                      write(*,*) '# ... Compute_Geometry, line 557'
+                      write(*,*) '# Contact developers, and if you ... '
+                      write(*,*) '# ... are one of them, fix it!'                         
+                      if(abs((grid % xf(ss) - grid % xf(s))) < Tol .and.  &
+                         abs((grid % yf(ss) - grid % yf(s))) < Tol) then
                         mm = hh + c_max/2 
                         b_coor(mm) = mm
                         b_face(mm) = ss
@@ -615,9 +635,9 @@
         if(grid % faces_n_nodes(s) == 4) then
 
           ! Coordinates of the shadow face
-          xs2=xsp(SideC(0,s))
-          ys2=ysp(SideC(0,s))
-          zs2=zsp(SideC(0,s))
+          xs2=grid % xf(SideC(0,s))
+          ys2=grid % yf(SideC(0,s))
+          zs2=grid % zf(SideC(0,s))
 
           ! Add shadow faces
           grid % faces_n_nodes(NS+NSsh-1) = 4
@@ -630,9 +650,9 @@
           grid % sx(NS+NSsh-1) = grid % sx(s)
           grid % sy(NS+NSsh-1) = grid % sy(s)
           grid % sz(NS+NSsh-1) = grid % sz(s)
-          xsp(NS+NSsh-1) = xsp(s)
-          ysp(NS+NSsh-1) = ysp(s)
-          zsp(NS+NSsh-1) = zsp(s)
+          grid % xf(NS+NSsh-1) = grid % xf(s)
+          grid % yf(NS+NSsh-1) = grid % yf(s)
+          grid % zf(NS+NSsh-1) = grid % zf(s)
           grid % faces_n_nodes(NS+NSsh) = 4
           SideC(1,NS+NSsh) = c2
           SideC(2,NS+NSsh) = -NbC-1
@@ -643,15 +663,15 @@
           grid % sx(NS+NSsh) = grid % sx(s)
           grid % sy(NS+NSsh) = grid % sy(s)
           grid % sz(NS+NSsh) = grid % sz(s)
-          xsp(NS+NSsh) = xs2
-          ysp(NS+NSsh) = ys2
-          zsp(NS+NSsh) = zs2
+          grid % xf(NS+NSsh) = xs2
+          grid % yf(NS+NSsh) = ys2
+          grid % zf(NS+NSsh) = zs2
         else if(grid % faces_n_nodes(s) == 3) then
 
           ! Coordinates of the shadow face
-          xs2=xsp(SideC(0,s))
-          ys2=ysp(SideC(0,s))
-          zs2=zsp(SideC(0,s))
+          xs2=grid % xf(SideC(0,s))
+          ys2=grid % yf(SideC(0,s))
+          zs2=grid % zf(SideC(0,s))
  
           ! Add shadow faces
           grid % faces_n_nodes(NS+NSsh-1) = 3
@@ -663,9 +683,9 @@
           grid % sx(NS+NSsh-1) = grid % sx(s)
           grid % sy(NS+NSsh-1) = grid % sy(s)
           grid % sz(NS+NSsh-1) = grid % sz(s)
-          xsp(NS+NSsh-1) = xsp(s)
-          ysp(NS+NSsh-1) = ysp(s)
-          zsp(NS+NSsh-1) = zsp(s)
+          grid % xf(NS+NSsh-1) = grid % xf(s)
+          grid % yf(NS+NSsh-1) = grid % yf(s)
+          grid % zf(NS+NSsh-1) = grid % zf(s)
           grid % faces_n_nodes(NS+NSsh) = 3
           SideC(1,NS+NSsh) = c2
           SideC(2,NS+NSsh) = -NbC-1
@@ -675,14 +695,14 @@
           grid % sx(NS+NSsh) = grid % sx(s)
           grid % sy(NS+NSsh) = grid % sy(s)
           grid % sz(NS+NSsh) = grid % sz(s)
-          xsp(NS+NSsh) = xs2
-          ysp(NS+NSsh) = ys2
-          zsp(NS+NSsh) = zs2
+          grid % xf(NS+NSsh) = xs2
+          grid % yf(NS+NSsh) = ys2
+          grid % zf(NS+NSsh) = zs2
         end if
 
-        grid % dx(s)=xsp(s)-xs2  !
-        grid % dy(s)=ysp(s)-ys2  ! later: xc2 = xc2 + Dx  
-        grid % dz(s)=zsp(s)-zs2  !
+        grid % dx(s) = grid % xf(s) - xs2  !
+        grid % dy(s) = grid % yf(s) - ys2  ! later: xc2 = xc2 + Dx  
+        grid % dz(s) = grid % zf(s) - zs2  !
 
       endif !  S*(c2-c1) < 0.0
     end if  !  c2 > 0
@@ -723,9 +743,9 @@
       grid % faces_n(2,NewS(s)) = grid % faces_n(2,s)
       grid % faces_n(3,NewS(s)) = grid % faces_n(3,s)
       grid % faces_n(4,NewS(s)) = grid % faces_n(4,s)
-      xsp(NewS(s)) = xsp(s)
-      ysp(NewS(s)) = ysp(s)
-      zsp(NewS(s)) = zsp(s)
+      grid % xf(NewS(s)) = grid % xf(s)
+      grid % yf(NewS(s)) = grid % yf(s)
+      grid % zf(NewS(s)) = grid % zf(s)
       grid % sx(NewS(s)) = grid % sx(s)
       grid % sy(NewS(s)) = grid % sy(s)
       grid % sz(NewS(s)) = grid % sz(s)
@@ -757,13 +777,13 @@
     c1=SideC(1,s)
     c2=SideC(2,s)   
 
-    volume(c1) = volume(c1) + xsp(s)*grid % sx(s)  &
-                            + ysp(s)*grid % sy(s)  &
-                            + zsp(s)*grid % sz(s)
+    volume(c1) = volume(c1) + grid % xf(s) * grid % sx(s)  &
+                            + grid % yf(s) * grid % sy(s)  &
+                            + grid % zf(s) * grid % sz(s)
     if(c2 > 0) then
-      volume(c2) = volume(c2) - (xsp(s)-grid % dx(s))*grid % sx(s)  &
-                              - (ysp(s)-grid % dy(s))*grid % sy(s)  &
-                              - (zsp(s)-grid % dz(s))*grid % sz(s)
+      volume(c2) = volume(c2) - (grid % xf(s) - grid % dx(s)) * grid % sx(s)  &
+                              - (grid % yf(s) - grid % dy(s)) * grid % sy(s)  &
+                              - (grid % zf(s) - grid % dz(s)) * grid % sz(s)
     end if
   end do
   volume = volume/3.0
@@ -872,13 +892,15 @@
     xc1  = grid % xc(c1)
     yc1  = grid % yc(c1)
     zc1  = grid % zc(c1)
-    dsc1 = Distance(xc1, yc1, zc1, xsp(s), ysp(s), zsp(s))
+    dsc1 = Distance(xc1, yc1, zc1,   &
+                    grid % xf(s), grid % yf(s), grid % zf(s))
 
     ! Second cell (pls. check if xsi=xc on the boundary)
     xc2  = grid % xc(c2) + grid % dx(s)
     yc2  = grid % yc(c2) + grid % dy(s)
     zc2  = grid % zc(c2) + grid % dz(s)
-    dsc2 = Distance(xc2, yc2, zc2, xsp(s), ysp(s), zsp(s))
+    dsc2 = Distance(xc2, yc2, zc2,   &
+                    grid % xf(s), grid % yf(s), grid % zf(s))
 
     ! Interpolation factor
     f(s) = dsc2 / (dsc1+dsc2)   ! not checked

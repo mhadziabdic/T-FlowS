@@ -86,9 +86,9 @@
     if(c2 > 0 .or. c2 < 0 .and. TypeBC(c2) == BUFFER) then  
       if( StateMat(material(c1))==FLUID .and. &
           StateMat(material(c2))==SOLID ) then  
-        xs = xsp(s) 
-        ys = ysp(s) 
-        zs = zsp(s) 
+        xs = grid % xf(s) 
+        ys = grid % yf(s) 
+        zs = grid % zf(s) 
         Ps(s) = (   phi(c1)                 +     &
                     phi_x(c1) * (xs-grid % xc(c1)) +     &
                     phi_y(c1) * (ys-grid % yc(c1)) +     &
@@ -99,9 +99,9 @@
       end if
       if( StateMat(material(c1))==SOLID .and. &
           StateMat(material(c2))==FLUID ) then  
-        xs = xsp(s) 
-        ys = ysp(s) 
-        zs = zsp(s) 
+        xs = grid % xf(s) 
+        ys = grid % yf(s) 
+        zs = grid % zf(s) 
         Ps(s) = (   phi(c2)                 +     &
                     phi_x(c2) * (xs-grid % xc(c2)) +     &
                     phi_y(c2) * (ys-grid % yc(c2)) +     &

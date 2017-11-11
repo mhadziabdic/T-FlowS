@@ -237,16 +237,16 @@
 
       ! Barycenters
       if(grid % faces_n_nodes(s) == 4) then  
-        xsp(s) = (   local_x_node(1)+local_x_node(2)        &
-                   + local_x_node(3)+local_x_node(4) )/4.0
-        ysp(s) = (   local_y_node(1)+local_y_node(2)        &
-                   + local_y_node(3)+local_y_node(4) )/4.0
-        zsp(s) = (   local_z_node(1)+local_z_node(2)        &
-                   + local_z_node(3)+local_z_node(4) )/4.0
+        grid % xf(s) = (   local_x_node(1)+local_x_node(2)          &
+                         + local_x_node(3)+local_x_node(4) ) / 4.0
+        grid % yf(s) = (   local_y_node(1)+local_y_node(2)          &
+                         + local_y_node(3)+local_y_node(4) ) / 4.0
+        grid % zf(s) = (   local_z_node(1)+local_z_node(2)          &
+                         + local_z_node(3)+local_z_node(4) ) / 4.0
       else if(grid % faces_n_nodes(s) == 3) then  
-        xsp(s) = (local_x_node(1)+local_x_node(2)+local_x_node(3))/3.0
-        ysp(s) = (local_y_node(1)+local_y_node(2)+local_y_node(3))/3.0
-        zsp(s) = (local_z_node(1)+local_z_node(2)+local_z_node(3))/3.0
+        grid % xf(s) = (local_x_node(1)+local_x_node(2)+local_x_node(3)) / 3.0
+        grid % yf(s) = (local_y_node(1)+local_y_node(2)+local_y_node(3)) / 3.0
+        grid % zf(s) = (local_z_node(1)+local_z_node(2)+local_z_node(3)) / 3.0
       end if 
 
     end do ! through sides
@@ -266,9 +266,9 @@
                       grid % sz(s)*grid % sz(s))
 
       if(c2  < 0) then
-        t = (   grid % sx(s) * (xsp(s)-grid % xc(c1))           &
-              + grid % sy(s) * (ysp(s)-grid % yc(c1))           &
-              + grid % sz(s) * (zsp(s)-grid % zc(c1)) ) / tot_surf
+        t = (   grid % sx(s) * (grid % xf(s)-grid % xc(c1))           &
+              + grid % sy(s) * (grid % yf(s)-grid % yc(c1))           &
+              + grid % sz(s) * (grid % zf(s)-grid % zc(c1)) ) / tot_surf
         grid % xc(c2) = grid % xc(c1) + grid % sx(s)*t / tot_surf
         grid % yc(c2) = grid % yc(c1) + grid % sy(s)*t / tot_surf
         grid % zc(c2) = grid % zc(c1) + grid % sz(s)*t / tot_surf
@@ -333,9 +333,9 @@
             grid % sx(NS+NSsh-1) = grid % sx(s)
             grid % sy(NS+NSsh-1) = grid % sy(s)
             grid % sz(NS+NSsh-1) = grid % sz(s)
-            xsp(NS+NSsh-1) = xsp(s)
-            ysp(NS+NSsh-1) = ysp(s)
-            zsp(NS+NSsh-1) = zsp(s)
+            grid % xf(NS+NSsh-1) = grid % xf(s)
+            grid % yf(NS+NSsh-1) = grid % yf(s)
+            grid % zf(NS+NSsh-1) = grid % zf(s)
             grid % faces_n_nodes(NS+NSsh) = 4
             SideC(1,NS+NSsh) = c2 
             SideC(2,NS+NSsh) = -NbC-1
@@ -346,9 +346,9 @@
             grid % sx(NS+NSsh) = grid % sx(s)
             grid % sy(NS+NSsh) = grid % sy(s)
             grid % sz(NS+NSsh) = grid % sz(s)
-            xsp(NS+NSsh) = xs2
-            ysp(NS+NSsh) = ys2
-            zsp(NS+NSsh) = zs2
+            grid % xf(NS+NSsh) = xs2
+            grid % yf(NS+NSsh) = ys2
+            grid % zf(NS+NSsh) = zs2
           else if(grid % faces_n_nodes(s) == 3) then  
 
             ! Coordinates of the shadow face
@@ -374,9 +374,9 @@
             grid % sx(NS+NSsh-1) = grid % sx(s)
             grid % sy(NS+NSsh-1) = grid % sy(s)
             grid % sz(NS+NSsh-1) = grid % sz(s)
-            xsp(NS+NSsh-1) = xsp(s)
-            ysp(NS+NSsh-1) = ysp(s)
-            zsp(NS+NSsh-1) = zsp(s)
+            grid % xf(NS+NSsh-1) = grid % xf(s)
+            grid % yf(NS+NSsh-1) = grid % yf(s)
+            grid % zf(NS+NSsh-1) = grid % zf(s)
             grid % faces_n_nodes(NS+NSsh) = 3
             SideC(1,NS+NSsh) = c2 
             SideC(2,NS+NSsh) = -NbC-1
@@ -386,14 +386,14 @@
             grid % sx(NS+NSsh) = grid % sx(s)
             grid % sy(NS+NSsh) = grid % sy(s)
             grid % sz(NS+NSsh) = grid % sz(s)
-            xsp(NS+NSsh) = xs2
-            ysp(NS+NSsh) = ys2
-            zsp(NS+NSsh) = zs2
+            grid % xf(NS+NSsh) = xs2
+            grid % yf(NS+NSsh) = ys2
+            grid % zf(NS+NSsh) = zs2
           end if 
 
-          grid % dx(s)=xsp(s)-xs2  !------------------------!
-          grid % dy(s)=ysp(s)-ys2  ! later: xc2 = xc2 + Dx  !
-          grid % dz(s)=zsp(s)-zs2  !------------------------!
+          grid % dx(s)=grid % xf(s)-xs2  !------------------------!
+          grid % dy(s)=grid % yf(s)-ys2  ! later: xc2 = xc2 + Dx  !
+          grid % dz(s)=grid % zf(s)-zs2  !------------------------!
 
         endif !  S*(c2-c1) < 0.0
       end if  !  c2 > 0
@@ -428,29 +428,35 @@
     x_cell_tmp = grid % xc(c1)
     y_cell_tmp = grid % yc(c1)
     z_cell_tmp = grid % zc(c1)
-    dsc1=Distance(x_cell_tmp,y_cell_tmp,z_cell_tmp,xsp(s), ysp(s), zsp(s)) 
-    volume(c1)=volume(c1) + Tet_Volume(xsp(s),ysp(s),zsp(s),            &
-                   local_x_node(1),local_y_node(1),local_z_node(1),     &
-                   local_x_node(2),local_y_node(2),local_z_node(2),     &
-                   x_cell_tmp,y_cell_tmp,z_cell_tmp)
-    volume(c1)=volume(c1) + Tet_Volume(xsp(s),ysp(s),zsp(s),            &
-                   local_x_node(2),local_y_node(2),local_z_node(2),     &
-                   local_x_node(3),local_y_node(3),local_z_node(3),     &
-                   x_cell_tmp,y_cell_tmp,z_cell_tmp)
+    dsc1 = Distance(x_cell_tmp,   y_cell_tmp,   z_cell_tmp,    &
+                    grid % xf(s), grid % yf(s), grid % zf(s)) 
+    volume(c1) = volume(c1)                                                    &
+               + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),            &
+                            local_x_node(1),local_y_node(1),local_z_node(1),   &
+                            local_x_node(2),local_y_node(2),local_z_node(2),   &
+                            x_cell_tmp,y_cell_tmp,z_cell_tmp)
+    volume(c1) = volume(c1)                                                    &
+               + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),            &
+                            local_x_node(2),local_y_node(2),local_z_node(2),   &
+                            local_x_node(3),local_y_node(3),local_z_node(3),   &
+                            x_cell_tmp,y_cell_tmp,z_cell_tmp)
     if(grid % faces_n_nodes(s) == 4) then
-      volume(c1)=volume(c1) + Tet_Volume(xsp(s),ysp(s),zsp(s),          &
-                     local_x_node(3),local_y_node(3),local_z_node(3),   &
-                     local_x_node(4),local_y_node(4),local_z_node(4),   &
-                     x_cell_tmp,y_cell_tmp,z_cell_tmp)
-      volume(c1)=volume(c1) + Tet_Volume(xsp(s),ysp(s),zsp(s),          &
-                     local_x_node(4),local_y_node(4),local_z_node(4),   &
-                     local_x_node(1),local_y_node(1),local_z_node(1),   &
-                     x_cell_tmp,y_cell_tmp,z_cell_tmp)
+      volume(c1) = volume(c1)                                                  &
+                 + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
+                              local_x_node(3),local_y_node(3),local_z_node(3), &
+                              local_x_node(4),local_y_node(4),local_z_node(4), &
+                              x_cell_tmp,y_cell_tmp,z_cell_tmp)
+      volume(c1) = volume(c1)                                                  &
+                 + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
+                              local_x_node(4),local_y_node(4),local_z_node(4), &
+                              local_x_node(1),local_y_node(1),local_z_node(1), &
+                              x_cell_tmp,y_cell_tmp,z_cell_tmp)
     else if(grid % faces_n_nodes(s) == 3) then
-      volume(c1)=volume(c1) + Tet_Volume(xsp(s),ysp(s),zsp(s),          &
-                     local_x_node(3),local_y_node(3),local_z_node(3),   &
-                     local_x_node(1),local_y_node(1),local_z_node(1),   &
-                     x_cell_tmp,y_cell_tmp,z_cell_tmp)
+      volume(c1) = volume(c1)                                                  &
+                 + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
+                              local_x_node(3),local_y_node(3),local_z_node(3), &
+                              local_x_node(1),local_y_node(1),local_z_node(1), &
+                              x_cell_tmp,y_cell_tmp,z_cell_tmp)
     end if
 
     ! Second cell
@@ -458,29 +464,35 @@
       x_cell_tmp = grid % xc(c2) + grid % dx(s)
       y_cell_tmp = grid % yc(c2) + grid % dy(s)
       z_cell_tmp = grid % zc(c2) + grid % dz(s)
-      dsc2=Distance(x_cell_tmp,y_cell_tmp,z_cell_tmp,xsp(s), ysp(s), zsp(s)) 
-      volume(c2)=volume(c2) -Tet_Volume(xsp(s),ysp(s),zsp(s),           &
-                     local_x_node(1),local_y_node(1),local_z_node(1),   &
-                     local_x_node(2),local_y_node(2),local_z_node(2),   &
-                     x_cell_tmp,y_cell_tmp,z_cell_tmp)
-      volume(c2)=volume(c2) -Tet_Volume(xsp(s),ysp(s),zsp(s),           &
-                     local_x_node(2),local_y_node(2),local_z_node(2),   &
-                     local_x_node(3),local_y_node(3),local_z_node(3),   &
-                     x_cell_tmp,y_cell_tmp,z_cell_tmp)
+      dsc2=Distance(x_cell_tmp,   y_cell_tmp,   z_cell_tmp,    &
+                    grid % xf(s), grid % yf(s), grid % zf(s)) 
+      volume(c2) = volume(c2)                                                  &
+                 - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
+                              local_x_node(1),local_y_node(1),local_z_node(1), &
+                              local_x_node(2),local_y_node(2),local_z_node(2), &
+                              x_cell_tmp,y_cell_tmp,z_cell_tmp)
+      volume(c2) = volume(c2)                                                  &
+                 - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
+                              local_x_node(2),local_y_node(2),local_z_node(2), &
+                              local_x_node(3),local_y_node(3),local_z_node(3), &
+                              x_cell_tmp,y_cell_tmp,z_cell_tmp)
       if(grid % faces_n_nodes(s) == 4) then
-        volume(c2)=volume(c2) -Tet_Volume(xsp(s),ysp(s),zsp(s),         &
-                       local_x_node(3),local_y_node(3),local_z_node(3), &
-                       local_x_node(4),local_y_node(4),local_z_node(4), &
-                       x_cell_tmp,y_cell_tmp,z_cell_tmp)
-        volume(c2)=volume(c2) -Tet_Volume(xsp(s),ysp(s),zsp(s),         &
-                       local_x_node(4),local_y_node(4),local_z_node(4), &
-                       local_x_node(1),local_y_node(1),local_z_node(1), &
-                       x_cell_tmp,y_cell_tmp,z_cell_tmp)
+        volume(c2) = volume(c2)                                            &
+                   - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),    &
+                         local_x_node(3),local_y_node(3),local_z_node(3),  &
+                         local_x_node(4),local_y_node(4),local_z_node(4),  &
+                         x_cell_tmp,y_cell_tmp,z_cell_tmp)
+        volume(c2) = volume(c2)                                            &
+                   - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),    &
+                         local_x_node(4),local_y_node(4),local_z_node(4),  &
+                         local_x_node(1),local_y_node(1),local_z_node(1),  &
+                         x_cell_tmp,y_cell_tmp,z_cell_tmp)
       else if(grid % faces_n_nodes(s) == 3) then
-        volume(c2)=volume(c2) -Tet_Volume(xsp(s),ysp(s),zsp(s),         &
-                       local_x_node(3),local_y_node(3),local_z_node(3), &
-                       local_x_node(1),local_y_node(1),local_z_node(1), &
-                       x_cell_tmp,y_cell_tmp,z_cell_tmp)
+        volume(c2) = volume(c2)                                            &
+                   - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),    &
+                         local_x_node(3),local_y_node(3),local_z_node(3),  &
+                         local_x_node(1),local_y_node(1),local_z_node(1),  &
+                         x_cell_tmp,y_cell_tmp,z_cell_tmp)
       end if  
     else        
       dsc2=0.0
@@ -525,7 +537,9 @@
             Distance_Squared(grid % xc(c1),  &
                              grid % yc(c1),  &
                              grid % zc(c1),  &
-                             xsp(s),ysp(s),zsp(s)))
+                             grid % xf(s),   &
+                             grid % yf(s),   &
+                             grid % zf(s)))
           end if
         end if 
       end do
@@ -580,13 +594,13 @@
       xc1 = grid % xc(c1)
       yc1 = grid % yc(c1)
       zc1 = grid % zc(c1)
-      dsc1=Distance(xc1, yc1, zc1, xsp(s), ysp(s), zsp(s))
+      dsc1=Distance(xc1, yc1, zc1, grid % xf(s), grid % yf(s), grid % zf(s))
 
       ! Second cell (pls. check if xsi=xc on the boundary)
       xc2 = grid % xc(c2) + grid % dx(s)
       yc2 = grid % yc(c2) + grid % dy(s)
       zc2 = grid % zc(c2) + grid % dz(s)
-      dsc2=Distance(xc2, yc2, zc2, xsp(s), ysp(s), zsp(s))
+      dsc2=Distance(xc2, yc2, zc2, grid % xf(s), grid % yf(s), grid % zf(s))
   
       ! Interpolation factor
       f(s) = dsc2 / (dsc1+dsc2)   ! not checked

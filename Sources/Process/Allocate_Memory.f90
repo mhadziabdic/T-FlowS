@@ -17,9 +17,6 @@
 !==============================================================================!
 
   ! Variables defined in all.h90:
-  allocate (xsp(NS)); xsp=0.0       
-  allocate (ysp(NS)); ysp=0.0       
-  allocate (zsp(NS)); zsp=0.0  
   allocate (volume(-NbC:NC)); volume=0.  
   allocate (delta(-NbC:NC));  delta=0.  
   allocate (WallDs(-NbC:NC)); WallDs=0.       

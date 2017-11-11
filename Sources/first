@@ -108,13 +108,13 @@ else
   if [ $1 = "GNU" ]; then
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Sequential/*.f90 . ; cd ../..
 #   ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
-    ./configure FC=$COMPILER  FCFLAGS='-g -Wall -fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-g -Wall -fcheck=all -fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
 
   # GNU-MPI
   elif [ $1 = "GNU-MPI" ]; then
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Parallel/Double/*.f90 . ; cd ../..
 #   ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
-    ./configure FC=$COMPILER  FCFLAGS='-g -Wall -fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-g -Wall -fcheck=all -fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
 
   # INTEL
   elif [ $1 = "INTEL" ]; then

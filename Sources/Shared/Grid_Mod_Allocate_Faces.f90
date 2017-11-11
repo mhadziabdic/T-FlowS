@@ -21,8 +21,14 @@
   allocate(grid % sx(nf));  grid % sx = 0.0
   allocate(grid % sy(nf));  grid % sy = 0.0
   allocate(grid % sz(nf));  grid % sz = 0.0
+
   allocate(grid % dx(nf));  grid % dx = 0.0
   allocate(grid % dy(nf));  grid % dy = 0.0
   allocate(grid % dz(nf));  grid % dz = 0.0
+
+  ! Face center coordinates
+  allocate(grid % xf(nf));  grid % dx = 0.0
+  allocate(grid % yf(nf));  grid % dy = 0.0
+  allocate(grid % zf(nf));  grid % dz = 0.0
 
   end subroutine

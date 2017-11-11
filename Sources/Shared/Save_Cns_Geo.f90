@@ -294,9 +294,9 @@
       if(var ==  5)  work(count) = grid % dy(s)
       if(var ==  6)  work(count) = grid % dz(s)
       if(var ==  7)  work(count) = f(s)
-      if(var ==  8)  work(count) = xsp(s)
-      if(var ==  9)  work(count) = ysp(s)
-      if(var == 10)  work(count) = zsp(s)
+      if(var ==  8)  work(count) = grid % xf(s)
+      if(var ==  9)  work(count) = grid % yf(s)
+      if(var == 10)  work(count) = grid % zf(s)
     end if 
   end do
 
@@ -316,9 +316,9 @@
             if(var ==  5)  work(count) = grid % dy(s)
             if(var ==  6)  work(count) = grid % dz(s)
             if(var ==  7)  work(count) = f(s)
-            if(var ==  8)  work(count) = xsp(s)
-            if(var ==  9)  work(count) = ysp(s)
-            if(var == 10)  work(count) = zsp(s)
+            if(var ==  8)  work(count) = grid % xf(s)
+            if(var ==  9)  work(count) = grid % yf(s)
+            if(var == 10)  work(count) = grid % zf(s)
           end if  
           if( (proces(c2) == sub) .and. (proces(c1) == subo) ) then 
             count=count+1
@@ -329,9 +329,9 @@
             if(var ==  5)  work(count) = -grid % dy(s)
             if(var ==  6)  work(count) = -grid % dz(s)
             if(var ==  7)  work(count) = 1.0-f(s)
-            if(var ==  8)  work(count) = xsp(s) - grid % dx(s)
-            if(var ==  9)  work(count) = ysp(s) - grid % dy(s)
-            if(var == 10)  work(count) = zsp(s) - grid % dz(s)
+            if(var ==  8)  work(count) = grid % xf(s) - grid % dx(s)
+            if(var ==  9)  work(count) = grid % yf(s) - grid % dy(s)
+            if(var == 10)  work(count) = grid % zf(s) - grid % dz(s)
           end if  
         end if  ! c2 > 0 
       end if    ! I think this is not really necessary 

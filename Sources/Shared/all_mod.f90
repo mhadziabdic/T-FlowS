@@ -15,7 +15,6 @@ module all_mod
   real,allocatable :: delta(:)             ! delta (max(dx,dy,dz))
   real,allocatable :: a1(:)                ! scotti
   real,allocatable :: a2(:)                ! scotti
-  real,allocatable :: xsp(:),ysp(:),zsp(:) ! face coordinates    
   real,allocatable :: WallDs(:), f(:)
 
   !----------------------------------------!

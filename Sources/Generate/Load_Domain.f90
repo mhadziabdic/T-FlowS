@@ -94,12 +94,6 @@
   ! Variables declared in gen_mod.h90:
   allocate (walln(grid % max_n_nodes))
   walln=0
-  allocate (xsp  (grid % max_n_faces))
-  xsp=0
-  allocate (ysp  (grid % max_n_faces))
-  ysp=0
-  allocate (zsp  (grid % max_n_faces))
-  zsp=0
 
   allocate (SideCc(grid % max_n_faces,2))
   SideCc=0 

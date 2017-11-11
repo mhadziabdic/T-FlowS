@@ -49,16 +49,19 @@
     integer, allocatable :: faces_n(:,:)
     integer, allocatable :: faces_c(:,:)
 
+    ! Face surface areas (si) and distances between cells (di)
+    real, allocatable :: sx(:), sy(:), sz(:)
+    real, allocatable :: dx(:), dy(:), dz(:)
+
+    ! Face coordinates 
+    real, allocatable :: xf(:), yf(:), zf(:)
+    
     !-------------------------!
     !  Node-based variables   !
     !-------------------------!
 
     ! Node coordinates
     real, allocatable :: xn(:), yn(:), zn(:)
-    
-    ! Face surface areas (si) and distances between cells (di)
-    real, allocatable :: sx(:), sy(:), sz(:)
-    real, allocatable :: dx(:), dy(:), dz(:)
     
     type(Material_Type),           allocatable :: materials(:)
     type(Boundary_Condition_Type), allocatable :: boundary_conditions(:)

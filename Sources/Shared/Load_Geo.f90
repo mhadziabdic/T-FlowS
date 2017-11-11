@@ -46,9 +46,9 @@
 
   read(9) (f(s), s=1,NS)
 
-  read(9) (xsp(s), s=1,NS)
-  read(9) (ysp(s), s=1,NS)
-  read(9) (zsp(s), s=1,NS)
+  read(9) (grid % xf(s), s=1,NS)
+  read(9) (grid % yf(s), s=1,NS)
+  read(9) (grid % zf(s), s=1,NS)
 
   close(9) 
 

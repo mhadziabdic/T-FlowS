@@ -41,9 +41,6 @@
   write(*,'(A1,I8,A11)') '#', NS,  ' cell faces' 
 
   ! Variables defined in all_mod.h90:
-  allocate (xsp(NS)); xsp=0.0
-  allocate (ysp(NS)); ysp=0.0
-  allocate (zsp(NS)); zsp=0.0
   allocate (volume(-NbC:NC)); volume=0.0
   allocate (delta(-NbC:NC));  delta=0.0
   allocate (WallDs(NS)); WallDs=0.0

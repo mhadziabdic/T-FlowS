@@ -53,12 +53,12 @@
         StateMat(material(c1))==SOLID .and. &  
         StateMat(material(c2))==FLUID ) then   
 
-      Dxc1 = xsp(s)-grid % xc(c1)                     
-      Dyc1 = ysp(s)-grid % yc(c1)                     
-      Dzc1 = zsp(s)-grid % zc(c1)                     
-      Dxc2 = xsp(s)-grid % xc(c2)                     
-      Dyc2 = ysp(s)-grid % yc(c2)                     
-      Dzc2 = zsp(s)-grid % zc(c2)                     
+      Dxc1 = grid % xf(s) - grid % xc(c1)                     
+      Dyc1 = grid % yf(s) - grid % yc(c1)                     
+      Dzc1 = grid % zf(s) - grid % zc(c1)                     
+      Dxc2 = grid % xf(s) - grid % xc(c2)                     
+      Dyc2 = grid % yf(s) - grid % yc(c2)                     
+      Dzc2 = grid % zf(s) - grid % zc(c2)                     
 
       ! Missing parts of the gradient vector
       p1(c1) = CONc(material(c1)) *  &
@@ -105,12 +105,12 @@
       phi_f = (f2 - f1) / (p1(c1) - p2(c2) + TINY)
       phiside(s) = phi_f
 
-      Dxc1 = xsp(s)-grid % xc(c1)                     
-      Dyc1 = ysp(s)-grid % yc(c1)                     
-      Dzc1 = zsp(s)-grid % zc(c1)                     
-      Dxc2 = xsp(s)-grid % xc(c2)                     
-      Dyc2 = ysp(s)-grid % yc(c2)                     
-      Dzc2 = zsp(s)-grid % zc(c2)                     
+      Dxc1 = grid % xf(s) - grid % xc(c1)                     
+      Dyc1 = grid % yf(s) - grid % yc(c1)                     
+      Dzc1 = grid % zf(s) - grid % zc(c1)                     
+      Dxc2 = grid % xf(s) - grid % xc(c2)                     
+      Dyc2 = grid % yf(s) - grid % yc(c2)                     
+      Dzc2 = grid % zf(s) - grid % zc(c2)                     
 
       ! Now update the gradients
       phi_x(c1)=phi_x(c1)+phi_f*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1)

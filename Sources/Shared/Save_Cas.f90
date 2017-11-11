@@ -202,8 +202,10 @@
   do s=1,NSsub
       c1 = SideC(1,s)
       c2 = SideC(2,s)
-      if(c2 > 0 .and. (material(NewC(c1)) /= material(NewC(c2))) ) then
-        NFac = NFac+1 
+      if(c2 > 0) then
+        if( (material(NewC(c1)) /= material(NewC(c2))) ) then
+          NFac = NFac+1 
+        end if
       end if
   end do
   write(*,*) '# Number of cell faces at interface: ', Nfac
@@ -213,20 +215,22 @@
   do s=1,NSsub
       c1 = SideC(1,s)
       c2 = SideC(2,s)
-      if(c2 > 0 .and. (material(NewC(c1)) /= material(NewC(c2))) ) then
-        if(grid % faces_n_nodes(s) == 3) then
-          write(9,'(6Z9)')                 &
-            3, NewN(grid % faces_n(1,s)),  &
-               NewN(grid % faces_n(2,s)),  &
-               NewN(grid % faces_n(3,s)),  &
-               NewC(c1), NewC(c2)
-        else if(grid % faces_n_nodes(s) == 4) then
-          write(9,'(7Z9)')                 &
-            4, NewN(grid % faces_n(1,s)),  &
-               NewN(grid % faces_n(2,s)),  & 
-               NewN(grid % faces_n(3,s)),  &
-               NewN(grid % faces_n(4,s)),  &
-               NewC(c1), NewC(c2)
+      if(c2 > 0) then
+        if( (material(NewC(c1)) /= material(NewC(c2))) ) then
+          if(grid % faces_n_nodes(s) == 3) then
+            write(9,'(6Z9)')                 &
+              3, NewN(grid % faces_n(1,s)),  &
+                 NewN(grid % faces_n(2,s)),  &
+                 NewN(grid % faces_n(3,s)),  &
+                 NewC(c1), NewC(c2)
+          else if(grid % faces_n_nodes(s) == 4) then
+            write(9,'(7Z9)')                 &
+              4, NewN(grid % faces_n(1,s)),  &
+                 NewN(grid % faces_n(2,s)),  & 
+                 NewN(grid % faces_n(3,s)),  &
+                 NewN(grid % faces_n(4,s)),  &
+                 NewC(c1), NewC(c2)
+          end if 
         end if 
       end if
   end do
@@ -237,28 +241,28 @@
   write(9,'(A25)') '(0 "Sides in the domain")'
   write(9,'(A7,Z9,Z9,A6)') '(13 (4 ', NtotFac+1, NSsub-NSsh/2, ' 2 0)('
   do s=1,NSsub
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
-      if(c2 < 0) c2=0
-      if(c2 > 0 .and. (material(NewC(c1)) == material(NewC(c2))) .and. &
-         grid % dx(s) == 0.0 .and.  &
-         grid % dy(s) == 0.0 .and.  &
-         grid % dz(s) == 0.0 ) then
-        if(grid % faces_n_nodes(s) == 3) then
-          write(9,'(6Z9)')                 &
-            3, NewN(grid % faces_n(1,s)),  &
-               NewN(grid % faces_n(2,s)),  &
-               NewN(grid % faces_n(3,s)),  &
-               NewC(c1), NewC(c2)
-        else if(grid % faces_n_nodes(s) == 4) then
-          write(9,'(7Z9)')                 &
-            4, NewN(grid % faces_n(1,s)),  &
-               NewN(grid % faces_n(2,s)),  &
-               NewN(grid % faces_n(3,s)),  &
-               NewN(grid % faces_n(4,s)),  &
-               NewC(c1), NewC(c2)
-        end if
+    c1 = SideC(1,s)
+    c2 = SideC(2,s)
+    if(c2 < 0) c2=0
+    if(c2 > 0 .and. (material(NewC(c1)) == material(NewC(c2))) .and. &
+      grid % dx(s) == 0.0 .and.  &
+      grid % dy(s) == 0.0 .and.  &
+      grid % dz(s) == 0.0 ) then
+      if(grid % faces_n_nodes(s) == 3) then
+        write(9,'(6Z9)')                 &
+          3, NewN(grid % faces_n(1,s)),  &
+             NewN(grid % faces_n(2,s)),  &
+             NewN(grid % faces_n(3,s)),  &
+             NewC(c1), NewC(c2)
+      else if(grid % faces_n_nodes(s) == 4) then
+        write(9,'(7Z9)')                 &
+          4, NewN(grid % faces_n(1,s)),  &
+             NewN(grid % faces_n(2,s)),  &
+             NewN(grid % faces_n(3,s)),  &
+             NewN(grid % faces_n(4,s)),  &
+             NewC(c1), NewC(c2)
       end if
+    end if
   end do
   write(9,'(A2)') '))'
 

@@ -263,7 +263,7 @@
   if(SIMULA == EBM.or.SIMULA==HJ) then
     write(9,'(A99)') '        <DataArray type="Float32" Name="TKE" format="ascii">'
     do c=1,NCsub
-      write(9,*) 0.5*(uu%n(c)+vv%n(c)+ww%n(c)) 
+      write(9,*) Kin%n(c)
     end do  
     write(9,'(A20)') '        </DataArray>'
 
@@ -273,9 +273,35 @@
     end do  
     write(9,'(A20)') '        </DataArray>'
 
+    write(9,'(A99)') '        <DataArray type="Float32" Name="uu" format="ascii">'
+    do c=1,NCsub
+      write(9,*) uu%n(c)
+    end do  
+    write(9,'(A20)') '        </DataArray>'
+
+    write(9,'(A99)') '        <DataArray type="Float32" Name="vv" format="ascii">'
+    do c=1,NCsub
+      write(9,*) vv%n(c)
+    end do  
+    write(9,'(A20)') '        </DataArray>'
+    write(9,'(A99)') '        <DataArray type="Float32" Name="ww" format="ascii">'
+    do c=1,NCsub
+      write(9,*) ww%n(c)
+    end do  
+    write(9,'(A20)') '        </DataArray>'
+    write(9,'(A99)') '        <DataArray type="Float32" Name="uv" format="ascii">'
+    do c=1,NCsub
+      write(9,*) uv%n(c)
+    end do  
+    write(9,'(A20)') '        </DataArray>'
     write(9,'(A99)') '        <DataArray type="Float32" Name="uw" format="ascii">'
     do c=1,NCsub
       write(9,*) uw%n(c)
+    end do  
+    write(9,'(A20)') '        </DataArray>'
+    write(9,'(A99)') '        <DataArray type="Float32" Name="vw" format="ascii">'
+    do c=1,NCsub
+      write(9,*) vw%n(c)
     end do  
     write(9,'(A20)') '        </DataArray>'
   end if    
@@ -427,13 +453,14 @@ call wait
       write(112,*) '        <PDataArray type="Float32" Name="uw"/>'
     end if 
     if(SIMULA == EBM.or.SIMULA==HJ) then
-      write(112,*) '        <PDataArray type="Float32" Name="Viscosity ratio"/>'
       write(112,*) '        <PDataArray type="Float32" Name="TKE"/>'
       write(112,*) '        <PDataArray type="Float32" Name="EPS"/>'
-      if(BUOY==YES) write(112,*) '        <PDataArray type="Float32" Name="tt"/>'
-      if(BUOY==YES) write(112,*) '        <PDataArray type="Float32" Name="ut"/>'
-      if(BUOY==YES) write(112,*) '        <PDataArray type="Float32" Name="vt"/>'
-      if(BUOY==YES) write(112,*) '        <PDataArray type="Float32" Name="wt"/>'
+      write(112,*) '        <PDataArray type="Float32" Name="uu"/>'
+      write(112,*) '        <PDataArray type="Float32" Name="vv"/>'
+      write(112,*) '        <PDataArray type="Float32" Name="ww"/>'
+      write(112,*) '        <PDataArray type="Float32" Name="uv"/>'
+      write(112,*) '        <PDataArray type="Float32" Name="uw"/>'
+      write(112,*) '        <PDataArray type="Float32" Name="vw"/>'
     end if
   end if
  

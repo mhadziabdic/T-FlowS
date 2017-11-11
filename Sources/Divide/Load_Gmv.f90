@@ -13,7 +13,7 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, n, s
+  integer           :: c, n
   character(len=80) :: dum_s, name_in
 !==============================================================================!
 
@@ -41,7 +41,6 @@
   write(*,'(A1,I8,A11)') '#', NS,  ' cell faces' 
 
   ! Variables defined in all_mod.h90:
-  allocate (volume(-NbC:NC)); volume=0.0
   allocate (delta(-NbC:NC));  delta=0.0
   allocate (WallDs(NS)); WallDs=0.0
   allocate (f(NS)); f=0.0

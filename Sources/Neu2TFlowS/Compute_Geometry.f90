@@ -121,8 +121,6 @@
   !   => depends on: x_node,y_node,z_node   !
   !   <= gives:      xc,yc,zc c>0           !
   !-----------------------------------------!
-  allocate(volume(NC)); volume=0.0
-
   do c=1,NC
     do n=1,grid % cells_n_nodes(c)
       grid % xc(c) = grid % xc(c) + grid % xn(grid % cells_n(n,c))  &
@@ -761,7 +759,9 @@
   !-----------------------------------!
   max_dis = 0.0 
   do s=1,NS-NSsh
-    max_dis = max(max_dis, (grid % dx(s)*grid % dx(s)+grid % dy(s)*grid % dy(s)+grid % dz(s)*grid % dz(s)))
+    max_dis = max(max_dis, (  grid % dx(s)*grid % dx(s)  &
+                            + grid % dy(s)*grid % dy(s)  &
+                            + grid % dz(s)*grid % dz(s) ) )
   end do
   write(*,*) '# Maximal distance of periodic boundary is:', sqrt(max_dis)
 
@@ -777,24 +777,27 @@
     c1=SideC(1,s)
     c2=SideC(2,s)   
 
-    volume(c1) = volume(c1) + grid % xf(s) * grid % sx(s)  &
-                            + grid % yf(s) * grid % sy(s)  &
-                            + grid % zf(s) * grid % sz(s)
+    grid % vol(c1) = grid % vol(c1)               &
+                   + grid % xf(s) * grid % sx(s)  &
+                   + grid % yf(s) * grid % sy(s)  &
+                   + grid % zf(s) * grid % sz(s)
+
     if(c2 > 0) then
-      volume(c2) = volume(c2) - (grid % xf(s) - grid % dx(s)) * grid % sx(s)  &
-                              - (grid % yf(s) - grid % dy(s)) * grid % sy(s)  &
-                              - (grid % zf(s) - grid % dz(s)) * grid % sz(s)
+      grid % vol(c2) = grid % vol(c2)                                &
+                     - (grid % xf(s) - grid % dx(s)) * grid % sx(s)  &
+                     - (grid % yf(s) - grid % dy(s)) * grid % sy(s)  &
+                     - (grid % zf(s) - grid % dz(s)) * grid % sz(s)
     end if
   end do
-  volume = volume/3.0
+  grid % vol = grid % vol * ONE_THIRD
   c1 = 0
-  min_vol =  1E+30
-  max_vol = -1E+30
+  min_vol =  HUGE
+  max_vol = -HUGE
   tot_vol = 0.0
   do c=1,NC
-    tot_vol = tot_vol + volume(c)
-    min_vol = min(min_vol, volume(c))
-    max_vol = max(max_vol, volume(c))
+    tot_vol = tot_vol + grid % vol(c)
+    min_vol = min(min_vol, grid % vol(c))
+    max_vol = max(max_vol, grid % vol(c))
   end do
   write(*,*) '# Minimal cell volume is: ', min_vol
   write(*,*) '# Maximal cell volume is: ', max_vol
@@ -809,7 +812,6 @@
  
   deallocate(b_coor)
   deallocate(b_face)
- 
 
   !------------------------------------------!
   !     Calculate delta                      !

@@ -125,7 +125,7 @@
               TauWall(c1) = DENc(material(c1))*kappa*Uf(c1)*Utan    &   
                              /(log((WallDs(c1)+Zo)/Zo))    
               Pk(c1) = TauWall(c1)*Uf(c1)/(kappa*(WallDs(c1)+Zo))
-              Kin%n(c2) = TauWall(c1)/0.09**0.5
+              Kin%n(c2) = TauWall(c1)/sqrt(Cmu)
             end if
             b(c1) = b(c1) + Pk(c1) * volume(c1)
             b(c1) = b(c1) - VISt(c1) * Shear(c1) * Shear(c1) * volume(c1)

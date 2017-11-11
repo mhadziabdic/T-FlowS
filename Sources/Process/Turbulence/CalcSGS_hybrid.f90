@@ -32,14 +32,14 @@
 !                   !
 !===================!
 
-    do c=1,NC
-      lf =  (volume(c)**0.333333)    
-      VISt_sgs(c) = DENc(material(c))    &
-                    * (lf*lf)              &          ! delta^2 
-                    * Cdyn(c)              &          ! Cdynamic   
-                    * Shear(c)      
-    end do
+  do c=1,NC
+    lf =  (volume(c)**ONE_THIRD)    
+    VISt_sgs(c) = DENc(material(c))    &
+                  * (lf*lf)              &          ! delta^2 
+                  * Cdyn(c)              &          ! Cdynamic   
+                  * Shear(c)      
+  end do
 
-    call Exchng(VISt_sgs)
+  call Exchng(VISt_sgs)
 
-  end subroutine CalcSGS_hybrid
+  end subroutine

@@ -25,9 +25,6 @@
   integer :: NNsub, NmaterBC, NNsub_new, NCsub_new
   integer :: off_set_connection
   integer :: i
-  real,allocatable :: vettore (:)         !local vector for postprox
-  real,allocatable :: vettore2 (:)        !local vector for postprox
-  real,allocatable :: vettore3 (:)        !local vector for postprox
   real    :: Nx, Ny, Nz
   real    :: Cs, R, Cmu_mod
   real    :: Stot, lf, UtauL, Uff

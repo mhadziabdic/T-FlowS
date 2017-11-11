@@ -35,9 +35,11 @@ module allp_mod
     SOLID    =    8,             & ! material state: solid
     CMN_FILE =    7                ! T-FlowS command file (T-FlowS.cmn)
 
-  real, parameter ::      & 
-    HUGE = 1.e+30,        &
-    TINY = 1.e-64,        &
-    PI   = 3.14159265359
+  real, parameter ::                   & 
+    HUGE       = 1.e+30,               &
+    TINY       = 1.e-30,               &
+    PI         = 3.14159265359,        &
+    ONE_THIRD  = 0.33333333333333333,  &
+    TWO_THIRDS = 1.0 - ONE_THIRD
 
 end module 

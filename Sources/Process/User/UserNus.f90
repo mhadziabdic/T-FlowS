@@ -207,7 +207,7 @@
             vwp(i)   = vwp(i) + (vw % mean(c)- V % mean(c) * W % mean(c))
             Kinp(i)  = Kinp(i) + Kin % n(c) 
             Epsp(i)  = Epsp(i) + Eps % n(c) 
-            fp(i)    = fp(i) + 1.5 + 0.4/(1.0 + 3.0*(0.41*WallDs(c)/volume(c)**0.33333)**0.5 ) 
+            fp(i)    = fp(i) + 1.5 + 0.4/(1.0 + 3.0*(0.41*WallDs(c)/volume(c)**ONE_THIRD)**0.5 ) 
             if(IsNearWall(c)) then
               Ufric_p(i) = Ufric_p(i) + (VISc * (U % mean(c)**2 + V % mean(c)**2 + W % mean(c)**2)**0.5/WallDs(c))**0.5
             end if 

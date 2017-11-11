@@ -123,7 +123,7 @@
       b(c) = b(c) &
            + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * volume(c)
 
-      Lf = volume(c)**0.33333
+      Lf = volume(c)**ONE_THIRD
 
       ! Negative contribution:
       Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
@@ -133,7 +133,7 @@
 
       Fmu = min(Fmu,1.0)
 
-      Ce2 =  1.5 + 0.4/(1.0 + 2.4*(0.41*WallDs(c)/Lf)**0.66666)
+      Ce2 =  1.5 + 0.4/(1.0 + 2.4*(0.41*WallDs(c)/Lf)**TWO_THIRDS)
 
       A % val(A % dia(c)) = A % val(A % dia(c))            &
                          + (Ce1 + (Ce2 - Ce1) * Fmu )      &

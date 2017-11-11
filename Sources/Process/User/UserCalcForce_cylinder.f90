@@ -128,9 +128,9 @@
 ! cR2 = cNP3 + 2*FLOOR( (cNP3 - cNP2)/3.0 )
 !     endif
 !! going from minimum to zero
-!     if( (ForceMIN*(0.6666 + 0.03)<Fpy).and.(Fpy<ForceMIN*(0.6666 - 0.03)).and.(cPb>cPa).and.(Fpy>cPb)) then
+!     if( (ForceMIN*(TWO_THIRDS + 0.03)<Fpy).and.(Fpy<ForceMIN*(TWO_THIRDS - 0.03)).and.(cPb>cPa).and.(Fpy>cPb)) then
 !       cNPminA = k
-!     elseif( (ForceMIN*(0.3333 + 0.03)<Fpy).and.( Fpy<ForceMIN*(0.3333 - 0.03)).and.(cPb>cPa).and.(Fpy>cPb)) then
+!     elseif( (ForceMIN*(ONE_THIRD + 0.03)<Fpy).and.( Fpy<ForceMIN*(ONE_THIRD - 0.03)).and.(cPb>cPa).and.(Fpy>cPb)) then
 !       cNPminB = k
 !     endif 
 !!! zero lift force
@@ -143,9 +143,9 @@
 !        cNP0b = k
 !      endif 
 !      !! going from zero to maximum
-!      if((-ForceMIN*(0.3333-0.03)<Fpy).and.(Fpy<-ForceMIN*(0.3333+0.03)).and.(cPa<cPb).and.(cPb<Fpy)) then
+!      if((-ForceMIN*(ONE_THIRD-0.03)<Fpy).and.(Fpy<-ForceMIN*(ONE_THIRD+0.03)).and.(cPa<cPb).and.(cPb<Fpy)) then
 !      cNPmaxA = k
-!      elseif((-ForceMIN*(0.6666-0.03)<Fpy).and.(Fpy<-ForceMIN*(0.6666+0.03)).and.(cPa<cPb).and.(cPb<Fpy)) then
+!      elseif((-ForceMIN*(TWO_THIRDS-0.03)<Fpy).and.(Fpy<-ForceMIN*(TWO_THIRDS+0.03)).and.(cPa<cPb).and.(cPb<Fpy)) then
 !      cNPmaxB = k
 !      endif 
 ! endif !mod k, 2

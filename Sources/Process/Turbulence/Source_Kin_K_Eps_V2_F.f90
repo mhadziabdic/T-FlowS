@@ -43,7 +43,7 @@
 
   if(SIMULA == HYB_ZETA) then
     do c=1,NC
-      lf = volume(c)**0.3333
+      lf = volume(c)**ONE_THIRD
       Lsgs  = 0.8*lf
       Lrans = 0.41*WallDs(c)
       ALPHA1 = max(1.0,Lrans/Lsgs)

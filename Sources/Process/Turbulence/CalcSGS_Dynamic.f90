@@ -155,7 +155,7 @@
   call GraPhi(W % filt, 3, Wz,.TRUE.)    ! dW/dz
 
   do c=1,NC
-    Lg  = volume(c)**0.33333    
+    Lg  = volume(c)**ONE_THIRD
     Lf  = 2.0 * Lg
 
     ShearTest(c) = sqrt(2.0*(Ux(c)*Ux(c) + Vy(c)*Vy(c) + Wz(c)*Wz(c) + &

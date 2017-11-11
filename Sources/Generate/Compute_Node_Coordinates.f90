@@ -409,9 +409,9 @@
         do j=1,nj
           do k=1,nk
             n = nn+(k-1)*ni*nj + (j-1)*ni + i
-            call Laplac(dom, grid, b, i, j, k, 0.333, 0.333, 0.334,  &
-                                               0.333, 0.333, 0.334,  &
-                                               0.333, 0.333, 0.334)
+            call Laplac(dom, grid, b, i, j, k, ONE_THIRD, ONE_THIRD, ONE_THIRD,  &
+                                               ONE_THIRD, ONE_THIRD, ONE_THIRD,  &
+                                               ONE_THIRD, ONE_THIRD, ONE_THIRD)
           end do
         end do
       end do

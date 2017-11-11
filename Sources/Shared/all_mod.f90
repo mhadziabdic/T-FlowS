@@ -13,8 +13,6 @@ module all_mod
   !----------------------------------------------------!
   real,allocatable :: volume(:)            ! cell's volume
   real,allocatable :: delta(:)             ! delta (max(dx,dy,dz))
-  real,allocatable :: a1(:)                ! scotti
-  real,allocatable :: a2(:)                ! scotti
   real,allocatable :: WallDs(:), f(:)
 
   !----------------------------------------!
@@ -42,8 +40,6 @@ module all_mod
 
   integer,allocatable :: CopyC(:)        !  might be shorter
   integer,allocatable :: CopyS(:,:)      !  similar to SideC 
-
-  integer,allocatable :: SideC1C2(:,:)   !  similar to SideC 
 
   real, allocatable   :: Dxsp(:,:)       !  similar to SideC 
   real, allocatable   :: Dysp(:,:)       !  similar to SideC 

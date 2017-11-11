@@ -225,9 +225,9 @@
             Wmp(i)   = Wmp(i) + W % n(c)
             Kinp(i)  = Kinp(i) + Kin % n(c) 
             Epsp(i)  = Epsp(i) + Eps % n(c) 
-            uup(i)   = uup(i) + 0.66666*Kin % n(c) - 2.0*VISt(c)*Ux(c) 
-            vvp(i)   = vvp(i) + 0.66666*Kin % n(c) - 2.0*VISt(c)*Vy(c)
-            wwp(i)   = wwp(i) + 0.66666*Kin % n(c) - 2.0*VISt(c)*Wz(c)
+            uup(i)   = uup(i) + TWO_THIRDS * Kin % n(c) - 2.0*VISt(c)*Ux(c) 
+            vvp(i)   = vvp(i) + TWO_THIRDS * Kin % n(c) - 2.0*VISt(c)*Vy(c)
+            wwp(i)   = wwp(i) + TWO_THIRDS * Kin % n(c) - 2.0*VISt(c)*Wz(c)
             uvp(i)   = uvp(i) + VISt(c)*(Uy(c) + Vx(c))
             uwp(i)   = uwp(i) + VISt(c)*(Uz(c) + Wx(c))
             vwp(i)   = vwp(i) + VISt(c)*(Vz(c) + Wy(c))
@@ -309,7 +309,7 @@
             vwp(i)   = vwp(i) + (vw % mean(c)- V % mean(c) * W % mean(c))
             Kinp(i)  = Kinp(i) + Kin % n(c) 
             Epsp(i)  = Epsp(i) + Eps % n(c) 
-            fp(i)    = fp(i) + 1.5 + 0.4/(1.0 + 3.0*(0.41*WallDs(c)/volume(c)**0.33333)**0.5 ) 
+            fp(i)    = fp(i) + 1.5 + 0.4/(1.0 + 3.0*(0.41*WallDs(c)/volume(c)**ONE_THIRD)**0.5 ) 
             if(IsNearWall(c)) then
               Ufric_p(i) = Ufric_p(i) + (VISc * (U % mean(c)**2 + V % mean(c)**2 + W % mean(c)**2)**0.5/WallDs(c))**0.5
             end if 
@@ -637,7 +637,7 @@
     open(3,file=namRes_plus)
     write(3,'(A1,2(A10, F17.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric/VISc
     if(HOT==YES) write(3,'(A1,3(A10, F14.8))') '#', 'abs(Tflux) = ', abs(Tflux), &
-    ' K+ =', abs(Tflux)/Ufric * (VISc/CONc(material(1)))**0.333333, 'Nu max = ', &
+    ' K+ =', abs(Tflux)/Ufric * (VISc/CONc(material(1)))**ONE_THIRD, 'Nu max = ', &
     Numax
     if(SIMULA == DNS) then
       write(3,'(A1,2X,A80)') '#', '1:Xrad, 2:U, 3:V, 4:W, 5:uu, 6:vv, 7:ww, 8:uv, 9:uw, 10:vw, 11:Kin' 

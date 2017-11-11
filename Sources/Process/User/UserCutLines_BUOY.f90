@@ -309,7 +309,7 @@
 
     open(3,file=namRes_plus)
     write(3,'(A1,2(A10, F13.5))') '#', 'Utau = ', Ufric, 'Re_tau = ', Ufric/VISc
-    write(3,'(A1,2(A10, F14.8))') '#', 'Tflux = ', Tflux, ' K+ =', Tflux/Ufric * (VISc/CONc(material(1)))**0.333333
+    write(3,'(A1,2(A10, F14.8))') '#', 'Tflux = ', Tflux, ' K+ =', Tflux/Ufric * (VISc/CONc(material(1)))**ONE_THIRD
     write(3,'(A1,1X,A130)') '#', 'Xrad U V W T (-5) uu vv ww uv uw (-10) &
                              vw Kin Eps v2 f22 (-15) VISratio uT vT wT uTR (-20) &
                              vTR wTR Tnorm sqr(TT)norm (-25)' 

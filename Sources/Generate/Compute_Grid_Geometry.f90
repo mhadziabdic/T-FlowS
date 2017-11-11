@@ -352,17 +352,17 @@
           else if(grid % faces_n_nodes(s) == 3) then  
 
             ! Coordinates of the shadow face
-            xs2=.33333333 * (grid % xn(grid % cells_n(f3n(m,1), c2))  &
-                           + grid % xn(grid % cells_n(f3n(m,2), c2))  &
-                           + grid % xn(grid % cells_n(f3n(m,3), c2)) )
+            xs2 = ONE_THIRD * (grid % xn(grid % cells_n(f3n(m,1), c2))  &
+                             + grid % xn(grid % cells_n(f3n(m,2), c2))  &
+                             + grid % xn(grid % cells_n(f3n(m,3), c2)) )
 
-            ys2=.33333333 * (grid % yn(grid % cells_n(f3n(m,1), c2))  &
-                           + grid % yn(grid % cells_n(f3n(m,2), c2))  &
-                           + grid % yn(grid % cells_n(f3n(m,3), c2)) )
+            ys2 = ONE_THIRD * (grid % yn(grid % cells_n(f3n(m,1), c2))  &
+                             + grid % yn(grid % cells_n(f3n(m,2), c2))  &
+                             + grid % yn(grid % cells_n(f3n(m,3), c2)) )
 
-            zs2=.33333333 * (grid % zn(grid % cells_n(f3n(m,1), c2))  &
-                           + grid % zn(grid % cells_n(f3n(m,2), c2))  &
-                           + grid % zn(grid % cells_n(f3n(m,3), c2)) )
+            zs2 = ONE_THIRD * (grid % zn(grid % cells_n(f3n(m,1), c2))  &
+                             + grid % zn(grid % cells_n(f3n(m,2), c2))  &
+                             + grid % zn(grid % cells_n(f3n(m,3), c2)) )
 
             ! Add shadow faces
             grid % faces_n_nodes(NS+NSsh-1) = 3

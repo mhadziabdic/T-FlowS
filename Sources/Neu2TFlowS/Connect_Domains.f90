@@ -37,8 +37,6 @@
   real              :: xc_12, xc_22
   real              :: yc_12, yc_22
   real              :: zc_12, zc_22
-  real,parameter    :: one3rd = 0.3333333
-  real,parameter    :: two3rd = 0.6666666
   character(len=80) :: answer
 !==============================================================================!
 
@@ -64,7 +62,7 @@
   !-------! 
   do s1=1,NS
     if(mod(s1,100000)==0) then
-      write(*,*) ((one3rd*s1)/(1.0*NS)) * 100, 'Complete'
+      write(*,*) ((ONE_THIRD*s1)/(1.0*NS)) * 100, 'Complete'
     end if
     c11 = SideC(1,s1)
     c12 = SideC(2,s1)
@@ -116,7 +114,7 @@
   !-------! 
   do s1=1,NS
     if(mod(s1,100000)==0) then
-      write(*,*) (one3rd + (one3rd*s1)/(1.0*NS)) * 100.0, 'Complete'
+      write(*,*) (ONE_THIRD + (ONE_THIRD*s1)/(1.0*NS)) * 100.0, 'Complete'
     end if
     c11 = SideC(1,s1)
     c12 = SideC(2,s1)
@@ -168,7 +166,7 @@
   !-------! 
   do s1=1,NS
     if(mod(s1,100000)==0) then
-      write(*,*) (two3rd + (one3rd*s1)/(1.0*NS)) * 100.0, 'Complete'
+      write(*,*) (TWO_THIRDS + (ONE_THIRD*s1)/(1.0*NS)) * 100.0, 'Complete'
     end if
     c11 = SideC(1,s1)
     c12 = SideC(2,s1)

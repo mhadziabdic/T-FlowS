@@ -23,9 +23,6 @@
   allocate (f(NS));  f=0.0  
   allocate (fF(NS)); fF=0.0  
 
-  allocate (a1(-NbC:NC));  a1=0. 
-  allocate (a2(-NbC:NC));  a2=0.  
-
   ! Variables defined in sol.h90:
   call Solvers_Mod_Allocate_Vectors(NbC, NC)
   call Matrix_Mod_Allocate(D, NbC, NC, NS)

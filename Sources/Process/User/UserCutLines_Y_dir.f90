@@ -116,7 +116,7 @@
     else if(SIMULA==ZETA) then
       do c = 1,NC
         PHI1x(c) = (vv % mean(c)- V % mean(c) * V % mean(c)) + &
-        0.66666*Kin%mean(c) - &
+        TWO_THIRDS*Kin%mean(c) - &
         2*CmuD*Kin%mean(c)**2*v_2%mean(c)/Eps%mean(c)*PHI1z(c) 
         PHI2x(c) = (uv % mean(c)- U % mean(c) * V % mean(c)) - &
         CmuD*Kin%mean(c)**2*v_2%mean(c)/Eps%mean(c)*(PHI2z(c)+PHI3x(c))
@@ -146,7 +146,7 @@
 !    else if(SIMULA==ZETA) then
 !      do c = 1,NC
 !        PHI1x(c) = (vv % mean(c)- V % mean(c) * V % mean(c)) + &
-!        0.66666*Kin%mean(c) - &
+!        TWO_THIRDS*Kin%mean(c) - &
 !        2*CmuD*Kin%mean(c)**2*v_2%mean(c)/Eps%mean(c)*PHI1z(c) 
 !        PHI2x(c) = (uv % mean(c)- U % mean(c) * V % mean(c)) - &
 !        CmuD*Kin%mean(c)**2*v_2%mean(c)/Eps%mean(c)*(PHI2z(c)+PHI3x(c))

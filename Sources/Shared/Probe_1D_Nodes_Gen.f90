@@ -14,7 +14,7 @@
 !----------------------------------[Calling]-----------------------------------! 
   include "Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: n_prob, p, c, n
+  integer           :: n_prob, p, n
   real              :: n_p(10000)
   character(len=80) :: name_prob
   character(len=80) :: answer

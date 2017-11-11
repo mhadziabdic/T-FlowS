@@ -247,7 +247,7 @@
   do c=1,NC
     if(NewC(c)  > 0) then
       count=count+1
-      work(count) = volume(c)
+      work(count) = grid % vol(c)
     end if
   end do
   write(9) (work(c), c=1,count) 

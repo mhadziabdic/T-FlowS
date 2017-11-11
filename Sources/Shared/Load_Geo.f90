@@ -31,7 +31,7 @@
   read(9) (grid % yc(c), c=-1,-NBC,-1)
   read(9) (grid % zc(c), c=-1,-NBC,-1) 
 
-  read(9) (volume(c), c=1,NC)
+  read(9) (grid % vol(c), c=1,NC)
   read(9) (delta(c),  c=1,NC)
 
   read(9) (WallDs(c), c=1,NC)

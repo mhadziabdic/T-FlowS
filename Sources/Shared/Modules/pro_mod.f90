@@ -70,6 +70,9 @@ module pro_mod
   ! For convective schemes
   real,allocatable :: PHImax(:), PHImin(:) 
 
+  ! Total dissipation in HJ model
+  real,allocatable :: Eps_tot(:)
+
   ! Velocity components
   type(Unknown) :: U
   type(Unknown) :: V

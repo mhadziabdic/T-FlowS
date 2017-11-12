@@ -298,7 +298,7 @@
     end if
 
     call CalcConvect
-    if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_EBM
+    if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_RSM
 
     
     do ini=1,Nini                   !  FRACTION & SIMPLE  
@@ -476,7 +476,7 @@
         call GraPhi(Eps % n,3,PHIz,.TRUE.)             ! df22/dz
         call CalcStresses(13, Eps, PHIx, PHIy, PHIz) 
 
-        call CalcVISt_EBM
+        call CalcVISt_RSM
       end if                 
 
       if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA) then

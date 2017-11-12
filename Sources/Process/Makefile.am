@@ -18,7 +18,7 @@ Process_SOURCES =	 			\
   CalcShear.f90					\
   CalcStresses.f90				\
   CalcTurb.f90					\
-  CalcVISt_EBM.f90				\
+  CalcVISt_RSM.f90				\
   CalcVISt_KEps.f90				\
   CalcVISt_KEPSV2F.f90				\
   CalcVISt_SPA_ALL.f90				\

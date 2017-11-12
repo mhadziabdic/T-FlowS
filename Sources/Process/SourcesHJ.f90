@@ -53,6 +53,18 @@
     Tsc(c)=  Kin % n(c)/Eps % n(c)
   end do
 
+  call GraPhi(Kin%n,1,VAR6x,.TRUE.)             ! dK/dx
+  call GraPhi(Kin%n,2,VAR6y,.TRUE.)             ! dK/dy
+  call GraPhi(Kin%n,3,VAR6z,.TRUE.)             ! dK/dz
+
+  call GraPhi(VAR6x,1,VAR7x,.TRUE.)             ! dK/dx
+  call GraPhi(VAR6y,2,VAR7y,.TRUE.)             ! dK/dy
+  call GraPhi(VAR6z,3,VAR7z,.TRUE.)             ! dK/dz
+
+  do c = 1, NC
+    Eps_tot(c) = Eps%n(c) + 0.5*VISc*(VAR7x(c)+VAR7y(c)+VAR7z(c))
+  end do
+
 !====================================================================!  
 ! Below is one of versions of HJ model that required much more memory!
 !====================================================================!  
@@ -224,7 +236,7 @@
         Uzy = Uyz
         Uzz = VAR1z(c)
         Diss1(c) = &
-                2.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
+                2.0*0.25*VISc*Kin%n(c)/Eps_tot(c)*&
                (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+&
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+&
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+&
@@ -246,7 +258,7 @@
         Uzy = Uyz
         Uzz = VAR1z(c)
         Diss1(c) = Diss1(c) +&
-                2.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
+                2.0*0.25*VISc*Kin%n(c)/Eps_tot(c)*&
                 (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+&
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+&
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+&
@@ -268,7 +280,7 @@
         Uzy = Uyz
         Uzz = VAR1z(c)
         Diss1(c) = Diss1(c) +&
-                2.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
+                2.0*0.25*VISc*Kin%n(c)/Eps_tot(c)*&
                 (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+&
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+&
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+&
@@ -309,25 +321,25 @@
     a23 = vw % n(c)/Kin % n(c)    
     a32 = a23
     
-   S11 = Ux(c)
-   S22 = Vy(c)
-   S33 = Wz(c)
-   S12 = 0.5*(Uy(c)+Vx(c))
-   S21 = S12
-   S13 = 0.5*(Uz(c)+Wx(c))
-   S31 = S13
-   S23 = 0.5*(Vz(c)+Wy(c))
-   S32 = S23
+    S11 = Ux(c)
+    S22 = Vy(c)
+    S33 = Wz(c)
+    S12 = 0.5*(Uy(c)+Vx(c))
+    S21 = S12
+    S13 = 0.5*(Uz(c)+Wx(c))
+    S31 = S13
+    S23 = 0.5*(Vz(c)+Wy(c))
+    S32 = S23
 
-   V11 = 0.0
-   V22 = 0.0
-   V33 = 0.0
-   V12 = 0.5*(Uy(c)-Vx(c)) - omegaZ
-   V21 = -V12 + omegaZ
-   V13 = 0.5*(Uz(c)-Wx(c)) + omegaY
-   V31 = -V13 - omegaY
-   V23 = 0.5*(Vz(c)-Wy(c)) - omegaX
-   V32 = -V23 + omegaX
+    V11 = 0.0
+    V22 = 0.0
+    V33 = 0.0
+    V12 = 0.5*(Uy(c)-Vx(c)) - omegaZ
+    V21 = -V12 + omegaZ
+    V13 = 0.5*(Uz(c)-Wx(c)) + omegaY
+    V31 = -V13 - omegaY
+    V23 = 0.5*(Vz(c)-Wy(c)) - omegaX
+    V32 = -V23 + omegaX
 
     AA2=(a11**2)+(a22**2)+(a33**2)+2*((a12**2)+(a13**2)+(a23**2))
 
@@ -339,16 +351,6 @@
     AA=max(AA,0.0)
     AA=min(AA,1.0)
  
-    Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+tiny)
-    Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
-    ff2=min((Ret/150)**1.5, 1.0)
-    fd=1.0/(1.0+0.1*Ret)
-    FF1=min(0.6, AA2)
-    CC=2.5*AA*FF1**0.25*ff2
-    C1W=max((1.0-0.7*CC), 0.3)
-    C2W=min(AA,0.3)
-    fw=min((Kin%n(c)**1.5)/(2.5*Eps%n(c)*WallDs(c)),1.4)
-
     uu_nn     = (uu % n(c)*n1*n1+uv % n(c)*n1*n2+uw % n(c)*n1*n3 &
                + uv % n(c)*n2*n1+vv % n(c)*n2*n2+vw % n(c)*n2*n3 &
                + uw % n(c)*n3*n1+vw % n(c)*n3*n2+ww % n(c)*n3*n3)
@@ -358,7 +360,7 @@
  
     EE=AA
     fss=1.0-(AA**0.5*EE**2.0)
-    do icont=1,7
+    do icont=1,6
       Eps11= (1.0 - fss)*r23*Eps %n(c) + fss * uu%n(c)/Kin%n(c) * Eps%n(c)
       Eps22= (1.0 - fss)*r23*Eps %n(c) + fss * vv%n(c)/Kin%n(c) * Eps%n(c)
       Eps33= (1.0 - fss)*r23*Eps %n(c) + fss * ww%n(c)/Kin%n(c) * Eps%n(c)
@@ -391,20 +393,17 @@
       fss=1.0-(AA**0.5*EE**2.0)
     end do
      
-    fss=1.0-(AA**0.5*EE**2.0)
+    Ret= (Kin % n(c)*Kin % n(c))/(VISc*Eps_tot(c)+tiny)
+    Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
     ff2=min((Ret/150)**1.5, 1.0)
     fd=1.0/(1.0+0.1*Ret)
     FF1=min(0.6, AA2)
     CC=2.5*AA*FF1**0.25*ff2
+    CC1=CC+SQRT(AA)*(EE**2)
+    CC2=0.8*SQRT(AA)
     C1W=max((1.0-0.7*CC), 0.3)
     C2W=min(AA,0.3)
-    fw=min((Kin%n(c)**1.5)/(2.5*Eps%n(c)*WallDs(c)),1.4)
-    CC1=CC+(AA**0.5)*(EE**2)
-    CC2=0.8*(AA**0.5)
-    CC3=1.067*(AA**0.5)
-    CC4=0.8*(AA**0.5)
-    CC5=0.8*(AA**0.5)
-    CC1P = max(0.8*AA2,0.5)*CC1
+    fw=min((Kin%n(c)**1.5)/(2.5*Eps_tot(c)*WallDs(c)),1.4)
 
 
     P11     = -2.0*(uu %n(c)*Ux(c) + uv % n(c)*Uy(c) + uw % n(c)*Uz(c)) &

@@ -29,8 +29,7 @@
   real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v_2Xoold(:), f22Xoold(:)
   real,allocatable :: Pold(:)
   real,allocatable :: PPold(:)
-  real,allocatable :: Pxold(:),Pyold(:),Pzold(:)
-  real             :: Us, Ws, Vs, R, Rnew, Rold
+  real             :: Us, Ws, Vs
   real             :: new_distance, old_distance
 
   ! Variables for ReadC:

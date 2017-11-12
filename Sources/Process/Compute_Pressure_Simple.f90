@@ -95,16 +95,16 @@
       ! Calculate coeficients for the system matrix
       if(c2  > 0) then 
         A12 = 0.5 * DENs * SMDPN *           &
-           (  volume(c1) / A % sav(c1)       &
-            + volume(c2) / A % sav(c2) )  
+           (  grid % vol(c1) / A % sav(c1)       &
+            + grid % vol(c2) / A % sav(c2) )  
         A % val(A % pos(1,s))  = -A12
         A % val(A % pos(2,s))  = -A12
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
         A % val(A % dia(c2)) = A % val(A % dia(c2)) +  A12
       else 
         A12 = 0.5 * DENs * SMDPN *           &
-             (  volume(c1) / A % sav(c1)     &
-              + volume(c2) / A % sav(c2) )  
+             (  grid % vol(c1) / A % sav(c1)     &
+              + grid % vol(c2) / A % sav(c2) )  
         A % bou(c2)  = -A12
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       end if 
@@ -150,7 +150,7 @@
               / (  grid % sx(s) * grid % dx(s)   &
                  + grid % sy(s) * grid % dy(s)   &
                  + grid % sz(s) * grid % dz(s) )  
-        A12 = DENs * SMDPN * volume(c1) / A % sav(c1)
+        A12 = DENs * SMDPN * grid % vol(c1) / A % sav(c1)
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       else if(TypeBC(c2) == PRESSURE) then
         Us = U % n(c1)
@@ -166,7 +166,7 @@
               / ( grid % sx(s) * grid % dx(s)   &
                 + grid % sy(s) * grid % dy(s)   &
                 + grid % sz(s) * grid % dz(s) )
-        A12 = DENs * SMDPN * volume(c1) / A % sav(c1)
+        A12 = DENs * SMDPN * grid % vol(c1) / A % sav(c1)
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       else  ! it is SYMMETRY
         Flux(s) = 0.0

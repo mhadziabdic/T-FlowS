@@ -3,8 +3,8 @@ noinst_LIBRARIES = libTurbulence.a
 libTurbulence_a_SOURCES =	\
   les_mod.f90			\
   rans_mod.f90			\
-  CalcSGS_Dynamic.f90		\
-  CalcSGS_hybrid.f90		\
+  Compute_Sgs_Dynamic.f90	\
+  Compute_Sgs_Hybrid.f90	\
   CalcVISt_EBM.f90		\
   CalcVISt_KEps.f90		\
   CalcVISt_KEPSV2F.f90		\
@@ -23,7 +23,7 @@ libTurbulence_a_SOURCES =	\
   Source_Ebm.f90		\
   Source_F22_Ebm.f90		\
   Source_Hanjalic_Jakirlic.f90	\
-  SourceVisSpalart.f90
+  Source_Vis_Spalart_Almaras.f90
 
 SUBDIRS = ../../Shared
 

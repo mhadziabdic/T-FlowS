@@ -56,9 +56,9 @@
 
   do c=1,NC
     if(StateMat(material(c))==FLUID) then
-      phi_x(c)=phi_x(c)/volume(c)
-      phi_y(c)=phi_y(c)/volume(c)
-      phi_z(c)=phi_z(c)/volume(c)
+      phi_x(c) = phi_x(c) / grid % vol(c)
+      phi_y(c) = phi_y(c) / grid % vol(c)
+      phi_z(c) = phi_z(c) / grid % vol(c)
     end if
   end do
 
@@ -78,7 +78,7 @@
                     phi_z(c1) * (grid % zc(c2)-grid % zc(c1))   ) / &
               ( 1.0 - (  grid % sx(s) * (grid % xc(c2)-grid % xc(c1))      & 
                        + grid % sy(s) * (grid % yc(c2)-grid % yc(c1))      &
-                       + grid % sz(s) * (grid % zc(c2)-grid % zc(c1))  ) / volume(c1)  )
+                       + grid % sz(s) * (grid % zc(c2)-grid % zc(c1))  ) / grid % vol(c1)  )
       end if
     end if
 
@@ -95,7 +95,7 @@
                     phi_z(c1) * (zs-grid % zc(c1))   ) / &
               ( 1.0 - (  grid % sx(s) * (xs-grid % xc(c1))      & 
                        + grid % sy(s) * (ys-grid % yc(c1))      &
-                       + grid % sz(s) * (zs-grid % zc(c1))  ) / volume(c1)  )
+                       + grid % sz(s) * (zs-grid % zc(c1))  ) / grid % vol(c1)  )
       end if
       if( StateMat(material(c1))==SOLID .and. &
           StateMat(material(c2))==FLUID ) then  
@@ -108,7 +108,7 @@
                     phi_z(c2) * (zs-grid % zc(c2))   ) / &
               ( 1.0 + (  grid % sx(s) * (xs-grid % xc(c2))      & 
                        + grid % sy(s) * (ys-grid % yc(c2))      &
-                       + grid % sz(s) * (zs-grid % zc(c2))  ) / volume(c2)  )
+                       + grid % sz(s) * (zs-grid % zc(c2))  ) / grid % vol(c2)  )
       end if
     end if ! c2 < 0
   end do
@@ -122,24 +122,24 @@
     if(c2 < 0               .and. &
        TypeBC(c2) /= BUFFER .and. &
        TypeBC(c2) /= OUTFLOW) then  
-      phi_x(c1) = phi_x(c1) + Ps(s) * grid % sx(s)/volume(c1)
-      phi_y(c1) = phi_y(c1) + Ps(s) * grid % sy(s)/volume(c1)
-      phi_z(c1) = phi_z(c1) + Ps(s) * grid % sz(s)/volume(c1)
+      phi_x(c1) = phi_x(c1) + Ps(s) * grid % sx(s) / grid % vol(c1)
+      phi_y(c1) = phi_y(c1) + Ps(s) * grid % sy(s) / grid % vol(c1)
+      phi_z(c1) = phi_z(c1) + Ps(s) * grid % sz(s) / grid % vol(c1)
     end if
 
     ! Handle two materials
     if(c2 > 0 .or. c2 < 0 .and. TypeBC(c2) == BUFFER) then  
       if( StateMat(material(c1))==FLUID .and. &
           StateMat(material(c2))==SOLID ) then  
-        phi_x(c1) = phi_x(c1) + Ps(s) * grid % sx(s)/volume(c1)
-        phi_y(c1) = phi_y(c1) + Ps(s) * grid % sy(s)/volume(c1)
-        phi_z(c1) = phi_z(c1) + Ps(s) * grid % sz(s)/volume(c1)
+        phi_x(c1) = phi_x(c1) + Ps(s) * grid % sx(s) / grid % vol(c1)
+        phi_y(c1) = phi_y(c1) + Ps(s) * grid % sy(s) / grid % vol(c1)
+        phi_z(c1) = phi_z(c1) + Ps(s) * grid % sz(s) / grid % vol(c1)
       end if 
       if( StateMat(material(c1))==SOLID .and. &
           StateMat(material(c2))==FLUID ) then  
-        phi_x(c2) = phi_x(c2) - Ps(s) * grid % sx(s)/volume(c2)
-        phi_y(c2) = phi_y(c2) - Ps(s) * grid % sy(s)/volume(c2)
-        phi_z(c2) = phi_z(c2) - Ps(s) * grid % sz(s)/volume(c2)
+        phi_x(c2) = phi_x(c2) - Ps(s) * grid % sx(s) / grid % vol(c2)
+        phi_y(c2) = phi_y(c2) - Ps(s) * grid % sy(s) / grid % vol(c2)
+        phi_z(c2) = phi_z(c2) - Ps(s) * grid % sz(s) / grid % vol(c2)
       end if 
     end if  ! c2 < 0
   end do

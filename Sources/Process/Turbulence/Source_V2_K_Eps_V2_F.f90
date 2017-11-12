@@ -42,27 +42,27 @@
     ! choose this particular way to the add source term. 
     do c = 1, NC
       if(Nstep > 500) then
-        b(c) = b(c) + f22%n(c)*volume(c)
+        b(c) = b(c) + f22%n(c)*grid % vol(c)
       else
-        b(c) = b(c) + max(0.0,f22 % n(c)*volume(c))
+        b(c) = b(c) + max(0.0,f22 % n(c)*grid % vol(c))
         A % val(A % dia(c)) = A % val(A % dia(c))               &
-                            + max(0.0, -f22 % n(c) * volume(c)  &
+                            + max(0.0, -f22 % n(c) * grid % vol(c)  &
                             / (v_2 % n(c) + TINY))    
       end if      
       A % val(A % dia(c)) =  A % val(A % dia(c))  &
-                          + volume(c) * Pk(c)     &
+                          + grid % vol(c) * Pk(c)     &
                           / (Kin % n(c)+TINY) 
     end do
   else if(SIMULA == K_EPS_VV) then
     do c = 1, NC
-      b(c) = b(c) + max(0.0, f22 % n(c) * Kin % n(c) * volume(c))
+      b(c) = b(c) + max(0.0, f22 % n(c) * Kin % n(c) * grid % vol(c))
       A % val(A % dia(c)) = A % val(A % dia(c))                            &
-                          + max(0.0, -f22 % n(c) * Kin % n(c) * volume(c)  &
+                          + max(0.0, -f22 % n(c) * Kin % n(c) * grid % vol(c)  &
                           / (v_2 % n(c) + TINY))
     end do
     do c = 1, NC  
       A % val(A % dia(c)) = A % val(A % dia(c))  &
-                          + volume(c) * Eps % n(c) / (Kin%n(c)+TINY) 
+                          + grid % vol(c) * Eps % n(c) / (Kin%n(c)+TINY) 
     end do
   end if
 

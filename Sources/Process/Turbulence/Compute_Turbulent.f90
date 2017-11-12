@@ -27,7 +27,7 @@
   real    :: error
   real    :: VISeff
   real    :: phi_xS, phi_yS, phi_zS
-!------------------------------------------------------------------------------!
+!==============================================================================!
 !                                                                              ! 
 !  The form of equations which are solved:                                     !   
 !                                                                              !
@@ -37,7 +37,7 @@
 !    |      dt       |                |  sigma              |                  !
 !   /               /                /                     /                   !
 !                                                                              !
-!==============================================================================!
+!------------------------------------------------------------------------------!
 
   A % val = 0.0
 
@@ -374,7 +374,7 @@
   ! Two time levels; linear interpolation
   if(INERT == LIN) then
     do c=1,NC
-      A0 = DENc(material(c))*volume(c)/dt
+      A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + A0
       b(c) = b(c) + A0 * phi % o(c)
     end do
@@ -383,7 +383,7 @@
   ! Three time levels; parabolic interpolation
   if(INERT == PAR) then
     do c=1,NC
-      A0 = DENc(material(c))*volume(c)/dt
+      A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
       b(c) = b(c) + 2.0*A0 * phi % o(c) - 0.5*A0 * phi % oo(c)
     end do
@@ -410,7 +410,7 @@
   end if
 
   if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA)                                &
-  call SourceVisSpalart(phi_x,phi_y,phi_z)
+  call Source_Vis_Spalart_Almaras(grid, phi_x, phi_y, phi_z)
 
   !---------------------------------!
   !                                 !

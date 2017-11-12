@@ -17,7 +17,7 @@
   integer s, c, c1, c2, j
   real    Sor11,  f22hg
   real    A0
-!------------------------------------------------------------------------------!
+!==============================================================================!
 !                                                                              !
 !  The form of source terms are :                                              !
 !                                                                              !
@@ -44,7 +44,8 @@
 !     vi2            [m^2/s^2]                                                 !
 !     f22            [-]                                                       !
 !     Lsc            [m]                                                       !
-!==============================================================================!
+!                                                                              !
+!------------------------------------------------------------------------------!
 
   call Scale()
 
@@ -56,12 +57,12 @@
            * (v_2 % n(c) - 2.0 / 3.0)   &
            / (Tsc(c) + TINY)            &
            + 0.0085 * Pk(c) / (Kin % n(c) + TINY)
-     b(c) = b(c) + f22hg * volume(c) / (Lsc(c)**2 + TINY) 
+     b(c) = b(c) + f22hg * grid % vol(c) / (Lsc(c)**2 + TINY) 
    end do
 
    ! Source term f22hg
    do c = 1, NC
-     Sor11 = volume(c)/(Lsc(c)**2 + TINY)
+     Sor11 = grid % vol(c)/(Lsc(c)**2 + TINY)
      A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11 
    end do
 
@@ -87,10 +88,10 @@
    end do
  else if(SIMULA == K_EPS_VV) then
    do c = 1,NC
-     f22hg = (1.0 - Cf_1)*(v_2 % n(c)/(Kin % n(c)+TINY) - 2.0/3.0)/(Tsc(c)+TINY)   &
+     f22hg = (1.0 - Cf_1)*(v_2 % n(c)/(Kin % n(c)+TINY) - TWO_THIRDS)/(Tsc(c)+TINY)   &
                 + Cf_2*Pk(c)/(Kin % n(c)+TINY)
-     b(c) = b(c) + f22hg*volume(c)/(Lsc(c)+TINY)**2
-     Sor11 = volume(c)/Lsc(c)**2
+     b(c) = b(c) + f22hg*grid % vol(c)/(Lsc(c)+TINY)**2
+     Sor11 = grid % vol(c)/Lsc(c)**2
      A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11
    end do
 

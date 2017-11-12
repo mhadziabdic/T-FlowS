@@ -385,21 +385,21 @@
   !      call GraPhi(uv%n,2,VAR2y,.TRUE.)
   !      call GraPhi(uw%n,3,VAR2z,.TRUE.)
   !      do c = 1, NC
-  !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
+  !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
   !      end do
   !    else if(ui % name == 'V') then
   !      call GraPhi(uv%n,1,VAR2x,.TRUE.)
   !      call GraPhi(vv%n,2,VAR2y,.TRUE.)
   !      call GraPhi(vw%n,3,VAR2z,.TRUE.)
   !      do c = 1, NC
-  !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
+  !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
   !      end do
   !    else if(ui % name == 'W') then
   !      call GraPhi(uw%n,1,VAR2x,.TRUE.)
   !      call GraPhi(vw%n,2,VAR2y,.TRUE.)
   !      call GraPhi(ww%n,3,VAR2z,.TRUE.)
   !      do c = 1, NC
-  !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
+  !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
   !      end do
   !    end if
   
@@ -483,7 +483,7 @@
   ! Two time levels; linear interpolation
   if(INERT == LIN) then
     do c=1,NC
-      A0 = DENc(material(c))*volume(c)/dt
+      A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + A0
       b(c) = b(c) + A0 * ui % o(c)
     end do
@@ -492,7 +492,7 @@
   ! Three time levels; parabolic interpolation
   if(INERT == PAR) then
     do c=1,NC
-      A0 = DENc(material(c))*volume(c)/dt
+      A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
       b(c) = b(c) + 2.0*A0 * ui % o(c) - 0.5*A0 * ui % oo(c)
     end do
@@ -509,15 +509,15 @@
   !--------------------------!
   if(ui % name == 'U') then
     do c=1,NC
-      b(c) = b(c)  + PdropX(material(c)) * volume(c)
+      b(c) = b(c)  + PdropX(material(c)) * grid % vol(c)
     end do
   else if(ui % name == 'V') then
     do c=1,NC
-      b(c) = b(c)  + PdropY(material(c)) * volume(c)
+      b(c) = b(c)  + PdropY(material(c)) * grid % vol(c)
     end do
   else if(ui % name == 'W') then
     do c=1,NC
-      b(c) = b(c)  + PdropZ(material(c)) * volume(c)
+      b(c) = b(c)  + PdropZ(material(c)) * grid % vol(c)
     end do
   end if
 
@@ -525,13 +525,13 @@
   !   Local pressure distribution   !
   !---------------------------------!
   do c=1,NC
-    b(c) = b(c) - Hi(c)*volume(c)
+    b(c) = b(c) - Hi(c) * grid % vol(c)
   end do
 
   !----------------------------------------!
   !   All other terms defined by the user  !
   !----------------------------------------!
-  if(HOT == YES) call UserForce(var)
+  if(HOT == YES) call User_Force(grid, ui, a, b)
 
 !  do c=1,NC                                         ! 2mat
 !    if(StateMat(material(c))==SOLID) then           ! 2mat

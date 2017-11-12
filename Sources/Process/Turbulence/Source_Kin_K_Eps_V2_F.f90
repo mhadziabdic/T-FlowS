@@ -43,23 +43,23 @@
 
   if(SIMULA == HYB_ZETA) then
     do c=1,NC
-      lf = volume(c)**ONE_THIRD
+      lf = grid % vol(c)**ONE_THIRD
       Lsgs  = 0.8*lf
       Lrans = 0.41*WallDs(c)
       ALPHA1 = max(1.0,Lrans/Lsgs)
 
       ! Production:
-      b(c) = b(c) + VISt(c) * Shear(c) * Shear(c) * volume(c)
+      b(c) = b(c) + VISt(c) * Shear(c) * Shear(c) * grid % vol(c)
 
       ! Dissipation:
       if(ALPHA1 < 1.05) then
         A % val(A % dia(c)) = A % val(A % dia(c)) +          &
-             DENc(material(c))*Eps % n(c)/(Kin%n(c) + TINY) * volume(c)
+             DENc(material(c))*Eps % n(c)/(Kin%n(c) + TINY) * grid % vol(c)
       else
         A % val(A % dia(c)) = A % val(A % dia(c)) +                           &
                               DENc(material(c))   *                           &
                               min(ALPHA1**1.45 * Eps % n(c), Kin % n(c)**1.5  &
-                            / (lf*0.01)) / (Kin % n(c) + TINY) * volume(c)
+                            / (lf*0.01)) / (Kin % n(c) + TINY) * grid % vol(c)
       end if
       Pk(c) =  VISt(c) * Shear(c) * Shear(c)
     end do
@@ -67,20 +67,20 @@
     do c=1,NC
 
       ! Production:
-      b(c) = b(c) + VISt(c) * Shear(c) * Shear(c) * volume(c)
+      b(c) = b(c) + VISt(c) * Shear(c) * Shear(c) * grid % vol(c)
  
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c)) +                             &
-           DENc(material(c))*Eps % n(c)/(Kin % n(c)+TINY) * volume(c)
+           DENc(material(c))*Eps % n(c)/(Kin % n(c)+TINY) * grid % vol(c)
       Pk(c) =  VISt(c) * Shear(c) * Shear(c) 
       if (BUOY == YES) then 
         buoyBeta(c) = 1.0
         Gbuoy(c) = -buoyBeta(c) * (grav_x * ut % n(c) +  &
                                    grav_y * vt % n(c) +  &
                                    grav_z * wt % n(c))
-        b(c) = b(c) + max(0.0, Gbuoy(c) * volume(c))
+        b(c) = b(c) + max(0.0, Gbuoy(c) * grid % vol(c))
         A % val(A % dia(c)) = A % val(A % dia(c))                            &
-                     + max(0.0,-Gbuoy(c)*volume(c) / (Kin % n(c) + TINY))
+                     + max(0.0,-Gbuoy(c)*grid % vol(c) / (Kin % n(c) + TINY))
       end if
     end do
   end if
@@ -121,8 +121,8 @@
             Pk(c1) = TauWall(c1)*Uf(c1) / (kappa*(WallDs(c1)+Zo))
             Kin % n(c2) = TauWall(c1) / 0.09**0.5
           end if
-          b(c1) = b(c1) + Pk(c1) * volume(c1)
-          b(c1) = b(c1) - VISt(c1) * Shear(c1) * Shear(c1) * volume(c1)
+          b(c1) = b(c1) + Pk(c1) * grid % vol(c1)
+          b(c1) = b(c1) - VISt(c1) * Shear(c1) * Shear(c1) * grid % vol(c1)
         end if  
       end if  ! TypeBC(c2)==WALL or WALLFL
     end if    ! c2 < 0 

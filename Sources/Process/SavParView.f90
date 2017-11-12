@@ -25,10 +25,8 @@
   integer :: NNsub, NmaterBC, NNsub_new, NCsub_new
   integer :: off_set_connection
   integer :: i
-  real    :: Nx, Ny, Nz
-  real    :: Cs, R, Cmu_mod
-  real    :: Stot, lf, UtauL, Uff
-  real    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus
+  real    :: Stot, lf, Uff
+  real    :: Apow, Bpow, nu, dely
   real    :: frictionv(NC)
 !======================================================================!
 

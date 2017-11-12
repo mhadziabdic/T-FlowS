@@ -72,7 +72,7 @@
           end if  
 
           ! Filling up the source term
-          b(c1) = b(c1) + Pk(c1) * volume(c1) 
+          b(c1) = b(c1) + Pk(c1) * grid % vol(c1) 
         end if  ! TypeBC(c2)==WALL or WALLFL
       end if    ! c2 < 0
     end do
@@ -87,13 +87,13 @@
 
         ! Production:
         Pk(c)= VISt(c) * Shear(c)*Shear(c)
-        b(c) = b(c) + Pk(c) * volume(c)
+        b(c) = b(c) + Pk(c) * grid % vol(c)
       end if
 
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c))                          &
                           + DENc(material(c)) * Eps % n(c) / Kin % n(c)  &
-                          * volume(c)
+                          * grid % vol(c)
     end do
   end if    ! end if mode = wf 
 
@@ -105,10 +105,10 @@
 
       ! Production:
       Pk(c)= VISt(c) * Shear(c) * Shear(c)
-      b(c) = b(c) + Pk(c) * volume(c)
+      b(c) = b(c) + Pk(c) * grid % vol(c)
 
       ! Dissipation:
-      A % val(A % dia(c)) = A % val(A % dia(c)) + DENc(material(c))*Eps%n(c)/(Kin%n(c)+TINY)*volume(c)
+      A % val(A % dia(c)) = A % val(A % dia(c)) + DENc(material(c))*Eps%n(c)/(Kin%n(c)+TINY)*grid % vol(c)
 
       ! Preparation of Kin for the boundary condition. Kin variable is temporaraly borrowed.
       Kin % n(c) = sqrt(Kin % n(c))
@@ -126,7 +126,7 @@
                           + 2.0 * VISc*(  PHIx(c)*PHIx(c)    &
                                         + PHIy(c)*PHIy(c)    &
                                         + PHIz(c)*PHIz(c))   &
-                           * volume(c) / (Kin % n(c) + TINY)          
+                           * grid % vol(c) / (Kin % n(c) + TINY)          
     end do
   end if
 
@@ -135,13 +135,13 @@
 
       ! Production:
       Pk(c)= VISt(c) * Shear(c) * Shear(c)
-      b(c) = b(c) + Pk(c) * volume(c)
+      b(c) = b(c) + Pk(c) * grid % vol(c)
 
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c))      &
                           + DENc(material(c))        &
                           * Eps % n(c) / Kin % n(c)  &
-                          * volume(c)
+                          * grid % vol(c)
     end do
   end if
 

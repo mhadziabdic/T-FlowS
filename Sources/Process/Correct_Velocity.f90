@@ -30,15 +30,15 @@
   !-----------------------------------------!
   if(ALGOR == FRACT) then
     do c=1,NC
-      U % n(c) = U % n(c) - Px(c) * volume(c) / A % sav(c)
-      V % n(c) = V % n(c) - Py(c) * volume(c) / A % sav(c)
-      W % n(c) = W % n(c) - Pz(c) * volume(c) / A % sav(c)
+      U % n(c) = U % n(c) - Px(c) * grid % vol(c) / A % sav(c)
+      V % n(c) = V % n(c) - Py(c) * grid % vol(c) / A % sav(c)
+      W % n(c) = W % n(c) - Pz(c) * grid % vol(c) / A % sav(c)
     end do 
   else ! algorythm is SIMPLE
     do c=1,NC
-      U % n(c) = U % n(c) - Px(c) * volume(c) / A % sav(c)
-      V % n(c) = V % n(c) - Py(c) * volume(c) / A % sav(c)
-      W % n(c) = W % n(c) - Pz(c) * volume(c) / A % sav(c)
+      U % n(c) = U % n(c) - Px(c) * grid % vol(c) / A % sav(c)
+      V % n(c) = V % n(c) - Py(c) * grid % vol(c) / A % sav(c)
+      W % n(c) = W % n(c) - Pz(c) * grid % vol(c) / A % sav(c)
     end do 
   end if
 
@@ -98,7 +98,7 @@
   end do
 
   do c=1,NC
-    b(c) = b(c) / (volume(c)*DENc(material(c)))
+    b(c) = b(c) / (grid % vol(c) * DENc(material(c)))
   end do
 
   errmax=0.0

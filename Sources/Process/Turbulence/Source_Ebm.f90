@@ -102,12 +102,12 @@
       Diss_hom  = 2.0/3.0 * Eps % n(c)
 
       b(c) = b(c) + (max(Prod,0.0) + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
-             f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
+             f22 % n(c)*f22 % n(c)*(PHI_hom))*grid % vol(c)
 
       A % val(A % dia(c)) =  A % val(A % dia(c)) + (max(-Prod,0.0)/max(uu%n(c),1.0e-12) + (1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c) +&         
                       f22%n(c)*f22%n(c)*(Diss_hom/max(uu%n(c),1.0e-12)+g1*Eps%n(c)/(2.0*Kin%n(c))&
-                      +g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
+                      +g1_star*Pk(c)/(2.0*Kin%n(c))))*grid % vol(c)
 
     ! vv stress
     else if(name_phi == 'VV') then
@@ -131,12 +131,12 @@
       Diss_hom  = 2.0/3.0 * Eps % n(c)
 
       b(c) = b(c) + (max(Prod,0.0) + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
-             f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
+             f22 % n(c)*f22 % n(c)*(PHI_hom))*grid % vol(c)
 
       A % val(A % dia(c)) =  A % val(A % dia(c)) + (max(-Prod,0.0)/max(vv%n(c),1.0e-12) + (1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c) &         
                     + f22%n(c)*f22%n(c)*(Diss_hom/max(vv%n(c),1.0e-12)+g1*Eps%n(c)/(2.0*Kin%n(c))&
-                    +g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
+                    +g1_star*Pk(c)/(2.0*Kin%n(c))))*grid % vol(c)
 
     ! ww stress
     else if(name_phi == 'WW') then
@@ -159,11 +159,11 @@
       Diss_hom  = 2.0/3.0 * Eps % n(c)
 
       b(c) = b(c) + (max(Prod,0.0) + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
-             f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
+             f22 % n(c)*f22 % n(c)*(PHI_hom))*grid % vol(c)
       A % val(A % dia(c)) =  A % val(A % dia(c)) + (max(-Prod,0.0)/max(ww%n(c),1.0e-12)+(1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c)          &
                     + f22%n(c)*f22%n(c)*(Diss_hom/max(ww%n(c),1.0e-12)+g1*Eps%n(c)/(2.0*Kin%n(c))&
-                    +g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
+                    +g1_star*Pk(c)/(2.0*Kin%n(c))))*grid % vol(c)
 
     ! uv stress
     else if(name_phi == 'UV') then
@@ -189,11 +189,11 @@
       Diss_wall = uv % n(c)/Kin % n(c) * Eps % n(c) 
  
       b(c) = b(c) + (Prod + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
-             f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
+             f22 % n(c)*f22 % n(c)*(PHI_hom))*grid % vol(c)
       A % val(A % dia(c)) =  A % val(A % dia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c)&
                     + f22%n(c)*f22%n(c)*( &
-                    +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
+                    +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*grid % vol(c)
 
 
     ! uw stress
@@ -220,11 +220,11 @@
       Diss_wall = uw % n(c)/Kin % n(c) * Eps % n(c) 
 
       b(c) = b(c) + (Prod + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
-             f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
+             f22 % n(c)*f22 % n(c)*(PHI_hom))*grid % vol(c)
       A % val(A % dia(c)) =  A % val(A % dia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c)&           
                     + f22%n(c)*f22%n(c)*(&
-                    +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
+                    +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*grid % vol(c)
 
     ! vw stress
     else if(name_phi == 'VW') then
@@ -250,15 +250,15 @@
       Diss = (1.0 - f22 % n(c)*f22 % n(c)) * vw % n(c)/Kin % n(c) * Eps % n(c) 
 
       b(c) = b(c) + (Prod + (1.0-f22 % n(c)*f22 % n(c))*PHI_wall +&
-             f22 % n(c)*f22 % n(c)*(PHI_hom))*volume(c)
+             f22 % n(c)*f22 % n(c)*(PHI_hom))*grid % vol(c)
       A % val(A % dia(c)) =  A % val(A % dia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
                       6.0*Eps%n(c)/Kin%n(c) &           
                     + f22%n(c)*f22%n(c)*(&
-                    +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*volume(c)
+                    +g1*Eps%n(c)/(2.0*Kin%n(c))+g1_star*Pk(c)/(2.0*Kin%n(c))))*grid % vol(c)
 
     ! Eps equation
     else if(name_phi == 'EPS') then
-      Esor = volume(c)/max(Tsc(c),1.0e-12)
+      Esor = grid % vol(c)/max(Tsc(c),1.0e-12)
 !
 !     Ce11 = Ce1*(1.0 + 0.03*(1. - f22%n(c)*f22%n(c))*sqrt(Kin%n(c)/max(uu_nn,1.e-12)))  
 !

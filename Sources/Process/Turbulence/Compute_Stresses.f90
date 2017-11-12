@@ -30,7 +30,7 @@
   real    :: phi_xS, phi_yS, phi_zS
   real    :: VIStS, TDiff_im, TDiff_ex, TDiff_coef, TDiffx, TDiffy,TDiffz
   real    :: uuS, vvS, wwS, uvS, uwS, vwS
-!------------------------------------------------------------------------------!
+!==============================================================================!
 !                                                                              ! 
 !  The form of equations which are being solved:                               !   
 !                                                                              !
@@ -40,7 +40,7 @@
 !    |      dt       |                |  sigma              |                  !
 !   /               /                /                     /                   !
 !                                                                              !
-!==============================================================================!
+!------------------------------------------------------------------------------!
 
 
   A % val = 0.0
@@ -357,7 +357,7 @@
     call GraPhi(VAR1z,3,VAR2z,.TRUE.)
 
     do c=1,NC
-      b(c) = b(c) + (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
+      b(c) = b(c) + (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
     end do
 
     !------------------------------------------------------------------!
@@ -441,7 +441,7 @@
   ! Two time levels; Linear interpolation
   if(INERT == LIN) then
     do c=1,NC
-      A0 = DENc(material(c))*volume(c)/dt
+      A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + A0
       b(c) = b(c) + A0 * phi % o(c)
     end do
@@ -450,7 +450,7 @@
   ! Three time levels; parabolic interpolation
   if(INERT == PAR) then
     do c=1,NC
-      A0 = DENc(material(c))*volume(c)/dt
+      A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
       b(c) = b(c) + 2.0*A0 * phi % o(c) - 0.5*A0 * phi % oo(c)
     end do

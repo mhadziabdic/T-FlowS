@@ -41,7 +41,7 @@
  
   if(MODE == SMAG) then
     do c=1,NC
-      lf = volume(c)**ONE_THIRD
+      lf = grid % vol(c)**ONE_THIRD
 
       ! if(near(c) /= 0) is needed for parallel version
       ! since the subdomains which do not "touch" wall
@@ -63,7 +63,7 @@
   else if(MODE == DYN) then
     if(BUOY==YES) then  
       do c=1,NC
-        lf =  (volume(c)**ONE_THIRD)  
+        lf = grid % vol(c)**ONE_THIRD  
         VISt(c) = DENc(material(c))  &
                 * (lf*lf)            &          ! delta^2 
                 * Cdyn(c)            &          ! Cdynamic   
@@ -80,7 +80,7 @@
     end if     
   else if(MODE == WALE) then
     do c=1,NC
-      lf =  (volume(c)**ONE_THIRD)    
+      lf = grid % vol(c)**ONE_THIRD    
       VISt(c) = DENc(material(c))  &
               * (lf*lf)            &          ! delta^2 
               * (0.5*0.5)          &          ! Cs^2   

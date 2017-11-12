@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Gmv_Results(name_aut)
+  subroutine Save_Gmv_Results(grid, name_save)
 !------------------------------------------------------------------------------!
 !   Writes: NAME.r.gmv                                                         !
 !----------------------------------[Modules]-----------------------------------!
@@ -8,20 +8,23 @@
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: c, i 
   character(len=80)   :: name_out, answer, store_name
-  character, optional :: name_aut*(*)
+  character, optional :: name_save*(*)
 !==============================================================================!
 
   ! Store the name
   store_name = name     
 
-  if(PRESENT(name_aut)) then
-    write(*,*) name_aut
-    name = name_aut  
+  if(PRESENT(name_save)) then
+    write(*,*) name_save
+    name = name_save  
   else
     if(this_proc  < 2)  &
       write(*,*) '# Input result file name [skip cancels]:'
@@ -234,4 +237,4 @@
   ! Restore the name
   name = store_name
 
-  end subroutine Save_Gmv_Results
+  end subroutine

@@ -20,7 +20,7 @@
   integer           :: i, m, n, Ndtt_temp, HOTtemp, SIMULAtemp, c, Nproc 
   real              :: Mres, CPUtim
   real              :: start, finish
-  character(len=10) :: namSav
+  character(len=10) :: name_save
   logical           :: restar, multiple 
 !---------------------------------[Interfaces]---------------------------------!
   interface
@@ -65,12 +65,14 @@
       real           :: dphidx(-NbC:NC),dphidy(-NbC:NC),dphidz(-NbC:NC)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Save_Gmv_Results(namAut)  
+    subroutine Save_Gmv_Results(grid, namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
+      use Grid_Mod
       implicit none
-       character, optional :: namAut*(*)
+      type(Grid_Type) :: grid
+      character, optional :: namAut*(*)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Save_Dat_Results(grid, namAut)  
@@ -152,7 +154,7 @@
   call Allocate_Memory(grid)
   call Load_Geo       (grid)
   call BufLoa
-  call Exchng(volume(-NbC))
+  call Exchng(grid % vol(-NbC))
 
   call wait   
 
@@ -175,7 +177,7 @@
   end if
 
   ! Read command file (T-FlowS.cmn) 
-1 call ReaCom(grid, restar)
+  call ReaCom(grid, restar)
 
   ! Initialize variables
   if(.not. restar) then
@@ -186,14 +188,6 @@
 
   ! Interpolate between diff. meshes
   call Load_Ini(grid)
-
-  if(.not. restar) then
-!BOJAN    do m=1,grid % n_materials
-!BOJAN      if(SHAKE(m) == YES) then
-!BOJAN        call UserPerturb2(5.0,0,m)
-!BOJAN      end if
-!BOJAN    end do  
-  end if
 
   ! Check if there are more materials
   multiple = .FALSE.
@@ -276,14 +270,14 @@
 
     if(SIMULA == LES) then
       call CalcShear(grid, U % n, V % n, W % n, Shear)
-      if(MODE == DYN) call CalcSGS_Dynamic() 
+      if(MODE == DYN) call Compute_Sgs_Dynamic(grid) 
       if(MODE == WALE) call CalcWALE() 
       call Compute_Sgs(grid)
     end if  
 
     If(SIMULA==HYB_ZETA) then  
-      call CalcSGS_Dynamic()      
-      call CalcSGS_hybrid()
+      call Compute_Sgs_Dynamic(grid)      
+      call Compute_Sgs_Hybrid(grid)
     end if
 
     call CalcConvect(grid)
@@ -561,12 +555,6 @@
 !                                                     !
 !-----------------------------------------------------!
     do m=1,grid % n_materials
-!BOJAN      if(SHAKE(m) == YES) then
-!BOJAN        if( n  < SHAKE_PER(m) .and. MOD(n+1,SHAKE_INT(m)) == 0 ) then 
-!BOJAN          call UserPerturb2(5.0,n,m)
-!BOJAN        endif 
-!BOJAN      endif
-
       if( FLUXoX(m)  /=  0.0 ) then
         PdropX(m) = (FLUXoX(m)-FLUXx(m)) / (dt*AreaX(m)+TINY) 
       end if
@@ -578,13 +566,13 @@
       end if
     end do
 
-    ! Regular savings, each 1000 time steps            
+    ! Regular backup savings, each 1000 time steps            
     if(mod(n,1000) == 0) then                                
       Ndtt_temp = Ndtt
       Ndtt      = n
-      namSav = 'savexxxxxx'
-      write(namSav(5:10),'(I6.6)') n
-      call Save_Restart(grid, namSav)                          
+      name_save = 'savexxxxxx'
+      write(name_save(5:10),'(I6.6)') n
+      call Save_Restart(grid, name_save)                          
       Ndtt = Ndtt_temp
     end if   
 
@@ -602,17 +590,13 @@
       if(this_proc < 2) close(1, status='delete')
       Ndtt_temp = Ndtt
       Ndtt      = n
-      namSav = 'savexxxxxx'
-      write(namSav(5:10),'(I6.6)') n
-      call Save_Restart(grid, namSav)                          
-      call Save_Dat_Results(grid, namSav)
-      call Save_Gmv_Results(namSav)
-      call SavParView(this_proc,NC,namSav, Nstat, n)
-!BOJAN      if(CHANNEL == YES) then
-!BOJAN  call UserCutLines_channel(zc)
-!BOJAN      else if(PIPE == YES) then
-!BOJAN  call UserCutLines_pipe(grid)
-!BOJAN      end if
+      name_save = 'savexxxxxx'
+      write(name_save(5:10),'(I6.6)') n
+      call Save_Restart    (grid, name_save)                          
+      call Save_Gmv_Results(grid, name_save)
+      call Save_Dat_Results(grid, name_save)
+      call User_Save_Results(grid, n)  ! write results in user-customized format
+      call SavParView(this_proc,NC,name_save, Nstat, n)
       Ndtt = Ndtt_temp
 8   continue 
 
@@ -623,41 +607,21 @@
     close(9)
   end if
 
-5 Ndtt = n - 1                                 
+  Ndtt = n - 1                                 
 
   !----------------------!
   !   Save the results   !
   !----------------------!
-6 call Save_Restart(grid)
-  call Save_Ini(grid)
-  call Save_Gmv_Results       ! Write results in GMV format. 
-  call Save_Dat_Results(grid) ! Write results in FLUENT dat format. 
-  namSav = 'savexxxxxx'
-  write(namSav(5:10),'(I6.6)') n
-  call SavParView(this_proc,NC,namSav, Nstat, n)
+6 call Save_Restart     (grid)
+  call Save_Ini         (grid)
+  call Save_Gmv_Results (grid)     ! write results in GMV format. 
+  call Save_Dat_Results (grid)     ! write results in FLUENT dat format. 
+  call User_Save_Results(grid, n)  ! write results in user-customized format
+  name_save = 'savexxxxxx'
+  write(name_save(5:10),'(I6.6)') n
+  call SavParView(this_proc,NC,name_save, Nstat, n)
   call Wait
 
-!  call UserCutLines_Point_Cart
-
-!---- Create a cut line with normalise a values
-!  if(CHANNEL == YES) then
-!    call UserCutLines_channel(zc)
-!  else if(PIPE == YES) then
-!    call UserCutLines_pipe(grid)
-!    call UserCutLines_annulus
-!  else if(JET == YES) then
-!    call UserCutLines_Nu
-!   call UserCutLines_jet
-!    call UserProbe1D_Nusselt_jet
-!    call UserCutLines_Horiz_RANS
-!  else if(BACKSTEP == YES) then
-!    call UserBackstep        
-!    call UserBackstep_Y        
-!  else if(RB_CONV == YES) then
-!    call UserCutLines_RB_conv
-!    call UserCutLines_Point_Cart
-!  end if
- 
 3 if(this_proc  < 2) write(*,*) '# Exiting !'
 
   !----------------------------!

@@ -17,7 +17,6 @@
 !==============================================================================!
 
   ! Variables defined in all.h90:
-  allocate (volume(-NbC:NC)); volume=0.  
   allocate (delta(-NbC:NC));  delta=0.  
   allocate (WallDs(-NbC:NC)); WallDs=0.       
   allocate (f(NS));  f=0.0  

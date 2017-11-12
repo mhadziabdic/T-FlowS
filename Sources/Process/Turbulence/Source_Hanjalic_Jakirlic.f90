@@ -466,58 +466,58 @@
       b(c) = b(c) + (  max(P11,0.0)+CC1*Eps%n(c)*r23  &
                      + max(VAR2_11,0.0)               &
                      + max(VAR1w_11,0.0)              &
-                      +max(VAR2w_11,0.0) )*volume(c) 
+                      +max(VAR2w_11,0.0) )*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))                      &
                           + (   CC1 *Eps%n(c)/Kin%n(c)               &
                               + C1W *fw*Eps%n(c)/Kin%n(c)*3.0*n1*n1  &
-                              + fss*Eps%n(c)/Kin%n(c))*volume(c) 
+                              + fss*Eps%n(c)/Kin%n(c))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))         &
                           + (  max(-P11,0.0)            &
                              + max(-VAR2_11,0.0)        &
                              + max(-VAR1w_11,0.0)       &
                              + max(-VAR2w_11,0.0)       &
                              + (1.0-fss)*r23*Eps%n(c))  &
-                             / max(uu%n(c),1.0e-10) * volume(c) 
+                             / max(uu%n(c),1.0e-10) * grid % vol(c) 
 !==============================================================================================================================!
     ! vv stress
     else if(name_phi == 'VV') then
 !==============================================================================================================================!
-      b(c) = b(c) + (max(P22,0.0)+CC1*Eps%n(c)*r23+max(VAR2_22,0.0)+max(VAR1w_22,0.0)+max(VAR2w_22,0.0))*volume(c) 
+      b(c) = b(c) + (max(P22,0.0)+CC1*Eps%n(c)*r23+max(VAR2_22,0.0)+max(VAR1w_22,0.0)+max(VAR2w_22,0.0))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n2*n2 + &
-                      fss*Eps%n(c)/Kin%n(c))*volume(c) 
+                      fss*Eps%n(c)/Kin%n(c))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P22,0.0)+max(-VAR2_22,0.0)+max(-VAR1w_22,0.0)+max(-VAR2w_22,0.0)+ &
-                      (1.0-fss)*r23*Eps%n(c))/max(vv%n(c),1.0e-10)*volume(c) 
+                      (1.0-fss)*r23*Eps%n(c))/max(vv%n(c),1.0e-10)*grid % vol(c) 
 !==============================================================================================================================!
     ! ww stress
     else if(name_phi == 'WW') then
 !==============================================================================================================================!
-      b(c) = b(c) + (max(P33,0.0)+CC1*Eps%n(c)*r23+max(VAR2_33,0.0)+max(VAR1w_33,0.0)+max(VAR2w_33,0.0))*volume(c) 
+      b(c) = b(c) + (max(P33,0.0)+CC1*Eps%n(c)*r23+max(VAR2_33,0.0)+max(VAR1w_33,0.0)+max(VAR2w_33,0.0))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n3*n3 + &
-                      fss*Eps%n(c)/Kin%n(c))*volume(c) 
+                      fss*Eps%n(c)/Kin%n(c))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P33,0.0)+max(-VAR2_33,0.0)+max(-VAR1w_33,0.0)+max(-VAR2w_33,0.0)+ &
-                      (1.0-fss)*r23*Eps%n(c))/max(ww%n(c),1.0e-10)*volume(c) 
+                      (1.0-fss)*r23*Eps%n(c))/max(ww%n(c),1.0e-10)*grid % vol(c) 
 !==============================================================================================================================!
 !==============================================================================================================================!
     ! uv stress
     else if(name_phi == 'UV') then
-      b(c) = b(c) + (P12 + VAR2_12 + VAR1w_12 + VAR2w_12)*volume(c) 
+      b(c) = b(c) + (P12 + VAR2_12 + VAR1w_12 + VAR2w_12)*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*1.5*(n1*n1+n2*n2) + &
-                      fss*Eps%n(c)/Kin%n(c))*volume(c) 
+                      fss*Eps%n(c)/Kin%n(c))*grid % vol(c) 
 !==============================================================================================================================!
 !==============================================================================================================================!
     ! uw stress
     else if(name_phi == 'UW') then
-      b(c) = b(c) + (P13 + VAR2_13 + VAR1w_13 + VAR2w_13)*volume(c) 
+      b(c) = b(c) + (P13 + VAR2_13 + VAR1w_13 + VAR2w_13)*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*1.5*(n1*n1+n3*n3) + &
-                      fss*Eps%n(c)/Kin%n(c))*volume(c) 
+                      fss*Eps%n(c)/Kin%n(c))*grid % vol(c) 
 
 !==============================================================================================================================!
 !==============================================================================================================================!
     ! vw stress
     else if(name_phi == 'VW') then
-      b(c) = b(c) + (P23 + VAR2_23 + VAR1w_23 + VAR2w_23)*volume(c) 
+      b(c) = b(c) + (P23 + VAR2_23 + VAR1w_23 + VAR2w_23)*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*1.5*(n2*n2+n3*n3) + &
-                      fss*Eps%n(c)/Kin%n(c))*volume(c) 
+                      fss*Eps%n(c)/Kin%n(c))*grid % vol(c) 
 !==============================================================================================================================!
 !==============================================================================================================================!
     ! Eps equation
@@ -525,9 +525,9 @@
       Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
       Eps1 = 1.44*Pk(c)*Eps%n(c)/Kin%n(c)
       Eps2 = Ce2*Feps*Eps%n(c)/Kin%n(c)
-      b(c) = b(c) + max(Eps1 + Diss1(c),0.0)*volume(c) 
+      b(c) = b(c) + max(Eps1 + Diss1(c),0.0)*grid % vol(c) 
      
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + Eps2*volume(c)
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + Eps2*grid % vol(c)
     end if
   end do
 
@@ -543,7 +543,7 @@
       Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+TINY)
       Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
       b(c) = b(c) + (Ce2*Feps*Eps%n(c)/Kin%n(c)*(VISc*(VAR7x(c)*VAR7x(c)+&
-                    VAR7y(c)*VAR7y(c)+VAR7z(c)*VAR7z(c))))*volume(c)
+                    VAR7y(c)*VAR7y(c)+VAR7z(c)*VAR7z(c))))*grid % vol(c)
     end do
   end if
 

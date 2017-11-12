@@ -34,11 +34,11 @@
 
       ! Positive contribution:
       b(c) = b(c) & 
-           + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * volume(c)
+           + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * grid % vol(c)
     
       ! Negative contribution:
       A % val(A % dia(c)) = A % val(A % dia(c)) &
-                    + Ce2 * DENc(material(c)) * Eps % n(c) / Kin % n(c) * volume(c)
+                    + Ce2 * DENc(material(c)) * Eps % n(c) / Kin % n(c) * grid % vol(c)
     end do 
 
     !--------------------------------------------!
@@ -82,21 +82,21 @@
 
       ! Positive contribution:
       b(c) = b(c) & 
-           + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * volume(c)        & 
+           + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * grid % vol(c)        & 
            + 2.0 * VISc * VISt(c) * &
-           (PHIx(c)*PHIx(c)+PHIy(c)*PHIy(c)+PHIz(c)*PHIz(c)) * volume(c)
+           (PHIx(c)*PHIx(c)+PHIy(c)*PHIy(c)+PHIz(c)*PHIz(c)) * grid % vol(c)
     
       ! Negative contribution:
       Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
       Fmu = 1.0 - 0.3*exp(-(Ret*Ret))
       A % val(A % dia(c)) = A % val(A % dia(c))                                   &
-      + Fmu * Ce2 * DENc(material(c)) * Eps % n(c) / Kin % n(c) * volume(c)        
+      + Fmu * Ce2 * DENc(material(c)) * Eps % n(c) / Kin % n(c) * grid % vol(c)        
 
        ! Yap correction
        L1 = Kin % n(c)**1.5/Eps % n(c)
        L2 = 2.55 * WallDs(c)
        YAP = 0.83 * Eps % n(c) * Eps % n(c)/Kin % n(c) * max((L1/L2 -1.0)*(L1/L2)**2.0,0.0)
-       b(c) = b(c) + YAP * volume(c) 
+       b(c) = b(c) + YAP * grid % vol(c) 
     end do 
 
     !-----------------------------------!
@@ -121,9 +121,9 @@
 
       ! Positive contribution:
       b(c) = b(c) &
-           + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * volume(c)
+           + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * grid % vol(c)
 
-      Lf = volume(c)**ONE_THIRD
+      Lf = grid % vol(c)**ONE_THIRD
 
       ! Negative contribution:
       Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
@@ -138,7 +138,7 @@
       A % val(A % dia(c)) = A % val(A % dia(c))            &
                          + (Ce1 + (Ce2 - Ce1) * Fmu )      &
                          * DENc(material(c)) * Eps % n(c)  &
-                         / Kin % n(c) * volume(c)
+                         / Kin % n(c) * grid % vol(c)
 
     end do
 

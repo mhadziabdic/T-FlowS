@@ -463,7 +463,7 @@
   ! Two time levels; Linear interpolation
   if(INERT.eq.LIN) then
     do c=1,NC
-      A0 = CAPc(material(c)) * DENc(material(c)) * volume(c)/dt
+      A0 = CAPc(material(c)) * DENc(material(c)) * grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + A0
       b(c)  = b(c) + A0*phi % o(c)
     end do
@@ -472,7 +472,7 @@
   ! Three time levels; parabolic interpolation
   if(INERT.eq.PAR) then
     do c=1,NC
-      A0 = CAPc(material(c)) * DENc(material(c)) * volume(c)/dt
+      A0 = CAPc(material(c)) * DENc(material(c)) * grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
       b(c)  = b(c) + 2.0 * A0 * phi % o(c) - 0.5 * A0 * phi % oo(c)
     end do
@@ -492,7 +492,7 @@
       call GraPhi(VAR1y,2,VAR2y,.TRUE.)
       call GraPhi(VAR1z,3,VAR2z,.TRUE.)
       do c=1,NC
-        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*volume(c)
+        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
       end do
 
       !------------------------------------------------------------------!
@@ -556,7 +556,7 @@
     end if  
   end if  
 
-  call UserSource
+  call User_Source(grid)
 
   !---------------------------------!
   !                                 !
@@ -566,7 +566,6 @@
   do c=1,NC
     b(c) = b(c) + A % val(A % dia(c)) * (1.0 - phi % URF) * phi % n(c) / phi % URF
     A % val(A % dia(c)) = A % val(A % dia(c)) / phi % URF
-!?????? A % sav(c) = A % val(A % dia(c)) ??????
   end do  
 
   if(ALGOR == SIMPLE)   miter=10

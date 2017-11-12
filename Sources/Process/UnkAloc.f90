@@ -160,6 +160,7 @@
     allocate (VAR2x(-NbC:NC)); VAR2x=0.
     allocate (VAR2y(-NbC:NC)); VAR2y=0.
     allocate (VAR2z(-NbC:NC)); VAR2z=0.
+
     if(URANS == YES) then    
       allocate (VAR10x(-NbC:NC)); VAR10x=0.
       allocate (VAR10y(-NbC:NC)); VAR10y=0.
@@ -189,6 +190,8 @@
       allocate (VAR7x(-NbC:NC)); VAR7x=0.
       allocate (VAR7y(-NbC:NC)); VAR7y=0.
       allocate (VAR7z(-NbC:NC)); VAR7z=0.
+
+      allocate (Eps_tot(-NbC:NC)); Eps_tot=0.
 
 !      allocate (VAR8x(-NbC:NC)); VAR8x=0.
 !      allocate (VAR8y(-NbC:NC)); VAR8y=0.

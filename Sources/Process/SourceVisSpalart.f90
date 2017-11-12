@@ -43,8 +43,8 @@
 !--------------------------------------------------!
 !    Compute the first-order diffusion term        !
 !--------------------------------------------------!
-      Dif   = Cb2 * DENc(material(c)) * (dPHIdx(c)**2.0 + dPHIdy(c)**2.0           &
-              + dPHIdz(c)**2.0)/SIGMAv
+      Dif   = Cb2 * DENc(material(c)) * (dPHIdx(c) + dPHIdy(c)           &
+              + dPHIdz(c))**2.0/SIGMAv
       b(c)  = b(c) + Dif * volume(c)
     end do
   else if(SIMULA == DES_SPA) then
@@ -74,7 +74,8 @@
 !--------------------------------------------------!
 !    Compute the first-order diffusion term        !
 !--------------------------------------------------!
-      Dif   = Cb2 * DENc(material(c)) * (PHIx(c) + PHIy(c) + PHIz(c))**2.0/SIGMAv
+      Dif   = Cb2 * DENc(material(c)) * (dPHIdx(c) + dPHIdy(c) &
+              + dPHIdz(c))**2.0/SIGMAv
       b(c)  = b(c) + Dif * volume(c)
     end do 
   end if

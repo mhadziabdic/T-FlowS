@@ -35,18 +35,18 @@
       type(Grid_Type) :: grid
       integer         :: var
       type(Var_Type)  :: Ui
-      real            :: dUidi(-grid % n_boundary_cells:grid % n_cells),  &
-                         dUidj(-grid % n_boundary_cells:grid % n_cells),  &
-                         dUidk(-grid % n_boundary_cells:grid % n_cells)
+      real            :: dUidi(-grid % n_bnd_cells:grid % n_cells),  &
+                         dUidj(-grid % n_bnd_cells:grid % n_cells),  &
+                         dUidk(-grid % n_bnd_cells:grid % n_cells)
       real            :: Si(grid % n_faces),  &
                          Sj(grid % n_faces),  &
                          Sk(grid % n_faces) 
       real            :: Di(grid % n_faces),  &
                          Dj(grid % n_faces),  &
                          Dk(grid % n_faces) 
-      real            :: Hi   (-grid % n_boundary_cells:grid % n_cells),  &
-                         dUjdi(-grid % n_boundary_cells:grid % n_cells),  &
-                         dUkdi(-grid % n_boundary_cells:grid % n_cells) 
+      real            :: Hi   (-grid % n_bnd_cells:grid % n_cells),  &
+                         dUjdi(-grid % n_bnd_cells:grid % n_cells),  &
+                         dUkdi(-grid % n_bnd_cells:grid % n_cells) 
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Compute_Scalar(grid, var, phi, dphidx, dphidy, dphidz)
@@ -58,9 +58,9 @@
       type(Grid_Type) :: grid
       integer         :: var
       type(Var_Type)  :: phi
-      real            :: dphidx(-grid % n_boundary_cells:grid % n_cells),  &
-                         dphidy(-grid % n_boundary_cells:grid % n_cells),  &
-                         dphidz(-grid % n_boundary_cells:grid % n_cells)
+      real            :: dphidx(-grid % n_bnd_cells:grid % n_cells),  &
+                         dphidy(-grid % n_bnd_cells:grid % n_cells),  &
+                         dphidz(-grid % n_bnd_cells:grid % n_cells)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Compute_Turbulent(grid, var, phi, dphidx, dphidy, dphidz, Nstep)  
@@ -72,9 +72,9 @@
       type(Grid_Type) :: grid
       integer        :: var, Nstep
       type(Var_Type) :: phi
-      real           :: dphidx(-grid % n_boundary_cells:grid % n_cells),  &
-                        dphidy(-grid % n_boundary_cells:grid % n_cells),  &
-                        dphidz(-grid % n_boundary_cells:grid % n_cells)
+      real           :: dphidx(-grid % n_bnd_cells:grid % n_cells),  &
+                        dphidy(-grid % n_bnd_cells:grid % n_cells),  &
+                        dphidz(-grid % n_bnd_cells:grid % n_cells)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Save_Gmv_Results(grid, namAut)  
@@ -123,10 +123,10 @@
       use Grid_Mod
       implicit none
       type(Grid_Type) :: grid
-      real            :: Ui(-grid % n_boundary_cells:grid % n_cells),  &
-                         Vi(-grid % n_boundary_cells:grid % n_cells),  &
-                         Wi(-grid % n_boundary_cells:grid % n_cells)
-      real            :: She(-grid % n_boundary_cells:grid % n_cells)
+      real            :: Ui(-grid % n_bnd_cells:grid % n_cells),  &
+                         Vi(-grid % n_bnd_cells:grid % n_cells),  &
+                         Wi(-grid % n_bnd_cells:grid % n_cells)
+      real            :: She(-grid % n_bnd_cells:grid % n_cells)
     end subroutine
   end interface
 !======================================================================!
@@ -168,7 +168,7 @@
   call Allocate_Memory(grid)
   call Load_Geo       (grid)
   call BufLoa
-  call Exchng(grid % vol(-grid % n_boundary_cells))
+  call Exchng(grid % vol(-grid % n_bnd_cells))
 
   call wait   
 

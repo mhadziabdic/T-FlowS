@@ -7,7 +7,7 @@
   use all_mod
   use gen_mod
   use Grid_Mod
-!------------------------------------------------------------------------------! 
+!------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
@@ -899,7 +899,7 @@
   !----------------------------!  
 
   ! Initialize the new numbers for the cells
-  do c = -grid % n_boundary_cells, grid % n_cells
+  do c = -grid % n_bnd_cells, grid % n_cells
     NewN(c)=c
   end do
 

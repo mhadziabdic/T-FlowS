@@ -12,8 +12,8 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   integer         :: i
-  real            :: phi (-grid % n_boundary_cells:grid % n_cells),  &
-                     phii(-grid % n_boundary_cells:grid % n_cells) 
+  real            :: phi (-grid % n_bnd_cells:grid % n_cells),  &
+                     phii(-grid % n_bnd_cells:grid % n_cells) 
   logical         :: Boundary
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2

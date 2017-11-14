@@ -21,18 +21,18 @@
   type(Grid_Type) :: grid
   integer         :: var
   type(Var_Type)  :: ui
-  real            :: ui_i(-grid % n_boundary_cells:grid % n_cells),  &
-                     ui_j(-grid % n_boundary_cells:grid % n_cells),  & 
-                     ui_k(-grid % n_boundary_cells:grid % n_cells)
+  real            :: ui_i(-grid % n_bnd_cells:grid % n_cells),  &
+                     ui_j(-grid % n_bnd_cells:grid % n_cells),  & 
+                     ui_k(-grid % n_bnd_cells:grid % n_cells)
   real            :: Si(grid % n_faces),  &
                      Sj(grid % n_faces),  &
                      Sk(grid % n_faces) 
   real            :: Di(grid % n_faces),  &
                      Dj(grid % n_faces),  &
                      Dk(grid % n_faces) 
-  real            :: Hi  (-grid % n_boundary_cells:grid % n_cells),  &
-                     uj_i(-grid % n_boundary_cells:grid % n_cells),  &
-                     uk_i(-grid % n_boundary_cells:grid % n_cells) 
+  real            :: Hi  (-grid % n_bnd_cells:grid % n_cells),  &
+                     uj_i(-grid % n_bnd_cells:grid % n_cells),  &
+                     uk_i(-grid % n_bnd_cells:grid % n_cells) 
   real            :: uuS, vvS, wwS, uvS, uwS, vwS
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter, mat
@@ -104,7 +104,7 @@
   Fstress = 0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
-  do c=-grid % n_boundary_cells,-1
+  do c=-grid % n_bnd_cells,-1
     A % bou(c)=0.0
   end do
 
@@ -585,7 +585,7 @@
 
   niter=miter
 
-  call cg(grid % n_cells, grid % n_boundary_cells, A,           & 
+  call cg(grid % n_cells, grid % n_bnd_cells, A,           & 
           ui % n, b, PREC,        &
           niter,U % STol, res(var), error)
 

@@ -19,7 +19,7 @@
   real    :: error
   real    :: SMDPN
   real    :: dPxi, dPyi, dPzi
-!------------------------------------------------------------------------------!
+!==============================================================================!
 !     
 !  The form of equations which I am solving:    
 !     
@@ -40,7 +40,7 @@
 !     b              [kg/s]
 !     Flux           [kg/s]
 !   
-!==============================================================================!
+!------------------------------------------------------------------------------!
 
   ! Initialize matrix and right hand side
   A % val = 0.0
@@ -184,7 +184,7 @@
   ! Value 1.e-18 blows the solution.
   ! Value 1.e-12 keeps the solution stable
   niter=40
-  call bicg(grid % n_cells, grid % n_boundary_cells, A,                     &
+  call bicg(grid % n_cells, grid % n_bnd_cells, A,                     &
         PP % n, b, PREC, niter, PP % STol,  &
         res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)

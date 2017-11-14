@@ -20,9 +20,9 @@
   phi % name = name_phi
 
   ! Values new (n), old (o), and older than old (oo)
-  allocate (phi % n (-grid % n_boundary_cells: grid % n_cells));   phi % n  = 0.
-  allocate (phi % o (-grid % n_boundary_cells: grid % n_cells));   phi % o  = 0.
-  allocate (phi % oo(-grid % n_boundary_cells: grid % n_cells));   phi % oo = 0.
+  allocate (phi % n (-grid % n_bnd_cells: grid % n_cells));   phi % n  = 0.
+  allocate (phi % o (-grid % n_bnd_cells: grid % n_cells));   phi % o  = 0.
+  allocate (phi % oo(-grid % n_bnd_cells: grid % n_cells));   phi % oo = 0.
 
   ! Advection terms
   allocate (phi % C  (grid % n_cells));   phi % C   = 0.
@@ -39,6 +39,6 @@
   allocate (phi % Xoo(grid % n_cells));   phi % Xoo = 0.
 
   ! Variable's boundary flux
-  allocate (phi % q(-grid % n_boundary_cells: -1));   phi % q  = 0.
+  allocate (phi % q(-grid % n_bnd_cells: -1));   phi % q  = 0.
 
   end subroutine

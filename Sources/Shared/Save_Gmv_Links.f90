@@ -48,7 +48,7 @@
   do c = 1, grid % n_cells
     if(NewC(c)  > 0) write(9, '(1PE14.7)') grid % xc(c)
   end do 
-  do c = -1,-grid % n_boundary_cells,-1
+  do c = -1,-grid % n_bnd_cells,-1
     if(NewC(c) /= 0) write(9, '(1PE14.7)') grid % xc(c)
   end do 
   do c = 1,NBFsub
@@ -62,7 +62,7 @@
   do c = 1, grid % n_cells
     if(NewC(c)  > 0) write(9, '(1PE14.7)') grid % yc(c)
   end do 
-  do c = -1,-grid % n_boundary_cells,-1
+  do c = -1,-grid % n_bnd_cells,-1
     if(NewC(c) /= 0) write(9, '(1PE14.7)') grid % yc(c)
   end do 
   do c = 1,NBFsub
@@ -76,7 +76,7 @@
   do c = 1, grid % n_cells
     if(NewC(c)  > 0) write(9, '(1PE14.7)') grid % zc(c)
   end do 
-  do c = -1,-grid % n_boundary_cells,-1
+  do c = -1,-grid % n_bnd_cells,-1
     if(NewC(c) /= 0) write(9, '(1PE14.7)') grid % zc(c)
   end do 
   do c = 1,NBFsub

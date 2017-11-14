@@ -25,9 +25,9 @@
   real              :: xt(8), yt(8), zt(8)
   integer           :: face_nodes(6,4)
 !==============================================================================!
-  data face_nodes / 1, 1, 2, 4, 3, 5,                               &
-                    2, 5, 6, 8, 7, 7,                               &
-                    4, 6, 8, 7, 5, 8,                               &
+  data face_nodes / 1, 1, 2, 4, 3, 5,         &
+                    2, 5, 6, 8, 7, 7,         &
+                    4, 6, 8, 7, 5, 8,         &
                     3, 2, 4, 3, 1, 6  /
 !------------------------------------------------------------------------------!
 
@@ -47,7 +47,7 @@
   !-----------------------------------------------------------------!
   call ReadC(9,inp,tn,ts,te)
   read(inp,*) grid % max_n_nodes,           &
-              grid % max_n_boundary_cells,  &
+              grid % max_n_bnd_cells,  &
               grid % max_n_faces  
 
   !---------------------!
@@ -55,11 +55,11 @@
   !---------------------!
   write(*,*) '# Allocating memory for: ' 
   write(*,*) '#', grid % max_n_nodes, ' nodes and cells' 
-  write(*,*) '#', grid % max_n_boundary_cells, ' boundary cells'         
+  write(*,*) '#', grid % max_n_bnd_cells, ' boundary cells'         
   write(*,*) '#', grid % max_n_faces, ' cell faces' 
 
   ! Variables declared in all_mod.h90:
-  allocate (delta (-grid % max_n_boundary_cells:grid % max_n_nodes))
+  allocate (delta (-grid % max_n_bnd_cells:grid % max_n_nodes))
   delta=0.0
 
   allocate (WallDs(grid % max_n_nodes))
@@ -67,24 +67,24 @@
   allocate (f(grid % max_n_faces))
   f=0.0
 
-  allocate (material(-grid % max_n_boundary_cells:grid % max_n_nodes)) 
+  allocate (material(-grid % max_n_bnd_cells:grid % max_n_nodes)) 
   material=0
   allocate (SideC(0:2,grid % max_n_faces))
   SideC = 0
 
-  allocate (CopyC(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  allocate (CopyC(-grid % max_n_bnd_cells:grid % max_n_nodes))
   CopyC=0
-  allocate (CopyS(2,grid % max_n_boundary_cells))
+  allocate (CopyS(2,grid % max_n_bnd_cells))
   CopyS=0    
 
-  allocate (BCmark(-grid % max_n_boundary_cells-1:-1))
+  allocate (BCmark(-grid % max_n_bnd_cells-1:-1))
   BCmark=0;
 
   ! Variables in Grid_Mod
   call Grid_Mod_Allocate_Nodes(grid,  &
                                grid % max_n_nodes) 
   call Grid_Mod_Allocate_Cells(grid,                         &
-                               grid % max_n_boundary_cells,  &
+                               grid % max_n_bnd_cells,  &
                                grid % max_n_nodes) 
   call Grid_Mod_Allocate_Faces(grid,  &
                                grid % max_n_faces) 
@@ -96,13 +96,14 @@
   allocate (SideCc(grid % max_n_faces,2))
   SideCc=0 
 
-  allocate (NewN(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  ! Variables for renumbering
+  allocate (NewN(-grid % max_n_bnd_cells:grid % max_n_nodes))
   NewN=0
-  allocate (NewC(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  allocate (NewC(-grid % max_n_bnd_cells:grid % max_n_nodes))
   NewC=0
   allocate (NewS( grid % max_n_faces))
   NewS=0
-  allocate (CelMar(-grid % max_n_boundary_cells:grid % max_n_nodes))
+  allocate (CelMar(-grid % max_n_bnd_cells:grid % max_n_nodes))
   CelMar=0
 
   allocate (TwinN(grid % max_n_nodes,0:8))
@@ -189,9 +190,10 @@
                          dom % blocks(b) % corners(3))
       call Swap_Integers(dom % blocks(b) % corners(6),  &
                          dom % blocks(b) % corners(7))
-      call Swap_Reals(dom % blocks(b) % weights(1),dom % blocks(b) % weights(2))
-      dom % blocks(b) % weights(1)=1.0/dom % blocks(b) % weights(1)
-      dom % blocks(b) % weights(2)=1.0/dom % blocks(b) % weights(2)
+      call Swap_Reals(dom % blocks(b) % weights(1),  &
+                      dom % blocks(b) % weights(2))
+      dom % blocks(b) % weights(1) = 1.0 / dom % blocks(b) % weights(1)
+      dom % blocks(b) % weights(2) = 1.0 / dom % blocks(b) % weights(2)
       call Swap_Integers(dom % blocks(b) % resolutions(1),  &
                          dom % blocks(b) % resolutions(2))
       write(*,*) 'Warning: Block ',b,' was not properly oriented'
@@ -338,7 +340,7 @@
 
     call ReadC(9,inp,tn,ts,te)
     if(tn == 7) then
-      read(inp,*)  dum,                    &  
+      read(inp,*)  dum,                     &  
                    dom % regions(n) % is,   &
                    dom % regions(n) % js,   &
                    dom % regions(n) % ks,   & 
@@ -493,4 +495,4 @@
 
   close(9)
 
-  end subroutine Load_Domain
+  end subroutine

@@ -10,7 +10,7 @@
 
   ! Store number of cells and boundary cells
   grid % n_cells          = nc
-  grid % n_boundary_cells = nb
+  grid % n_bnd_cells = nb
 
   ! Allocate cell center coordinates and initialize to zero
   allocate(grid % xc(-nb:nc));  grid % xc = 0.0

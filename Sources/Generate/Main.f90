@@ -24,28 +24,26 @@
   ! Open with a logo
   call Logo
 
-  call Load_Domain(dom, grid)
+  call Load_Domain             (dom, grid)
   call Compute_Node_Coordinates(dom, grid)
-  call Distribute_Regions(dom, grid)
-  call Connect_Blocks(dom, grid)
-  call Connect_Periodicity(dom, grid)
-  call Connect_Copy(dom)
+  call Distribute_Regions      (dom, grid)
+  call Connect_Blocks          (dom, grid)
+  call Connect_Periodicity     (dom, grid)
+  call Connect_Copy            (dom)
 
   ! From this point on, domain is not used anymore
   call Determine_Grid_Connectivity(grid, .false.)  ! trial run 
-  call Compute_Grid_Geometry(grid, .false.)
-  call Smooth_Grid(grid)
-
-  call Refine_Grid(grid)
-
+  call Compute_Grid_Geometry      (grid, .false.)
+  call Smooth_Grid                (grid)
+  call Refine_Grid                (grid)
   call Determine_Grid_Connectivity(grid, .true.) ! real run
-  call Compute_Grid_Geometry(grid, .true.)
+  call Compute_Grid_Geometry      (grid, .true.)
 
   ! Prepare for saving
   do n = 1,grid % n_nodes
     NewN(n)=n
   end do
-  do c = -grid % n_boundary_cells,grid % n_cells
+  do c = -grid % n_bnd_cells,grid % n_cells
     NewC(c)=c
   end do
   do s = 1,grid % n_faces
@@ -56,8 +54,10 @@
   call Save_Gmv_Cells(grid, 0,         &
                       grid % n_nodes,  &
                       grid % n_cells)     ! save grid for postprocessing
+
   call Save_Gmv_Faces(grid, 0,         &
                       grid % n_nodes)     ! save grid for checking b.c. 
+
   call Save_Shadows  (grid, 0,         &
                       grid % n_nodes,  &
                       grid % n_cells)     ! save shadows 
@@ -65,7 +65,7 @@
   call Save_Cns_Geo(grid, 0,                  &
                     grid % n_cells,           &
                     grid % n_faces,           &
-                    grid % n_boundary_cells,  &
+                    grid % n_bnd_cells,  &
                     0, 0)  ! saved data for processing
 
   ! Save links for checking
@@ -73,7 +73,7 @@
                       grid % n_nodes,           &
                       grid % n_cells,           &
                       grid % n_faces,           &
-                      grid % n_boundary_cells,  &
+                      grid % n_bnd_cells,  &
                       0)
 
   ! Save the 1D probe (good for the channel flow)
@@ -83,7 +83,7 @@
   call Probe_2D(grid)
 
   ! Create output for Fluent
-  NewC(-grid % n_boundary_cells-1) = -grid % n_boundary_cells-1
+  NewC(-grid % n_bnd_cells-1) = -grid % n_bnd_cells-1
   call Save_Cas(grid, 0,              &
                 grid % n_nodes,       &
                 grid % n_cells,       &

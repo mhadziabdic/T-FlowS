@@ -31,20 +31,20 @@
   !   Count the boundary cells   !
   !                              !
   !------------------------------!
-  grid % n_boundary_cells = 0
+  grid % n_bnd_cells = 0
   do c = 1, grid % n_cells
     do m = 1, 24   ! neighbour cells
       if(grid % cells_c(m,c)  < 0) then
-        grid % n_boundary_cells   = grid % n_boundary_cells + 1
+        grid % n_bnd_cells   = grid % n_bnd_cells + 1
 
         ! Remember the boundary marker, take positive value for marker
-        BCmark(-grid % n_boundary_cells) =  -grid % cells_c(m,c)  
+        BCmark(-grid % n_bnd_cells) =  -grid % cells_c(m,c)  
 
         ! Put new boundary cell into place  
-        grid % cells_c(m,c)  = -grid % n_boundary_cells
+        grid % cells_c(m,c)  = -grid % n_bnd_cells
 
         ! Material marker
-        material(-grid % n_boundary_cells) = material(c)
+        material(-grid % n_bnd_cells) = material(c)
 
       end if 
     end do
@@ -85,12 +85,16 @@
         ! Nodes of a side grid % n_faces
         if(c2  > 0) then
           if(level(c2)  > level(c1)) then
-            grid % faces_n(1, grid % n_faces) = grid % cells_n( lfn(SideCc(grid % n_faces,2),4), c2 )
-            grid % faces_n(2,grid % n_faces) = grid % cells_n( lfn(SideCc(grid % n_faces,2),3), c2 )
-            grid % faces_n(3,grid % n_faces) = grid % cells_n( lfn(SideCc(grid % n_faces,2),2), c2 )
-            grid % faces_n(4,grid % n_faces) = grid % cells_n( lfn(SideCc(grid % n_faces,2),1), c2 )
+            grid % faces_n(1,grid % n_faces) =  &
+              grid % cells_n( lfn(SideCc(grid % n_faces,2),4), c2 )
+            grid % faces_n(2,grid % n_faces) =  &
+              grid % cells_n( lfn(SideCc(grid % n_faces,2),3), c2 )
+            grid % faces_n(3,grid % n_faces) =  &
+              grid % cells_n( lfn(SideCc(grid % n_faces,2),2), c2 )
+            grid % faces_n(4,grid % n_faces) =  &
+              grid % cells_n( lfn(SideCc(grid % n_faces,2),1), c2 )
           else
-            grid % faces_n(1, grid % n_faces) = grid % cells_n( lfn(m,1), c1 )
+            grid % faces_n(1,grid % n_faces) = grid % cells_n( lfn(m,1), c1 )
             grid % faces_n(2,grid % n_faces) = grid % cells_n( lfn(m,2), c1 )
             grid % faces_n(3,grid % n_faces) = grid % cells_n( lfn(m,3), c1 )
             grid % faces_n(4,grid % n_faces) = grid % cells_n( lfn(m,4), c1 )
@@ -112,14 +116,14 @@
   write(*,*) '# Wall and interface faces end at  : ', WallFacLst
 
   if(.NOT. rrun) then
-  grid % n_boundary_cells = 0
+  grid % n_bnd_cells = 0
   do c = 1, grid % n_cells
     do m = 1, 24   ! neighbour cells
       if(grid % cells_c(m,c)  < 0) then
-        grid % n_boundary_cells   = grid % n_boundary_cells + 1
+        grid % n_bnd_cells   = grid % n_bnd_cells + 1
 
         ! Restore the boundary marker, take positive value for marker
-        grid % cells_c(m,c)  = -BCmark(-grid % n_boundary_cells)
+        grid % cells_c(m,c)  = -BCmark(-grid % n_bnd_cells)
       end if 
     end do
   end do 

@@ -34,12 +34,12 @@
 
   ! Number of cells, boundary cells and sides
   read(9) grid % n_cells                                 
-  read(9) grid % n_boundary_cells
+  read(9) grid % n_bnd_cells
   read(9) grid % n_faces
   read(9) c   ! NSsh is not used in Processor. 
 
   ! Allocate memory =--> carefull, there is no checking!
-  call Grid_Mod_Allocate_Cells(grid, grid % n_boundary_cells, grid % n_cells) 
+  call Grid_Mod_Allocate_Cells(grid, grid % n_bnd_cells, grid % n_cells) 
   call Grid_Mod_Allocate_Faces(grid, grid % n_faces) 
 
   ! Number of materials and boundary conditions
@@ -58,9 +58,9 @@
   end do
 
   ! Cell materials
-  allocate (material(-grid % n_boundary_cells:grid % n_cells))
+  allocate (material(-grid % n_bnd_cells:grid % n_cells))
   read(9) (material(c), c =  1, grid % n_cells)        
-  read(9) (material(c), c = -1,-grid % n_boundary_cells, -1) 
+  read(9) (material(c), c = -1,-grid % n_bnd_cells, -1) 
 
   ! Faces
   allocate (SideC(0:2,grid % n_faces))
@@ -69,13 +69,13 @@
   read(9) (SideC(2,s), s = 1, grid % n_faces)
 
   ! Boundary cells
-  allocate (TypeBC(-grid % n_boundary_cells:grid % n_cells)); TypeBC=0 
-  allocate (bcmark(-grid % n_boundary_cells:-1))
-  read(9) (bcmark(c), c = -1, -grid % n_boundary_cells, -1) 
+  allocate (TypeBC(-grid % n_bnd_cells:grid % n_cells)); TypeBC=0 
+  allocate (bcmark(-grid % n_bnd_cells:-1))
+  read(9) (bcmark(c), c = -1, -grid % n_bnd_cells, -1) 
 
   ! Boundary copy cells
-  allocate (CopyC(-grid % n_boundary_cells:-1))
-  read(9) (CopyC(c), c = -1, -grid % n_boundary_cells, -1)   
+  allocate (CopyC(-grid % n_bnd_cells:-1))
+  read(9) (CopyC(c), c = -1, -grid % n_bnd_cells, -1)   
 
   close(9)
 

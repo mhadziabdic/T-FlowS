@@ -44,7 +44,7 @@
   write(*,*) '# Total number of boundary sections: ', n_bnd_sect
 
   ! Count the boundary cells
-  grid % n_boundary_cells = 0
+  grid % n_bnd_cells = 0
   do 
     call Read_Line(9,inp,tn,ts,te)
     if( inp(ts(1):te(1)) == 'BOUNDARY' ) then
@@ -52,13 +52,13 @@
         if(j>1) call Read_Line(9,inp,tn,ts,te) ! BOUNDARY CONDITIONS
         call Read_Line(9,inp,tn,ts,te)
         read(inp(ts(3):te(3)),*) dum1  
-        grid % n_boundary_cells = grid % n_boundary_cells + dum1 
+        grid % n_bnd_cells = grid % n_bnd_cells + dum1 
         do i = 1, dum1
           read(9,*) c, dum2, dir
         end do
         call Read_Line(9,inp,tn,ts,te)         ! ENDOFSECTION
       end do
-      write(*,*) '# Total number of boundary cells: ', grid % n_boundary_cells
+      write(*,*) '# Total number of boundary cells: ', grid % n_bnd_cells
       go to 1
     end if
   end do 
@@ -72,21 +72,21 @@
 
   ! Allocate memory =--> carefull, there is no checking!
   call Grid_Mod_Allocate_Nodes(grid, grid % n_nodes) 
-  call Grid_Mod_Allocate_Cells(grid, grid % n_boundary_cells, grid % n_cells) 
+  call Grid_Mod_Allocate_Cells(grid, grid % n_bnd_cells, grid % n_cells) 
   call Grid_Mod_Allocate_Faces(grid, grid % n_cells*5) 
 
-  allocate(material(-grid % n_boundary_cells:grid % n_cells));  material=0 
-  allocate(BCtype(grid % n_cells,6));                           BCtype=0
-  allocate(BCmark(-grid % n_boundary_cells-1:-1));              BCmark=0
-! WARNING:  allocate(CellN(-grid % n_boundary_cells-1:grid % n_cells,-1:8)); CellN=0
+  allocate(material(-grid % n_bnd_cells:grid % n_cells));  material=0 
+  allocate(BCtype( grid % n_cells,6));                     BCtype=0
+  allocate(BCmark(-grid % n_bnd_cells-1:-1));              BCmark=0
+! WARNING:  allocate(CellN(-grid % n_bnd_cells-1:grid % n_cells,-1:8)); CellN=0
   allocate(SideC(0:2,grid % n_cells*5));       SideC=0    
   n_copy = 1000000 
-  allocate(CopyC(-grid % n_boundary_cells:-1));  CopyC=0
-  allocate(CopyS(2,n_copy));                     CopyS=0
+  allocate(CopyC(-grid % n_bnd_cells:-1));     CopyC=0
+  allocate(CopyS(2,n_copy));                   CopyS=0
 
-  allocate(NewN( grid % n_nodes));                           NewN=0  
-  allocate(NewC(-grid % n_boundary_cells-1:grid % n_cells)); NewC=0  
-  allocate(NewS( grid % n_cells*5));                         NewS=0  
+  allocate(NewN( grid % n_nodes));                      NewN=0  
+  allocate(NewC(-grid % n_bnd_cells-1:grid % n_cells)); NewC=0  
+  allocate(NewS( grid % n_cells*5));                    NewS=0  
 
   allocate(proces(0:grid % n_cells)); proces=0
 

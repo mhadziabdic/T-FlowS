@@ -13,7 +13,7 @@
 !---------------------------------[Arguments]----------------------------------!
   integer   :: idSc
   character :: namSc*(*)
-  real      :: phi(-grid % n_boundary_cells:grid % n_cells)
+  real      :: phi(-grid % n_bnd_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer   :: N, s, c, c1, c2, Nfac(10), NtotFac
 !==============================================================================!

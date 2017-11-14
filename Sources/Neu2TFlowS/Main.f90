@@ -32,7 +32,7 @@
   do n=1,grid % n_nodes
     NewN(n) = n 
   end do  
-  do c=-grid % n_boundary_cells,grid % n_cells
+  do c=-grid % n_bnd_cells,grid % n_cells
     NewC(c) = c 
   end do  
   do s=1,grid % n_faces 
@@ -43,34 +43,37 @@
                       grid % n_nodes,     &
                       grid % n_cells,     &
                       grid % n_faces,     &
-                      grid % n_boundary_cells)
+                      grid % n_bnd_cells)
+
   call Save_Gmv_Faces(grid, 0,            &
                       grid % n_nodes)        ! save grid for checking b.c. 
+
   call Save_Shadows  (grid, 0,            &
                       grid % n_nodes,     &
                       grid % n_cells)             ! save shadows 
-  call Save_Cns_Geo  (grid, 0,                  &
-                      grid % n_cells,           &
-                      grid % n_faces,           &
-                      grid % n_boundary_cells,  &
+
+  call Save_Cns_Geo  (grid, 0,             &
+                      grid % n_cells,      &
+                      grid % n_faces,      &
+                      grid % n_bnd_cells,  &
                       0, 0) 
 
   ! Save links for checking
-  call Save_Gmv_Links(grid, 0,                  &
-                      grid % n_nodes,           &
-                      grid % n_cells,           &
-                      grid % n_faces,           &
-                      grid % n_boundary_cells,  &
+  call Save_Gmv_Links(grid, 0,             &
+                      grid % n_nodes,      &
+                      grid % n_cells,      &
+                      grid % n_faces,      &
+                      grid % n_bnd_cells,  &
                       0)
 
   ! Create output for Fluent
-  NewC(-grid % n_boundary_cells-1) = -grid % n_boundary_cells-1
+  NewC(-grid % n_bnd_cells-1) = -grid % n_bnd_cells-1
   call Save_Cas(grid, 0,                  &
                 grid % n_nodes,           &
                 grid % n_cells,           &
                 grid % n_faces+NSsh,      &
-                grid % n_boundary_cells)      ! save grid for postprocessing
-                                                ! with Fluent
+                grid % n_bnd_cells)      ! save grid for postprocessing
+                                         ! with Fluent
 
   ! Create 1D file (used for channel or pipe flow) 
   call Probe_1D_Nodes(grid)

@@ -7,7 +7,7 @@
   use all_mod
   use gen_mod
   use Grid_Mod
-!------------------------------------------------------------------------------! 
+!------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type)     :: grid
@@ -107,13 +107,13 @@
 !                           rx*Sx + ry*Sy + rz*Sz
 !  
 !------------------------------------------------------------------------------!
-  data    f4n / 1, 1, 2, 4, 3, 5,                                   &
-                2, 5, 6, 8, 7, 7,                                   &
-                4, 6, 8, 7, 5, 8,                                   &
+  data    f4n / 1, 1, 2, 4, 3, 5,     &
+                2, 5, 6, 8, 7, 7,     &
+                4, 6, 8, 7, 5, 8,     &
                 3, 2, 4, 3, 1, 6  /
 
-  data    f3n / 1,  1,  2,  3,                                      &
-                2,  4,  4,  4,                                      &
+  data    f3n / 1,  1,  2,  3,        &
+                2,  4,  4,  4,        &
                 3,  2,  3,  1 /
 
     ! Without the following six lines, this procedure works for any grid
@@ -136,11 +136,11 @@
       grid % zc(c)=0.0
       do n = 1, grid % cells_n_nodes(c)
         grid % xc(c) = grid % xc(c) + grid % xn(grid % cells_n(n,c))  &
-              / (1.0*grid % cells_n_nodes(c))
+                     / (1.0*grid % cells_n_nodes(c))
         grid % yc(c) = grid % yc(c) + grid % yn(grid % cells_n(n,c))  &
-              / (1.0*grid % cells_n_nodes(c))
+                     / (1.0*grid % cells_n_nodes(c))
         grid % zc(c) = grid % zc(c) + grid % zn(grid % cells_n(n,c))  &
-              / (1.0*grid % cells_n_nodes(c))
+                     / (1.0*grid % cells_n_nodes(c))
       end do
     end do
 
@@ -179,7 +179,7 @@
     !   <= gives:      Sx,Sy,Sz,xsp,yzp,zsp               !
     !-----------------------------------------------------!
     do s = 1, grid % n_faces
-      do n = 1, grid % faces_n_nodes(s)    ! for quadrilateral an triangular faces
+      do n = 1, grid % faces_n_nodes(s)  ! for quadrilateral an triangular faces
         local_x_node(n) = grid % xn(grid % faces_n(n,s))
         local_y_node(n) = grid % yn(grid % faces_n(n,s))
         local_z_node(n) = grid % zn(grid % faces_n(n,s))
@@ -187,49 +187,49 @@
 
       ! Cell side components
       if( grid % faces_n_nodes(s)  ==  4 ) then
-        grid % sx(s)= 0.5 * (   (local_y_node(2)-local_y_node(1))  &
-                       * (local_z_node(2)+local_z_node(1))  &
-                       + (local_y_node(3)-local_y_node(2))  &
-                       * (local_z_node(2)+local_z_node(3))  &
-                       + (local_y_node(4)-local_y_node(3))  &
-                       * (local_z_node(3)+local_z_node(4))  &
-                       + (local_y_node(1)-local_y_node(4))  &
-                       * (local_z_node(4)+local_z_node(1)) )
-        grid % sy(s)= 0.5 * (   (local_z_node(2)-local_z_node(1))  &
-                       * (local_x_node(2)+local_x_node(1))  &
-                       + (local_z_node(3)-local_z_node(2))  &
-                       * (local_x_node(2)+local_x_node(3))  &
-                       + (local_z_node(4)-local_z_node(3))  &
-                       * (local_x_node(3)+local_x_node(4))  &
-                       + (local_z_node(1)-local_z_node(4))  &
-                       * (local_x_node(4)+local_x_node(1)) )
-        grid % sz(s)= 0.5 * (   (local_x_node(2)-local_x_node(1))  & 
-                       * (local_y_node(2)+local_y_node(1))  & 
-                       + (local_x_node(3)-local_x_node(2))  & 
-                       * (local_y_node(2)+local_y_node(3))  &
-                       + (local_x_node(4)-local_x_node(3))  & 
-                       * (local_y_node(3)+local_y_node(4))  &
-                       + (local_x_node(1)-local_x_node(4))  & 
-                       * (local_y_node(4)+local_y_node(1)) )
+        grid % sx(s)= 0.5 * ((local_y_node(2)-local_y_node(1))  &
+                           * (local_z_node(2)+local_z_node(1))  &
+                           + (local_y_node(3)-local_y_node(2))  &
+                           * (local_z_node(2)+local_z_node(3))  &
+                           + (local_y_node(4)-local_y_node(3))  &
+                           * (local_z_node(3)+local_z_node(4))  &
+                           + (local_y_node(1)-local_y_node(4))  &
+                           * (local_z_node(4)+local_z_node(1)) )
+        grid % sy(s)= 0.5 * ((local_z_node(2)-local_z_node(1))  &
+                           * (local_x_node(2)+local_x_node(1))  &
+                           + (local_z_node(3)-local_z_node(2))  &
+                           * (local_x_node(2)+local_x_node(3))  &
+                           + (local_z_node(4)-local_z_node(3))  &
+                           * (local_x_node(3)+local_x_node(4))  &
+                           + (local_z_node(1)-local_z_node(4))  &
+                           * (local_x_node(4)+local_x_node(1)) )
+        grid % sz(s)= 0.5 * ((local_x_node(2)-local_x_node(1))  & 
+                           * (local_y_node(2)+local_y_node(1))  & 
+                           + (local_x_node(3)-local_x_node(2))  & 
+                           * (local_y_node(2)+local_y_node(3))  &
+                           + (local_x_node(4)-local_x_node(3))  & 
+                           * (local_y_node(3)+local_y_node(4))  &
+                           + (local_x_node(1)-local_x_node(4))  & 
+                           * (local_y_node(4)+local_y_node(1)) )
       else if( grid % faces_n_nodes(s)  ==  3 ) then 
-        grid % sx(s)= 0.5 * (   (local_y_node(2)-local_y_node(1))  &
-                       * (local_z_node(2)+local_z_node(1))  & 
-                       + (local_y_node(3)-local_y_node(2))  &
-                       * (local_z_node(2)+local_z_node(3))  &
-                       + (local_y_node(1)-local_y_node(3))  &
-                       * (local_z_node(3)+local_z_node(1)) )
-        grid % sy(s)= 0.5 * (   (local_z_node(2)-local_z_node(1))  &
-                       * (local_x_node(2)+local_x_node(1))  &
-                       + (local_z_node(3)-local_z_node(2))  &
-                       * (local_x_node(2)+local_x_node(3))  & 
-                       + (local_z_node(1)-local_z_node(3))  &
-                       * (local_x_node(3)+local_x_node(1)) )
-        grid % sz(s)= 0.5 * (   (local_x_node(2)-local_x_node(1))  &
-                       * (local_y_node(2)+local_y_node(1))  &
-                       + (local_x_node(3)-local_x_node(2))  & 
-                       * (local_y_node(2)+local_y_node(3))  & 
-                       + (local_x_node(1)-local_x_node(3))  & 
-                       * (local_y_node(3)+local_y_node(1)) )
+        grid % sx(s)= 0.5 * ((local_y_node(2)-local_y_node(1))  &
+                           * (local_z_node(2)+local_z_node(1))  & 
+                           + (local_y_node(3)-local_y_node(2))  &
+                           * (local_z_node(2)+local_z_node(3))  &
+                           + (local_y_node(1)-local_y_node(3))  &
+                           * (local_z_node(3)+local_z_node(1)) )
+        grid % sy(s)= 0.5 * ((local_z_node(2)-local_z_node(1))  &
+                           * (local_x_node(2)+local_x_node(1))  &
+                           + (local_z_node(3)-local_z_node(2))  &
+                           * (local_x_node(2)+local_x_node(3))  & 
+                           + (local_z_node(1)-local_z_node(3))  &
+                           * (local_x_node(3)+local_x_node(1)) )
+        grid % sz(s)= 0.5 * ((local_x_node(2)-local_x_node(1))  &
+                           * (local_y_node(2)+local_y_node(1))  &
+                           + (local_x_node(3)-local_x_node(2))  & 
+                           * (local_y_node(2)+local_y_node(3))  & 
+                           + (local_x_node(1)-local_x_node(3))  & 
+                           * (local_y_node(3)+local_y_node(1)) )
       else
         write(*,*) 'Compute_Grid_Geometry: something horrible has happened !'
         stop
@@ -295,8 +295,8 @@
       if(c2   >  0) then
 
         ! Scalar product of the side with line c1-c2 is a good criterion
-        if( (grid % sx(s) * (grid % xc(c2) - grid % xc(c1) ) +              &
-             grid % sy(s) * (grid % yc(c2) - grid % yc(c1) ) +              &
+        if( (grid % sx(s) * (grid % xc(c2) - grid % xc(c1) ) +  &
+             grid % sy(s) * (grid % yc(c2) - grid % yc(c1) ) +  &
              grid % sz(s) * (grid % zc(c2) - grid % zc(c1) ))  < 0.0 ) then
 
           NSsh = NSsh + 2
@@ -324,9 +324,9 @@
  
             ! Add shadow faces
             grid % faces_n_nodes(grid % n_faces+NSsh-1) = 4
-            SideC(1, grid % n_faces+NSsh-1) = c1 
-            SideC(2,grid % n_faces+NSsh-1) = -grid % n_boundary_cells-1
-            grid % faces_n(1, grid % n_faces+NSsh-1) = grid % faces_n(1,s)
+            SideC(1,grid % n_faces+NSsh-1) = c1 
+            SideC(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
+            grid % faces_n(1,grid % n_faces+NSsh-1) = grid % faces_n(1,s)
             grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
             grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
             grid % faces_n(4,grid % n_faces+NSsh-1) = grid % faces_n(4,s)
@@ -338,8 +338,8 @@
             grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
             grid % faces_n_nodes(grid % n_faces+NSsh) = 4
             SideC(1, grid % n_faces+NSsh) = c2 
-            SideC(2, grid % n_faces+NSsh) = -grid % n_boundary_cells-1
-            grid % faces_n(1, grid % n_faces+NSsh) = grid % cells_n(f4n(m,1), c2) 
+            SideC(2, grid % n_faces+NSsh) = -grid % n_bnd_cells-1
+            grid % faces_n(1,grid % n_faces+NSsh) = grid % cells_n(f4n(m,1), c2)
             grid % faces_n(2,grid % n_faces+NSsh) = grid % cells_n(f4n(m,2), c2)
             grid % faces_n(3,grid % n_faces+NSsh) = grid % cells_n(f4n(m,3), c2)
             grid % faces_n(4,grid % n_faces+NSsh) = grid % cells_n(f4n(m,4), c2)
@@ -366,8 +366,8 @@
 
             ! Add shadow faces
             grid % faces_n_nodes(grid % n_faces+NSsh-1) = 3
-            SideC(1, grid % n_faces+NSsh-1) = c1 
-            SideC(2,grid % n_faces+NSsh-1) = -grid % n_boundary_cells-1
+            SideC(1,grid % n_faces+NSsh-1) = c1 
+            SideC(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
             grid % faces_n(1, grid % n_faces+NSsh-1) = grid % faces_n(1,s)
             grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
             grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
@@ -379,8 +379,8 @@
             grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
             grid % faces_n_nodes(grid % n_faces+NSsh) = 3
             SideC(1, grid % n_faces+NSsh) = c2 
-            SideC(2, grid % n_faces+NSsh) = -grid % n_boundary_cells-1
-            grid % faces_n(1, grid % n_faces+NSsh) = grid % cells_n(f3n(m,1), c2) 
+            SideC(2, grid % n_faces+NSsh) = -grid % n_bnd_cells-1
+            grid % faces_n(1,grid % n_faces+NSsh) = grid % cells_n(f3n(m,1), c2)
             grid % faces_n(2,grid % n_faces+NSsh) = grid % cells_n(f3n(m,2), c2)
             grid % faces_n(3,grid % n_faces+NSsh) = grid % cells_n(f3n(m,3), c2)
             grid % sx(grid % n_faces+NSsh) = grid % sx(s)
@@ -418,7 +418,7 @@
     c1=SideC(1,s)
     c2=SideC(2,s)   
 
-    do n = 1, grid % faces_n_nodes(s)      ! for quadrilateral an triangular faces
+    do n = 1, grid % faces_n_nodes(s)  ! for quadrilateral an triangular faces
       local_x_node(n) = grid % xn(grid % faces_n(n,s))
       local_y_node(n) = grid % yn(grid % faces_n(n,s))
       local_z_node(n) = grid % zn(grid % faces_n(n,s))
@@ -549,8 +549,10 @@
       WallDs(c)=sqrt(WallDs(c))
     end do
 
-    write(*,*) '# Maximal distance to the wall: ', maxval(WallDs(1:grid % n_cells))
-    write(*,*) '# Minimal distance to the wall: ', minval(WallDs(1:grid % n_cells))
+    write(*,*) '# Maximal distance to the wall: ',  &
+                  maxval(WallDs(1:grid % n_cells))
+    write(*,*) '# Minimal distance to the wall: ',  &
+                  minval(WallDs(1:grid % n_cells))
   end if
 
   do n = 1, grid % n_nodes

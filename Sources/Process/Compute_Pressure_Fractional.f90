@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Compute_Pressure_Fractional(grid)
 !------------------------------------------------------------------------------!
-!   Forms and solves pressure equation for the fractional step method. !
+!   Forms and solves pressure equation for the fractional step method.         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -17,7 +17,7 @@
   real    :: error
   real    :: Us, Vs, Ws, DENs
   real    :: A12
-!------------------------------------------------------------------------------!
+!==============================================================================!
 !     
 !  The form of equations which I am solving:    
 !     
@@ -38,7 +38,7 @@
 !     b              [kg/s]
 !     Flux           [kg/s]
 !   
-!==============================================================================!
+!------------------------------------------------------------------------------!
 
   ! Initialize matrix and source term
   A % val = 0.0
@@ -196,7 +196,7 @@
   ! Value 1.e-12 keeps the solution stable
   if(ALGOR == FRACT)  niter = 200
   if(ALGOR == SIMPLE) niter =  15
-  call cg(grid % n_cells, grid % n_boundary_cells, A,             &  
+  call cg(grid % n_cells, grid % n_bnd_cells, A,             &  
           PP % n, b, PREC, niter, PP % STol,  &
           res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)

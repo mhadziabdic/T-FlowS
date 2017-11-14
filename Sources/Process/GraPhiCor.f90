@@ -32,10 +32,10 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  real            :: phi  (-grid % n_boundary_cells:grid % n_cells),  &
-                     phi_x(-grid % n_boundary_cells:grid % n_cells),  &
-                     phi_y(-grid % n_boundary_cells:grid % n_cells),  &
-                     phi_z(-grid % n_boundary_cells:grid % n_cells)
+  real            :: phi  (-grid % n_bnd_cells:grid % n_cells),  &
+                     phi_x(-grid % n_bnd_cells:grid % n_cells),  &
+                     phi_y(-grid % n_bnd_cells:grid % n_cells),  &
+                     phi_z(-grid % n_bnd_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c1, c2
   real    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 

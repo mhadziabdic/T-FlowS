@@ -21,7 +21,7 @@
   n=n1-n0
 
   if(n  > -1) then
-    do c = -grid % n_boundary_cells, grid % n_cells
+    do c = -grid % n_bnd_cells, grid % n_cells
 
       !-----------------------!
       !      mean values      !

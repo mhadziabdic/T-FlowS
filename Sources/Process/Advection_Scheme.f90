@@ -19,10 +19,10 @@
   type(Grid_Type) :: grid
   real            :: phi_f
   integer         :: s
-  real            :: phi(-grid % n_boundary_cells:grid % n_cells)
-  real            :: phi_i(-grid % n_boundary_cells:grid % n_cells),  &
-                     phi_j(-grid % n_boundary_cells:grid % n_cells),  &
-                     phi_k(-grid % n_boundary_cells:grid % n_cells)
+  real            :: phi(-grid % n_bnd_cells:grid % n_cells)
+  real            :: phi_i(-grid % n_bnd_cells:grid % n_cells),  &
+                     phi_j(-grid % n_bnd_cells:grid % n_cells),  &
+                     phi_k(-grid % n_bnd_cells:grid % n_cells)
   real            :: Di(grid % n_faces),  &
                      Dj(grid % n_faces),  &
                      Dk(grid % n_faces)

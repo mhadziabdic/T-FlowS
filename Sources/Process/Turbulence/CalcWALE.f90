@@ -15,9 +15,9 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  real    :: SijdSijd(-grid % n_boundary_cells:grid % n_cells),  &
-             She     (-grid % n_boundary_cells:grid % n_cells),  &
-             Vor     (-grid % n_boundary_cells:grid % n_cells)
+  real    :: SijdSijd(-grid % n_bnd_cells:grid % n_cells),  &
+             She     (-grid % n_bnd_cells:grid % n_cells),  &
+             Vor     (-grid % n_bnd_cells:grid % n_cells)
   integer :: c
   real    :: S11,  S22,  S33,  S12,  S13,  S23,  S21,  S31,  S32
   real    :: S11d, S22d, S33d, S12d, S13d, S23d, S21d, S31d, S32d

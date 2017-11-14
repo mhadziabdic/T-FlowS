@@ -1,26 +1,26 @@
-!======================================================================!
-  subroutine Correct_Bad(grid, PHIi)
-!----------------------------------------------------------------------!
-!   Corrects the pressure gradients in the cells where they cannot     !
-!   be computed, the so called "bad" cells.                            !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Correct_Bad(grid, phii)
+!------------------------------------------------------------------------------!
+!   Corrects the pressure gradients in the cells where they cannot             !
+!   be computed, the so called "bad" cells.                                    !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use Grid_Mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
+!---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  real            :: PHIi(-grid % n_boundary_cells:grid % n_cells)
-!-------------------------------[Locals]-------------------------------!
+  real            :: phii(-grid % n_bnd_cells:grid % n_cells)
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, s
-!======================================================================!
+!==============================================================================!
 
   do c = 1, grid % n_cells
     if(BadForG(c)) then
-      PHIi(c) = 0.0
+      phii(c) = 0.0
     end if
   end do 
 
@@ -29,11 +29,11 @@
     c2 = SideC(2,s)
      
     if(c2 > 0 .or. c2 < 0 .and. TypeBC(c2) == BUFFER) then
-      if(BadForG(c1)) PHIi(c1) = PHIi(c1) + 0.5*PHIi(c2) 
-      if(BadForG(c2)) PHIi(c2) = PHIi(c2) + 0.5*PHIi(c1) 
+      if(BadForG(c1)) phii(c1) = phii(c1) + 0.5*phii(c2) 
+      if(BadForG(c2)) phii(c2) = phii(c2) + 0.5*phii(c1) 
     end if
   end do
 
-  call Exchng(PHIi)
+  call Exchng(phii)
 
   end subroutine

@@ -27,9 +27,9 @@
   read(9) (grid % yc(c), c = 1, grid % n_cells) 
   read(9) (grid % zc(c), c = 1, grid % n_cells)
 
-  read(9) (grid % xc(c), c=-1,-grid % n_boundary_cells,-1)  
-  read(9) (grid % yc(c), c=-1,-grid % n_boundary_cells,-1)
-  read(9) (grid % zc(c), c=-1,-grid % n_boundary_cells,-1) 
+  read(9) (grid % xc(c), c=-1,-grid % n_bnd_cells,-1)  
+  read(9) (grid % yc(c), c=-1,-grid % n_bnd_cells,-1)
+  read(9) (grid % zc(c), c=-1,-grid % n_bnd_cells,-1) 
 
   read(9) (grid % vol(c), c = 1, grid % n_cells)
   read(9) (delta(c),      c = 1, grid % n_cells)

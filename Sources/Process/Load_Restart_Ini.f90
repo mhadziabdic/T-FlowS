@@ -117,9 +117,9 @@
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6   
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6   
 
-  read(9) (U % n(c),   c = -grid % n_boundary_cells,grid % n_cells)
-  read(9) (V % n(c),   c = -grid % n_boundary_cells,grid % n_cells)
-  read(9) (W % n(c),   c = -grid % n_boundary_cells,grid % n_cells)
+  read(9) (U % n(c),   c = -grid % n_bnd_cells,grid % n_cells)
+  read(9) (V % n(c),   c = -grid % n_bnd_cells,grid % n_cells)
+  read(9) (W % n(c),   c = -grid % n_bnd_cells,grid % n_cells)
   read(9) (U % o(c),   c = 1, grid % n_cells)
   read(9) (V % o(c),   c = 1, grid % n_cells)
   read(9) (W % o(c),   c = 1, grid % n_cells)
@@ -142,12 +142,12 @@
   read(9) (V % Xo(c),  c = 1, grid % n_cells)
   read(9) (W % Xo(c),  c = 1, grid % n_cells)
 
-  read(9) (P % n(c),   c = -grid % n_boundary_cells,grid % n_cells)
-  read(9) (PP % n(c),  c = -grid % n_boundary_cells,grid % n_cells)
+  read(9) (P % n(c),   c = -grid % n_bnd_cells,grid % n_cells)
+  read(9) (PP % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
 
-  read(9) (Px(c),   c = -grid % n_boundary_cells,grid % n_cells)
-  read(9) (Py(c),   c = -grid % n_boundary_cells,grid % n_cells)
-  read(9) (Pz(c),   c = -grid % n_boundary_cells,grid % n_cells)
+  read(9) (Px(c),   c = -grid % n_bnd_cells,grid % n_cells)
+  read(9) (Py(c),   c = -grid % n_bnd_cells,grid % n_cells)
+  read(9) (Pz(c),   c = -grid % n_bnd_cells,grid % n_cells)
 
   ! Pressure drops in each material (domain)
   do m=1,grid % n_materials
@@ -162,8 +162,8 @@
   read(9) (Flux(s), s=1,grid % n_faces)
 
   if(HOT == YES) then
-    read(9) (T % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
-    read(9) (T % q(c),    c = -grid % n_boundary_cells,-1)
+    read(9) (T % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (T % q(c),    c = -grid % n_bnd_cells,-1)
     read(9) (T % o(c),    c = 1, grid % n_cells)
     read(9) (T % C(c),    c = 1, grid % n_cells)
     read(9) (T % Co(c),   c = 1, grid % n_cells)
@@ -174,7 +174,7 @@
   
   if(RES_INI==K_EPS.or.RES_INI==ZETA.or.&
      RES_INI==K_EPS_VV.or.RES_INI==HYB_ZETA.or.RES_INI == HYB_PITM) then 
-    read(9) (Kin % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (Kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (Kin % o(c),    c = 1, grid % n_cells)
     read(9) (Kin % C(c),    c = 1, grid % n_cells)
     read(9) (Kin % Co(c),   c = 1, grid % n_cells)
@@ -182,7 +182,7 @@
     read(9) (Kin % X(c),    c = 1, grid % n_cells)
     read(9) (Kin % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (Eps % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (Eps % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (Eps % o(c),    c = 1, grid % n_cells)
     read(9) (Eps % C(c),    c = 1, grid % n_cells)
     read(9) (Eps % Co(c),   c = 1, grid % n_cells)
@@ -190,15 +190,15 @@
     read(9) (Eps % X(c),    c = 1, grid % n_cells)
     read(9) (Eps % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (Pk(c),     c = -grid % n_boundary_cells,grid % n_cells)
-    read(9) (Uf(c),     c = -grid % n_boundary_cells,grid % n_cells)
-    read(9) (Ynd(c),    c = -grid % n_boundary_cells,grid % n_cells) 
-    read(9) (VISwall(c),c = -grid % n_boundary_cells,grid % n_cells)
-    read(9) (TauWall(c),c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (Pk(c),     c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (Uf(c),     c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (Ynd(c),    c = -grid % n_bnd_cells,grid % n_cells) 
+    read(9) (VISwall(c),c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (TauWall(c),c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
   if(RES_INI==K_EPS_VV.or.RES_INI==ZETA.or.RES_INI == HYB_ZETA) then
-    read(9) (v_2%n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (v_2%n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (v_2%o(c),   c = 1, grid % n_cells)
     read(9) (v_2%C(c),   c = 1, grid % n_cells)
     read(9) (v_2%Co(c),  c = 1, grid % n_cells)
@@ -206,18 +206,18 @@
     read(9) (v_2%X(c),   c = 1, grid % n_cells)
     read(9) (v_2%Xo(c),  c = 1, grid % n_cells)
 
-    read(9) (f22%n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (f22%n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (f22%o(c),   c = 1, grid % n_cells)
     read(9) (f22%Do(c),  c = 1, grid % n_cells)
     read(9) (f22%X(c),   c = 1, grid % n_cells)
     read(9) (f22%Xo(c),  c = 1, grid % n_cells)
  
-    read(9) (Tsc(c),    c = -grid % n_boundary_cells,grid % n_cells)
-    read(9) (Lsc(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (Tsc(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (Lsc(c),    c = -grid % n_bnd_cells,grid % n_cells)
   end if 
 
   if(RES_INI==EBM.or.RES_INI==HJ) then
-    read(9) (uu  % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (uu  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (uu  % o(c),    c = 1, grid % n_cells)
     read(9) (uu  % C(c),    c = 1, grid % n_cells)
     read(9) (uu  % Co(c),   c = 1, grid % n_cells)
@@ -225,7 +225,7 @@
     read(9) (uu  % X(c),    c = 1, grid % n_cells)
     read(9) (uu  % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (vv  % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (vv  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (vv  % o(c),    c = 1, grid % n_cells)
     read(9) (vv  % C(c),    c = 1, grid % n_cells)
     read(9) (vv  % Co(c),   c = 1, grid % n_cells)
@@ -233,7 +233,7 @@
     read(9) (vv  % X(c),    c = 1, grid % n_cells)
     read(9) (vv  % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (ww  % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (ww  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (ww  % o(c),    c = 1, grid % n_cells)
     read(9) (ww  % C(c),    c = 1, grid % n_cells)
     read(9) (ww  % Co(c),   c = 1, grid % n_cells)
@@ -241,7 +241,7 @@
     read(9) (ww  % X(c),    c = 1, grid % n_cells)
     read(9) (ww  % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (uv  % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (uv  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (uv  % o(c),    c = 1, grid % n_cells)
     read(9) (uv  % C(c),    c = 1, grid % n_cells)
     read(9) (uv  % Co(c),   c = 1, grid % n_cells)
@@ -249,7 +249,7 @@
     read(9) (uv  % X(c),    c = 1, grid % n_cells)
     read(9) (uv  % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (uw  % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (uw  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (uw  % o(c),    c = 1, grid % n_cells)
     read(9) (uw  % C(c),    c = 1, grid % n_cells)
     read(9) (uw  % Co(c),   c = 1, grid % n_cells)
@@ -257,7 +257,7 @@
     read(9) (uw  % X(c),    c = 1, grid % n_cells)
     read(9) (uw  % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (vw  % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (vw  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (vw  % o(c),    c = 1, grid % n_cells)
     read(9) (vw  % C(c),    c = 1, grid % n_cells)
     read(9) (vw  % Co(c),   c = 1, grid % n_cells)
@@ -265,7 +265,7 @@
     read(9) (vw  % X(c),    c = 1, grid % n_cells)
     read(9) (vw  % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (Eps % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (Eps % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (Eps % o(c),    c = 1, grid % n_cells)
     read(9) (Eps % C(c),    c = 1, grid % n_cells)
     read(9) (Eps % Co(c),   c = 1, grid % n_cells)
@@ -273,12 +273,12 @@
     read(9) (Eps % X(c),    c = 1, grid % n_cells)
     read(9) (Eps % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (Pk(c),         c = -grid % n_boundary_cells,grid % n_cells)
-    read(9) (Kin % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
-    read(9) (VISt(c),       c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (Pk(c),         c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (Kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (VISt(c),       c = -grid % n_bnd_cells,grid % n_cells)
 
     if(RES_INI==EBM) then
-      read(9) (f22 % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+      read(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
       read(9) (f22 % o(c),    c = 1, grid % n_cells)
       read(9) (f22 % Do(c),   c = 1, grid % n_cells)
       read(9) (f22 % X(c),    c = 1, grid % n_cells)
@@ -287,7 +287,7 @@
   end if
 
   if(RES_INI == SPA_ALL.or.RES_INI==DES_SPA) then
-    read(9) (VIS % n(c),    c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (VIS % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (VIS % o(c),    c = 1, grid % n_cells)
     read(9) (VIS % C(c),    c = 1, grid % n_cells)
     read(9) (VIS % Co(c),   c = 1, grid % n_cells)
@@ -295,10 +295,10 @@
     read(9) (VIS % X(c),    c = 1, grid % n_cells)
     read(9) (VIS % Xo(c),   c = 1, grid % n_cells)
 
-    read(9) (Vort(c),       c = -grid % n_boundary_cells,grid % n_cells)
+    read(9) (Vort(c),       c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(RES_INI/=DNS) read(9) (VISt(c), c = -grid % n_boundary_cells,grid % n_cells)
+  if(RES_INI/=DNS) read(9) (VISt(c), c = -grid % n_bnd_cells,grid % n_cells)
 
   close(9)
 

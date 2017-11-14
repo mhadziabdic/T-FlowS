@@ -11,7 +11,7 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  real            :: phi(-grid % n_boundary_cells:grid % n_cells) 
+  real            :: phi(-grid % n_bnd_cells:grid % n_cells) 
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c1, c2, s
 !==============================================================================!

@@ -15,14 +15,14 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: b, c, n, s, c1, c2, sub, subo, ln
   integer              :: n_nodes_sub, n_cells_sub, n_faces_sub,  &
-                          n_b_cells_sub,n_buff_sub,NCSsub,NCFsub
+                          n_bnd_cells_sub, n_buff_sub, NCSsub, NCFsub
   character(len=80)    :: name_out
   integer,allocatable  :: side_cell(:,:)
 !==============================================================================!
 !   Each subdomain needs two buffers: a send buffer and a receive buffer.      !
 !   A receive buffer will be stored as aditional boundary cells for each       !
-!   subdomain. So each subdomain will have grid % n_boundary_cells physical    !
-!   boundary faces and NBBC-grid % n_boundary_cells buffer bounndary cells.    !
+!   subdomain. So each subdomain will have grid % n_bnd_cells physical         !
+!   boundary faces and NBBC-grid % n_bnd_cells buffer bounndary cells.         !
 !   It is handy to do it that way, because most of the algorythms can remain   !
 !   the same as they are now.  They won't even "know" that they use values     !
 !   from other processors.  On the other hand, a sending buffer has to be      !
@@ -85,13 +85,13 @@
     end do
 
     ! Faces & real boundary cells
-    n_faces_sub   = 0  ! number of sides in subdomain
-    n_b_cells_sub = 0  ! number of real boundary cells in subdomain
+    n_faces_sub     = 0  ! number of sides in subdomain
+    n_bnd_cells_sub = 0  ! number of real boundary cells in subdomain
     NCSsub = 0
     do s = 1, grid % n_faces
       NewS(s)=0
     end do
-    do c=-grid % n_boundary_cells,-1
+    do c=-grid % n_bnd_cells,-1
       NewC(c)=0
     end do
     do s = 1, grid % n_faces
@@ -105,9 +105,9 @@
       else ! c2 < 0
         if( proces(c1) == sub ) then
           n_faces_sub =n_faces_sub+1
-          NewS(s)=n_faces_sub     ! new number for the side
-          n_b_cells_sub=n_b_cells_sub+1
-          NewC(c2)=-n_b_cells_sub ! new number for the boundary cell
+          NewS(s)=n_faces_sub        ! new number for the side
+          n_bnd_cells_sub=n_bnd_cells_sub+1
+          NewC(c2)=-n_bnd_cells_sub  ! new number for the boundary cell
         end if
       end if 
     end do
@@ -124,7 +124,7 @@
     write(*,*) n_cells_sub, ' cells'
     write(*,*) n_nodes_sub, ' nodes' 
     write(*,*) n_faces_sub, ' sides' 
-    write(*,*) n_b_cells_sub, ' physical boundary cells' 
+    write(*,*) n_bnd_cells_sub, ' physical boundary cells' 
 
     !--------------------!
     !   Create buffers   !
@@ -132,7 +132,7 @@
     n_buff_sub = 0
     NCFsub = 0
     write(9,'(A33)') '#--- Number of physical b. cells:'
-    write(9,'(I8)')  n_b_cells_sub   
+    write(9,'(I8)')  n_bnd_cells_sub   
     do subo=1,n_sub
       if(subo /= sub) then
         NBBs(subo)=n_buff_sub+1
@@ -144,17 +144,17 @@
           if(c2  > 0) then
             if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
               n_buff_sub = n_buff_sub+1
-              BuSeIn(n_buff_sub)=NewC(c1) ! Buffer Send Index 
-              BuReIn(n_buff_sub)=c2       ! important for coordinate
-              BufPos(n_buff_sub)=-n_b_cells_sub-n_buff_sub
+              BuSeIn(n_buff_sub)=NewC(c1)  ! buffer send index 
+              BuReIn(n_buff_sub)=c2        ! important for coordinate
+              BufPos(n_buff_sub)=-n_bnd_cells_sub-n_buff_sub
 
               NewS(s)=n_faces_sub+n_buff_sub
             end if
             if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
               n_buff_sub = n_buff_sub+1
-              BuSeIn(n_buff_sub)=NewC(c2) ! Buffer Send Index
-              BuReIn(n_buff_sub)=c1       ! important for coordinate
-              BufPos(n_buff_sub)=-n_b_cells_sub-n_buff_sub
+              BuSeIn(n_buff_sub)=NewC(c2)  ! buffer send index
+              BuReIn(n_buff_sub)=c1        ! important for coordinate
+              BufPos(n_buff_sub)=-n_bnd_cells_sub-n_buff_sub
 
               NewS(s)=n_faces_sub+n_buff_sub
             end if
@@ -168,16 +168,16 @@
           if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
             n_buff_sub = n_buff_sub+1
             NCFsub = NCFsub+1
-            BuSeIn(n_buff_sub)=NewC(c1) ! Buffer Send Index 
+            BuSeIn(n_buff_sub)=NewC(c1) ! buffer send index 
             BuReIn(n_buff_sub)=c2 
-            BufPos(n_buff_sub)= - (-n_b_cells_sub-n_buff_sub) ! watch the sign
+            BufPos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
           if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
             n_buff_sub = n_buff_sub+1
             NCFsub = NCFsub+1
-            BuSeIn(n_buff_sub)=NewC(c2) ! Buffer Send Index
+            BuSeIn(n_buff_sub)=NewC(c2) ! buffer send index
             BuReIn(n_buff_sub)=c1 
-            BufPos(n_buff_sub)= - (-n_b_cells_sub-n_buff_sub) ! watch the sign
+            BufPos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
         end do    ! through sides
         NBBe(subo)=n_buff_sub
@@ -201,42 +201,46 @@
                         sub,          &
                         n_nodes_sub,  &
                         n_cells_sub)
+
     call Save_Gmv_Faces(grid,         &
                         sub,          &
                         n_nodes_sub)
+
     call Save_Shadows(grid,         &
                       sub,          &
                       n_nodes_sub,  &
                       n_cells_sub)
+
     call Save_Cns_Geo(grid,              &
                       sub, n_cells_sub,  &
                       n_faces_sub,       &
-                      n_b_cells_sub,     &
+                      n_bnd_cells_sub,   &
                       n_buff_sub,        &
                       NCFsub)
-    call Save_Gmv_Links(grid,            &
-                        sub,             &
-                        n_nodes_sub,     &
-                        n_cells_sub,     &
-                        n_faces_sub,     &
-                        n_b_cells_sub,   &
+
+    call Save_Gmv_Links(grid,             &
+                        sub,              &
+                        n_nodes_sub,      &
+                        n_cells_sub,      &
+                        n_faces_sub,      &
+                        n_bnd_cells_sub,  &
                         n_buff_sub)
 
     write(*,*) '# Test:'
     write(*,*) '# n_nodes_sub   =', n_nodes_sub
     write(*,*) '# n_cells_sub   =', n_cells_sub
     write(*,*) '# n_faces_sub   =', n_faces_sub
-    write(*,*) '# n_b_cells_sub =', n_b_cells_sub
+    write(*,*) '# n_bnd_cells_sub =', n_bnd_cells_sub
 
     write(*,*) '# ====================================' 
     write(*,*) '# Subdomain   ', sub
     write(*,*) '# Buffer size ', n_buff_sub
     do subo=1,n_sub
       if(subo /= sub) then
-        write(*,*) '# Connections with ', subo ,' : ',              &
-          NBBe(subo)-NBBs(subo)+1,                                  &
-          n_b_cells_sub+NBBs(subo),                                 &
-          n_b_cells_sub+NBBe(subo) 
+        write(*,*) '# Connections with ', subo ,' : ',  &
+          NBBe(subo)-NBBs(subo)+1,                      &
+          n_bnd_cells_sub+NBBs(subo),                   &
+          n_bnd_cells_sub+NBBe(subo) 
       end if 
     end do ! for subo
     write(*,*) '------------------------------------' 

@@ -124,11 +124,11 @@
   do c = 1, grid % n_cells
     do n = 1, grid % cells_n_nodes(c)
       grid % xc(c) = grid % xc(c) + grid % xn(grid % cells_n(n,c))  &
-                    / (1.0*grid % cells_n_nodes(c))
+                   / (1.0*grid % cells_n_nodes(c))
       grid % yc(c) = grid % yc(c) + grid % yn(grid % cells_n(n,c))  &
-                    / (1.0*grid % cells_n_nodes(c))
+                   / (1.0*grid % cells_n_nodes(c))
       grid % zc(c) = grid % zc(c) + grid % zn(grid % cells_n(n,c))  &
-                    / (1.0*grid % cells_n_nodes(c))
+                   / (1.0*grid % cells_n_nodes(c))
     end do
   end do
 
@@ -151,27 +151,27 @@
     ! Cell side components
     if( grid % faces_n_nodes(s)  ==  4 ) then
       grid % sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
-                    +(yt(3)-yt(2))*(zt(2)+zt(3))   &
-                    +(yt(4)-yt(3))*(zt(3)+zt(4))   &
-                    +(yt(1)-yt(4))*(zt(4)+zt(1)) )
+                           +(yt(3)-yt(2))*(zt(2)+zt(3))   &
+                           +(yt(4)-yt(3))*(zt(3)+zt(4))   &
+                           +(yt(1)-yt(4))*(zt(4)+zt(1)) )
       grid % sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
-                    +(zt(3)-zt(2))*(xt(2)+xt(3))   &
-                    +(zt(4)-zt(3))*(xt(3)+xt(4))   &
-                    +(zt(1)-zt(4))*(xt(4)+xt(1)) )
+                           +(zt(3)-zt(2))*(xt(2)+xt(3))   &
+                           +(zt(4)-zt(3))*(xt(3)+xt(4))   &
+                           +(zt(1)-zt(4))*(xt(4)+xt(1)) )
       grid % sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   & 
-                    +(xt(3)-xt(2))*(yt(2)+yt(3))   &
-                    +(xt(4)-xt(3))*(yt(3)+yt(4))   &
-                    +(xt(1)-xt(4))*(yt(4)+yt(1)) )
+                           +(xt(3)-xt(2))*(yt(2)+yt(3))   &
+                           +(xt(4)-xt(3))*(yt(3)+yt(4))   &
+                           +(xt(1)-xt(4))*(yt(4)+yt(1)) )
     else if( grid % faces_n_nodes(s)  ==  3 ) then 
       grid % sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
-                    +(yt(3)-yt(2))*(zt(2)+zt(3))   &
-                    +(yt(1)-yt(3))*(zt(3)+zt(1)) )
+                           +(yt(3)-yt(2))*(zt(2)+zt(3))   &
+                           +(yt(1)-yt(3))*(zt(3)+zt(1)) )
       grid % sy(s)= 0.5 * ( (zt(2)-zt(1))*(xt(2)+xt(1))   &
-                    +(zt(3)-zt(2))*(xt(2)+xt(3))   & 
-                    +(zt(1)-zt(3))*(xt(3)+xt(1)) )
+                           +(zt(3)-zt(2))*(xt(2)+xt(3))   & 
+                           +(zt(1)-zt(3))*(xt(3)+xt(1)) )
       grid % sz(s)= 0.5 * ( (xt(2)-xt(1))*(yt(2)+yt(1))   &
-                    +(xt(3)-xt(2))*(yt(2)+yt(3))   & 
-                    +(xt(1)-xt(3))*(yt(3)+yt(1)) )
+                           +(xt(3)-xt(2))*(yt(2)+yt(3))   & 
+                           +(xt(1)-xt(3))*(yt(3)+yt(1)) )
     else
       write(*,*) 'calc4: something horrible has happened !'
       stop
@@ -549,7 +549,7 @@
                       write(*,*) '# Warning!  Potentially a bug in ...'
                       write(*,*) '# ... Compute_Geometry, line 557'
                       write(*,*) '# Contact developers, and if you ... '
-                      write(*,*) '# ... are one of them, fix it!'                         
+                      write(*,*) '# ... are one of them, fix it!'   
                       if(abs((grid % xf(ss) - grid % xf(s))) < Tol .and.  &
                          abs((grid % yf(ss) - grid % yf(s))) < Tol) then
                         mm = hh + c_max/2 
@@ -639,7 +639,7 @@
           ! Add shadow faces
           grid % faces_n_nodes(grid % n_faces+NSsh-1) = 4
           SideC(1,grid % n_faces+NSsh-1) = c1
-          SideC(2,grid % n_faces+NSsh-1) = -grid % n_boundary_cells-1
+          SideC(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
           grid % faces_n(1,grid % n_faces+NSsh-1) = grid % faces_n(1,s)
           grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
           grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
@@ -652,7 +652,7 @@
           grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
           grid % faces_n_nodes(grid % n_faces+NSsh) = 4
           SideC(1,grid % n_faces+NSsh) = c2
-          SideC(2,grid % n_faces+NSsh) = -grid % n_boundary_cells-1
+          SideC(2,grid % n_faces+NSsh) = -grid % n_bnd_cells-1
           grid % faces_n(1,grid % n_faces+NSsh) = grid % faces_n(1,SideC(0,s)) 
           grid % faces_n(2,grid % n_faces+NSsh) = grid % faces_n(2,SideC(0,s))
           grid % faces_n(3,grid % n_faces+NSsh) = grid % faces_n(3,SideC(0,s))
@@ -673,7 +673,7 @@
           ! Add shadow faces
           grid % faces_n_nodes(grid % n_faces+NSsh-1) = 3
           SideC(1,grid % n_faces+NSsh-1) = c1
-          SideC(2,grid % n_faces+NSsh-1) = -grid % n_boundary_cells-1
+          SideC(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
           grid % faces_n(1,grid % n_faces+NSsh-1) = grid % faces_n(1,s)
           grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
           grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
@@ -685,7 +685,7 @@
           grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
           grid % faces_n_nodes(grid % n_faces+NSsh) = 3
           SideC(1,grid % n_faces+NSsh) = c2
-          SideC(2,grid % n_faces+NSsh) = -grid % n_boundary_cells-1
+          SideC(2,grid % n_faces+NSsh) = -grid % n_bnd_cells-1
           grid % faces_n(1,grid % n_faces+NSsh) = grid % faces_n(1,SideC(0,s)) 
           grid % faces_n(2,grid % n_faces+NSsh) = grid % faces_n(2,SideC(0,s))
           grid % faces_n(3,grid % n_faces+NSsh) = grid % faces_n(3,SideC(0,s))
@@ -722,7 +722,8 @@
       NewS(s) = -1
     end if
   end do
-  write(*,'(A22,I9,Z9)') ' # Old number of sides: ', grid % n_faces, grid % n_faces
+  write(*,'(A22,I9,Z9)') ' # Old number of sides: ', &
+                          grid % n_faces, grid % n_faces
   write(*,'(A22,I9,Z9)') ' # New number of sides: ', &
                           number_sides-NSsh,number_sides-NSsh
   
@@ -818,7 +819,7 @@
   !     => depends on: x_node,y_node,z_node  !
   !     <= gives:      delta                 !
   !------------------------------------------!
-  allocate(delta(-grid % n_boundary_cells:grid % n_cells));  delta=0.0
+  allocate(delta(-grid % n_bnd_cells:grid % n_cells));  delta=0.0
 
   do c = 1, grid % n_cells
     delta(c)=0.0
@@ -847,7 +848,7 @@
   !     => depends on: xc,yc,zc inside and on the boundary.          !
   !     <= gives:      WallDs i                                      !
   !------------------------------------------------------------------!
-  allocate(WallDs(-grid % n_boundary_cells:grid % n_cells)); WallDs = HUGE
+  allocate(WallDs(-grid % n_bnd_cells:grid % n_cells)); WallDs = HUGE
 
   write(*,*) '#================================================================'
   write(*,*) '# Type the total number of wall boundary conditions:'
@@ -864,9 +865,10 @@
   else
     do c1 = 1, grid % n_cells
       if(mod(c1,10000) == 0) then
-        write(*,'(a2, f5.0, a14)') ' #', (100.*c1/(1.*grid % n_cells)), ' % complete...'
+        write(*,'(a2, f5.0, a14)') ' #', (100.*c1/(1.*grid % n_cells)),  &
+                                   ' % complete...'
       endif
-      do c2=-1,-grid % n_boundary_cells,-1
+      do c2=-1,-grid % n_bnd_cells,-1
         if(BCmark(c2) <= wall_mark) then
           WallDs(c1)=min(WallDs(c1),                                      &
           Distance_Squared(grid % xc(c1), grid % yc(c1), grid % zc(c1),   &
@@ -883,7 +885,7 @@
   !------------------------------------------------------------!
   !   Calculate the interpolation factors for the cell sides   !
   !------------------------------------------------------------!
-  allocate(f(grid % n_faces+max(grid % n_cells,grid % n_boundary_cells))); f=0.0
+  allocate(f(grid % n_faces+max(grid % n_cells,grid % n_bnd_cells))); f=0.0
 
   do s = 1, grid % n_faces
     c1=SideC(1,s)

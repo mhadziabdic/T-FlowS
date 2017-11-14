@@ -17,9 +17,9 @@
   type(Grid_Type) :: grid
   integer         :: var
   type(Var_Type)  :: phi
-  real            :: phi_x(-grid % n_boundary_cells:grid % n_cells),  &
-                     phi_y(-grid % n_boundary_cells:grid % n_cells),  &
-                     phi_z(-grid % n_boundary_cells:grid % n_cells)
+  real            :: phi_x(-grid % n_bnd_cells:grid % n_cells),  &
+                     phi_y(-grid % n_bnd_cells:grid % n_cells),  &
+                     phi_z(-grid % n_bnd_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter
   real    :: Fex, Fim 
@@ -51,7 +51,7 @@
   b=0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
-  do c=-grid % n_boundary_cells,-1
+  do c=-grid % n_bnd_cells,-1
     A % bou(c)=0.0
   end do
 
@@ -253,7 +253,7 @@
   if(ALGOR == FRACT)    miter=5
 
   niter=miter
-  call cg(grid % n_cells, grid % n_boundary_cells, A,  & 
+  call cg(grid % n_cells, grid % n_bnd_cells, A,  & 
           phi % n, b, PREC,        &
           niter,phi % STol, res(var), error)
   

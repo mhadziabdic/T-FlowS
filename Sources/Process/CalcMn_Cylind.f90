@@ -22,7 +22,7 @@
   n=n1-n0
 
   if(n  > -1) then
-    do c=-grid % n_boundary_cells,grid % n_cells
+    do c=-grid % n_bnd_cells,grid % n_cells
 !-----------------------!
 !      mean values      !
 !-----------------------!
@@ -71,7 +71,7 @@
   end if
 
   if(n  > -1) then
-    do c=-grid % n_boundary_cells,grid % n_cells
+    do c=-grid % n_bnd_cells,grid % n_cells
       R           = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5 + tiny
       Urad_mean   = (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R)
       Utan_mean   = (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R)

@@ -28,7 +28,7 @@
 !   NBFsub - number of buffer boundary faces in subdomain                      !
 !------------------------------------------------------------------------------!
 
-  allocate(iwork(-grid % n_boundary_cells:grid % n_faces,0:2)); iwork=0
+  allocate(iwork(-grid % n_bnd_cells:grid % n_faces,0:2)); iwork=0
   allocate(work(grid % n_faces));           work=0
 
   !----------------------!
@@ -78,7 +78,7 @@
 
   ! Physicall cells
   count=0
-  do c = -1,-grid % n_boundary_cells, -1
+  do c = -1,-grid % n_bnd_cells, -1
     if(NewC(c) /= 0) then
       count=count+1
       iwork(count,1) = material(c)
@@ -127,7 +127,7 @@
   count=0          ! count goes to negative
 
   ! NBCsub physical boundary cells
-  do c = -1,-grid % n_boundary_cells,-1  ! OK, later chooses just cells with NewC
+  do c = -1,-grid % n_bnd_cells,-1  ! OK, later chooses just cells with NewC
     if(NewC(c) /= 0) then
       count=count-1 
       ! nekad bio i: NewC(c)
@@ -208,7 +208,7 @@
   ! Physicall cells
   do var = 1, 3
     count=0
-    do c = -1, -grid % n_boundary_cells, -1
+    do c = -1, -grid % n_bnd_cells, -1
       if(NewC(c) /= 0) then
         count=count+1
         if(var == 1) work(count) = grid % xc(c)

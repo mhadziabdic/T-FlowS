@@ -29,7 +29,7 @@
 
   ! Number of cells
   read(9) grid % n_cells
-  read(9) grid % n_boundary_cells
+  read(9) grid % n_bnd_cells
   read(9) grid % n_faces
   read(9) NSsh
   read(9) grid % n_materials
@@ -48,9 +48,9 @@
     read(9) grid % boundary_conditions(n) % name
   end do
 
-  allocate (material(-grid % n_boundary_cells:grid % n_cells))
+  allocate (material(-grid % n_bnd_cells:grid % n_cells))
   read(9) (material(c), c=1,grid % n_cells)
-  read(9) (material(c), c=-1,-grid % n_boundary_cells,-1)
+  read(9) (material(c), c=-1,-grid % n_bnd_cells,-1)
 
   ! Faces
   allocate (SideC(0:2,grid % n_faces+NSsh))
@@ -59,10 +59,10 @@
   read(9) (SideC(2,s), s=1,grid % n_faces)
 
   ! Boundary cells
-  allocate (bcmark(-grid % n_boundary_cells-1:-1)); bcmark=0
-  allocate (CopyC(-grid % n_boundary_cells:-1));    CopyC=0
-  read(9) (bcmark(c), c=-1,-grid % n_boundary_cells, -1)
-  read(9) (CopyC(c), c=-1,-grid % n_boundary_cells, -1)
+  allocate (bcmark(-grid % n_bnd_cells-1:-1)); bcmark=0
+  allocate (CopyC(-grid % n_bnd_cells:-1));    CopyC=0
+  read(9) (bcmark(c), c=-1,-grid % n_bnd_cells, -1)
+  read(9) (CopyC(c), c=-1,-grid % n_bnd_cells, -1)
  
   read(9) n_copy
   write(*,*) n_copy
@@ -72,4 +72,4 @@
 
   close(9)
 
-  end subroutine Load_Cns
+  end subroutine

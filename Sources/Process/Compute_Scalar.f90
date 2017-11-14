@@ -16,9 +16,9 @@
   type(Grid_Type) :: grid
   integer         :: var
   type(Var_Type)  :: phi
-  real            :: phi_x(-grid % n_boundary_cells:grid % n_cells),  &
-                     phi_y(-grid % n_boundary_cells:grid % n_cells),  &
-                     phi_z(-grid % n_boundary_cells:grid % n_cells)
+  real            :: phi_x(-grid % n_bnd_cells:grid % n_cells),  &
+                     phi_y(-grid % n_bnd_cells:grid % n_cells),  &
+                     phi_z(-grid % n_bnd_cells:grid % n_cells)
 !----------------------------------[Calling]-----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------! 
@@ -76,7 +76,7 @@
   ! This is important for "copy" boundary conditions. Find out why !
   ! (I just coppied this from NewUVW.f90. I don't have a clue if it
   ! is of any importance at all. Anyway, I presume it can do no harm.)
-  do c = -grid % n_boundary_cells,-1
+  do c = -grid % n_bnd_cells,-1
     A % bou(c)=0.0
   end do
 
@@ -271,7 +271,10 @@
     endif
 
 
-    if(SIMULA == ZETA.or.SIMULA==K_EPS_VV.or.SIMULA == K_EPS.or.SIMULA==HYB_ZETA) then
+    if(SIMULA == ZETA      .or.  &
+       SIMULA == K_EPS_VV  .or.  &
+       SIMULA == K_EPS     .or.  &
+       SIMULA == HYB_ZETA) then
       if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
         if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
           CONeff1 = CONwall(c1)
@@ -317,9 +320,11 @@
       else
         if(TypeBC(c2).ne.SYMMETRY) then 
           if(material(c1) == material(c2)) then
-            phi % Do(c1) = phi % Do(c1) + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1))   
+            phi % Do(c1) = phi % Do(c1)  &
+                + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1))   
           else
-            phi % Do(c1) = phi % Do(c1) + 2.*CONc(material(c1))*Scoef(s)*(phiside(s)-phi % n(c1)) 
+            phi % Do(c1) = phi % Do(c1)  &
+                + 2.*CONc(material(c1))*Scoef(s)*(phiside(s)-phi % n(c1)) 
           end if
         end if
       end if 
@@ -451,7 +456,8 @@
       if(phi % X(c) >= 0) then
         b(c)  = b(c) + phi % X(c)
       else
-        A % val(A % dia(c)) = A % val(A % dia(c)) - phi % X(c)/(phi % n(c)+1.e-6)
+        A % val(A % dia(c)) = A % val(A % dia(c))  &
+                            - phi % X(c)/(phi % n(c)+1.e-6)
       end if
     end do
   end if
@@ -566,7 +572,8 @@
   !                                 !    
   !---------------------------------!
   do c = 1, grid % n_cells
-    b(c) = b(c) + A % val(A % dia(c)) * (1.0 - phi % URF) * phi % n(c) / phi % URF
+    b(c) = b(c) + A % val(A % dia(c)) * (1.0 - phi % URF) * phi % n(c)  &
+                                      / phi % URF
     A % val(A % dia(c)) = A % val(A % dia(c)) / phi % URF
   end do  
 
@@ -574,7 +581,7 @@
   if(ALGOR == FRACT)    miter=5 
 
   niter=miter
-  call bicg(grid % n_cells, grid % n_boundary_cells, A,           & 
+  call bicg(grid % n_cells, grid % n_bnd_cells, A,           & 
             phi % n, b, PREC,     &
             niter,phi % STol, res(var), error)
   write(LineRes(65:76),  '(1PE12.3)') res(var)

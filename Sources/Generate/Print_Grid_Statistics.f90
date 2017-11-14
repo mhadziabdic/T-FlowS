@@ -7,7 +7,7 @@
   use all_mod
   use gen_mod
   use Grid_Mod
-!------------------------------------------------------------------------------! 
+!------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
@@ -21,7 +21,7 @@
   write(*,*) '# Number of nodes         :', grid % n_nodes
   write(*,*) '# Number of cells         :', grid % n_cells
   write(*,*) '# Number of sides         :', grid % n_faces
-  write(*,*) '# Number of boundary cells:', grid % n_boundary_cells
+  write(*,*) '# Number of boundary cells:', grid % n_bnd_cells
   write(*,*) '#---------------------------------------------------------------'
 
   ! Find the number of non zero entries
@@ -37,7 +37,7 @@
   write(*,*) '# Number of non zero matrix entries:', nonz
   write(*,*) '# Average stencil size:', real(nonz)/real(grid % n_cells)
   write(*,*) '# Max number of nodes and cells:',   grid % max_n_nodes
-  write(*,*) '# Max number of boundary cells:',    grid % max_n_boundary_cells
+  write(*,*) '# Max number of boundary cells:',    grid % max_n_bnd_cells
   write(*,*) '#---------------------------------------------------------------'
 
   ! Neighbours

@@ -20,7 +20,7 @@
     integer :: n_nodes
     integer :: n_cells
     integer :: n_faces
-    integer :: n_boundary_cells
+    integer :: n_bnd_cells
     integer :: n_materials            ! number of materials
     integer :: n_boundary_conditions  ! number of boundary conditions
 
@@ -72,7 +72,7 @@
     !  Maximum number of cells, boundary cells and faces
     ! (Used for tentative memory allocation in Generator)
     integer :: max_n_nodes
-    integer :: max_n_boundary_cells
+    integer :: max_n_bnd_cells
     integer :: max_n_faces
 
   end type Grid_Type

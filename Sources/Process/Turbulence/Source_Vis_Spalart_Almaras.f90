@@ -17,9 +17,9 @@
   integer :: c 
   real    :: Xrat, Fv1, Fv2, Fw, SS, DistV, ProdV, R, GG, Dif
   real    :: dist
-  real    :: phi_x(-grid % n_boundary_cells:grid % n_cells),  &
-             phi_y(-grid % n_boundary_cells:grid % n_cells),  &
-             phi_z(-grid % n_boundary_cells:grid % n_cells)
+  real    :: phi_x(-grid % n_bnd_cells:grid % n_cells),  &
+             phi_y(-grid % n_bnd_cells:grid % n_cells),  &
+             phi_z(-grid % n_bnd_cells:grid % n_cells)
 !==============================================================================!
 
   if(SIMULA == SPA_ALL) then

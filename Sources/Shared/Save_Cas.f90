@@ -84,7 +84,7 @@
   !   Faces on the boundary   !
   !---------------------------!
   NtotFac = 0
-  BCmark(-grid % n_boundary_cells-1) = 20  ! set the type for periodic.
+  BCmark(-grid % n_bnd_cells-1) = 20  ! set the type for periodic.
   ! It has to be 19+1, where 19 is max number of boundary. 
   ! See ReadFluentNeu.f90
 

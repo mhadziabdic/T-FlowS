@@ -16,11 +16,11 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  real            :: Ui(-grid % n_boundary_cells:grid % n_cells),  &
-                     Vi(-grid % n_boundary_cells:grid % n_cells),  &
-                     Wi(-grid % n_boundary_cells:grid % n_cells)
-  real            :: She(-grid % n_boundary_cells:grid % n_cells)
-!-----------------------------------[Locals]-------------------------------!
+  real            :: Ui(-grid % n_bnd_cells:grid % n_cells),  &
+                     Vi(-grid % n_bnd_cells:grid % n_cells),  &
+                     Wi(-grid % n_bnd_cells:grid % n_cells)
+  real            :: She(-grid % n_bnd_cells:grid % n_cells)
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c
 !==============================================================================!
 

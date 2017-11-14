@@ -20,6 +20,6 @@
   phi % name = name_phi
 
   ! Values in the new (n) time step
-  allocate (phi % n (-grid % n_boundary_cells : grid % n_cells));   phi % n = 0.
+  allocate (phi % n (-grid % n_bnd_cells : grid % n_cells));   phi % n = 0.
 
   end subroutine

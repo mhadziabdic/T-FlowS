@@ -21,10 +21,18 @@
   type(Grid_Type) :: grid
   integer         :: var
   type(Var_Type)  :: ui
-  real            :: ui_i(-NbC:NC), ui_j(-NbC:NC), ui_k(-NbC:NC)
-  real            :: Si(NS), Sj(NS), Sk(NS) 
-  real            :: Di(NS), Dj(NS), Dk(NS) 
-  real            :: Hi(-NbC:NC), uj_i(-NbC:NC), uk_i(-NbC:NC) 
+  real            :: ui_i(-grid % n_boundary_cells:grid % n_cells),  &
+                     ui_j(-grid % n_boundary_cells:grid % n_cells),  & 
+                     ui_k(-grid % n_boundary_cells:grid % n_cells)
+  real            :: Si(grid % n_faces),  &
+                     Sj(grid % n_faces),  &
+                     Sk(grid % n_faces) 
+  real            :: Di(grid % n_faces),  &
+                     Dj(grid % n_faces),  &
+                     Dk(grid % n_faces) 
+  real            :: Hi  (-grid % n_boundary_cells:grid % n_cells),  &
+                     uj_i(-grid % n_boundary_cells:grid % n_cells),  &
+                     uk_i(-grid % n_boundary_cells:grid % n_cells) 
   real            :: uuS, vvS, wwS, uvS, uwS, vwS
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter, mat
@@ -95,9 +103,8 @@
   A % val = 0.0
   Fstress = 0.0
 
-
   ! This is important for "copy" boundary conditions. Find out why !
-  do c=-NbC,-1
+  do c=-grid % n_boundary_cells,-1
     A % bou(c)=0.0
   end do
 
@@ -107,7 +114,7 @@
 
   ! Old values (o) and older than old (oo)
   if(ini == 1) then
-    do c=1,NC
+    do c=1,grid % n_cells
       ui % oo(c)  = ui % o(c)
       ui % o (c)  = ui % n(c)
       ui % Coo(c) = ui % Co(c)
@@ -128,13 +135,13 @@
   ! Compute phimax and phimin
   do mat=1,grid % n_materials
     if(BLEND(mat) /= NO) then
-      call CalMinMax(ui % n)  ! or ui % o ???
+      call Compute_Minimum_Maximum(grid, ui % n)  ! or ui % o ???
       goto 1
     end if
   end do
 
   ! New values
-1 do c=1,NC
+1 do c=1,grid % n_cells
     ui % C(c)    = 0.0
     ui % X(c)    = 0.0
   end do
@@ -142,7 +149,7 @@
   !----------------------------!
   !   Spatial Discretization   !
   !----------------------------!
-  do s=1,NS
+  do s=1,grid % n_faces
 
     c1=SideC(1,s)
     c2=SideC(2,s) 
@@ -151,7 +158,7 @@
     uis=f(s)*ui % n(c1) + (1.0-f(s))*ui % n(c2)
 
     if(BLEND(material(c1)) /= NO .or. BLEND(material(c2)) /= NO) then
-      call ConvScheme(uis, s, ui % n, ui_i, ui_j, ui_k, Di, Dj, Dk, &
+      call Advection_Scheme(grid, uis, s, ui % n, ui_i, ui_j, ui_k, Di, Dj, Dk, &
                            max(BLEND(material(c1)),BLEND(material(c2))) ) 
     end if 
     
@@ -194,7 +201,7 @@
 
   ! Adams-Bashforth scheeme for convective fluxes
   if(CONVEC == AB) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + URFC(material(c)) * & 
                     (1.5*ui % Co(c) - 0.5*ui % Coo(c) - ui % X(c))
     end do  
@@ -202,7 +209,7 @@
 
   ! Crank-Nicholson scheeme for convective fluxes
   if(CONVEC == CN) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + URFC(material(c)) * & 
                     (0.5 * ( ui % C(c) + ui % Co(c) ) - ui % X(c))
     end do  
@@ -210,14 +217,14 @@
 
   ! Fully implicit treatment of convective fluxes 
   if(CONVEC == FI) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + URFC(material(c)) * & 
                     (ui % C(c) - ui % X(c))
     end do  
   end if     
           
   ! New values
-  do c=1,NC
+  do c=1,grid % n_cells
     ui % X(c) = 0.0
   end do
 
@@ -230,7 +237,7 @@
   !----------------------------!
   !   Spatial discretization   !
   !----------------------------!
-  do s=1,NS       
+  do s=1,grid % n_faces       
 
     c1=SideC(1,s)
     c2=SideC(2,s)   
@@ -384,21 +391,21 @@
   !      call GraPhi(uu%n,1,VAR2x,.TRUE.)
   !      call GraPhi(uv%n,2,VAR2y,.TRUE.)
   !      call GraPhi(uw%n,3,VAR2z,.TRUE.)
-  !      do c = 1, NC
+  !      do c = 1, grid % n_cells
   !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
   !      end do
   !    else if(ui % name == 'V') then
   !      call GraPhi(uv%n,1,VAR2x,.TRUE.)
   !      call GraPhi(vv%n,2,VAR2y,.TRUE.)
   !      call GraPhi(vw%n,3,VAR2z,.TRUE.)
-  !      do c = 1, NC
+  !      do c = 1, grid % n_cells
   !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
   !      end do
   !    else if(ui % name == 'W') then
   !      call GraPhi(uw%n,1,VAR2x,.TRUE.)
   !      call GraPhi(vw%n,2,VAR2y,.TRUE.)
   !      call GraPhi(ww%n,3,VAR2z,.TRUE.)
-  !      do c = 1, NC
+  !      do c = 1, grid % n_cells
   !        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
   !      end do
   !    end if
@@ -406,7 +413,7 @@
   ! Here we clean up momentum from the false diffusion
   if(SIMULA == EBM.or.SIMULA == HJ) then
     if(MODE /= HYB) then
-      do s=1,NS
+      do s=1,grid % n_faces
         c1=SideC(1,s)
         c2=SideC(2,s)
 
@@ -438,14 +445,14 @@
 
   ! Adams-Bashfort scheeme for diffusion fluxes
   if(DIFFUS == AB) then 
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * ui % Do(c) - 0.5 * ui % Doo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
   if(DIFFUS == CN) then 
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * ui % Do(c)
     end do  
   end if
@@ -455,21 +462,21 @@
 
   ! Adams-Bashfort scheeme for cross diffusion 
   if(CROSS == AB) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * ui % Xo(c) - 0.5 * ui % Xoo(c)
     end do 
   end if
 
   ! Crank-Nicholson scheme for cross difusive terms
   if(CROSS == CN) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * ui % X(c) + 0.5 * ui % Xo(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
   if(CROSS == FI) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + ui % X(c)
     end do 
   end if
@@ -482,7 +489,7 @@
 
   ! Two time levels; linear interpolation
   if(INERT == LIN) then
-    do c=1,NC
+    do c=1,grid % n_cells
       A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + A0
       b(c) = b(c) + A0 * ui % o(c)
@@ -491,7 +498,7 @@
 
   ! Three time levels; parabolic interpolation
   if(INERT == PAR) then
-    do c=1,NC
+    do c=1,grid % n_cells
       A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
       b(c) = b(c) + 2.0*A0 * ui % o(c) - 0.5*A0 * ui % oo(c)
@@ -508,15 +515,15 @@
   !   Global pressure drop   !
   !--------------------------!
   if(ui % name == 'U') then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c)  + PdropX(material(c)) * grid % vol(c)
     end do
   else if(ui % name == 'V') then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c)  + PdropY(material(c)) * grid % vol(c)
     end do
   else if(ui % name == 'W') then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c)  + PdropZ(material(c)) * grid % vol(c)
     end do
   end if
@@ -524,7 +531,7 @@
   !---------------------------------!
   !   Local pressure distribution   !
   !---------------------------------!
-  do c=1,NC
+  do c=1,grid % n_cells
     b(c) = b(c) - Hi(c) * grid % vol(c)
   end do
 
@@ -533,14 +540,14 @@
   !----------------------------------------!
   if(HOT == YES) call User_Force(grid, ui, a, b)
 
-!  do c=1,NC                                         ! 2mat
+!  do c=1,grid % n_cells                                         ! 2mat
 !    if(StateMat(material(c))==SOLID) then           ! 2mat
 !      b(c)          = 0.0                           ! 2mat
 !    end if                                          ! 2mat
 !  end do                                            ! 2mat
 
 !---- Disconnect the SOLID cells from FLUID system  ! 2mat
-!  do s=1,NS                                         ! 2mat
+!  do s=1,grid % n_faces                             ! 2mat
 !    c1=SideC(1,s)                                   ! 2mat
 !    c2=SideC(2,s)                                   ! 2mat
 !    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
@@ -567,7 +574,7 @@
   !   Solve the equations for u,v,w   !
   !                                   !    
   !-----------------------------------!
-  do c=1,NC
+  do c=1,grid % n_cells
     A % sav(c) = A % val(A % dia(c))
     b(c) = b(c) + A % val(A % dia(c)) * (1.0-U % URF)*ui % n(c) / U % URF
     A % val(A % dia(c)) = A % val(A % dia(c)) / U % URF
@@ -578,7 +585,7 @@
 
   niter=miter
 
-  call cg(NC, Nbc, A,           & 
+  call cg(grid % n_cells, grid % n_boundary_cells, A,           & 
           ui % n, b, PREC,        &
           niter,U % STol, res(var), error)
 

@@ -17,7 +17,7 @@
 !----------------------------------[Calling]-----------------------------------!
   real             :: Distance
 !-----------------------------------[Locals]-----------------------------------!
-  integer          :: j, k,  c, nearest_cell, var, Nvar, c1, c2, s 
+  integer          :: j, k,  c, nearest_cell, c1, c2, s 
   integer          :: NCold  
   real,allocatable :: Xold(:),Yold(:),Zold(:)
   real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v_2old(:), f22old(:)
@@ -27,14 +27,11 @@
   real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v_2Doold(:), f22Doold(:)
   real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v_2Xold(:), f22Xold(:)
   real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v_2Xoold(:), f22Xoold(:)
-  real,allocatable :: Pold(:)
-  real,allocatable :: PPold(:)
   real             :: Us, Ws, Vs
-  real             :: new_distance, old_distance
+  real             :: old_distance
 
   ! Variables for ReadC:
-  character(len=80) :: namCoo, answer, answer_hot
-  character(len=4)  :: ext
+  character(len=80) :: answer
   character(len=80) :: name_in
 !==============================================================================!  
 
@@ -186,9 +183,9 @@
   nearest_cell = 0
   near = 0
   old_distance = HUGE
-    do c = 1, NC
+    do c = 1, grid % n_cells
       if(this_proc < 2) then
-        if(mod(c,20000) == 0) write(*,*) (100.*c/(1.*NC)), '% complete...'  
+        if(mod(c,20000) == 0) write(*,*) (100.*c/(1.*grid % n_cells)), '% complete...'  
       end if
       old_distance = HUGE
       do k = 1, j
@@ -251,7 +248,7 @@
         F22 % Xo(c) = F22Xoold(near(c)) 
       end if
     end do
-  do s=1, NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 
@@ -331,11 +328,10 @@
     deallocate(TXoold)
   end if
 
-
   write(*,*) 'Finished with Load_Ini  Processor: ', this_proc
 
   ! Restore the name
   name = answer
 
-  end subroutine Load_Ini
+  end subroutine
 

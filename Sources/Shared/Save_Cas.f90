@@ -4,7 +4,7 @@
 !   Writes: ".cas" file                                                        !
 !                                                                              !
 !   See also: number                                                           !
-!   NSsub holds (has to hold) NS + NSsh                                        !
+!   NSsub holds (has to hold) grid % n_faces + NSsh                                        !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
@@ -59,7 +59,7 @@
 
   ! Regular node section
   write(9,'(A7,Z9,Z9,A4)') '(10 (7 ', 1, NNsub, ' 1)('
-  do n=1,NN
+  do n = 1, grid % n_nodes
     if(NewN(n) /= 0) write(9, '(3E15.7)') grid % xn(n),  &
                                           grid % yn(n),  &
                                           grid % zn(n)
@@ -84,7 +84,7 @@
   !   Faces on the boundary   !
   !---------------------------!
   NtotFac = 0
-  BCmark(-NbC-1) = 20  ! set the type for periodic.
+  BCmark(-grid % n_boundary_cells-1) = 20  ! set the type for periodic.
   ! It has to be 19+1, where 19 is max number of boundary. 
   ! See ReadFluentNeu.f90
 
@@ -100,7 +100,7 @@
     if(Nfac /= 0) then
       write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
       write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 100+n, NtotFac+1, NtotFac+Nfac, ' 3 0)('
-      do s=1,NS+NSsh
+      do s=1,grid % n_faces+NSsh
           c1 = SideC(1,s)
           c2 = SideC(2,s)
           if(c2 < 0) then  
@@ -134,7 +134,7 @@
   ! periodic.shadow
   write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
   write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 5, NtotFac+1, NtotFac+NSsh/2, ' 8 0)('
-  do s=NS+1,NS+NSsh,2  ! =--> or maybe: do s=NS+1,NS+NSsh/2
+  do s=grid % n_faces+1,grid % n_faces+NSsh,2  ! =--> or maybe: do s=grid % n_faces+1,grid % n_faces+NSsh/2
     c1 = SideC(1,s)
     c2 = SideC(2,s)
     if(c2 < 0) then
@@ -161,7 +161,7 @@
   ! Periodic
   write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
   write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 6, NtotFac+1+NSsh/2, NtotFac+NSsh, ' c 0)('
-  do s=NS+2,NS+NSsh,2  ! =--> or maybe: do s=NS+1,NS+NSsh/2
+  do s=grid % n_faces+2,grid % n_faces+NSsh,2  ! =--> or maybe: do s=grid % n_faces+1,grid % n_faces+NSsh/2
       c1 = SideC(1,s)
       c2 = SideC(2,s)
       if(c2 < 0) then
@@ -186,7 +186,7 @@
   write(9,'(A2)') '))' 
 
   write(9,'(A7,Z9,Z9,A6)') '(18 (', NtotFac+1, NtotFac+NSsh/2, ' 6 5)('
-  do s=NtotFac+1, NtotFac+NSsh/2     ! =-> ili mozda: "do s=NS+1,NS+NSsh,2" ??
+  do s=NtotFac+1, NtotFac+NSsh/2     ! =-> ili mozda: "do s=grid % n_faces+1,grid % n_faces+NSsh,2" ??
     write(9,'(Z9,Z9)') s, s+NSsh/2 
   end do
   write(9,'(A2)') '))' 
@@ -280,7 +280,7 @@
 
   ! Regular cell section
   write(9,'(A7,Z9,Z9,A6)') '(12 (1 ', 1, NCsub, ' 1 0)('
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
       if(grid % cells_n_nodes(c) == 8) then       ! hexahedra   
         write(9, *) ' 4 ' 
@@ -324,4 +324,4 @@
   write(9,'(A5,I6,A18)') '(45 (', 110 , ' wall wall-10) ())'
   write(9,'(A5,I6,A18)') '(45 (', 111 , ' wall period ) ())'
 
-  end subroutine Save_Cas
+  end subroutine

@@ -13,10 +13,10 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  real            :: phi(-NbC:NC),                              &
-                     phi_x(-NbC:NC),                            &
-                     phi_y(-NbC:NC),                            &
-                     phi_z(-NbC:NC)
+  real            :: phi(  -grid % n_boundary_cells:grid % n_cells),        &
+                     phi_x(-grid % n_boundary_cells:grid % n_cells),        &
+                     phi_y(-grid % n_boundary_cells:grid % n_cells),        &
+                     phi_z(-grid % n_boundary_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2
   real    :: phi_s, xs, ys, zs 
@@ -26,7 +26,7 @@
 
   Ps = 0.0
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     phi_x(c)=0.0
     phi_y(c)=0.0
     phi_z(c)=0.0
@@ -35,7 +35,7 @@
   !------------------------------------------------------------!
   !   First step: without any wall influence, except outflow   !
   !------------------------------------------------------------!
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2 > 0                            .or. &
@@ -54,7 +54,7 @@
     end if
   end do
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(StateMat(material(c))==FLUID) then
       phi_x(c) = phi_x(c) / grid % vol(c)
       phi_y(c) = phi_y(c) / grid % vol(c)
@@ -65,7 +65,7 @@
   !------------------------------------------------------------!
   !   Second step: extrapolate to boundaries, except outflow   !
   !------------------------------------------------------------!
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2 < 0               .and. &
@@ -116,7 +116,7 @@
   !---------------------------------------------!
   !   Third step: compute the final gradients   !
   !---------------------------------------------!
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2 < 0               .and. &

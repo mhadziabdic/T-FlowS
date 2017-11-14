@@ -23,7 +23,7 @@
     FLUXy(m) = 0.0
     FLUXz(m) = 0.0
 
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2 > 0) then

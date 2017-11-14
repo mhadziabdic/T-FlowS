@@ -17,7 +17,7 @@
 !----------------------------------[Calling]-----------------------------------!
   real :: Correct_Velocity
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: i, m, n, Ndtt_temp, HOTtemp, SIMULAtemp, c, Nproc 
+  integer           :: i, m, n, Ndtt_temp
   real              :: Mres, CPUtim
   real              :: start, finish
   character(len=10) :: name_save
@@ -35,10 +35,18 @@
       type(Grid_Type) :: grid
       integer         :: var
       type(Var_Type)  :: Ui
-      real            :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
-      real            :: Si(NS), Sj(NS), Sk(NS) 
-      real            :: Di(NS), Dj(NS), Dk(NS) 
-      real            :: Hi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
+      real            :: dUidi(-grid % n_boundary_cells:grid % n_cells),  &
+                         dUidj(-grid % n_boundary_cells:grid % n_cells),  &
+                         dUidk(-grid % n_boundary_cells:grid % n_cells)
+      real            :: Si(grid % n_faces),  &
+                         Sj(grid % n_faces),  &
+                         Sk(grid % n_faces) 
+      real            :: Di(grid % n_faces),  &
+                         Dj(grid % n_faces),  &
+                         Dk(grid % n_faces) 
+      real            :: Hi   (-grid % n_boundary_cells:grid % n_cells),  &
+                         dUjdi(-grid % n_boundary_cells:grid % n_cells),  &
+                         dUkdi(-grid % n_boundary_cells:grid % n_cells) 
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Compute_Scalar(grid, var, phi, dphidx, dphidy, dphidz)
@@ -50,7 +58,9 @@
       type(Grid_Type) :: grid
       integer         :: var
       type(Var_Type)  :: phi
-      real            :: dphidx(-NbC:NC),dphidy(-NbC:NC),dphidz(-NbC:NC)
+      real            :: dphidx(-grid % n_boundary_cells:grid % n_cells),  &
+                         dphidy(-grid % n_boundary_cells:grid % n_cells),  &
+                         dphidz(-grid % n_boundary_cells:grid % n_cells)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Compute_Turbulent(grid, var, phi, dphidx, dphidy, dphidz, Nstep)  
@@ -62,7 +72,9 @@
       type(Grid_Type) :: grid
       integer        :: var, Nstep
       type(Var_Type) :: phi
-      real           :: dphidx(-NbC:NC),dphidy(-NbC:NC),dphidz(-NbC:NC)
+      real           :: dphidx(-grid % n_boundary_cells:grid % n_cells),  &
+                        dphidy(-grid % n_boundary_cells:grid % n_cells),  &
+                        dphidz(-grid % n_boundary_cells:grid % n_cells)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Save_Gmv_Results(grid, namAut)  
@@ -111,8 +123,10 @@
       use Grid_Mod
       implicit none
       type(Grid_Type) :: grid
-      real            :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
-      real            :: She(-NbC:NC)
+      real            :: Ui(-grid % n_boundary_cells:grid % n_cells),  &
+                         Vi(-grid % n_boundary_cells:grid % n_cells),  &
+                         Wi(-grid % n_boundary_cells:grid % n_cells)
+      real            :: She(-grid % n_boundary_cells:grid % n_cells)
     end subroutine
   end interface
 !======================================================================!
@@ -154,12 +168,12 @@
   call Allocate_Memory(grid)
   call Load_Geo       (grid)
   call BufLoa
-  call Exchng(grid % vol(-NbC))
+  call Exchng(grid % vol(-grid % n_boundary_cells))
 
   call wait   
 
-  call Matrix_Mod_Topology(A)
-  call Matrix_Mod_Topology(D)
+  call Matrix_Mod_Topology(grid, A)
+  call Matrix_Mod_Topology(grid, D)
 
   call Wait   
 
@@ -224,7 +238,7 @@
 
   ! Prepare ...
   call Compute_Geometry(grid)
-  call FindBad()
+  call Find_Bad        (grid)
   if(SIMULA==LES.and.MODE==SMAG.and..NOT.restar) call NearWallCell(grid)
 
   ! Prepare the gradient matrix for velocities
@@ -241,7 +255,7 @@
   LinMon3 = '# [3]'
   LineRes = '#'
 
-  if(ALGOR  ==  FRACT) call ForAPF() 
+  if(ALGOR  ==  FRACT) call Pressure_Matrix_Fractional(grid)
 
   ! Print the areas of monitoring planes
   if(this_proc < 2) then
@@ -271,7 +285,7 @@
     if(SIMULA == LES) then
       call CalcShear(grid, U % n, V % n, W % n, Shear)
       if(MODE == DYN) call Compute_Sgs_Dynamic(grid) 
-      if(MODE == WALE) call CalcWALE() 
+      if(MODE == WALE) call CalcWALE(grid) 
       call Compute_Sgs(grid)
     end if  
 
@@ -281,7 +295,7 @@
     end if
 
     call CalcConvect(grid)
-    if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_EBM
+    if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_EBM(grid)
     
     do ini=1,Nini                   !  FRACTION & SIMPLE  
 
@@ -372,7 +386,7 @@
         call GraPhi(grid, Eps % n,3,phiz,.TRUE.)           ! dEps/dz
         call Compute_Turbulent(grid, 7,  &
                                Eps, phix, phiy, phiz, n)
-        call CalcVISt_KEps()
+        call CalcVISt_KEps(grid)
       end if 
 
       if(SIMULA == K_EPS_VV .or.  &
@@ -404,7 +418,7 @@
         call GraPhi(grid, v_2 % n,3,phiz,.TRUE.)             ! dv_2/dz
         call Compute_Turbulent(grid, 9, v_2, phix, phiy, phiz, n)  
 
-        call CalcVISt_KepsV2F()
+        call CalcVISt_KepsV2F(grid)
       end if                 
 
       if(SIMULA==EBM.or.SIMULA==HJ) then
@@ -412,7 +426,7 @@
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        if(SIMULA==EBM) call Scale()  
+        if(SIMULA==EBM) call Time_And_Length_Scale(grid)
 
         call GraPhi(grid, U % n, 1, Ux,.TRUE.)    ! dU/dx
         call GraPhi(grid, U % n, 2, Uy,.TRUE.)    ! dU/dy
@@ -482,7 +496,7 @@
         call GraPhi(grid, VIS % n,3,phiz,.TRUE.)             ! dVIS/dz
         call Compute_Turbulent(grid, 6,  &
                                VIS, phix, phiy, phiz, n)  ! dVIS/dx, dVIS/dy, dVIS/dz
-        call CalcVISt_SPA_ALL(n)
+        call CalcVISt_SPA_ALL(grid, n)
       end if
 
       ! Update the values at boundaries
@@ -527,7 +541,7 @@
 !BOJAN     if(BUDG == YES.and.HOT==YES) call CalcBudgets_cylind(Nbudg, n)
 !BOJAN     if(BUDG == YES.and.HOT==NO)  call CalcBudgets_cylind(Nbudg, n)
    else
-     call CalcMn(Nstat, n)  !  calculate mean values 
+     call Compute_Mean(grid, Nstat, n)  !  calculate mean values 
    end if
 
 !-----------------------------------------------------!  
@@ -596,7 +610,7 @@
       call Save_Gmv_Results(grid, name_save)
       call Save_Dat_Results(grid, name_save)
       call User_Save_Results(grid, n)  ! write results in user-customized format
-      call SavParView(this_proc,NC,name_save, Nstat, n)
+      call SavParView(this_proc,grid % n_cells,name_save, Nstat, n)
       Ndtt = Ndtt_temp
 8   continue 
 
@@ -619,10 +633,10 @@
   call User_Save_Results(grid, n)  ! write results in user-customized format
   name_save = 'savexxxxxx'
   write(name_save(5:10),'(I6.6)') n
-  call SavParView(this_proc,NC,name_save, Nstat, n)
+  call SavParView(this_proc, grid % n_cells, name_save, Nstat, n)
   call Wait
 
-3 if(this_proc  < 2) write(*,*) '# Exiting !'
+  if(this_proc  < 2) write(*,*) '# Exiting !'
 
   !----------------------------!
   !   Close the command file   !

@@ -42,7 +42,7 @@
 !------------------------------------------------------------------------------!
 
   if(SIMULA == HYB_ZETA) then
-    do c=1,NC
+    do c = 1, grid % n_cells
       lf = grid % vol(c)**ONE_THIRD
       Lsgs  = 0.8*lf
       Lrans = 0.41*WallDs(c)
@@ -64,7 +64,7 @@
       Pk(c) =  VISt(c) * Shear(c) * Shear(c)
     end do
   else
-    do c=1,NC
+    do c = 1, grid % n_cells
 
       ! Production:
       b(c) = b(c) + VISt(c) * Shear(c) * Shear(c) * grid % vol(c)
@@ -85,7 +85,7 @@
     end do
   end if
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     

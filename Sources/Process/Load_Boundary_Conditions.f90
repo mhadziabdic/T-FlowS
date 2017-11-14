@@ -326,7 +326,7 @@
 
     ! Boundary condition is given by a single constant
     if(name_prof(n) == '') then 
-      do c=-1,-NbC,-1
+      do c = -1,-grid % n_boundary_cells,-1
         if(bcmark(c) == n) then
           TypeBC(c) = typBou(n)
 
@@ -406,7 +406,7 @@
         end do  
 
         ! Set the closest point
-        do c=-1,-NbC,-1
+        do c = -1,-grid % n_boundary_cells,-1
           if(bcmark(c) == n) then
             TypeBC(c) = typBou(n)
             if(in_out) then    !if .true. set boundary values, otherwise, just set TypeBC
@@ -458,7 +458,7 @@
               end if        
             end if    !end if(in_out)
           end if      !end if(bcmark(c) == n)
-        end do        !end do c=-1,-NbC,-1
+        end do        !end do c = -1,-grid % n_boundary_cells,-1
       else  ! dir == "XPL" ...
         do m=1,n_points
           call ReadC(9,inp,tn,ts,te)
@@ -514,7 +514,7 @@
           end if  
         end do
            
-        do c=-1,-NbC,-1
+        do c = -1,-grid % n_boundary_cells,-1
           if(bcmark(c) == n) then
             TypeBC(c) = typBou(n)
           
@@ -593,7 +593,7 @@
   !-------------------------------------!
   !   Finally handle the buffer cells   !
   !-------------------------------------!
-  do c=-1,-NbC,-1
+  do c = -1,-grid % n_boundary_cells,-1
     if(bcmark(c) == BUFFER) TypeBC(c)=BUFFER 
   end do
 

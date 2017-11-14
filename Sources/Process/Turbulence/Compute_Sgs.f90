@@ -40,7 +40,7 @@
   end if 
  
   if(MODE == SMAG) then
-    do c=1,NC
+    do c = 1, grid % n_cells
       lf = grid % vol(c)**ONE_THIRD
 
       ! if(near(c) /= 0) is needed for parallel version
@@ -62,7 +62,7 @@
     end do
   else if(MODE == DYN) then
     if(BUOY==YES) then  
-      do c=1,NC
+      do c = 1, grid % n_cells
         lf = grid % vol(c)**ONE_THIRD  
         VISt(c) = DENc(material(c))  &
                 * (lf*lf)            &          ! delta^2 
@@ -70,7 +70,7 @@
                 * Shear(c) 
       end do
     else
-      do c=1,NC 
+      do c = 1, grid % n_cells 
         VISt(c) = DENc(material(c))       &
                 * (lf*lf)                 &          ! delta^2 
                 * Cdyn(c)                 &          ! Cdynamic   
@@ -79,7 +79,7 @@
       end do
     end if     
   else if(MODE == WALE) then
-    do c=1,NC
+    do c = 1, grid % n_cells
       lf = grid % vol(c)**ONE_THIRD    
       VISt(c) = DENc(material(c))  &
               * (lf*lf)            &          ! delta^2 
@@ -88,24 +88,24 @@
     end do
   end if
 
-!-----------------------!
-!     Wall function     !
-!-----------------------+--------------!
-!     Law of the wall:                 !
-!                                      !
-!       u+ = yz+  for z+ < 11.81       !
-!                                      !
-!     and                              !
-!                                      !
-!       u+ = A(y+)^B   for y+ > 11.81  !
-!                                      !
-!       with: A=8.3 and B = 1/7        !
-!                                      !
-!------------------------------------------------------------------!
-! The procedure below should be activated only if the wall function 
-! approach is used. 
-!----------------.--------------------------------------------------! 
-  do s=1,NS
+  !-------------------!
+  !   Wall function   !
+  !-------------------+--------------!
+  !   Law of the wall:               !
+  !                                  !
+  !   u+ = yz+  for z+ < 11.81       !
+  !                                  !
+  !   and                            !
+  !                                  !
+  !   u+ = A(y+)^B   for y+ > 11.81  !
+  !                                  !
+  !   with: A = 8.3 and B = 1/7      !
+  !                                  !
+  !----------------------------------+----------!
+  !   The procedure below should be activated   !
+  !   only if wall function approach is used.   !
+  !----------------.----------------------------! 
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 

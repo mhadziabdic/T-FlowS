@@ -27,7 +27,7 @@
     call GraPhi(grid, T % n,3, PHIz, .TRUE.)  ! dT/dz
   end if
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 

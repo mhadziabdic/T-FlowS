@@ -17,20 +17,24 @@
 !==============================================================================!
 
   ! Variables defined in all.h90:
-  allocate (delta(-NbC:NC));  delta=0.  
-  allocate (WallDs(-NbC:NC)); WallDs=0.       
-  allocate (f(NS));  f=0.0  
-  allocate (fF(NS)); fF=0.0  
+  allocate (delta (-grid % n_boundary_cells:grid % n_cells));  delta  = 0.0  
+  allocate (WallDs(-grid % n_boundary_cells:grid % n_cells));  WallDs = 0.0       
+  allocate (f (grid % n_faces));  f  = 0.0  
+  allocate (fF(grid % n_faces));  fF = 0.0  
 
   ! Variables defined in sol.h90:
-  call Solvers_Mod_Allocate_Vectors(NbC, NC)
-  call Matrix_Mod_Allocate(D, NbC, NC, NS)
+  call Solvers_Mod_Allocate_Vectors(grid % n_boundary_cells, grid % n_cells)
+  call Matrix_Mod_Allocate(D, grid % n_boundary_cells,  &
+                              grid % n_cells,           &
+                              grid % n_faces)
 
   ! Variables defined in pro_mod.h90:
-  call Matrix_Mod_Allocate(A, NbC, NC, NS)
-  allocate (b(NC));  b=0
+  call Matrix_Mod_Allocate(A, grid % n_boundary_cells,  &
+                              grid % n_cells,           &
+                              grid % n_faces)
+  allocate (b(grid % n_cells));  b=0
 
-  allocate (Scoef(NS)); Scoef=0.
+  allocate (Scoef(grid % n_faces)); Scoef=0.
 
   allocate (xp(grid % n_materials));    xp   =0.0
   allocate (yp(grid % n_materials));    yp   =0.0
@@ -40,11 +44,6 @@
   allocate (AreaZ(grid % n_materials)); AreaZ=0.0
 
   ! Variables defined in par_mod.h90:
-  allocate (BufInd(-NbC:-1)); BufInd=0
-
-  !??????????????????????????????????!
-  ! Is there enough allocated memory !
-  !??????????????????????????????????!
-  ! Do something !  
+  allocate (BufInd(-grid % n_boundary_cells:-1)); BufInd=0
 
   end subroutine

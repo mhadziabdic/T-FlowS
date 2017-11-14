@@ -51,7 +51,7 @@
   call Exchng(W % n)
   call Exchng(Shear)
 
-  do c =1, NC
+  do c =1, grid % n_cells
     Ua   = 0.0
     Va   = 0.0
     Wa   = 0.0
@@ -155,7 +155,7 @@
   call GraPhi(W % filt, 2, Wy,.TRUE.)    ! dW/dy
   call GraPhi(W % filt, 3, Wz,.TRUE.)    ! dW/dz
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     Lg  = grid % vol(c)**ONE_THIRD
     Lf  = 2.0 * Lg
 

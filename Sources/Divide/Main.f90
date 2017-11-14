@@ -41,27 +41,27 @@
   call Load_Gmv_Faces(grid)
 
   ! Initialize processor numbers
-  do c=1,NC
+  do c = 1, grid % n_cells
     proces(c)=1
   end do
 
   ! Sort the cells
   write(*,*) '# Sorting the cells'
-  do i=1,NC
+  do i = 1, grid % n_cells
     ix(i) = i
     criter(i) = grid % xc(i) + 0.01 * grid % yc(i) + 0.0001 * grid % zc(i)
   end do
-  call Sort_Real_By_Index(criter(1),ix(1),NC,2)
-  do i=1,NC
+  call Sort_Real_By_Index(criter(1),ix(1),grid % n_cells,2)
+  do i = 1, grid % n_cells
     iy(i) = i
     criter(i) = grid % yc(i) + 0.01 * grid % zc(i) + 0.0001 * grid % xc(i)
   end do
-  call Sort_Real_By_Index(criter(1),iy(1),NC,2)
-  do i=1,NC
+  call Sort_Real_By_Index(criter(1),iy(1),grid % n_cells,2)
+  do i = 1, grid % n_cells
     iz(i) = i
     criter(i) = grid % zc(i) + 0.01 * grid % xc(i) + 0.0001 * grid % yc(i)
   end do
-  call Sort_Real_By_Index(criter(1),iz(1),NC,2)
+  call Sort_Real_By_Index(criter(1),iz(1),grid % n_cells,2)
   write(*,*) '# Finished sorting'
 
   call Load_Geo(grid)
@@ -91,7 +91,7 @@
   end if
 
   n_sub=1
-  subNC(n_sub) = NC
+  subNC(n_sub) = grid % n_cells
 
   !----------------------------------!
   !   Find the number of divisions   !
@@ -104,14 +104,14 @@
   !-------------------------------!
   do i = 1, n_div
 
-    do j=1,n_sub
+    do j = 1, n_sub
       write(*,*) '# Dividing', j, ' into', chunks(i), ' chunks'
       call Split_Subdomain(grid, j, chunks(i))
     end do
 
   end do     
 
-  do j=1,n_sub
+  do j = 1, n_sub
     write(*,*) '# Processor:', j, ' cells:', subNC(j)
   end do
 

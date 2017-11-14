@@ -49,11 +49,11 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-  write(*,*) '# Refine: Number of nodes: ', NN 
-  write(*,*) '#         Number of cells: ', NC 
+  write(*,*) '# Refine: Number of nodes: ', grid % n_nodes 
+  write(*,*) '#         Number of cells: ', grid % n_cells 
 
-  n_cells_old = NC 
-  n_nodes_old = NN
+  n_cells_old = grid % n_cells 
+  n_nodes_old = grid % n_nodes
   nn_2 = 0 
   nn_4 = 0
   nn_8 = 0
@@ -67,14 +67,14 @@
   !   Count new celss   !
   !                     !
   !---------------------!
-  do c=1,n_cells_old
+  do c = 1, n_cells_old
     if(CelMar(c) == -1) then 
-      NC = NC + 8
-      CelMar(c) = NC   ! now points to cr8
+      grid % n_cells = grid % n_cells + 8
+      CelMar(c) = grid % n_cells   ! now points to cr8
     end if
   end do
 
-  do c=1,n_cells_old
+  do c = 1, n_cells_old
 
     c1 = grid % cells_c(1,c)
     c2 = grid % cells_c(2,c)
@@ -268,7 +268,7 @@
     n78 = 0     !     3-----n13-----1
 
     ! n12
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n1 .and. node_n2(n,2) == n2 ) .or.  &
           ( node_n2(n,1) == n2 .and. node_n2(n,2) == n1) ) then
         n12 = node_n2(n,0) 
@@ -276,8 +276,8 @@
     end do
     if (n12 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n12 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n12 = grid % n_nodes
       node_n2(nn_2,0) = n12
       node_n2(nn_2,1) = n1
       node_n2(nn_2,2) = n2
@@ -287,7 +287,7 @@
     end if 
 
     ! n13
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n1 .and. node_n2(n,2) == n3 ) .or.  &
           ( node_n2(n,1) == n3 .and. node_n2(n,2) == n1) ) then
         n13 = node_n2(n,0) 
@@ -295,8 +295,8 @@
     end do
     if (n13 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n13 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n13 = grid % n_nodes
       node_n2(nn_2,0) = n13
       node_n2(nn_2,1) = n1
       node_n2(nn_2,2) = n3
@@ -306,7 +306,7 @@
     end if 
 
     ! n24
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n2 .and. node_n2(n,2) == n4 ) .or.  &
           ( node_n2(n,1) == n4 .and. node_n2(n,2) == n2) ) then
         n24 = node_n2(n,0) 
@@ -314,8 +314,8 @@
     end do
     if (n24 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n24 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n24 = grid % n_nodes
       node_n2(nn_2,0) = n24
       node_n2(nn_2,1) = n2
       node_n2(nn_2,2) = n4
@@ -325,7 +325,7 @@
     end if 
 
     ! n34
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n3 .and. node_n2(n,2) == n4 ) .or.  &
           ( node_n2(n,1) == n4 .and. node_n2(n,2) == n3) ) then
         n34 = node_n2(n,0) 
@@ -333,8 +333,8 @@
     end do
     if (n34 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n34 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n34 = grid % n_nodes
       node_n2(nn_2,0) = n34
       node_n2(nn_2,1) = n3
       node_n2(nn_2,2) = n4
@@ -344,7 +344,7 @@
     end if 
 
     ! n15
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n1 .and. node_n2(n,2) == n5 ) .or.  &
           ( node_n2(n,1) == n5 .and. node_n2(n,2) == n1) ) then
         n15 = node_n2(n,0) 
@@ -352,8 +352,8 @@
     end do
     if (n15 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n15 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n15 = grid % n_nodes
       node_n2(nn_2,0) = n15
       node_n2(nn_2,1) = n1
       node_n2(nn_2,2) = n5
@@ -363,7 +363,7 @@
     end if 
 
     ! n26
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n2 .and. node_n2(n,2) == n6 ) .or.  &
           ( node_n2(n,1) == n6 .and. node_n2(n,2) == n2) ) then
         n26 = node_n2(n,0) 
@@ -371,8 +371,8 @@
     end do
     if (n26 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n26 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n26 = grid % n_nodes
       node_n2(nn_2,0) = n26
       node_n2(nn_2,1) = n2
       node_n2(nn_2,2) = n6
@@ -382,7 +382,7 @@
     end if 
 
     ! n37
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n3 .and. node_n2(n,2) == n7 ) .or.  &
           ( node_n2(n,1) == n7 .and. node_n2(n,2) == n3) ) then
         n37 = node_n2(n,0) 
@@ -390,8 +390,8 @@
     end do
     if (n37 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n37 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n37 = grid % n_nodes
       node_n2(nn_2,0) = n37
       node_n2(nn_2,1) = n3
       node_n2(nn_2,2) = n7
@@ -401,7 +401,7 @@
     end if 
 
     ! n48
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n4 .and. node_n2(n,2) == n8 ) .or.  &
           ( node_n2(n,1) == n8 .and. node_n2(n,2) == n4) ) then
         n48 = node_n2(n,0) 
@@ -409,8 +409,8 @@
     end do
     if (n48 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n48 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n48 = grid % n_nodes
       node_n2(nn_2,0) = n48
       node_n2(nn_2,1) = n4
       node_n2(nn_2,2) = n8
@@ -420,7 +420,7 @@
     end if 
 
     ! n56
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n5 .and. node_n2(n,2) == n6 ) .or.  &
           ( node_n2(n,1) == n6 .and. node_n2(n,2) == n5) ) then
         n56 = node_n2(n,0) 
@@ -428,8 +428,8 @@
     end do
     if (n56 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n56 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n56 = grid % n_nodes
       node_n2(nn_2,0) = n56
       node_n2(nn_2,1) = n5
       node_n2(nn_2,2) = n6
@@ -439,7 +439,7 @@
     end if 
 
     ! n57
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n5 .and. node_n2(n,2) == n7 ) .or.  &
           ( node_n2(n,1) == n7 .and. node_n2(n,2) == n5) ) then
         n57 = node_n2(n,0) 
@@ -447,8 +447,8 @@
     end do
     if (n57 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n57 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n57 = grid % n_nodes
       node_n2(nn_2,0) = n57
       node_n2(nn_2,1) = n5
       node_n2(nn_2,2) = n7
@@ -458,7 +458,7 @@
     end if 
 
     ! n68 
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n6 .and. node_n2(n,2) == n8 ) .or.  &
           ( node_n2(n,1) == n8 .and. node_n2(n,2) == n6) ) then
         n68 = node_n2(n,0) 
@@ -466,8 +466,8 @@
     end do
     if (n68 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n68 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n68 = grid % n_nodes
       node_n2(nn_2,0) = n68
       node_n2(nn_2,1) = n6
       node_n2(nn_2,2) = n8
@@ -477,7 +477,7 @@
     end if 
 
     ! n78
-    do n=1,nn_2
+    do n = 1, nn_2
       if( ( node_n2(n,1) == n7 .and. node_n2(n,2) == n8 ) .or.  &
           ( node_n2(n,1) == n8 .and. node_n2(n,2) == n7) ) then
         n78 = node_n2(n,0) 
@@ -485,8 +485,8 @@
     end do
     if (n78 == 0) then
       nn_2 = nn_2 + 1
-      NN  = NN  + 1
-      n78 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      n78 = grid % n_nodes
       node_n2(nn_2,0) = n78
       node_n2(nn_2,1) = n7
       node_n2(nn_2,2) = n8
@@ -506,7 +506,7 @@
     nF6 = 0
 
     ! nF1
-    do n=1,nn_4
+    do n = 1, nn_4
       if( ( node_n4(n,1) == n1 .and. node_n4(n,4) == n4 ) .or.  &
           ( node_n4(n,1) == n4 .and. node_n4(n,4) == n1 ) .or.  &
           ( node_n4(n,1) == n2 .and. node_n4(n,4) == n3 ) .or.  &
@@ -516,8 +516,8 @@
     end do
     if (nF1 == 0) then
       nn_4 = nn_4 + 1
-      NN  = NN  + 1
-      nF1 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      nF1 = grid % n_nodes
       node_n4(nn_4,0) = nF1
       node_n4(nn_4,1) = n1
       node_n4(nn_4,2) = n2
@@ -532,7 +532,7 @@
     end if 
 
     ! nF2
-    do n=1,nn_4
+    do n = 1, nn_4
       if( ( node_n4(n,1) == n1 .and. node_n4(n,4) == n6 ) .or.  &
           ( node_n4(n,1) == n6 .and. node_n4(n,4) == n1 ) .or.  &
           ( node_n4(n,1) == n2 .and. node_n4(n,4) == n5 ) .or.  &
@@ -542,8 +542,8 @@
     end do
     if (nF2 == 0) then
       nn_4 = nn_4 + 1
-      NN  = NN  + 1
-      nF2 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      nF2 = grid % n_nodes
       node_n4(nn_4,0) = nF2
       node_n4(nn_4,1) = n1
       node_n4(nn_4,2) = n2
@@ -558,7 +558,7 @@
     end if 
 
     ! nF3
-    do n=1,nn_4
+    do n = 1, nn_4
       if( ( node_n4(n,1) == n2 .and. node_n4(n,4) == n8 ) .or.  &
           ( node_n4(n,1) == n8 .and. node_n4(n,4) == n2 ) .or.  &
           ( node_n4(n,1) == n4 .and. node_n4(n,4) == n6 ) .or.  &
@@ -568,8 +568,8 @@
     end do
     if (nF3 == 0) then
       nn_4 = nn_4 + 1
-      NN  = NN  + 1
-      nF3 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      nF3 = grid % n_nodes
       node_n4(nn_4,0) = nF3
       node_n4(nn_4,1) = n2
       node_n4(nn_4,2) = n4
@@ -584,7 +584,7 @@
     end if 
 
     ! nF4
-    do n=1,nn_4
+    do n = 1, nn_4
       if( ( node_n4(n,1) == n3 .and. node_n4(n,4) == n8 ) .or.  &
           ( node_n4(n,1) == n8 .and. node_n4(n,4) == n3 ) .or.  &
           ( node_n4(n,1) == n4 .and. node_n4(n,4) == n7 ) .or.  &
@@ -594,8 +594,8 @@
     end do
     if (nF4 == 0) then
       nn_4 = nn_4 + 1
-      NN  = NN  + 1
-      nF4 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      nF4 = grid % n_nodes
       node_n4(nn_4,0) = nF4
       node_n4(nn_4,1) = n3
       node_n4(nn_4,2) = n4
@@ -610,7 +610,7 @@
     end if 
 
     ! nF5
-    do n=1,nn_4
+    do n = 1, nn_4
       if( ( node_n4(n,1) == n1 .and. node_n4(n,4) == n7 ) .or.  &
           ( node_n4(n,1) == n7 .and. node_n4(n,4) == n1 ) .or.  &
           ( node_n4(n,1) == n3 .and. node_n4(n,4) == n5 ) .or.  &
@@ -620,8 +620,8 @@
     end do
     if (nF5 == 0) then
       nn_4 = nn_4 + 1
-      NN  = NN  + 1
-      nF5 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      nF5 = grid % n_nodes
       node_n4(nn_4,0) = nF5
       node_n4(nn_4,1) = n1
       node_n4(nn_4,2) = n3
@@ -636,7 +636,7 @@
     end if 
 
     ! nF6
-    do n=1,nn_4
+    do n = 1, nn_4
       if( ( node_n4(n,1) == n5 .and. node_n4(n,4) == n8 ) .or.  &
           ( node_n4(n,1) == n8 .and. node_n4(n,4) == n5 ) .or.  &
           ( node_n4(n,1) == n6 .and. node_n4(n,4) == n7 ) .or.  &
@@ -646,8 +646,8 @@
     end do
     if (nF6 == 0) then
       nn_4 = nn_4 + 1
-      NN  = NN  + 1
-      nF6 = NN
+      grid % n_nodes  = grid % n_nodes  + 1
+      nF6 = grid % n_nodes
       node_n4(nn_4,0) = nF6
       node_n4(nn_4,1) = n5
       node_n4(nn_4,2) = n6
@@ -665,8 +665,8 @@
     !   Eventually, the node in the middle   !
     !----------------------------------------!
     nn_8 = nn_8 + 1
-    NN  = NN + 1
-    n0  = NN
+    grid % n_nodes  = grid % n_nodes + 1
+    n0  = grid % n_nodes
     node_n8(nn_8,0) = n0 
     node_n8(nn_8,1) = n1
     node_n8(nn_8,2) = n2
@@ -825,8 +825,8 @@
     end if   
   end do
 
-  write(*,*) 'Number of nodes after the refinement: ', NN 
-  write(*,*) 'Number of cells after the refinement: ', NC 
+  write(*,*) 'Number of nodes after the refinement: ', grid % n_nodes 
+  write(*,*) 'Number of cells after the refinement: ', grid % n_cells 
 
   !------------------------------------------!
   !                                          !
@@ -899,12 +899,12 @@
   !----------------------------!  
 
   ! Initialize the new numbers for the cells
-  do c=-NbC,NC
+  do c = -grid % n_boundary_cells, grid % n_cells
     NewN(c)=c
   end do
 
-  del=0 
-  do c=1,NC
+  del = 0 
+  do c = 1, grid % n_cells
     if(CelMar(c) /= 0) then
       NewN(c) = -1
       del = del+1
@@ -914,17 +914,17 @@
   end do
   write(*,*) 'Deleted cells:', del
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewN(c) /= -1) then
 
       ! Update the cell numbers. Watch out ! The numbers you are
       ! updating are old, so double indexing is needed
-      do n=1,24  ! n is neighbour now
+      do n = 1, 24  ! n is neighbour now
         grid % cells_c( n, NewN(c) ) = NewN( grid % cells_c( n, c ) )
       end do
 
       ! Update the node numbers
-      do n=1,8   ! n is node now
+      do n = 1, 8   ! n is node now
         grid % cells_n( n, NewN(c) ) = grid % cells_n( n, c )
       end do
 
@@ -933,18 +933,18 @@
     end if
   end do
 
-  do c=NC-del+1, grid % max_n_nodes   ! erase old data
-    do n=1,24                         ! n is neighbour now
+  do c=grid % n_cells-del+1, grid % max_n_nodes   ! erase old data
+    do n = 1, 24                         ! n is neighbour now
       grid % cells_c( n, c ) = 0
     end do
   end do
 
-  NC = NC - del    
+  grid % n_cells = grid % n_cells - del    
 
-  write(*,*) 'Number of cells after the renumeration: ', NC 
+  write(*,*) 'Number of cells after the renumeration: ', grid % n_cells 
 
   deallocate(node_n2)
   deallocate(node_n4)
   deallocate(node_n8)
 
-  end subroutine Refine_Marked_Cells
+  end subroutine

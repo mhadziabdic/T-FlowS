@@ -47,11 +47,11 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-  call Scale()
+  call Time_And_Length_Scale(grid)
 
  ! Source term f22hg
  if(SIMULA == ZETA.or.SIMULA==HYB_ZETA) then 
-   do c = 1,NC
+   do c = 1, grid % n_cells
      f22hg = (1.0 - Cf_1 - 0.65*Pk(c)   &
            / (Eps % n(c) + TINY))       &
            * (v_2 % n(c) - 2.0 / 3.0)   &
@@ -61,13 +61,13 @@
    end do
 
    ! Source term f22hg
-   do c = 1, NC
+   do c = 1, grid % n_cells
      Sor11 = grid % vol(c)/(Lsc(c)**2 + TINY)
      A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11 
    end do
 
    ! Imposing boundary condition for f22 on the wall
-   do s=1,NS
+   do s = 1, grid % n_faces
      c1=SideC(1,s)
      c2=SideC(2,s)
      if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
@@ -87,7 +87,7 @@
      end if    ! end if of c2<0
    end do
  else if(SIMULA == K_EPS_VV) then
-   do c = 1,NC
+   do c = 1, grid % n_cells
      f22hg = (1.0 - Cf_1)*(v_2 % n(c)/(Kin % n(c)+TINY) - TWO_THIRDS)/(Tsc(c)+TINY)   &
                 + Cf_2*Pk(c)/(Kin % n(c)+TINY)
      b(c) = b(c) + f22hg*grid % vol(c)/(Lsc(c)+TINY)**2
@@ -96,7 +96,7 @@
    end do
 
    ! Imposing boundary condition for f22 on the wall
-   do s=1,NS
+   do s = 1, grid % n_faces
      c1=SideC(1,s)
      c2=SideC(2,s)
      if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then

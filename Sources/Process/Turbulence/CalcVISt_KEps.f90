@@ -1,54 +1,53 @@
-!======================================================================!
-  subroutine CalcVISt_Keps() 
-!----------------------------------------------------------------------!
-!   Computes the turbulent viscosity for RANS models.                  !
-!                                                                      !
-!   In the domain:                                                     !
-!   ~~~~~~~~~~~~~~                                                     !
-!   For k-eps model :                                                  !
-!                       2                                              !
-!   VISt = Cmu * rho * K  * Eps                                        ! 
-!                                                                      !
-!   On the boundary (wall viscosity):                                  !
-!   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                   !
-!            +          kappa                                          !
-!   VIStw = y  * VISt ----------                                       ! 
-!                     E * ln(y+)                                       !
-!                                                                      !
-!    For k-eps-v2f model :                                             !
-!                                                                      !
-!    VISt = CmuD * rho * Tsc  * vv                                     !
-!                                                                      !
-!                                                                      !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine CalcVISt_Keps(grid) 
+!------------------------------------------------------------------------------!
+!   Computes the turbulent viscosity for RANS models.                          !
+!                                                                              !
+!   In the domain:                                                             !
+!   ~~~~~~~~~~~~~~                                                             !
+!   For k-eps model :                                                          !
+!                       2                                                      !
+!   VISt = Cmu * rho * K  * Eps                                                ! 
+!                                                                              !
+!   On the boundary (wall viscosity):                                          !
+!   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                           !
+!            +          kappa                                                  !
+!   VIStw = y  * VISt ----------                                               ! 
+!                     E * ln(y+)                                               !
+!                                                                              !
+!    For k-eps-v2f model :                                                     !
+!                                                                              !
+!    VISt = CmuD * rho * Tsc  * vv                                             !
+!                                                                              !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use rans_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!------------------------------[Calling]-------------------------------!
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, s
   real    :: CK, Yplus, Fmu, Ret, yStar, Prturb, EBF, Prmol, beta                                        
-!======================================================================!
+!==============================================================================!
 
 !======================================================================!
 !  K-EPS model
 !======================================================================!
-
   Ret   = 0.0
   Fmu   = 0.0 
   yPlus = 0.0 
   Prturb = 0.9
 
   if(MODE == HRe) then
-    do c=1,NC
+    do c = 1, grid % n_cells
       VISt(c) = Cmu * DENc(material(c)) * Kin%n(c) * Kin%n(c) / (Eps % n(c)+1.0e-14)
     end do
     if(ROUGH==NO) then
-      do s=1,NS
+      do s = 1, grid % n_faces
         c1 = SideC(1,s)
         c2 = SideC(2,s)
         if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then  
@@ -60,7 +59,7 @@
         end if
       end do
     else if(ROUGH==YES) then
-      do s=1,NS
+      do s = 1, grid % n_faces
         c1 = SideC(1,s)
         c2 = SideC(2,s)
         if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
@@ -75,14 +74,14 @@
   end if
   
   if(MODE==LRe) then
-    do c = 1, NC 
+    do c = 1, grid % n_cells 
       Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
       Fmu = exp(-3.4/(1.0 + 0.02*Ret)**2.0) 
       VISt(c) = Fmu * Cmu * DENc(material(c)) * Kin%n(c) * Kin%n(c) / Eps % n(c)
     end do
   end if
   if(HOT == YES) then
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1 = SideC(1,s)
       c2 = SideC(2,s)
       if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then  
@@ -95,7 +94,7 @@
   end if   
 
   if(SIMULA==HYB_PITM) then
-    do c = 1, NC
+    do c = 1, grid % n_cells
       Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
 
       yStar = (VISc * Eps % n(c))**0.25 * WallDs(c)/VISc
@@ -111,8 +110,6 @@
     end do
   end if
 
-
   call Exchng(VISt)  
-  RETURN
 
-  end subroutine CalcVISt_Keps 
+  end subroutine

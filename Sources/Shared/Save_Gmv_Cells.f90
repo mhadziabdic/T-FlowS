@@ -13,7 +13,7 @@
   type(Grid_Type) :: grid
   integer         :: sub, NNsub, NCsub
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c,  c1,  c2,  n, s
+  integer           :: c, n
   character(len=80) :: name_out
 !==============================================================================!
 
@@ -36,13 +36,13 @@
   !-----------!
   write(9,*) 'nodes', NNsub
 
-  do n=1,NN
+  do n = 1, grid % n_nodes
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % xn(n)
   end do
-  do n=1,NN
+  do n = 1, grid % n_nodes
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % yn(n)
   end do
-  do n=1,NN
+  do n = 1, grid % n_nodes
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % zn(n)
   end do
 
@@ -50,7 +50,7 @@
   !   Cells   !
   !-----------!
   write(9,*) 'cells', NCsub
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
       if(grid % cells_n_nodes(c) == 8) then
         write(9,*) 'hex 8'
@@ -92,7 +92,7 @@
   do n = 1, grid % n_materials
     write(9,*) grid % materials(n) % name
   end do
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
       write(9,*) material(c)
     end if

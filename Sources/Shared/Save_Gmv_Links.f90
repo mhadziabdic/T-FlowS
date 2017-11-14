@@ -5,7 +5,7 @@
 !                                                                              !
 !   Links between the computational cells have been introduced as aditional    !
 !   cells of general type. Cell centers are introduced as aditional nodes      !
-!   with numbers NN+1 to NN+NC. Material of this links is different than       !
+!   with numbers grid % n_nodes+1 to grid % n_nodes+grid % n_cells. Material of this links is different than       !
 !   from the cells, so that they can be visualised  more easily in GMV.        !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
@@ -42,44 +42,44 @@
   write(9,*) 'nodes', NNsub + NCsub + NBCsub + NBFsub
 
   ! X
-  do n=1,NN
+  do n = 1, grid % n_nodes
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % xn(n)
   end do
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c)  > 0) write(9, '(1PE14.7)') grid % xc(c)
   end do 
-  do c=-1,-NBC,-1
+  do c = -1,-grid % n_boundary_cells,-1
     if(NewC(c) /= 0) write(9, '(1PE14.7)') grid % xc(c)
   end do 
-  do c=1,NBFsub
+  do c = 1,NBFsub
     write(9, '(1PE14.7)') grid % xc(BuReIn(c))
   end do
 
   ! Y
-  do n=1,NN
+  do n = 1, grid % n_nodes
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % yn(n)
   end do
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c)  > 0) write(9, '(1PE14.7)') grid % yc(c)
   end do 
-  do c=-1,-NBC,-1
+  do c = -1,-grid % n_boundary_cells,-1
     if(NewC(c) /= 0) write(9, '(1PE14.7)') grid % yc(c)
   end do 
-  do c=1,NBFsub
+  do c = 1,NBFsub
     write(9, '(1PE14.7)') grid % yc(BuReIn(c))
   end do
 
   ! Z
-  do n=1,NN
+  do n = 1, grid % n_nodes
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % zn(n)
   end do
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c)  > 0) write(9, '(1PE14.7)') grid % zc(c)
   end do 
-  do c=-1,-NBC,-1
+  do c = -1,-grid % n_boundary_cells,-1
     if(NewC(c) /= 0) write(9, '(1PE14.7)') grid % zc(c)
   end do 
-  do c=1,NBFsub
+  do c = 1,NBFsub
     write(9, '(1PE14.7)') grid % zc(BuReIn(c))
   end do
 
@@ -89,7 +89,7 @@
 
   ! Regular (ordinary) cells
   write(9,*) 'cells', NCsub + NSsub + NBFsub ! + NBFsub
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c)  > 0) then
       if(grid % cells_n_nodes(c) == 8) then
         write(9,*) 'hex 8'
@@ -126,7 +126,7 @@
 
   ! Physical links; non-periodic
   nf_sub_non_per = 0 
-  do s=1, NS
+  do s=1, grid % n_faces
     c1 = SideC(1,s)
     c2 = SideC(2,s)
 
@@ -156,7 +156,7 @@
 
   ! Physical links; periodic
   nf_sub_per    = 0 
-  do s=1, NS
+  do s=1, grid % n_faces
     c1 = SideC(1,s)
     c2 = SideC(2,s)
 
@@ -189,7 +189,7 @@
   write(*,*) '# Number of sides   :', NSsub
 
   ! Interprocessor links
-  do c=1,NBFsub
+  do c = 1,NBFsub
     c1 = BuSeIn(c) 
     write(9,*) 'general 1'
     write(9,*) '  2'
@@ -205,7 +205,7 @@
   write(9,*) 'periodic'
   write(9,*) 'buffers'
 
-  do c=1, NCsub
+  do c = 1, NCsub
     write(9,*) 1
   end do
   do s=1, nf_sub_non_per

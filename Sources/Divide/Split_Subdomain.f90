@@ -39,7 +39,7 @@
     xmin=+HUGE
     ymin=+HUGE
     zmin=+HUGE
-    do c=1,NC
+    do c = 1, grid % n_cells
       if(proces(c) == sub) then
         xmax=max(xmax, grid % xc(c))
         ymax=max(ymax, grid % yc(c))
@@ -59,7 +59,7 @@
     if(delx == dxyz) dir='x'
   end if
 
-  do j=1,n_parts-1
+  do j = 1, n_parts-1
 
     n_filled   = 0
 
@@ -69,7 +69,7 @@
     if(division_algorithm==COORDINATE) then
 
       if(dir == 'x') then
-        do c=1,NC
+        do c = 1, grid % n_cells
           ic=ix(c)
           if(proces(ic) == sub) then
             proces(ic) = n_sub+j
@@ -80,7 +80,7 @@
       end if
 
       if(dir == 'y') then
-        do c=1,NC
+        do c = 1, grid % n_cells
           ic=iy(c)
           if(proces(ic) == sub) then
             proces(ic) = n_sub+j
@@ -91,7 +91,7 @@
       end if
 
       if(dir == 'z') then
-        do c=1,NC
+        do c = 1, grid % n_cells
           ic=iz(c)
           if(proces(ic) == sub) then
             proces(ic) = n_sub+j
@@ -103,7 +103,7 @@
     end if
 
     if(division_algorithm==INERTIAL) then
-      do c=1,NC
+      do c = 1, grid % n_cells
         ic=iin(c)
         if(proces(ic) == sub) then
           proces(ic) = n_sub+j
@@ -123,4 +123,4 @@
 
   n_sub = n_sub + n_parts - 1
 
-  end subroutine Split_Subdomain
+  end subroutine

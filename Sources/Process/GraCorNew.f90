@@ -32,10 +32,10 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  real :: phi(-NbC:NC),    &
-          phi_x(-NbC:NC),  &
-          phi_y(-NbC:NC),  &
-          phi_z(-NbC:NC)
+  real :: phi  (-grid % n_boundary_cells:grid % n_cells),  &
+          phi_x(-grid % n_boundary_cells:grid % n_cells),  &
+          phi_y(-grid % n_boundary_cells:grid % n_cells),  &
+          phi_z(-grid % n_boundary_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c1, c2
   real    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
@@ -43,7 +43,7 @@
   real    :: L1, L2, D1, D2
 !==============================================================================!
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 
@@ -79,7 +79,7 @@
  
   call Exchng(p2)
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 

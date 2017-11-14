@@ -66,9 +66,9 @@
   nammon=name 
   nammon(len_trim(name)+1:len_trim(name)+10)="-monit.000"
   l=len_trim(nammon) 
-  do j=1,Nmon
+  do j = 1, Nmon
     Mres(j)=HUGE
-    do i=1,NC
+    do i = 1, grid % n_cells
       if(Distance(xm(j),ym(j),zm(j),  &
               grid % xc(i),grid % yc(i),grid % zc(i))  < Mres(j)) then
         Cm(j)=i
@@ -82,7 +82,7 @@
     end if 
   end do
 
-  do j=1,Nmon
+  do j = 1, Nmon
     if(Cm(j)  > 0) then
       if(j  <  10) then
         write(nammon(l  :l),'(I1)') j
@@ -206,7 +206,7 @@
   endif 
 
     
-  do m=1,grid % n_materials
+  do m = 1, grid % n_materials
     if(SIMULA  ==  LES .or. SIMULA == DNS .or. SIMULA == DES_SPA &
       .or.SIMULA  ==  HYB_PITM .or. SIMULA == HYB_ZETA) then
       if(this_proc  < 2) then
@@ -750,5 +750,4 @@
 
   call Wait   
 
-  end subroutine ReaCom
-
+  end subroutine

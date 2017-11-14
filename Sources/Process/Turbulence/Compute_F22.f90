@@ -17,7 +17,9 @@
   type(Grid_Type) :: grid
   integer         :: var
   type(Var_Type)  :: phi
-  real            :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
+  real            :: phi_x(-grid % n_boundary_cells:grid % n_cells),  &
+                     phi_y(-grid % n_boundary_cells:grid % n_cells),  &
+                     phi_z(-grid % n_boundary_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter
   real    :: Fex, Fim 
@@ -42,14 +44,14 @@
 !     f22            [1/s]
 !     Lsc            [m]
 !
-!==============================================================================!
+!------------------------------------------------------------------------------!
 
   A % val = 0.0
 
   b=0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
-  do c=-NbC,-1
+  do c=-grid % n_boundary_cells,-1
     A % bou(c)=0.0
   end do
 
@@ -59,7 +61,7 @@
 
   ! Old values (o) and older than old (oo)
   if(ini == 1) then
-    do c=1,NC
+    do c=1,grid % n_cells
       phi % oo(c)  = phi % o(c)
       phi % o (c)  = phi % n(c)
       phi % Doo(c) = phi % Do(c)
@@ -70,7 +72,7 @@
   end if
 
   ! New values
-  do c=1,NC
+  do c=1,grid % n_cells
     phi % X(c) = 0.0
   end do
 
@@ -83,7 +85,7 @@
   !----------------------------!
   !   Spatial discretization   !
   !----------------------------!
-  do s=1,NS       
+  do s = 1, grid % n_faces       
 
     c1=SideC(1,s)
     c2=SideC(2,s)   
@@ -155,11 +157,8 @@
         A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - A21
         A % val(A % dia(c2))  = A % val(A % dia(c2))  + A21
       else if(c2  < 0) then
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -!
-! Outflow is not included because it was causing problems     !
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -! 
+        ! Outflow is not included because it was causing problems  
         if( (TypeBC(c2) == INFLOW)) then                    
-!---------  (TypeBC(c2) == OUTFLOW) ) then   
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * phi % n(c2)
 
@@ -168,12 +167,12 @@
         if( (TypeBC(c2) == WALL).or.                          &
             (TypeBC(c2) == WALLFL) ) then
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
-!=============================================================!
-! Source coefficient is filled in SourceF22.f90 in order to   !
-! get updated values of f22 on the wall.                      !
-! Othrwise f22 equation does not converge very well           !
-!          b(c1) = b(c1) + A12 * phi % n(c2)                  !
-!=============================================================!
+          !---------------------------------------------------------------!
+          !   Source coefficient is filled in SourceF22.f90 in order to   !
+          !   get updated values of f22 on the wall.  Otherwise f22       !
+          !   equation does not converge very well                        !
+          !   b(c1) = b(c1) + A12 * phi % n(c2)                           !
+          !---------------------------------------------------------------!
         else if( TypeBC(c2) == BUFFER ) then  
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           A % bou(c2) = - A12  ! cool parallel stuff
@@ -190,14 +189,14 @@
 
   ! Adams-Bashfort scheeme for diffusion fluxes
   if(DIFFUS == AB) then 
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * phi % Do(c) - 0.5 * phi % Doo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
   if(DIFFUS == CN) then 
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * phi % Do(c)
     end do  
   end if
@@ -205,7 +204,7 @@
 
   ! Adams-Bashfort scheeme for cross diffusion 
   if(CROSS == AB) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * phi % Xo(c) - 0.5 * phi % Xoo(c)
     end do 
   end if
@@ -215,14 +214,14 @@
 
   ! Crank-Nicholson scheme for cross difusive terms
   if(CROSS == CN) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * phi % X(c) + 0.5 * phi % Xo(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
   if(CROSS == FI) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + phi % X(c)
     end do 
   end if
@@ -245,7 +244,7 @@
   !   Solve the equations for phi   !
   !                                 !    
   !---------------------------------!
-  do c=1,NC
+  do c=1,grid % n_cells
     b(c) = b(c) + A % val(A % dia(c)) * (1.0-phi % URF)*phi % n(c) / phi % URF
     A % val(A % dia(c)) = A % val(A % dia(c)) / phi % URF
   end do 
@@ -254,9 +253,9 @@
   if(ALGOR == FRACT)    miter=5
 
   niter=miter
-  call cg(NC, Nbc, A,           & 
-           phi % n, b, PREC,    &
-           niter,phi % STol, res(var), error)
+  call cg(grid % n_cells, grid % n_boundary_cells, A,  & 
+          phi % n, b, PREC,        &
+          niter,phi % STol, res(var), error)
   
   if(this_proc < 2) write(*,*) '# ', phi % name, res(var), niter 
 

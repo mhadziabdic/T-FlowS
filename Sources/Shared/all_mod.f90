@@ -25,8 +25,6 @@ module all_mod
   !-------------------------------------------!
   !   Logical quantities desribing the grid   !
   !-------------------------------------------!
-  integer   :: NC, NS                    ! num. of nodes and cells 
-  integer   :: NbC
   integer   :: MNBS
   integer   :: n_copy                    ! number of copy cells/faces
   logical   :: Mater(1024)               ! is the material present ?

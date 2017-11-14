@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine CorBad(PHIi)
+  subroutine Correct_Bad(grid, PHIi)
 !----------------------------------------------------------------------!
 !   Corrects the pressure gradients in the cells where they cannot     !
 !   be computed, the so called "bad" cells.                            !
@@ -8,21 +8,23 @@
   use all_mod
   use pro_mod
   use les_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
-  real :: PHIi(-NbC:NC)
+  type(Grid_Type) :: grid
+  real            :: PHIi(-grid % n_boundary_cells:grid % n_cells)
 !-------------------------------[Locals]-------------------------------!
   integer :: c, c1, c2, s
 !======================================================================!
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(BadForG(c)) then
       PHIi(c) = 0.0
     end if
   end do 
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1 = SideC(1,s)
     c2 = SideC(2,s)
      
@@ -34,4 +36,4 @@
 
   call Exchng(PHIi)
 
-  end subroutine CorBad 
+  end subroutine

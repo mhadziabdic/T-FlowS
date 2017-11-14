@@ -36,10 +36,10 @@
 !   Cv_e2, vi2 and coefficient A1                                              !
 !------------------------------------------------------------------------------!
 
-  call Scale()
+  call Time_And_Length_Scale(grid)
 
   if(SIMULA == ZETA.or.SIMULA==HYB_ZETA) then
-    do c = 1,NC 
+    do c = 1, grid % n_cells 
       Esor = grid % vol(c)/(Tsc(c)+tiny)
       Ce_11 = Ce1*(1.0 + alpha*(1.0/(v_2%n(c)+tiny) ))    
       b(c) = b(c) + Ce_11*Pk(c)*Esor
@@ -51,7 +51,7 @@
 
   ! Imposing a boundary condition on wall for Eps 
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
@@ -104,7 +104,7 @@
   end do  
 
   if(SIMULA == K_EPS_VV) then
-    do c = 1,NC
+    do c = 1, grid % n_cells
       Esor = grid % vol(c)/Tsc(c)
       Ce_11 = Ce1*(1.0 + alpha*(Kin%n(c)/(v_2%n(c)) + tiny)**0.5)
       b(c) = b(c) + Ce_11*Pk(c)*Esor

@@ -23,28 +23,28 @@
   real                :: very_big
 !==============================================================================!
 
-  very_big = max(NN,NC)
+  very_big = max(grid % n_nodes,grid % n_cells)
 
-  allocate(face_coor(NC*6)); face_coor = NN*1E+30
-  allocate(face_cell(NC*6)); face_cell = 0    
-  allocate(Starts(NC*6)); Starts = 0    
-  allocate(Ends(NC*6));   Ends = 0    
-! allocate(CellC(NC,6));  CellC = 0
+  allocate(face_coor(grid % n_cells*6)); face_coor = grid % n_nodes*HUGE
+  allocate(face_cell(grid % n_cells*6)); face_cell = 0    
+  allocate(Starts(grid % n_cells*6)); Starts = 0    
+  allocate(Ends(grid % n_cells*6));   Ends = 0    
+! allocate(CellC(grid % n_cells,6));  CellC = 0
 
   !---------------------------------------------------!
   !   Fill the generic coordinates with some values   !
   !---------------------------------------------------!
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(grid % cells_n_nodes(c) == 4) fn = f4n
     if(grid % cells_n_nodes(c) == 5) fn = f5n
     if(grid % cells_n_nodes(c) == 6) fn = f6n
     if(grid % cells_n_nodes(c) == 8) fn = f8n 
-    do j=1,6
+    do j = 1, 6
       if(BCtype(c,j) == 0) then 
 
         n_f_nod = 0
         f_nod = -1
-        do k=1,4
+        do k = 1, 4
           if(fn(j,k) > 0) then
             f_nod(k) = grid % cells_n(fn(j,k), c)
             n_f_nod = n_f_nod + 1
@@ -68,7 +68,7 @@
   !--------------------------------------------------!
   !   Sort the cell faces according to coordinares   !
   !--------------------------------------------------!
-  call Sort_Real_By_Index(face_coor,face_cell,NC*6,2)
+  call Sort_Real_By_Index(face_coor,face_cell,grid % n_cells*6,2)
 
   !------------------------------------------------!
   !   Anotate cell faces with same coordinates     !
@@ -77,7 +77,7 @@
   !------------------------------------------------!
   Nuber = 1
   Starts(1) = 1
-  do c=2,NC*6
+  do c=2,grid % n_cells*6
     if( face_coor(c) /= face_coor(c-1) ) then
       Nuber = Nuber + 1
       Starts(Nuber) = c
@@ -90,7 +90,7 @@
   !   Main loop to fill the SideC structure   !
   !                                           !
   !-------------------------------------------!
-  do n3=1,Nuber
+  do n3 = 1, Nuber
     if(Starts(n3) /= Ends(n3)) then
       do i1=Starts(n3),Ends(n3)
         do i2=i1+1,Ends(n3)
@@ -103,8 +103,8 @@
             !------------------------------!
             Nmatch     = 0
             MatchNodes = 0 
-            do n1=1,grid % cells_n_nodes(c1)
-              do n2=1,grid % cells_n_nodes(c2)
+            do n1 = 1, grid % cells_n_nodes(c1)
+              do n2 = 1, grid % cells_n_nodes(c2)
                 if(grid % cells_n(n1,c1)==grid % cells_n(n2,c2)) then
                   Nmatch = Nmatch + 1 
                   MatchNodes(n1) = 1
@@ -121,19 +121,19 @@
               if(grid % cells_n_nodes(c1) == 5) fn = f5n
               if(grid % cells_n_nodes(c1) == 6) fn = f6n
               if(grid % cells_n_nodes(c1) == 8) fn = f8n
-              do j=1,6
+              do j = 1, 6
                 if(grid % cells_c(j, c1) == 0  .and.   & ! not set yet
                     ( max( MatchNodes(fn(j,1)),0 ) + &
                       max( MatchNodes(fn(j,2)),0 ) + &
                       max( MatchNodes(fn(j,3)),0 ) + &
                       max( MatchNodes(fn(j,4)),0 ) == Nmatch ) ) then
-                  NS = NS + 1 
-                  SideC(1,NS) = c1
-                  SideC(2,NS) = c2
-                  grid % faces_n_nodes(NS) = Nmatch 
-                  do k=1,4
+                  grid % n_faces = grid % n_faces + 1 
+                  SideC(1,grid % n_faces) = c1
+                  SideC(2,grid % n_faces) = c2
+                  grid % faces_n_nodes(grid % n_faces) = Nmatch 
+                  do k = 1, 4
                     if(fn(j,k) > 0) then
-                      grid % faces_n(k,NS) = grid % cells_n(fn(j,k), c1)                
+                      grid % faces_n(k,grid % n_faces) = grid % cells_n(fn(j,k), c1)                
                     end if
                   end do
                   grid % cells_c(j, c1) = 1 !  -> means: set
@@ -146,6 +146,6 @@
     end if
   end do    ! do n3
 
-  write(*,*) '# Find_Faces: Number of faces: ', NS, NS
+  write(*,*) '# Find_Faces: Number of faces: ', grid % n_faces, grid % n_faces
 
   end subroutine

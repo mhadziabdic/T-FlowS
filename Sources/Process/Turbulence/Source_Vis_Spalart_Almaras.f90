@@ -17,11 +17,13 @@
   integer :: c 
   real    :: Xrat, Fv1, Fv2, Fw, SS, DistV, ProdV, R, GG, Dif
   real    :: dist
-  real    :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
+  real    :: phi_x(-grid % n_boundary_cells:grid % n_cells),  &
+             phi_y(-grid % n_boundary_cells:grid % n_cells),  &
+             phi_z(-grid % n_boundary_cells:grid % n_cells)
 !==============================================================================!
 
   if(SIMULA == SPA_ALL) then
-    do c = 1, NC
+    do c = 1, grid % n_cells
 
       !---------------------------------!
       !   Compute the production term   !
@@ -52,7 +54,7 @@
     end do
 
   else if(SIMULA == DES_SPA) then
-    do c = 1, NC
+    do c = 1, grid % n_cells
 
       dist = min(WallDs(c),0.65*delta(c))
 

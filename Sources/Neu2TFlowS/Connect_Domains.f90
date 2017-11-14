@@ -60,14 +60,14 @@
   !-------!
   !   X   !
   !-------! 
-  do s1=1,NS
+  do s1 = 1, grid % n_faces
     if(mod(s1,100000)==0) then
-      write(*,*) ((ONE_THIRD*s1)/(1.0*NS)) * 100, 'Complete'
+      write(*,*) ((ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100, 'Complete'
     end if
     c11 = SideC(1,s1)
     c12 = SideC(2,s1)
     if( abs(grid % dx(s1)) > 1.0e-9 ) then
-      do s2=1,NS 
+      do s2 = 1, grid % n_faces 
         c21 = SideC(1,s2)
         c22 = SideC(2,s2)
         if(c22 < 0) then
@@ -112,14 +112,14 @@
   !-------!
   !   Y   !
   !-------! 
-  do s1=1,NS
+  do s1 = 1, grid % n_faces
     if(mod(s1,100000)==0) then
-      write(*,*) (ONE_THIRD + (ONE_THIRD*s1)/(1.0*NS)) * 100.0, 'Complete'
+      write(*,*) (ONE_THIRD + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
     end if
     c11 = SideC(1,s1)
     c12 = SideC(2,s1)
     if( abs(grid % dy(s1)) > 1.0e-9 ) then
-      do s2=1,NS 
+      do s2 = 1, grid % n_faces 
         c21 = SideC(1,s2)
         c22 = SideC(2,s2)
         if(c22 < 0) then
@@ -164,14 +164,14 @@
   !-------!
   !   Z   !
   !-------! 
-  do s1=1,NS
+  do s1 = 1, grid % n_faces
     if(mod(s1,100000)==0) then
-      write(*,*) (TWO_THIRDS + (ONE_THIRD*s1)/(1.0*NS)) * 100.0, 'Complete'
+      write(*,*) (TWO_THIRDS + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
     end if
     c11 = SideC(1,s1)
     c12 = SideC(2,s1)
     if( abs(grid % dz(s1)) > 1.0e-9 ) then
-      do s2=1,NS 
+      do s2 = 1, grid % n_faces 
         c21 = SideC(1,s2)
         c22 = SideC(2,s2)
         if(c22 < 0) then

@@ -19,7 +19,7 @@
   !----------------------------------------------!
   !   Calculate total surface of the cell face   ! 
   !----------------------------------------------!
-  do s=1,NS
+  do s = 1, grid % n_faces
     Scoef(s) = (  grid % sx(s)*grid % sx(s)  &
                 + grid % sy(s)*grid % sy(s)  &
                 + grid % sz(s)*grid % sz(s) )  
@@ -28,7 +28,7 @@
   !-------------------------------------------------------!
   !   Calculate the distance between neighbouring cells   !
   !-------------------------------------------------------!
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 
@@ -52,7 +52,7 @@
   !----------------------------------------------------------!
   !   Calculate interpolation coefficients for fluid phase   !
   !----------------------------------------------------------!
-  do s=1,NS                                       ! 2mat
+  do s = 1, grid % n_faces                        ! 2mat
     c1=SideC(1,s)                                 ! 2mat
     c2=SideC(2,s)                                 ! 2mat
                                                   ! 2mat
@@ -78,7 +78,7 @@
   !------------------------------!
   IsNearWall = .FALSE.
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 
@@ -107,7 +107,7 @@
   AreaY = 0.0
   AreaZ = 0.0
   do m = 1, grid % n_materials
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2  > 0 .or. c2 < 0.and.TypeBC(c2) == BUFFER) then

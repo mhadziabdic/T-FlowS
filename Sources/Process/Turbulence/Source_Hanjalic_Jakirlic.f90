@@ -43,11 +43,11 @@
   real,allocatable :: Diss1(:)
 !==============================================================================!
 
-  allocate (Diss1(1:NC)); Diss1 = 0.0
+  allocate (Diss1(1:grid % n_cells)); Diss1 = 0.0
   EE = 0.5
   AA = 0.5
 
-  do c=1,NC
+  do c=1,grid % n_cells
     Kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), 1.0e-7)
     Lsc(c)=  (Kin % n(c))**1.5/Eps % n(c)
     Tsc(c)=  Kin % n(c)/Eps % n(c)
@@ -57,52 +57,52 @@
 ! Below is one of versions of HJ model that required much more memory!
 !====================================================================!  
 ! if(var == 23) then
-!   call GraPhi(uu%n,1,VAR3x, .TRUE.) ! duu/dx  
-!   call GraPhi(uu%n,2,VAR3y, .TRUE.) ! duu/dy  
-!   call GraPhi(uu%n,3,VAR3z, .TRUE.) ! duu/dz  
+!   call GraPhi(grid,uu%n,1,VAR3x, .TRUE.) ! duu/dx  
+!   call GraPhi(grid,uu%n,2,VAR3y, .TRUE.) ! duu/dy  
+!   call GraPhi(grid,uu%n,3,VAR3z, .TRUE.) ! duu/dz  
 !
-!   call GraPhi(vv%n,1,VAR4x, .TRUE.) ! duw/dx  
-!   call GraPhi(vv%n,2,VAR4y, .TRUE.) ! duw/dy  
-!   call GraPhi(vv%n,3,VAR4z, .TRUE.) ! duw/dz  
+!   call GraPhi(grid,vv%n,1,VAR4x, .TRUE.) ! duw/dx  
+!   call GraPhi(grid,vv%n,2,VAR4y, .TRUE.) ! duw/dy  
+!   call GraPhi(grid,vv%n,3,VAR4z, .TRUE.) ! duw/dz  
 !
-!   call GraPhi(ww%n,1,VAR5x, .TRUE.) ! duw/dx  
-!   call GraPhi(ww%n,2,VAR5y, .TRUE.) ! duw/dy  
-!   call GraPhi(ww%n,3,VAR5z, .TRUE.) ! duw/dz  
+!   call GraPhi(grid,ww%n,1,VAR5x, .TRUE.) ! duw/dx  
+!   call GraPhi(grid,ww%n,2,VAR5y, .TRUE.) ! duw/dy  
+!   call GraPhi(grid,ww%n,3,VAR5z, .TRUE.) ! duw/dz  
 !
-!   call GraPhi(uv%n,1,VAR6x, .TRUE.) ! duv/dx  
-!   call GraPhi(uv%n,2,VAR6y, .TRUE.) ! duv/dy  
-!   call GraPhi(uv%n,3,VAR6z, .TRUE.) ! duv/dz  
+!   call GraPhi(grid,uv%n,1,VAR6x, .TRUE.) ! duv/dx  
+!   call GraPhi(grid,uv%n,2,VAR6y, .TRUE.) ! duv/dy  
+!   call GraPhi(grid,uv%n,3,VAR6z, .TRUE.) ! duv/dz  
 !
-!   call GraPhi(uw%n,1,VAR7x, .TRUE.) ! duw/dx  
-!   call GraPhi(uw%n,2,VAR7y, .TRUE.) ! duw/dy  
-!   call GraPhi(uw%n,3,VAR7z, .TRUE.) ! duw/dz  
+!   call GraPhi(grid,uw%n,1,VAR7x, .TRUE.) ! duw/dx  
+!   call GraPhi(grid,uw%n,2,VAR7y, .TRUE.) ! duw/dy  
+!   call GraPhi(grid,uw%n,3,VAR7z, .TRUE.) ! duw/dz  
 !
-!   call GraPhi(vw%n,1,VAR8x, .TRUE.) ! duw/dx  
-!   call GraPhi(vw%n,2,VAR8y, .TRUE.) ! duw/dy  
-!   call GraPhi(vw%n,3,VAR8z, .TRUE.) ! duw/dz  
+!   call GraPhi(grid,vw%n,1,VAR8x, .TRUE.) ! duw/dx  
+!   call GraPhi(grid,vw%n,2,VAR8y, .TRUE.) ! duw/dy  
+!   call GraPhi(grid,vw%n,3,VAR8z, .TRUE.) ! duw/dz  
 !
-!   call GraPhi(Ux,1,VAR1x, .TRUE.)  ! d2U/dxdx
-!   call GraPhi(Uy,2,VAR1y, .TRUE.)  ! d2U/dydy
-!   call GraPhi(Uz,3,VAR1z, .TRUE.)  ! d2U/dzdz
-!   call GraPhi(Ux,2,VAR2x, .TRUE.)  ! d2U/dxdy
-!   call GraPhi(Ux,3,VAR2y, .TRUE.)  ! d2U/dxdz
-!   call GraPhi(Uy,3,VAR2z, .TRUE.)  ! d2U/dydz
+!   call GraPhi(grid,Ux,1,VAR1x, .TRUE.)  ! d2U/dxdx
+!   call GraPhi(grid,Uy,2,VAR1y, .TRUE.)  ! d2U/dydy
+!   call GraPhi(grid,Uz,3,VAR1z, .TRUE.)  ! d2U/dzdz
+!   call GraPhi(grid,Ux,2,VAR2x, .TRUE.)  ! d2U/dxdy
+!   call GraPhi(grid,Ux,3,VAR2y, .TRUE.)  ! d2U/dxdz
+!   call GraPhi(grid,Uy,3,VAR2z, .TRUE.)  ! d2U/dydz
 !
-!   call GraPhi(Vx,1,VAR9x, .TRUE.)  ! d2V/dxdx
-!   call GraPhi(Vy,2,VAR9y, .TRUE.)  ! d2V/dydy
-!   call GraPhi(Vz,3,VAR9z, .TRUE.)  ! d2V/dzdz
-!   call GraPhi(Vx,2,VAR10x, .TRUE.)  ! d2V/dxdy
-!   call GraPhi(Vx,3,VAR10y, .TRUE.)  ! d2V/dxdz
-!   call GraPhi(Vy,3,VAR10z, .TRUE.)  ! d2V/dydz
+!   call GraPhi(grid,Vx,1,VAR9x, .TRUE.)  ! d2V/dxdx
+!   call GraPhi(grid,Vy,2,VAR9y, .TRUE.)  ! d2V/dydy
+!   call GraPhi(grid,Vz,3,VAR9z, .TRUE.)  ! d2V/dzdz
+!   call GraPhi(grid,Vx,2,VAR10x, .TRUE.)  ! d2V/dxdy
+!   call GraPhi(grid,Vx,3,VAR10y, .TRUE.)  ! d2V/dxdz
+!   call GraPhi(grid,Vy,3,VAR10z, .TRUE.)  ! d2V/dydz
 !
-!   call GraPhi(Wx,1,VAR11x, .TRUE.)  ! d2W/dxdx
-!   call GraPhi(Wy,2,VAR11y, .TRUE.)  ! d2W/dydy
-!   call GraPhi(Wz,3,VAR11z, .TRUE.)  ! d2W/dzdz
-!   call GraPhi(Wx,2,VAR12x, .TRUE.)  ! d2W/dxdy
-!   call GraPhi(Wx,3,VAR12y, .TRUE.)  ! d2W/dxdz
-!   call GraPhi(Wy,3,VAR12z, .TRUE.)  ! d2W/dydz
+!   call GraPhi(grid,Wx,1,VAR11x, .TRUE.)  ! d2W/dxdx
+!   call GraPhi(grid,Wy,2,VAR11y, .TRUE.)  ! d2W/dydy
+!   call GraPhi(grid,Wz,3,VAR11z, .TRUE.)  ! d2W/dzdz
+!   call GraPhi(grid,Wx,2,VAR12x, .TRUE.)  ! d2W/dxdy
+!   call GraPhi(grid,Wx,3,VAR12y, .TRUE.)  ! d2W/dxdz
+!   call GraPhi(grid,Wy,3,VAR12z, .TRUE.)  ! d2W/dydz
 !
-!   do c=1,NC
+!   do c=1,grid % n_cells
 !     Uxx = VAR1x(c)
 !     Uyy = VAR1y(c)
 !     Uzz = VAR1z(c)
@@ -188,31 +188,31 @@
   if(name_phi == 'EPS') then
   do i=1,3
     if(i == 1) then
-      call GraPhi(Ux,1,VAR2x, .TRUE.)  ! d2U/dxdx
-      call GraPhi(Ux,2,VAR2y, .TRUE.)  ! d2U/dxdy
-      call GraPhi(Ux,3,VAR2z, .TRUE.)  ! d2U/dxdz
-      call GraPhi(Uy,2,VAR1x, .TRUE.) ! d2U/dydy
-      call GraPhi(Uy,3,VAR1y, .TRUE.) ! d2U/dydz
-      call GraPhi(Uz,3,VAR1z, .TRUE.) ! d2U/dzdz
+      call GraPhi(grid,Ux,1,VAR2x, .TRUE.)  ! d2U/dxdx
+      call GraPhi(grid,Ux,2,VAR2y, .TRUE.)  ! d2U/dxdy
+      call GraPhi(grid,Ux,3,VAR2z, .TRUE.)  ! d2U/dxdz
+      call GraPhi(grid,Uy,2,VAR1x, .TRUE.) ! d2U/dydy
+      call GraPhi(grid,Uy,3,VAR1y, .TRUE.) ! d2U/dydz
+      call GraPhi(grid,Uz,3,VAR1z, .TRUE.) ! d2U/dzdz
     end if
     if(i == 2) then
-      call GraPhi(Vx,1,VAR2x, .TRUE.)  ! d2V/dxdx
-      call GraPhi(Vx,2,VAR2y, .TRUE.)  ! d2V/dxdy
-      call GraPhi(Vx,3,VAR2z, .TRUE.)  ! d2V/dxdz
-      call GraPhi(Vy,2,VAR1x, .TRUE.) ! d2V/dydy
-      call GraPhi(Vy,3,VAR1y, .TRUE.) ! d2V/dydz
-      call GraPhi(Vz,3,VAR1z, .TRUE.) ! d2V/dzdz
+      call GraPhi(grid,Vx,1,VAR2x, .TRUE.)  ! d2V/dxdx
+      call GraPhi(grid,Vx,2,VAR2y, .TRUE.)  ! d2V/dxdy
+      call GraPhi(grid,Vx,3,VAR2z, .TRUE.)  ! d2V/dxdz
+      call GraPhi(grid,Vy,2,VAR1x, .TRUE.) ! d2V/dydy
+      call GraPhi(grid,Vy,3,VAR1y, .TRUE.) ! d2V/dydz
+      call GraPhi(grid,Vz,3,VAR1z, .TRUE.) ! d2V/dzdz
     end if
     if(i == 3) then
-      call GraPhi(Wx,1,VAR2x, .TRUE.)  ! d2W/dxdx
-      call GraPhi(Wx,2,VAR2y, .TRUE.)  ! d2W/dxdy
-      call GraPhi(Wx,3,VAR2z, .TRUE.)  ! d2W/dxdz
-      call GraPhi(Wy,2,VAR1x, .TRUE.) ! d2W/dydy
-      call GraPhi(Wy,3,VAR1y, .TRUE.) ! d2W/dydz
-      call GraPhi(Wz,3,VAR1z, .TRUE.) ! d2W/dzdz
+      call GraPhi(grid,Wx,1,VAR2x, .TRUE.)  ! d2W/dxdx
+      call GraPhi(grid,Wx,2,VAR2y, .TRUE.)  ! d2W/dxdy
+      call GraPhi(grid,Wx,3,VAR2z, .TRUE.)  ! d2W/dxdz
+      call GraPhi(grid,Wy,2,VAR1x, .TRUE.) ! d2W/dydy
+      call GraPhi(grid,Wy,3,VAR1y, .TRUE.) ! d2W/dydz
+      call GraPhi(grid,Wz,3,VAR1z, .TRUE.) ! d2W/dzdz
     end if
 
-    do c=1,NC
+    do c=1,grid % n_cells
       if(i == 1) then
         Uxx = VAR2x(c)
         Uxy = VAR2y(c)
@@ -283,13 +283,13 @@
   end do  ! i
   end if                               
 
-  call GraPhi(Lsc,1,VAR2x,.TRUE.)             ! df22/dx
-  call GraPhi(Lsc,2,VAR2y,.TRUE.)             ! df22/dy
-  call GraPhi(Lsc,3,VAR2z,.TRUE.)             ! df22/dz
+  call GraPhi(grid,Lsc,1,VAR2x,.TRUE.)             ! df22/dx
+  call GraPhi(grid,Lsc,2,VAR2y,.TRUE.)             ! df22/dy
+  call GraPhi(grid,Lsc,3,VAR2z,.TRUE.)             ! df22/dz
 
   r23 = 2.0/3.0 
   r13 = 1.0/3.0 
-  do  c = 1, NC
+  do  c = 1, grid % n_cells
     Pk(c)      = max(-(uu % n(c)*Ux(c) + uv % n(c)*Uy(c) + uw % n(c)*Uz(c) +&
                        uv % n(c)*Vx(c) + vv % n(c)*Vy(c) + vw % n(c)*Vz(c) +&
                        uw % n(c)*Wx(c) + vw % n(c)*Wy(c) + ww % n(c)*Wz(c)),1.0e-10)                
@@ -531,15 +531,15 @@
     end if
   end do
 
-  do c = 1, NC
+  do c = 1, grid % n_cells
     VAR6x(c) = sqrt(0.5*(uu%n(c)+vv%n(c)+ww%n(c)))    
   end do 
 
   if(name_phi == 'EPS') then 
-    call GraPhi(VAR6x,1,VAR7x,.TRUE.)             ! dK/dx
-    call GraPhi(VAR6x,2,VAR7y,.TRUE.)             ! dK/dy
-    call GraPhi(VAR6x,3,VAR7z,.TRUE.)             ! dK/dz
-    do c = 1, NC
+    call GraPhi(grid,VAR6x,1,VAR7x,.TRUE.)             ! dK/dx
+    call GraPhi(grid,VAR6x,2,VAR7y,.TRUE.)             ! dK/dy
+    call GraPhi(grid,VAR6x,3,VAR7z,.TRUE.)             ! dK/dz
+    do c = 1, grid % n_cells
       Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+TINY)
       Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
       b(c) = b(c) + (Ce2*Feps*Eps%n(c)/Kin%n(c)*(VISc*(VAR7x(c)*VAR7x(c)+&
@@ -548,7 +548,7 @@
   end if
 
   if(name_phi == 'EPS') then
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
 

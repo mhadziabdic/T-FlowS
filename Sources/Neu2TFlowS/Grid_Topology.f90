@@ -15,8 +15,6 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer :: i, j
 !==============================================================================!
-
-!------------------------------------------------------------------------------!
 !
 !    *.NEU nodes are numbered as this:
 !
@@ -64,111 +62,111 @@
   !------------------------------!
   !   Count the boundary cells   !
   !------------------------------!
-  NBc = 0
-  NS  = 0
-  do i=1,NC
-    do j=1,6
+  grid % n_boundary_cells = 0
+  grid % n_faces  = 0
+  do i = 1, grid % n_cells
+    do j = 1, 6
       if(BCtype(i,j) /= 0) then
-        NBc = NBc + 1 
+        grid % n_boundary_cells = grid % n_boundary_cells + 1 
 
         ! BCmark
-        BCmark(-NBc) = BCtype(i,j)
+        BCmark(-grid % n_boundary_cells) = BCtype(i,j)
 
         ! Material:
-        material(-NbC) = material(i)
+        material(-grid % n_boundary_cells) = material(i)
 
         ! Sides
-        NS  = NS  + 1
-        SideC(1,NS) = i
-        SideC(2,NS) = -NbC
+        grid % n_faces  = grid % n_faces  + 1
+        SideC(1,grid % n_faces) = i
+        SideC(2,grid % n_faces) = -grid % n_boundary_cells
 
         ! Hexahedra:
         if(grid % cells_n_nodes(i) == 8) then
-          grid % cells_n_nodes(-NbC) = 4 
-          grid % cells_n(1,-NbC) = grid % cells_n(f8n(j,1), i)
-          grid % cells_n(2,-NbC) = grid % cells_n(f8n(j,2), i)
-          grid % cells_n(3,-NbC) = grid % cells_n(f8n(j,3), i)
-          grid % cells_n(4,-NbC) = grid % cells_n(f8n(j,4), i)
+          grid % cells_n_nodes(-grid % n_boundary_cells) = 4 
+          grid % cells_n(1,-grid % n_boundary_cells) = grid % cells_n(f8n(j,1), i)
+          grid % cells_n(2,-grid % n_boundary_cells) = grid % cells_n(f8n(j,2), i)
+          grid % cells_n(3,-grid % n_boundary_cells) = grid % cells_n(f8n(j,3), i)
+          grid % cells_n(4,-grid % n_boundary_cells) = grid % cells_n(f8n(j,4), i)
 
-          grid % faces_n_nodes(NS) = 4
-          grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
-          grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
-          grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
-          grid % faces_n(4,NS) = grid % cells_n(4,-NbC)
+          grid % faces_n_nodes(grid % n_faces) = 4
+          grid % faces_n(1,grid % n_faces) = grid % cells_n(1,-grid % n_boundary_cells)
+          grid % faces_n(2,grid % n_faces) = grid % cells_n(2,-grid % n_boundary_cells)
+          grid % faces_n(3,grid % n_faces) = grid % cells_n(3,-grid % n_boundary_cells)
+          grid % faces_n(4,grid % n_faces) = grid % cells_n(4,-grid % n_boundary_cells)
         end if
 
         ! Prisms:
         if(grid % cells_n_nodes(i) == 6) then
           if(j <= 3) then    ! faces (1), (2) and (3)
-            grid % cells_n_nodes(-NbC) = 4 
-            grid % cells_n(1,-NbC) = grid % cells_n(f6n(j,1), i)
-            grid % cells_n(2,-NbC) = grid % cells_n(f6n(j,2), i)
-            grid % cells_n(3,-NbC) = grid % cells_n(f6n(j,3), i)
-            grid % cells_n(4,-NbC) = grid % cells_n(f6n(j,4), i)
+            grid % cells_n_nodes(-grid % n_boundary_cells) = 4 
+            grid % cells_n(1,-grid % n_boundary_cells) = grid % cells_n(f6n(j,1), i)
+            grid % cells_n(2,-grid % n_boundary_cells) = grid % cells_n(f6n(j,2), i)
+            grid % cells_n(3,-grid % n_boundary_cells) = grid % cells_n(f6n(j,3), i)
+            grid % cells_n(4,-grid % n_boundary_cells) = grid % cells_n(f6n(j,4), i)
 
-            grid % faces_n_nodes(NS) = 4
-            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
-            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
-            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
-            grid % faces_n(4,NS) = grid % cells_n(4,-NbC)
+            grid % faces_n_nodes(grid % n_faces) = 4
+            grid % faces_n(1,grid % n_faces) = grid % cells_n(1,-grid % n_boundary_cells)
+            grid % faces_n(2,grid % n_faces) = grid % cells_n(2,-grid % n_boundary_cells)
+            grid % faces_n(3,grid % n_faces) = grid % cells_n(3,-grid % n_boundary_cells)
+            grid % faces_n(4,grid % n_faces) = grid % cells_n(4,-grid % n_boundary_cells)
           else if(j <= 5) then
-            grid % cells_n_nodes(-NbC) = 3 
-            grid % cells_n(1,-NbC) = grid % cells_n(f6n(j,1), i)
-            grid % cells_n(2,-NbC) = grid % cells_n(f6n(j,2), i)
-            grid % cells_n(3,-NbC) = grid % cells_n(f6n(j,3), i)
+            grid % cells_n_nodes(-grid % n_boundary_cells) = 3 
+            grid % cells_n(1,-grid % n_boundary_cells) = grid % cells_n(f6n(j,1), i)
+            grid % cells_n(2,-grid % n_boundary_cells) = grid % cells_n(f6n(j,2), i)
+            grid % cells_n(3,-grid % n_boundary_cells) = grid % cells_n(f6n(j,3), i)
 
-            grid % faces_n_nodes(NS) = 3
-            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
-            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
-            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
+            grid % faces_n_nodes(grid % n_faces) = 3
+            grid % faces_n(1,grid % n_faces) = grid % cells_n(1,-grid % n_boundary_cells)
+            grid % faces_n(2,grid % n_faces) = grid % cells_n(2,-grid % n_boundary_cells)
+            grid % faces_n(3,grid % n_faces) = grid % cells_n(3,-grid % n_boundary_cells)
           end if
         end if
 
         ! Tetrahedra:
         if(grid % cells_n_nodes(i) == 4) then
           if(j <= 4) then
-            grid % cells_n_nodes(-NbC) = 3 
-            grid % cells_n(1,-NbC) = grid % cells_n(f4n(j,1), i)
-            grid % cells_n(2,-NbC) = grid % cells_n(f4n(j,2), i)
-            grid % cells_n(3,-NbC) = grid % cells_n(f4n(j,3), i)
+            grid % cells_n_nodes(-grid % n_boundary_cells) = 3 
+            grid % cells_n(1,-grid % n_boundary_cells) = grid % cells_n(f4n(j,1), i)
+            grid % cells_n(2,-grid % n_boundary_cells) = grid % cells_n(f4n(j,2), i)
+            grid % cells_n(3,-grid % n_boundary_cells) = grid % cells_n(f4n(j,3), i)
 
-            grid % faces_n_nodes(NS) = 3
-            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
-            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
-            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
+            grid % faces_n_nodes(grid % n_faces) = 3
+            grid % faces_n(1,grid % n_faces) = grid % cells_n(1,-grid % n_boundary_cells)
+            grid % faces_n(2,grid % n_faces) = grid % cells_n(2,-grid % n_boundary_cells)
+            grid % faces_n(3,grid % n_faces) = grid % cells_n(3,-grid % n_boundary_cells)
           end if
         end if
 
         ! Pyramides:
         if(grid % cells_n_nodes(i) == 5) then
           if(j == 1) then    ! face (1)
-            grid % cells_n_nodes(-NbC) = 4
-            grid % cells_n(1,-NbC) = grid % cells_n(f5n(j,1), i)
-            grid % cells_n(2,-NbC) = grid % cells_n(f5n(j,2), i)
-            grid % cells_n(3,-NbC) = grid % cells_n(f5n(j,3), i)
-            grid % cells_n(4,-NbC) = grid % cells_n(f5n(j,4), i)
+            grid % cells_n_nodes(-grid % n_boundary_cells) = 4
+            grid % cells_n(1,-grid % n_boundary_cells) = grid % cells_n(f5n(j,1), i)
+            grid % cells_n(2,-grid % n_boundary_cells) = grid % cells_n(f5n(j,2), i)
+            grid % cells_n(3,-grid % n_boundary_cells) = grid % cells_n(f5n(j,3), i)
+            grid % cells_n(4,-grid % n_boundary_cells) = grid % cells_n(f5n(j,4), i)
  
-            grid % faces_n_nodes(NS) = 4
-            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
-            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
-            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
-            grid % faces_n(4,NS) = grid % cells_n(4,-NbC)
+            grid % faces_n_nodes(grid % n_faces) = 4
+            grid % faces_n(1,grid % n_faces) = grid % cells_n(1,-grid % n_boundary_cells)
+            grid % faces_n(2,grid % n_faces) = grid % cells_n(2,-grid % n_boundary_cells)
+            grid % faces_n(3,grid % n_faces) = grid % cells_n(3,-grid % n_boundary_cells)
+            grid % faces_n(4,grid % n_faces) = grid % cells_n(4,-grid % n_boundary_cells)
           else if(j <= 5) then
-            grid % cells_n_nodes(-NbC) = 3
-            grid % cells_n(1,-NbC) = grid % cells_n(f5n(j,1), i)
-            grid % cells_n(2,-NbC) = grid % cells_n(f5n(j,2), i)
-            grid % cells_n(3,-NbC) = grid % cells_n(f5n(j,3), i)
+            grid % cells_n_nodes(-grid % n_boundary_cells) = 3
+            grid % cells_n(1,-grid % n_boundary_cells) = grid % cells_n(f5n(j,1), i)
+            grid % cells_n(2,-grid % n_boundary_cells) = grid % cells_n(f5n(j,2), i)
+            grid % cells_n(3,-grid % n_boundary_cells) = grid % cells_n(f5n(j,3), i)
  
-            grid % faces_n_nodes(NS) = 3
-            grid % faces_n(1,NS) = grid % cells_n(1,-NbC)
-            grid % faces_n(2,NS) = grid % cells_n(2,-NbC)
-            grid % faces_n(3,NS) = grid % cells_n(3,-NbC)
+            grid % faces_n_nodes(grid % n_faces) = 3
+            grid % faces_n(1,grid % n_faces) = grid % cells_n(1,-grid % n_boundary_cells)
+            grid % faces_n(2,grid % n_faces) = grid % cells_n(2,-grid % n_boundary_cells)
+            grid % faces_n(3,grid % n_faces) = grid % cells_n(3,-grid % n_boundary_cells)
           end if
         end if
 
       end if
     end do 
   end do
-  write(*,*) 'Boundary cells: ', NBc
+  write(*,*) 'Boundary cells: ', grid % n_boundary_cells
 
   end subroutine Grid_Topology

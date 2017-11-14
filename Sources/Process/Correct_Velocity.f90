@@ -29,20 +29,20 @@
   !   velocities.                           !
   !-----------------------------------------!
   if(ALGOR == FRACT) then
-    do c=1,NC
+    do c = 1, grid % n_cells
       U % n(c) = U % n(c) - Px(c) * grid % vol(c) / A % sav(c)
       V % n(c) = V % n(c) - Py(c) * grid % vol(c) / A % sav(c)
       W % n(c) = W % n(c) - Pz(c) * grid % vol(c) / A % sav(c)
     end do 
   else ! algorythm is SIMPLE
-    do c=1,NC
+    do c = 1, grid % n_cells
       U % n(c) = U % n(c) - Px(c) * grid % vol(c) / A % sav(c)
       V % n(c) = V % n(c) - Py(c) * grid % vol(c) / A % sav(c)
       W % n(c) = W % n(c) - Pz(c) * grid % vol(c) / A % sav(c)
     end do 
   end if
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 
@@ -66,7 +66,7 @@
   !   because A % val(A % pos(1,s)) is also zero.                     !  
   !   What will happen with parallel version ... only god knows.      !
   !-------------------------------------------------------------------!
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
@@ -82,11 +82,11 @@
   !    Calculate the max mass error     !
   !   with the new (corrected) fluxes   !
   !-------------------------------------!
-1 do c=1,NC
+  do c = 1, grid % n_cells
     b(c) = 0.0 
   end do
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2  > 0 .or. c2  < 0 .and. TypeBC(c2) == BUFFER) then
@@ -97,12 +97,12 @@
     end if
   end do
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     b(c) = b(c) / (grid % vol(c) * DENc(material(c)))
   end do
 
   errmax=0.0
-  do c=1,NC
+  do c = 1, grid % n_cells
     errmax=max(errmax, abs(b(c)))
   end do
   call glomax(errmax)
@@ -111,10 +111,10 @@
   !   Calculate the CFL number   !
   !     and the Peclet number    !
   !------------------------------!
-  do m=1,grid % n_materials
+  do m = 1, grid % n_materials
     cfl_max(m) = 0.0
     pe_max(m)  = 0.0
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       if( (material(c1) .eq. m) .or. (material(c2) .eq. m) ) then

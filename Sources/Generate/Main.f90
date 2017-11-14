@@ -42,25 +42,39 @@
   call Compute_Grid_Geometry(grid, .true.)
 
   ! Prepare for saving
-  do n=1,NN
+  do n = 1,grid % n_nodes
     NewN(n)=n
   end do
-  do c=-NBC,NC
+  do c = -grid % n_boundary_cells,grid % n_cells
     NewC(c)=c
   end do
-  do s=1,NS
+  do s = 1,grid % n_faces
     NewS(s)=s
   end do
 
   ! Save the grid
-  call Save_Gmv_Cells(grid, 0, NN, NC)  ! save grid for postprocessing
-  call Save_Gmv_Faces(grid, 0, NN, NC)  ! save grid for checking b.c. 
-  call Save_Shadows  (grid, 0, NN, NC)  ! save shadows 
+  call Save_Gmv_Cells(grid, 0,         &
+                      grid % n_nodes,  &
+                      grid % n_cells)     ! save grid for postprocessing
+  call Save_Gmv_Faces(grid, 0,         &
+                      grid % n_nodes)     ! save grid for checking b.c. 
+  call Save_Shadows  (grid, 0,         &
+                      grid % n_nodes,  &
+                      grid % n_cells)     ! save shadows 
 
-  call Save_Cns_Geo(grid, 0, NC, NS, NBC, 0, 0)  ! saved data for processing
+  call Save_Cns_Geo(grid, 0,                  &
+                    grid % n_cells,           &
+                    grid % n_faces,           &
+                    grid % n_boundary_cells,  &
+                    0, 0)  ! saved data for processing
 
   ! Save links for checking
-  call Save_Gmv_Links(grid, 0, NN, NC, NS, NbC, 0)
+  call Save_Gmv_Links(grid, 0,                  &
+                      grid % n_nodes,           &
+                      grid % n_cells,           &
+                      grid % n_faces,           &
+                      grid % n_boundary_cells,  &
+                      0)
 
   ! Save the 1D probe (good for the channel flow)
   call Probe_1D_Nodes_Gen(grid)
@@ -69,9 +83,12 @@
   call Probe_2D(grid)
 
   ! Create output for Fluent
-  NewC(-NBC-1) = -NBC-1
-  call Save_Cas(grid, 0, NN, NC, NS+NSsh) ! save grid for postprocessing
-                                    ! with Fluent
+  NewC(-grid % n_boundary_cells-1) = -grid % n_boundary_cells-1
+  call Save_Cas(grid, 0,              &
+                grid % n_nodes,       &
+                grid % n_cells,       &
+                grid % n_faces+NSsh)     ! save grid for Fluent
+
   ! Make eps figures
   call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x') 
   call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y') 

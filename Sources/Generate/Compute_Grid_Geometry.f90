@@ -117,10 +117,10 @@
                 3,  2,  3,  1 /
 
     ! Without the following six lines, this procedure works for any grid
-    do c=1,NC
+    do c = 1, grid % n_cells
       grid % cells_n_nodes(c)=8
     end do
-    do s=1,NS
+    do s = 1, grid % n_faces
       grid % faces_n_nodes(s)=4 
     end do
 
@@ -130,11 +130,11 @@
     !   => depends on: x_node,y_node,z_node   ! 
     !   <= gives:      xc,yc,zc c>0           !
     !-----------------------------------------!
-    do c=1,NC
+    do c = 1, grid % n_cells
       grid % xc(c)=0.0
       grid % yc(c)=0.0
       grid % zc(c)=0.0
-      do n=1,grid % cells_n_nodes(c)
+      do n = 1, grid % cells_n_nodes(c)
         grid % xc(c) = grid % xc(c) + grid % xn(grid % cells_n(n,c))  &
               / (1.0*grid % cells_n_nodes(c))
         grid % yc(c) = grid % yc(c) + grid % yn(grid % cells_n(n,c))  &
@@ -150,7 +150,7 @@
     !   => depends on: x_node,y_node,z_node   ! 
     !   <= gives:      delta                  !
     !-----------------------------------------!
-    do c=1,NC
+    do c = 1, grid % n_cells
       delta(c)=0.0
       x_min = +HUGE   
       y_min = +HUGE  
@@ -158,7 +158,7 @@
       x_max = -HUGE  
       y_max = -HUGE  
       z_max = -HUGE  
-      do n=1,grid % cells_n_nodes(c)
+      do n = 1, grid % cells_n_nodes(c)
         x_min = min(x_min, grid % xn(grid % cells_n(n,c)))
         y_min = min(y_min, grid % yn(grid % cells_n(n,c)))
         z_min = min(z_min, grid % zn(grid % cells_n(n,c)))
@@ -178,8 +178,8 @@
     !   => depends on: x_node,y_node,z_node               ! 
     !   <= gives:      Sx,Sy,Sz,xsp,yzp,zsp               !
     !-----------------------------------------------------!
-    do s=1,NS
-      do n=1,grid % faces_n_nodes(s)    ! for quadrilateral an triangular faces
+    do s = 1, grid % n_faces
+      do n = 1, grid % faces_n_nodes(s)    ! for quadrilateral an triangular faces
         local_x_node(n) = grid % xn(grid % faces_n(n,s))
         local_y_node(n) = grid % yn(grid % faces_n(n,s))
         local_z_node(n) = grid % zn(grid % faces_n(n,s))
@@ -257,7 +257,7 @@
     !   => depends on: xc,yc,zc,Sx,Sy,Sz   !
     !   <= gives:      xc,yc,zc for c<0    !   
     !--------------------------------------!
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
 
@@ -283,7 +283,7 @@
     !---------------------------------------------!
     if(rrun) then
     NSsh = 0
-    do s=1,NS
+    do s = 1, grid % n_faces
 
       ! Initialize
       grid % dx(s)=0.0
@@ -323,32 +323,32 @@
                      + grid % zn(grid % cells_n(f4n(m,4), c2)))
  
             ! Add shadow faces
-            grid % faces_n_nodes(NS+NSsh-1) = 4
-            SideC(1,NS+NSsh-1) = c1 
-            SideC(2,NS+NSsh-1) = -NbC-1
-            grid % faces_n(1,NS+NSsh-1) = grid % faces_n(1,s)
-            grid % faces_n(2,NS+NSsh-1) = grid % faces_n(2,s)
-            grid % faces_n(3,NS+NSsh-1) = grid % faces_n(3,s)
-            grid % faces_n(4,NS+NSsh-1) = grid % faces_n(4,s)
-            grid % sx(NS+NSsh-1) = grid % sx(s)
-            grid % sy(NS+NSsh-1) = grid % sy(s)
-            grid % sz(NS+NSsh-1) = grid % sz(s)
-            grid % xf(NS+NSsh-1) = grid % xf(s)
-            grid % yf(NS+NSsh-1) = grid % yf(s)
-            grid % zf(NS+NSsh-1) = grid % zf(s)
-            grid % faces_n_nodes(NS+NSsh) = 4
-            SideC(1,NS+NSsh) = c2 
-            SideC(2,NS+NSsh) = -NbC-1
-            grid % faces_n(1,NS+NSsh) = grid % cells_n(f4n(m,1), c2) 
-            grid % faces_n(2,NS+NSsh) = grid % cells_n(f4n(m,2), c2)
-            grid % faces_n(3,NS+NSsh) = grid % cells_n(f4n(m,3), c2)
-            grid % faces_n(4,NS+NSsh) = grid % cells_n(f4n(m,4), c2)
-            grid % sx(NS+NSsh) = grid % sx(s)
-            grid % sy(NS+NSsh) = grid % sy(s)
-            grid % sz(NS+NSsh) = grid % sz(s)
-            grid % xf(NS+NSsh) = xs2
-            grid % yf(NS+NSsh) = ys2
-            grid % zf(NS+NSsh) = zs2
+            grid % faces_n_nodes(grid % n_faces+NSsh-1) = 4
+            SideC(1, grid % n_faces+NSsh-1) = c1 
+            SideC(2,grid % n_faces+NSsh-1) = -grid % n_boundary_cells-1
+            grid % faces_n(1, grid % n_faces+NSsh-1) = grid % faces_n(1,s)
+            grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
+            grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
+            grid % faces_n(4,grid % n_faces+NSsh-1) = grid % faces_n(4,s)
+            grid % sx(grid % n_faces+NSsh-1) = grid % sx(s)
+            grid % sy(grid % n_faces+NSsh-1) = grid % sy(s)
+            grid % sz(grid % n_faces+NSsh-1) = grid % sz(s)
+            grid % xf(grid % n_faces+NSsh-1) = grid % xf(s)
+            grid % yf(grid % n_faces+NSsh-1) = grid % yf(s)
+            grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
+            grid % faces_n_nodes(grid % n_faces+NSsh) = 4
+            SideC(1, grid % n_faces+NSsh) = c2 
+            SideC(2, grid % n_faces+NSsh) = -grid % n_boundary_cells-1
+            grid % faces_n(1, grid % n_faces+NSsh) = grid % cells_n(f4n(m,1), c2) 
+            grid % faces_n(2,grid % n_faces+NSsh) = grid % cells_n(f4n(m,2), c2)
+            grid % faces_n(3,grid % n_faces+NSsh) = grid % cells_n(f4n(m,3), c2)
+            grid % faces_n(4,grid % n_faces+NSsh) = grid % cells_n(f4n(m,4), c2)
+            grid % sx(grid % n_faces+NSsh) = grid % sx(s)
+            grid % sy(grid % n_faces+NSsh) = grid % sy(s)
+            grid % sz(grid % n_faces+NSsh) = grid % sz(s)
+            grid % xf(grid % n_faces+NSsh) = xs2
+            grid % yf(grid % n_faces+NSsh) = ys2
+            grid % zf(grid % n_faces+NSsh) = zs2
           else if(grid % faces_n_nodes(s) == 3) then  
 
             ! Coordinates of the shadow face
@@ -365,30 +365,30 @@
                              + grid % zn(grid % cells_n(f3n(m,3), c2)) )
 
             ! Add shadow faces
-            grid % faces_n_nodes(NS+NSsh-1) = 3
-            SideC(1,NS+NSsh-1) = c1 
-            SideC(2,NS+NSsh-1) = -NbC-1
-            grid % faces_n(1,NS+NSsh-1) = grid % faces_n(1,s)
-            grid % faces_n(2,NS+NSsh-1) = grid % faces_n(2,s)
-            grid % faces_n(3,NS+NSsh-1) = grid % faces_n(3,s)
-            grid % sx(NS+NSsh-1) = grid % sx(s)
-            grid % sy(NS+NSsh-1) = grid % sy(s)
-            grid % sz(NS+NSsh-1) = grid % sz(s)
-            grid % xf(NS+NSsh-1) = grid % xf(s)
-            grid % yf(NS+NSsh-1) = grid % yf(s)
-            grid % zf(NS+NSsh-1) = grid % zf(s)
-            grid % faces_n_nodes(NS+NSsh) = 3
-            SideC(1,NS+NSsh) = c2 
-            SideC(2,NS+NSsh) = -NbC-1
-            grid % faces_n(1,NS+NSsh) = grid % cells_n(f3n(m,1), c2) 
-            grid % faces_n(2,NS+NSsh) = grid % cells_n(f3n(m,2), c2)
-            grid % faces_n(3,NS+NSsh) = grid % cells_n(f3n(m,3), c2)
-            grid % sx(NS+NSsh) = grid % sx(s)
-            grid % sy(NS+NSsh) = grid % sy(s)
-            grid % sz(NS+NSsh) = grid % sz(s)
-            grid % xf(NS+NSsh) = xs2
-            grid % yf(NS+NSsh) = ys2
-            grid % zf(NS+NSsh) = zs2
+            grid % faces_n_nodes(grid % n_faces+NSsh-1) = 3
+            SideC(1, grid % n_faces+NSsh-1) = c1 
+            SideC(2,grid % n_faces+NSsh-1) = -grid % n_boundary_cells-1
+            grid % faces_n(1, grid % n_faces+NSsh-1) = grid % faces_n(1,s)
+            grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
+            grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
+            grid % sx(grid % n_faces+NSsh-1) = grid % sx(s)
+            grid % sy(grid % n_faces+NSsh-1) = grid % sy(s)
+            grid % sz(grid % n_faces+NSsh-1) = grid % sz(s)
+            grid % xf(grid % n_faces+NSsh-1) = grid % xf(s)
+            grid % yf(grid % n_faces+NSsh-1) = grid % yf(s)
+            grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
+            grid % faces_n_nodes(grid % n_faces+NSsh) = 3
+            SideC(1, grid % n_faces+NSsh) = c2 
+            SideC(2, grid % n_faces+NSsh) = -grid % n_boundary_cells-1
+            grid % faces_n(1, grid % n_faces+NSsh) = grid % cells_n(f3n(m,1), c2) 
+            grid % faces_n(2,grid % n_faces+NSsh) = grid % cells_n(f3n(m,2), c2)
+            grid % faces_n(3,grid % n_faces+NSsh) = grid % cells_n(f3n(m,3), c2)
+            grid % sx(grid % n_faces+NSsh) = grid % sx(s)
+            grid % sy(grid % n_faces+NSsh) = grid % sy(s)
+            grid % sz(grid % n_faces+NSsh) = grid % sz(s)
+            grid % xf(grid % n_faces+NSsh) = xs2
+            grid % yf(grid % n_faces+NSsh) = ys2
+            grid % zf(grid % n_faces+NSsh) = zs2
           end if 
 
           grid % dx(s)=grid % xf(s)-xs2  !------------------------!
@@ -410,15 +410,15 @@
   !   <= gives:      volume          !
   !----------------------------------!
   if(rrun) then
-  do c=1,NC
+  do c = 1, grid % n_cells
     grid % vol(c)=0.0
   end do
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)   
 
-    do n=1,grid % faces_n_nodes(s)      ! for quadrilateral an triangular faces
+    do n = 1, grid % faces_n_nodes(s)      ! for quadrilateral an triangular faces
       local_x_node(n) = grid % xn(grid % faces_n(n,s))
       local_y_node(n) = grid % yn(grid % faces_n(n,s))
       local_z_node(n) = grid % zn(grid % faces_n(n,s))
@@ -527,8 +527,8 @@
     WallDs = 1.0
     write(*,*) '# Distance to the wall set to 1 everywhere !'            
   else 
-    do c1=1,NC 
-      do s = WallFacFst, WallFacLst      ! 1,NS
+    do c1=1, grid % n_cells 
+      do s = WallFacFst, WallFacLst      ! 1, grid % n_faces
         c_1 = SideC(1,s)
         c_2 = SideC(2,s)
         if(c_2 < 0) then
@@ -545,40 +545,40 @@
       end do
     end do
 
-    do c=1,NC
+    do c = 1, grid % n_cells
       WallDs(c)=sqrt(WallDs(c))
     end do
 
-    write(*,*) '# Maximal distance to the wall: ', maxval(WallDs(1:NC))
-    write(*,*) '# Minimal distance to the wall: ', minval(WallDs(1:NC))
+    write(*,*) '# Maximal distance to the wall: ', maxval(WallDs(1:grid % n_cells))
+    write(*,*) '# Minimal distance to the wall: ', minval(WallDs(1:grid % n_cells))
   end if
 
-  do n=1,NN
+  do n = 1, grid % n_nodes
     walln(n)=HUGE
   end do
 
-  do c=1,NC
-    do n=1,grid % cells_n_nodes(c)
+  do c = 1, grid % n_cells
+    do n = 1, grid % cells_n_nodes(c)
       walln(grid % cells_n(n,c))=min(WallDs(c),walln(grid % cells_n(n,c)))
     end do
   end do
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2 < 0 .or. material(c1) /= material(c2)) then 
-      do n=1,grid % faces_n_nodes(s)    ! for quadrilateral an triangular faces
+      do n = 1, grid % faces_n_nodes(s)  ! for quadrilateral an triangular faces
         walln(grid % faces_n(n,s)) = 0.0
       end do
     end if
   end do 
 
   maxdis=0.0 
-  do n=1,NN
+  do n = 1, grid % n_nodes
     maxdis=max(walln(n),maxdis)
   end do
 
-  do n=1,NN
+  do n = 1, grid % n_nodes
     walln(n)=walln(n)/maxdis
   end do
 
@@ -586,7 +586,7 @@
   !   Calculate the interpolation factors for the cell sides   !
   !------------------------------------------------------------!
   if(rrun) then
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
   

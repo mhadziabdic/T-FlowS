@@ -8,20 +8,20 @@ Process_SOURCES =	 			\
   CalcConvect.f90				\
   Compute_Gradient_Matrix.f90			\
   CalcMn_Cylind.f90				\
-  CalcMn.f90					\
+  Compute_Mean.f90				\
   Compute_Pressure_Fractional.f90		\
   Compute_Pressure_Simple.f90			\
   CalcShear.f90					\
   CalcVort.f90					\
-  CalMinMax.f90					\
+  Compute_Minimum_Maximum.f90			\
   Compute_Fluxes.f90				\
   Compute_Geometry.f90				\
   Compute_Scalar.f90				\
-  ConvScheme.f90				\
-  CorBad.f90					\
+  Advection_Scheme.f90				\
+  Correct_Bad.f90				\
   Correct_Velocity.f90				\
-  FindBad.f90					\
-  ForAPF.f90					\
+  Find_Bad.f90					\
+  Pressure_Matrix_Fractional.f90		\
   GraCorNew.f90					\
   GradP3.f90					\
   GradP.f90					\
@@ -45,7 +45,7 @@ Process_SOURCES =	 			\
   Save_Restart.f90				\
   ReaCom.f90					\
   SavParView.f90				\
-  Scale.f90
+  Time_And_Length_Scale.f90
 
 SUBDIRS = Communication				\
           Solvers				\

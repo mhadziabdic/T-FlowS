@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Gmv_Faces(grid, sub, NNsub, NCsub)
+  subroutine Save_Gmv_Faces(grid, sub, NNsub)
 !------------------------------------------------------------------------------!
 ! Writes .faces.gmv file.                                                      !
 !----------------------------------[Modules]-----------------------------------!
@@ -11,9 +11,9 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: sub, NNsub, NCsub, NmaterBC
+  integer         :: sub, NNsub
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c,  c1,  c2,  n, s
+  integer           :: c1, c2, n, s
   character(len=80) :: name_out
 !==============================================================================!
 
@@ -38,13 +38,13 @@
   !-----------!
   write(9,*) 'nodes', NNsub
 
-  do n=1,NN
+  do n = 1, grid % n_nodes
     write(9, '(1PE14.7)') grid % xn(n)
   end do
-  do n=1,NN
+  do n = 1, grid % n_nodes
     write(9, '(1PE14.7)') grid % yn(n)
   end do
-  do n=1,NN
+  do n = 1, grid % n_nodes
     write(9, '(1PE14.7)') grid % zn(n)
   end do
 
@@ -53,8 +53,8 @@
   !-----------!
 
   ! Count the cell faces on the periodic boundaries
-  write(9,*) 'cells', NS
-  do s=1,NS
+  write(9,*) 'cells', grid % n_faces
+  do s = 1, grid % n_faces
     if(grid % faces_n_nodes(s) == 4) then
       write(9,*) 'quad 4'
       write(9,'(4I9)')                             &
@@ -67,7 +67,7 @@
         grid % faces_n(3,s)
     else
       write(*,*) '# Unsupported cell type ',       &
-                 grid % cells_n_nodes(c), ' nodes.'
+                 grid % faces_n_nodes(s), ' nodes.'
       write(*,*) '# Exiting'
       stop 
     end if
@@ -82,7 +82,7 @@
   end do        
   write(9,*) 'DEFAULT_INSIDE'
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1 = SideC(1,s)
     c2 = SideC(2,s)
    

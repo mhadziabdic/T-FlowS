@@ -1,15 +1,17 @@
 !==============================================================================!
-  subroutine CalMinMax(phi)
+  subroutine Compute_Minimum_Maximum(grid, phi)
 !------------------------------------------------------------------------------!
 !                                                                              !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  real    :: phi(-NbC:NC) 
+  type(Grid_Type) :: grid
+  real            :: phi(-grid % n_boundary_cells:grid % n_cells) 
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c1, c2, s
 !==============================================================================!
@@ -17,7 +19,7 @@
   phi_max = phi 
   phi_min = phi 
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 
@@ -30,7 +32,7 @@
 
   end do
 
-  call exchng(phi_max)
-  call exchng(phi_min)
+  call Exchng(phi_max)
+  call Exchng(phi_min)
 
   end subroutine

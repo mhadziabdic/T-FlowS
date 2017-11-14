@@ -12,7 +12,8 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   integer         :: i
-  real            :: phi(-NbC:NC), phii(-NbC:NC) 
+  real            :: phi (-grid % n_boundary_cells:grid % n_cells),  &
+                     phii(-grid % n_boundary_cells:grid % n_cells) 
   logical         :: Boundary
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2
@@ -21,12 +22,12 @@
 
   call Exchng(phi)
 
-  do c=1,NC
+  do c=1,grid % n_cells
     phii(c)=0.0
   end do
 
   if(i == 1) then
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       Dxc1 = grid % dx(s)
@@ -72,7 +73,7 @@
   end if
 
   if(i == 2) then
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       Dxc1 = grid % dx(s)
@@ -122,7 +123,7 @@
   end if
 
   if(i == 3) then
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       Dxc1 = grid % dx(s)
@@ -173,6 +174,6 @@
 
   call Exchng(phii)
 
-  if(.not. Boundary) call CorBad(phii)
+  if(.not. Boundary) call Correct_Bad(grid, phii)
 
   end subroutine

@@ -1,15 +1,17 @@
 !==============================================================================!
-  subroutine Matrix_Mod_Topology(matrix)
+  subroutine Matrix_Mod_Topology(grid, matrix)
 !------------------------------------------------------------------------------!
 !   Determines the topology of the system matrix.                              !
 !   It relies only on SideC structure. Try to keep it that way.                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod, only: NC, NS, SideC
+  use all_mod, only: SideC
   use par_mod, only: this_proc
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type)   :: grid
   type(Matrix_Type) :: matrix
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: c, s, pos, pos1, pos2, n
@@ -19,7 +21,7 @@
 !==============================================================================!
                   
   ! Memory allocation
-  allocate(stencw(NC)); stencw=1
+  allocate(stencw(grid % n_cells)); stencw=1
 
   if(this_proc < 2) write(*,*) '# Determining matrix topology.'
 
@@ -27,7 +29,7 @@
   matrix % nonzeros = 0
 
   ! Compute stencis widths
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2  > 0) then
@@ -38,7 +40,7 @@
 
   ! Count the nonzero entries and allocate the memory for the array 
   n = 0  
-  do c=1,NC
+  do c = 1, grid % n_cells
     n = n + stencw(c)
   end do   
   matrix % nonzeros = n + 1
@@ -48,14 +50,14 @@
 
   ! Form matrix % row and diagonal only formation of matrix % col
   matrix % row(1)=1
-  do c=1,NC
+  do c = 1, grid % n_cells
     matrix % row(c+1)=matrix % row(c)+stencw(c)
     matrix % col(matrix % row(c)) = c   ! sam sebi je prvi
     stencw(c)=1
   end do 
 
   ! Extend matrix % col entries with off-diagonal terms      
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2  > 0) then
@@ -68,7 +70,7 @@
 
   ! Sort matrix % col to make them nice and neat
   ! and also locate the position of diagonal
-  do c=1,NC
+  do c = 1, grid % n_cells
     call Sort_Int_Carry_Int(matrix % col(matrix % row(c)),  &
                             matrix % col(matrix % row(c)),  &
                             stencw(c), 1)
@@ -78,7 +80,7 @@
   end do 
 
   ! Find mirror positions
-  do c1 = 1,NC
+  do c1 = 1, grid % n_cells
     do pos1 = matrix % row(c1), matrix % row(c1 + 1) - 1 
       n1 = matrix % col(pos1)  ! at this point you have c1 and n1  
     
@@ -99,7 +101,7 @@
   end do    
 
   ! Connect faces with matrix entries
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2  > 0) then

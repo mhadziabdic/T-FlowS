@@ -30,7 +30,7 @@
   !-----------------------------------------!
 
   ! Initialize all the material markers to 1 
-  do c=1,nc
+  do c = 1, grid % n_cells
     material(c) = 1
   end do
 

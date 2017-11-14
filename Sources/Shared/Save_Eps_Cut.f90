@@ -48,26 +48,26 @@
   write(*, *) '# Now creating the file:', name_eps
 
   if(dir == 'x') then
-    xmax=maxval(grid % yn(1:NN))
-    ymax=maxval(grid % zn(1:NN))
-    zmax=maxval(grid % xn(1:NN))
-    xmin=minval(grid % yn(1:NN))
-    ymin=minval(grid % zn(1:NN))
-    zmin=minval(grid % xn(1:NN))
+    xmax=maxval(grid % yn(1:grid % n_nodes))
+    ymax=maxval(grid % zn(1:grid % n_nodes))
+    zmax=maxval(grid % xn(1:grid % n_nodes))
+    xmin=minval(grid % yn(1:grid % n_nodes))
+    ymin=minval(grid % zn(1:grid % n_nodes))
+    zmin=minval(grid % xn(1:grid % n_nodes))
   else if(dir == 'y') then
-    xmax=maxval(grid % zn(1:NN))
-    ymax=maxval(grid % xn(1:NN))
-    zmax=maxval(grid % yn(1:NN))
-    xmin=minval(grid % zn(1:NN))
-    ymin=minval(grid % xn(1:NN))
-    zmin=minval(grid % yn(1:NN))
+    xmax=maxval(grid % zn(1:grid % n_nodes))
+    ymax=maxval(grid % xn(1:grid % n_nodes))
+    zmax=maxval(grid % yn(1:grid % n_nodes))
+    xmin=minval(grid % zn(1:grid % n_nodes))
+    ymin=minval(grid % xn(1:grid % n_nodes))
+    zmin=minval(grid % yn(1:grid % n_nodes))
   else if(dir == 'z') then
-    xmax=maxval(grid % xn(1:NN))
-    ymax=maxval(grid % yn(1:NN))
-    zmax=maxval(grid % zn(1:NN))
-    xmin=minval(grid % xn(1:NN))
-    ymin=minval(grid % yn(1:NN))
-    zmin=minval(grid % zn(1:NN))
+    xmax=maxval(grid % xn(1:grid % n_nodes))
+    ymax=maxval(grid % yn(1:grid % n_nodes))
+    zmax=maxval(grid % zn(1:grid % n_nodes))
+    xmin=minval(grid % xn(1:grid % n_nodes))
+    ymin=minval(grid % yn(1:grid % n_nodes))
+    zmin=minval(grid % zn(1:grid % n_nodes))
   end if
 
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin))
@@ -98,7 +98,7 @@
   write(9, '(A24)') '% Scale:                '
   write(9, '(2F10.6,A4)') sclp,sclp, ' sc '
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1 = SideC(1,s)
     c2 = SideC(2,s)
 

@@ -4,7 +4,7 @@
 !   This subroutine finds the coordinate of cell-centers in non-homogeneous    !
 !   direction and write them in file called "name.1D"                          !
 !------------------------------------------------------------------------------!
-  use all_mod
+  use all_mod, only: name
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -34,7 +34,7 @@
   !-----------------------------!
   !   Browse through all cells  !
   !-----------------------------!
-  do c=1,NC
+  do c = 1, grid % n_cells
 
     ! Try to find the cell among the probes
     do p=1,n_prob

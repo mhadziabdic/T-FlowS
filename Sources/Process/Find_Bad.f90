@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine FindBad()
+  subroutine Find_Bad(grid)
 !----------------------------------------------------------------------!
 ! Searches for cells which are "bad" for calculation of pressure       !
 ! gradients.                                                           !
@@ -11,8 +11,11 @@
   use all_mod
   use pro_mod
   use par_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
+!-----------------------------[Arguments]------------------------------!
+  type(Grid_Type) :: grid
 !-------------------------------[Locals]-------------------------------!
   integer :: s, c, c1, c2, NumBad
 !======================================================================!
@@ -22,7 +25,7 @@
 
   NumBad = 0
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2 < 0) then
@@ -30,7 +33,7 @@
     end if  
   end do
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NumGood(c)==2) then
       BadForG(c) = .TRUE.
       NumBad = NumBad + 1
@@ -44,4 +47,4 @@
   if(this_proc < 2) write(*,*) '# There are ', NumBad, &
                           ' bad cells for gradients.'
 
-  end subroutine FindBad
+  end subroutine

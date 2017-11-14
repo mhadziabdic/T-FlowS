@@ -29,8 +29,8 @@
 !==============================================================================!
 
   ! Allocate the memory
-  allocate(indx(max(NS+NSsh0, grid % max_n_faces))); indx=0
-  allocate(work(max(NS+NSsh0, grid % max_n_faces))); work=0
+  allocate(indx(max(grid % n_faces + NSsh0, grid % max_n_faces))); indx=0
+  allocate(work(max(grid % n_faces + NSsh0, grid % max_n_faces))); work=0
 
   BCcount = 0
 
@@ -49,9 +49,9 @@
   red(n) = 1.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! magenta
   red(n) = 1.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! yellow
   red(n) = 0.00; green(n) = 1.00; blue(n) = 1.00;  n=n+1 ! cyan
-  red(n) = 1.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! light Red
-  red(n) = 0.50; green(n) = 1.00; blue(n) = 0.50;  n=n+1 ! light Green
-  red(n) = 0.50; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! light Blue
+  red(n) = 1.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! light red
+  red(n) = 0.50; green(n) = 1.00; blue(n) = 0.50;  n=n+1 ! light green
+  red(n) = 0.50; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! light blue
   red(n) = 0.50; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! gray           
 
   !------------------------------!
@@ -90,21 +90,21 @@
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
   write(*, *) '# Now creating the file:', name_eps
 
-  xmax=maxval(grid % xn(1:NN))
-  ymax=maxval(grid % yn(1:NN))
-  zmax=maxval(grid % zn(1:NN))
-  xmin=minval(grid % xn(1:NN))
-  ymin=minval(grid % yn(1:NN))
-  zmin=minval(grid % zn(1:NN))
+  xmax=maxval(grid % xn(1:grid % n_nodes))
+  ymax=maxval(grid % yn(1:grid % n_nodes))
+  zmax=maxval(grid % zn(1:grid % n_nodes))
+  xmin=minval(grid % xn(1:grid % n_nodes))
+  ymin=minval(grid % yn(1:grid % n_nodes))
+  zmin=minval(grid % zn(1:grid % n_nodes))
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin),(zmax-zmin))
   sclp = 0.005 
 
-!---- Find the bounding box
+  ! Find the bounding box
   xminb=+1000000
   xmaxb=-1000000
   yminb=+1000000
   ymaxb=-1000000
-  do n=1,Nn
+  do n = 1, grid % n_nodes
     if(xk  < 0.0 .and. yk  > 0.0) then
       xp1=-grid % xn(n)*sin(alfa)-grid % yn(n)*sin(beta)
     else if(xk  > 0.0 .and. yk  < 0.0) then
@@ -166,13 +166,13 @@
   write(9, '(I6,A)') int(real(boxsize)/sclp), ' scalefont'
   write(9, '(A)') 'setfont'
 
-  do s=1,NS+NSsh0
+  do s = 1, grid % n_faces+NSsh0
     indx(s) = s
     work(s) = Distance(xk, yk, zk, grid % xf(s), grid % yf(s), grid % zf(s))
   end do
-  call Sort_Real_By_Index(work, indx, NS+NSsh0, -2)
+  call Sort_Real_By_Index(work, indx, grid % n_faces+NSsh0, -2)
 
-  do s0=1,NS+NSsh0
+  do s0=1,grid % n_faces+NSsh0
     s=indx(s0)
 
     shade = (grid % sx(s)*nx+grid % sy(s)*ny+grid % sz(s)*nz)  &
@@ -231,7 +231,7 @@
       yp3=(-x3*cos(alfa)-y3*cos(beta))*cos(gama) + z3*sin(gama)
       yp4=(-x4*cos(alfa)-y4*cos(beta))*cos(gama) + z4*sin(gama)
 
-      if(s <= NS) then
+      if(s <= grid % n_faces) then
         if(colour(1:1) == 'G') then
           if(grid % faces_n_nodes(s) == 4)                          &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A9,F4.2,A15)')  &
@@ -274,7 +274,7 @@
                     blue(BCmark(c2)),                               &
                     ' srgb f gr s gr'
         end if ! colour
-      else if(s > NS) then
+      else if(s > grid % n_faces) then
         if(grid % faces_n_nodes(s) == 4) then
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A9)')           &
                         'gs np 0 slw ',                             &
@@ -304,7 +304,7 @@
     iy1 = ymaxb
     ix2 = ix1+boxsize
     iy2 = iy1+boxsize
-    do n=1,10
+    do n = 1, 10
       if( BCcount(n) > 0 ) then
         iy1 = iy1 - boxsize
         iy2 = iy2 - boxsize

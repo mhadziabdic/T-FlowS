@@ -288,7 +288,7 @@
   !   Twin of my twin   ! 
   !   is also my twin   !
   !---------------------!
-  do n1=1,NN
+  do n1=1,grid % n_nodes
     do i1=1,TwinN(n1,0)
       n2=TwinN(n1,i1) 
       do i2=1,TwinN(n2,0)

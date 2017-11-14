@@ -88,8 +88,8 @@
   !   Velocities   !
   !----------------!
   write(9,'(A16)') '(0 "velocities")'
-  write(9,'(A16,I9,I9,A2)') '(300 (2 1 3 0 0 ',  1, NC, ')(' 
-  do c=1,NC
+  write(9,'(A16,I9,I9,A2)') '(300 (2 1 3 0 0 ',  1, grid % n_cells, ')(' 
+  do c = 1, grid % n_cells
     write(9,'(3F14.6)') U % n(c), V % n(c), W % n(c) 
   end do  
   write(9,'(A2)') '))'
@@ -110,7 +110,7 @@
   !   Other scalars   !
   !-------------------!
   if(TGV == YES) then
-    do c =  1, NC
+    do c = 1, grid % n_cells
       R   = R + (U % n(c) - (-sin(grid % xc(c))*cos(grid % yc(c))*exp(-2.0*VISc*Time)))**2.0
       RR  = RR + U % n(c)*U % n(c)
       PP % n(c) = sqrt(R/RR) 
@@ -255,7 +255,7 @@
   NtotFac = 0
   do n=1,10   ! Browse through boundary condition types
     Nfac(n) = 0
-    do s=1,NS   ! Count the faces with boundary condition "n"
+    do s = 1, grid % n_faces   ! Count the faces with boundary condition "n"
       c2 = SideC(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == n) Nfac(n)=Nfac(n)+1
@@ -267,7 +267,7 @@
     NtotFac = NtotFac+Nfac(n)
   end do   ! n -> boundary condition types
 
-  write(9,'(I8)') NC
+  write(9,'(I8)') grid % n_cells
   do n=1,10
     write(9,'(I8)') Nfac(n)
   end do

@@ -28,7 +28,7 @@
   real    :: fun
 !==============================================================================!
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     lf = grid % vol(c)**ONE_THIRD    
     VISt_sgs(c) = DENc(material(c))      &
                   * (lf*lf)              &          ! delta^2 

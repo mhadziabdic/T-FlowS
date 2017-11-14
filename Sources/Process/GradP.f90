@@ -13,10 +13,10 @@
   implicit none
 !-----------------------------[Arguments]------------------------------!
   type(Grid_Type) :: grid
-  real            :: phi(-NbC:NC),                              &
-                     phi_x(-NbC:NC),                            &
-                     phi_y(-NbC:NC),                            &
-                     phi_z(-NbC:NC)
+  real            :: phi  (-grid % n_boundary_cells:grid % n_cells),  &
+                     phi_x(-grid % n_boundary_cells:grid % n_cells),  &
+                     phi_y(-grid % n_boundary_cells:grid % n_cells),  &
+                     phi_z(-grid % n_boundary_cells:grid % n_cells)
 !-------------------------------[Locals]-------------------------------!
   integer :: s, c, c1, c2, iter
 !======================================================================!
@@ -25,13 +25,13 @@
 
   Ps = 0.0
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     phi_x(c)=0.0
     phi_y(c)=0.0
     phi_z(c)=0.0
   end do
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
@@ -47,7 +47,7 @@
 
   do iter=1,1 
 
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then

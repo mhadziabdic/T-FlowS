@@ -17,17 +17,14 @@
   character :: storename*80, namTem*80, namXML*80
   character :: namAut*(*)
 !-------------------------------[Locals]-------------------------------!
-  integer   :: c,  c1,  c2,  n, s, contauai
-  character :: namOut*80, Line*300, stringadummy*100, nameIn*80
+  integer   :: c, n
+  character :: namOut*80, stringadummy*100, nameIn*80
   real,allocatable :: x(:), y(:), z(:)    ! self evident
   integer,allocatable :: connessione(:,:) ! connection
   integer :: celleconnessione
-  integer :: NNsub, NmaterBC, NNsub_new, NCsub_new
+  integer :: NNsub, NCsub_new
   integer :: off_set_connection
   integer :: i
-  real    :: Stot, lf, Uff
-  real    :: Apow, Bpow, nu, dely
-  real    :: frictionv(NC)
 !======================================================================!
 
   namTem = name
@@ -292,10 +289,7 @@
     end if
   end if
 
-call wait
-
-1290 continue
-
+  call wait
 
   write(9,'(A17)') '      </CellData>'
   
@@ -436,4 +430,4 @@ call wait
 
   return
 
-  end subroutine SavParView
+  end subroutine

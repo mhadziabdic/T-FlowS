@@ -15,7 +15,7 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------!
-  real    :: UserUPlus, Uta, Stot
+  real    :: Stot
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, m, s, n
   integer :: n1, n2, n3, n4, n5, n6
@@ -24,8 +24,8 @@
   Area  = 0.0
   Uaver = 0.0
   write(*,*) 'grid % n_materials: ', grid % n_materials
-  do n=1,grid % n_materials
-    do c=1,NC
+  do n = 1, grid % n_materials
+    do c = 1, grid % n_cells
       U % mean(c) = 0.0
       V % mean(c) = 0.0
       W % mean(c) = 0.0
@@ -89,7 +89,7 @@
   end do   !end do n=1,grid % n_materials
 
   if(TGV == YES) then
-    do c=1,NC
+    do c = 1, grid % n_cells
       U % n(c)    = -sin(grid % xc(c))*cos(grid % yc(c))
       U % o(c)    = -sin(grid % xc(c))*cos(grid % yc(c))
       U % oo(c)   = -sin(grid % xc(c))*cos(grid % yc(c))
@@ -114,9 +114,9 @@
   n4 = 0
   n5 = 0
   n6 = 0
-  do m=1,grid % n_materials
+  do m = 1, grid % n_materials
     MassIn(m) = 0.0
-    do s=1,nS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2  < 0) then 
@@ -156,8 +156,6 @@
   !----------------------!
   Time   = 0.0   
   Uaver  = MassIn(1)/(Area + TINY) 
-!   write(*,*) MassIn, Area, MassIn/Area 
-!>>> This is very handy test to perform 
   if(this_proc  < 2) then
     write(*,*) '# MassIn=', MassIn(1)
     write(*,*) '# Average inflow velocity =', MassIn(1)/Area

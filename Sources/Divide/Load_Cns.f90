@@ -28,9 +28,9 @@
   write(*,'(A24,A)') '# Now reading the file: ', name_in
 
   ! Number of cells
-  read(9) NC
-  read(9) NbC
-  read(9) NS
+  read(9) grid % n_cells
+  read(9) grid % n_boundary_cells
+  read(9) grid % n_faces
   read(9) NSsh
   read(9) grid % n_materials
   read(9) grid % n_boundary_conditions
@@ -48,21 +48,21 @@
     read(9) grid % boundary_conditions(n) % name
   end do
 
-  allocate (material(-NbC:NC))
-  read(9) (material(c), c=1,NC)
-  read(9) (material(c), c=-1,-NBC,-1)
+  allocate (material(-grid % n_boundary_cells:grid % n_cells))
+  read(9) (material(c), c=1,grid % n_cells)
+  read(9) (material(c), c=-1,-grid % n_boundary_cells,-1)
 
   ! Faces
-  allocate (SideC(0:2,NS+NSsh))
-  read(9) (SideC(0,s), s=1,NS)
-  read(9) (SideC(1,s), s=1,NS)
-  read(9) (SideC(2,s), s=1,NS)
+  allocate (SideC(0:2,grid % n_faces+NSsh))
+  read(9) (SideC(0,s), s=1,grid % n_faces)
+  read(9) (SideC(1,s), s=1,grid % n_faces)
+  read(9) (SideC(2,s), s=1,grid % n_faces)
 
   ! Boundary cells
-  allocate (bcmark(-NbC-1:-1)); bcmark=0
-  allocate (CopyC(-NbC:-1));    CopyC=0
-  read(9) (bcmark(c), c=-1,-NbC, -1)
-  read(9) (CopyC(c), c=-1,-NbC, -1)
+  allocate (bcmark(-grid % n_boundary_cells-1:-1)); bcmark=0
+  allocate (CopyC(-grid % n_boundary_cells:-1));    CopyC=0
+  read(9) (bcmark(c), c=-1,-grid % n_boundary_cells, -1)
+  read(9) (CopyC(c), c=-1,-grid % n_boundary_cells, -1)
  
   read(9) n_copy
   write(*,*) n_copy

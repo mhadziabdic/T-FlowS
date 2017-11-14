@@ -28,8 +28,8 @@
 !   NBFsub - number of buffer boundary faces in subdomain                      !
 !------------------------------------------------------------------------------!
 
-  allocate(iwork(-NbC:NS,0:2)); iwork=0
-  allocate(work(NS));           work=0
+  allocate(iwork(-grid % n_boundary_cells:grid % n_faces,0:2)); iwork=0
+  allocate(work(grid % n_faces));           work=0
 
   !----------------------!
   !                      !
@@ -68,7 +68,7 @@
   !   Cells   ! 
   !-----------! 
   count=0
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
       count=count+1
       iwork(count,1) = material(c)
@@ -78,7 +78,7 @@
 
   ! Physicall cells
   count=0
-  do c=-1,-NBC, -1
+  do c = -1,-grid % n_boundary_cells, -1
     if(NewC(c) /= 0) then
       count=count+1
       iwork(count,1) = material(c)
@@ -86,7 +86,7 @@
   end do
 
   ! Buffer boundary cell centers
-  do s=1,NBFsub
+  do s = 1, NBFsub
     count=count+1
     iwork(count,1) = material(BuReIn(s))
   end do
@@ -98,7 +98,7 @@
   count=0
 
   ! NSsub physical faces
-  do s=1,NS  ! OK, later chooses just sides with NewS
+  do s = 1, grid % n_faces  ! OK, later chooses just sides with NewS
     if( NewS(s)  > 0  .and.  NewS(s) <= NSsub ) then
       count=count+1 
       iwork(count,0) = 0 
@@ -108,7 +108,7 @@
   end do 
 
   ! NBFsub buffer faces (copy faces here, avoid them with BufPos) 
-  do s=1,NBFsub
+  do s = 1, NBFsub
     if(BufPos(s)  < 0) then         ! normal buffer (non-copy) 
       count=count+1 
       iwork(count,0) = BuReIn(s)    ! old cell number
@@ -127,7 +127,7 @@
   count=0          ! count goes to negative
 
   ! NBCsub physical boundary cells
-  do c=-1,-NbC,-1  ! OK, later chooses just cells with NewC
+  do c = -1,-grid % n_boundary_cells,-1  ! OK, later chooses just cells with NewC
     if(NewC(c) /= 0) then
       count=count-1 
       ! nekad bio i: NewC(c)
@@ -150,7 +150,7 @@
   end do 
 
   ! NBFsub buffer cells
-  do c=1,NBFsub
+  do c = 1, NBFsub
     count=count-1 
     ! nekad bio i: -NBCsub-c, 
     iwork(count,1) = BUFFER 
@@ -164,7 +164,7 @@
   !   Copy   !
   !----------!
   count = 0
-  do s=1,n_copy
+  do s = 1, n_copy
     count = count + 1
     iwork(count,1) = CopyS(1,s) 
     iwork(count,2) = CopyS(2,s) 
@@ -173,19 +173,6 @@
   write(9) count 
   write(9) (iwork(c,1), c=1,count)
   write(9) (iwork(c,2), c=1,count)
-
-  !------------------------------------------------------------!
-  !   Append boundary condition and material keys at the end   !
-  !------------------------------------------------------------!
-! write(*,*) 'Nbnd ', Nbnd 
-! write(9) Nbnd  
-! do n=1,Nbnd
-!   write(9) grid % boundary_conditions(n) % name
-! end do
-! write(9) Nmat  
-! do n=1,Nmat
-!   write(9) grid % materials(n) % name
-! end do
 
   close(9)
 
@@ -201,9 +188,9 @@
   !---------------------------------!
   !     cell center coordinates     !
   !---------------------------------!
-  do var=1,3
+  do var = 1, 3
     count=0
-    do c=1,NC
+    do c=1,grid % n_cells
       if(NewC(c)  > 0) then
         count=count+1
         if(var == 1) work(count) = grid % xc(c)
@@ -219,9 +206,9 @@
   !---------------------------!
 
   ! Physicall cells
-  do var=1,3
+  do var = 1, 3
     count=0
-    do c=-1,-NBC, -1
+    do c = -1, -grid % n_boundary_cells, -1
       if(NewC(c) /= 0) then
         count=count+1
         if(var == 1) work(count) = grid % xc(c)
@@ -231,7 +218,7 @@
     end do 
 
     ! Buffer boundary cell centers
-    do s=1,NBFsub
+    do s = 1, NBFsub
       count=count+1
       if(var ==  1) work(count) = grid % xc(BuReIn(s))
       if(var ==  2) work(count) = grid % yc(BuReIn(s))
@@ -244,7 +231,7 @@
   !   Cell volumes   !
   !------------------!
   count=0
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c)  > 0) then
       count=count+1
       work(count) = grid % vol(c)
@@ -256,7 +243,7 @@
   !   Cell data   !
   !---------------!
   count=0
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c)  > 0) then
       count=count+1
       work(count) = delta(c)
@@ -268,7 +255,7 @@
   !   Wall distance   !
   !-------------------!
   count=0
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c)  > 0) then
       count=count+1
       work(count) = WallDs(c)
@@ -284,7 +271,7 @@
   do var=1,10
   count=0
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     if(NewS(s)  > 0 .and. NewS(s) <= NSsub) then
       count=count+1
       if(var ==  1)  work(count) = grid % sx(s)
@@ -301,8 +288,8 @@
   end do
 
   ! From NSsub+1 to NSsub + NBFsub (think: are they in right order ?)
-  do subo=1,n_sub
-    do s=1,NS
+  do subo = 1, n_sub
+    do s = 1, grid % n_faces
       if(NewS(s)  > NSsub .and. NewS(s) <= NSsub+NBFsub) then
         c1 = SideC(1,s)
         c2 = SideC(2,s)
@@ -347,4 +334,4 @@
   deallocate (iwork)
   deallocate (work)
 
-  end subroutine Save_Cns_Geo
+  end subroutine

@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 !   Reads:  name.geo                                                           !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use all_mod, only: delta, WallDs, f
   use par_mod, only: this_proc
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -23,33 +23,32 @@
   open(9, file=name_in, FORM='unformatted')
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 
-  read(9) (grid % xc(c), c=1,NC)
-  read(9) (grid % yc(c), c=1,NC) 
-  read(9) (grid % zc(c), c=1,NC)
+  read(9) (grid % xc(c), c = 1, grid % n_cells)
+  read(9) (grid % yc(c), c = 1, grid % n_cells) 
+  read(9) (grid % zc(c), c = 1, grid % n_cells)
 
-  read(9) (grid % xc(c), c=-1,-NBC,-1)  
-  read(9) (grid % yc(c), c=-1,-NBC,-1)
-  read(9) (grid % zc(c), c=-1,-NBC,-1) 
+  read(9) (grid % xc(c), c=-1,-grid % n_boundary_cells,-1)  
+  read(9) (grid % yc(c), c=-1,-grid % n_boundary_cells,-1)
+  read(9) (grid % zc(c), c=-1,-grid % n_boundary_cells,-1) 
 
-  read(9) (grid % vol(c), c=1,NC)
-  read(9) (delta(c),  c=1,NC)
+  read(9) (grid % vol(c), c = 1, grid % n_cells)
+  read(9) (delta(c),      c = 1, grid % n_cells)
+  read(9) (WallDs(c),     c = 1, grid % n_cells)
 
-  read(9) (WallDs(c), c=1,NC)
+  read(9) (grid % sx(s), s = 1, grid % n_faces)
+  read(9) (grid % sy(s), s = 1, grid % n_faces)
+  read(9) (grid % sz(s), s = 1, grid % n_faces)
 
-  read(9) (grid % sx(s), s=1,NS)
-  read(9) (grid % sy(s), s=1,NS)
-  read(9) (grid % sz(s), s=1,NS)
+  read(9) (grid % dx(s), s = 1, grid % n_faces)
+  read(9) (grid % dy(s), s = 1, grid % n_faces)
+  read(9) (grid % dz(s), s = 1, grid % n_faces)
 
-  read(9) (grid % dx(s), s=1,NS)
-  read(9) (grid % dy(s), s=1,NS)
-  read(9) (grid % dz(s), s=1,NS)
+  read(9) (f(s), s = 1, grid % n_faces)
 
-  read(9) (f(s), s=1,NS)
-
-  read(9) (grid % xf(s), s=1,NS)
-  read(9) (grid % yf(s), s=1,NS)
-  read(9) (grid % zf(s), s=1,NS)
+  read(9) (grid % xf(s), s = 1, grid % n_faces)
+  read(9) (grid % yf(s), s = 1, grid % n_faces)
+  read(9) (grid % zf(s), s = 1, grid % n_faces)
 
   close(9) 
 
-  end subroutine Load_Geo
+  end subroutine

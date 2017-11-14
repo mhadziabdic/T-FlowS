@@ -31,20 +31,20 @@
   !   Count the boundary cells   !
   !                              !
   !------------------------------!
-  NbC = 0
-  do c=1,NC
-    do m=1,24   ! neighbour cells
+  grid % n_boundary_cells = 0
+  do c = 1, grid % n_cells
+    do m = 1, 24   ! neighbour cells
       if(grid % cells_c(m,c)  < 0) then
-        NbC   = NbC + 1
+        grid % n_boundary_cells   = grid % n_boundary_cells + 1
 
         ! Remember the boundary marker, take positive value for marker
-        BCmark(-NbC) =  -grid % cells_c(m,c)  
+        BCmark(-grid % n_boundary_cells) =  -grid % cells_c(m,c)  
 
         ! Put new boundary cell into place  
-        grid % cells_c(m,c)  = -NbC
+        grid % cells_c(m,c)  = -grid % n_boundary_cells
 
         ! Material marker
-        material(-NbC) = material(c)
+        material(-grid % n_boundary_cells) = material(c)
 
       end if 
     end do
@@ -54,72 +54,72 @@
   !   Create the array with   ! 
   !   information on  sides   !
   !---------------------------!
-  NS = 0     ! initialize the number of sides
+  grid % n_faces = 0     ! initialize the number of sides
   do pass = 1,3
-    if(pass == 2) WallFacFst = NS+1
-  do c1=1,NC
-    do m=1,24 ! through all the neighbouring cells
+    if(pass == 2) WallFacFst = grid % n_faces+1
+  do c1=1, grid % n_cells
+    do m = 1, 24 ! through all the neighbouring cells
       c2=grid % cells_c(m,c1)
       if( (pass==1).and.(c2>c1).and.(material(c1)==material(c2)) .or. &
           (pass==2).and.(c2>c1).and.(material(c1)/=material(c2)) .or. &
           (pass==3).and.(c2<0) ) then
-        NS=NS+1
+        grid % n_faces=grid % n_faces+1
 
-        ! Which volumes are connected with side NS
-        SideC(1,NS)=c1
-        SideC(2,NS)=c2 
+        ! Which volumes are connected with side grid % n_faces
+        SideC(1, grid % n_faces)=c1
+        SideC(2,grid % n_faces)=c2 
 
         ! Which is c2 neighbour of c1 and vice versa
-        do c=1,24
+        do c = 1,24
           if(grid % cells_c(c,c1) == c2) then 
-            SideCc(NS,1)=c
+            SideCc(grid % n_faces,1)=c
           end if
 
           if(c2 > 0) then
             if(grid % cells_c(c,c2) == c1) then 
-              SideCc(NS,2)=c
+              SideCc(grid % n_faces,2)=c
             end if 
           end if
         end do
 
-        ! Nodes of a side NS
+        ! Nodes of a side grid % n_faces
         if(c2  > 0) then
           if(level(c2)  > level(c1)) then
-            grid % faces_n(1,NS) = grid % cells_n( lfn(SideCc(NS,2),4), c2 )
-            grid % faces_n(2,NS) = grid % cells_n( lfn(SideCc(NS,2),3), c2 )
-            grid % faces_n(3,NS) = grid % cells_n( lfn(SideCc(NS,2),2), c2 )
-            grid % faces_n(4,NS) = grid % cells_n( lfn(SideCc(NS,2),1), c2 )
+            grid % faces_n(1, grid % n_faces) = grid % cells_n( lfn(SideCc(grid % n_faces,2),4), c2 )
+            grid % faces_n(2,grid % n_faces) = grid % cells_n( lfn(SideCc(grid % n_faces,2),3), c2 )
+            grid % faces_n(3,grid % n_faces) = grid % cells_n( lfn(SideCc(grid % n_faces,2),2), c2 )
+            grid % faces_n(4,grid % n_faces) = grid % cells_n( lfn(SideCc(grid % n_faces,2),1), c2 )
           else
-            grid % faces_n(1,NS) = grid % cells_n( lfn(m,1), c1 )
-            grid % faces_n(2,NS) = grid % cells_n( lfn(m,2), c1 )
-            grid % faces_n(3,NS) = grid % cells_n( lfn(m,3), c1 )
-            grid % faces_n(4,NS) = grid % cells_n( lfn(m,4), c1 )
+            grid % faces_n(1, grid % n_faces) = grid % cells_n( lfn(m,1), c1 )
+            grid % faces_n(2,grid % n_faces) = grid % cells_n( lfn(m,2), c1 )
+            grid % faces_n(3,grid % n_faces) = grid % cells_n( lfn(m,3), c1 )
+            grid % faces_n(4,grid % n_faces) = grid % cells_n( lfn(m,4), c1 )
           end if
         else
-          grid % faces_n(1,NS) = grid % cells_n( lfn(m,1), c1 )
-          grid % faces_n(2,NS) = grid % cells_n( lfn(m,2), c1 )
-          grid % faces_n(3,NS) = grid % cells_n( lfn(m,3), c1 )
-          grid % faces_n(4,NS) = grid % cells_n( lfn(m,4), c1 )
+          grid % faces_n(1, grid % n_faces) = grid % cells_n( lfn(m,1), c1 )
+          grid % faces_n(2,grid % n_faces) = grid % cells_n( lfn(m,2), c1 )
+          grid % faces_n(3,grid % n_faces) = grid % cells_n( lfn(m,3), c1 )
+          grid % faces_n(4,grid % n_faces) = grid % cells_n( lfn(m,4), c1 )
         end if 
 
       end if
     end do   ! m
   end do     ! c1
   end do     ! pass
-  WallFacLst = NS
+  WallFacLst = grid % n_faces
 
   write(*,*) '# Wall and interface faces start at: ', WallFacFst 
   write(*,*) '# Wall and interface faces end at  : ', WallFacLst
 
   if(.NOT. rrun) then
-  NbC = 0
-  do c=1,NC
-    do m=1,24   ! neighbour cells
+  grid % n_boundary_cells = 0
+  do c = 1, grid % n_cells
+    do m = 1, 24   ! neighbour cells
       if(grid % cells_c(m,c)  < 0) then
-        NbC   = NbC + 1
+        grid % n_boundary_cells   = grid % n_boundary_cells + 1
 
         ! Restore the boundary marker, take positive value for marker
-        grid % cells_c(m,c)  = -BCmark(-NbC)
+        grid % cells_c(m,c)  = -BCmark(-grid % n_boundary_cells)
       end if 
     end do
   end do 
@@ -130,7 +130,7 @@
   !-------------------------------------------!
   !   Find the side oposite on the boundary   !
   !-------------------------------------------!
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2  < 0) then
@@ -150,7 +150,7 @@
   !-------------------------------------------------------!
   !   Find the boundary cell on which you should copy     ! 
   !-------------------------------------------------------!
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
     if(c2 < 0 .and. CopyC(c1) /= 0) then
@@ -165,9 +165,9 @@
   !--------------------------------------!
   !   Is there enough allocated memory   !
   !--------------------------------------!
-  if( NS  > grid % max_n_faces ) then
+  if( grid % n_faces  > grid % max_n_faces ) then
     write(*,*) '# Error message from Generator'
-    write(*,*) '# The number sides is: ', NS
+    write(*,*) '# The number sides is: ',              grid % n_faces
     write(*,*) '# There is space available only for:', grid % max_n_faces
     write(*,*) '# Increase the number of faces in .dom file'
     write(*,*) '# and recompile the code. Good Luck !'

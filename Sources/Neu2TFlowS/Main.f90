@@ -29,27 +29,47 @@
   call Compute_Geometry(grid)
   call Connect_Domains (grid)
 
-  do n=1,NN
+  do n=1,grid % n_nodes
     NewN(n) = n 
   end do  
-  do c=-NbC,NC
+  do c=-grid % n_boundary_cells,grid % n_cells
     NewC(c) = c 
   end do  
-  do s=1,NS 
+  do s=1,grid % n_faces 
     NewS(s) = s
   end do  
 
-  call Save_Gmv_Cells(grid, 0, NN, NC, NS, NbC)
-  call Save_Gmv_Faces(grid, 0, NN, NC)  ! save grid for checking b.c. 
-  call Save_Shadows  (grid, 0, NN, NC)             ! save shadows 
-  call Save_Cns_Geo  (grid, 0, NC, NS, NBC, 0, 0) 
+  call Save_Gmv_Cells(grid, 0,            &
+                      grid % n_nodes,     &
+                      grid % n_cells,     &
+                      grid % n_faces,     &
+                      grid % n_boundary_cells)
+  call Save_Gmv_Faces(grid, 0,            &
+                      grid % n_nodes)        ! save grid for checking b.c. 
+  call Save_Shadows  (grid, 0,            &
+                      grid % n_nodes,     &
+                      grid % n_cells)             ! save shadows 
+  call Save_Cns_Geo  (grid, 0,                  &
+                      grid % n_cells,           &
+                      grid % n_faces,           &
+                      grid % n_boundary_cells,  &
+                      0, 0) 
 
   ! Save links for checking
-  call Save_Gmv_Links(grid, 0, NN, NC, NS, NbC, 0)
+  call Save_Gmv_Links(grid, 0,                  &
+                      grid % n_nodes,           &
+                      grid % n_cells,           &
+                      grid % n_faces,           &
+                      grid % n_boundary_cells,  &
+                      0)
 
   ! Create output for Fluent
-  NewC(-NBC-1) = -NBC-1
-  call Save_Cas(grid, 0, NN, NC, NS+NSsh, NBC)  ! save grid for postprocessing
+  NewC(-grid % n_boundary_cells-1) = -grid % n_boundary_cells-1
+  call Save_Cas(grid, 0,                  &
+                grid % n_nodes,           &
+                grid % n_cells,           &
+                grid % n_faces+NSsh,      &
+                grid % n_boundary_cells)      ! save grid for postprocessing
                                                 ! with Fluent
 
   ! Create 1D file (used for channel or pipe flow) 
@@ -62,6 +82,6 @@
   call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z')
  
   write(*,*) '# Making a 3D shaded .eps figure of the domain.'
-  call Save_Eps_Whole(grid, NSsh)   ! Draw the domain with shadows
+  call Save_Eps_Whole(grid, NSsh)   ! draw the domain with shadows
 
   end program

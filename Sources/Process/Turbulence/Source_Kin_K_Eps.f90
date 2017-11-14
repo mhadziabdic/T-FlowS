@@ -15,14 +15,14 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, s 
-  real    :: UtotSq, Unor, UnorSq, Utan, R
+  real    :: UtotSq, Unor, UnorSq, Utan
 !==============================================================================!
 
   !-----------------------------------------------!
   !  Compute the sources in the near wall cells   !
   !-----------------------------------------------!
   if(MODE == HRe) then
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
  
@@ -80,7 +80,7 @@
     !-----------------------------------------!
     !   Compute the sources in the interior   !
     !-----------------------------------------!
-    do c=1,NC
+    do c=1,grid % n_cells
 
       ! IsNearWall ensures not to put Pk twice into the near wall cells
       if(.NOT. IsNearWall(c)) then
@@ -101,7 +101,7 @@
   !   Jones-Launder model and Launder-Sharma + Yap model   !
   !--------------------------------------------------------!
   if(MODE == LRe) then
-    do c=1,NC
+    do c = 1, grid % n_cells
 
       ! Production:
       Pk(c)= VISt(c) * Shear(c) * Shear(c)
@@ -118,7 +118,7 @@
     call GraPhi(Kin % n,2,PHIy,.TRUE.)             ! dK/dy
     call GraPhi(Kin % n,3,PHIz,.TRUE.)             ! dK/dz
 
-    do c = 1, NC
+    do c = 1, grid % n_cells
 
       ! Turning Kin back to its real value
       Kin % n(c) = Kin % n(c) * Kin % n(c) 
@@ -131,7 +131,7 @@
   end if
 
   if(SIMULA == HYB_PITM) then
-    do c=1,NC
+    do c = 1, grid % n_cells
 
       ! Production:
       Pk(c)= VISt(c) * Shear(c) * Shear(c)

@@ -40,7 +40,7 @@
     ! sensitive to initial condition while the second one can lead to 
     ! instabilities for some cases such as flow around cylinder. That is why we 
     ! choose this particular way to the add source term. 
-    do c = 1, NC
+    do c = 1, grid % n_cells
       if(Nstep > 500) then
         b(c) = b(c) + f22%n(c)*grid % vol(c)
       else
@@ -54,13 +54,13 @@
                           / (Kin % n(c)+TINY) 
     end do
   else if(SIMULA == K_EPS_VV) then
-    do c = 1, NC
+    do c = 1, grid % n_cells
       b(c) = b(c) + max(0.0, f22 % n(c) * Kin % n(c) * grid % vol(c))
       A % val(A % dia(c)) = A % val(A % dia(c))                            &
                           + max(0.0, -f22 % n(c) * Kin % n(c) * grid % vol(c)  &
                           / (v_2 % n(c) + TINY))
     end do
-    do c = 1, NC  
+    do c = 1, grid % n_cells  
       A % val(A % dia(c)) = A % val(A % dia(c))  &
                           + grid % vol(c) * Eps % n(c) / (Kin%n(c)+TINY) 
     end do

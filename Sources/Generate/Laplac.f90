@@ -34,15 +34,15 @@
     zt(n) = dom % points( dom % blocks(b) % corners(n) ) % z
   end do  
 
-  n = NN + (k-1)*ni*nj + (j-1)*ni + i
+  n = grid % n_nodes + (k-1)*ni*nj + (j-1)*ni + i
 
   ! Node numbers at the block faces
-  n1 = NN + ( 1-1)*ni*nj + ( j-1)*ni + i     !  ->  k == 1
-  n2 = NN + ( k-1)*ni*nj + ( j-1)*ni + 1     !  ->  i == 1
-  n3 = NN + ( k-1)*ni*nj + ( 1-1)*ni + i     !  ->  j == 1
-  n4 = NN + ( k-1)*ni*nj + ( j-1)*ni + ni    !  ->  i == ni
-  n5 = NN + ( k-1)*ni*nj + (nj-1)*ni + i     !  ->  j == nj
-  n6 = NN + (nk-1)*ni*nj + ( j-1)*ni + i     !  ->  k == nk
+  n1 = grid % n_nodes + ( 1-1)*ni*nj + ( j-1)*ni + i     !  ->  k == 1
+  n2 = grid % n_nodes + ( k-1)*ni*nj + ( j-1)*ni + 1     !  ->  i == 1
+  n3 = grid % n_nodes + ( k-1)*ni*nj + ( 1-1)*ni + i     !  ->  j == 1
+  n4 = grid % n_nodes + ( k-1)*ni*nj + ( j-1)*ni + ni    !  ->  i == ni
+  n5 = grid % n_nodes + ( k-1)*ni*nj + (nj-1)*ni + i     !  ->  j == nj
+  n6 = grid % n_nodes + (nk-1)*ni*nj + ( j-1)*ni + i     !  ->  k == nk
 
   ! Face I
   if(grid % xn(n1) == HUGE) then

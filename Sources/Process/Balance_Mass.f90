@@ -19,9 +19,9 @@
   !--------------------------------------!
   !   Calculate the inflow mass fluxes   !
   !--------------------------------------!
-  do m=1,grid % n_materials
+  do m = 1, grid % n_materials
     MassIn(m) = 0.0
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2 < 0) then
@@ -47,9 +47,9 @@
   !     then correct it to satisfy the    ! 
   !          overall mass balance         !
   !---------------------------------------!
-  do m=1,grid % n_materials
+  do m = 1, grid % n_materials
     MASOUT(m) = 0.0
-    do s = 1, NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2  < 0) then
@@ -86,7 +86,7 @@
   end do
 
   do m = 1, grid % n_materials
-    do s =1, NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
       if(c2  < 0) then

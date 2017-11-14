@@ -16,11 +16,12 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  real            :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
-  real            :: She(-NbC:NC)
+  real            :: Ui(-grid % n_boundary_cells:grid % n_cells),  &
+                     Vi(-grid % n_boundary_cells:grid % n_cells),  &
+                     Wi(-grid % n_boundary_cells:grid % n_cells)
+  real            :: She(-grid % n_boundary_cells:grid % n_cells)
 !-----------------------------------[Locals]-------------------------------!
-  integer :: c, i
-  real    :: Sii, Sjk 
+  integer :: c
 !==============================================================================!
 
   call Exchng(Ui)
@@ -40,7 +41,7 @@
   call GraPhi(grid, Wi, 2, Wy, .TRUE.)  ! dW/dy
   call GraPhi(grid, Wi, 3, Wz, .TRUE.)  ! dW/dz
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     She(c) = Ux(c)*Ux(c) + Vy(c)*Vy(c) + Wz(c)*Wz(c) + &
              0.5*(Vz(c) + Wy(c))*(Vz(c) + Wy(c)) + & 
              0.5*(Uz(c) + Wx(c))*(Uz(c) + Wx(c)) + & 
@@ -52,7 +53,7 @@
 
   end do 
 
-  She = sqrt(2.0 * She)
-  Vort = sqrt(2.0*abs(Vort))
+  She  = sqrt(2.0 * She)
+  Vort = sqrt(2.0 * abs(Vort))
 
   end subroutine

@@ -30,7 +30,7 @@
 !==============================================================================!
 
   if(MODE == HRe) then
-    do c=1,NC
+    do c = 1, grid % n_cells
 
       ! Positive contribution:
       b(c) = b(c) & 
@@ -45,7 +45,7 @@
     !   Cut-off the wall influence in order to   !
     !   impose the boundary condition for EPS    !
     !--------------------------------------------!
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
 
@@ -78,7 +78,7 @@
    call GraPhi(Shear,2,PHIy, .TRUE.)  ! dW/dy
    call GraPhi(Shear,3,PHIz, .TRUE.)  ! dV/dz
 
-    do c=1,NC
+    do c = 1, grid % n_cells
 
       ! Positive contribution:
       b(c) = b(c) & 
@@ -102,7 +102,7 @@
     !-----------------------------------!
     !   Boundary condition fo epsilon   !
     !-----------------------------------!
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
 
@@ -117,7 +117,7 @@
   end if
 
   if(SIMULA == HYB_PITM) then
-    do c=1,NC
+    do c = 1, grid % n_cells
 
       ! Positive contribution:
       b(c) = b(c) &
@@ -145,7 +145,7 @@
     !-----------------------------------!
     !   Boundary condition fo epsilon   !
     !-----------------------------------!
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
 

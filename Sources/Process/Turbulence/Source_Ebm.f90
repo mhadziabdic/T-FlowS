@@ -31,10 +31,10 @@
   call GraPhi(f22 % n, 2, VAR2y, .TRUE.)             ! df22/dy
   call GraPhi(f22 % n, 3, VAR2z, .TRUE.)             ! df22/dz
 
-  call Scale()
+  call Time_And_Length_Scale(grid)
 
   r13 = 1.0/3.0 
-  do  c = 1, NC
+  do  c = 1, grid % n_cells
     Kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)),1.0e-12)
     Pk(c)      = max(-(uu % n(c)*Ux(c) + uv % n(c)*Uy(c) + uw % n(c)*Uz(c) +&
                    uv % n(c)*Vx(c) + vv % n(c)*Vy(c) + vw % n(c)*Vz(c) +&
@@ -271,7 +271,7 @@
   end do
 
   if(name_phi == 'EPS') then
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)
 

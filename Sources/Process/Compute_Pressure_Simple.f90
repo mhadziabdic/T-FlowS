@@ -54,7 +54,7 @@
   !-------------------------------------------------!
   !   Calculate the mass fluxes on the cell faces   !
   !-------------------------------------------------!
-  do s=1, NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 
@@ -176,7 +176,7 @@
 1 end do
 
   errmax=0.0
-  do c=1,NC
+  do c=1,grid % n_cells
     errmax=max(errmax, abs(b(c)))
   end do
 
@@ -184,7 +184,7 @@
   ! Value 1.e-18 blows the solution.
   ! Value 1.e-12 keeps the solution stable
   niter=40
-  call bicg(NC, NbC, A,                     &
+  call bicg(grid % n_cells, grid % n_boundary_cells, A,                     &
         PP % n, b, PREC, niter, PP % STol,  &
         res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)
@@ -193,20 +193,20 @@
   !-------------------------------!
   !   Update the pressure field   !
   !-------------------------------!
-  do c = 1, NC
+  do c = 1, grid % n_cells
     P % n(c)  =  P % n(c)  +  P % URF  *  PP % n(c)
   end do
 
   !------------------------------------!
   !   Normalize the pressure field     !
   !------------------------------------!
-  !Pmax  = maxval(P % n(1:NC))
-  !Pmin  = minval(P % n(1:NC))
+  ! Pmax  = maxval(P % n(1:grid % n_cells))
+  ! Pmin  = minval(P % n(1:grid % n_cells))
  
-  !call glomax(Pmax)
-  !call glomin(Pmin)
+  ! call glomax(Pmax)
+  ! call glomin(Pmin)
  
-  !P % n = P % n - 0.5*(Pmax+Pmin)
+  ! P % n = P % n - 0.5*(Pmax+Pmin)
  
   call Exchng(PP % n)
 

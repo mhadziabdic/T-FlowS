@@ -29,8 +29,8 @@
 !==============================================================================!
 
   ! Allocate the memory
-  allocate(indx(NS)); indx=0
-  allocate(work(NS)); work=0   
+  allocate(indx(grid % n_faces)); indx=0
+  allocate(work(grid % n_faces)); work=0   
 
   !------------------------------!
   !   Set the processor colors   !
@@ -92,12 +92,12 @@
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
   write(6, *) '# Now creating the file:', name_eps
 
-  xmax=maxval(grid % xn(1:NN))
-  ymax=maxval(grid % yn(1:NN))
-  zmax=maxval(grid % zn(1:NN))
-  xmin=minval(grid % xn(1:NN))
-  ymin=minval(grid % yn(1:NN))
-  zmin=minval(grid % zn(1:NN))
+  xmax=maxval(grid % xn(1:grid % n_nodes))
+  ymax=maxval(grid % yn(1:grid % n_nodes))
+  zmax=maxval(grid % zn(1:grid % n_nodes))
+  xmin=minval(grid % xn(1:grid % n_nodes))
+  ymin=minval(grid % yn(1:grid % n_nodes))
+  zmin=minval(grid % zn(1:grid % n_nodes))
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin),(zmax-zmin))
   sclp = 0.005 
 
@@ -106,7 +106,7 @@
   xmaxb=-1000000
   yminb=+1000000
   ymaxb=-1000000
-  do n=1,Nn
+  do n = 1, grid % n_nodes
     if(xk  < 0.0 .and. yk  > 0.0) then
       xp1= - grid % xn(n) * sin(alfa) - grid % yn(n) * sin(beta)
     else if(xk  > 0.0 .and. yk  < 0.0) then
@@ -162,7 +162,7 @@
   write(9, '(I6,A)') int(real(boxsize)/sclp), ' scalefont' 
   write(9, '(A)') 'setfont'
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1 = SideC(1,s)
     c2 = SideC(2,s)
     indx(s) = s
@@ -171,9 +171,9 @@
                 f(s)*grid % yc(c1)+(1.-f(s))*(grid % yc(c2)+grid % dy(s)),  &
                 f(s)*grid % zc(c1)+(1.-f(s))*(grid % zc(c2)+grid % dz(s)) )
   end do
-  call Sort_Real_By_Index(work,indx,NS,-2)
+  call Sort_Real_By_Index(work,indx,grid % n_faces,-2)
 
-  do s0=1,NS
+  do s0 = 1, grid % n_faces
     s=indx(s0)
 
     shade = (grid % sx(s)*nx + grid % sy(s)*ny + grid % sz(s)*nz)  &

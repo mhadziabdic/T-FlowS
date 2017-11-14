@@ -38,7 +38,7 @@
   !-----------------------------!
   !   Browse through all nodes  !
   !-----------------------------!
-  do n =  1, NN 
+  do n = 1, grid % n_nodes 
 
     ! Try to find the cell among the probes
     do p=1,n_prob

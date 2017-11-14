@@ -32,7 +32,7 @@
   !   Node section   !
   !------------------!    
   read(9,'(A80)') dum_s 
-  do n=1,3*NN
+  do n = 1, 3*grid % n_nodes
     read(9,'(A80)') dum_s 
   end do  
 
@@ -40,7 +40,7 @@
   !   Cell section   !
   !------------------!    
   read(9,'(A80)') dum_s 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1 = SideC(1,s)
     c2 = SideC(2,s)
     read(9,*) dum_s, dum_i
@@ -71,7 +71,7 @@
   open(9, file=name_in)
   write(6, *) 'Now reading the file:', name_in
 
-  do s=NS+1,NS+NSsh
+  do s = grid % n_faces+1,grid % n_faces+NSsh
     read(9,*) grid % faces_n_nodes(s)
     if(grid % faces_n_nodes(s)==3) then
       read(9,*) grid % faces_n(1,s),  &

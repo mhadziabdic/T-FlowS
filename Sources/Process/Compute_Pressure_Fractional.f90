@@ -47,7 +47,7 @@
   !-------------------------------------------------!
   !   Calculate the mass fluxes on the cell faces   !
   !-------------------------------------------------!
-  do s=1, NS
+  do s=1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s)
 
@@ -91,7 +91,9 @@
       ! Now calculate the flux through cell face
       Flux(s) = DENs * ( Us*grid % sx(s) + Vs*grid % sy(s) + Ws*grid % sz(s) )
 
-      A12=DENs*(grid % sx(s)*grid % sx(s)+grid % sy(s)*grid % sy(s)+grid % sz(s)*grid % sz(s))
+      A12=DENs*(  grid % sx(s)*grid % sx(s)  &
+                + grid % sy(s)*grid % sy(s)  &
+                + grid % sz(s)*grid % sz(s))
       A12=A12*(f(s)/A % sav(c1)+(1.-f(s))/A % sav(c2))
 
       if(c2  > 0) then 
@@ -128,7 +130,7 @@
   PP % n = 0.0 
 
   errmax=0.0
-  do c=1,NC
+  do c = 1, grid % n_cells
     errmax=errmax + abs(b(c))
   end do
   call glosum(errmax)                       
@@ -138,7 +140,7 @@
   !--------------------------------------------!
 
   ! Give the "false" flux back and set it to zero   ! 2mat
-  do s=1,NS                                         ! 2mat
+  do s = 1, grid % n_faces                          ! 2mat
     c1=SideC(1,s)                                   ! 2mat
     c2=SideC(2,s)                                   ! 2mat
     if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
@@ -152,7 +154,7 @@
   end do                                            ! 2mat
 
   ! Disconnect the SOLID cells from FLUID system    ! 2mat
-  do s=1,NS                                         ! 2mat
+  do s = 1, grid % n_faces                          ! 2mat
     c1=SideC(1,s)                                   ! 2mat
     c2=SideC(2,s)                                   ! 2mat
     if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat 
@@ -194,7 +196,7 @@
   ! Value 1.e-12 keeps the solution stable
   if(ALGOR == FRACT)  niter = 200
   if(ALGOR == SIMPLE) niter =  15
-  call cg(NC, NbC, A,                         &  
+  call cg(grid % n_cells, grid % n_boundary_cells, A,             &  
           PP % n, b, PREC, niter, PP % STol,  &
           res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)
@@ -208,8 +210,8 @@
   !----------------------------------!
   !   Normalize the pressure field   !
   !----------------------------------!
-  Pmax  = maxval(P % n(1:NC))
-  Pmin  = minval(P % n(1:NC))
+  Pmax  = maxval(P % n(1:grid % n_cells))
+  Pmin  = minval(P % n(1:grid % n_cells))
 
   call glomax(Pmax) 
   call glomin(Pmin) 

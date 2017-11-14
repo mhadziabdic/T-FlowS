@@ -33,14 +33,14 @@
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 
   ! Number of cells, boundary cells and sides
-  read(9) NC                                 
-  read(9) NbC
-  read(9) NS
+  read(9) grid % n_cells                                 
+  read(9) grid % n_boundary_cells
+  read(9) grid % n_faces
   read(9) c   ! NSsh is not used in Processor. 
 
   ! Allocate memory =--> carefull, there is no checking!
-  call Grid_Mod_Allocate_Cells(grid, NbC, NC) 
-  call Grid_Mod_Allocate_Faces(grid, NS) 
+  call Grid_Mod_Allocate_Cells(grid, grid % n_boundary_cells, grid % n_cells) 
+  call Grid_Mod_Allocate_Faces(grid, grid % n_faces) 
 
   ! Number of materials and boundary conditions
   read(9) grid % n_materials
@@ -58,24 +58,24 @@
   end do
 
   ! Cell materials
-  allocate (material(-NbC:NC))
-  read(9) (material(c), c=1,NC)        
-  read(9) (material(c), c=-1,-NBC,-1) 
+  allocate (material(-grid % n_boundary_cells:grid % n_cells))
+  read(9) (material(c), c =  1, grid % n_cells)        
+  read(9) (material(c), c = -1,-grid % n_boundary_cells, -1) 
 
   ! Faces
-  allocate (SideC(0:2,NS))
-  read(9) (SideC(0,s), s=1,NS)
-  read(9) (SideC(1,s), s=1,NS)
-  read(9) (SideC(2,s), s=1,NS)
+  allocate (SideC(0:2,grid % n_faces))
+  read(9) (SideC(0,s), s = 1, grid % n_faces)
+  read(9) (SideC(1,s), s = 1, grid % n_faces)
+  read(9) (SideC(2,s), s = 1, grid % n_faces)
 
   ! Boundary cells
-  allocate (TypeBC(-NbC:NC)); TypeBC=0 
-  allocate (bcmark(-NbC:-1))
-  read(9) (bcmark(c), c=-1,-NbC, -1) 
+  allocate (TypeBC(-grid % n_boundary_cells:grid % n_cells)); TypeBC=0 
+  allocate (bcmark(-grid % n_boundary_cells:-1))
+  read(9) (bcmark(c), c = -1, -grid % n_boundary_cells, -1) 
 
   ! Boundary copy cells
-  allocate (CopyC(-NbC:-1))
-  read(9) (CopyC(c), c=-1,-NbC, -1)   
+  allocate (CopyC(-grid % n_boundary_cells:-1))
+  read(9) (CopyC(c), c = -1, -grid % n_boundary_cells, -1)   
 
   close(9)
 

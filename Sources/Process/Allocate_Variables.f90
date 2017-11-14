@@ -25,57 +25,57 @@
   call Var_Mod_Allocate_New_Only("P",  p,  grid)
   call Var_Mod_Allocate_New_Only("PP", pp, grid)
 
-  allocate (U % mean(-NbC:NC));  U % mean =0.
-  allocate (V % mean(-NbC:NC));  V % mean =0.
-  allocate (W % mean(-NbC:NC));  W % mean =0.
+  allocate (U % mean(-grid % n_boundary_cells:grid % n_cells));  U % mean =0.
+  allocate (V % mean(-grid % n_boundary_cells:grid % n_cells));  V % mean =0.
+  allocate (W % mean(-grid % n_boundary_cells:grid % n_cells));  W % mean =0.
 
-  allocate (P % mean(-NbC:NC));  P % mean=0.
+  allocate (P % mean(-grid % n_boundary_cells:grid % n_cells));  P % mean=0.
 
-  allocate (Px(-NbC:NC)); Px=0.
-  allocate (Py(-NbC:NC)); Py=0.
-  allocate (Pz(-NbC:NC)); Pz=0.  
+  allocate (Px(-grid % n_boundary_cells:grid % n_cells)); Px=0.
+  allocate (Py(-grid % n_boundary_cells:grid % n_cells)); Py=0.
+  allocate (Pz(-grid % n_boundary_cells:grid % n_cells)); Pz=0.  
 
-  allocate (Ux(-NbC:NC)); Ux=0.
-  allocate (Uy(-NbC:NC)); Uy=0.
-  allocate (Uz(-NbC:NC)); Uz=0.  
+  allocate (Ux(-grid % n_boundary_cells:grid % n_cells)); Ux=0.
+  allocate (Uy(-grid % n_boundary_cells:grid % n_cells)); Uy=0.
+  allocate (Uz(-grid % n_boundary_cells:grid % n_cells)); Uz=0.  
 
-  allocate (Vx(-NbC:NC)); Vx=0.
-  allocate (Vy(-NbC:NC)); Vy=0.
-  allocate (Vz(-NbC:NC)); Vz=0.  
+  allocate (Vx(-grid % n_boundary_cells:grid % n_cells)); Vx=0.
+  allocate (Vy(-grid % n_boundary_cells:grid % n_cells)); Vy=0.
+  allocate (Vz(-grid % n_boundary_cells:grid % n_cells)); Vz=0.  
 
-  allocate (Wx(-NbC:NC)); Wx=0.
-  allocate (Wy(-NbC:NC)); Wy=0.
-  allocate (Wz(-NbC:NC)); Wz=0.  
+  allocate (Wx(-grid % n_boundary_cells:grid % n_cells)); Wx=0.
+  allocate (Wy(-grid % n_boundary_cells:grid % n_cells)); Wy=0.
+  allocate (Wz(-grid % n_boundary_cells:grid % n_cells)); Wz=0.  
 
-  allocate (Ps(NS)); Ps=0.;
+  allocate (Ps(grid % n_faces)); Ps=0.;
 
-  allocate (PHI1x(-NbC:NC)); PHI1x=0.
-  allocate (PHI1y(-NbC:NC)); PHI1y=0.
-  allocate (PHI1z(-NbC:NC)); PHI1z=0.
+  allocate (PHI1x(-grid % n_boundary_cells:grid % n_cells)); PHI1x=0.
+  allocate (PHI1y(-grid % n_boundary_cells:grid % n_cells)); PHI1y=0.
+  allocate (PHI1z(-grid % n_boundary_cells:grid % n_cells)); PHI1z=0.
 
-  allocate (PHI2x(-NbC:NC)); PHI2x=0.
-  allocate (PHI2y(-NbC:NC)); PHI2y=0.
-  allocate (PHI2z(-NbC:NC)); PHI2z=0.
+  allocate (PHI2x(-grid % n_boundary_cells:grid % n_cells)); PHI2x=0.
+  allocate (PHI2y(-grid % n_boundary_cells:grid % n_cells)); PHI2y=0.
+  allocate (PHI2z(-grid % n_boundary_cells:grid % n_cells)); PHI2z=0.
 
-  allocate (PHI3x(-NbC:NC)); PHI3x=0.
-  allocate (PHI3y(-NbC:NC)); PHI3y=0.
-  allocate (PHI3z(-NbC:NC)); PHI3z=0.
+  allocate (PHI3x(-grid % n_boundary_cells:grid % n_cells)); PHI3x=0.
+  allocate (PHI3y(-grid % n_boundary_cells:grid % n_cells)); PHI3y=0.
+  allocate (PHI3z(-grid % n_boundary_cells:grid % n_cells)); PHI3z=0.
 
-  allocate (PHI4x(-NbC:NC)); PHI4x=0.
-  allocate (PHI4y(-NbC:NC)); PHI4y=0.
-  allocate (PHI4z(-NbC:NC)); PHI4z=0.
+  allocate (PHI4x(-grid % n_boundary_cells:grid % n_cells)); PHI4x=0.
+  allocate (PHI4y(-grid % n_boundary_cells:grid % n_cells)); PHI4y=0.
+  allocate (PHI4z(-grid % n_boundary_cells:grid % n_cells)); PHI4z=0.
 
-  allocate (PHIx(-NbC:NC)); PHIx=0.
-  allocate (PHIy(-NbC:NC)); PHIy=0.
-  allocate (PHIz(-NbC:NC)); PHIz=0.
-  allocate (PHIside(NS)); PHIside=0.
+  allocate (PHIx(-grid % n_boundary_cells:grid % n_cells)); PHIx=0.
+  allocate (PHIy(-grid % n_boundary_cells:grid % n_cells)); PHIy=0.
+  allocate (PHIz(-grid % n_boundary_cells:grid % n_cells)); PHIz=0.
+  allocate (PHIside(grid % n_faces)); PHIside=0.
 
-  allocate (phi_max(-NbC:NC)); phi_max=0.
-  allocate (phi_min(-NbC:NC)); phi_min=0.
+  allocate (phi_max(-grid % n_boundary_cells:grid % n_cells)); phi_max=0.
+  allocate (phi_min(-grid % n_boundary_cells:grid % n_cells)); phi_min=0.
 
-  allocate (G(6,NC)); G=0
+  allocate (G(6,grid % n_cells)); G=0
 
-  allocate (Flux(NS));     Flux=0.
+  allocate (Flux(grid % n_faces));     Flux=0.
 
   allocate (PdropX(grid % n_materials)); PdropX=0.0
   allocate (PdropY(grid % n_materials)); PdropY=0.0 
@@ -100,71 +100,71 @@
   allocate (MassIn(grid % n_materials)); MassIn=0.0
   allocate (MasOut(grid % n_materials)); MasOut=0.0
 
-  allocate (BadForG(NC));  BadForG = .false.
-  allocate (NumGood(NC));  NumGood = 0          
-  allocate (NumNeig(NC));  NumNeig = 0         
+  allocate (BadForG(grid % n_cells));  BadForG = .false.
+  allocate (NumGood(grid % n_cells));  NumGood = 0          
+  allocate (NumNeig(grid % n_cells));  NumNeig = 0         
 
-  allocate (near(-NbC:NC));  near  = 0.
-  allocate (VISwall(-NbC:NC)); VISwall =0.0
+  allocate (near(-grid % n_boundary_cells:grid % n_cells));  near  = 0.
+  allocate (VISwall(-grid % n_boundary_cells:grid % n_cells)); VISwall =0.0
 
   ! For solution of temperature
   if(HOT==YES) then
     call Var_Mod_Allocate_Solution("T", t, grid)
-    allocate (CONwall(-NbC:NC)); CONwall =0.0
+    allocate (CONwall(-grid % n_boundary_cells:grid % n_cells)); CONwall =0.0
   end if
 
   !----------------------------!
   !   Reynolds stress models   !
   !----------------------------!
   if(SIMULA==EBM.or.SIMULA==HJ) then
-    allocate (VAR1x(-NbC:NC)); VAR1x=0.
-    allocate (VAR1y(-NbC:NC)); VAR1y=0.
-    allocate (VAR1z(-NbC:NC)); VAR1z=0.
+    allocate (VAR1x(-grid % n_boundary_cells:grid % n_cells)); VAR1x=0.
+    allocate (VAR1y(-grid % n_boundary_cells:grid % n_cells)); VAR1y=0.
+    allocate (VAR1z(-grid % n_boundary_cells:grid % n_cells)); VAR1z=0.
 
-    allocate (VAR2x(-NbC:NC)); VAR2x=0.
-    allocate (VAR2y(-NbC:NC)); VAR2y=0.
-    allocate (VAR2z(-NbC:NC)); VAR2z=0.
+    allocate (VAR2x(-grid % n_boundary_cells:grid % n_cells)); VAR2x=0.
+    allocate (VAR2y(-grid % n_boundary_cells:grid % n_cells)); VAR2y=0.
+    allocate (VAR2z(-grid % n_boundary_cells:grid % n_cells)); VAR2z=0.
     if(URANS == YES) then    
-      allocate (VAR10x(-NbC:NC)); VAR10x=0.
-      allocate (VAR10y(-NbC:NC)); VAR10y=0.
-      allocate (VAR10z(-NbC:NC)); VAR10z=0.
+      allocate (VAR10x(-grid % n_boundary_cells:grid % n_cells)); VAR10x=0.
+      allocate (VAR10y(-grid % n_boundary_cells:grid % n_cells)); VAR10y=0.
+      allocate (VAR10z(-grid % n_boundary_cells:grid % n_cells)); VAR10z=0.
 
-      allocate (VAR11x(-NbC:NC)); VAR11x=0.
-      allocate (VAR11y(-NbC:NC)); VAR11y=0.
-      allocate (VAR11z(-NbC:NC)); VAR11z=0.
+      allocate (VAR11x(-grid % n_boundary_cells:grid % n_cells)); VAR11x=0.
+      allocate (VAR11y(-grid % n_boundary_cells:grid % n_cells)); VAR11y=0.
+      allocate (VAR11z(-grid % n_boundary_cells:grid % n_cells)); VAR11z=0.
     end if
     if(SIMULA == HJ) then
-!      allocate (VAR3x(-NbC:NC)); VAR3x=0.
-!      allocate (VAR3y(-NbC:NC)); VAR3y=0.
-!      allocate (VAR3z(-NbC:NC)); VAR3z=0.
+!      allocate (VAR3x(-grid % n_boundary_cells:grid % n_cells)); VAR3x=0.
+!      allocate (VAR3y(-grid % n_boundary_cells:grid % n_cells)); VAR3y=0.
+!      allocate (VAR3z(-grid % n_boundary_cells:grid % n_cells)); VAR3z=0.
 
-!      allocate (VAR4x(-NbC:NC)); VAR4x=0.
-!      allocate (VAR4y(-NbC:NC)); VAR4y=0.
-!      allocate (VAR4z(-NbC:NC)); VAR4z=0.
+!      allocate (VAR4x(-grid % n_boundary_cells:grid % n_cells)); VAR4x=0.
+!      allocate (VAR4y(-grid % n_boundary_cells:grid % n_cells)); VAR4y=0.
+!      allocate (VAR4z(-grid % n_boundary_cells:grid % n_cells)); VAR4z=0.
 
-!      allocate (VAR5x(-NbC:NC)); VAR5x=0.
-!      allocate (VAR5y(-NbC:NC)); VAR5y=0.
-!      allocate (VAR5z(-NbC:NC)); VAR5z=0.
+!      allocate (VAR5x(-grid % n_boundary_cells:grid % n_cells)); VAR5x=0.
+!      allocate (VAR5y(-grid % n_boundary_cells:grid % n_cells)); VAR5y=0.
+!      allocate (VAR5z(-grid % n_boundary_cells:grid % n_cells)); VAR5z=0.
 
-      allocate (VAR6x(-NbC:NC)); VAR6x=0.
-      allocate (VAR6y(-NbC:NC)); VAR6y=0.
-      allocate (VAR6z(-NbC:NC)); VAR6z=0.
+      allocate (VAR6x(-grid % n_boundary_cells:grid % n_cells)); VAR6x=0.
+      allocate (VAR6y(-grid % n_boundary_cells:grid % n_cells)); VAR6y=0.
+      allocate (VAR6z(-grid % n_boundary_cells:grid % n_cells)); VAR6z=0.
 
-      allocate (VAR7x(-NbC:NC)); VAR7x=0.
-      allocate (VAR7y(-NbC:NC)); VAR7y=0.
-      allocate (VAR7z(-NbC:NC)); VAR7z=0.
+      allocate (VAR7x(-grid % n_boundary_cells:grid % n_cells)); VAR7x=0.
+      allocate (VAR7y(-grid % n_boundary_cells:grid % n_cells)); VAR7y=0.
+      allocate (VAR7z(-grid % n_boundary_cells:grid % n_cells)); VAR7z=0.
 
-!      allocate (VAR8x(-NbC:NC)); VAR8x=0.
-!      allocate (VAR8y(-NbC:NC)); VAR8y=0.
-!      allocate (VAR8z(-NbC:NC)); VAR8z=0.
+!      allocate (VAR8x(-grid % n_boundary_cells:grid % n_cells)); VAR8x=0.
+!      allocate (VAR8y(-grid % n_boundary_cells:grid % n_cells)); VAR8y=0.
+!      allocate (VAR8z(-grid % n_boundary_cells:grid % n_cells)); VAR8z=0.
 
-!      allocate (VAR9x(-NbC:NC)); VAR9x=0.
-!      allocate (VAR9y(-NbC:NC)); VAR9y=0.
-!      allocate (VAR9z(-NbC:NC)); VAR9z=0.
+!      allocate (VAR9x(-grid % n_boundary_cells:grid % n_cells)); VAR9x=0.
+!      allocate (VAR9y(-grid % n_boundary_cells:grid % n_cells)); VAR9y=0.
+!      allocate (VAR9z(-grid % n_boundary_cells:grid % n_cells)); VAR9z=0.
 
-!      allocate (VAR12x(-NbC:NC)); VAR12x=0.
-!      allocate (VAR12y(-NbC:NC)); VAR12y=0.
-!      allocate (VAR12z(-NbC:NC)); VAR12z=0.
+!      allocate (VAR12x(-grid % n_boundary_cells:grid % n_cells)); VAR12x=0.
+!      allocate (VAR12y(-grid % n_boundary_cells:grid % n_cells)); VAR12y=0.
+!      allocate (VAR12z(-grid % n_boundary_cells:grid % n_cells)); VAR12z=0.
     end if  ! SIMULA == HJ
 
     ! Reynolds stresses
@@ -179,9 +179,9 @@
     call Var_Mod_Allocate_Solution("EPS", eps, grid)
 
     ! Time scale, length scale and production
-    allocate (Tsc(-NbC:NC));     Tsc = 0.0
-    allocate (Lsc(-NbC:NC));     Lsc = 0.0
-    allocate (Pk(-NbC:NC));      Pk  = 0.0
+    allocate (Tsc(-grid % n_boundary_cells:grid % n_cells));     Tsc = 0.0
+    allocate (Lsc(-grid % n_boundary_cells:grid % n_cells));     Lsc = 0.0
+    allocate (Pk(-grid % n_boundary_cells:grid % n_cells));      Pk  = 0.0
 
     if(SIMULA==EBM) then
       call Var_Mod_Allocate_Solution("F22", f22, grid)
@@ -190,13 +190,13 @@
     end if
 
     if(URANS == YES) then
-      allocate (uu % mean(NC));   uu % mean=0.
-      allocate (vv % mean(NC));   vv % mean=0.
-      allocate (ww % mean(NC));   ww % mean=0.
-      allocate (uv % mean(NC));   uv % mean=0.
-      allocate (uw % mean(NC));   uw % mean=0.
-      allocate (vw % mean(NC));   vw % mean=0.
-      allocate (Kin % mean(NC));   Kin % mean=0.
+      allocate (uu % mean(grid % n_cells));   uu % mean=0.
+      allocate (vv % mean(grid % n_cells));   vv % mean=0.
+      allocate (ww % mean(grid % n_cells));   ww % mean=0.
+      allocate (uv % mean(grid % n_cells));   uv % mean=0.
+      allocate (uw % mean(grid % n_cells));   uw % mean=0.
+      allocate (vw % mean(grid % n_cells));   vw % mean=0.
+      allocate (Kin % mean(grid % n_cells));   Kin % mean=0.
     end if
   end if  ! SIMULA == EBM or HJ
 
@@ -206,14 +206,14 @@
     call Var_Mod_Allocate_Solution("KIN", kin, grid)
     call Var_Mod_Allocate_Solution("EPS", eps, grid)
 
-    allocate (Uf(-NbC:NC));      Uf    =0.0
-    allocate (Ufmean(-NbC:NC));  Ufmean=0.0
-    allocate (Pk(-NbC:NC));      Pk    =0.0
-    allocate (Ynd(-NbC:NC));     Ynd   =0.0
+    allocate (Uf(-grid % n_boundary_cells:grid % n_cells));      Uf    =0.0
+    allocate (Ufmean(-grid % n_boundary_cells:grid % n_cells));  Ufmean=0.0
+    allocate (Pk(-grid % n_boundary_cells:grid % n_cells));      Pk    =0.0
+    allocate (Ynd(-grid % n_boundary_cells:grid % n_cells));     Ynd   =0.0
 
     if(URANS == YES) then
-      allocate (Kin % mean(NC));   Kin % mean=0.
-      allocate (Eps % mean(NC));   Eps % mean=0.
+      allocate (Kin % mean(grid % n_cells));   Kin % mean=0.
+      allocate (Eps % mean(grid % n_cells));   Eps % mean=0.
     end if
   end if
 
@@ -223,49 +223,49 @@
     call Var_Mod_Allocate_Solution("V^2", v_2, grid)
     call Var_Mod_Allocate_Solution("F22", f22, grid)
 
-    allocate (Tsc(-NbC:NC));     Tsc   =0.0
-    allocate (Lsc(-NbC:NC));     Lsc   =0.0
-    allocate (Uf(-NbC:NC));      Uf    =0.0
-    allocate (Ufmean(-NbC:NC));  Ufmean=0.0  
-    allocate (Pk(-NbC:NC));      Pk    =0.0  
-    allocate (Ynd(-NbC:NC));     Ynd   =0.0
+    allocate (Tsc(-grid % n_boundary_cells:grid % n_cells));     Tsc   =0.0
+    allocate (Lsc(-grid % n_boundary_cells:grid % n_cells));     Lsc   =0.0
+    allocate (Uf(-grid % n_boundary_cells:grid % n_cells));      Uf    =0.0
+    allocate (Ufmean(-grid % n_boundary_cells:grid % n_cells));  Ufmean=0.0  
+    allocate (Pk(-grid % n_boundary_cells:grid % n_cells));      Pk    =0.0  
+    allocate (Ynd(-grid % n_boundary_cells:grid % n_cells));     Ynd   =0.0
 
     if(URANS == YES) then
-      allocate (Kin % mean(NC));   Kin % mean=0.
-      allocate (Eps % mean(NC));   Eps % mean=0.
-      allocate (f22 % mean(NC));   f22 % mean=0.
-      allocate (v_2 % mean(NC));   v_2 % mean=0.
+      allocate (Kin % mean(grid % n_cells));   Kin % mean=0.
+      allocate (Eps % mean(grid % n_cells));   Eps % mean=0.
+      allocate (f22 % mean(grid % n_cells));   f22 % mean=0.
+      allocate (v_2 % mean(grid % n_cells));   v_2 % mean=0.
     end if
 
     if(BUOY==YES) then
-      allocate (tt % n(-NbC:NC)); tt % n=0.
-      allocate (tt % o(NC));      tt % o=0.
-      allocate (tt % oo(NC));     tt % oo=0.
-      allocate (tt % C(NC));      tt % C=0.
-      allocate (tt % Co(NC));     tt % Co=0.
-      allocate (tt % Coo(NC));    tt % Coo=0.
-      allocate (tt % Do(NC));     tt % Do=0.
-      allocate (tt % Doo(NC));    tt % Doo=0.
-      allocate (tt % X(NC));      tt % X=0.
-      allocate (tt % Xo(NC));     tt % Xo=0.
-      allocate (tt % Xoo(NC));    tt % Xoo=0.
-      allocate (tt % mean(NC));   tt % mean=0.
-      allocate (Gbuoy(-NbC:NC));  Gbuoy=0. ! XXXXX 6 Jun 2014
-      allocate (buoyBeta(-NbC:NC));  buoyBeta=0.  ! XXXXX 5 Jul 2014
-      allocate (Pbuoy(-NbC:NC));  Pbuoy=0.  ! XXXXX 5 Jul 2014
-      allocate (Kin%mean(-NbC:NC));  Kin%mean=0.  ! XXXXX 5 Jul 2014
-      allocate (Eps%mean(-NbC:NC));  Eps%mean=0.  ! XXXXX 5 Jul 2014
-      allocate (Ptt(-NbC:NC));    Ptt=0.
+      allocate (tt % n(-grid % n_boundary_cells:grid % n_cells)); tt % n=0.
+      allocate (tt % o(grid % n_cells));      tt % o=0.
+      allocate (tt % oo(grid % n_cells));     tt % oo=0.
+      allocate (tt % C(grid % n_cells));      tt % C=0.
+      allocate (tt % Co(grid % n_cells));     tt % Co=0.
+      allocate (tt % Coo(grid % n_cells));    tt % Coo=0.
+      allocate (tt % Do(grid % n_cells));     tt % Do=0.
+      allocate (tt % Doo(grid % n_cells));    tt % Doo=0.
+      allocate (tt % X(grid % n_cells));      tt % X=0.
+      allocate (tt % Xo(grid % n_cells));     tt % Xo=0.
+      allocate (tt % Xoo(grid % n_cells));    tt % Xoo=0.
+      allocate (tt % mean(grid % n_cells));   tt % mean=0.
+      allocate (Gbuoy(-grid % n_boundary_cells:grid % n_cells));  Gbuoy=0. ! XXXXX 6 Jun 2014
+      allocate (buoyBeta(-grid % n_boundary_cells:grid % n_cells));  buoyBeta=0.  ! XXXXX 5 Jul 2014
+      allocate (Pbuoy(-grid % n_boundary_cells:grid % n_cells));  Pbuoy=0.  ! XXXXX 5 Jul 2014
+      allocate (Kin%mean(-grid % n_boundary_cells:grid % n_cells));  Kin%mean=0.  ! XXXXX 5 Jul 2014
+      allocate (Eps%mean(-grid % n_boundary_cells:grid % n_cells));  Eps%mean=0.  ! XXXXX 5 Jul 2014
+      allocate (Ptt(-grid % n_boundary_cells:grid % n_cells));    Ptt=0.
     end if
   end if                    
 
   if(SIMULA == HYB_ZETA) then
-    allocate (VISt_sgs(-NbC:NC));  VISt_sgs=0.
-    allocate (VISt_eff(-NbC:NC));  VISt_eff=0.
+    allocate (VISt_sgs(-grid % n_boundary_cells:grid % n_cells));  VISt_sgs=0.
+    allocate (VISt_eff(-grid % n_boundary_cells:grid % n_cells));  VISt_eff=0.
   end if
 
   if(SIMULA == DES_SPA) then
-    allocate (Ksgs(-NbC:NC));  Ksgs=0.
+    allocate (Ksgs(-grid % n_boundary_cells:grid % n_cells));  Ksgs=0.
   end if
 
   if(SIMULA == SPA_ALL.or.SIMULA == DES_SPA) then
@@ -273,226 +273,226 @@
   end if
 
   if(SIMULA == DES_SPA) then
-    allocate (VIS % mean(NC));   VIS % mean=0.
+    allocate (VIS % mean(grid % n_cells));   VIS % mean=0.
   end if
 
   ! Variables defined in les_mod.h90:
   if(SIMULA == LES.or.SIMULA==HYB_ZETA) then
     if(MODE == WALE) then 
-      allocate (WALEv(-NbC:NC));  WALEv =0.
+      allocate (WALEv(-grid % n_boundary_cells:grid % n_cells));  WALEv =0.
     end if
     if(MODE == DYN) then 
-      allocate (U % filt(-NbC:NC));  U % filt =0.
-      allocate (V % filt(-NbC:NC));  V % filt =0.
-      allocate (W % filt(-NbC:NC));  W % filt =0.
+      allocate (U % filt(-grid % n_boundary_cells:grid % n_cells));  U % filt =0.
+      allocate (V % filt(-grid % n_boundary_cells:grid % n_cells));  V % filt =0.
+      allocate (W % filt(-grid % n_boundary_cells:grid % n_cells));  W % filt =0.
    
-      allocate (Cdyn(-NbC:NC)); Cdyn = 0
-      allocate(UUf(NC));   UUf = 0.0
-      allocate(VVf(NC));   VVf = 0.0
-      allocate(WWf(NC));   WWf = 0.0
-      allocate(UVf(NC));   UVf = 0.0
-      allocate(UWf(NC));   UWf = 0.0
-      allocate(VWf(NC));   VWf = 0.0
+      allocate (Cdyn(-grid % n_boundary_cells:grid % n_cells)); Cdyn = 0
+      allocate(UUf(grid % n_cells));   UUf = 0.0
+      allocate(VVf(grid % n_cells));   VVf = 0.0
+      allocate(WWf(grid % n_cells));   WWf = 0.0
+      allocate(UVf(grid % n_cells));   UVf = 0.0
+      allocate(UWf(grid % n_cells));   UWf = 0.0
+      allocate(VWf(grid % n_cells));   VWf = 0.0
 
-      allocate(M11f(NC));   M11f = 0.0
-      allocate(M22f(NC));   M22f = 0.0
-      allocate(M33f(NC));   M33f = 0.0
-      allocate(M12f(NC));   M12f = 0.0
-      allocate(M13f(NC));   M13f = 0.0
-      allocate(M23f(NC));   M23f = 0.0
+      allocate(M11f(grid % n_cells));   M11f = 0.0
+      allocate(M22f(grid % n_cells));   M22f = 0.0
+      allocate(M33f(grid % n_cells));   M33f = 0.0
+      allocate(M12f(grid % n_cells));   M12f = 0.0
+      allocate(M13f(grid % n_cells));   M13f = 0.0
+      allocate(M23f(grid % n_cells));   M23f = 0.0
     end if 
-    allocate(ShearTest(-NbC:NC));   ShearTest = 0.0
-    allocate (Ksgs(-NbC:NC));  Ksgs=0.
-    allocate (Cdyn_mean(-NbC:NC)); Cdyn_mean = 0
+    allocate(ShearTest(-grid % n_boundary_cells:grid % n_cells));   ShearTest = 0.0
+    allocate (Ksgs(-grid % n_boundary_cells:grid % n_cells));  Ksgs=0.
+    allocate (Cdyn_mean(-grid % n_boundary_cells:grid % n_cells)); Cdyn_mean = 0
   end if
 
   if(SIMULA == LES.or.SIMULA==DNS.or.SIMULA==DES_SPA) then
-    allocate (uu % mean(-NbC:NC)); uu % mean=0.
-    allocate (vv % mean(-NbC:NC)); vv % mean=0.
-    allocate (ww % mean(-NbC:NC)); ww % mean=0.
-    allocate (uv % mean(-NbC:NC)); uv % mean=0.
-    allocate (uw % mean(-NbC:NC)); uw % mean=0.
-    allocate (vw % mean(-NbC:NC)); vw % mean=0.
+    allocate (uu % mean(-grid % n_boundary_cells:grid % n_cells)); uu % mean=0.
+    allocate (vv % mean(-grid % n_boundary_cells:grid % n_cells)); vv % mean=0.
+    allocate (ww % mean(-grid % n_boundary_cells:grid % n_cells)); ww % mean=0.
+    allocate (uv % mean(-grid % n_boundary_cells:grid % n_cells)); uv % mean=0.
+    allocate (uw % mean(-grid % n_boundary_cells:grid % n_cells)); uw % mean=0.
+    allocate (vw % mean(-grid % n_boundary_cells:grid % n_cells)); vw % mean=0.
 
-    allocate (uuu % mean(-NbC:NC)); uuu % mean=0.
-    allocate (uuv % mean(-NbC:NC)); uuv % mean=0.
-    allocate (uuw % mean(-NbC:NC)); uuw % mean=0.
+    allocate (uuu % mean(-grid % n_boundary_cells:grid % n_cells)); uuu % mean=0.
+    allocate (uuv % mean(-grid % n_boundary_cells:grid % n_cells)); uuv % mean=0.
+    allocate (uuw % mean(-grid % n_boundary_cells:grid % n_cells)); uuw % mean=0.
 
-    allocate (vvu % mean(-NbC:NC)); vvu % mean=0.
-    allocate (vvv % mean(-NbC:NC)); vvv % mean=0.
-    allocate (vvw % mean(-NbC:NC)); vvw % mean=0.
+    allocate (vvu % mean(-grid % n_boundary_cells:grid % n_cells)); vvu % mean=0.
+    allocate (vvv % mean(-grid % n_boundary_cells:grid % n_cells)); vvv % mean=0.
+    allocate (vvw % mean(-grid % n_boundary_cells:grid % n_cells)); vvw % mean=0.
 
-    allocate (wwu % mean(-NbC:NC)); wwu % mean=0.
-    allocate (wwv % mean(-NbC:NC)); wwv % mean=0.
-    allocate (www % mean(-NbC:NC)); www % mean=0.
+    allocate (wwu % mean(-grid % n_boundary_cells:grid % n_cells)); wwu % mean=0.
+    allocate (wwv % mean(-grid % n_boundary_cells:grid % n_cells)); wwv % mean=0.
+    allocate (www % mean(-grid % n_boundary_cells:grid % n_cells)); www % mean=0.
 
-    allocate (uwu % mean(-NbC:NC)); uwu % mean=0.
-    allocate (uwv % mean(-NbC:NC)); uwv % mean=0.
-    allocate (uww % mean(-NbC:NC)); uww % mean=0.
+    allocate (uwu % mean(-grid % n_boundary_cells:grid % n_cells)); uwu % mean=0.
+    allocate (uwv % mean(-grid % n_boundary_cells:grid % n_cells)); uwv % mean=0.
+    allocate (uww % mean(-grid % n_boundary_cells:grid % n_cells)); uww % mean=0.
 
     if(BUDG==YES) then
-    allocate (uu % n(-NbC:NC)); uu % n=0.
-    allocate (vv % n(-NbC:NC)); vv % n=0.
-    allocate (ww % n(-NbC:NC)); ww % n=0.
-    allocate (uv % n(-NbC:NC)); uv % n=0.
-    allocate (uw % n(-NbC:NC)); uw % n=0.
-    allocate (vw % n(-NbC:NC)); vw % n=0.
+    allocate (uu % n(-grid % n_boundary_cells:grid % n_cells)); uu % n=0.
+    allocate (vv % n(-grid % n_boundary_cells:grid % n_cells)); vv % n=0.
+    allocate (ww % n(-grid % n_boundary_cells:grid % n_cells)); ww % n=0.
+    allocate (uv % n(-grid % n_boundary_cells:grid % n_cells)); uv % n=0.
+    allocate (uw % n(-grid % n_boundary_cells:grid % n_cells)); uw % n=0.
+    allocate (vw % n(-grid % n_boundary_cells:grid % n_cells)); vw % n=0.
 
-    allocate (U % fluc(-NbC:NC));  U % fluc =0.
-    allocate (V % fluc(-NbC:NC));  V % fluc =0.
-    allocate (W % fluc(-NbC:NC));  W % fluc =0.
-    allocate (P % fluc(-NbC:NC));  P % fluc =0.
+    allocate (U % fluc(-grid % n_boundary_cells:grid % n_cells));  U % fluc =0.
+    allocate (V % fluc(-grid % n_boundary_cells:grid % n_cells));  V % fluc =0.
+    allocate (W % fluc(-grid % n_boundary_cells:grid % n_cells));  W % fluc =0.
+    allocate (P % fluc(-grid % n_boundary_cells:grid % n_cells));  P % fluc =0.
 
-    allocate (Puu_mean(1:NC));  Puu_mean =0.
-    allocate (Pvv_mean(1:NC));  Pvv_mean =0.
-    allocate (Pww_mean(1:NC));  Pww_mean =0.
-    allocate (Puv_mean(1:NC));  Puv_mean =0.
-    allocate (Puw_mean(1:NC));  Puw_mean =0.
-    allocate (Pvw_mean(1:NC));  Pvw_mean =0.
-
-
-    allocate (Diss_uu_mean(1:NC)); Diss_uu_mean  =0.
-    allocate (Diss_vv_mean(1:NC)); Diss_vv_mean  =0.
-    allocate (Diss_ww_mean(1:NC)); Diss_ww_mean  =0.
-    allocate (Diss_uv_mean(1:NC)); Diss_uv_mean  =0.
-    allocate (Diss_uw_mean(1:NC)); Diss_uw_mean  =0.
-    allocate (Diss_vw_mean(1:NC)); Diss_vw_mean  =0.
-
-    allocate (Diss_sgs_mean(1:NC)); Diss_sgs_mean  =0.
+    allocate (Puu_mean(1:grid % n_cells));  Puu_mean =0.
+    allocate (Pvv_mean(1:grid % n_cells));  Pvv_mean =0.
+    allocate (Pww_mean(1:grid % n_cells));  Pww_mean =0.
+    allocate (Puv_mean(1:grid % n_cells));  Puv_mean =0.
+    allocate (Puw_mean(1:grid % n_cells));  Puw_mean =0.
+    allocate (Pvw_mean(1:grid % n_cells));  Pvw_mean =0.
 
 
-  allocate (PHI5x(-NbC:NC)); PHI5x=0.
-  allocate (PHI5y(-NbC:NC)); PHI5y=0.
-  allocate (PHI5z(-NbC:NC)); PHI5z=0.
+    allocate (Diss_uu_mean(1:grid % n_cells)); Diss_uu_mean  =0.
+    allocate (Diss_vv_mean(1:grid % n_cells)); Diss_vv_mean  =0.
+    allocate (Diss_ww_mean(1:grid % n_cells)); Diss_ww_mean  =0.
+    allocate (Diss_uv_mean(1:grid % n_cells)); Diss_uv_mean  =0.
+    allocate (Diss_uw_mean(1:grid % n_cells)); Diss_uw_mean  =0.
+    allocate (Diss_vw_mean(1:grid % n_cells)); Diss_vw_mean  =0.
 
-  allocate (PHI6x(-NbC:NC)); PHI6x=0.
-  allocate (PHI6y(-NbC:NC)); PHI6y=0.
-  allocate (PHI6z(-NbC:NC)); PHI6z=0.
+    allocate (Diss_sgs_mean(1:grid % n_cells)); Diss_sgs_mean  =0.
 
-  allocate (PHI7x(-NbC:NC)); PHI7x=0.
-  allocate (PHI7y(-NbC:NC)); PHI7y=0.
-  allocate (PHI7z(-NbC:NC)); PHI7z=0.
 
-  allocate (PHI8x(-NbC:NC)); PHI8x=0.
-  allocate (PHI8y(-NbC:NC)); PHI8y=0.
-  allocate (PHI8z(-NbC:NC)); PHI8z=0.
+  allocate (PHI5x(-grid % n_boundary_cells:grid % n_cells)); PHI5x=0.
+  allocate (PHI5y(-grid % n_boundary_cells:grid % n_cells)); PHI5y=0.
+  allocate (PHI5z(-grid % n_boundary_cells:grid % n_cells)); PHI5z=0.
 
-  allocate (PHI9x(-NbC:NC)); PHI9x=0.
-  allocate (PHI9y(-NbC:NC)); PHI9y=0.
-  allocate (PHI9z(-NbC:NC)); PHI9z=0.
+  allocate (PHI6x(-grid % n_boundary_cells:grid % n_cells)); PHI6x=0.
+  allocate (PHI6y(-grid % n_boundary_cells:grid % n_cells)); PHI6y=0.
+  allocate (PHI6z(-grid % n_boundary_cells:grid % n_cells)); PHI6z=0.
 
-  allocate (PHI10x(-NbC:NC)); PHI10x=0.
-  allocate (PHI10y(-NbC:NC)); PHI10y=0.
-  allocate (PHI10z(-NbC:NC)); PHI10z=0.
+  allocate (PHI7x(-grid % n_boundary_cells:grid % n_cells)); PHI7x=0.
+  allocate (PHI7y(-grid % n_boundary_cells:grid % n_cells)); PHI7y=0.
+  allocate (PHI7z(-grid % n_boundary_cells:grid % n_cells)); PHI7z=0.
 
-  allocate (Kx(-NbC:NC)); Kx=0.
+  allocate (PHI8x(-grid % n_boundary_cells:grid % n_cells)); PHI8x=0.
+  allocate (PHI8y(-grid % n_boundary_cells:grid % n_cells)); PHI8y=0.
+  allocate (PHI8z(-grid % n_boundary_cells:grid % n_cells)); PHI8z=0.
+
+  allocate (PHI9x(-grid % n_boundary_cells:grid % n_cells)); PHI9x=0.
+  allocate (PHI9y(-grid % n_boundary_cells:grid % n_cells)); PHI9y=0.
+  allocate (PHI9z(-grid % n_boundary_cells:grid % n_cells)); PHI9z=0.
+
+  allocate (PHI10x(-grid % n_boundary_cells:grid % n_cells)); PHI10x=0.
+  allocate (PHI10y(-grid % n_boundary_cells:grid % n_cells)); PHI10y=0.
+  allocate (PHI10z(-grid % n_boundary_cells:grid % n_cells)); PHI10z=0.
+
+  allocate (Kx(-grid % n_boundary_cells:grid % n_cells)); Kx=0.
 
     if(HOT==YES) then
-    allocate (Put_mean(1:NC));  Put_mean =0.
-    allocate (Pvt_mean(1:NC));  Pvt_mean =0.
-    allocate (Pwt_mean(1:NC));  Pwt_mean =0.
-    allocate (Ptt_mean(1:NC));  Ptt_mean =0.
-    allocate (Difv_ut_tot(1:NC));   Difv_ut_tot=0.
-    allocate (Difv_vt_tot(1:NC));   Difv_vt_tot=0.
-    allocate (Difv_wt_tot(1:NC));   Difv_wt_tot=0.
-    allocate (Diss_ut_mean(1:NC)); Diss_ut_mean  =0.
-    allocate (Diss_vt_mean(1:NC)); Diss_vt_mean  =0.
-    allocate (Diss_wt_mean(1:NC)); Diss_wt_mean  =0.
-    allocate (Diss_tt_mean(1:NC)); Diss_tt_mean  =0.
-    allocate (Dift_ut_mean(1:NC));   Dift_ut_mean=0.
-    allocate (Dift_vt_mean(1:NC));   Dift_vt_mean=0.
-    allocate (Dift_wt_mean(1:NC));   Dift_wt_mean=0.
-    allocate (Dift_tt_mean(1:NC));   Dift_tt_mean=0.
-    allocate (Difv_ut_mean(1:NC));   Difv_ut_mean=0.
-    allocate (Difv_vt_mean(1:NC));   Difv_vt_mean=0.
-    allocate (Difv_wt_mean(1:NC));   Difv_wt_mean=0.
-    allocate (Difv_tt_mean(1:NC));   Difv_tt_mean=0.
-    allocate (C_ut_mean(1:NC));   C_ut_mean=0.
-    allocate (C_vt_mean(1:NC));   C_vt_mean=0.
-    allocate (C_wt_mean(1:NC));   C_wt_mean=0.
-    allocate (C_tt_mean(1:NC));   C_tt_mean=0.
-    allocate (PD_ut_mean(-NbC:NC));   PD_ut_mean=0.
-    allocate (PD_vt_mean(-NbC:NC));   PD_vt_mean=0.
-    allocate (PD_wt_mean(-NbC:NC));   PD_wt_mean=0.
-    allocate (PR_ut_mean(-NbC:NC));   PR_ut_mean=0.
-    allocate (PR_vt_mean(-NbC:NC));   PR_vt_mean=0.
-    allocate (PR_wt_mean(-NbC:NC));   PR_wt_mean=0.
-    allocate (T % fluc(-NbC:NC));  T % fluc=0.
+    allocate (Put_mean(1:grid % n_cells));  Put_mean =0.
+    allocate (Pvt_mean(1:grid % n_cells));  Pvt_mean =0.
+    allocate (Pwt_mean(1:grid % n_cells));  Pwt_mean =0.
+    allocate (Ptt_mean(1:grid % n_cells));  Ptt_mean =0.
+    allocate (Difv_ut_tot(1:grid % n_cells));   Difv_ut_tot=0.
+    allocate (Difv_vt_tot(1:grid % n_cells));   Difv_vt_tot=0.
+    allocate (Difv_wt_tot(1:grid % n_cells));   Difv_wt_tot=0.
+    allocate (Diss_ut_mean(1:grid % n_cells)); Diss_ut_mean  =0.
+    allocate (Diss_vt_mean(1:grid % n_cells)); Diss_vt_mean  =0.
+    allocate (Diss_wt_mean(1:grid % n_cells)); Diss_wt_mean  =0.
+    allocate (Diss_tt_mean(1:grid % n_cells)); Diss_tt_mean  =0.
+    allocate (Dift_ut_mean(1:grid % n_cells));   Dift_ut_mean=0.
+    allocate (Dift_vt_mean(1:grid % n_cells));   Dift_vt_mean=0.
+    allocate (Dift_wt_mean(1:grid % n_cells));   Dift_wt_mean=0.
+    allocate (Dift_tt_mean(1:grid % n_cells));   Dift_tt_mean=0.
+    allocate (Difv_ut_mean(1:grid % n_cells));   Difv_ut_mean=0.
+    allocate (Difv_vt_mean(1:grid % n_cells));   Difv_vt_mean=0.
+    allocate (Difv_wt_mean(1:grid % n_cells));   Difv_wt_mean=0.
+    allocate (Difv_tt_mean(1:grid % n_cells));   Difv_tt_mean=0.
+    allocate (C_ut_mean(1:grid % n_cells));   C_ut_mean=0.
+    allocate (C_vt_mean(1:grid % n_cells));   C_vt_mean=0.
+    allocate (C_wt_mean(1:grid % n_cells));   C_wt_mean=0.
+    allocate (C_tt_mean(1:grid % n_cells));   C_tt_mean=0.
+    allocate (PD_ut_mean(-grid % n_boundary_cells:grid % n_cells));   PD_ut_mean=0.
+    allocate (PD_vt_mean(-grid % n_boundary_cells:grid % n_cells));   PD_vt_mean=0.
+    allocate (PD_wt_mean(-grid % n_boundary_cells:grid % n_cells));   PD_wt_mean=0.
+    allocate (PR_ut_mean(-grid % n_boundary_cells:grid % n_cells));   PR_ut_mean=0.
+    allocate (PR_vt_mean(-grid % n_boundary_cells:grid % n_cells));   PR_vt_mean=0.
+    allocate (PR_wt_mean(-grid % n_boundary_cells:grid % n_cells));   PR_wt_mean=0.
+    allocate (T % fluc(-grid % n_boundary_cells:grid % n_cells));  T % fluc=0.
     end if
 
-    allocate (Dift_uu_mean(1:NC));   Dift_uu_mean=0.
-    allocate (Dift_vv_mean(1:NC));   Dift_vv_mean=0.
-    allocate (Dift_ww_mean(1:NC));   Dift_ww_mean=0.
-    allocate (Dift_uv_mean(1:NC));   Dift_uv_mean=0.
-    allocate (Dift_uw_mean(1:NC));   Dift_uw_mean=0.
-    allocate (Dift_vw_mean(1:NC));   Dift_vw_mean=0.
+    allocate (Dift_uu_mean(1:grid % n_cells));   Dift_uu_mean=0.
+    allocate (Dift_vv_mean(1:grid % n_cells));   Dift_vv_mean=0.
+    allocate (Dift_ww_mean(1:grid % n_cells));   Dift_ww_mean=0.
+    allocate (Dift_uv_mean(1:grid % n_cells));   Dift_uv_mean=0.
+    allocate (Dift_uw_mean(1:grid % n_cells));   Dift_uw_mean=0.
+    allocate (Dift_vw_mean(1:grid % n_cells));   Dift_vw_mean=0.
 
-    allocate (Difv_uu_mean(1:NC));   Difv_uu_mean=0.
-    allocate (Difv_vv_mean(1:NC));   Difv_vv_mean=0.
-    allocate (Difv_ww_mean(1:NC));   Difv_ww_mean=0.
-    allocate (Difv_uv_mean(1:NC));   Difv_uv_mean=0.
-    allocate (Difv_uw_mean(1:NC));   Difv_uw_mean=0.
-    allocate (Difv_vw_mean(1:NC));   Difv_vw_mean=0.
+    allocate (Difv_uu_mean(1:grid % n_cells));   Difv_uu_mean=0.
+    allocate (Difv_vv_mean(1:grid % n_cells));   Difv_vv_mean=0.
+    allocate (Difv_ww_mean(1:grid % n_cells));   Difv_ww_mean=0.
+    allocate (Difv_uv_mean(1:grid % n_cells));   Difv_uv_mean=0.
+    allocate (Difv_uw_mean(1:grid % n_cells));   Difv_uw_mean=0.
+    allocate (Difv_vw_mean(1:grid % n_cells));   Difv_vw_mean=0.
 
-    allocate (C_uu_mean(1:NC));   C_uu_mean=0.
-    allocate (C_vv_mean(1:NC));   C_vv_mean=0.
-    allocate (C_ww_mean(1:NC));   C_ww_mean=0.
-    allocate (C_uv_mean(1:NC));   C_uv_mean=0.
-    allocate (C_uw_mean(1:NC));   C_uw_mean=0.
-    allocate (C_vw_mean(1:NC));   C_vw_mean=0.
+    allocate (C_uu_mean(1:grid % n_cells));   C_uu_mean=0.
+    allocate (C_vv_mean(1:grid % n_cells));   C_vv_mean=0.
+    allocate (C_ww_mean(1:grid % n_cells));   C_ww_mean=0.
+    allocate (C_uv_mean(1:grid % n_cells));   C_uv_mean=0.
+    allocate (C_uw_mean(1:grid % n_cells));   C_uw_mean=0.
+    allocate (C_vw_mean(1:grid % n_cells));   C_vw_mean=0.
 
-    allocate (PD_uu_mean(-NbC:NC));   PD_uu_mean=0.
-    allocate (PD_vv_mean(-NbC:NC));   PD_vv_mean=0.
-    allocate (PD_ww_mean(-NbC:NC));   PD_ww_mean=0.
-    allocate (PD_uv_mean(-NbC:NC));   PD_uv_mean=0.
-    allocate (PD_uw_mean(-NbC:NC));   PD_uw_mean=0.
-    allocate (PD_vw_mean(-NbC:NC));   PD_vw_mean=0.
+    allocate (PD_uu_mean(-grid % n_boundary_cells:grid % n_cells));   PD_uu_mean=0.
+    allocate (PD_vv_mean(-grid % n_boundary_cells:grid % n_cells));   PD_vv_mean=0.
+    allocate (PD_ww_mean(-grid % n_boundary_cells:grid % n_cells));   PD_ww_mean=0.
+    allocate (PD_uv_mean(-grid % n_boundary_cells:grid % n_cells));   PD_uv_mean=0.
+    allocate (PD_uw_mean(-grid % n_boundary_cells:grid % n_cells));   PD_uw_mean=0.
+    allocate (PD_vw_mean(-grid % n_boundary_cells:grid % n_cells));   PD_vw_mean=0.
 
-    allocate (PR_uu_mean(-NbC:NC));   PR_uu_mean=0.
-    allocate (PR_vv_mean(-NbC:NC));   PR_vv_mean=0.
-    allocate (PR_ww_mean(-NbC:NC));   PR_ww_mean=0.
-    allocate (PR_uv_mean(-NbC:NC));   PR_uv_mean=0.
-    allocate (PR_uw_mean(-NbC:NC));   PR_uw_mean=0.
-    allocate (PR_vw_mean(-NbC:NC));   PR_vw_mean=0.
+    allocate (PR_uu_mean(-grid % n_boundary_cells:grid % n_cells));   PR_uu_mean=0.
+    allocate (PR_vv_mean(-grid % n_boundary_cells:grid % n_cells));   PR_vv_mean=0.
+    allocate (PR_ww_mean(-grid % n_boundary_cells:grid % n_cells));   PR_ww_mean=0.
+    allocate (PR_uv_mean(-grid % n_boundary_cells:grid % n_cells));   PR_uv_mean=0.
+    allocate (PR_uw_mean(-grid % n_boundary_cells:grid % n_cells));   PR_uw_mean=0.
+    allocate (PR_vw_mean(-grid % n_boundary_cells:grid % n_cells));   PR_vw_mean=0.
     end if
 
-    allocate(VISt_mean(NC)); VISt_mean = 0.0
-    allocate (ShearMean(NC));  ShearMean=0.
+    allocate(VISt_mean(grid % n_cells)); VISt_mean = 0.0
+    allocate (ShearMean(grid % n_cells));  ShearMean=0.
     if(HOT==YES) then
-      allocate (T % mean(-NbC:NC));  T % mean=0.
-      allocate (TT % mean(-NbC:NC)); TT % mean=0.
-      allocate (uT % mean(-NbC:NC)); uT % mean=0.
-      allocate (vT % mean(-NbC:NC)); vT % mean=0.
-      allocate (wT % mean(-NbC:NC)); wT % mean=0.
+      allocate (T % mean(-grid % n_boundary_cells:grid % n_cells));  T % mean=0.
+      allocate (TT % mean(-grid % n_boundary_cells:grid % n_cells)); TT % mean=0.
+      allocate (uT % mean(-grid % n_boundary_cells:grid % n_cells)); uT % mean=0.
+      allocate (vT % mean(-grid % n_boundary_cells:grid % n_cells)); vT % mean=0.
+      allocate (wT % mean(-grid % n_boundary_cells:grid % n_cells)); wT % mean=0.
     end if
   end if
 
   if(SIMULA == HYB_ZETA.or.SIMULA==HYB_PITM) then
-    allocate (uu % mean(-NbC:NC)); uu % mean=0.
-    allocate (vv % mean(-NbC:NC)); vv % mean=0.
-    allocate (ww % mean(-NbC:NC)); ww % mean=0.
-    allocate (uv % mean(-NbC:NC)); uv % mean=0.
-    allocate (uw % mean(-NbC:NC)); uw % mean=0.
-    allocate (vw % mean(-NbC:NC)); vw % mean=0.
+    allocate (uu % mean(-grid % n_boundary_cells:grid % n_cells)); uu % mean=0.
+    allocate (vv % mean(-grid % n_boundary_cells:grid % n_cells)); vv % mean=0.
+    allocate (ww % mean(-grid % n_boundary_cells:grid % n_cells)); ww % mean=0.
+    allocate (uv % mean(-grid % n_boundary_cells:grid % n_cells)); uv % mean=0.
+    allocate (uw % mean(-grid % n_boundary_cells:grid % n_cells)); uw % mean=0.
+    allocate (vw % mean(-grid % n_boundary_cells:grid % n_cells)); vw % mean=0.
 
 
-    allocate(VISt_mean(NC)); VISt_mean = 0.0
-    allocate (ShearMean(NC));  ShearMean=0.
+    allocate(VISt_mean(grid % n_cells)); VISt_mean = 0.0
+    allocate (ShearMean(grid % n_cells));  ShearMean=0.
     if(HOT==YES) then
-      allocate (T % mean(-NbC:NC));  T % mean=0.
-      allocate (TT % mean(-NbC:NC)); TT % mean=0.
-      allocate (uT % mean(-NbC:NC)); uT % mean=0.
-      allocate (vT % mean(-NbC:NC)); vT % mean=0.
-      allocate (wT % mean(-NbC:NC)); wT % mean=0.
+      allocate (T % mean(-grid % n_boundary_cells:grid % n_cells));  T % mean=0.
+      allocate (TT % mean(-grid % n_boundary_cells:grid % n_cells)); TT % mean=0.
+      allocate (uT % mean(-grid % n_boundary_cells:grid % n_cells)); uT % mean=0.
+      allocate (vT % mean(-grid % n_boundary_cells:grid % n_cells)); vT % mean=0.
+      allocate (wT % mean(-grid % n_boundary_cells:grid % n_cells)); wT % mean=0.
     end if
   end if
  
-  allocate (VISt(-NbC:NC)); VISt=0
-  allocate (IsNearWall(NC)); IsNearWall = .FALSE.
+  allocate (VISt(-grid % n_boundary_cells:grid % n_cells)); VISt=0
+  allocate (IsNearWall(grid % n_cells)); IsNearWall = .FALSE.
 
-  allocate (Vort(-NbC:NC));  Vort=0.
-  allocate (Shear(-NbC:NC)); Shear=0.
-  allocate (TauWall(NC));    TauWall=0.
+  allocate (Vort(-grid % n_boundary_cells:grid % n_cells));  Vort=0.
+  allocate (Shear(-grid % n_boundary_cells:grid % n_cells)); Shear=0.
+  allocate (TauWall(grid % n_cells));    TauWall=0.
 
 !??????????????????????????????????????????!
 !     Is there enough allocated memory     !

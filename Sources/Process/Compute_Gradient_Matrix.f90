@@ -18,7 +18,7 @@
   real    :: Jac, Ginv(6)
 !==============================================================================!
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     G(1,c) = 0.0
     G(2,c) = 0.0
     G(3,c) = 0.0
@@ -27,7 +27,7 @@
     G(6,c) = 0.0
   end do
 
-  do s=1,NS
+  do s = 1, grid % n_faces
     c1=SideC(1,s)
     c2=SideC(2,s) 
 
@@ -52,7 +52,7 @@
       Dzc2 = grid % zf(s) - grid % zc(c2)      ! 2mat
     end if                                     ! 2mat
 
-!---- With boundary cells, velocities, temperatures
+    ! With boundary cells, velocities, temperatures
     if(Boundary) then
       G(1,c1)=G(1,c1) + Dxc1*Dxc1  ! 1,1
       G(2,c1)=G(2,c1) + Dyc1*Dyc1  ! 2,2
@@ -93,7 +93,7 @@
   !----------------------------------!
   !   Find the inverse of matrix G   !
   !----------------------------------!
-  do c=1,NC
+  do c = 1, grid % n_cells
     Jac  =         G(1,c) * G(2,c) * G(3,c)  &
            -       G(1,c) * G(6,c) * G(6,c)  &
            -       G(4,c) * G(4,c) * G(3,c)  &

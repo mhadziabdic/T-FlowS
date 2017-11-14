@@ -19,21 +19,21 @@
   character(len=80)    :: name_out
   integer,allocatable  :: side_cell(:,:)
 !==============================================================================!
-!   Each subdomain needs two buffers: a send buffer and a receive buffer.
-!   A receive buffer will be stored as aditional boundary cells for each
-!   subdomain. So each subdomain will have NBC physical boundary faces and 
-!   NBBC-NBC buffer bounndary cells. It is handy to do it that way, because 
-!   most of the algorythms can remain the same as they are now.  They won't 
-!   even "know" that they use values from other processors.  On the other 
-!   hand, a sending buffer has to be allocated in a new separate array called 
-!   simply buffer(). An additional array is needed to keep track of all the 
-!   indexes. That one is called buffind().  buffind() has stored cell numbers 
-!   from it's own subdomain so that later they can be copied with (well, 
-!   something like that):
-!
-!   do i=1,BUFFSIZ
-!     buffer(i) = U(buffind(i))
-!   end do
+!   Each subdomain needs two buffers: a send buffer and a receive buffer.      !
+!   A receive buffer will be stored as aditional boundary cells for each       !
+!   subdomain. So each subdomain will have grid % n_boundary_cells physical    !
+!   boundary faces and NBBC-grid % n_boundary_cells buffer bounndary cells.    !
+!   It is handy to do it that way, because most of the algorythms can remain   !
+!   the same as they are now.  They won't even "know" that they use values     !
+!   from other processors.  On the other hand, a sending buffer has to be      !
+!   allocated in a new separate array called simply buffer(). An additional    !
+!   array is needed to keep track of all the indexes. That one is called       !
+!   buffind().  buffind() has stored cell numbers from it's own subdomain      !
+!   so that later they can be copied with (well, something like that):         !
+!                                                                              !
+!   do i=1,BUFFSIZ                                                             !
+!     buffer(i) = U(buffind(i))                                                !
+!   end do                                                                     !
 !------------------------------------------------------------------------------!
 
   !-------------------------------!
@@ -41,7 +41,7 @@
   !   Browse through subdomains   !
   !                               !
   !-------------------------------!
-  do sub=1,n_sub
+  do sub = 1, n_sub
 
     call Name_File(sub, name_out, '.buf', len_trim('.buf'))
     open(9, file=name_out)
@@ -55,10 +55,10 @@
 
     ! Cells
     n_cells_sub = 0     ! number of cells in subdomain
-    do c=1,NC
+    do c = 1, grid % n_cells
       NewC(c)=0
     end do
-    do c=1,NC
+    do c = 1, grid % n_cells
       if(proces(c) == sub) then
         n_cells_sub=n_cells_sub+1
         NewC(c)=n_cells_sub
@@ -67,17 +67,17 @@
 
     ! Nodes
     n_nodes_sub = 0     ! number of cells in subdomain
-    do n=1,NN
+    do n = 1, grid % n_nodes
       NewN(n)=0
     end do
-    do c=1,NC
+    do c = 1, grid % n_cells
       if(proces(c) == sub) then
-        do ln=1,grid % cells_n_nodes(c)
+        do ln = 1, grid % cells_n_nodes(c)
           NewN(grid % cells_n(ln,c))=-1
         end do
       end if
     end do
-    do n=1,NN
+    do n = 1, grid % n_nodes
       if(NewN(n) == -1) then
         n_nodes_sub=n_nodes_sub+1
         NewN(n)=n_nodes_sub
@@ -88,13 +88,13 @@
     n_faces_sub   = 0  ! number of sides in subdomain
     n_b_cells_sub = 0  ! number of real boundary cells in subdomain
     NCSsub = 0
-    do s=1,NS
+    do s = 1, grid % n_faces
       NewS(s)=0
     end do
-    do c=-NBC,-1
+    do c=-grid % n_boundary_cells,-1
       NewC(c)=0
     end do
-    do s=1,NS
+    do s = 1, grid % n_faces
       c1=SideC(1,s)  
       c2=SideC(2,s) 
       if(c2  > 0) then
@@ -112,7 +112,7 @@
       end if 
     end do
 
-    do s=1,n_copy
+    do s = 1, n_copy
       c1=CopyS(1,s)
       c2=CopyS(2,s)
       if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
@@ -138,7 +138,7 @@
         NBBs(subo)=n_buff_sub+1
 
         ! Faces inside the domain
-        do s=1,NS
+        do s = 1, grid % n_faces
           c1=SideC(1,s)  
           c2=SideC(2,s) 
           if(c2  > 0) then
@@ -162,7 +162,7 @@
         end do    ! through sides
 
         ! Faces on the "copy" boundary
-        do s=1,n_copy
+        do s = 1, n_copy
           c1=CopyS(1,s)  
           c2=CopyS(2,s) 
           if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
@@ -203,8 +203,7 @@
                         n_cells_sub)
     call Save_Gmv_Faces(grid,         &
                         sub,          &
-                        n_nodes_sub,  &
-                        n_cells_sub)
+                        n_nodes_sub)
     call Save_Shadows(grid,         &
                       sub,          &
                       n_nodes_sub,  &
@@ -251,19 +250,19 @@
   !   Save the entire domain with renumbered cells   !
   !                                                  !
   !--------------------------------------------------!
-  do n=1,NN
+  do n = 1, grid % n_nodes
     NewN(n)=n
   end do
-  do c=1,NC
+  do c = 1, grid % n_cells
     NewC(c)=0
   end do
-  do s=1,NS
+  do s = 1, grid % n_faces
     NewS(s)=0
   end do
 
   n_cells_sub = 0     ! number of cells renumbered
-  do sub=1,n_sub
-    do c=1,NC
+  do sub = 1, n_sub
+    do c = 1, grid % n_cells
       if(proces(c) == sub) then
         n_cells_sub=n_cells_sub+1
         NewC(c)=n_cells_sub
@@ -272,8 +271,8 @@
   end do
 
   n_faces_sub = 0     ! number of sides renumbered
-  do sub=1,n_sub
-    do s=1,NS
+  do sub = 1, n_sub
+    do s = 1, grid % n_faces
       c1 = SideC(1,s)
       c2 = SideC(2,s)
       if(proces(c1) == sub) then
@@ -282,36 +281,36 @@
       end if
     end do
   end do
-  write(*,*) 'Number of sides: ', NS, n_faces_sub
+  write(*,*) 'Number of sides: ', grid % n_faces, n_faces_sub
 
   ! It is not sorting nodes ... is it good?  I doubt
-  call Grid_Mod_Sort_Cells_By_Index(grid, NewC(1), NC)
-  call Grid_Mod_Sort_Faces_By_Index(grid, NewS(1), NS)
+  call Grid_Mod_Sort_Cells_By_Index(grid, NewC(1), grid % n_cells)
+  call Grid_Mod_Sort_Faces_By_Index(grid, NewS(1), grid % n_faces)
 
-  call Sort_Int_By_Index(proces(1),  NewC(1),NC)
-  call Sort_Int_By_Index(material(1),NewC(1),NC)
+  call Sort_Int_By_Index(proces(1),  NewC(1),grid % n_cells)
+  call Sort_Int_By_Index(material(1),NewC(1),grid % n_cells)
 
-  call RNSort(grid % dx(1), NewS(1), NS)  ! this is important
-  call RNSort(grid % dy(1), NewS(1), NS)  ! for plotting the
-  call RNSort(grid % dz(1), NewS(1), NS)  ! grid with EpsPar()
-  allocate(side_cell(NS,2))
-  do s=1,NS
+  call RNSort(grid % dx(1), NewS(1), grid % n_faces)  ! this is important
+  call RNSort(grid % dy(1), NewS(1), grid % n_faces)  ! for plotting the
+  call RNSort(grid % dz(1), NewS(1), grid % n_faces)  ! grid with EpsPar()
+  allocate(side_cell(grid % n_faces,2))
+  do s = 1, grid % n_faces
     side_cell(s,1) = SideC(1,s)
     side_cell(s,2) = SideC(2,s)
   end do
-  call Sort_Int_By_Index(side_cell(1,1), NewS(1),NS)
-  call Sort_Int_By_Index(side_cell(1,2), NewS(1),NS)
-  do s=1,NS
+  call Sort_Int_By_Index(side_cell(1,1), NewS(1),grid % n_faces)
+  call Sort_Int_By_Index(side_cell(1,2), NewS(1),grid % n_faces)
+  do s = 1, grid % n_faces
     SideC(1,s) = side_cell(s,1)
     SideC(2,s) = side_cell(s,2)
   end do
   deallocate(side_cell)
 
-  call Save_Gmv_Cells(grid, 0, NN, NC)
-  call Save_Gmv_Faces(grid, 0, NN, NC)
-  call Save_Shadows  (grid, 0, NN, NC)
+  call Save_Gmv_Cells(grid, 0, grid % n_nodes, grid % n_cells)
+  call Save_Gmv_Faces(grid, 0, grid % n_nodes)
+  call Save_Shadows  (grid, 0, grid % n_nodes, grid % n_cells)
 
-  call Save_Cas(grid, 0, NN, NC, NS+NSsh)
+  call Save_Cas(grid, 0, grid % n_nodes, grid % n_cells, grid % n_faces+NSsh)
 
   call Save_Eps_Decomposed(grid)
 

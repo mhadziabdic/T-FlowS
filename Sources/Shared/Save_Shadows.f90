@@ -28,7 +28,7 @@
   open(9, file=name_out)
   write(6, *) '# Now creating the file:', name_out
 
-  do s=NS+1,NS+NSsh
+  do s = grid % n_faces+1, grid % n_faces+NSsh
     write(9,*) grid % faces_n_nodes(s) 
     if(grid % faces_n_nodes(s)==3) then
       write(9,*) grid % faces_n(1,s),  &

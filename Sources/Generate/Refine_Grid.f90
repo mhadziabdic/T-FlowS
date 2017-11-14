@@ -30,7 +30,7 @@
       y8=refined_regions(lev,reg,5)
       z8=refined_regions(lev,reg,6)
 
-      do c=1,NC
+      do c = 1, grid % n_cells
         n1 = grid % cells_n(1,c)
         n2 = grid % cells_n(2,c)
         n3 = grid % cells_n(3,c)

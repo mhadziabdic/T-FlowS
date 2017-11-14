@@ -7,6 +7,8 @@
   integer           :: n_bnd_cells, n_cells, n_faces
 !==============================================================================!
 
+  write(*,*) '# Do this better!!! (Bojan)'
+
   ! Allocate memory for matrix
   allocate (matrix % row(n_cells+1));             matrix % row=0
   allocate (matrix % dia(n_cells));               matrix % dia=0

@@ -1,43 +1,45 @@
-!======================================================================!
-  subroutine CalcVISt_KepsV2F() 
-!----------------------------------------------------------------------!
-!   Computes the turbulent viscosity for RANS models.                  !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine CalcVISt_KepsV2F(grid) 
+!------------------------------------------------------------------------------!
+!   Computes the turbulent viscosity for RANS models.                          !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use les_mod
   use rans_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!------------------------------[Calling]-------------------------------!
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, s
   real    :: UnorSq, Unor, UtotSq, Cmu1, beta, Prmol, Prturb
   real    :: lf, Gblend, Ustar, Ck, yPlus, Uplus, EBF
-!======================================================================!
+!==============================================================================!
 
-  call Scale()
+  call Time_And_Length_Scale(grid)
 
   if(SIMULA == K_EPS_VV) then
-    do c = 1,NC
+    do c = 1, grid % n_cells
       VISt(c) = CmuD*v_2%n(c)*Tsc(c)
     end do
   else if(SIMULA == ZETA) then
-    do c = 1,NC
+    do c = 1, grid % n_cells
       VISt(c) = CmuD*v_2%n(c)*Kin % n(c)*Tsc(c)
     end do
   else if(SIMULA == HYB_ZETA) then
-    do c = 1,NC
+    do c = 1, grid % n_cells
       VISt(c) = CmuD*v_2%n(c)*Kin % n(c)*Tsc(c)
       VISt_eff(c) = max(VISt(c),VISt_sgs(c))
     end do
     call Exchng(VISt_eff)  
   end if
 
-  do s=1,NS
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+  do s = 1, grid % n_faces
+    c1 = SideC(1,s)
+    c2 = SideC(2,s)
     
     if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
       if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
@@ -85,6 +87,5 @@
  
   call Exchng(VISt)  
   call Exchng(VISwall)  
-  RETURN
 
-  end subroutine CalcVISt_KepsV2F  
+  end subroutine

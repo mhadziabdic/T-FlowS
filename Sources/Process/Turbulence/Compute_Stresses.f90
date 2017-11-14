@@ -19,17 +19,18 @@
   type(Grid_Type) :: grid
   integer         :: var
   type(Var_Type)  :: phi
-  real            :: phi_x(-NbC:NC), phi_y(-NbC:NC), phi_z(-NbC:NC)
+  real            :: phi_x(-grid % n_boundary_cells:grid % n_cells),  &
+                     phi_y(-grid % n_boundary_cells:grid % n_cells),  &
+                     phi_z(-grid % n_boundary_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter, mat
-  real    :: Fex, Fim, TDiffS, VIStur 
+  real    :: Fex, Fim
   real    :: phis
   real    :: A0, A12, A21
   real    :: error
   real    :: VISeff
   real    :: phi_xS, phi_yS, phi_zS
-  real    :: VIStS, TDiff_im, TDiff_ex, TDiff_coef, TDiffx, TDiffy,TDiffz
-  real    :: uuS, vvS, wwS, uvS, uwS, vwS
+  real    :: VIStS
 !==============================================================================!
 !                                                                              ! 
 !  The form of equations which are being solved:                               !   
@@ -48,7 +49,7 @@
   b=0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
-  do c=-NbC,-1
+  do c = -grid % n_boundary_cells,-1
     A % bou(c)=0.0
   end do
 
@@ -58,7 +59,7 @@
 
   ! Old values (o) and older than old (oo)
   if(ini == 1) then
-    do c=1,NC
+    do c = 1, grid % n_cells
       phi % oo(c)  = phi % o(c)
       phi % o (c)  = phi % n(c)
       phi % Coo(c) = phi % Co(c)
@@ -77,15 +78,15 @@
   !---------------!
 
   ! Compute phimax and phimin
-  do mat=1,grid % n_materials
+  do mat = 1, grid % n_materials
     if(BLEND_TUR(mat) /= NO) then
-      call CalMinMax(phi % n)  ! or phi % o ???
+      call Compute_Minimum_Maximum(grid, phi % n)  ! or phi % o ???
       goto 1
     end if
   end do
 
   ! New values
-1 do c=1,NC
+1 do c = 1, grid % n_cells
     phi % C(c)    = 0.0
     phi % X(c)    = 0.0
   end do
@@ -93,7 +94,7 @@
   !----------------------------!
   !   Spatial Discretization   !
   !----------------------------!
-  do s=1,NS
+  do s = 1, grid % n_faces
 
     c1=SideC(1,s)
     c2=SideC(2,s) 
@@ -104,7 +105,7 @@
 
       if( BLEND_TUR(material(c1)) /= NO .or.  &
           BLEND_TUR(material(c2)) /= NO ) then
-        call ConvScheme(phis, s, phi % n, phi_x, phi_y, phi_z,  &
+        call Advection_Scheme(grid, phis, s, phi % n, phi_x, phi_y, phi_z,  &
                         grid % dx, grid % dy, grid % dz,        &
                         max(BLEND_TUR(material(c1)),            &
                             BLEND_TUR(material(c2))) ) 
@@ -166,7 +167,7 @@
 
   ! Adams-Bashforth scheeme for convective fluxes
   if(CONVEC == AB) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + URFC_Tur(material(c)) * &
                     (1.5*phi % Co(c) - 0.5*phi % Coo(c) - phi % X(c))
     end do  
@@ -174,7 +175,7 @@
 
   ! Crank-Nicholson scheeme for convective fluxes
   if(CONVEC == CN) then
-    do c=1,NC
+    do c = 1, grid % n_cells
       b(c) = b(c) + URFC_Tur(material(c)) * &
                     (0.5 * ( phi % C(c) + phi % Co(c) ) - phi % X(c))
     end do  
@@ -182,14 +183,14 @@
 
   ! Fully implicit treatment of convective fluxes 
   if(CONVEC == FI) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + URFC_Tur(material(c)) * &
                     (phi % C(c) - phi % X(c))
     end do  
   end if     
             
   ! New values
-  do c=1,NC
+  do c = 1, grid % n_cells
     phi % X(c) = 0.0
   end do
   
@@ -202,7 +203,7 @@
   !----------------------------!
   !   Spatial discretization   !
   !----------------------------!
-  do s=1,NS       
+  do s = 1, grid % n_faces       
 
     c1=SideC(1,s)
     c2=SideC(2,s)   
@@ -327,7 +328,7 @@
       CmuD = 0.22
     end if 
     if(SIMULA==HJ) then        
-      do c=1,NC
+      do c=1,grid % n_cells
         VAR1x(c) = CmuD/phi % Sigma*Kin%n(c)/Eps%n(c)*&
                    ((uu%n(c))*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c)) - &
                    VISc*phi_x(c)
@@ -341,7 +342,7 @@
                    VISc*phi_z(c) 
       end do
     else if(SIMULA==EBM) then
-      do c=1,NC
+      do c=1,grid % n_cells
         VAR1x(c) = CmuD/phi % Sigma*Tsc(c)*&
                    ((uu%n(c))*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c)) 
 
@@ -356,15 +357,15 @@
     call GraPhi(VAR1y,2,VAR2y,.TRUE.)
     call GraPhi(VAR1z,3,VAR2z,.TRUE.)
 
-    do c=1,NC
-      b(c) = b(c) + (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
+    do c = 1, grid % n_cells
+      b(c) = b(c) + (VAR2x(c)+VAR2y(c)+VAR2z(c)) * grid % vol(c)
     end do
 
     !------------------------------------------------------------------!
     !   Here we clean up transport equation from the false diffusion   !
     !------------------------------------------------------------------!
     if(SIMULA==EBM.and.MODE/=HYB) then
-      do s=1,NS
+      do s = 1, grid % n_faces
 
         c1=SideC(1,s)
         c2=SideC(2,s)
@@ -396,14 +397,14 @@
 
   ! Adams-Bashfort scheeme for diffusion fluxes
   if(DIFFUS == AB) then 
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * phi % Do(c) - 0.5 * phi % Doo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
   if(DIFFUS == CN) then 
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * phi % Do(c)
     end do  
   end if
@@ -413,21 +414,21 @@
 
   ! Adams-Bashfort scheeme for cross diffusion 
   if(CROSS == AB) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * phi % Xo(c) - 0.5 * phi % Xoo(c)
     end do 
   end if
     
   ! Crank-Nicholson scheme for cross difusive terms
   if(CROSS == CN) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * phi % X(c) + 0.5 * phi % Xo(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
   if(CROSS == FI) then
-    do c=1,NC
+    do c=1,grid % n_cells
       b(c) = b(c) + phi % X(c) 
     end do 
   end if
@@ -440,7 +441,7 @@
 
   ! Two time levels; Linear interpolation
   if(INERT == LIN) then
-    do c=1,NC
+    do c=1,grid % n_cells
       A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + A0
       b(c) = b(c) + A0 * phi % o(c)
@@ -449,21 +450,21 @@
 
   ! Three time levels; parabolic interpolation
   if(INERT == PAR) then
-    do c=1,NC
+    do c=1,grid % n_cells
       A0 = DENc(material(c))*grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
       b(c) = b(c) + 2.0*A0 * phi % o(c) - 0.5*A0 * phi % oo(c)
     end do
   end if
 
-  !  do c=1,NC                                         ! 2mat
+  !  do c=1,grid % n_cells                             ! 2mat
   !    if(StateMat(material(c))==SOLID) then           ! 2mat
   !      b(c)          = 0.0                           ! 2mat
   !    end if                                          ! 2mat
   !  end do                                            ! 2mat
 
   !---- Disconnect the SOLID cells from FLUID system   ! 2mat
-  !  do s=1,NS                                         ! 2mat
+  !  do s=1,grid % n_faces                             ! 2mat
   !    c1=SideC(1,s)                                   ! 2mat
   !    c2=SideC(2,s)                                   ! 2mat
   !    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
@@ -496,7 +497,7 @@
   !   Solve the equations for phi   !
   !                                 !    
   !---------------------------------!
-  do c=1,NC
+  do c=1,grid % n_cells
     b(c) = b(c) + A % val(A % dia(c)) * (1.0-phi % URF)*phi % n(c) / phi % URF
     A % val(A % dia(c)) = A % val(A % dia(c)) / phi % URF
 !?????? Asave(c) = A % val(A % dia(c)) ??????
@@ -506,7 +507,7 @@
   if(ALGOR == FRACT)    miter=5
 
   niter=miter
-  call cg(NC, Nbc, A,           &
+  call cg(grid % n_cells, grid % n_boundary_cells, A,           &
            phi % n, b, PREC,    &
            niter,phi % STol, res(var), error)
 
@@ -518,7 +519,7 @@
   if(this_proc < 2) write(*,*) '#', phi % name, res(var), niter 
 
   if(phi % name == 'EPS') then
-    do c= 1, NC
+    do c= 1, grid % n_cells
       phi % n(c) = phi % n(c) 
      if( phi % n(c) < 0.0) then
        phi % n(c) = phi % o(c)
@@ -529,7 +530,7 @@
   if(phi % name == "UU" .or.  &
      phi % name == "VV" .or.  &
      phi % name == "WW") then
-    do c= 1, NC
+    do c = 1, grid % n_cells
       phi % n(c) = phi % n(c) 
       if(phi % n(c) < 0.0) then
         phi % n(c) = phi % o(c)

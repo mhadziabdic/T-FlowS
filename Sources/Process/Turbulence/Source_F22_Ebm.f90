@@ -47,27 +47,27 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-   call Scale()
+  call Time_And_Length_Scale(grid)
 
-   ! Source term f22hg
-   do c = 1,NC
-     f22hg = 1.0
-     Sor11 = grid % vol(c)/Lsc(c)**2
-     A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11     
-     b(c) = b(c) + f22hg*grid % vol(c)/Lsc(c)**2
-   end do
+  ! Source term f22hg
+  do c = 1, grid % n_cells
+    f22hg = 1.0
+    Sor11 = grid % vol(c)/Lsc(c)**2
+    A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11     
+    b(c) = b(c) + f22hg*grid % vol(c)/Lsc(c)**2
+  end do
 
-   ! Source term
-   do s=1,NS
-     c1=SideC(1,s)
-     c2=SideC(2,s)
-     if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
-       if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+  ! Source term
+  do s = 1, grid % n_faces
+    c1=SideC(1,s)
+    c2=SideC(2,s)
+    if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
+      if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
 
-           f22 % n(c2) = 0.0
+          f22 % n(c2) = 0.0
 
-       end if   ! end if of BC=wall
-     end if    ! end if of c2<0
-   end do
+      end if   ! end if of BC=wall
+    end if    ! end if of c2<0
+  end do
 
- end subroutine
+  end subroutine

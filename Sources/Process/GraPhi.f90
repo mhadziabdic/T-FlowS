@@ -20,7 +20,7 @@
   real    :: Dphi1, Dphi2, Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
 !==============================================================================!
 
-  call Exchng(phi)
+  call Exchange(grid, phi)
 
   do c=1,grid % n_cells
     phii(c)=0.0
@@ -172,7 +172,7 @@
     end do
   end if
 
-  call Exchng(phii)
+  call Exchange(grid, phii)
 
   if(.not. Boundary) call Correct_Bad(grid, phii)
 

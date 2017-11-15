@@ -6,6 +6,4 @@
   implicit none
 !======================================================================!
 
-  RETURN
-
-  end subroutine BufLoa
+  end subroutine

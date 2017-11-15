@@ -10,4 +10,4 @@
 
 ! call cpu_time(time) This is Fortran 95 feature.
 
-  end subroutine Timex
+  end subroutine

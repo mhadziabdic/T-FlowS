@@ -42,6 +42,6 @@
     VISt(c) = Cmu_mod*DENc(material(c)) * Kin%n(c) * Kin%n(c) / Eps % n(c)
   end do
 
-  call Exchng(VISt)  
+  call Exchange(grid, VISt)  
 
   end subroutine

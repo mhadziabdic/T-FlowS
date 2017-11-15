@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine CalcShear(grid, Ui, Vi, Wi, She)
+  subroutine CalcShear(grid, ui, vi, wi, She)
 !------------------------------------------------------------------------------!
 !   Computes the magnitude of the shear stress.                                !
 !------------------------------------------------------------------------------!
@@ -16,30 +16,30 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  real            :: Ui(-grid % n_bnd_cells:grid % n_cells),  &
-                     Vi(-grid % n_bnd_cells:grid % n_cells),  &
-                     Wi(-grid % n_bnd_cells:grid % n_cells)
+  real            :: ui(-grid % n_bnd_cells:grid % n_cells),  &
+                     vi(-grid % n_bnd_cells:grid % n_cells),  &
+                     wi(-grid % n_bnd_cells:grid % n_cells)
   real            :: She(-grid % n_bnd_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c
 !==============================================================================!
 
-  call Exchng(Ui)
-  call Exchng(Vi)
-  call Exchng(Wi)
+  call Exchange(grid, ui)
+  call Exchange(grid, vi)
+  call Exchange(grid, wi)
 
   !---------------!
   !   SGS terms   !
   !---------------!
-  call GraPhi(grid, Ui, 1, Ux, .TRUE.)  ! dU/dx
-  call GraPhi(grid, Ui, 2, Uy, .TRUE.)  ! dU/dy
-  call GraPhi(grid, Ui, 3, Uz, .TRUE.)  ! dU/dz
-  call GraPhi(grid, Vi, 1, Vx, .TRUE.)  ! dV/dx
-  call GraPhi(grid, Vi, 2, Vy, .TRUE.)  ! dV/dy
-  call GraPhi(grid, Vi, 3, Vz, .TRUE.)  ! dV/dz
-  call GraPhi(grid, Wi, 1, Wx, .TRUE.)  ! dW/dx
-  call GraPhi(grid, Wi, 2, Wy, .TRUE.)  ! dW/dy
-  call GraPhi(grid, Wi, 3, Wz, .TRUE.)  ! dW/dz
+  call GraPhi(grid, ui, 1, Ux, .TRUE.)  ! dU/dx
+  call GraPhi(grid, ui, 2, Uy, .TRUE.)  ! dU/dy
+  call GraPhi(grid, ui, 3, Uz, .TRUE.)  ! dU/dz
+  call GraPhi(grid, vi, 1, Vx, .TRUE.)  ! dV/dx
+  call GraPhi(grid, vi, 2, Vy, .TRUE.)  ! dV/dy
+  call GraPhi(grid, vi, 3, Vz, .TRUE.)  ! dV/dz
+  call GraPhi(grid, wi, 1, Wx, .TRUE.)  ! dW/dx
+  call GraPhi(grid, wi, 2, Wy, .TRUE.)  ! dW/dy
+  call GraPhi(grid, wi, 3, Wz, .TRUE.)  ! dW/dz
 
   do c = 1, grid % n_cells
     She(c) = Ux(c)*Ux(c) + Vy(c)*Vy(c) + Wz(c)*Wz(c) + &

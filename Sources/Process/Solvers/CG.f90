@@ -128,7 +128,7 @@
         q1(i) = q1(i) + A % val(j) * p1(k) 
       end do
     end do
-    call Exchng(p1)
+    call Exchange(A % pnt_grid, p1)
     do sub=1,n_proc
       if(NBBe(sub)  <=  NBBs(sub)) then
         do k=NBBs(sub),NBBe(sub),-1

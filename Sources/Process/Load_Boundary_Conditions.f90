@@ -17,7 +17,7 @@
   real :: Distance
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, n, n_points, n_initial_cond, s
-  integer           :: m, c1, c2, bc, mt, i
+  integer           :: m, c1, bc, mt, i
   character(len=80) :: name_bou, name_prof(128), dir, bc_name, mt_name
   integer           :: typBou(128)
   real              :: xyz(10024)

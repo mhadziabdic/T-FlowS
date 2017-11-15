@@ -1,8 +1,10 @@
 !==============================================================================!
   module Matrix_Mod
 !------------------------------------------------------------------------------!
-
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
+!------------------------------------------------------------------------------!
 
   !--------------------------------------------------------------------!
   !   Matrix type                                                      !
@@ -32,15 +34,16 @@
   !   A % dia = [   1   5   9  12 ]                                    !
   !--------------------------------------------------------------------!
   type Matrix_Type
-    integer              :: nonzeros  ! number of nonzero entries
-    real,    allocatable :: val(:)    ! value
-    real,    allocatable :: sav(:)    ! saved value
-    real,    allocatable :: bou(:)    ! boundary value
-    integer, allocatable :: col(:)    ! beginning of each row   
-    integer, allocatable :: row(:)    ! column positions
-    integer, allocatable :: dia(:)    ! diagonal positions 
-    integer, allocatable :: pos(:,:)  ! position in the matrix
-    integer, allocatable :: mir(:)    ! mirror positions   
+    integer                  :: nonzeros  ! number of nonzero entries
+    real,    allocatable     :: val(:)    ! value
+    real,    allocatable     :: sav(:)    ! saved value
+    real,    allocatable     :: bou(:)    ! boundary value
+    integer, allocatable     :: col(:)    ! beginning of each row   
+    integer, allocatable     :: row(:)    ! column positions
+    integer, allocatable     :: dia(:)    ! diagonal positions 
+    integer, allocatable     :: pos(:,:)  ! position in the matrix
+    integer, allocatable     :: mir(:)    ! mirror positions   
+    type(Grid_Type), pointer :: pnt_grid
   end type 
 
   contains

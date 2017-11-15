@@ -46,10 +46,10 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-  call Exchng(U % n)
-  call Exchng(V % n)
-  call Exchng(W % n)
-  call Exchng(Shear)
+  call Exchange(grid, U % n)
+  call Exchange(grid, V % n)
+  call Exchange(grid, W % n)
+  call Exchange(grid, Shear)
 
   do c =1, grid % n_cells
     Ua   = 0.0

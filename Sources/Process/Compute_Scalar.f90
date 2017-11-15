@@ -23,11 +23,10 @@
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------! 
   integer :: n, c, s, c1, c2, niter, miter, mat
-  real    :: A0, A12, A21, error, VISeff
+  real    :: A0, A12, A21, error
   real    :: CONeff1, FUex1, FUim1, phixS1, phiyS1, phizS1
   real    :: CONeff2, FUex2, FUim2, phixS2, phiyS2, phizS2
   real    :: Stot, phis, CAPs, Prt1, Prt2
-  real    :: phi_xS, phi_yS, phi_zS, Corr, TDC
 !------------------------------------------------------------------------------!
 !     
 !  The form of equations which are solved:    
@@ -587,6 +586,6 @@
   write(LineRes(65:76),  '(1PE12.3)') res(var)
   write(LineRes(93:96),  '(I4)')      niter       
 
-  call Exchng(phi % n)
+  call Exchange(grid, phi % n)
 
   end subroutine

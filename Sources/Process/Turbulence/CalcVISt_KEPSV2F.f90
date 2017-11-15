@@ -34,7 +34,7 @@
       VISt(c) = CmuD*v_2%n(c)*Kin % n(c)*Tsc(c)
       VISt_eff(c) = max(VISt(c),VISt_sgs(c))
     end do
-    call Exchng(VISt_eff)  
+    call Exchange(grid, VISt_eff)  
   end if
 
   do s = 1, grid % n_faces
@@ -85,7 +85,7 @@
     end if    ! c2 < 0
   end do
  
-  call Exchng(VISt)  
-  call Exchng(VISwall)  
+  call Exchange(grid, VISt)  
+  call Exchange(grid, VISwall)  
 
   end subroutine

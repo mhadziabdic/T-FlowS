@@ -76,7 +76,7 @@
     end if    
   end do
  
-  call Exchng(p2)
+  call Exchange(grid, p2)
 
   do s = 1, grid % n_faces
     c1=SideC(1,s)
@@ -126,8 +126,8 @@
     end if    
   end do
 
-  call Exchng(phi_x)
-  call Exchng(phi_y)
-  call Exchng(phi_z)
+  call Exchange(grid, phi_x)
+  call Exchange(grid, phi_y)
+  call Exchange(grid, phi_z)
 
   end subroutine

@@ -21,7 +21,7 @@
   if(SIMULA == DES_SPA) then
     do c = 1, grid % n_cells
       Xrat     = VIS % n(c)/VISc
-      Fv1      = Xrat**3.0/(Xrat**3.0 + Cvis1**3.0)
+      Fv1      = Xrat**3/(Xrat**3 + Cvis1**3)
       VISt(c)  = DENc(material(c)) * Fv1 * VIS % n(c)
     end do
   end if
@@ -29,11 +29,11 @@
   if(SIMULA == SPA_ALL) then
     do c = 1, grid % n_cells
       Xrat     = VIS % n(c)/VISc
-      Fv1      = Xrat**3.0/(Xrat**3.0 + Cvis1**3.0)
+      Fv1      = Xrat**3/(Xrat**3 + Cvis1**3)
       VISt(c)  = DENc(material(c)) * Fv1 * VIS % n(c)
     end do
   end if
 
-  call Exchng(VISt)  
+  call Exchange(grid, VISt)  
 
   end subroutine

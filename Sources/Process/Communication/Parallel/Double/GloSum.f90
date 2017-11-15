@@ -27,4 +27,4 @@
 
   phi = phi_new
 
-  end subroutine GloSum
+  end subroutine

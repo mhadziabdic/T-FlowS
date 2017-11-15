@@ -441,6 +441,6 @@
 
   if(this_proc < 2) write(*,*) '# ', phi % name, res(var), niter 
 
-  call Exchng(phi % n)
+  call Exchange(grid, phi % n)
 
   end subroutine

@@ -159,7 +159,7 @@
     end if    ! c2 < 0
   end do
 
-  call Exchng(VISt)
-  call Exchng(VISwall)
+  call Exchange(grid, VISt)
+  call Exchange(grid, VISwall)
 
   end subroutine

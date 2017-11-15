@@ -34,6 +34,6 @@
     end if
   end do
 
-  call Exchng(phii)
+  call Exchange(grid, phii)
 
   end subroutine

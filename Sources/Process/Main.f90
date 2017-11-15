@@ -137,14 +137,14 @@
   call cpu_time(start)
 
   ! Test the precision
-  open(90,FORM='unformatted',file='Processor.real');
+  open(90,FORM='unformatted',file='processor.real');
   write(90) 3.1451592
   close(90)
                
   !------------------------------!
   !   Start parallel execution   !
   !------------------------------!
-  call StaPar  
+  call StaPar()
 
   call Timex(CPUtim) 
 
@@ -168,7 +168,7 @@
   call Allocate_Memory(grid)
   call Load_Geo       (grid)
   call BufLoa
-  call Exchng(grid % vol(-grid % n_bnd_cells))
+  call Exchange(grid, grid % vol(-grid % n_bnd_cells))
 
   call wait   
 
@@ -340,12 +340,12 @@
                   Pz,   Uz,   Vz)      ! dP/dz, dU/dz, dV/dz
 
       if(ALGOR == FRACT) then
-        call Exchng(A % sav)  
+        call Exchange(grid, A % sav)  
         call Balance_Mass(grid)
         call Compute_Pressure_Fractional(grid)
       endif
       if(ALGOR == SIMPLE) then
-        call Exchng(A % sav)  
+        call Exchange(grid, A % sav)  
         call Balance_Mass(grid)
         call Compute_Pressure_Simple(grid)
       end if

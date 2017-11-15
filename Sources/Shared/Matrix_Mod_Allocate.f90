@@ -1,19 +1,20 @@
 !==============================================================================!
-  subroutine Matrix_Mod_Allocate(matrix, n_bnd_cells, n_cells, n_faces)
+  subroutine Matrix_Mod_Allocate(grid, matrix)
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type)   :: grid
   type(Matrix_Type) :: matrix
-  integer           :: n_bnd_cells, n_cells, n_faces
 !==============================================================================!
 
-  write(*,*) '# Do this better!!! (Bojan)'
-
   ! Allocate memory for matrix
-  allocate (matrix % row(n_cells+1));             matrix % row=0
-  allocate (matrix % dia(n_cells));               matrix % dia=0
-  allocate (matrix % sav(-n_bnd_cells:n_cells));  matrix % sav=0
-  allocate (matrix % bou(-n_bnd_cells:-1));       matrix % bou=0
-  allocate (matrix % pos(2,n_faces));             matrix % pos=0
+  allocate (matrix % row( grid % n_cells+1));                   matrix % row = 0
+  allocate (matrix % dia( grid % n_cells));                     matrix % dia = 0
+  allocate (matrix % sav(-grid % n_bnd_cells:grid % n_cells));  matrix % sav = 0
+  allocate (matrix % bou(-grid % n_bnd_cells:-1));              matrix % bou = 0
+  allocate (matrix % pos(2,grid % n_faces));                    matrix % pos = 0
 
   end subroutine

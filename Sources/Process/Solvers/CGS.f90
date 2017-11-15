@@ -28,7 +28,7 @@
   real              :: tol                !  tolerance
   real              :: ini_res, fin_res   !  residual
 !-----------------------------------[Locals]-----------------------------------!
-  real    :: alfa, beta, rho, rhoold, bnrm2, sum1, sum2, error
+  real    :: alfa, beta, rho, rhoold, bnrm2, error
   integer :: i, j, k, iter, sub
 !==============================================================================!
            
@@ -130,7 +130,7 @@
       end do
       alfa=alfa+r2(i)*v2(i)
     end do
-    call Exchng(p2)
+    call Exchange(A % pnt_grid, p2)
     do sub=1,n_proc
       if(NBBe(sub)  <=  NBBs(sub)) then
         do k=NBBs(sub),NBBe(sub),-1
@@ -182,7 +182,7 @@
         q2(i) = q2(i) + A % val(j) * p1(k)
       end do
     end do
-    call Exchng(p1)
+    call Exchange(A % pnt_grid, p1)
     do sub=1,n_proc
       if(NBBe(sub)  <=  NBBs(sub)) then
         do k=NBBs(sub),NBBe(sub),-1

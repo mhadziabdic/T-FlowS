@@ -110,6 +110,6 @@
     end do
   end if
 
-  call Exchng(VISt)  
+  call Exchange(grid, VISt)  
 
   end subroutine

@@ -11,14 +11,17 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type)   :: grid
-  type(Matrix_Type) :: matrix
+  type(Grid_Type), target :: grid
+  type(Matrix_Type)       :: matrix
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: c, s, pos, pos1, pos2, n
   integer              :: c1, c2  ! cell 1 and 2
   integer              :: n1, n2  ! neighbour 1 and 2
   integer, allocatable :: stencw(:)
 !==============================================================================!
+
+  ! Store pointer to the grid
+  matrix % pnt_grid => grid
                   
   ! Memory allocation
   allocate(stencw(grid % n_cells)); stencw=1

@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine Exchng(phi) 
+  subroutine Exchange(grid, phi) 
 !----------------------------------------------------------------------!
 !   Exchanges the values between the processors.                       !
 !----------------------------------------------------------------------!
@@ -7,12 +7,14 @@
   use all_mod
   use par_mod
   use pro_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !------------------------------[Include]-------------------------------!
   include 'mpif.h'
 !-----------------------------[Arguments]------------------------------!
-  real    :: phi(-NbC:NC)
+  type(Grid_Type) :: grid
+  real            :: phi(-grid % n_bnd_cells:grid % n_cells)
 !-------------------------------[Locals]-------------------------------!
   integer :: c1, c2, sub, rtag, stag, length, error
   integer :: status(MPI_STATUS_SIZE)
@@ -41,7 +43,7 @@
 !-------------------------------------+---------
              (phi(NBBe(sub)),   & ! buffer  
               length,           & ! length   
-              MPI_REAL,         & ! datatype  
+              MPI_DOUBLE_PRECISION,       & ! datatype  
 !-------------------------------------+---------
               (sub-1),          & ! dest,      
               stag,             & ! sendtag,    
@@ -57,4 +59,4 @@
     end if  !  NBBe(sub)  /=  NBBs(sub)
   end do
 
-  end subroutine Exchng
+  end subroutine

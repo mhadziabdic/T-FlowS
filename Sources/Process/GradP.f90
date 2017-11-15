@@ -21,7 +21,7 @@
   integer :: s, c, c1, c2, iter
 !======================================================================!
  
-  call Exchng(phi)
+  call Exchange(grid, phi)
 
   Ps = 0.0
 

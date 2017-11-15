@@ -42,7 +42,7 @@
     call GraPhi(grid, T % n, 1, phix, .TRUE.)     ! dT/dx
     call GraPhi(grid, T % n, 2, phiy, .TRUE.)     ! dT/dy
     call GraPhi(grid, T % n, 3, phiz, .TRUE.)     ! dT/dz
-    call GraCorNew(T % n,phix,phiy,phiz) ! needed ?
+    call GraCorNew(grid, T % n, phix, phiy, phiz) ! needed ?
     do s = 1, grid % n_faces
       c1=SideC(1,s)
       c2=SideC(2,s)

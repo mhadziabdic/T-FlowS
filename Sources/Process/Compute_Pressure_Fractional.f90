@@ -218,6 +218,6 @@
 
   P % n  =  P % n  -  0.5 * (Pmax+Pmin)
 
-  call Exchng(PP % n) 
+  call Exchange(grid, PP % n) 
 
   end subroutine

@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Compute_F22(grid, var, phi, phi_x, phi_y, phi_z)
 !------------------------------------------------------------------------------!
-! Discretizes and solves eliptic relaxation equations for f22.                 !
+!   Discretizes and solves eliptic relaxation equations for f22.               !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -259,6 +259,6 @@
   
   if(this_proc < 2) write(*,*) '# ', phi % name, res(var), niter 
 
-  call Exchng(phi % n)
+  call Exchange(grid, phi % n)
 
   end subroutine

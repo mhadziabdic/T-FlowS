@@ -24,14 +24,10 @@
 
   ! Variables defined in sol.h90:
   call Solvers_Mod_Allocate_Vectors(grid % n_bnd_cells, grid % n_cells)
-  call Matrix_Mod_Allocate(D, grid % n_bnd_cells,  &
-                              grid % n_cells,      &
-                              grid % n_faces)
+  call Matrix_Mod_Allocate(grid, D)
 
   ! Variables defined in pro_mod.h90:
-  call Matrix_Mod_Allocate(A, grid % n_bnd_cells,  &
-                              grid % n_cells,      &
-                              grid % n_faces)
+  call Matrix_Mod_Allocate(grid, A)
   allocate (b(grid % n_cells));  b=0
 
   allocate (Scoef(grid % n_faces)); Scoef=0.

@@ -21,9 +21,9 @@
   real    :: Sjk
 !==============================================================================!
 
-  call Exchng(U % n)
-  call Exchng(V % n)
-  call Exchng(W % n)
+  call Exchange(grid, U % n)
+  call Exchange(grid, V % n)
+  call Exchange(grid, W % n)
 
   !---------------!
   !               !

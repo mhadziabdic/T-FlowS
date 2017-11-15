@@ -145,6 +145,6 @@
     end do
   end if
 
-  call Exchng(Kin % n)
+  call Exchange(grid, Kin % n)
 
   end subroutine

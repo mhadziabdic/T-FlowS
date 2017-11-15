@@ -602,6 +602,6 @@
     write(LineRes(85:88), '(I4)')      niter 
   end if
 
-  call Exchng(ui % n)
+  call Exchange(grid, ui % n)
 
   end subroutine

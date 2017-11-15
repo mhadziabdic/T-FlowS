@@ -32,7 +32,7 @@
 
   end do
 
-  call Exchng(phi_max)
-  call Exchng(phi_min)
+  call Exchange(grid, phi_max)
+  call Exchange(grid, phi_min)
 
   end subroutine

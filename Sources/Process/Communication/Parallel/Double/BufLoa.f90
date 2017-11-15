@@ -2,7 +2,6 @@
   subroutine BufLoa 
 !----------------------------------------------------------------------!
 ! Reads: NAME.buf                                                      !
-! ~~~~~~                                                               !
 !------------------------------[Modules]-------------------------------!
   use all_mod
   use par_mod
@@ -10,7 +9,7 @@
   implicit none
 !-------------------------------[Locals]-------------------------------!
   integer           :: c, dummy 
-  integer           :: sub, subo, NNsub,NCsub,NSsub,NBCsub,NBFsub
+  integer           :: sub, subo, NBCsub
   character(len=80) :: name_in
 !======================================================================!
 !  Each subdomain needs two buffers: a send buffer and a receive buffer.
@@ -92,4 +91,4 @@
 !->>>    write(*,'(A2,I2,3I7)') 'PE',this_proc, sub, NBBs(sub), NBBe(sub)
 !->>>  end do   ! through subdomains
 
-  end subroutine BufLoa
+  end subroutine

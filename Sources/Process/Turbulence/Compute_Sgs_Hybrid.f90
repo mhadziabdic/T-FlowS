@@ -36,6 +36,6 @@
                   * Shear(c)      
   end do
 
-  call Exchng(VISt_sgs)
+  call Exchange(grid, VISt_sgs)
 
   end subroutine

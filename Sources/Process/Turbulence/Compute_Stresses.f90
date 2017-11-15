@@ -538,6 +538,6 @@
     end do
   end if
 
-  call Exchng(phi % n)
+  call Exchange(grid, phi % n)
 
   end subroutine

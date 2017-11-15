@@ -36,7 +36,7 @@
   do n=1,10   ! browse through boundary condition types
     Nfac(n) = 0
     do s = 1, grid % n_faces   ! count the faces with boundary condition "n"
-      c2 = SideC(2,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == n) Nfac(n)=Nfac(n)+1
       end if
@@ -47,8 +47,8 @@
       write(9,'(A6,I3,I4,A7,I7,I7,A4)') '(300 (', idSc, 100+n, ' 1 0 0 ', &
                                         NtotFac+1, NtotFac+Nfac(n), ')('
       do s = 1, grid % n_faces !@@@ +NSsh
-        c1 = SideC(1,s)
-        c2 = SideC(2,s)
+        c1 = grid % faces_c(1,s)
+        c2 = grid % faces_c(2,s)
         if(c2 < 0) then
           if(BCmark(c2) == n) then
             if(TypeBC(c2) == SYMMETRY) then

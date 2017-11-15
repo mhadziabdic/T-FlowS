@@ -9,6 +9,7 @@
   use les_mod
   use par_mod
   use rans_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -22,9 +23,9 @@
   ! store the name
   if(this_proc  < 2)                                                     &
   write(*,*) '# Now saving initial files [skip cancels]:'  
-  call ReadC(CMN_FILE,inp,tn,ts,te)
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
   
-  read(inp(ts(1):te(1)), '(A80)')  name_out
+  read(token % string(token % s(1):token % e(1)), '(A80)')  name_out
   answer=name_out
   call To_Upper_Case(answer)
   

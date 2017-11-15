@@ -4,8 +4,10 @@
 !   Writes grid in encapsulated postscript format.                             !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use allp_mod
+  use all_mod, only: name
   use gen_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
@@ -29,8 +31,8 @@
   write(*,'(A39)')        ' #-----------------------------------------------'
 
   write(*,*) '# Enter the ',dir,' coordinate for cutting or type skip to exit: '
-  call ReadC(5,inp,tn,ts,te)
-  read(inp, *) answer
+  call Tokenizer_Mod_Read_Line(5)
+  read(token % string, *) answer
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return  
   read(answer, *) z0
@@ -99,8 +101,8 @@
   write(9, '(2F10.6,A4)') sclp,sclp, ' sc '
 
   do s = 1, grid % n_faces
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     x1 = xg(grid % faces_n(1,s))
     y1 = yg(grid % faces_n(1,s))

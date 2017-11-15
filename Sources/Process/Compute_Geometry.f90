@@ -29,8 +29,8 @@
   !   Calculate the distance between neighbouring cells   !
   !-------------------------------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     xc1=grid % xc(c1)
     yc1=grid % yc(c1)
@@ -53,8 +53,8 @@
   !   Calculate interpolation coefficients for fluid phase   !
   !----------------------------------------------------------!
   do s = 1, grid % n_faces                        ! 2mat
-    c1=SideC(1,s)                                 ! 2mat
-    c2=SideC(2,s)                                 ! 2mat
+    c1 = grid % faces_c(1,s)                                 ! 2mat
+    c2 = grid % faces_c(2,s)                                 ! 2mat
                                                   ! 2mat
     fF(s) = f(s)                                  ! 2mat
                                                   ! 2mat 
@@ -79,8 +79,8 @@
   IsNearWall = .FALSE.
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if(c2 < 0) then
       if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
@@ -108,8 +108,8 @@
   AreaZ = 0.0
   do m = 1, grid % n_materials
     do s = 1, grid % n_faces
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2  > 0 .or. c2 < 0.and.TypeBC(c2) == BUFFER) then
         if( (material(c1) == m) .and. (material(c1) == material(c2)) ) then
           xc1=grid % xc(c1)

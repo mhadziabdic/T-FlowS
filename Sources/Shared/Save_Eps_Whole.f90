@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
@@ -59,13 +60,13 @@
   !------------------------------!
 1 write(*,*) '# Enter the camera coordinates (skip to exit): '
   write(*,*) '#---------------------------------------------'
-  call ReadC(5,inp,tn,ts,te)
-  if(tn == 1) then 
-    read(inp, *) answer
+  call Tokenizer_Mod_Read_Line(5)
+  if(token % n == 1) then 
+    read(token % string, *) answer
     call To_Upper_Case(answer)
     if(answer == 'SKIP') return  
-  else if(tn == 3) then 
-    read(inp, *) xk, yk, zk  
+  else if(token % n == 3) then 
+    read(token % string, *) xk, yk, zk  
   end if  
   alfa = acos( xk / sqrt(xk*xk+yk*yk) )
   beta = acos( yk / sqrt(xk*xk+yk*yk) )
@@ -81,12 +82,12 @@
   !                      !
   !----------------------!
   write(*,*) '# G-> Gray or C-> Coloured (by boundary conditions): '
-  call ReadC(5,inp,tn,ts,te)
-  read(inp, *) colour 
+  call Tokenizer_Mod_Read_Line(5)
+  read(token % string, *) colour 
   call To_Upper_Case(colour);
   write(*,*) '# Enter the file name (without extension): '
-  call ReadC(5,inp,tn,ts,te)
-  read(inp, *) name_eps 
+  call Tokenizer_Mod_Read_Line(5)
+  read(token % string, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
   write(*, *) '# Now creating the file:', name_eps
 
@@ -182,8 +183,8 @@
     shade = abs(shade)
     shade = 0.4 + 0.6*shade
 
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if(c2 < 0 .or. material(c1) /= material(c2) ) then 
 

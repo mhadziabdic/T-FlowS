@@ -96,8 +96,8 @@
   !----------------------------!
   do s = 1, grid % n_faces
 
-    c1=SideC(1,s)
-    c2=SideC(2,s) 
+    c1=grid % faces_c(1,s)
+    c2=grid % faces_c(2,s) 
 
     ! Velocities on "orthogonal" cell centers 
     if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
@@ -205,8 +205,8 @@
   !----------------------------!
   do s = 1, grid % n_faces       
 
-    c1=SideC(1,s)
-    c2=SideC(2,s)   
+    c1=grid % faces_c(1,s)
+    c2=grid % faces_c(2,s)   
 
     ! VIStur is used to make diaginal element more dominant.
     ! This contribution is later substracted.
@@ -367,8 +367,8 @@
     if(SIMULA==EBM.and.MODE/=HYB) then
       do s = 1, grid % n_faces
 
-        c1=SideC(1,s)
-        c2=SideC(2,s)
+        c1=grid % faces_c(1,s)
+        c2=grid % faces_c(2,s)
 
         VISeff = (fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2)) 
 
@@ -465,8 +465,8 @@
 
   !---- Disconnect the SOLID cells from FLUID system   ! 2mat
   !  do s=1,grid % n_faces                             ! 2mat
-  !    c1=SideC(1,s)                                   ! 2mat
-  !    c2=SideC(2,s)                                   ! 2mat
+  !    c1=grid % faces_c(1,s)                                   ! 2mat
+  !    c2=grid % faces_c(2,s)                                   ! 2mat
   !    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
   !      if(c2 > 0) then ! => not buffer               ! 2mat
   !        if(StateMat(material(c1)) == SOLID) then    ! 2mat

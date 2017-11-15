@@ -8,6 +8,7 @@
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -23,8 +24,8 @@
 
   if(this_proc  < 2) &              
     write(*,*) '# Input intial restart file name [write skip to continue]:'
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)), '(A80)')  name_in
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)), '(A80)')  name_in
   answer=name_in
   call To_Upper_Case(answer) 
 
@@ -44,8 +45,8 @@
     write(*,*) '# HJ       -> HJ model.'
     write(*,*) '# EBM      -> EBM model.'
   endif
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),'(A)')  answer
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'DNS') then
     RES_INI = DNS

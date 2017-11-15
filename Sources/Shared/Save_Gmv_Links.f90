@@ -127,8 +127,8 @@
   ! Physical links; non-periodic
   nf_sub_non_per = 0 
   do s=1, grid % n_faces
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if( (NewS(s) > 0) .and. (NewS(s) <= NSsub) ) then
 
@@ -138,8 +138,8 @@
 
         nf_sub_non_per = nf_sub_non_per + 1
 
-        c1 = NewC(SideC(1,s))
-        c2 = NewC(SideC(2,s))
+        c1 = NewC(grid % faces_c(1,s))
+        c2 = NewC(grid % faces_c(2,s))
         if( c2  > 0 ) then
           write(9,*) 'general 1'
           write(9,*) '  2'
@@ -157,8 +157,8 @@
   ! Physical links; periodic
   nf_sub_per    = 0 
   do s=1, grid % n_faces
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if( (NewS(s) > 0) .and. (NewS(s) <= NSsub) ) then
 
@@ -168,8 +168,8 @@
 
         nf_sub_per = nf_sub_per + 1
 
-        c1 = NewC(SideC(1,s))
-        c2 = NewC(SideC(2,s))
+        c1 = NewC(grid % faces_c(1,s))
+        c2 = NewC(grid % faces_c(2,s))
         if( c2  > 0 ) then
           write(9,*) 'general 1'
           write(9,*) '  2'

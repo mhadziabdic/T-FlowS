@@ -258,8 +258,8 @@
     !   <= gives:      xc,yc,zc for c<0    !   
     !--------------------------------------!
     do s = 1, grid % n_faces
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
 
       tot_surf = sqrt(grid % sx(s)*grid % sx(s) +  &
                       grid % sy(s)*grid % sy(s) +  &
@@ -290,8 +290,8 @@
       grid % dy(s)=0.0
       grid % dz(s)=0.0
 
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2   >  0) then
 
         ! Scalar product of the side with line c1-c2 is a good criterion
@@ -324,8 +324,8 @@
  
             ! Add shadow faces
             grid % faces_n_nodes(grid % n_faces+NSsh-1) = 4
-            SideC(1,grid % n_faces+NSsh-1) = c1 
-            SideC(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
+            grid % faces_c(1,grid % n_faces+NSsh-1) = c1 
+            grid % faces_c(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
             grid % faces_n(1,grid % n_faces+NSsh-1) = grid % faces_n(1,s)
             grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
             grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
@@ -337,8 +337,8 @@
             grid % yf(grid % n_faces+NSsh-1) = grid % yf(s)
             grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
             grid % faces_n_nodes(grid % n_faces+NSsh) = 4
-            SideC(1, grid % n_faces+NSsh) = c2 
-            SideC(2, grid % n_faces+NSsh) = -grid % n_bnd_cells-1
+            grid % faces_c(1, grid % n_faces+NSsh) = c2 
+            grid % faces_c(2, grid % n_faces+NSsh) = -grid % n_bnd_cells-1
             grid % faces_n(1,grid % n_faces+NSsh) = grid % cells_n(f4n(m,1), c2)
             grid % faces_n(2,grid % n_faces+NSsh) = grid % cells_n(f4n(m,2), c2)
             grid % faces_n(3,grid % n_faces+NSsh) = grid % cells_n(f4n(m,3), c2)
@@ -366,8 +366,8 @@
 
             ! Add shadow faces
             grid % faces_n_nodes(grid % n_faces+NSsh-1) = 3
-            SideC(1,grid % n_faces+NSsh-1) = c1 
-            SideC(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
+            grid % faces_c(1,grid % n_faces+NSsh-1) = c1 
+            grid % faces_c(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
             grid % faces_n(1, grid % n_faces+NSsh-1) = grid % faces_n(1,s)
             grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
             grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
@@ -378,8 +378,8 @@
             grid % yf(grid % n_faces+NSsh-1) = grid % yf(s)
             grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
             grid % faces_n_nodes(grid % n_faces+NSsh) = 3
-            SideC(1, grid % n_faces+NSsh) = c2 
-            SideC(2, grid % n_faces+NSsh) = -grid % n_bnd_cells-1
+            grid % faces_c(1, grid % n_faces+NSsh) = c2 
+            grid % faces_c(2, grid % n_faces+NSsh) = -grid % n_bnd_cells-1
             grid % faces_n(1,grid % n_faces+NSsh) = grid % cells_n(f3n(m,1), c2)
             grid % faces_n(2,grid % n_faces+NSsh) = grid % cells_n(f3n(m,2), c2)
             grid % faces_n(3,grid % n_faces+NSsh) = grid % cells_n(f3n(m,3), c2)
@@ -415,8 +415,8 @@
   end do
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)   
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)   
 
     do n = 1, grid % faces_n_nodes(s)  ! for quadrilateral an triangular faces
       local_x_node(n) = grid % xn(grid % faces_n(n,s))
@@ -529,8 +529,8 @@
   else 
     do c1=1, grid % n_cells 
       do s = WallFacFst, WallFacLst      ! 1, grid % n_faces
-        c_1 = SideC(1,s)
-        c_2 = SideC(2,s)
+        c_1 = grid % faces_c(1,s)
+        c_2 = grid % faces_c(2,s)
         if(c_2 < 0) then
           if(BCmark(c_2) <= wall_mark) then
             WallDs(c1)=min(WallDs(c1), &
@@ -566,8 +566,8 @@
   end do
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0 .or. material(c1) /= material(c2)) then 
       do n = 1, grid % faces_n_nodes(s)  ! for quadrilateral an triangular faces
         walln(grid % faces_n(n,s)) = 0.0
@@ -589,8 +589,8 @@
   !------------------------------------------------------------!
   if(rrun) then
     do s = 1, grid % n_faces
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
   
       ! First cell
       xc1 = grid % xc(c1)

@@ -22,8 +22,8 @@
   do m = 1, grid % n_materials
     MassIn(m) = 0.0
     do s = 1, grid % n_faces
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         Flux(s) = DENc(material(c1))*( U % n(c2)*grid % sx(s) + &
                                        V % n(c2)*grid % sy(s) + &
@@ -50,8 +50,8 @@
   do m = 1, grid % n_materials
     MASOUT(m) = 0.0
     do s = 1, grid % n_faces
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2  < 0) then
         if(TypeBC(c2) == OUTFLOW) then
             U % n(c2) = U % n(c1)
@@ -87,8 +87,8 @@
 
   do m = 1, grid % n_materials
     do s = 1, grid % n_faces
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2  < 0) then
         if(TypeBC(c2) == OUTFLOW  .or. TypeBC(c2) == CONVECT &
           .or. TypeBC(c2) == PRESSURE) then

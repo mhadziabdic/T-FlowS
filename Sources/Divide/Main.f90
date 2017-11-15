@@ -8,6 +8,7 @@
   use gen_mod 
   use div_mod
   use par_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -31,8 +32,8 @@
   call Logo
 
   write(*,'(A41)') '# Input problem name: (without extension)'
-  call ReadC(5,inp,tn,ts,te)  
-  read(inp, '(A80)')  name
+  call Tokenizer_Mod_Read_Line(5)  
+  read(token % string, '(A80)')  name
 
   ! Load the finite volume grid
   call Load_Cns(grid)

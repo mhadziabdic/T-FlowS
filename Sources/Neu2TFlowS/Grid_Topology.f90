@@ -77,8 +77,8 @@
 
         ! Sides
         grid % n_faces  = grid % n_faces  + 1
-        SideC(1,grid % n_faces) = i
-        SideC(2,grid % n_faces) = -grid % n_bnd_cells
+        grid % faces_c(1,grid % n_faces) = i
+        grid % faces_c(2,grid % n_faces) = -grid % n_bnd_cells
 
         ! Hexahedra:
         if(grid % cells_n_nodes(i) == 8) then

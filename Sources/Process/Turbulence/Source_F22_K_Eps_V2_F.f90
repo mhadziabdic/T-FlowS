@@ -68,8 +68,8 @@
 
    ! Imposing boundary condition for f22 on the wall
    do s = 1, grid % n_faces
-     c1=SideC(1,s)
-     c2=SideC(2,s)
+     c1=grid % faces_c(1,s)
+     c2=grid % faces_c(2,s)
      if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
 
@@ -97,8 +97,8 @@
 
    ! Imposing boundary condition for f22 on the wall
    do s = 1, grid % n_faces
-     c1=SideC(1,s)
-     c2=SideC(2,s)
+     c1=grid % faces_c(1,s)
+     c2=grid % faces_c(2,s)
      if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
          f22 % n(c2) = -20.0*VISc**2*v_2 % n(c1)/                     &

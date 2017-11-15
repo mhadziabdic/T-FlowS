@@ -34,13 +34,13 @@
       write(9,*) grid % faces_n(1,s),  &
                  grid % faces_n(2,s),  &
                  grid % faces_n(3,s),  &
-                 SideC(1,s), SideC(2,s) 
+                 grid % faces_c(1,s), grid % faces_c(2,s) 
     else if(grid % faces_n_nodes(s)==4) then
       write(9,*) grid % faces_n(1,s),  &
                  grid % faces_n(2,s),  &
                  grid % faces_n(3,s),  &
                  grid % faces_n(4,s),  &
-                 SideC(1,s), SideC(2,s) 
+                 grid % faces_c(1,s), grid % faces_c(2,s) 
     end if
   end do  
 

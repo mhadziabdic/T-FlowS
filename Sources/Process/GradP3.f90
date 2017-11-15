@@ -36,8 +36,8 @@
   !   First step: without any wall influence, except outflow   !
   !------------------------------------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 > 0                            .or. &
        c2 < 0 .and. TypeBC(c2) == BUFFER .or. &
        c2 < 0 .and. TypeBC(c2) == OUTFLOW) then  
@@ -66,8 +66,8 @@
   !   Second step: extrapolate to boundaries, except outflow   !
   !------------------------------------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0               .and. &
        TypeBC(c2) /= BUFFER .and. &
        TypeBC(c2) /= OUTFLOW) then  
@@ -117,8 +117,8 @@
   !   Third step: compute the final gradients   !
   !---------------------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0               .and. &
        TypeBC(c2) /= BUFFER .and. &
        TypeBC(c2) /= OUTFLOW) then  

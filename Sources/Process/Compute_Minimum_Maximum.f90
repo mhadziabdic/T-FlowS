@@ -20,8 +20,8 @@
   phi_min = phi 
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if( (c2>0) .or. (c2<0 .and. TypeBC(c2)==BUFFER) ) then
       phi_max(c1) = max(phi_max(c1), phi(c2))

@@ -7,6 +7,7 @@
   use pro_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -28,8 +29,8 @@
   else
     if(this_proc  < 2)  &
       write(*,*) '# Input result file name [skip cancels]:'
-    call ReadC(CMN_FILE,inp,tn,ts,te)  
-    read(inp(ts(1):te(1)),'(A80)')  name
+    call Tokenizer_Mod_Read_Line(CMN_FILE)  
+    read(token % string(token % s(1):token % e(1)),'(A80)')  name
     answer=name
     call To_Upper_Case(answer) 
     if(answer == 'SKIP') then
@@ -256,7 +257,7 @@
   do n=1,10   ! Browse through boundary condition types
     Nfac(n) = 0
     do s = 1, grid % n_faces   ! Count the faces with boundary condition "n"
-      c2 = SideC(2,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == n) Nfac(n)=Nfac(n)+1
       end if

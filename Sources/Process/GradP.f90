@@ -32,8 +32,8 @@
   end do
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
       if(TypeBC(c2) /= PRESSURE) then  
         phi(c2) = phi(c1)
@@ -48,8 +48,8 @@
   do iter=1,1 
 
     do s = 1, grid % n_faces
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
         if(TypeBC(c2) /= PRESSURE) then                  
           phi(c2) = phi(c1) + 1.2 * ( phi_x(c1) * (grid % xc(c2)-grid % xc(c1)) &  

@@ -18,19 +18,14 @@ module all_mod
   !   Variables for ease of input/output   !
   !----------------------------------------!
   character(len=80)  :: name
-  character(len=300) :: inp*300
-  integer            :: tn, ts(300), te(300)
-  integer            :: cmn_line_count
 
   !-------------------------------------------!
   !   Logical quantities desribing the grid   !
   !-------------------------------------------!
   integer   :: MNBS
   integer   :: n_copy                    ! number of copy cells/faces
-  logical   :: Mater(1024)               ! is the material present ?
 
   integer,allocatable :: material(:)     ! material markers
-  integer,allocatable :: SideC(:,:)      !  c0, c1, c2
 
   integer,allocatable :: TypeBC(:)       ! type of boundary condition
   integer,allocatable :: bcmark(:)

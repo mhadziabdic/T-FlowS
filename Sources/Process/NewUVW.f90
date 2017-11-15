@@ -151,8 +151,8 @@
   !----------------------------!
   do s=1,grid % n_faces
 
-    c1=SideC(1,s)
-    c2=SideC(2,s) 
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s) 
 
     ! Central differencing
     uis=f(s)*ui % n(c1) + (1.0-f(s))*ui % n(c2)
@@ -239,8 +239,8 @@
   !----------------------------!
   do s=1,grid % n_faces       
 
-    c1=SideC(1,s)
-    c2=SideC(2,s)   
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)   
 
     VISeff = fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2) + VISc
 
@@ -414,8 +414,8 @@
   if(SIMULA == EBM.or.SIMULA == HJ) then
     if(MODE /= HYB) then
       do s=1,grid % n_faces
-        c1=SideC(1,s)
-        c2=SideC(2,s)
+        c1 = grid % faces_c(1,s)
+        c2 = grid % faces_c(2,s)
 
         VIStS = (fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2))
         A0 = Scoef(s)*VIStS 
@@ -548,8 +548,8 @@
 
 !---- Disconnect the SOLID cells from FLUID system  ! 2mat
 !  do s=1,grid % n_faces                             ! 2mat
-!    c1=SideC(1,s)                                   ! 2mat
-!    c2=SideC(2,s)                                   ! 2mat
+!    c1 = grid % faces_c(1,s)                                   ! 2mat
+!    c2 = grid % faces_c(2,s)                                   ! 2mat
 !    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
 !      if(c2 > 0) then ! => not buffer               ! 2mat
 !        if(StateMat(material(c1)) == SOLID) then    ! 2mat

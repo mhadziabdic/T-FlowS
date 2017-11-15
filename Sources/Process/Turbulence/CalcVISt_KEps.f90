@@ -48,8 +48,8 @@
     end do
     if(ROUGH==NO) then
       do s = 1, grid % n_faces
-        c1 = SideC(1,s)
-        c2 = SideC(2,s)
+        c1 = grid % faces_c(1,s)
+        c2 = grid % faces_c(2,s)
         if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then  
           if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
             Ck = sqrt(TauWall(c1))
@@ -60,8 +60,8 @@
       end do
     else if(ROUGH==YES) then
       do s = 1, grid % n_faces
-        c1 = SideC(1,s)
-        c2 = SideC(2,s)
+        c1 = grid % faces_c(1,s)
+        c2 = grid % faces_c(2,s)
         if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
           if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
             Ck = sqrt(TauWall(c1))
@@ -82,8 +82,8 @@
   end if
   if(HOT == YES) then
     do s = 1, grid % n_faces
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then  
         if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
           Prmol = VISc * CAPc(material(c1)) / CONc(material(c1))

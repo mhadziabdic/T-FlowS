@@ -5,7 +5,6 @@
 !   It relies only on SideC structure. Try to keep it that way.                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod, only: SideC
   use par_mod, only: this_proc
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -33,8 +32,8 @@
 
   ! Compute stencis widths
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2  > 0) then
       stencw(c1)=stencw(c1)+1
       stencw(c2)=stencw(c2)+1
@@ -61,8 +60,8 @@
 
   ! Extend matrix % col entries with off-diagonal terms      
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2  > 0) then
       matrix % col(matrix % row(c1)+stencw(c1)) = c2
       matrix % col(matrix % row(c2)+stencw(c2)) = c1
@@ -105,8 +104,8 @@
 
   ! Connect faces with matrix entries
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2  > 0) then
 
       ! Where is matrix(c1,c2) and ...

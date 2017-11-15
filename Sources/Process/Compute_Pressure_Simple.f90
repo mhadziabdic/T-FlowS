@@ -55,8 +55,8 @@
   !   Calculate the mass fluxes on the cell faces   !
   !-------------------------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     DENs =      f(s)  * DENc(material(c1))     &
          + (1.0-f(s)) * DENc(material(c2))

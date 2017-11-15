@@ -9,6 +9,7 @@
   use les_mod
   use par_mod
   use rans_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -33,22 +34,22 @@
     write(*,*) '# (type 0 if you just want to analyse results)'
     write(*,*) '#-----------------------------------------------'
   end if
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp,*)  Ndt
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string,*)  Ndt
 
   ! Starting time step for statistics 
   if(this_proc  < 2)  &
     write(*,*) '# Starting time step for statistics (',Nstat,') '
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp,*)  Nstat
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string,*)  Nstat
   if(BUDG == YES) then
-    read(inp(ts(2):te(2)),*) Nbudg
+    read(token % string(token % s(2):token % e(2)),*) Nbudg
   end if
 
   if(this_proc  < 2)  & 
     write(*,*) '# Number of monitoring points:'
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp,*) Nmon 
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string,*) Nmon 
 
   allocate (mres(Nmon))
   allocate (xm(Nmon))
@@ -58,8 +59,8 @@
   if(this_proc  < 2)  &
     write(*,*) '# Enter the coordinates of monitoring point(s)'
   do i=1,Nmon
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*)  xm(i), ym(i), zm(i)
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*)  xm(i), ym(i), zm(i)
   end do
 
   ! Find the monitoring cells
@@ -108,8 +109,8 @@
       write(*,*) '# Enter the coordinates of monitoring plane: (', &
                   xp(m), yp(m), zp(m), ' )'
     end if
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*) xp(m), yp(m), zp(m)
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*) xp(m), yp(m), zp(m)
   end do
 
   ! Kind of simulation
@@ -122,8 +123,8 @@
     write(*,*) '# SPA_ALL  -> Spalart-Allmaras model.' 
     write(*,*) '# ZETA  -> k-eps-zeta-f model.' 
   endif
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),'(A)')  answer
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'DNS') then
     SIMULA = DNS
@@ -156,7 +157,7 @@
   endif
 
   if(SIMULA==EBM.or.SIMULA==HJ) then
-    read(inp(ts(2):te(2)),'(A8)') answer
+    read(token % string(token % s(2):token % e(2)),'(A8)') answer
     call To_Upper_Case(answer)
     if(answer == 'HYB') then
       MODE = HYB 
@@ -166,7 +167,7 @@
   end if 
 
   if(SIMULA==K_EPS) then
-    read(inp(ts(2):te(2)),'(A8)') answer
+    read(token % string(token % s(2):token % e(2)),'(A8)') answer
     call To_Upper_Case(answer)
     if(answer == 'HRE') then
       MODE = HRE
@@ -182,7 +183,7 @@
   end if
 
   if(SIMULA==LES.or.SIMULA==HYB_ZETA) then
-    read(inp(ts(2):te(2)),'(A8)') answer
+    read(token % string(token % s(2):token % e(2)),'(A8)') answer
     call To_Upper_Case(answer)
     if(answer == 'SMAG') then
       MODE = SMAG 
@@ -202,7 +203,7 @@
   if(SIMULA  ==  LES.and.MODE == SMAG) then
     if(this_proc  < 2)  &
       write(*,*) '# C Smagorinsky = ', Cs0, ' enter the new value: '
-    read(inp(ts(3):te(3)),*) Cs0
+    read(token % string(token % s(3):token % e(3)),*) Cs0
   endif 
 
     
@@ -214,8 +215,8 @@
         write(*,*) '# YES -> shake'
         write(*,*) '# NO  -> don''t shake'
       end if
-      call ReadC(CMN_FILE,inp,tn,ts,te)
-      read(inp(ts(1):te(1)),'(A)')  answer
+      call Tokenizer_Mod_Read_Line(CMN_FILE)
+      read(token % string(token % s(1):token % e(1)),'(A)')  answer
       call To_Upper_Case(answer)
       if(answer == 'YES') then
         SHAKE(m) = YES
@@ -231,12 +232,12 @@
       if(SHAKE(m) == YES) then
         if(this_proc < 2) &
           write(*,*) '# For how many time steps you want to shake ?'
-        call ReadC(CMN_FILE,inp,tn,ts,te)
-        read(inp,*) SHAKE_PER(m) 
+        call Tokenizer_Mod_Read_Line(CMN_FILE)
+        read(token % string,*) SHAKE_PER(m) 
         if(this_proc < 2) &
           write(*,*) '# Interval for shaking:', SHAKE_PER(m)
-        call ReadC(CMN_FILE,inp,tn,ts,te)
-        read(inp,*) SHAKE_INT(m)
+        call Tokenizer_Mod_Read_Line(CMN_FILE)
+        read(token % string,*) SHAKE_INT(m)
       end if
     endif 
   end do
@@ -378,13 +379,13 @@
     write(*,*) '# SIMPLE [Nini] -> S. I. M. P. L. E.'
     write(*,*) '# FRACTION      -> Fractional step method'
   endif 
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),'(A)')  answer
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'SIMPLE') then
     ALGOR = SIMPLE
     Nini  = 10
-    if(tn==2) read(inp(ts(2):te(2)),*) Nini
+    if(token % n==2) read(token % string(token % s(2):token % e(2)),*) Nini
   else if(answer == 'FRACTION') then
     ALGOR = FRACT
     Nini  = 1
@@ -398,20 +399,20 @@
 
   if(ALGOR == SIMPLE) then
     if(this_proc < 2) write(*,*) '# Under Relaxation Factor for velocity (',U % URF,')'
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*)  U % URF
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*)  U % URF
     if(this_proc < 2) write(*,*) '# Under Relaxation Factor for pressure (',P % URF,')'
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*)  P % URF
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*)  P % URF
     if(HOT == YES) then
       if(this_proc < 2) write(*,*) '# Under Relaxation Factor for temperature (',T % URF,')'
-      call ReadC(CMN_FILE,inp,tn,ts,te)
-      read(inp,*)  T % URF
+      call Tokenizer_Mod_Read_Line(CMN_FILE)
+      read(token % string,*)  T % URF
     end if
     if(SIMULA /= LES .and. SIMULA /= DNS) then
       if(this_proc < 2) write(*,*) '# Under Relaxation Factor for turbulent variables (',T % URF,')'
-      call ReadC(CMN_FILE,inp,tn,ts,te)
-      read(inp,*)  URFT
+      call Tokenizer_Mod_Read_Line(CMN_FILE)
+      read(token % string,*)  URFT
     end if
   endif
   Kin % URF   = URFT
@@ -432,8 +433,8 @@
     write(*,*) '# LIN -> Linear'
     write(*,*) '# PAR -> Parabolic'
   endif 
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),'(A)')  answer
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'LIN') then
     INERT = LIN
@@ -453,8 +454,8 @@
     write(*,*) '# CN -> Crank-Nicholson'
     write(*,*) '# FI -> Fully Implicit'
   endif 
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),'(A)')  answer
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'AB') then
     CONVEC = AB
@@ -476,8 +477,8 @@
     write(*,*) '# CN -> Crank-Nicholson'
     write(*,*) '# FI -> Fully Implicit'
   endif 
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),'(A)')  answer
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'AB') then
     DIFFUS = AB
@@ -499,8 +500,8 @@
     write(*,*) '# CN -> Crank-Nicholson'
     write(*,*) '# FI -> Fully Implicit'
   endif 
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),'(A)')  answer
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'AB') then
     CROSS = AB
@@ -531,12 +532,12 @@
       write(*,*) '# SMART     -> self descriptive'
       write(*,*) '# AVL_SMART -> self descriptive'
     endif 
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp(ts(1):te(1)),'(A)')  answer
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string(token % s(1):token % e(1)),'(A)')  answer
     call To_Upper_Case(answer)
     if(answer == 'BLEND_CDS_UDS') then
       BLEND(m) = YES
-      if(tn==2) read(inp(ts(2):te(2)),*) URFC(m)
+      if(token % n==2) read(token % string(token % s(2):token % e(2)),*) URFC(m)
     else if(answer == 'NO') then
       BLEND(m) = NO
     else if(answer == 'UDS') then
@@ -573,12 +574,12 @@
       if(this_proc  < 2) then
         write(*,*) '# Convetive schemes for energy equation:'
       endif 
-      call ReadC(CMN_FILE,inp,tn,ts,te)
-      read(inp(ts(1):te(1)),'(A)')  answer
+      call Tokenizer_Mod_Read_Line(CMN_FILE)
+      read(token % string(token % s(1):token % e(1)),'(A)')  answer
       call To_Upper_Case(answer)
       if(answer == 'BLEND_TEM_CDS_UDS') then
         BLEND_TEM(m) = YES
-        if(tn==2) read(inp(ts(2):te(2)),*) URFC_Tem(m)
+        if(token % n==2) read(token % string(token % s(2):token % e(2)),*) URFC_Tem(m)
       else if(answer == 'NO') then
         BLEND_TEM(m) = NO
       else if(answer == 'UDS') then
@@ -616,12 +617,13 @@
       if(this_proc  < 2) then
         write(*,*) '# Convetive schemes for transport equation:'
       endif 
-      call ReadC(CMN_FILE,inp,tn,ts,te)
-      read(inp(ts(1):te(1)),'(A)')  answer
+      call Tokenizer_Mod_Read_Line(CMN_FILE)
+      read(token % string(token % s(1):token % e(1)),'(A)')  answer
       call To_Upper_Case(answer)
       if(answer == 'BLEND_TUR_CDS_UDS') then
         BLEND_TUR(m) = YES
-        if(tn==2) read(inp(ts(2):te(2)),*) URFC_Tur(m)
+        if(token % n==2)  &
+          read(token % string(token % s(2):token % e(2)),*) URFC_Tur(m)
       else if(answer == 'NO') then
         BLEND_TUR(m) = NO
       else if(answer == 'UDS') then
@@ -660,8 +662,8 @@
     write(*,*) '# DI -> Diagonal preconditioning'
     write(*,*) '# IC -> Incomplete Cholesky'
   endif 
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),'(A)')  answer
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'NO') then
     PREC = 0 
@@ -679,18 +681,18 @@
 
   if(this_proc  < 2)  &
     write(*,*) '# Tolerance for velocity solver: (',U % STol,' )'
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*)    U % STol
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*)    U % STol
     V % Stol     = U % Stol
     W % Stol     = U % Stol
   if(this_proc  < 2)  &
     write(*,*) '# Tolerance for pressure solver: (',PP % STol,' )'
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*)   PP % STol
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*)   PP % STol
     P % Stol = PP % Stol
   if(SIMULA/=LES.and.SIMULA/=DNS) then
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*)    Kin % STol
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*)    Kin % STol
     Eps % Stol   = Kin % Stol
     v_2 % Stol   = Kin % Stol
     f22 % Stol   = Kin % Stol
@@ -705,35 +707,35 @@
   if(HOT == YES) then
     if(this_proc  < 2)  &
       write(*,*) '# Tolerance for temperature solver: (',T % STol,' )'
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*)    T % STol
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*)    T % STol
   end if
  
   if(ALGOR == SIMPLE) then
     if(this_proc  < 2)  &
       write(*,*) '# Tolerance for SIMPLE: (',SIMTol,' )'
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*)   SIMTol
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*)   SIMTol
   endif     
 
   ! Time step
   if(this_proc  < 2)  &
     write(*,*) '# Time step: (',dt,' )'
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp,*)   dt
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string,*)   dt
 
   ! Wall velocity 
   do m=1,grid % n_materials
     if(this_proc  < 2)  &
       write(*,*) '# Enter Pdrop (x, y, z) for domain ', m
-    call ReadC(CMN_FILE,inp,tn,ts,te) 
+    call Tokenizer_Mod_Read_Line(CMN_FILE) 
     if(.not. restar) then 
-      read(inp,*)  PdropX(m), PdropY(m), PdropZ(m)
+      read(token % string,*)  PdropX(m), PdropY(m), PdropZ(m)
       UTau(m) = sqrt(abs(PdropX(m))) ! delta=1, nu=1 
       VTau(m) = sqrt(abs(PdropY(m))) ! delta=1, nu=1 
       WTau(m) = sqrt(abs(PdropZ(m))) ! delta=1, nu=1 
     else
-      read(inp,*)  dummy, dummy, dummy 
+      read(token % string,*)  dummy, dummy, dummy 
     end if     
   end do
 
@@ -743,9 +745,9 @@
       write(*,*) '# Enter the wanted mass flux through domain ', m
       write(*,*) '# (type 0.0 to keep the pressure drop constant)'
     endif 
-    call ReadC(CMN_FILE,inp,tn,ts,te) 
-    if(.not. restar) read(inp,*)  FLUXoX(m), FLUXoY(m), FLUXoZ(m)
-    if(restar)       read(inp,*)  dummy, dummy, dummy 
+    call Tokenizer_Mod_Read_Line(CMN_FILE) 
+    if(.not. restar) read(token % string,*)  FLUXoX(m), FLUXoY(m), FLUXoZ(m)
+    if(restar)       read(token % string,*)  dummy, dummy, dummy 
   end do
 
   call Wait   

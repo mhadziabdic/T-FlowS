@@ -13,6 +13,6 @@
 
     character(len=80) :: name
 
-  end type Boundary_Condition_Type
+  end type
 
-  end module Boundary_Condition_Mod
+  end module

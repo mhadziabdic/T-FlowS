@@ -3,7 +3,6 @@
 !------------------------------------------------------------------------------!
 !   Determines the topology of the cells, faces and boundary cells.            !
 !------------------------------------------------------------------------------!
-!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
@@ -66,8 +65,8 @@
         grid % n_faces=grid % n_faces+1
 
         ! Which volumes are connected with side grid % n_faces
-        SideC(1, grid % n_faces)=c1
-        SideC(2,grid % n_faces)=c2 
+        grid % faces_c(1, grid % n_faces)=c1
+        grid % faces_c(2,grid % n_faces)=c2 
 
         ! Which is c2 neighbour of c1 and vice versa
         do c = 1,24
@@ -135,17 +134,17 @@
   !   Find the side oposite on the boundary   !
   !-------------------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2  < 0) then
       do i=1,6
         if(grid % cells_c(i,c1)  ==  c2) then
-          if(i == 1) SideC(0,s) = grid % cells_c(6,c1)
-          if(i == 2) SideC(0,s) = grid % cells_c(4,c1)
-          if(i == 3) SideC(0,s) = grid % cells_c(5,c1)
-          if(i == 4) SideC(0,s) = grid % cells_c(2,c1)
-          if(i == 5) SideC(0,s) = grid % cells_c(3,c1)
-          if(i == 6) SideC(0,s) = grid % cells_c(1,c1)
+          if(i == 1) grid % faces_c(0,s) = grid % cells_c(6,c1)
+          if(i == 2) grid % faces_c(0,s) = grid % cells_c(4,c1)
+          if(i == 3) grid % faces_c(0,s) = grid % cells_c(5,c1)
+          if(i == 4) grid % faces_c(0,s) = grid % cells_c(2,c1)
+          if(i == 5) grid % faces_c(0,s) = grid % cells_c(3,c1)
+          if(i == 6) grid % faces_c(0,s) = grid % cells_c(1,c1)
         end if
       end do
     end if
@@ -155,8 +154,8 @@
   !   Find the boundary cell on which you should copy     ! 
   !-------------------------------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0 .and. CopyC(c1) /= 0) then
       if(BCmark(c2) == copy_cond(1,0)) then
         CopyC(c2) = CopyC(c1)

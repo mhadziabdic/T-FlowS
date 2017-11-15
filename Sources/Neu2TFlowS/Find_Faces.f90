@@ -128,8 +128,8 @@
                       max( MatchNodes(fn(j,3)),0 ) + &
                       max( MatchNodes(fn(j,4)),0 ) == Nmatch ) ) then
                   grid % n_faces = grid % n_faces + 1 
-                  SideC(1,grid % n_faces) = c1
-                  SideC(2,grid % n_faces) = c2
+                  grid % faces_c(1,grid % n_faces) = c1
+                  grid % faces_c(2,grid % n_faces) = c2
                   grid % faces_n_nodes(grid % n_faces) = Nmatch 
                   do k = 1, 4
                     if(fn(j,k) > 0) then

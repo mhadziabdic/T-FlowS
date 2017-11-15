@@ -7,6 +7,7 @@
   use pro_mod
   use rans_mod
   use par_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -37,281 +38,284 @@
   !-------------------------!
   !   Phisical properties   !
   !-------------------------!
-  call ReadC(9,inp,tn,ts,te)
-  read(inp,*) grid % n_materials
+  call Tokenizer_Mod_Read_Line(9)
+  read(token % string,*) grid % n_materials
   do mt = 1,grid % n_materials
 
-    call ReadC(9,inp,tn,ts,te)
-    call To_Upper_Case(  inp(ts(1):te(1))  )
-    call To_Upper_Case(  inp(ts(2):te(2))  )
-    read(inp(ts(1):te(1)),*) mt_name
+    call Tokenizer_Mod_Read_Line(9)
+    call To_Upper_Case(  token % string(token % s(1):token % e(1))  )
+    call To_Upper_Case(  token % string(token % s(2):token % e(2))  )
+    read(token % string(token % s(1):token % e(1)),*) mt_name
 
     ! Find material index
     do i=1, grid % n_materials 
       if(mt_name == grid % materials(i) % name) n=i      
     end do
 
-    if( inp(ts(2):te(2))  ==  'FLUID') then 
+    if( token % string(token % s(2):token % e(2))  ==  'FLUID') then 
       StateMat(n)=FLUID
-    else if( inp(ts(2):te(2))  ==  'SOLID') then 
+    else if( token % string(token % s(2):token % e(2))  ==  'SOLID') then 
       StateMat(n)=SOLID
     else 
       if(this_proc < 2) write(*,*) 'Load_Boundary_Conditions: Unknown material state'
       stop  
     end if
-    read(inp(ts(3):te(3)),*) VISc
-    read(inp(ts(4):te(4)),*) DENc(n)
-    if(HOT==YES) read(inp(ts(5):te(5)),*) CONc(n)
-    if(HOT==YES) read(inp(ts(6):te(6)),*) CAPc(n)
+    read(token % string(token % s(3):token % e(3)),*) VISc
+    read(token % string(token % s(4):token % e(4)),*) DENc(n)
+    if(HOT==YES) read(token % string(token % s(5):token % e(5)),*) CONc(n)
+    if(HOT==YES) read(token % string(token % s(6):token % e(6)),*) CAPc(n)
   end do
   
   !-----------------------------------------------------!
   !   Boundary conditions 1 - read them from the file   !
   !-----------------------------------------------------!
-  call ReadC(9,inp,tn,ts,te)
-  read(inp,*) grid % n_boundary_conditions
+  call Tokenizer_Mod_Read_Line(9)
+  read(token % string,*) grid % n_boundary_conditions
 
   do bc = 1,grid % n_boundary_conditions  ! number of boundary conditions
 
-    call ReadC(9,inp,tn,ts,te)
-    call To_Upper_Case(  inp(ts(1):te(1))  )
-    call To_Upper_Case(  inp(ts(2):te(2))  )
-    call To_Upper_Case(  inp(ts(3):te(3))  )
-    read(inp(ts(1):te(1)),*) bc_name
+    call Tokenizer_Mod_Read_Line(9)
+    call To_Upper_Case(  token % string(token % s(1):token % e(1))  )
+    call To_Upper_Case(  token % string(token % s(2):token % e(2))  )
+    call To_Upper_Case(  token % string(token % s(3):token % e(3))  )
+    read(token % string(token % s(1):token % e(1)),*) bc_name
 
     ! Find b.c. index
     do i=1, grid % n_boundary_conditions 
       if(bc_name == grid % boundary_conditions(i) % name) n=i      
     end do
 
-    if( inp(ts(2):te(2)) == 'INFLOW') then 
+    if( token % string(token % s(2):token % e(2)) == 'INFLOW') then 
       typBou(n)=INFLOW
       PER_BC = NO
-    else if( inp(ts(2):te(2)) == 'WALL') then 
+    else if( token % string(token % s(2):token % e(2)) == 'WALL') then 
       typBou(n)=WALL
-    else if( inp(ts(2):te(2)) == 'OUTFLOW') then 
+    else if( token % string(token % s(2):token % e(2)) == 'OUTFLOW') then 
       typBou(n)=OUTFLOW
-    else if( inp(ts(2):te(2)) == 'SYMMETRY') then 
+    else if( token % string(token % s(2):token % e(2)) == 'SYMMETRY') then 
       typBou(n)=SYMMETRY
-    else if( inp(ts(2):te(2)) == 'WALLFLUX') then 
+    else if( token % string(token % s(2):token % e(2)) == 'WALLFLUX') then 
       typBou(n)=WALLFL
-    else if( inp(ts(2):te(2)) == 'CONVECTIVE') then 
+    else if( token % string(token % s(2):token % e(2)) == 'CONVECTIVE') then 
       typBou(n)=CONVECT
-    else if( inp(ts(2):te(2)) == 'PRESSURE') then 
+    else if( token % string(token % s(2):token % e(2)) == 'PRESSURE') then 
       typBou(n)=PRESSURE
     else
-      if(this_proc < 2) write(*,*) 'Load_Boundary_Conditions: Unknown boundary condition type: ', inp(ts(2):te(2))
+      if(this_proc < 2)  &
+        write(*,*) 'Load_Boundary_Conditions: '//        &
+                   'Unknown boundary condition type: ',  &
+                   token % string(token % s(2):token % e(2))
       stop  
     end if
-    if( inp(ts(3):te(3))  ==  'FILE') then
-      read(inp(ts(4):te(4)),'(A80)') name_prof(n)
+    if( token % string(token % s(3):token % e(3))  ==  'FILE') then
+      read(token % string(token % s(4):token % e(4)),'(A80)') name_prof(n)
       write(*,*) 'n =            ', n
       write(*,*) 'name_prof(n) = ', name_prof(n)
     else
-      read(inp(ts(3):te(3)),*) U % bound(n)
-      read(inp(ts(4):te(4)),*) V % bound(n)
-      read(inp(ts(5):te(5)),*) W % bound(n)
+      read(token % string(token % s(3):token % e(3)),*) U % bound(n)
+      read(token % string(token % s(4):token % e(4)),*) V % bound(n)
+      read(token % string(token % s(5):token % e(5)),*) W % bound(n)
       if(typBou(n)==PRESSURE) then
-        read(inp(ts(6):te(6)),*) P % bound(n)
+        read(token % string(token % s(6):token % e(6)),*) P % bound(n)
         if(HOT==YES) then 
-          read(inp(ts(7):te(7)),*) T % bound(n)
+          read(token % string(token % s(7):token % e(7)),*) T % bound(n)
           if(SIMULA==EBM.or.SIMULA==HJ) then
-            read(inp(ts(8):te(8)),*)   uu % bound(n)
-            read(inp(ts(9):te(9)),*)   vv % bound(n)
-            read(inp(ts(10):te(10)),*) ww % bound(n)
-            read(inp(ts(11):te(11)),*) uv % bound(n)
-            read(inp(ts(12):te(12)),*) uw % bound(n)
-            read(inp(ts(13):te(13)),*) vw % bound(n)
-            read(inp(ts(14):te(14)),*) Eps% bound(n)
-            if(SIMULA==EBM) read(inp(ts(15):te(15)),*) f22 % bound(n)
+            read(token % string(token % s(8):token % e(8)),*)   uu % bound(n)
+            read(token % string(token % s(9):token % e(9)),*)   vv % bound(n)
+            read(token % string(token % s(10):token % e(10)),*) ww % bound(n)
+            read(token % string(token % s(11):token % e(11)),*) uv % bound(n)
+            read(token % string(token % s(12):token % e(12)),*) uw % bound(n)
+            read(token % string(token % s(13):token % e(13)),*) vw % bound(n)
+            read(token % string(token % s(14):token % e(14)),*) Eps% bound(n)
+            if(SIMULA==EBM) read(token % string(token % s(15):token % e(15)),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(inp(ts(8):te(8)),*) Kin % bound(n)
-            read(inp(ts(9):te(9)),*) Eps % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) Kin % bound(n)
+            read(token % string(token % s(9):token % e(9)),*) Eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(inp(ts(8):te(8)),*) Kin % bound(n)
-            read(inp(ts(9):te(9)),*) Eps % bound(n)
-            read(inp(ts(10):te(10)),*) v_2 % bound(n)
-            read(inp(ts(11):te(11)),*) f22 % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) Kin % bound(n)
+            read(token % string(token % s(9):token % e(9)),*) Eps % bound(n)
+            read(token % string(token % s(10):token % e(10)),*) v_2 % bound(n)
+            read(token % string(token % s(11):token % e(11)),*) f22 % bound(n)
           end if
           if(SIMULA == SPA_ALL) then
-            read(inp(ts(8):te(8)),*) VIS % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) VIS % bound(n)
           end if
           if(SIMULA == DES_SPA) then
-            read(inp(ts(8):te(8)),*) VIS % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) VIS % bound(n)
           end if
         else  ! HOT .ne. YES
           if(SIMULA==EBM.or.SIMULA==HJ) then
-            read(inp(ts(7):te(7)),*)   uu % bound(n)
-            read(inp(ts(8):te(8)),*)   vv % bound(n)
-            read(inp(ts(9):te(9)),*) ww % bound(n)
-            read(inp(ts(10):te(10)),*) uv % bound(n)
-            read(inp(ts(11):te(11)),*) uw % bound(n)
-            read(inp(ts(12):te(12)),*) vw % bound(n)
-            read(inp(ts(13):te(13)),*) Eps% bound(n)
-            if(SIMULA==EBM) read(inp(ts(14):te(14)),*) f22 % bound(n)
+            read(token % string(token % s(7):token % e(7)),*)   uu % bound(n)
+            read(token % string(token % s(8):token % e(8)),*)   vv % bound(n)
+            read(token % string(token % s(9):token % e(9)),*) ww % bound(n)
+            read(token % string(token % s(10):token % e(10)),*) uv % bound(n)
+            read(token % string(token % s(11):token % e(11)),*) uw % bound(n)
+            read(token % string(token % s(12):token % e(12)),*) vw % bound(n)
+            read(token % string(token % s(13):token % e(13)),*) Eps% bound(n)
+            if(SIMULA==EBM) read(token % string(token % s(14):token % e(14)),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(inp(ts(7):te(7)),*) Kin % bound(n)
-            read(inp(ts(8):te(8)),*) Eps % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) Kin % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) Eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(inp(ts(7):te(7)),*) Kin % bound(n)
-            read(inp(ts(8):te(8)),*) Eps % bound(n)
-            read(inp(ts(9):te(9)),*) v_2  % bound(n)
-            read(inp(ts(10):te(10)),*) f22 % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) Kin % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) Eps % bound(n)
+            read(token % string(token % s(9):token % e(9)),*) v_2  % bound(n)
+            read(token % string(token % s(10):token % e(10)),*) f22 % bound(n)
           end if
           if(SIMULA == SPA_ALL) then
-            read(inp(ts(7):te(7)),*) VIS % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) VIS % bound(n)
           end if
           if(SIMULA == DES_SPA) then
-            read(inp(ts(7):te(7)),*) VIS % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) VIS % bound(n)
           end if
         end if  ! HOT == YES
         name_prof(n)=''
       else   ! typBou .ne. PRESSURE
         if(HOT==YES) then 
-          read(inp(ts(6):te(6)),*) T % bound(n)
+          read(token % string(token % s(6):token % e(6)),*) T % bound(n)
           if(SIMULA==EBM.or.SIMULA==HJ) then
-            read(inp(ts(7):te(7)),*) uu % bound(n)
-            read(inp(ts(8):te(8)),*) vv % bound(n)
-            read(inp(ts(9):te(9)),*) ww % bound(n)
-            read(inp(ts(10):te(10)),*) uv % bound(n)
-            read(inp(ts(11):te(11)),*) uw % bound(n)
-            read(inp(ts(12):te(12)),*) vw % bound(n)
-            read(inp(ts(13):te(13)),*) Eps% bound(n)
-            if(SIMULA==EBM) read(inp(ts(14):te(14)),*) f22 % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) uu % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) vv % bound(n)
+            read(token % string(token % s(9):token % e(9)),*) ww % bound(n)
+            read(token % string(token % s(10):token % e(10)),*) uv % bound(n)
+            read(token % string(token % s(11):token % e(11)),*) uw % bound(n)
+            read(token % string(token % s(12):token % e(12)),*) vw % bound(n)
+            read(token % string(token % s(13):token % e(13)),*) Eps% bound(n)
+            if(SIMULA==EBM) read(token % string(token % s(14):token % e(14)),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(inp(ts(7):te(7)),*) Kin % bound(n)
-            read(inp(ts(8):te(8)),*) Eps % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) Kin % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) Eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(inp(ts(7):te(7)),*) Kin % bound(n)
-            read(inp(ts(8):te(8)),*) Eps % bound(n)
-            read(inp(ts(9):te(9)),*) v_2 % bound(n)
-            read(inp(ts(10):te(10)),*) f22 % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) Kin % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) Eps % bound(n)
+            read(token % string(token % s(9):token % e(9)),*) v_2 % bound(n)
+            read(token % string(token % s(10):token % e(10)),*) f22 % bound(n)
           end if
           if(SIMULA == SPA_ALL) then
-            read(inp(ts(7):te(7)),*) VIS % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) VIS % bound(n)
           end if
           if(SIMULA == DES_SPA) then
-            read(inp(ts(7):te(7)),*) VIS % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) VIS % bound(n)
           end if
         else  ! HOT .ne. YES
           if(SIMULA==EBM.or.SIMULA==HJ) then
-            read(inp(ts(6):te(6)),*) uu % bound(n)
-            read(inp(ts(7):te(7)),*) vv % bound(n)
-            read(inp(ts(8):te(8)),*) ww % bound(n)
-            read(inp(ts(9):te(9)),*) uv % bound(n)
-            read(inp(ts(10):te(10)),*) uw % bound(n)
-            read(inp(ts(11):te(11)),*) vw % bound(n)
-            read(inp(ts(12):te(12)),*) Eps% bound(n)
-            if(SIMULA==EBM) read(inp(ts(13):te(13)),*) f22 % bound(n)
+            read(token % string(token % s(6):token % e(6)),*) uu % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) vv % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) ww % bound(n)
+            read(token % string(token % s(9):token % e(9)),*) uv % bound(n)
+            read(token % string(token % s(10):token % e(10)),*) uw % bound(n)
+            read(token % string(token % s(11):token % e(11)),*) vw % bound(n)
+            read(token % string(token % s(12):token % e(12)),*) Eps% bound(n)
+            if(SIMULA==EBM) read(token % string(token % s(13):token % e(13)),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(inp(ts(6):te(6)),*) Kin % bound(n)
-            read(inp(ts(7):te(7)),*) Eps % bound(n)
+            read(token % string(token % s(6):token % e(6)),*) Kin % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) Eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(inp(ts(6):te(6)),*) Kin % bound(n)
-            read(inp(ts(7):te(7)),*) Eps % bound(n)
-            read(inp(ts(8):te(8)),*) v_2  % bound(n)
-            read(inp(ts(9):te(9)),*) f22 % bound(n)
+            read(token % string(token % s(6):token % e(6)),*) Kin % bound(n)
+            read(token % string(token % s(7):token % e(7)),*) Eps % bound(n)
+            read(token % string(token % s(8):token % e(8)),*) v_2  % bound(n)
+            read(token % string(token % s(9):token % e(9)),*) f22 % bound(n)
           end if
           if(SIMULA == SPA_ALL) then
-            read(inp(ts(6):te(6)),*) VIS % bound(n)
+            read(token % string(token % s(6):token % e(6)),*) VIS % bound(n)
           end if
           if(SIMULA == DES_SPA) then
-            read(inp(ts(6):te(6)),*) VIS % bound(n)
+            read(token % string(token % s(6):token % e(6)),*) VIS % bound(n)
           end if
         end if  ! HOT == YES
         name_prof(n)=''
       end if  ! typBou == PRESSURE
-    end if    ! inp .not. file
+    end if    ! token % string .not. file
   end do      
 
   !------------------------!
   !   Initial conditions   !
   !------------------------!
-  call ReadC(9,inp,tn,ts,te)
-  read(inp,*) n_initial_cond
+  call Tokenizer_Mod_Read_Line(9)
+  read(token % string,*) n_initial_cond
   write(*,*) '# Number of initial conditions: ', n_initial_cond
   if(n_initial_cond > grid % n_materials) then
     if(this_proc < 2) write(*,*) 'Warning: there are more initial conditions then materials'
   end if
 
   do n=1,n_initial_cond
-    call ReadC(9,inp,tn,ts,te)
-    call To_Upper_Case(inp(ts(2):te(2)))
+    call Tokenizer_Mod_Read_Line(9)
+    call To_Upper_Case(token % string(token % s(2):token % e(2)))
 
     ! Initial conditions given in GMV file
-    if(inp(ts(2):te(2)) == 'FILE') then
-      read(inp(ts(3):te(3)),'(A80)') namIni(n)
+    if(token % string(token % s(2):token % e(2)) == 'FILE') then
+      read(token % string(token % s(3):token % e(3)),'(A80)') namIni(n)
       write(*,*) '@Load_Boundary_Conditions: material ', n, '; init. cond. given by file: ', namIni(n)
     else
       namIni(n) = ''
 
       ! Initial conditions given by constant
-      read(inp(ts(2):te(2)),*) U % init(n)
-      read(inp(ts(3):te(3)),*) V % init(n)
-      read(inp(ts(4):te(4)),*) W % init(n)
+      read(token % string(token % s(2):token % e(2)),*) U % init(n)
+      read(token % string(token % s(3):token % e(3)),*) V % init(n)
+      read(token % string(token % s(4):token % e(4)),*) W % init(n)
  
       if(HOT==YES) then
-        read(inp(ts(5):te(5)),*) T % init(n)
+        read(token % string(token % s(5):token % e(5)),*) T % init(n)
         if(SIMULA==EBM.or.SIMULA==HJ) then
-          read(inp(ts(6):te(6)),*) uu % init(n)
-          read(inp(ts(7):te(7)),*) vv % init(n)
-          read(inp(ts(8):te(8)),*) ww % init(n)
-          read(inp(ts(9):te(9)),*) uv % init(n)
-          read(inp(ts(10):te(10)),*) uw % init(n)
-          read(inp(ts(11):te(11)),*) vw % init(n)
-          read(inp(ts(12):te(12)),*) Eps% init(n)
-          if(SIMULA==EBM) read(inp(ts(13):te(13)),*) f22 % init(n)
+          read(token % string(token % s(6):token % e(6)),*) uu % init(n)
+          read(token % string(token % s(7):token % e(7)),*) vv % init(n)
+          read(token % string(token % s(8):token % e(8)),*) ww % init(n)
+          read(token % string(token % s(9):token % e(9)),*) uv % init(n)
+          read(token % string(token % s(10):token % e(10)),*) uw % init(n)
+          read(token % string(token % s(11):token % e(11)),*) vw % init(n)
+          read(token % string(token % s(12):token % e(12)),*) Eps% init(n)
+          if(SIMULA==EBM) read(token % string(token % s(13):token % e(13)),*) f22 % init(n)
         end if
         if(SIMULA==K_EPS) then
-          read(inp(ts(6):te(6)),*) Kin % init(n)
-          read(inp(ts(7):te(7)),*) Eps % init(n)
+          read(token % string(token % s(6):token % e(6)),*) Kin % init(n)
+          read(token % string(token % s(7):token % e(7)),*) Eps % init(n)
         end if
         if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-          read(inp(ts(6):te(6)),*) Kin % init(n)
-          read(inp(ts(7):te(7)),*) Eps % init(n)
-          read(inp(ts(8):te(8)),*) v_2  % init(n)
-          read(inp(ts(9):te(9)),*) f22 % init(n)
+          read(token % string(token % s(6):token % e(6)),*) Kin % init(n)
+          read(token % string(token % s(7):token % e(7)),*) Eps % init(n)
+          read(token % string(token % s(8):token % e(8)),*) v_2  % init(n)
+          read(token % string(token % s(9):token % e(9)),*) f22 % init(n)
         end if
         if(SIMULA == SPA_ALL) then
-          read(inp(ts(6):te(6)),*) VIS % init(n)
+          read(token % string(token % s(6):token % e(6)),*) VIS % init(n)
         end if
         if(SIMULA == DES_SPA) then
-          read(inp(ts(6):te(6)),*) VIS % init(n)
+          read(token % string(token % s(6):token % e(6)),*) VIS % init(n)
         end if
       else ! HOT /= YES
         if(SIMULA==EBM.or.SIMULA==HJ) then
-          read(inp(ts(5):te(5)),*) uu % init(n)
-          read(inp(ts(6):te(6)),*) vv % init(n)
-          read(inp(ts(7):te(7)),*) ww % init(n)
-          read(inp(ts(8):te(8)),*) uv % init(n)
-          read(inp(ts(9):te(9)),*) uw % init(n)
-          read(inp(ts(10):te(10)),*) vw % init(n)
-          read(inp(ts(11):te(11)),*) Eps% init(n)
-          if(SIMULA==EBM) read(inp(ts(12):te(12)),*) f22 % init(n)
+          read(token % string(token % s(5):token % e(5)),*) uu % init(n)
+          read(token % string(token % s(6):token % e(6)),*) vv % init(n)
+          read(token % string(token % s(7):token % e(7)),*) ww % init(n)
+          read(token % string(token % s(8):token % e(8)),*) uv % init(n)
+          read(token % string(token % s(9):token % e(9)),*) uw % init(n)
+          read(token % string(token % s(10):token % e(10)),*) vw % init(n)
+          read(token % string(token % s(11):token % e(11)),*) Eps% init(n)
+          if(SIMULA==EBM) read(token % string(token % s(12):token % e(12)),*) f22 % init(n)
         end if
         if(SIMULA==K_EPS) then
-          read(inp(ts(5):te(5)),*) Kin % init(n)
-          read(inp(ts(6):te(6)),*) Eps % init(n)
+          read(token % string(token % s(5):token % e(5)),*) Kin % init(n)
+          read(token % string(token % s(6):token % e(6)),*) Eps % init(n)
         end if
         if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-          read(inp(ts(5):te(5)),*) Kin % init(n)
-          read(inp(ts(6):te(6)),*) Eps % init(n)
-          read(inp(ts(7):te(7)),*) v_2  % init(n)
-          read(inp(ts(8):te(8)),*) f22 % init(n)
+          read(token % string(token % s(5):token % e(5)),*) Kin % init(n)
+          read(token % string(token % s(6):token % e(6)),*) Eps % init(n)
+          read(token % string(token % s(7):token % e(7)),*) v_2  % init(n)
+          read(token % string(token % s(8):token % e(8)),*) f22 % init(n)
         end if
         if(SIMULA == SPA_ALL) then
-          read(inp(ts(5):te(5)),*) VIS % init(n)
+          read(token % string(token % s(5):token % e(5)),*) VIS % init(n)
         end if
         if(SIMULA == DES_SPA) then
-          read(inp(ts(5):te(5)),*) VIS % init(n)
+          read(token % string(token % s(5):token % e(5)),*) VIS % init(n)
         end if
       end if
     end if
@@ -380,28 +384,28 @@
     else
       open(9, file=name_prof(n))
       if(this_proc < 2) write(*,*) '# Now reading the file:', name_prof(n)
-      call ReadC(9,inp,tn,ts,te)
-      read(inp(ts(1):te(1)),*) n_points                  ! number of points
-      call ReadC(9,inp,tn,ts,te)
-      read(inp(ts(1):te(1)),*) dir  ! direction
+      call Tokenizer_Mod_Read_Line(9)
+      read(token % string(token % s(1):token % e(1)),*) n_points                  ! number of points
+      call Tokenizer_Mod_Read_Line(9)
+      read(token % string(token % s(1):token % e(1)),*) dir  ! direction
       call To_Upper_Case(dir)
       if(dir=="XPL" .or. dir=="YPL" .or. dir=="ZPL") then
         do m=1,n_points
-          call ReadC(9,inp,tn,ts,te)
-          read(inp(ts(1):te(1)),*) x1(m)
-          read(inp(ts(2):te(2)),*) x2(m)
-          read(inp(ts(3):te(3)),*) U % pro(m)
-          read(inp(ts(4):te(4)),*) V % pro(m)
-          read(inp(ts(5):te(5)),*) W % pro(m)
+          call Tokenizer_Mod_Read_Line(9)
+          read(token % string(token % s(1):token % e(1)),*) x1(m)
+          read(token % string(token % s(2):token % e(2)),*) x2(m)
+          read(token % string(token % s(3):token % e(3)),*) U % pro(m)
+          read(token % string(token % s(4):token % e(4)),*) V % pro(m)
+          read(token % string(token % s(5):token % e(5)),*) W % pro(m)
           if(SIMULA == EBM) then
-            read(inp(ts(6):te(6)),*) uu % pro(m)
-            read(inp(ts(7):te(7)),*) vv % pro(m)
-            read(inp(ts(8):te(8)),*) ww % pro(m)
-            read(inp(ts(9):te(9)),*) uv % pro(m)
-            read(inp(ts(10):te(10)),*) uw % pro(m)
-            read(inp(ts(11):te(11)),*) vw % pro(m)
-            read(inp(ts(12):te(12)),*) f22 % pro(m)
-            read(inp(ts(13):te(13)),*) Eps % pro(m)
+            read(token % string(token % s(6):token % e(6)),*) uu % pro(m)
+            read(token % string(token % s(7):token % e(7)),*) vv % pro(m)
+            read(token % string(token % s(8):token % e(8)),*) ww % pro(m)
+            read(token % string(token % s(9):token % e(9)),*) uv % pro(m)
+            read(token % string(token % s(10):token % e(10)),*) uw % pro(m)
+            read(token % string(token % s(11):token % e(11)),*) vw % pro(m)
+            read(token % string(token % s(12):token % e(12)),*) f22 % pro(m)
+            read(token % string(token % s(13):token % e(13)),*) Eps % pro(m)
           end if
         end do  
 
@@ -461,55 +465,55 @@
         end do        !end do c = -1,-grid % n_bnd_cells,-1
       else  ! dir == "XPL" ...
         do m=1,n_points
-          call ReadC(9,inp,tn,ts,te)
-          read(inp(ts(1):te(1)),*) xyz(m)
-          read(inp(ts(2):te(2)),*) U % pro(m)
-          read(inp(ts(3):te(3)),*) V % pro(m)
-          read(inp(ts(4):te(4)),*) W % pro(m)
+          call Tokenizer_Mod_Read_Line(9)
+          read(token % string(token % s(1):token % e(1)),*) xyz(m)
+          read(token % string(token % s(2):token % e(2)),*) U % pro(m)
+          read(token % string(token % s(3):token % e(3)),*) V % pro(m)
+          read(token % string(token % s(4):token % e(4)),*) W % pro(m)
           if(HOT==YES) then
-            read(inp(ts(5):te(5)),*) T % pro(m)
+            read(token % string(token % s(5):token % e(5)),*) T % pro(m)
             if(SIMULA==K_EPS) then
-              read(inp(ts(6):te(6)),*) Kin % pro(m)
-              read(inp(ts(7):te(7)),*) Eps % pro(m)
+              read(token % string(token % s(6):token % e(6)),*) Kin % pro(m)
+              read(token % string(token % s(7):token % e(7)),*) Eps % pro(m)
             end if
             if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-              read(inp(ts(6):te(6)),*) Kin % pro(m)
-              read(inp(ts(7):te(7)),*) Eps % pro(m)
-              read(inp(ts(8):te(8)),*) v_2 % pro(m)
-              read(inp(ts(9):te(9)),*) f22 % pro(m)
+              read(token % string(token % s(6):token % e(6)),*) Kin % pro(m)
+              read(token % string(token % s(7):token % e(7)),*) Eps % pro(m)
+              read(token % string(token % s(8):token % e(8)),*) v_2 % pro(m)
+              read(token % string(token % s(9):token % e(9)),*) f22 % pro(m)
             end if
             if(SIMULA == SPA_ALL) then
-              read(inp(ts(6):te(6)),*) VIS % pro(m)
+              read(token % string(token % s(6):token % e(6)),*) VIS % pro(m)
             end if
             if(SIMULA == DES_SPA) then
-              read(inp(ts(6):te(6)),*) VIS % pro(m)
+              read(token % string(token % s(6):token % e(6)),*) VIS % pro(m)
             end if
           else
             if(SIMULA==K_EPS) then
-              read(inp(ts(5):te(5)),*) Kin % pro(m)
-              read(inp(ts(6):te(6)),*) Eps % pro(m)
+              read(token % string(token % s(5):token % e(5)),*) Kin % pro(m)
+              read(token % string(token % s(6):token % e(6)),*) Eps % pro(m)
             end if
             if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-              read(inp(ts(5):te(5)),*) Kin % pro(m)
-              read(inp(ts(6):te(6)),*) Eps % pro(m)
-              read(inp(ts(7):te(7)),*) v_2 % pro(m)
-              read(inp(ts(8):te(8)),*) f22 % pro(m)
+              read(token % string(token % s(5):token % e(5)),*) Kin % pro(m)
+              read(token % string(token % s(6):token % e(6)),*) Eps % pro(m)
+              read(token % string(token % s(7):token % e(7)),*) v_2 % pro(m)
+              read(token % string(token % s(8):token % e(8)),*) f22 % pro(m)
             end if
             if(SIMULA == SPA_ALL) then
-              read(inp(ts(5):te(5)),*) VIS % pro(m)
+              read(token % string(token % s(5):token % e(5)),*) VIS % pro(m)
             end if
             if(SIMULA == DES_SPA) then
-              read(inp(ts(5):te(5)),*) VIS % pro(m)
+              read(token % string(token % s(5):token % e(5)),*) VIS % pro(m)
             end if
             if(SIMULA == EBM) then
-              read(inp(ts(5):te(5)),*) uu % pro(m)
-              read(inp(ts(6):te(6)),*) vv % pro(m)
-              read(inp(ts(7):te(7)),*) ww % pro(m)
-              read(inp(ts(8):te(8)),*) uv % pro(m)
-              read(inp(ts(9):te(9)),*) uw % pro(m)
-              read(inp(ts(10):te(10)),*) vw % pro(m)
-              read(inp(ts(11):te(11)),*) f22% pro(m)
-              read(inp(ts(12):te(12)),*) Eps% pro(m)
+              read(token % string(token % s(5):token % e(5)),*) uu % pro(m)
+              read(token % string(token % s(6):token % e(6)),*) vv % pro(m)
+              read(token % string(token % s(7):token % e(7)),*) ww % pro(m)
+              read(token % string(token % s(8):token % e(8)),*) uv % pro(m)
+              read(token % string(token % s(9):token % e(9)),*) uw % pro(m)
+              read(token % string(token % s(10):token % e(10)),*) vw % pro(m)
+              read(token % string(token % s(11):token % e(11)),*) f22% pro(m)
+              read(token % string(token % s(12):token % e(12)),*) Eps% pro(m)
             end if
           end if  
         end do

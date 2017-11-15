@@ -19,8 +19,8 @@
   call Compute_Fluxes(grid)
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     ! On the boundary perform the extrapolation
     if(c2  < 0) then
@@ -44,8 +44,8 @@
     call GraPhi(grid, T % n, 3, phiz, .TRUE.)     ! dT/dz
     call GraCorNew(grid, T % n, phix, phiy, phiz) ! needed ?
     do s = 1, grid % n_faces
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
 
       ! On the boundary perform the extrapolation
       if(c2  < 0) then

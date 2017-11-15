@@ -7,6 +7,7 @@
   use all_mod
   use gen_mod
   use par_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -65,13 +66,13 @@
   !   Input camera coordinates   !
   !------------------------------!
 1 write(*,*) '# Enter the camera coordinates (skip to exit): '
-  call ReadC(5,inp,tn,ts,te)
-  if(tn == 1) then
-    read(inp, *) answer
+  call Tokenizer_Mod_Read_Line(5)
+  if(token % n == 1) then
+    read(token % string, *) answer
     call To_Upper_Case(answer)
     if(answer == 'SKIP') return 
-  else if(tn == 3) then
-    read(inp, *) xk, yk, zk 
+  else if(token % n == 3) then
+    read(token % string, *) xk, yk, zk 
   end if
   alfa = acos( xk / sqrt(xk*xk+yk*yk) )
   beta = acos( yk / sqrt(xk*xk+yk*yk) )
@@ -87,8 +88,8 @@
   !                      !
   !----------------------!
   write(6,*) '# Enter the file name (without extension): '
-  call ReadC(5,inp,tn,ts,te)
-  read(inp, *) name_eps 
+  call Tokenizer_Mod_Read_Line(5)
+  read(token % string, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
   write(6, *) '# Now creating the file:', name_eps
 
@@ -163,8 +164,8 @@
   write(9, '(A)') 'setfont'
 
   do s = 1, grid % n_faces
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     indx(s) = s
     work(s) = Distance(xk,yk,zk,                                            &
                 f(s)*grid % xc(c1)+(1.-f(s))*(grid % xc(c2)+grid % dx(s)),  &
@@ -183,8 +184,8 @@
     shade=abs(shade)
     shade=0.4+0.6*shade
 
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if(c2 < 0 .or. &
       ( abs(grid % dx(s))+abs(grid % dy(s))+abs(grid % dz(s)) ) > 0. ) then 

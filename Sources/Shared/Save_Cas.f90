@@ -91,7 +91,7 @@
   do n=1,19   ! browse through boundary condition types
     Nfac = 0
     do s=1,NSsub   ! count the faces with boundary condition "n" 
-        c2 = SideC(2,s)
+        c2 = grid % faces_c(2,s)
         if(c2 < 0) then
           if(BCmark(c2) == n) Nfac=Nfac+1
         end if 
@@ -101,8 +101,8 @@
       write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
       write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 100+n, NtotFac+1, NtotFac+Nfac, ' 3 0)('
       do s=1,grid % n_faces+NSsh
-          c1 = SideC(1,s)
-          c2 = SideC(2,s)
+          c1 = grid % faces_c(1,s)
+          c2 = grid % faces_c(2,s)
           if(c2 < 0) then  
             if(BCmark(c2) == n) then 
               if(grid % faces_n_nodes(s) == 3) then
@@ -135,8 +135,8 @@
   write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
   write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 5, NtotFac+1, NtotFac+NSsh/2, ' 8 0)('
   do s=grid % n_faces+1,grid % n_faces+NSsh,2  ! =--> or maybe: do s=grid % n_faces+1,grid % n_faces+NSsh/2
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0) then
       if(BCmark(c2) == n) then
         if(grid % faces_n_nodes(s) == 3) then
@@ -162,8 +162,8 @@
   write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
   write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 6, NtotFac+1+NSsh/2, NtotFac+NSsh, ' c 0)('
   do s=grid % n_faces+2,grid % n_faces+NSsh,2  ! =--> or maybe: do s=grid % n_faces+1,grid % n_faces+NSsh/2
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == n) then
           if(grid % faces_n_nodes(s) == 3) then
@@ -200,8 +200,8 @@
   ! First count the cell faces on the material interface
   Nfac = 0
   do s=1,NSsub
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2 > 0) then
         if( (material(NewC(c1)) /= material(NewC(c2))) ) then
           NFac = NFac+1 
@@ -213,8 +213,8 @@
   write(9,'(A33)') '(0 "Sides on material interface")'
   write(9,'(A7,Z9,Z9,A6)') '(13 (3 ', NtotFac+1, NtotFac+Nfac, ' 2 0)('
   do s=1,NSsub
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2 > 0) then
         if( (material(NewC(c1)) /= material(NewC(c2))) ) then
           if(grid % faces_n_nodes(s) == 3) then
@@ -241,8 +241,8 @@
   write(9,'(A25)') '(0 "Sides in the domain")'
   write(9,'(A7,Z9,Z9,A6)') '(13 (4 ', NtotFac+1, NSsub-NSsh/2, ' 2 0)('
   do s=1,NSsub
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0) c2=0
     if(c2 > 0 .and. (material(NewC(c1)) == material(NewC(c2))) .and. &
       grid % dx(s) == 0.0 .and.  &

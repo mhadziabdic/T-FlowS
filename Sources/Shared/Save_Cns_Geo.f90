@@ -102,8 +102,8 @@
     if( NewS(s)  > 0  .and.  NewS(s) <= NSsub ) then
       count=count+1 
       iwork(count,0) = 0 
-      iwork(count,1) = NewC(SideC(1,s))
-      iwork(count,2) = NewC(SideC(2,s))
+      iwork(count,1) = NewC(grid % faces_c(1,s))
+      iwork(count,2) = NewC(grid % faces_c(2,s))
     end if
   end do 
 
@@ -117,7 +117,7 @@
     end if
   end do 
 
-  write(9) (iwork(s,0), s=1,count)
+!!write(9) (iwork(s,0), s=1,count)
   write(9) (iwork(s,1), s=1,count)
   write(9) (iwork(s,2), s=1,count)
 
@@ -291,8 +291,8 @@
   do subo = 1, n_sub
     do s = 1, grid % n_faces
       if(NewS(s)  > NSsub .and. NewS(s) <= NSsub+NBFsub) then
-        c1 = SideC(1,s)
-        c2 = SideC(2,s)
+        c1 = grid % faces_c(1,s)
+        c2 = grid % faces_c(2,s)
         if(c2  > 0) then
           if( (proces(c1) == sub) .and. (proces(c2) == subo) ) then 
             count=count+1

@@ -87,8 +87,8 @@
   !----------------------------!
   do s = 1, grid % n_faces       
 
-    c1=SideC(1,s)
-    c2=SideC(2,s)   
+    c1=grid % faces_c(1,s)
+    c2=grid % faces_c(2,s)   
 
     phi_xS = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
     phi_yS = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)

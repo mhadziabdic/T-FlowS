@@ -75,7 +75,7 @@
     integer :: max_n_bnd_cells
     integer :: max_n_faces
 
-  end type Grid_Type
+  end type
 
   ! If defined like this, one can easily think of multiple grids
   ! type(Grid_Type) :: grid
@@ -88,4 +88,4 @@
   include 'Grid_Mod_Allocate_Faces.f90'
   include 'Grid_Mod_Allocate_Nodes.f90'
 
-  end module Grid_Mod
+  end module

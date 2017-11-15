@@ -52,11 +52,12 @@
   read(9) (material(c), c=1,grid % n_cells)
   read(9) (material(c), c=-1,-grid % n_bnd_cells,-1)
 
+  call Grid_Mod_Allocate_Cells(grid, grid % n_bnd_cells, grid % n_cells) 
+  call Grid_Mod_Allocate_Faces(grid, grid % n_faces) 
+
   ! Faces
-  allocate (SideC(0:2,grid % n_faces+NSsh))
-  read(9) (SideC(0,s), s=1,grid % n_faces)
-  read(9) (SideC(1,s), s=1,grid % n_faces)
-  read(9) (SideC(2,s), s=1,grid % n_faces)
+  read(9) (grid % faces_c(1,s), s=1,grid % n_faces)
+  read(9) (grid % faces_c(2,s), s=1,grid % n_faces)
 
   ! Boundary cells
   allocate (bcmark(-grid % n_bnd_cells-1:-1)); bcmark=0

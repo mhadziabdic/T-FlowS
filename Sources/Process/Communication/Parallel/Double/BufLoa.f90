@@ -1,32 +1,33 @@
-!======================================================================!
+!==============================================================================!
   subroutine BufLoa 
-!----------------------------------------------------------------------!
-! Reads: NAME.buf                                                      !
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+! Reads: NAME.buf                                                              !
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use par_mod
-!----------------------------------------------------------------------!
+  use Tokenizer_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer           :: c, dummy 
   integer           :: sub, subo, NBCsub
   character(len=80) :: name_in
-!======================================================================!
-!  Each subdomain needs two buffers: a send buffer and a receive buffer.
-!  A receive buffer will be stored as aditional boundary cells for each
-!  subdomain. So each subdomain will have NBC physical boundary faces
-!  and NBBC-NBC buffer bounndary cells. It is handy to do it that way,
-!  because most of the algorythms can remain the same as they are now.
-!  They won't even "know" that they use values from other processors.
-!  On the other hand, a sending buffer has to be allocated in a new 
-!  separate array called simply buffer(). An additional array is needed 
-!  to keep track of all the indexes. That one is called BufInd().
-!  BufInd() has stored cell numbers from it's own subdomain so that
-!  later they can be copied with (well, something like that):
-!  do i=1,BUFFSIZ
-!    buffer(i) = U(BufInd(i))
-!  end do
-!----------------------------------------------------------------------!
+!==============================================================================!
+!   Each subdomain needs two buffers: a send buffer and a receive buffer.
+!   A receive buffer will be stored as aditional boundary cells for each
+!   subdomain. So each subdomain will have NBC physical boundary faces
+!   and NBBC-NBC buffer bounndary cells. It is handy to do it that way,
+!   because most of the algorythms can remain the same as they are now.
+!   They won't even "know" that they use values from other processors.
+!   On the other hand, a sending buffer has to be allocated in a new 
+!   separate array called simply buffer(). An additional array is needed 
+!   to keep track of all the indexes. That one is called BufInd().
+!   BufInd() has stored cell numbers from it's own subdomain so that
+!   later they can be copied with (well, something like that):
+!   do i=1,BUFFSIZ
+!     buffer(i) = U(BufInd(i))
+!   end do
+!------------------------------------------------------------------------------!
 
   if(n_proc == 0) return
 
@@ -38,8 +39,8 @@
   allocate (NBBe(0:n_proc))
 
 !///// number of physical boundary cells
-  call ReadC(9,inp,tn,ts,te)
-  read(inp,*) NBCsub
+  call Tokenizer_Mod_Read_Line(9)
+  read(token % string,*) NBCsub
 
 !///// initialize 
   do sub=0,n_proc
@@ -52,19 +53,19 @@
     if(sub  /=  this_proc) then
 
 !----- connections with subdomain          
-      call ReadC(9,inp,tn,ts,te)
-      read(inp,*) subo 
+      call Tokenizer_Mod_Read_Line(9)
+      read(token % string,*) subo 
 
 !----- number of local connections with subdomain sub 
-      call ReadC(9,inp,tn,ts,te)
-      read(inp,*) NBBe(sub)
+      call Tokenizer_Mod_Read_Line(9)
+      read(token % string,*) NBBe(sub)
 
       NBBs(sub) = NBBe(sub-1) - 1  
       NBBe(sub) = NBBs(sub) - NBBe(sub) + 1
 
       do c=NBBs(sub),NBBe(sub),-1
-        call ReadC(9,inp,tn,ts,te)
-        read(inp,*) dummy, BufInd(c) 
+        call Tokenizer_Mod_Read_Line(9)
+        read(token % string,*) dummy, BufInd(c) 
       end do 
     else
       NBBs(sub) = NBBe(sub-1)-1  ! just to become "sloppy" 

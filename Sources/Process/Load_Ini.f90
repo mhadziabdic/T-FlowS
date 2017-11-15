@@ -10,6 +10,7 @@
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -35,8 +36,8 @@
   character(len=80) :: name_in
 !==============================================================================!  
 
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)), '(A80)') name_in
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)), '(A80)') name_in
   answer=name_in
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return
@@ -249,8 +250,8 @@
       end if
     end do
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     ! Interpolate density and velocity
     Us = f(s) * U % n(c1) + (1.0-f(s)) * U % n(c2)

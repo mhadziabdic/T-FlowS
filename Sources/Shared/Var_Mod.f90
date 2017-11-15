@@ -24,7 +24,7 @@
     real              :: init(1024)          ! initial values
     real              :: pro(11024)          ! inlfow profile
     real              :: Sigma               ! sigma
-  end type Var_Type
+  end type
 
   contains 
 

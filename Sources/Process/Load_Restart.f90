@@ -8,6 +8,7 @@
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -24,8 +25,8 @@
 
   if(this_proc  < 2) &              
     write(*,*) '# Input restart file name [skip cancels]:'
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)), '(A80)')  name_in
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(token % string(token % s(1):token % e(1)), '(A80)')  name_in
   answer=name_in
   call To_Upper_Case(answer) 
 

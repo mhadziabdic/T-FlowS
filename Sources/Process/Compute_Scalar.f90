@@ -122,8 +122,8 @@
   !----------------------------------!
   do s=1,grid % n_faces
 
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     phis=f(s)*phi % n(c1) + (1.0-f(s))*phi % n(c2)
 
@@ -220,8 +220,8 @@
 
   do s = 1, grid % n_faces
 
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
      
     if(SIMULA/=LES.or.SIMULA/=DNS) then
       Prt1 = 1.0/( 0.5882 + 0.228*(VISt(c1)/(VISc+1.0e-12)) - 0.0441*                  &
@@ -507,8 +507,8 @@
       !------------------------------------------------------------------!
       do s = 1, grid % n_faces
 
-        c1=SideC(1,s)
-        c2=SideC(2,s)
+        c1 = grid % faces_c(1,s)
+        c2 = grid % faces_c(2,s)
 
         Prt1 = 1.0/( 0.5882 + 0.228*(VISt(c1)/(VISc+1.0e-12)) - 0.0441*                  &
               (VISt(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c1)+1.0e-12) ))) )

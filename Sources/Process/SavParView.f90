@@ -10,6 +10,7 @@
   use les_mod
   use pro_mod
   use rans_mod
+  use Tokenizer_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
@@ -42,28 +43,28 @@
 !---------------!
 !     start     !
 !---------------!
-  call ReadC(9,inp,tn,ts,te)  !read 'gmvinput ascii' line
+  call Tokenizer_Mod_Read_Line(9)  !read 'gmvinput ascii' line
 !---------------!
 !     nodes     !
 !---------------!
-  call ReadC(9,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),*) stringadummy
-  read(inp(ts(2):te(2)),*) NNsub
+  call Tokenizer_Mod_Read_Line(9)
+  read(token % string(token % s(1):token % e(1)),*) stringadummy
+  read(token % string(token % s(2):token % e(2)),*) NNsub
   allocate(x(NNsub)); x=0.
   allocate(y(NNsub)); y=0.
   allocate(z(NNsub)); z=0.
   
   do n=1,NNsub
-    call ReadC(9,inp,tn,ts,te)                           
-    read(inp(ts(1):te(1)),*) x(n)
+    call Tokenizer_Mod_Read_Line(9)                           
+    read(token % string(token % s(1):token % e(1)),*) x(n)
   end do
   do n=1,NNsub
-    call ReadC(9,inp,tn,ts,te)                           
-    read(inp(ts(1):te(1)),*) y(n)
+    call Tokenizer_Mod_Read_Line(9)                           
+    read(token % string(token % s(1):token % e(1)),*) y(n)
   end do
   do n=1,NNsub
-    call ReadC(9,inp,tn,ts,te)                           
-    read(inp(ts(1):te(1)),*) z(n)
+    call Tokenizer_Mod_Read_Line(9)                           
+    read(token % string(token % s(1):token % e(1)),*) z(n)
   end do
 
 !----------------------!
@@ -73,9 +74,9 @@
   celleconnessione = 0
   off_set_connection = 0
 
-  call ReadC(9,inp,tn,ts,te)                           
-  read(inp(ts(1):te(1)),*) stringadummy
-  read(inp(ts(2):te(2)),*) NCsub_new
+  call Tokenizer_Mod_Read_Line(9)                           
+  read(token % string(token % s(1):token % e(1)),*) stringadummy
+  read(token % string(token % s(2):token % e(2)),*) NCsub_new
 
   if (NCsub_new.ne.NCsub) then 
      write(*,*) 'number of cells read and processed is different, exiting!'
@@ -85,9 +86,9 @@
   allocate(connessione(NCsub,9)); connessione=0
 
   do n=1,NCsub
-    call ReadC(9,inp,tn,ts,te)                           
-    read(inp(ts(1):te(1)),*) stringadummy
-    read(inp(ts(2):te(2)),*) off_set_connection
+    call Tokenizer_Mod_Read_Line(9)                           
+    read(token % string(token % s(1):token % e(1)),*) stringadummy
+    read(token % string(token % s(2):token % e(2)),*) off_set_connection
     if (n==1) then 
        connessione(n,1) = off_set_connection
     else
@@ -96,9 +97,9 @@
     
     celleconnessione = celleconnessione + off_set_connection
 
-    call ReadC(9,inp,tn,ts,te)
+    call Tokenizer_Mod_Read_Line(9)
     do c=1,off_set_connection
-      read(inp(ts(c):te(c)),*) connessione(n,c+1)
+      read(token % string(token % s(c):token % e(c)),*) connessione(n,c+1)
     end do
   end do
 

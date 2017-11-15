@@ -14,6 +14,6 @@
     ! Stores the name of the material
     character(len=80) :: name
 
-  end type Material_Type
+  end type
 
-  end module Material_Mod
+  end module

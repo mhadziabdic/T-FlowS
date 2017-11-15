@@ -8,6 +8,7 @@
   use pro_mod
   use par_mod,  only: this_proc
   use rans_mod, only: grav_x, grav_y, grav_z, Zo
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -20,8 +21,8 @@
 !==============================================================================!
 
   if(this_proc < 2) write(*,*) '# Input problem name:'
-  call ReadC(CMN_FILE,inp,tn,ts,te)  
-  read(inp(ts(1):te(1)), '(A80)')  name
+  call Tokenizer_Mod_Read_Line(CMN_FILE)  
+  read(token % string(token % s(1):token % e(1)), '(A80)')  name
 
   !-------------------------------!
   !     Read the file with the    !
@@ -63,10 +64,8 @@
   read(9) (material(c), c = -1,-grid % n_bnd_cells, -1) 
 
   ! Faces
-  allocate (SideC(0:2,grid % n_faces))
-  read(9) (SideC(0,s), s = 1, grid % n_faces)
-  read(9) (SideC(1,s), s = 1, grid % n_faces)
-  read(9) (SideC(2,s), s = 1, grid % n_faces)
+  read(9) (grid % faces_c(1,s), s = 1, grid % n_faces)
+  read(9) (grid % faces_c(2,s), s = 1, grid % n_faces)
 
   ! Boundary cells
   allocate (TypeBC(-grid % n_bnd_cells:grid % n_cells)); TypeBC=0 
@@ -93,9 +92,9 @@
     write(*,*) '# TGV -> Taylor-Green Vortex test case'
     write(*,*) '# BUOY -> Buoyancy flows (Automatically turns HOT on)' 
   endif
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  do it=1,tn
-    read(inp(ts(it):te(it)),'(A8)')  answer
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  do it=1,token % n
+    read(token % string(token % s(it):token % e(it)),'(A8)')  answer
     call To_Upper_Case(answer)
     if(answer == 'CHANNEL') then
       CHANNEL = YES
@@ -141,24 +140,24 @@
 
   if(ROUGH == YES) then
     if(this_proc < 2) write(*,*) '# Reading roughness coefficient Zo'
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*) Zo
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*) Zo
   endif
 
   ! Angular velocity vector
   if(ROT == YES) then
     if(this_proc  < 2)  &
     write(*,*) '# Angular velocity vector: '
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*)  omegaX, omegaY, omegaZ
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*)  omegaX, omegaY, omegaZ
   end if
 
   ! Gravity
   if(BUOY == YES) then
     if(this_proc  < 2)  &
     write(*,*) '# Gravitational constant in x, y and z directions: '
-    call ReadC(CMN_FILE,inp,tn,ts,te)
-    read(inp,*) grav_x, grav_y, grav_z, Tref
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(token % string,*) grav_x, grav_y, grav_z, Tref
   end if
 
   end subroutine Load_Cns

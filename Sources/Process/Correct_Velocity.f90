@@ -43,8 +43,8 @@
   end if
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if(c2  < 0) then
       if( (TypeBC(c2) == PRESSURE) ) then
@@ -67,8 +67,8 @@
   !   What will happen with parallel version ... only god knows.      !
   !-------------------------------------------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
       if(c2  > 0) then
         Flux(s)=Flux(s)+(PP % n(c2) - PP % n(c1))*A % val(A % pos(1,s))
@@ -87,8 +87,8 @@
   end do
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2  > 0 .or. c2  < 0 .and. TypeBC(c2) == BUFFER) then
       b(c1)=b(c1)-Flux(s)
       if(c2  > 0) b(c2)=b(c2)+Flux(s)
@@ -115,8 +115,8 @@
     cfl_max(m) = 0.0
     pe_max(m)  = 0.0
     do s = 1, grid % n_faces
-      c1=SideC(1,s)
-      c2=SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if( (material(c1) .eq. m) .or. (material(c2) .eq. m) ) then
         if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
           CFLs = abs( dt * Flux(s) /                &

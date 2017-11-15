@@ -95,8 +95,8 @@
       NewC(c)=0
     end do
     do s = 1, grid % n_faces
-      c1=SideC(1,s)  
-      c2=SideC(2,s) 
+      c1 = grid % faces_c(1,s)  
+      c2 = grid % faces_c(2,s) 
       if(c2  > 0) then
         if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
           n_faces_sub=n_faces_sub+1
@@ -139,8 +139,8 @@
 
         ! Faces inside the domain
         do s = 1, grid % n_faces
-          c1=SideC(1,s)  
-          c2=SideC(2,s) 
+          c1 = grid % faces_c(1,s)  
+          c2 = grid % faces_c(2,s) 
           if(c2  > 0) then
             if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
               n_buff_sub = n_buff_sub+1
@@ -277,8 +277,8 @@
   n_faces_sub = 0     ! number of sides renumbered
   do sub = 1, n_sub
     do s = 1, grid % n_faces
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(proces(c1) == sub) then
         n_faces_sub=n_faces_sub+1
         NewS(s)=n_faces_sub
@@ -299,14 +299,14 @@
   call RNSort(grid % dz(1), NewS(1), grid % n_faces)  ! grid with EpsPar()
   allocate(side_cell(grid % n_faces,2))
   do s = 1, grid % n_faces
-    side_cell(s,1) = SideC(1,s)
-    side_cell(s,2) = SideC(2,s)
+    side_cell(s,1) = grid % faces_c(1,s)
+    side_cell(s,2) = grid % faces_c(2,s)
   end do
   call Sort_Int_By_Index(side_cell(1,1), NewS(1),grid % n_faces)
   call Sort_Int_By_Index(side_cell(1,2), NewS(1),grid % n_faces)
   do s = 1, grid % n_faces
-    SideC(1,s) = side_cell(s,1)
-    SideC(2,s) = side_cell(s,2)
+    grid % faces_c(1,s) = side_cell(s,1)
+    grid % faces_c(2,s) = side_cell(s,2)
   end do
   deallocate(side_cell)
 

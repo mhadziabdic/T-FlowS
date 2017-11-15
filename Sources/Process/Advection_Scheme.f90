@@ -55,8 +55,8 @@
 !
 !----------------------------------------------------------------------!
 
-  c1 = SideC(1,s)
-  c2 = SideC(2,s)
+  c1 = grid % faces_c(1,s)
+  c2 = grid % faces_c(2,s)
 
   if(Flux(s) > 0.0) then ! goes from c1 to c2
     fj   = 1.0 - f(s)

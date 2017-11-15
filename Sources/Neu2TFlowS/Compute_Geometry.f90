@@ -33,7 +33,7 @@
   real                 :: xmin, xmax, ymin, ymax, zmin, zmax 
   real, allocatable    :: xspr(:), yspr(:), zspr(:)
   real, allocatable    :: b_coor(:), phi_face(:)
-  integer, allocatable :: b_face(:)
+  integer, allocatable :: b_face(:), face_copy(:)
 !==============================================================================!
 !
 !                                n3 
@@ -207,8 +207,8 @@
   read(*,*) bou_cen 
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     SurTot = sqrt(  grid % sx(s)*grid % sx(s)  &
                   + grid % sy(s)*grid % sy(s)  &
@@ -237,8 +237,8 @@
   !   +  uses:       Dx,Dy,Dz                                     !
   !---------------------------------------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if(c2 > 0) then
       grid % dx(c1) = max( grid % dx(c1), abs( grid % xc(c2) - grid % xc(c1) ) )
@@ -251,8 +251,8 @@
   end do ! through sides
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if(c2 < 0) then
       if( Approx(grid % dx(c1), 0.0, 1.e-6) )  &
@@ -284,6 +284,8 @@
   !                                                        !
   !--------------------------------------------------------!
   option = 2
+
+  allocate(face_copy(grid % n_faces)); face_copy=0
 
 2 n_per = 0 
   write(*,*) '#======================================================'
@@ -369,7 +371,7 @@
     allocate(zspr(grid % n_faces)); zspr=0.0
 
     do s = 1, grid % n_faces
-      c2 = SideC(2,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
           if( Approx(angle, 0.0, 1.e-6) ) then
@@ -407,7 +409,7 @@
 
   if(option == 1) then 
     do s=1,grid % n_faces
-      c2 = SideC(2,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
           c = c + 1
@@ -428,7 +430,7 @@
   else if(option == 2) then 
     c_max = 0
     do s=1,grid % n_faces
-      c2 = SideC(2,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
           c_max = c_max + 1
@@ -448,7 +450,7 @@
     per_min =  HUGE 
 
     do s=1,grid % n_faces
-      c2 = SideC(2,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
           Det = (  p_i*(grid % xf(s))  &
@@ -464,7 +466,7 @@
     per_max = 0.5*(per_max + per_min)
 
     do s=1,grid % n_faces
-      c2 = SideC(2,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == type_per) then
           c = c + 1
@@ -479,7 +481,7 @@
               b_coor(hh) = hh
               b_face(hh) = s
               do ss=1,grid % n_faces
-                cc2 = SideC(2,ss)
+                cc2 = grid % faces_c(2,ss)
                 if(cc2 < 0) then
                   if(BCmark(cc2) == type_per) then 
                     Det = (  p_i * (grid % xf(ss))   &
@@ -507,7 +509,7 @@
               b_coor(hh) = hh
               b_face(hh) = s
               do ss=1,grid % n_faces
-                cc2 = SideC(2,ss)
+                cc2 = grid % faces_c(2,ss)
                 if(cc2 < 0) then
                   if(BCmark(cc2) == type_per) then 
 
@@ -538,7 +540,7 @@
               b_coor(hh) = hh
               b_face(hh) = s
               do ss=1,grid % n_faces
-                cc2 = SideC(2,ss)
+                cc2 = grid % faces_c(2,ss)
                 if(cc2 < 0) then
                   if(BCmark(cc2) == type_per) then
                     Det = (  p_i*(grid % xf(ss))  &
@@ -589,14 +591,14 @@
   do s = 1, c/2
     s1 = b_face(s)
     s2 = b_face(s+c/2)
-    c11 = SideC(1,s1)  ! cell 1 for side 1
-    c21 = SideC(2,s1)  ! cell 2 for cell 1
-    c12 = SideC(1,s2)  ! cell 1 for side 2
-    c22 = SideC(2,s2)  ! cell 2 for side 2
-    SideC(0,s1) = s2   ! just to remember where it was coppied from
-    SideC(2,s1) = c12 
-    SideC(1,s2) = 0    ! c21 
-    SideC(2,s2) = 0    ! c21 
+    c11 = grid % faces_c(1,s1)  ! cell 1 for side 1
+    c21 = grid % faces_c(2,s1)  ! cell 2 for cell 1
+    c12 = grid % faces_c(1,s2)  ! cell 1 for side 2
+    c22 = grid % faces_c(2,s2)  ! cell 2 for side 2
+    face_copy(s1) = s2   ! just to remember where it was coppied from
+    grid % faces_c(2,s1) = c12 
+    grid % faces_c(1,s2) = 0    ! c21 
+    grid % faces_c(2,s2) = 0    ! c21 
   end do
 
   n_per = c/2
@@ -617,8 +619,8 @@
     grid % dy(s)=0.0
     grid % dz(s)=0.0
 
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2   >  0) then
 
       ! Scalar product of the side with line c1-c2 is good criteria
@@ -632,14 +634,14 @@
         if(grid % faces_n_nodes(s) == 4) then
 
           ! Coordinates of the shadow face
-          xs2=grid % xf(SideC(0,s))
-          ys2=grid % yf(SideC(0,s))
-          zs2=grid % zf(SideC(0,s))
+          xs2=grid % xf(face_copy(s))
+          ys2=grid % yf(face_copy(s))
+          zs2=grid % zf(face_copy(s))
 
           ! Add shadow faces
           grid % faces_n_nodes(grid % n_faces+NSsh-1) = 4
-          SideC(1,grid % n_faces+NSsh-1) = c1
-          SideC(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
+          grid % faces_c(1,grid % n_faces+NSsh-1) = c1
+          grid % faces_c(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
           grid % faces_n(1,grid % n_faces+NSsh-1) = grid % faces_n(1,s)
           grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
           grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
@@ -651,12 +653,12 @@
           grid % yf(grid % n_faces+NSsh-1) = grid % yf(s)
           grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
           grid % faces_n_nodes(grid % n_faces+NSsh) = 4
-          SideC(1,grid % n_faces+NSsh) = c2
-          SideC(2,grid % n_faces+NSsh) = -grid % n_bnd_cells-1
-          grid % faces_n(1,grid % n_faces+NSsh) = grid % faces_n(1,SideC(0,s)) 
-          grid % faces_n(2,grid % n_faces+NSsh) = grid % faces_n(2,SideC(0,s))
-          grid % faces_n(3,grid % n_faces+NSsh) = grid % faces_n(3,SideC(0,s))
-          grid % faces_n(4,grid % n_faces+NSsh) = grid % faces_n(4,SideC(0,s))
+          grid % faces_c(1,grid % n_faces+NSsh) = c2
+          grid % faces_c(2,grid % n_faces+NSsh) = -grid % n_bnd_cells-1
+          grid % faces_n(1,grid % n_faces+NSsh) = grid % faces_n(1,face_copy(s))
+          grid % faces_n(2,grid % n_faces+NSsh) = grid % faces_n(2,face_copy(s))
+          grid % faces_n(3,grid % n_faces+NSsh) = grid % faces_n(3,face_copy(s))
+          grid % faces_n(4,grid % n_faces+NSsh) = grid % faces_n(4,face_copy(s))
           grid % sx(grid % n_faces+NSsh) = grid % sx(s)
           grid % sy(grid % n_faces+NSsh) = grid % sy(s)
           grid % sz(grid % n_faces+NSsh) = grid % sz(s)
@@ -666,14 +668,14 @@
         else if(grid % faces_n_nodes(s) == 3) then
 
           ! Coordinates of the shadow face
-          xs2=grid % xf(SideC(0,s))
-          ys2=grid % yf(SideC(0,s))
-          zs2=grid % zf(SideC(0,s))
+          xs2=grid % xf(face_copy(s))
+          ys2=grid % yf(face_copy(s))
+          zs2=grid % zf(face_copy(s))
  
           ! Add shadow faces
           grid % faces_n_nodes(grid % n_faces+NSsh-1) = 3
-          SideC(1,grid % n_faces+NSsh-1) = c1
-          SideC(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
+          grid % faces_c(1,grid % n_faces+NSsh-1) = c1
+          grid % faces_c(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
           grid % faces_n(1,grid % n_faces+NSsh-1) = grid % faces_n(1,s)
           grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
           grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
@@ -684,11 +686,11 @@
           grid % yf(grid % n_faces+NSsh-1) = grid % yf(s)
           grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
           grid % faces_n_nodes(grid % n_faces+NSsh) = 3
-          SideC(1,grid % n_faces+NSsh) = c2
-          SideC(2,grid % n_faces+NSsh) = -grid % n_bnd_cells-1
-          grid % faces_n(1,grid % n_faces+NSsh) = grid % faces_n(1,SideC(0,s)) 
-          grid % faces_n(2,grid % n_faces+NSsh) = grid % faces_n(2,SideC(0,s))
-          grid % faces_n(3,grid % n_faces+NSsh) = grid % faces_n(3,SideC(0,s))
+          grid % faces_c(1,grid % n_faces+NSsh) = c2
+          grid % faces_c(2,grid % n_faces+NSsh) = -grid % n_bnd_cells-1
+          grid % faces_n(1,grid % n_faces+NSsh) = grid % faces_n(1,face_copy(s)) 
+          grid % faces_n(2,grid % n_faces+NSsh) = grid % faces_n(2,face_copy(s))
+          grid % faces_n(3,grid % n_faces+NSsh) = grid % faces_n(3,face_copy(s))
           grid % sx(grid % n_faces+NSsh) = grid % sx(s)
           grid % sy(grid % n_faces+NSsh) = grid % sy(s)
           grid % sz(grid % n_faces+NSsh) = grid % sz(s)
@@ -706,6 +708,8 @@
   end do    !  sides
   write(*,*) 'Phase II: number of shadow faces: ', NSsh
 
+  deallocate(face_copy)
+
   !-------------------------------------------------------!
   !                                                       !
   !   Phase III  ->  find the new numbers of cell faces   !
@@ -713,8 +717,8 @@
   !-------------------------------------------------------!
   number_sides = 0
   do s = 1, grid % n_faces+NSsh
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c1 > 0) then
       number_sides = number_sides  + 1
       NewS(s) = number_sides 
@@ -734,8 +738,8 @@
   !--------------------------------------!
   do s = 1, grid % n_faces+NSsh
     if(NewS(s) > 0) then
-      SideC(1,NewS(s)) = SideC(1,s) 
-      SideC(2,NewS(s)) = SideC(2,s)
+      grid % faces_c(1,NewS(s)) = grid % faces_c(1,s) 
+      grid % faces_c(2,NewS(s)) = grid % faces_c(2,s)
       grid % faces_n_nodes(NewS(s)) = grid % faces_n_nodes(s)
       grid % faces_n(1,NewS(s)) = grid % faces_n(1,s)
       grid % faces_n(2,NewS(s)) = grid % faces_n(2,s)
@@ -774,8 +778,8 @@
   !   <= gives:      volume          !
   !----------------------------------!
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)   
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)   
 
     grid % vol(c1) = grid % vol(c1)               &
                    + grid % xf(s) * grid % sx(s)  &
@@ -888,8 +892,8 @@
   allocate(f(grid % n_faces+max(grid % n_cells,grid % n_bnd_cells))); f=0.0
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     ! First cell
     xc1  = grid % xc(c1)

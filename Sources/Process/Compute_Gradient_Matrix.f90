@@ -28,8 +28,8 @@
   end do
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s) 
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s) 
 
     Dxc1 = grid % dx(s)
     Dyc1 = grid % dy(s)

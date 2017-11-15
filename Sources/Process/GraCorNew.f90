@@ -44,8 +44,8 @@
 !==============================================================================!
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     ! Take care of material interfaces          
     if( StateMat(material(c1))==FLUID .and. &  
@@ -80,8 +80,8 @@
   call Exchange(grid, p2)
 
   do s = 1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     ! Take care of material interfaces          
     if( StateMat(material(c1))==FLUID .and. &  

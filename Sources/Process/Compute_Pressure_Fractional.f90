@@ -48,8 +48,8 @@
   !   Calculate the mass fluxes on the cell faces   !
   !-------------------------------------------------!
   do s=1, grid % n_faces
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     ! Handle two materials
     if( StateMat(material(c1))==FLUID .and.      &
@@ -141,8 +141,8 @@
 
   ! Give the "false" flux back and set it to zero   ! 2mat
   do s = 1, grid % n_faces                          ! 2mat
-    c1=SideC(1,s)                                   ! 2mat
-    c2=SideC(2,s)                                   ! 2mat
+    c1 = grid % faces_c(1,s)                                   ! 2mat
+    c2 = grid % faces_c(2,s)                                   ! 2mat
     if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
       if(StateMat(material(c1))==SOLID .or. &       ! 2mat
          StateMat(material(c2))==SOLID) then        ! 2mat
@@ -155,8 +155,8 @@
 
   ! Disconnect the SOLID cells from FLUID system    ! 2mat
   do s = 1, grid % n_faces                          ! 2mat
-    c1=SideC(1,s)                                   ! 2mat
-    c2=SideC(2,s)                                   ! 2mat
+    c1 = grid % faces_c(1,s)                                   ! 2mat
+    c2 = grid % faces_c(2,s)                                   ! 2mat
     if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat 
       if(c2 > 0) then ! => not BUFFER               ! 2mat
         if(StateMat(material(c1)) == SOLID) then    ! 2mat

@@ -24,6 +24,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod 
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -48,13 +49,13 @@
 1 write(*,*) '#======================================'
   write(*,*) '# Enter the copy marker (skip to exit):'
   write(*,*) '#--------------------------------------'
-  call ReadC(5,inp,tn,ts,te)
-  read(inp, *) answer
+  call Tokenizer_Mod_Read_Line(5)
+  read(token % string, *) answer
   call To_Upper_Case(answer)
   if(answer == 'SKIP') then
     return
   else 
-    read(inp,*) copy_marker 
+    read(token % string,*) copy_marker 
   end if    
 
   !-------!
@@ -64,12 +65,12 @@
     if(mod(s1,100000)==0) then
       write(*,*) ((ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100, 'Complete'
     end if
-    c11 = SideC(1,s1)
-    c12 = SideC(2,s1)
+    c11 = grid % faces_c(1,s1)
+    c12 = grid % faces_c(2,s1)
     if( abs(grid % dx(s1)) > 1.0e-9 ) then
       do s2 = 1, grid % n_faces 
-        c21 = SideC(1,s2)
-        c22 = SideC(2,s2)
+        c21 = grid % faces_c(1,s2)
+        c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
           if(BCmark(c22) == copy_marker) then
 
@@ -116,12 +117,12 @@
     if(mod(s1,100000)==0) then
       write(*,*) (ONE_THIRD + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
     end if
-    c11 = SideC(1,s1)
-    c12 = SideC(2,s1)
+    c11 = grid % faces_c(1,s1)
+    c12 = grid % faces_c(2,s1)
     if( abs(grid % dy(s1)) > 1.0e-9 ) then
       do s2 = 1, grid % n_faces 
-        c21 = SideC(1,s2)
-        c22 = SideC(2,s2)
+        c21 = grid % faces_c(1,s2)
+        c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
           if(BCmark(c22) == copy_marker) then
 
@@ -168,12 +169,12 @@
     if(mod(s1,100000)==0) then
       write(*,*) (TWO_THIRDS + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
     end if
-    c11 = SideC(1,s1)
-    c12 = SideC(2,s1)
+    c11 = grid % faces_c(1,s1)
+    c12 = grid % faces_c(2,s1)
     if( abs(grid % dz(s1)) > 1.0e-9 ) then
       do s2 = 1, grid % n_faces 
-        c21 = SideC(1,s2)
-        c22 = SideC(2,s2)
+        c21 = grid % faces_c(1,s2)
+        c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
           if(BCmark(c22) == copy_marker) then
 

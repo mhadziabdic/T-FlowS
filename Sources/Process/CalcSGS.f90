@@ -22,9 +22,8 @@
   real    :: Cs, R
   real    :: Stot, lf, UtauL, Uff 
   real    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus 
-  real    :: fun
+  real    :: fun, Nc2
 !======================================================================!
-
   
 !===================!
 !                   !
@@ -55,37 +54,35 @@
         Cs = Cs0
       end if
       VISt(c) = DENc(material(c)) &
-               * (lf*lf)         &          ! delta^2 
-               * (Cs*Cs)         &          ! Cs^2   
+               * (lf*lf)          &          ! delta^2 
+               * (Cs*Cs)          &          ! Cs^2   
               * Shear(c) 
     end do
   else if(MODE == DYN) then
-    if(BUOY==YES) then  
-      do c=1,NC
-        lf =  (volume(c)**0.333333)  
-        VISt(c) = DENc(material(c))    &
-              * (lf*lf)              &          ! delta^2 
-              * Cdyn(c)              &          ! Cdynamic   
-              * Shear(c) 
-      end do
-    else
-      do c=1,NC 
-        VISt(c) = DENc(material(c))    &
-              * (lf*lf)              &          ! delta^2 
-              * Cdyn(c)              &          ! Cdynamic   
-              * sqrt(Shear(c)*Shear(c) + 2.5*(grav_x*PHIx(c)+grav_y*PHIy(c)+grav_z*PHIz(c)))  
-      end do
-    end if     
+    do c=1,NC
+      lf =  (volume(c)**0.333333)  
+      VISt(c) = DENc(material(c))    &
+            * (lf*lf)                &          ! delta^2 
+            * Cdyn(c)                &          ! Cdynamic   
+            * Shear(c) 
+    end do
   else if(MODE == WALE) then
     do c=1,NC
       lf =  (volume(c)**0.333333)    
-      VISt(c) = DENc(material(c))    &
-                * (lf*lf)              &          ! delta^2 
-               * (0.5*0.5)         &          ! Cs^2   
-                    * WALEv(c) 
+      VISt(c) = DENc(material(c))     &
+               * (lf*lf)              &
+               * (0.5*0.5)            &
+               * WALEv(c) 
     end do
   end if
 
+  if(BUOY==YES) then
+    do c=1,NC
+      Nc2 = -(grav_x*PHIx(c)+grav_y*PHIy(c)+grav_z*PHIz(c))/Tref
+      Nc2 = max(0.0, Nc2) 
+      VISt(c) = VISt(c)*sqrt(1.0 - min(2.5*Nc2/(Shear(c)*Shear(c)),1.0))
+    end do
+  end if
 !-----------------------!
 !     Wall function     !
 !-----------------------+--------------!

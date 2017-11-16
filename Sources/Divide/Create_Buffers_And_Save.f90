@@ -112,7 +112,7 @@
       end if 
     end do
 
-    do s = 1, n_copy
+    do s = 1, grid % n_copy
       c1=CopyS(1,s)
       c2=CopyS(2,s)
       if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
@@ -162,7 +162,7 @@
         end do    ! through sides
 
         ! Faces on the "copy" boundary
-        do s = 1, n_copy
+        do s = 1, grid % n_copy
           c1=CopyS(1,s)  
           c2=CopyS(2,s) 
           if( (proces(c1) == sub).and.(proces(c2) == subo) ) then

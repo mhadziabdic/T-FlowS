@@ -164,7 +164,7 @@
   !   Copy   !
   !----------!
   count = 0
-  do s = 1, n_copy
+  do s = 1, grid % n_copy
     count = count + 1
     iwork(count,1) = CopyS(1,s) 
     iwork(count,2) = CopyS(2,s) 

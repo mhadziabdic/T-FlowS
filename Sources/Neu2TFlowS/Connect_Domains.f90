@@ -41,7 +41,7 @@
   character(len=80) :: answer
 !==============================================================================!
 
-  n_copy = 0
+  grid % n_copy = 0
   x_copy = 0
   y_copy = 0
   z_copy = 0
@@ -94,14 +94,14 @@
               
             if( Approx( yc_22, yc_12, tol=1.e-4 ) .and. &
                 Approx( zc_22, zc_12, tol=1.e-4 ) ) then
-              n_copy = n_copy + 1
+              grid % n_copy = grid % n_copy + 1
               x_copy = x_copy + 1
               if( abs(grid % xc(c11)-grid % xc(c22)) <  &
                   abs(grid % xc(c12)-grid % xc(c22))) c1 = c11
               if( abs(grid % xc(c11)-grid % xc(c22)) >  &
                   abs(grid % xc(c12)-grid % xc(c22))) c1 = c12
-              CopyS(1, n_copy) = c1
-              CopyS(2, n_copy) = c21           !   inside the domain
+              CopyS(1, grid % n_copy) = c1
+              CopyS(2, grid % n_copy) = c21           !   inside the domain
               CopyC(c22) = c1
             end if
           end if
@@ -146,14 +146,14 @@
               
             if( Approx( xc_22, xc_12, tol=1.e-4 ) .and. &
                 Approx( zc_22, zc_12, tol=1.e-4 ) ) then
-              n_copy = n_copy + 1 
+              grid % n_copy = grid % n_copy + 1 
               y_copy = y_copy + 1
               if( abs(grid % yc(c11)-grid % yc(c22)) <  &
                   abs(grid % yc(c12)-grid % yc(c22))) c1 = c11
               if( abs(grid % yc(c11)-grid % yc(c22)) >  &
                   abs(grid % yc(c12)-grid % yc(c22))) c1 = c12
-              CopyS(1, n_copy) = c1
-              CopyS(2, n_copy) = c21           !   inside the domain
+              CopyS(1, grid % n_copy) = c1
+              CopyS(2, grid % n_copy) = c21           !   inside the domain
               CopyC(c22) = c1
             end if
           end if
@@ -198,14 +198,14 @@
               
             if( Approx( yc_22, yc_12, tol=1.e-4 ) .and. &
                 Approx( xc_22, xc_12, tol=1.e-4 ) ) then
-              n_copy = n_copy + 1 
+              grid % n_copy = grid % n_copy + 1 
               z_copy = z_copy + 1
               if( abs(grid % zc(c11)-grid % zc(c22)) <  &
                   abs(grid % zc(c12)-grid % zc(c22))) c1 = c11
               if( abs(grid % zc(c11)-grid % zc(c22)) >  &
                   abs(grid % zc(c12)-grid % zc(c22))) c1 = c12
-              CopyS(1, n_copy) = c1
-              CopyS(2, n_copy) = c21           !   inside the domain
+              CopyS(1, grid % n_copy) = c1
+              CopyS(2, grid % n_copy) = c21           !   inside the domain
               CopyC(c22) = c1
             end if
           end if
@@ -214,7 +214,7 @@
     end if
   end do
 
-  write(*,*) '# n copy = ', n_copy
+  write(*,*) '# n copy = ', grid % n_copy
   write(*,*) '# x copy = ', x_copy
   write(*,*) '# x copy = ', y_copy
   write(*,*) '# x copy = ', z_copy

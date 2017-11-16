@@ -65,11 +65,11 @@
   read(9) (bcmark(c), c=-1,-grid % n_bnd_cells, -1)
   read(9) (CopyC(c), c=-1,-grid % n_bnd_cells, -1)
  
-  read(9) n_copy
-  write(*,*) n_copy
-  allocate (CopyS(2,n_copy))
-  read(9) (CopyS(1,s), s=1,n_copy)
-  read(9) (CopyS(2,s), s=1,n_copy)
+  read(9) grid % n_copy
+  write(*,*) '# Number of copy cells/faces: ', grid % n_copy
+  allocate (CopyS(2,grid % n_copy))
+  read(9) (CopyS(1,s), s=1,grid % n_copy)
+  read(9) (CopyS(2,s), s=1,grid % n_copy)
 
   close(9)
 

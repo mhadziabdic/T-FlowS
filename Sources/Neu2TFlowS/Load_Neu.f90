@@ -80,10 +80,10 @@
   allocate(material(-grid % n_bnd_cells:grid % n_cells));  material=0 
   allocate(BCtype( grid % n_cells,6));                     BCtype=0
   allocate(BCmark(-grid % n_bnd_cells-1:-1));              BCmark=0
-! WARNING:  allocate(CellN(-grid % n_bnd_cells-1:grid % n_cells,-1:8)); CellN=0
-  n_copy = 1000000 
-  allocate(CopyC(-grid % n_bnd_cells:-1));     CopyC=0
-  allocate(CopyS(2,n_copy));                   CopyS=0
+
+  grid % n_copy = grid % n_faces  ! I believe it is n_cells * 5 at this point
+  allocate(CopyC( -grid % n_bnd_cells:-1));             CopyC=0
+  allocate(CopyS(2,grid % n_copy));                     CopyS=0
 
   allocate(NewN( grid % n_nodes));                      NewN=0  
   allocate(NewC(-grid % n_bnd_cells-1:grid % n_cells)); NewC=0  

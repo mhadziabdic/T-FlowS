@@ -22,8 +22,6 @@ module all_mod
   !-------------------------------------------!
   !   Logical quantities desribing the grid   !
   !-------------------------------------------!
-  integer   :: n_copy                    ! number of copy cells/faces
-
   integer,allocatable :: material(:)     ! material markers
 
   integer,allocatable :: TypeBC(:)       ! type of boundary condition
@@ -31,9 +29,5 @@ module all_mod
 
   integer,allocatable :: CopyC(:)        !  might be shorter
   integer,allocatable :: CopyS(:,:)      !  similar to SideC 
-
-  real, allocatable   :: Dxsp(:,:)       !  similar to SideC 
-  real, allocatable   :: Dysp(:,:)       !  similar to SideC 
-  real, allocatable   :: Dzsp(:,:)       !  similar to SideC 
 
 end module 

@@ -17,12 +17,15 @@
   !---------------!
   type Grid_Type
 
-    integer :: n_nodes
-    integer :: n_cells
-    integer :: n_faces
-    integer :: n_bnd_cells
-    integer :: n_materials            ! number of materials
-    integer :: n_boundary_conditions  ! number of boundary conditions
+    ! Number of ...
+    integer :: n_nodes                ! ... nodes
+    integer :: n_cells                ! ... cells
+    integer :: n_faces                ! ... faces
+    integer :: n_bnd_cells            ! ... boundary cells
+    integer :: n_per_faces            ! ... periodic faces (shadows)
+    integer :: n_materials            ! ... materials
+    integer :: n_boundary_conditions  ! ... boundary conditions
+    integer :: n_copy                 ! ... copy cells and faces
 
     !-------------------------!
     !  Cell-based variables   !

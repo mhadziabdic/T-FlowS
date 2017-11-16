@@ -35,10 +35,10 @@
   ! Read the line which contains usefull information  
   call Tokenizer_Mod_Read_Line(9)
 
-  read(token % string(token % s(1):token % e(1)),*) grid % n_nodes  
-  read(token % string(token % s(2):token % e(2)),*) grid % n_cells
-  read(token % string(token % s(3):token % e(3)),*) n_blocks
-  read(token % string(token % s(4):token % e(4)),*) n_bnd_sect
+  read(line % tokens(1),*) grid % n_nodes  
+  read(line % tokens(2),*) grid % n_cells
+  read(line % tokens(3),*) n_blocks
+  read(line % tokens(4),*) n_bnd_sect
 
   write(*,*) '# Total number of nodes:  ',            grid % n_nodes
   write(*,*) '# Total number of cells:  ',            grid % n_cells
@@ -49,11 +49,11 @@
   grid % n_bnd_cells = 0
   do 
     call Tokenizer_Mod_Read_Line(9)
-    if( token % string(token % s(1):token % e(1)) == 'BOUNDARY' ) then
+    if( line % tokens(1) == 'BOUNDARY' ) then
       do j = 1, n_bnd_sect
         if(j>1) call Tokenizer_Mod_Read_Line(9) ! BOUNDARY CONDITIONS
         call Tokenizer_Mod_Read_Line(9)
-        read(token % string(token % s(3):token % e(3)),*) dum1  
+        read(line % tokens(3),*) dum1  
         grid % n_bnd_cells = grid % n_bnd_cells + dum1 
         do i = 1, dum1
           read(9,*) c, dum2, dir
@@ -102,9 +102,9 @@
   call Tokenizer_Mod_Read_Line(9)          ! NODAL COORDINATES
   do i = 1, grid % n_nodes
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string(token % s(2):token % e(2)),*) grid % xn(i) 
-    read(token % string(token % s(3):token % e(3)),*) grid % yn(i)
-    read(token % string(token % s(4):token % e(4)),*) grid % zn(i)
+    read(line % tokens(2),*) grid % xn(i) 
+    read(line % tokens(3),*) grid % yn(i)
+    read(line % tokens(4),*) grid % zn(i)
   end do
   call Tokenizer_Mod_Read_Line(9)          ! ENDOFSECTION
 
@@ -134,7 +134,7 @@
   do j = 1, n_blocks
     call Tokenizer_Mod_Read_Line(9)        ! ELEMENT GROUP
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string(token % s(4):token % e(4)),'(I10)') dum1  
+    read(line % tokens(4),'(I10)') dum1  
     call Tokenizer_Mod_Read_Line(9)        ! block*
     call Tokenizer_Mod_Read_Line(9)        ! 0
     read(9,'(10I8)') (temp(i), i = 1, dum1)
@@ -153,11 +153,9 @@
   do j = 1, n_bnd_sect
     call Tokenizer_Mod_Read_Line(9)        ! BOUNDARY CONDITIONS
     call Tokenizer_Mod_Read_Line(9)
-    call To_Upper_Case(  token % string(token % s(1):token % e(1))  )
-    write(*,*)  token % string(token % s(1):token % e(1)), j 
-    grid % boundary_conditions(j) % name =  &
-      token % string(token % s(1):token % e(1))
-    read(token % string(token % s(3):token % e(3)),'(I8)') dum1  
+    call To_Upper_Case(  line % tokens(1)  )
+    grid % boundary_conditions(j) % name = line % tokens(1)
+    read(line % tokens(3),'(I8)') dum1  
     do i = 1, dum1
       read(9,*) c, dum2, dir
       BCtype(c,dir) = j 

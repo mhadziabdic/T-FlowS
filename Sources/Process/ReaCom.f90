@@ -35,21 +35,21 @@
     write(*,*) '#-----------------------------------------------'
   end if
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string,*)  Ndt
+  read(line % tokens(1), *)  Ndt
 
   ! Starting time step for statistics 
   if(this_proc  < 2)  &
     write(*,*) '# Starting time step for statistics (',Nstat,') '
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string,*)  Nstat
+  read(line % tokens(1), *)  Nstat
   if(BUDG == YES) then
-    read(token % string(token % s(2):token % e(2)),*) Nbudg
+    read(line % tokens(2),*) Nbudg
   end if
 
   if(this_proc  < 2)  & 
     write(*,*) '# Number of monitoring points:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string,*) Nmon 
+  read(line % tokens(1), *) Nmon 
 
   allocate (mres(Nmon))
   allocate (xm(Nmon))
@@ -60,7 +60,9 @@
     write(*,*) '# Enter the coordinates of monitoring point(s)'
   do i=1,Nmon
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*)  xm(i), ym(i), zm(i)
+    read(line % tokens(1), *)  xm(i)
+    read(line % tokens(2), *)  ym(i)
+    read(line % tokens(3), *)  zm(i)
   end do
 
   ! Find the monitoring cells
@@ -110,7 +112,9 @@
                   xp(m), yp(m), zp(m), ' )'
     end if
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*) xp(m), yp(m), zp(m)
+    read(line % tokens(1), *) xp(m)
+    read(line % tokens(2), *) yp(m)
+    read(line % tokens(3), *) zp(m)
   end do
 
   ! Kind of simulation
@@ -124,7 +128,7 @@
     write(*,*) '# ZETA  -> k-eps-zeta-f model.' 
   endif
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)),'(A)')  answer
+  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'DNS') then
     SIMULA = DNS
@@ -157,7 +161,7 @@
   endif
 
   if(SIMULA==EBM.or.SIMULA==HJ) then
-    read(token % string(token % s(2):token % e(2)),'(A8)') answer
+    read(line % tokens(2),'(A8)') answer
     call To_Upper_Case(answer)
     if(answer == 'HYB') then
       MODE = HYB 
@@ -167,7 +171,7 @@
   end if 
 
   if(SIMULA==K_EPS) then
-    read(token % string(token % s(2):token % e(2)),'(A8)') answer
+    read(line % tokens(2),'(A8)') answer
     call To_Upper_Case(answer)
     if(answer == 'HRE') then
       MODE = HRE
@@ -183,7 +187,7 @@
   end if
 
   if(SIMULA==LES.or.SIMULA==HYB_ZETA) then
-    read(token % string(token % s(2):token % e(2)),'(A8)') answer
+    read(line % tokens(2),'(A8)') answer
     call To_Upper_Case(answer)
     if(answer == 'SMAG') then
       MODE = SMAG 
@@ -203,7 +207,7 @@
   if(SIMULA  ==  LES.and.MODE == SMAG) then
     if(this_proc  < 2)  &
       write(*,*) '# C Smagorinsky = ', Cs0, ' enter the new value: '
-    read(token % string(token % s(3):token % e(3)),*) Cs0
+    read(line % tokens(3),*) Cs0
   endif 
 
     
@@ -216,7 +220,7 @@
         write(*,*) '# NO  -> don''t shake'
       end if
       call Tokenizer_Mod_Read_Line(CMN_FILE)
-      read(token % string(token % s(1):token % e(1)),'(A)')  answer
+      read(line % tokens(1),'(A)')  answer
       call To_Upper_Case(answer)
       if(answer == 'YES') then
         SHAKE(m) = YES
@@ -233,11 +237,11 @@
         if(this_proc < 2) &
           write(*,*) '# For how many time steps you want to shake ?'
         call Tokenizer_Mod_Read_Line(CMN_FILE)
-        read(token % string,*) SHAKE_PER(m) 
+        read(line % tokens(1), *) SHAKE_PER(m) 
         if(this_proc < 2) &
           write(*,*) '# Interval for shaking:', SHAKE_PER(m)
         call Tokenizer_Mod_Read_Line(CMN_FILE)
-        read(token % string,*) SHAKE_INT(m)
+        read(line % tokens(1), *) SHAKE_INT(m)
       end if
     endif 
   end do
@@ -380,12 +384,12 @@
     write(*,*) '# FRACTION      -> Fractional step method'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)),'(A)')  answer
+  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'SIMPLE') then
     ALGOR = SIMPLE
     Nini  = 10
-    if(token % n==2) read(token % string(token % s(2):token % e(2)),*) Nini
+    if(line % n_tokens==2) read(line % tokens(2),*) Nini
   else if(answer == 'FRACTION') then
     ALGOR = FRACT
     Nini  = 1
@@ -400,19 +404,19 @@
   if(ALGOR == SIMPLE) then
     if(this_proc < 2) write(*,*) '# Under Relaxation Factor for velocity (',U % URF,')'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*)  U % URF
+    read(line % tokens(1), *)  U % URF
     if(this_proc < 2) write(*,*) '# Under Relaxation Factor for pressure (',P % URF,')'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*)  P % URF
+    read(line % tokens(1), *)  P % URF
     if(HOT == YES) then
       if(this_proc < 2) write(*,*) '# Under Relaxation Factor for temperature (',T % URF,')'
       call Tokenizer_Mod_Read_Line(CMN_FILE)
-      read(token % string,*)  T % URF
+      read(line % tokens(1), *)  T % URF
     end if
     if(SIMULA /= LES .and. SIMULA /= DNS) then
       if(this_proc < 2) write(*,*) '# Under Relaxation Factor for turbulent variables (',T % URF,')'
       call Tokenizer_Mod_Read_Line(CMN_FILE)
-      read(token % string,*)  URFT
+      read(line % tokens(1), *)  URFT
     end if
   endif
   Kin % URF   = URFT
@@ -434,7 +438,7 @@
     write(*,*) '# PAR -> Parabolic'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)),'(A)')  answer
+  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'LIN') then
     INERT = LIN
@@ -449,13 +453,13 @@
   endif
 
   if(this_proc  < 2) then
-    write(*,*) '# Integration of convective terms: '
+    write(*,*) '# Integration of advection terms: '
     write(*,*) '# AB -> Adams-Bashforth'
     write(*,*) '# CN -> Crank-Nicholson'
     write(*,*) '# FI -> Fully Implicit'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)),'(A)')  answer
+  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'AB') then
     CONVEC = AB
@@ -472,13 +476,13 @@
   endif
 
   if(this_proc  < 2) then
-    write(*,*) '# Integration of diffusive terms: '
+    write(*,*) '# Integration of diffusion terms: '
     write(*,*) '# AB -> Adams-Bashforth'
     write(*,*) '# CN -> Crank-Nicholson'
     write(*,*) '# FI -> Fully Implicit'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)),'(A)')  answer
+  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'AB') then
     DIFFUS = AB
@@ -495,13 +499,13 @@
   endif
 
   if(this_proc  < 2) then
-    write(*,*) '# Integration of cross-diffusive terms: '
+    write(*,*) '# Integration of cross-diffusion terms: '
     write(*,*) '# AB -> Adams-Bashforth'
     write(*,*) '# CN -> Crank-Nicholson'
     write(*,*) '# FI -> Fully Implicit'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)),'(A)')  answer
+  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'AB') then
     CROSS = AB
@@ -533,11 +537,11 @@
       write(*,*) '# AVL_SMART -> self descriptive'
     endif 
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string(token % s(1):token % e(1)),'(A)')  answer
+    read(line % tokens(1),'(A)')  answer
     call To_Upper_Case(answer)
     if(answer == 'BLEND_CDS_UDS') then
       BLEND(m) = YES
-      if(token % n==2) read(token % string(token % s(2):token % e(2)),*) URFC(m)
+      if(line % n_tokens==2) read(line % tokens(2),*) URFC(m)
     else if(answer == 'NO') then
       BLEND(m) = NO
     else if(answer == 'UDS') then
@@ -575,11 +579,11 @@
         write(*,*) '# Convetive schemes for energy equation:'
       endif 
       call Tokenizer_Mod_Read_Line(CMN_FILE)
-      read(token % string(token % s(1):token % e(1)),'(A)')  answer
+      read(line % tokens(1),'(A)')  answer
       call To_Upper_Case(answer)
       if(answer == 'BLEND_TEM_CDS_UDS') then
         BLEND_TEM(m) = YES
-        if(token % n==2) read(token % string(token % s(2):token % e(2)),*) URFC_Tem(m)
+        if(line % n_tokens==2) read(line % tokens(2),*) URFC_Tem(m)
       else if(answer == 'NO') then
         BLEND_TEM(m) = NO
       else if(answer == 'UDS') then
@@ -618,12 +622,12 @@
         write(*,*) '# Convetive schemes for transport equation:'
       endif 
       call Tokenizer_Mod_Read_Line(CMN_FILE)
-      read(token % string(token % s(1):token % e(1)),'(A)')  answer
+      read(line % tokens(1),'(A)')  answer
       call To_Upper_Case(answer)
       if(answer == 'BLEND_TUR_CDS_UDS') then
         BLEND_TUR(m) = YES
-        if(token % n==2)  &
-          read(token % string(token % s(2):token % e(2)),*) URFC_Tur(m)
+        if(line % n_tokens==2)  &
+          read(line % tokens(2),*) URFC_Tur(m)
       else if(answer == 'NO') then
         BLEND_TUR(m) = NO
       else if(answer == 'UDS') then
@@ -663,7 +667,7 @@
     write(*,*) '# IC -> Incomplete Cholesky'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)),'(A)')  answer
+  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'NO') then
     PREC = 0 
@@ -682,17 +686,17 @@
   if(this_proc  < 2)  &
     write(*,*) '# Tolerance for velocity solver: (',U % STol,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*)    U % STol
+    read(line % tokens(1), *)    U % STol
     V % Stol     = U % Stol
     W % Stol     = U % Stol
   if(this_proc  < 2)  &
     write(*,*) '# Tolerance for pressure solver: (',PP % STol,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*)   PP % STol
+    read(line % tokens(1), *)   PP % STol
     P % Stol = PP % Stol
   if(SIMULA/=LES.and.SIMULA/=DNS) then
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*)    Kin % STol
+    read(line % tokens(1), *)    Kin % STol
     Eps % Stol   = Kin % Stol
     v_2 % Stol   = Kin % Stol
     f22 % Stol   = Kin % Stol
@@ -708,21 +712,21 @@
     if(this_proc  < 2)  &
       write(*,*) '# Tolerance for temperature solver: (',T % STol,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*)    T % STol
+    read(line % tokens(1), *)  T % STol
   end if
  
   if(ALGOR == SIMPLE) then
     if(this_proc  < 2)  &
       write(*,*) '# Tolerance for SIMPLE: (',SIMTol,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*)   SIMTol
+    read(line % tokens(1), *)  SIMTol
   endif     
 
   ! Time step
   if(this_proc  < 2)  &
     write(*,*) '# Time step: (',dt,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string,*)   dt
+  read(line % tokens(1), *)  dt
 
   ! Wall velocity 
   do m=1,grid % n_materials
@@ -730,12 +734,16 @@
       write(*,*) '# Enter Pdrop (x, y, z) for domain ', m
     call Tokenizer_Mod_Read_Line(CMN_FILE) 
     if(.not. restar) then 
-      read(token % string,*)  PdropX(m), PdropY(m), PdropZ(m)
-      UTau(m) = sqrt(abs(PdropX(m))) ! delta=1, nu=1 
-      VTau(m) = sqrt(abs(PdropY(m))) ! delta=1, nu=1 
-      WTau(m) = sqrt(abs(PdropZ(m))) ! delta=1, nu=1 
+      read(line % tokens(1), *)  PdropX(m)
+      read(line % tokens(2), *)  PdropY(m)
+      read(line % tokens(3), *)  PdropZ(m)
+      UTau(m) = sqrt(abs(PdropX(m))) ! assuming: delta=1, nu=1 
+      VTau(m) = sqrt(abs(PdropY(m))) ! assuming: delta=1, nu=1 
+      WTau(m) = sqrt(abs(PdropZ(m))) ! assuming: delta=1, nu=1 
     else
-      read(token % string,*)  dummy, dummy, dummy 
+      read(line % tokens(1), *)  dummy
+      read(line % tokens(2), *)  dummy
+      read(line % tokens(3), *)  dummy
     end if     
   end do
 
@@ -745,9 +753,18 @@
       write(*,*) '# Enter the wanted mass flux through domain ', m
       write(*,*) '# (type 0.0 to keep the pressure drop constant)'
     endif 
+
     call Tokenizer_Mod_Read_Line(CMN_FILE) 
-    if(.not. restar) read(token % string,*)  FLUXoX(m), FLUXoY(m), FLUXoZ(m)
-    if(restar)       read(token % string,*)  dummy, dummy, dummy 
+    if(.not. restar) then 
+      read(line % tokens(1), *)  FLUXoX(m)
+      read(line % tokens(2), *)  FLUXoY(m)
+      read(line % tokens(3), *)  FLUXoZ(m)
+    end if
+    if(restar) then      
+      read(line % tokens(1), *)  dummy
+      read(line % tokens(2), *)  dummy
+      read(line % tokens(3), *)  dummy
+    end if
   end do
 
   call Wait   

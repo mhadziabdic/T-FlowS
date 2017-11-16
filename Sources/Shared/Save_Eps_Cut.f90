@@ -32,7 +32,7 @@
 
   write(*,*) '# Enter the ',dir,' coordinate for cutting or type skip to exit: '
   call Tokenizer_Mod_Read_Line(5)
-  read(token % string, *) answer
+  read(line % whole, *) answer
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return  
   read(answer, *) z0

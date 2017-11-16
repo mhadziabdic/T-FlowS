@@ -19,7 +19,7 @@
   character :: namAut*(*)
 !-------------------------------[Locals]-------------------------------!
   integer   :: c, n
-  character :: namOut*80, stringadummy*100, nameIn*80
+  character :: name_out*80, stringadummy*100, nameIn*80
   real,allocatable :: x(:), y(:), z(:)    ! self evident
   integer,allocatable :: connessione(:,:) ! connection
   integer :: celleconnessione
@@ -35,10 +35,10 @@
 !     reads GMV file      !
 !                         !
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
-  call Name_File(sub, namOut, '.gmv', len_trim('.gmv'))
-  open(9, file=namOut)
+  call Name_File(sub, name_out, '.gmv', len_trim('.gmv'))
+  open(9, file=name_out)
   if (this_proc <2) then
-    write(*,*) 'Now reading the file: ', namOut
+    write(*,*) 'Now reading the file: ', name_out
   end if
 !---------------!
 !     start     !
@@ -48,23 +48,23 @@
 !     nodes     !
 !---------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string(token % s(1):token % e(1)),*) stringadummy
-  read(token % string(token % s(2):token % e(2)),*) NNsub
+  read(line % tokens(1),*) stringadummy
+  read(line % tokens(2),*) NNsub
   allocate(x(NNsub)); x=0.
   allocate(y(NNsub)); y=0.
   allocate(z(NNsub)); z=0.
   
   do n=1,NNsub
     call Tokenizer_Mod_Read_Line(9)                           
-    read(token % string(token % s(1):token % e(1)),*) x(n)
+    read(line % tokens(1),*) x(n)
   end do
   do n=1,NNsub
     call Tokenizer_Mod_Read_Line(9)                           
-    read(token % string(token % s(1):token % e(1)),*) y(n)
+    read(line % tokens(1),*) y(n)
   end do
   do n=1,NNsub
     call Tokenizer_Mod_Read_Line(9)                           
-    read(token % string(token % s(1):token % e(1)),*) z(n)
+    read(line % tokens(1),*) z(n)
   end do
 
 !----------------------!
@@ -75,8 +75,8 @@
   off_set_connection = 0
 
   call Tokenizer_Mod_Read_Line(9)                           
-  read(token % string(token % s(1):token % e(1)),*) stringadummy
-  read(token % string(token % s(2):token % e(2)),*) NCsub_new
+  read(line % tokens(1),*) stringadummy
+  read(line % tokens(2),*) NCsub_new
 
   if (NCsub_new.ne.NCsub) then 
      write(*,*) 'number of cells read and processed is different, exiting!'
@@ -87,8 +87,8 @@
 
   do n=1,NCsub
     call Tokenizer_Mod_Read_Line(9)                           
-    read(token % string(token % s(1):token % e(1)),*) stringadummy
-    read(token % string(token % s(2):token % e(2)),*) off_set_connection
+    read(line % tokens(1),*) stringadummy
+    read(line % tokens(2),*) off_set_connection
     if (n==1) then 
        connessione(n,1) = off_set_connection
     else
@@ -99,7 +99,7 @@
 
     call Tokenizer_Mod_Read_Line(9)
     do c=1,off_set_connection
-      read(token % string(token % s(c):token % e(c)),*) connessione(n,c+1)
+      read(line % tokens(c),*) connessione(n,c+1)
     end do
   end do
 

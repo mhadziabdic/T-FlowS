@@ -17,9 +17,9 @@
 !------------------------------------------------------------------------------!
 
   !-----------------------------------!
-  !  Read the whole line into string  !
+  !  Read the whole line into whole  !
   !-----------------------------------!
-1 read(un,'(A300)') token % string
+1 read(un,'(A300)') line % whole
 
   !------------------------------------------!
   !  If you are reading from command file    !
@@ -32,33 +32,38 @@
   !--------------------!
   !  Skip empty lines  !
   !--------------------!
-  if( token % string  ==  '' ) goto 1 ! see: man ascii
+  if( line % whole  ==  '' ) goto 1 ! see: man ascii
 
   !----------------------!
   !  Skip comment lines  !
   !----------------------!
-  if( token % string(1:1) == '!' .or.               &
-      token % string(1:1) == '#' .or.               &
-      token % string(1:1) == '%' ) goto 1
+  if( line % whole(1:1) == '!' .or.               &
+      line % whole(1:1) == '#' .or.               &
+      line % whole(1:1) == '%' ) goto 1
 
   !--------------------------------------!
   !  Parse tokens. This is somehow cool  !
   !--------------------------------------!
-  token % n = 0
-  if(token % string(1:1) >= '!') then
-    token % n = 1
-    token % s(1)=1
+  line % n_tokens = 0
+  if(line % whole(1:1) >= '!') then
+    line % n_tokens = 1
+    line % s(1)=1
   end if
   do i=1,298
-    if( token % string(i:  i  ) <  '!' .and.  &
-        token % string(i+1:i+1) >= '!') then
-      token % n = token % n + 1
-      token % s(token % n) = i+1
+    if( line % whole(i:  i  ) <  '!' .and.  &
+        line % whole(i+1:i+1) >= '!') then
+      line % n_tokens = line % n_tokens + 1
+      line % s(line % n_tokens) = i+1
     end if
-    if( token % string(i  :i  ) >= '!' .and.  &
-        token % string(i+1:i+1) <  '!') then
-      token % e(token % n) = i
+    if( line % whole(i  :i  ) >= '!' .and.  &
+        line % whole(i+1:i+1) <  '!') then
+      line % e(line % n_tokens) = i
     end if
+  end do
+
+  ! Chop them up
+  do i = 1, line % n_tokens
+    line % tokens(i) = line % whole(line % s(i) : line % e(i))
   end do
 
   end subroutine

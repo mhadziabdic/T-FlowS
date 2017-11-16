@@ -188,7 +188,7 @@
   call Load_Restart(grid, restar)
 
   if(restar) then
-    call Load_Boundary_Conditions(grid, .false.)
+    call Load_Boundary_Conditions(grid, .FALSE.)
   end if
 
   ! Read command file (T-FlowS.cmn) 

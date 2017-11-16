@@ -13,7 +13,7 @@
   type(Grid_Type) :: grid
   logical         :: rrun
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, s, i
+  integer :: c, s
   integer :: c1, c2, m, pass
   integer :: lfn(6,4)
 !==============================================================================!
@@ -133,22 +133,22 @@
   !-------------------------------------------!
   !   Find the side oposite on the boundary   !
   !-------------------------------------------!
-  do s = 1, grid % n_faces
-    c1 = grid % faces_c(1,s)
-    c2 = grid % faces_c(2,s)
-    if(c2  < 0) then
-      do i=1,6
-        if(grid % cells_c(i,c1)  ==  c2) then
-          if(i == 1) grid % faces_c(0,s) = grid % cells_c(6,c1)
-          if(i == 2) grid % faces_c(0,s) = grid % cells_c(4,c1)
-          if(i == 3) grid % faces_c(0,s) = grid % cells_c(5,c1)
-          if(i == 4) grid % faces_c(0,s) = grid % cells_c(2,c1)
-          if(i == 5) grid % faces_c(0,s) = grid % cells_c(3,c1)
-          if(i == 6) grid % faces_c(0,s) = grid % cells_c(1,c1)
-        end if
-      end do
-    end if
-  end do 
+  ! do s = 1, grid % n_faces
+  !   c1 = grid % faces_c(1,s)
+  !   c2 = grid % faces_c(2,s)
+  !   if(c2  < 0) then
+  !     do i=1,6
+  !       if(grid % cells_c(i,c1)  ==  c2) then
+  !         if(i == 1) grid % faces_c(0,s) = grid % cells_c(6,c1)
+  !         if(i == 2) grid % faces_c(0,s) = grid % cells_c(4,c1)
+  !         if(i == 3) grid % faces_c(0,s) = grid % cells_c(5,c1)
+  !         if(i == 4) grid % faces_c(0,s) = grid % cells_c(2,c1)
+  !         if(i == 5) grid % faces_c(0,s) = grid % cells_c(3,c1)
+  !         if(i == 6) grid % faces_c(0,s) = grid % cells_c(1,c1)
+  !       end if
+  !     end do
+  !   end if
+  ! end do 
 
   !-------------------------------------------------------!
   !   Find the boundary cell on which you should copy     ! 

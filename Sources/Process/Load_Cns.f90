@@ -22,7 +22,7 @@
 
   if(this_proc < 2) write(*,*) '# Input problem name:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)  
-  read(token % string(token % s(1):token % e(1)), '(A80)')  name
+  read(line % tokens(1), '(A80)')  name
 
   !-------------------------------!
   !     Read the file with the    !
@@ -93,8 +93,8 @@
     write(*,*) '# BUOY -> Buoyancy flows (Automatically turns HOT on)' 
   endif
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  do it=1,token % n
-    read(token % string(token % s(it):token % e(it)),'(A8)')  answer
+  do it = 1, line % n_tokens
+    read(line % tokens(it),'(A8)')  answer
     call To_Upper_Case(answer)
     if(answer == 'CHANNEL') then
       CHANNEL = YES
@@ -141,7 +141,7 @@
   if(ROUGH == YES) then
     if(this_proc < 2) write(*,*) '# Reading roughness coefficient Zo'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*) Zo
+    read(line % tokens(1), *) Zo
   endif
 
   ! Angular velocity vector
@@ -149,7 +149,9 @@
     if(this_proc  < 2)  &
     write(*,*) '# Angular velocity vector: '
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*)  omegaX, omegaY, omegaZ
+    read(line % tokens(1), *)  omegaX
+    read(line % tokens(2), *)  omegaY
+    read(line % tokens(3), *)  omegaZ
   end if
 
   ! Gravity
@@ -157,7 +159,10 @@
     if(this_proc  < 2)  &
     write(*,*) '# Gravitational constant in x, y and z directions: '
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(token % string,*) grav_x, grav_y, grav_z, Tref
+    read(line % tokens(1), *) grav_x
+    read(line % tokens(2), *) grav_y
+    read(line % tokens(3), *) grav_z
+    read(line % tokens(4), *) Tref
   end if
 
-  end subroutine Load_Cns
+  end subroutine

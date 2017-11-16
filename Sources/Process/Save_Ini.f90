@@ -25,7 +25,7 @@
   write(*,*) '# Now saving initial files [skip cancels]:'  
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   
-  read(token % string(token % s(1):token % e(1)), '(A80)')  name_out
+  read(line % tokens(1), '(A80)')  name_out
   answer=name_out
   call To_Upper_Case(answer)
   

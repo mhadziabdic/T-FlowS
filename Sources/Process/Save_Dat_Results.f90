@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Save_Dat_Results(grid, name_aut)
 !------------------------------------------------------------------------------!
-! Writes: name.dat                                                             !
+!   Writes: name.dat                                                           !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
@@ -30,7 +30,7 @@
     if(this_proc  < 2)  &
       write(*,*) '# Input result file name [skip cancels]:'
     call Tokenizer_Mod_Read_Line(CMN_FILE)  
-    read(token % string(token % s(1):token % e(1)),'(A80)')  name
+    read(line % tokens(1),'(A80)')  name
     answer=name
     call To_Upper_Case(answer) 
     if(answer == 'SKIP') then
@@ -50,15 +50,15 @@
   open(9, file=name_out)
   if(this_proc  < 2) write(*,*) '# Now creating the file:', name_out  
 
-    call GraPhi(U % n, 1, Ux,.true.)    ! dU/dx
-    call GraPhi(V % n, 1, Vx,.true.)    ! dU/dx
-    call GraPhi(W % n, 1, Wx,.true.)    ! dU/dx
-    call GraPhi(U % n, 2, Uy,.true.)    ! dU/dx
-    call GraPhi(V % n, 2, Vy,.true.)    ! dU/dx
-    call GraPhi(W % n, 2, Wy,.true.)    ! dU/dx
-    call GraPhi(U % n, 3, Uz,.true.)    ! dU/dx
-    call GraPhi(V % n, 3, Vz,.true.)    ! dU/dx
-    call GraPhi(W % n, 3, Wz,.true.)    ! dU/dx
+    call GraPhi(grid, U % n, 1, Ux,.true.)    ! dU/dx
+    call GraPhi(grid, V % n, 1, Vx,.true.)    ! dU/dx
+    call GraPhi(grid, W % n, 1, Wx,.true.)    ! dU/dx
+    call GraPhi(grid, U % n, 2, Uy,.true.)    ! dU/dx
+    call GraPhi(grid, V % n, 2, Vy,.true.)    ! dU/dx
+    call GraPhi(grid, W % n, 2, Wy,.true.)    ! dU/dx
+    call GraPhi(grid, U % n, 3, Uz,.true.)    ! dU/dx
+    call GraPhi(grid, V % n, 3, Vz,.true.)    ! dU/dx
+    call GraPhi(grid, W % n, 3, Wz,.true.)    ! dU/dx
 
   !-----------!
   !   Start   !
@@ -112,7 +112,7 @@
   !-------------------!
   if(TGV == YES) then
     do c = 1, grid % n_cells
-      R   = R + (U % n(c) - (-sin(grid % xc(c))*cos(grid % yc(c))*exp(-2.0*VISc*Time)))**2.0
+      R   = R + (U % n(c) - (-sin(grid % xc(c))*cos(grid % yc(c))*exp(-2.0*VISc*Time)))**2
       RR  = RR + U % n(c)*U % n(c)
       PP % n(c) = sqrt(R/RR) 
     end do

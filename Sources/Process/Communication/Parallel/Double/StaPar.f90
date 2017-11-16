@@ -13,20 +13,14 @@
   integer :: error
 !======================================================================!
 
-  write(*,*) 'Calling MPI_INIT'
-
   CALL MPI_INIT(ERROR)
 
-  write(*,*) 'Calling MPI_COMM_WORLD'
-
-  CALL MPI_COMM_SIZE(MPI_COMM_WORLD,                                &
-                     n_proc,                                          &
+  CALL MPI_COMM_SIZE(MPI_COMM_WORLD,  &
+                     n_proc,          &
                      error) 
 
-  write(*,*) 'Calling MPI_COMM_RANK'
-
-  CALL MPI_COMM_RANK(MPI_COMM_WORLD,                                &
-                     this_proc,                                          &
+  CALL MPI_COMM_RANK(MPI_COMM_WORLD,  &
+                     this_proc,       &
                      error)
 
   this_proc=this_proc+1

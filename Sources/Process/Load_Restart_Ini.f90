@@ -25,7 +25,7 @@
   if(this_proc  < 2) &              
     write(*,*) '# Input intial restart file name [write skip to continue]:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)), '(A80)')  name_in
+  read(line % tokens(1), '(A80)')  name_in
   answer=name_in
   call To_Upper_Case(answer) 
 
@@ -46,7 +46,7 @@
     write(*,*) '# EBM      -> EBM model.'
   endif
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)),'(A)')  answer
+  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'DNS') then
     RES_INI = DNS

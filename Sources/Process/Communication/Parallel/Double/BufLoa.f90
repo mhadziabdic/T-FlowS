@@ -40,7 +40,7 @@
 
 !///// number of physical boundary cells
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*) NBCsub
+  read(line % whole,*) NBCsub
 
 !///// initialize 
   do sub=0,n_proc
@@ -54,18 +54,18 @@
 
 !----- connections with subdomain          
       call Tokenizer_Mod_Read_Line(9)
-      read(token % string,*) subo 
+      read(line % whole,*) subo 
 
 !----- number of local connections with subdomain sub 
       call Tokenizer_Mod_Read_Line(9)
-      read(token % string,*) NBBe(sub)
+      read(line % whole,*) NBBe(sub)
 
       NBBs(sub) = NBBe(sub-1) - 1  
       NBBe(sub) = NBBs(sub) - NBBe(sub) + 1
 
       do c=NBBs(sub),NBBe(sub),-1
         call Tokenizer_Mod_Read_Line(9)
-        read(token % string,*) dummy, BufInd(c) 
+        read(line % whole,*) dummy, BufInd(c) 
       end do 
     else
       NBBs(sub) = NBBe(sub-1)-1  ! just to become "sloppy" 

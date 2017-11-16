@@ -22,7 +22,6 @@ module all_mod
   !-------------------------------------------!
   !   Logical quantities desribing the grid   !
   !-------------------------------------------!
-  integer   :: MNBS
   integer   :: n_copy                    ! number of copy cells/faces
 
   integer,allocatable :: material(:)     ! material markers

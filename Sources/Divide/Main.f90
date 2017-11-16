@@ -33,7 +33,7 @@
 
   write(*,'(A41)') '# Input problem name: (without extension)'
   call Tokenizer_Mod_Read_Line(5)  
-  read(token % string, '(A80)')  name
+  read(line % tokens(1), *)  name
 
   ! Load the finite volume grid
   call Load_Cns(grid)

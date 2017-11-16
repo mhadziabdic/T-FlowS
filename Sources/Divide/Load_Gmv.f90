@@ -30,7 +30,7 @@
   ! Read the number of nodes
   call Tokenizer_Mod_Read_Line(9)
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string(token % s(2):token % e(2)),*)   grid % n_nodes 
+  read(line % tokens(2),*)   grid % n_nodes 
 
   !--------------------!
   !   Alocate memory   ! 
@@ -41,6 +41,7 @@
   write(*,'(A1,I8,A15)') '#', grid % n_bnd_cells, ' boundary cells'         
   write(*,'(A1,I8,A11)') '#', grid % n_faces,     ' cell faces' 
 
+  ! Allocate nodes because you will soon be reading them
   call Grid_Mod_Allocate_Nodes(grid, grid % n_nodes) 
 
   ! Variables defined in all_mod.h90:
@@ -81,37 +82,47 @@
 
   ! Read cell nodes 
   call Tokenizer_Mod_Read_Line(9)  ! cells, number of cells
-  do c = 1, grid % n_cells  !->>> ovo bi se moglo napravit neformatirano
+  do c = 1, grid % n_cells  
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string(token % s(1):token % e(1)),*) dum_s
+    read(line % tokens(1), *) dum_s
+
+    ! Hexahedral cells
     if(dum_s  ==  'hex') then
       grid % cells_n_nodes(c) = 8
       call Tokenizer_Mod_Read_Line(9)
-      read(token % string,*)                          &
+      read(line % whole, *)                           &
            grid % cells_n(1,c), grid % cells_n(2,c),  &
            grid % cells_n(4,c), grid % cells_n(3,c),  &
            grid % cells_n(5,c), grid % cells_n(6,c),  &
            grid % cells_n(8,c), grid % cells_n(7,c) 
+
+    ! Prismatic cells
     else if(dum_s  ==  'prism') then
       grid % cells_n_nodes(c) = 6
       call Tokenizer_Mod_Read_Line(9)
-      read(token % string,*)                        &
+      read(line % whole, *)                         &
          grid % cells_n(1,c), grid % cells_n(2,c),  &
          grid % cells_n(3,c), grid % cells_n(4,c),  &
          grid % cells_n(5,c), grid % cells_n(6,c)
+
+    ! Tetrahedral cells
     else if(dum_s  ==  'tet') then
       grid % cells_n_nodes(c) = 4
       call Tokenizer_Mod_Read_Line(9)
-      read(token % string,*)                        &
+      read(line % whole, *)                         &
          grid % cells_n(1,c), grid % cells_n(2,c),  &
          grid % cells_n(3,c), grid % cells_n(4,c)
+
+    ! Pyramid cells
     else if(dum_s  ==  'pyramid') then
       grid % cells_n_nodes(c) = 5
       call Tokenizer_Mod_Read_Line(9)
-      read(token % string,*)                        &
+      read(line % whole, *)                         &
          grid % cells_n(5,c), grid % cells_n(1,c),  &
          grid % cells_n(2,c), grid % cells_n(4,c),  &
          grid % cells_n(3,c)
+
+    ! Unsupported cells
     else
       write(*,*) '# Unsupported cell type: ', dum_s
       write(*,*) '# Exiting'
@@ -121,10 +132,10 @@
 
   ! Read cell materials
   call Tokenizer_Mod_Read_Line(9)  ! materials, number of materials 
-  read(token % string(token % s(2):token % e(2)),*) grid % n_materials
+  read(line % tokens(2),*) grid % n_materials
   do n = 1, grid % n_materials
     call Tokenizer_Mod_Read_Line(9)  
-    grid % materials(n) % name = token % string(token % s(1):token % e(1))
+    grid % materials(n) % name = line % tokens(1)
   end do 
   do c = 1, grid % n_cells
     read(9,*) material(c)

@@ -36,7 +36,7 @@
   write(*,*) '# Input problem name: (without extension)'
   write(*,*) '#----------------------------------------'
   call Tokenizer_Mod_Read_Line(5) 
-  read(token % string, '(A80)')  name
+  read(line % tokens(1), *) name
 
   domain_name = name
   domain_name(len_trim(name)+1:len_trim(name)+2) = '.d'
@@ -47,9 +47,9 @@
   !   Max. number of nodes (cells), boundary faces and cell faces   ! 
   !-----------------------------------------------------------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string, *) grid % max_n_nodes,      &
-                          grid % max_n_bnd_cells,  &
-                          grid % max_n_faces  
+  read(line % tokens(1), *) grid % max_n_nodes
+  read(line % tokens(2), *) grid % max_n_bnd_cells
+  read(line % tokens(3), *) grid % max_n_faces  
 
   !---------------------!
   !   Allocate memory   !
@@ -129,23 +129,22 @@
   !   Corners   !
   !-------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*) dom % n_points  ! number of points
+  read(line % tokens(1), *) dom % n_points  ! number of points
 
   call Domain_Mod_Allocate_Points(dom, dom % n_points)
 
   do i = 1, dom % n_points
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string(token % s(2):token % e(4)),*)  &
-                        dom % points(i) % x,           &
-                        dom % points(i) % y,           &
-                        dom % points(i) % z
+    read(line % tokens(2),*) dom % points(i) % x
+    read(line % tokens(3),*) dom % points(i) % y
+    read(line % tokens(4),*) dom % points(i) % z
   end do
 
   !------------!
   !   Blocks   !
   !------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*) dom % n_blocks  ! number of blocks 
+  read(line % tokens(1), *) dom % n_blocks  ! number of blocks 
 
   call Domain_Mod_Allocate_Blocks(dom, dom % n_blocks)
 
@@ -159,19 +158,18 @@
     dom % blocks(b) % corners(0)=1       ! suppose it is properly oriented
 
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string(token % s(2):token % e(4)),*)  &  
-         dom % blocks(b) % resolutions(1),             &   ! ni for block
-         dom % blocks(b) % resolutions(2),             &   ! nj for block
-         dom % blocks(b) % resolutions(3)                  ! nk for block
+    read(line % tokens(2),*) dom % blocks(b) % resolutions(1)
+    read(line % tokens(3),*) dom % blocks(b) % resolutions(2)
+    read(line % tokens(4),*) dom % blocks(b) % resolutions(3)
 
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*)              &  ! block weights 
+    read(line % whole, *)               &  ! block weights 
          dom % blocks(b) % weights(1),  &
          dom % blocks(b) % weights(2),  &
          dom % blocks(b) % weights(3)
 
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*)                                            &
+    read(line % whole, *)                                             &
          dom % blocks(b) % corners(1), dom % blocks(b) % corners(2),  &
          dom % blocks(b) % corners(3), dom % blocks(b) % corners(4),  &
          dom % blocks(b) % corners(5), dom % blocks(b) % corners(6),  &
@@ -224,17 +222,16 @@
   !   or with just a weighting factor.           !
   !----------------------------------------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*) dom % n_lines     ! number of defined dom % lines
+  read(line % tokens(1), *) dom % n_lines  ! number of defined dom % lines
 
   call Domain_Mod_Allocate_Lines(dom, dom % n_lines)
 
   do l=1, dom % n_lines
     call Tokenizer_Mod_Read_Line(9)
 
-    read(token % string(token % s(1):token % e(3)),*)  &
-         npnt,                                         &
-         dom % lines(l) % points(1),                   &
-         dom % lines(l) % points(2)
+    read(line % tokens(1),*) npnt
+    read(line % tokens(2),*) dom % lines(l) % points(1)
+    read(line % tokens(3),*) dom % lines(l) % points(2)
 
     call Find_Line(dom,                         &
                    dom % lines(l) % points(1),  &
@@ -250,16 +247,15 @@
     if(npnt > 0) then
       do n=1,dom % lines(l) % resolution
         call Tokenizer_Mod_Read_Line(9)
-        read(token % string(token % s(2):token % e(4)),*)  &
-             dom % lines(l) % x(n),                        &
-             dom % lines(l) % y(n),                        &
-             dom % lines(l) % z(n)
+        read(line % tokens(2),*) dom % lines(l) % x(n)
+        read(line % tokens(3),*) dom % lines(l) % y(n)
+        read(line % tokens(4),*) dom % lines(l) % z(n)
       end do
 
     ! Weight factor
     else
       call Tokenizer_Mod_Read_Line(9)
-      read(token % string,*) dom % lines(l) % weight
+      read(line % tokens(1), *) dom % lines(l) % weight
     endif 
 
   end do
@@ -279,19 +275,19 @@
   !   Surfaces   !
   !--------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*)     Nsurf     ! number of defined surfaces
+  read(line % tokens(1), *) Nsurf     ! number of defined surfaces
 
   do s=1,Nsurf
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*) dum, n1,n2,n3,n4
+    read(line % whole,*) dum, n1, n2, n3, n4
     call Find_Surface(dom, n1, n2, n3, n4, b, fc)
     write(*,*) '# block: ', b, ' surf: ', fc
     n = (b-1)*6 + fc         ! surface number
 
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*) dom % blocks(b) % face_weights(fc,1), &
-                dom % blocks(b) % face_weights(fc,2), &
-                dom % blocks(b) % face_weights(fc,2)
+    read(line % whole, *) dom % blocks(b) % face_weights(fc,1),  &
+                          dom % blocks(b) % face_weights(fc,2),  &
+                          dom % blocks(b) % face_weights(fc,2)
   end do
 
   !---------------------------------------!
@@ -337,8 +333,8 @@
   !   Boundary conditions and materials   !
   !---------------------------------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*) dom % n_regions  ! number of regions (can be boundary 
-                                          ! conditions or materials)
+  read(line % tokens(1), *) dom % n_regions  ! number of regions (can be boundary 
+                                             ! conditions or materials)
 
   call Domain_Mod_Allocate_Regions(dom, dom % n_regions)
 
@@ -346,24 +342,24 @@
     dom % regions(n) % face=''
 
     call Tokenizer_Mod_Read_Line(9)
-    if(token % n == 7) then
-      read(token % string,*)  dum,          &  
+    if(line % n_tokens == 7) then
+      read(line % whole,*)  dum,            &  
                    dom % regions(n) % is,   &
                    dom % regions(n) % js,   &
                    dom % regions(n) % ks,   & 
                    dom % regions(n) % ie,   &
                    dom % regions(n) % je,   &
                    dom % regions(n) % ke   
-    else if(token % n == 2) then
-      read(token % string(token % s(1):token % e(1)),*)       dum           
-      read(token % string(token % s(2):token % e(2)),'(A4)')  & 
+    else if(line % n_tokens == 2) then
+      read(line % tokens(1),*)       dum           
+      read(line % tokens(2),'(A4)')  & 
            dom % regions(n) % face
       call To_Upper_Case(dom % regions(n) % face)           
     end if
 
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*) dom % regions(n) % block,  & 
-                dom % regions(n) % name    
+    read(line % whole, *) dom % regions(n) % block,  & 
+                          dom % regions(n) % name    
     call To_Upper_Case(dom % regions(n) % name)           
 
     ! if( dom % blocks(b_cond(n,7)) % points(0) == -1 ) then
@@ -377,45 +373,45 @@
   !   Periodic boundaries   !
   !-------------------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*)  n_periodic_cond      ! number of periodic boundaries
+  read(line % tokens(1), *)  n_periodic_cond      ! number of periodic boundaries
   write(*,*) '# Number of periodic boundaries: ', n_periodic_cond 
 
   allocate (periodic_cond(n_periodic_cond,8))
 
   do n=1,n_periodic_cond
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*) dum, periodic_cond(n,1), periodic_cond(n,2),  &
-                                periodic_cond(n,3), periodic_cond(n,4) 
+    read(line % whole, *) dum, periodic_cond(n,1), periodic_cond(n,2),  &
+                               periodic_cond(n,3), periodic_cond(n,4) 
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*)      periodic_cond(n,5), periodic_cond(n,6),  &
-                                periodic_cond(n,7), periodic_cond(n,8)
+    read(line % whole, *)      periodic_cond(n,5), periodic_cond(n,6),  &
+                               periodic_cond(n,7), periodic_cond(n,8)
   end do
 
   !---------------------!
   !   Copy boundaries   !
   !---------------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*)  n_copy_cond      ! number of copy boundaries
+  read(line % tokens(1), *)  n_copy_cond  ! number of copy boundaries
   write(*,*) '# Number of copy boundaries: ', n_copy_cond
 
   allocate (copy_cond(n_copy_cond,8))
 
   do n=1,n_copy_cond
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*) dum, copy_cond(n,1), copy_cond(n,2),  &
-                                copy_cond(n,3), copy_cond(n,4) 
+    read(line % whole, *) dum, copy_cond(n,1), copy_cond(n,2),  &
+                               copy_cond(n,3), copy_cond(n,4) 
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*)      copy_cond(n,5), copy_cond(n,6),  &
-                                copy_cond(n,7),copy_cond(n,8)
+    read(line % whole, *)      copy_cond(n,5), copy_cond(n,6),  &
+                               copy_cond(n,7),copy_cond(n,8)
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*) copy_cond(n,0)
+    read(line % whole, *)  copy_cond(n,0)
   end do
 
   !-----------------------------------!
   !   Refinement levels and regions   !
   !-----------------------------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*) n_refine_levels ! number of refinement levels
+  read(line % tokens(1), *) n_refine_levels ! number of refinement levels
 
   write(*,*) '# Number of refinement levels: ', n_refine_levels
 
@@ -425,12 +421,12 @@
   do l=1,n_refine_levels
     write(*,*) 'Level: ', l
     call Tokenizer_Mod_Read_Line(9)
-    token % string = token % string(token % s(2):token % e(2))  
-    read(token % string,*) n_refined_regions(l)  ! number of regions in level n
+    read(line % tokens(2), *) n_refined_regions(l)  
 
-    do n=1, n_refined_regions(l)
+    ! Browse through regions in level "l"
+    do n = 1, n_refined_regions(l)
       call Tokenizer_Mod_Read_Line(9)
-      read(token % string(token % s(3):token % e(3)),*) answer
+      read(line % tokens(3),*) answer
       call To_Upper_Case(answer)
       if(answer == 'RECTANGLE') then
         refined_regions(l,n,0) = RECTANGLE
@@ -444,10 +440,10 @@
       endif 
 
       call Tokenizer_Mod_Read_Line(9)
-      read(token % string,*)                                        &
-                  refined_regions(l,n,1),refined_regions(l,n,2),    &
-                  refined_regions(l,n,3),refined_regions(l,n,4),    &
-                  refined_regions(l,n,5),refined_regions(l,n,6)   
+      read(line % whole, *)                                       &
+                refined_regions(l,n,1),refined_regions(l,n,2),    &
+                refined_regions(l,n,3),refined_regions(l,n,4),    &
+                refined_regions(l,n,5),refined_regions(l,n,6)   
     end do
   end do
 
@@ -455,62 +451,62 @@
   !   Smoothing regions   !
   !-----------------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(token % string,*) n_smoothing_regions  ! number of smoothing regions 
+  read(line % tokens(1), *) n_smoothing_regions  ! number of smoothing regions 
 
   write(*,*) '# Number of (non)smoothing regions: ', n_smoothing_regions 
 
-  allocate (smooth_in_x(n_smoothing_regions))
-  allocate (smooth_in_y(n_smoothing_regions))
-  allocate (smooth_in_z(n_smoothing_regions))
-  allocate (smooth_iters(n_smoothing_regions))
-  allocate (smooth_relax(n_smoothing_regions))
-  allocate (smooth_regions(n_smoothing_regions,0:6))
+  allocate (smooth_in_x   (n_smoothing_regions))
+  allocate (smooth_in_y   (n_smoothing_regions))
+  allocate (smooth_in_z   (n_smoothing_regions))
+  allocate (smooth_iters  (n_smoothing_regions))
+  allocate (smooth_relax  (n_smoothing_regions))
+  allocate (smooth_regions(n_smoothing_regions, 0:6))
 
   do n=1, n_smoothing_regions
-    smooth_in_x(n) = .false.
-    smooth_in_y(n) = .false.
-    smooth_in_z(n) = .false.
+    smooth_in_x(n) = .FALSE.
+    smooth_in_y(n) = .FALSE.
+    smooth_in_z(n) = .FALSE.
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string(token % s(1):token % e(1)),*) smooth_regions(n,0)  
-    if(token % n == 4) then   ! smoothing in three directions
+    read(line % tokens(1), *) smooth_regions(n,0)  
+    if(line % n_tokens == 4) then   ! smoothing in three directions
       smooth_in_x(n) = .TRUE.
       smooth_in_y(n) = .TRUE.
       smooth_in_z(n) = .TRUE.
-    else if(token % n == 3) then
-      call To_Upper_Case(token % string(token % s(2):token % e(2)))
-      call To_Upper_Case(token % string(token % s(3):token % e(3)))
-      if( token % string(token % s(2):token % e(2))  ==  'X' )  &
+    else if(line % n_tokens == 3) then
+      call To_Upper_Case(line % tokens(2))
+      call To_Upper_Case(line % tokens(3))
+      if( line % tokens(2)  ==  'X' )  &
           smooth_in_x(n) = .TRUE.
-      if( token % string(token % s(3):token % e(3))  ==  'X' )  &
+      if( line % tokens(3)  ==  'X' )  &
           smooth_in_x(n) = .TRUE.
-      if( token % string(token % s(2):token % e(2))  ==  'Y' )  &
+      if( line % tokens(2)  ==  'Y' )  &
           smooth_in_y(n) = .TRUE.
-      if( token % string(token % s(3):token % e(3))  ==  'Y' )  &
+      if( line % tokens(3)  ==  'Y' )  &
           smooth_in_y(n) = .TRUE.
-      if( token % string(token % s(2):token % e(2))  ==  'Z' )  &
+      if( line % tokens(2)  ==  'Z' )  &
           smooth_in_z(n) = .TRUE.
-      if( token % string(token % s(3):token % e(3))  ==  'Z' )  &
+      if( line % tokens(3)  ==  'Z' )  &
           smooth_in_z(n) = .TRUE.
-    else if(token % n == 2) then
-      call To_Upper_Case(token % string(token % s(2):token % e(2)))
-      if( token % string(token % s(2):token % e(2))  ==  'X' )  &
+    else if(line % n_tokens == 2) then
+      call To_Upper_Case(line % tokens(2))
+      if( line % tokens(2)  ==  'X' )  &
           smooth_in_x(n) = .TRUE.
-      if( token % string(token % s(2):token % e(2))  ==  'Y' )  &
+      if( line % tokens(2)  ==  'Y' )  &
           smooth_in_y(n) = .TRUE.
-      if( token % string(token % s(2):token % e(2))  ==  'Z' )  &
+      if( line % tokens(2)  ==  'Z' )  &
           smooth_in_z(n) = .TRUE.
     end if 
 
     ! Read the coordinates of the (non)smoothed region
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*) smooth_iters(n), smooth_relax(n)
+    read(line % whole, *) smooth_iters(n), smooth_relax(n)
     call Tokenizer_Mod_Read_Line(9)
-    read(token % string,*) smooth_regions(n,1),  &
-                           smooth_regions(n,2),  &
-                           smooth_regions(n,3),  &
-                           smooth_regions(n,4),  &
-                           smooth_regions(n,5),  &
-                           smooth_regions(n,6)   
+    read(line % whole, *) smooth_regions(n,1),  &
+                          smooth_regions(n,2),  &
+                          smooth_regions(n,3),  &
+                          smooth_regions(n,4),  &
+                          smooth_regions(n,5),  &
+                          smooth_regions(n,6)   
   end do
 
   close(9)

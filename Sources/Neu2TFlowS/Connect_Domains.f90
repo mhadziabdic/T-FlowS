@@ -50,12 +50,12 @@
   write(*,*) '# Enter the copy marker (skip to exit):'
   write(*,*) '#--------------------------------------'
   call Tokenizer_Mod_Read_Line(5)
-  read(token % string, *) answer
+  read(line % tokens(1), *) answer
   call To_Upper_Case(answer)
   if(answer == 'SKIP') then
     return
   else 
-    read(token % string,*) copy_marker 
+    read(line % tokens(1), *) copy_marker 
   end if    
 
   !-------!

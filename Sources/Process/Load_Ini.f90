@@ -37,7 +37,7 @@
 !==============================================================================!  
 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(token % string(token % s(1):token % e(1)), '(A80)') name_in
+  read(line % tokens(1), '(A80)') name_in
   answer=name_in
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return

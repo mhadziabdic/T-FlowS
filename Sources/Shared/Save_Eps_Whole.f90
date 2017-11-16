@@ -61,12 +61,12 @@
 1 write(*,*) '# Enter the camera coordinates (skip to exit): '
   write(*,*) '#---------------------------------------------'
   call Tokenizer_Mod_Read_Line(5)
-  if(token % n == 1) then 
-    read(token % string, *) answer
+  if(line % n_tokens == 1) then 
+    read(line % whole, *) answer
     call To_Upper_Case(answer)
     if(answer == 'SKIP') return  
-  else if(token % n == 3) then 
-    read(token % string, *) xk, yk, zk  
+  else if(line % n_tokens == 3) then 
+    read(line % whole, *) xk, yk, zk  
   end if  
   alfa = acos( xk / sqrt(xk*xk+yk*yk) )
   beta = acos( yk / sqrt(xk*xk+yk*yk) )
@@ -83,11 +83,11 @@
   !----------------------!
   write(*,*) '# G-> Gray or C-> Coloured (by boundary conditions): '
   call Tokenizer_Mod_Read_Line(5)
-  read(token % string, *) colour 
+  read(line % whole, *) colour 
   call To_Upper_Case(colour);
   write(*,*) '# Enter the file name (without extension): '
   call Tokenizer_Mod_Read_Line(5)
-  read(token % string, *) name_eps 
+  read(line % whole, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
   write(*, *) '# Now creating the file:', name_eps
 

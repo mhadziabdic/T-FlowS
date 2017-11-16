@@ -117,7 +117,7 @@
     end if
   end do 
 
-!!write(9) (iwork(s,0), s=1,count)
+!!write(9) (iwork(s,0), s=1,count) why is it OK to neglect this?
   write(9) (iwork(s,1), s=1,count)
   write(9) (iwork(s,2), s=1,count)
 

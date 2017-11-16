@@ -21,6 +21,9 @@
   !-----------------------------------!
 1 read(un,'(A300)') line % whole
 
+  ! Shift the whole line to the left (remove leading spaces)
+  line % whole = adjustl(line % whole)
+
   !------------------------------------------!
   !  If you are reading from command file    !
   !  (T-FlowS.cmn), increase the line count  !

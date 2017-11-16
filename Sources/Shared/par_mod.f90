@@ -12,13 +12,11 @@ module par_mod
 
   implicit none
 
-  integer :: n_sub      ! Number of subdivisions.  Used in Divide
   integer :: this_proc  ! Processor i.d.
-  integer :: n_proc     ! Number of processors.  Mostly in Process
+  integer :: n_proc     ! Number of processors.  Only in Process
 
-  integer, allocatable :: subNC(:), NBBs(:), NBBe(:)
+  integer, allocatable :: NBBs(:), NBBe(:)
 
-  integer, allocatable :: proces(:), BuSeIn(:), BuReIn(:), &
-                          BufInd(:), BufPos(:) 
+  integer, allocatable :: BufInd(:)
 
 end module

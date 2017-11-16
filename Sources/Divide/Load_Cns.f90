@@ -6,7 +6,6 @@
   use all_mod
   use gen_mod 
   use div_mod
-  use par_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none

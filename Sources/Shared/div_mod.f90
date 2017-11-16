@@ -10,11 +10,25 @@ module div_mod
 
   implicit none
 
+  ! Division algorithm
+  integer            :: division_algorithm
   integer, parameter :: COORDINATE = 1
   integer, parameter :: INERTIAL   = 2
 
-  integer              :: division_algorithm
+  ! Number of sub-divisions
+  integer              :: n_sub
+
+  ! Buffer send index and buffer receive index.  
+  ! Used for plotting dcomposed grids with links.
+  integer, allocatable :: SubNC(:), BuSeIn(:), BuReIn(:), BufPos(:)
+
+  ! Processor i.d.
+  integer, allocatable :: proces(:)  
+
+  ! Axes of innertial
   integer, allocatable :: ix(:), iy(:), iz(:), iin(:)
+
+  ! Division criterion (I believe)
   real, allocatable    :: criter(:) 
 
 end module

@@ -48,7 +48,7 @@
   !----------------------!
   call Name_File(this_proc, name_out, '.dat', len_trim('.dat'))
   open(9, file=name_out)
-  if(this_proc  < 2) write(*,*) '# Now creating the file:', name_out  
+  if(this_proc  < 2) write(*,*) '# Now creating the file:', trim(name_out)
 
     call GraPhi(grid, U % n, 1, Ux,.true.)    ! dU/dx
     call GraPhi(grid, V % n, 1, Vx,.true.)    ! dU/dx

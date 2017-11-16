@@ -7,7 +7,6 @@
   use all_mod
   use gen_mod 
   use div_mod
-  use par_mod
   use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -69,11 +68,9 @@
 
   write(*,*) '# Number of subdomains:'
   read(*,*)  n_sub_tot
-  n_proc = n_sub_tot      ! Needed for EpsPar
+  n_sub = n_sub_tot      ! Needed for EpsPar
 
-  allocate (subNC(n_proc))
-  allocate (NBBs(0:n_proc))
-  allocate (NBBe(0:n_proc))
+  allocate (subNC(n_sub))
 
   write(*,*) '#==============================='
   write(*,*) '# Algorythm for decomposition:'

@@ -42,6 +42,8 @@
   call Tokenizer_Mod_Read_Line(9)
   read(line % whole,*) NBCsub
 
+write(*,*) 'NBCsub = ', NBCsub
+
 !///// initialize 
   do sub=0,n_proc
     NBBs(sub) = -(NBCsub) 
@@ -56,9 +58,14 @@
       call Tokenizer_Mod_Read_Line(9)
       read(line % whole,*) subo 
 
+write(*,*) 'subo = ', subo
+
 !----- number of local connections with subdomain sub 
       call Tokenizer_Mod_Read_Line(9)
+write(*,*) 'whole_line = ', line % whole
       read(line % whole,*) NBBe(sub)
+
+write(*,*) 'whole_line = ', line % whole
 
       NBBs(sub) = NBBe(sub-1) - 1  
       NBBe(sub) = NBBs(sub) - NBBe(sub) + 1

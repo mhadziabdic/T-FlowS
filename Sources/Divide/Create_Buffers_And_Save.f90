@@ -6,7 +6,8 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod 
-  use par_mod
+  use div_mod
+  use par_mod, only: NBBs, NBBe
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -36,6 +37,9 @@
 !   end do                                                                     !
 !------------------------------------------------------------------------------!
 
+  allocate (NBBs(0:n_sub))
+  allocate (NBBe(0:n_sub))
+
   !-------------------------------!
   !                               !
   !   Browse through subdomains   !
@@ -45,13 +49,13 @@
 
     call Name_File(sub, name_out, '.buf', len_trim('.buf'))
     open(9, file=name_out)
-    write(*, *) '# Now creating the file:', name_out
+    write(*, *) '# Now creating the file:', trim(name_out)
 
-    write(9,'(A20)') '%%%%%%%%%%%%%%%%%%%%'
-    write(9,'(A20)') '%                  %'
-    write(9,'(A20)') '%  Buffer indexes  %'
-    write(9,'(A20)') '%                  %'
-    write(9,'(A20)') '%%%%%%%%%%%%%%%%%%%%'
+    write(9,'(A20)') '#------------------#'
+    write(9,'(A20)') '#                  #'
+    write(9,'(A20)') '#  Buffer indexes  #'
+    write(9,'(A20)') '#                  #'
+    write(9,'(A20)') '#------------------#'
 
     ! Cells
     n_cells_sub = 0     ! number of cells in subdomain
@@ -131,7 +135,7 @@
     !--------------------!
     n_buff_sub = 0
     NCFsub = 0
-    write(9,'(A33)') '#--- Number of physical b. cells:'
+    write(9,'(A30)') '# Number of physical b. cells:'
     write(9,'(I8)')  n_bnd_cells_sub   
     do subo=1,n_sub
       if(subo /= sub) then
@@ -183,13 +187,13 @@
         NBBe(subo)=n_buff_sub
 
         ! Write to buffer file
-        write(9,'(A33)') '#===============================#' 
+        write(9,'(A33)') '#-------------------------------#' 
         write(9,'(A33)') '#   Conections with subdomain:  #' 
-        write(9,'(A33)') '#===============================#' 
+        write(9,'(A33)') '#-------------------------------#' 
         write(9,'(I8)')  subo 
-        write(9,'(A33)') '#--- Number of local connections:'
+        write(9,'(A30)') '# Number of local connections:'
         write(9,'(I8)')  NBBe(subo)-NBBs(subo)+1 
-        write(9,'(A40)') '#--- Local number in a buffer and index:'
+        write(9,'(A37)') '# Local number in a buffer and index:'
         do b=NBBs(subo),NBBe(subo)
           write(9,'(2I8)') b-NBBs(subo)+1, BuSeIn(b) 
         end do

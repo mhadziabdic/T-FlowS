@@ -156,7 +156,7 @@
   write(*,*) '# Found following boundary conditions:'
   write(*,*) '#---------------------------------------------------'
   do n = 1, grid % n_boundary_conditions
-    write(*,*) '# ', grid % boundary_conditions(n) % name
+    write(*,*) '# ', trim(grid % boundary_conditions(n) % name)
   end do
   write(*,*) '#---------------------------------------------------'
 
@@ -164,7 +164,7 @@
   write(*,*) '# Found following materials:'
   write(*,*) '#---------------------------------------------------'
   do n = 1, grid % n_materials
-    write(*,*) '# ', grid % materials(n) % name
+    write(*,*) '# ', trim(grid % materials(n) % name)
   end do
   write(*,*) '#---------------------------------------------------'
 

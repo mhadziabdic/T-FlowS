@@ -49,8 +49,10 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
+  write(*,*) '#=============================================='
   write(*,*) '# Refine: Number of nodes: ', grid % n_nodes 
   write(*,*) '#         Number of cells: ', grid % n_cells 
+  write(*,*) '#----------------------------------------------'
 
   n_cells_old = grid % n_cells 
   n_nodes_old = grid % n_nodes
@@ -825,8 +827,8 @@
     end if   
   end do
 
-  write(*,*) 'Number of nodes after the refinement: ', grid % n_nodes 
-  write(*,*) 'Number of cells after the refinement: ', grid % n_cells 
+  write(*,*) '# Number of nodes after the refinement: ', grid % n_nodes 
+  write(*,*) '# Number of cells after the refinement: ', grid % n_cells 
 
   !------------------------------------------!
   !                                          !
@@ -941,7 +943,7 @@
 
   grid % n_cells = grid % n_cells - del    
 
-  write(*,*) 'Number of cells after the renumeration: ', grid % n_cells 
+  write(*,*) '# Number of cells after the renumeration: ', grid % n_cells 
 
   deallocate(node_n2)
   deallocate(node_n4)

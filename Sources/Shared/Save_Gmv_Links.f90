@@ -11,7 +11,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use gen_mod 
-  use par_mod 
+  use div_mod 
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -33,7 +33,7 @@
 
   call Name_File(sub, name_out, '.ln.gmv', len_trim('.ln.gmv'))
   open(9, file=name_out)
-  write(6, *) '# Now creating the file:', name_out
+  write(6, *) '# Now creating the file:', trim(name_out)
 
   !-----------!
   !   Nodes   !

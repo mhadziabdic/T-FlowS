@@ -44,7 +44,7 @@
   !-------------------------!
   call Name_File(this_proc, name_out, '.restart', len_trim('.restart') )
   open(9, file=name_out, FORM='unformatted')
-  if(this_proc  < 2) write(6, *) '# Now creating the file:', name_out
+  if(this_proc  < 2) write(6, *) '# Now creating the file:', trim(name_out)
 
   ! Version
   write(9) 0.0  ! version

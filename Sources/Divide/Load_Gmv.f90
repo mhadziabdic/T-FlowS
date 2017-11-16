@@ -6,7 +6,6 @@
   use all_mod
   use gen_mod 
   use div_mod
-  use par_mod
   use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -61,7 +60,6 @@
   allocate (iin(-grid % n_bnd_cells:grid % n_cells)); iin=0
   allocate (criter(grid % n_cells));   criter=0
 
-  ! Variables declared in par_mod.h90:
   allocate (proces(grid % n_cells)); proces=0
   allocate (BuSeIn(grid % n_faces)); BuSeIn=0
   allocate (BuReIn(grid % n_faces)); BuReIn=0

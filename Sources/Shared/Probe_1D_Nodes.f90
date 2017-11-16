@@ -92,7 +92,7 @@
   !--------------------!
   name_prob = name
   name_prob(len_trim(name)+1:len_trim(name)+3) = '.1D'
-  write(6, *) '# Now creating the file:', name_prob
+  write(6, *) '# Now creating the file:', trim(name_prob)
   open(9, file=name_prob)
 
   ! Write the number of probes 

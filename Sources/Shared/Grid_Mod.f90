@@ -85,10 +85,10 @@
 
   contains
  
-  include 'Grid_Mod_Sort_Cells_By_Index.f90'
-  include 'Grid_Mod_Sort_Faces_By_Index.f90'
-  include 'Grid_Mod_Allocate_Cells.f90'
-  include 'Grid_Mod_Allocate_Faces.f90'
-  include 'Grid_Mod_Allocate_Nodes.f90'
+  include 'Grid_Mod/Sort_Cells_By_Index.f90'
+  include 'Grid_Mod/Sort_Faces_By_Index.f90'
+  include 'Grid_Mod/Allocate_Cells.f90'
+  include 'Grid_Mod/Allocate_Faces.f90'
+  include 'Grid_Mod/Allocate_Nodes.f90'
 
   end module

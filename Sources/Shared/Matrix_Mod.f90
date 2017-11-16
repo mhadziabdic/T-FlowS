@@ -48,7 +48,7 @@
 
   contains
 
-  include 'Matrix_Mod_Topology.f90'
-  include 'Matrix_Mod_Allocate.f90'
+  include 'Matrix_Mod/Topology.f90'
+  include 'Matrix_Mod/Allocate.f90'
 
   end module 

@@ -7,7 +7,6 @@
   use all_mod 
   use gen_mod 
   use neu_mod 
-  use par_mod 
   use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -88,8 +87,6 @@
   allocate(NewN( grid % n_nodes));                      NewN=0  
   allocate(NewC(-grid % n_bnd_cells-1:grid % n_cells)); NewC=0  
   allocate(NewS( grid % n_cells*5));                    NewS=0  
-
-  allocate(proces(0:grid % n_cells)); proces=0
 
   allocate(temp(grid % n_cells)); temp=0
 

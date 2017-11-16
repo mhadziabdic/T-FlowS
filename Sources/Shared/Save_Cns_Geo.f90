@@ -5,7 +5,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-  use par_mod
+  use div_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -38,7 +38,7 @@
   !----------------------!
   call Name_File( sub, name_out, '.cns', len_trim('.cns') )
   open(9, file=name_out,form='unformatted')
-  write(*, *) '# Now creating the file:', name_out
+  write(*, *) '# Now creating the file:', trim(name_out)
 
   !-----------------------------------------------!
   !   Number of cells, boundary cells ans sides   !
@@ -183,7 +183,7 @@
   !----------------------!
   call Name_File( sub, name_out, '.geo', len_trim('.geo') )
   open(9, file=name_out, form='unformatted')
-  write(*, *) '# Now creating the file:', name_out
+  write(*, *) '# Now creating the file:', trim(name_out)
 
   !---------------------------------!
   !     cell center coordinates     !

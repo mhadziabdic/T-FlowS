@@ -37,9 +37,9 @@
   !----------------------!
   !  Skip comment lines  !
   !----------------------!
-  if( line % whole(1:1) == '!' .or.               &
-      line % whole(1:1) == '#' .or.               &
-      line % whole(1:1) == '%' ) goto 1
+  if( trim(line % whole(1:1)) == '!' .or.               &
+      trim(line % whole(1:1)) == '#' .or.               &
+      trim(line % whole(1:1)) == '%' ) goto 1
 
   !--------------------------------------!
   !  Parse tokens. This is somehow cool  !

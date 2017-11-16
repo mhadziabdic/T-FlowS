@@ -5,7 +5,6 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-  use par_mod
   use Tokenizer_Mod
   use Domain_Mod
   use Grid_Mod
@@ -112,16 +111,6 @@
 
   allocate (level(grid % max_n_nodes))
   level=0
-
-  ! Variables declared in pro_mod.h90:
-  allocate (proces(grid % max_n_nodes))
-  proces=0
-  allocate (BuSeIn(grid % max_n_faces))
-  BuSeIn=0
-  allocate (BuReIn(grid % max_n_faces))
-  BuReIn=0
-  allocate (BufPos(grid % max_n_faces))
-  BufPos=0
 
   write(*,*) '# Allocation successfull !'
 
@@ -358,8 +347,8 @@
     end if
 
     call Tokenizer_Mod_Read_Line(9)
-    read(line % whole, *) dom % regions(n) % block,  & 
-                          dom % regions(n) % name    
+    read(line % tokens(1), *) dom % regions(n) % block
+    read(line % tokens(2), *) dom % regions(n) % name    
     call To_Upper_Case(dom % regions(n) % name)           
 
     ! if( dom % blocks(b_cond(n,7)) % points(0) == -1 ) then

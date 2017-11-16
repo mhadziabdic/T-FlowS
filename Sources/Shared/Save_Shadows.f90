@@ -26,7 +26,7 @@
 
   call Name_File(sub, name_out, '.shadow.gmv', len_trim('.shadow.gmv'))
   open(9, file=name_out)
-  write(6, *) '# Now creating the file:', name_out
+  write(6, *) '# Now creating the file:', trim(name_out)
 
   do s = grid % n_faces+1, grid % n_faces+NSsh
     write(9,*) grid % faces_n_nodes(s) 

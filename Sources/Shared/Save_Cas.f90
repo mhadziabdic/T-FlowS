@@ -4,7 +4,7 @@
 !   Writes: ".cas" file                                                        !
 !                                                                              !
 !   See also: number                                                           !
-!   NSsub holds (has to hold) grid % n_faces + NSsh                                        !
+!   NSsub holds (has to hold) grid % n_faces + grid % n_sh                     !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
@@ -99,8 +99,9 @@
 
     if(Nfac /= 0) then
       write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
-      write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 100+n, NtotFac+1, NtotFac+Nfac, ' 3 0)('
-      do s=1,grid % n_faces+NSsh
+      write(9,'(A5,Z9,Z9,Z9,A6)')  &
+              '(13 (', 100+n, NtotFac+1, NtotFac+Nfac, ' 3 0)('
+      do s=1,grid % n_faces + grid % n_sh
           c1 = grid % faces_c(1,s)
           c2 = grid % faces_c(2,s)
           if(c2 < 0) then  
@@ -133,8 +134,9 @@
 
   ! periodic.shadow
   write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
-  write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 5, NtotFac+1, NtotFac+NSsh/2, ' 8 0)('
-  do s=grid % n_faces+1,grid % n_faces+NSsh,2  ! =--> or maybe: do s=grid % n_faces+1,grid % n_faces+NSsh/2
+  write(9,'(A5,Z9,Z9,Z9,A6)')  &
+          '(13 (', 5, NtotFac+1, NtotFac+grid % n_sh/2, ' 8 0)('
+  do s=grid % n_faces+1,grid % n_faces+grid % n_sh, 2
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
     if(c2 < 0) then
@@ -160,8 +162,9 @@
 
   ! Periodic
   write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
-  write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 6, NtotFac+1+NSsh/2, NtotFac+NSsh, ' c 0)('
-  do s=grid % n_faces+2,grid % n_faces+NSsh,2  ! =--> or maybe: do s=grid % n_faces+1,grid % n_faces+NSsh/2
+  write(9,'(A5,Z9,Z9,Z9,A6)')  &
+          '(13 (', 6, NtotFac+1+grid % n_sh/2, NtotFac+grid % n_sh, ' c 0)('
+  do s=grid % n_faces+2,grid % n_faces+grid % n_sh, 2
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
@@ -185,13 +188,13 @@
   end do
   write(9,'(A2)') '))' 
 
-  write(9,'(A7,Z9,Z9,A6)') '(18 (', NtotFac+1, NtotFac+NSsh/2, ' 6 5)('
-  do s=NtotFac+1, NtotFac+NSsh/2     ! =-> ili mozda: "do s=grid % n_faces+1,grid % n_faces+NSsh,2" ??
-    write(9,'(Z9,Z9)') s, s+NSsh/2 
+  write(9,'(A7,Z9,Z9,A6)') '(18 (', NtotFac+1, NtotFac+grid % n_sh/2, ' 6 5)('
+  do s=NtotFac+1, NtotFac+grid % n_sh/2 
+    write(9,'(Z9,Z9)') s, s+grid % n_sh/2 
   end do
   write(9,'(A2)') '))' 
 
-  NtotFac = NtotFac + NSsh
+  NtotFac = NtotFac + grid % n_sh
 
   !-------------------------!
   !   Faces in the domain   !
@@ -239,7 +242,7 @@
   ! Faces in the domain
   NtotFac = NtotFac+Nfac
   write(9,'(A25)') '(0 "Sides in the domain")'
-  write(9,'(A7,Z9,Z9,A6)') '(13 (4 ', NtotFac+1, NSsub-NSsh/2, ' 2 0)('
+  write(9,'(A7,Z9,Z9,A6)') '(13 (4 ', NtotFac+1, NSsub-grid % n_sh/2, ' 2 0)('
   do s=1,NSsub
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)

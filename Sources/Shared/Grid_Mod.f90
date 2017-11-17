@@ -26,6 +26,7 @@
     integer :: n_materials            ! ... materials
     integer :: n_boundary_conditions  ! ... boundary conditions
     integer :: n_copy                 ! ... copy cells and faces
+    integer :: n_sh                   ! ... shadow faces           
 
     !-------------------------!
     !  Cell-based variables   !

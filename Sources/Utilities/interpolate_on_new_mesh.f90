@@ -1,5 +1,5 @@
 !======================================================================*
-      PROGRAM sub_ini
+      program sub_ini
 !----------------------------------------------------------------------*
 !  This program uses solution from a previous computation to generate
 !  input files that initiate velocity, pressure and temperature fields
@@ -394,7 +394,7 @@
   deallocate(Pyold)
   deallocate(Pzold)
 
-  end PROGRAM
+  end program
 
 !======================================================================!
   subroutine Name_File(name, namOut, ext, lext)
@@ -429,8 +429,5 @@
 !    namOut(len_trim(name)+6:len_trim(name)+6+lext-1) = ext(1:lext)
 !  end if
 
-  end subroutine Name_File
-
-
-
+  end subroutine
 

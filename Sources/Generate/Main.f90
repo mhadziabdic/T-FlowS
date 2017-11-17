@@ -59,7 +59,6 @@
                       grid % n_nodes)     ! save grid for checking b.c. 
 
   call Save_Shadows  (grid, 0,         &
-                      grid % n_nodes,  &
                       grid % n_cells)     ! save shadows 
 
   call Save_Cns_Geo(grid, 0,                  &
@@ -87,14 +86,14 @@
   call Save_Cas(grid, 0,              &
                 grid % n_nodes,       &
                 grid % n_cells,       &
-                grid % n_faces+NSsh)     ! save grid for Fluent
+                grid % n_faces + grid % n_sh)  ! save grid for Fluent
 
   ! Make eps figures
   call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x') 
   call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y') 
   call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z') 
 
-  call Save_Eps_Whole(grid, NSsh)  ! draw the domain with shadows
+  call Save_Eps_Whole(grid, grid % n_sh)  ! draw the domain with shadows
 
   ! Write something on the screen
   call Print_Grid_Statistics(grid)

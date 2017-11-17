@@ -3,9 +3,8 @@
 !------------------------------------------------------------------------------!
 ! Writes: NAME.gmv, NAME.faces.gmv, NAME.shadow.gmv                            !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
-  use gen_mod
-  use par_mod
+  use all_mod, only: material
+  use gen_mod, only: NewN, NewC
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none

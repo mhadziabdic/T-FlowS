@@ -914,7 +914,7 @@
       NewN(c) = c - del 
     endif 
   end do
-  write(*,*) 'Deleted cells:', del
+  write(*,*) '# Deleted cells:', del
 
   do c = 1, grid % n_cells
     if(NewN(c) /= -1) then

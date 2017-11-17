@@ -10,4 +10,4 @@
   dom % n_points = n
   allocate(dom % points(n))
 
-  end subroutine Domain_Mod_Allocate_Points
+  end subroutine

@@ -49,7 +49,6 @@
                       grid % n_nodes)        ! save grid for checking b.c. 
 
   call Save_Shadows  (grid, 0,            &
-                      grid % n_nodes,     &
                       grid % n_cells)             ! save shadows 
 
   call Save_Cns_Geo  (grid, 0,             &
@@ -68,10 +67,10 @@
 
   ! Create output for Fluent
   NewC(-grid % n_bnd_cells-1) = -grid % n_bnd_cells-1
-  call Save_Cas(grid, 0,                  &
-                grid % n_nodes,           &
-                grid % n_cells,           &
-                grid % n_faces+NSsh,      &
+  call Save_Cas(grid, 0,                        &
+                grid % n_nodes,                 &
+                grid % n_cells,                 &
+                grid % n_faces + grid % n_sh,   &
                 grid % n_bnd_cells)      ! save grid for postprocessing
                                          ! with Fluent
 
@@ -85,6 +84,6 @@
   call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z')
  
   write(*,*) '# Making a 3D shaded .eps figure of the domain.'
-  call Save_Eps_Whole(grid, NSsh)   ! draw the domain with shadows
+  call Save_Eps_Whole(grid, grid % n_sh)   ! draw the domain with shadows
 
   end program

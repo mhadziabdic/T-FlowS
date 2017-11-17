@@ -35,9 +35,9 @@
   read(line % tokens(1), *)  name
 
   ! Load the finite volume grid
-  call Load_Cns(grid)
+  call Load_Cns(grid, 0)
   call Load_Gmv(grid)
-  call Load_Geo(grid)
+  call Load_Geo(grid, 0)
   call Load_Gmv_Faces(grid)
 
   ! Initialize processor numbers
@@ -64,7 +64,7 @@
   call Sort_Real_By_Index(criter(1),iz(1),grid % n_cells,2)
   write(*,*) '# Finished sorting'
 
-  call Load_Geo(grid)
+  call Load_Geo(grid, 0)
 
   write(*,*) '# Number of subdomains:'
   read(*,*)  n_sub_tot

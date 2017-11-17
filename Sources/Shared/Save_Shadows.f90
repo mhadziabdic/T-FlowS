@@ -1,19 +1,17 @@
 !==============================================================================!
-  subroutine Save_Shadows(grid, sub, NNsub, NCsub)
+  subroutine Save_Shadows(grid, sub, NCsub)
 !------------------------------------------------------------------------------!
-! Writes .shadow file.                                                         !
+!   Writes .shadow file.                                                       !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod
-  use par_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: sub, NNsub, NCsub, NmaterBC
+  integer         :: sub, NCsub
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c,  c1,  c2,  n, s
+  integer           :: s
   character(len=80) :: name_out
 !==============================================================================!
 
@@ -28,7 +26,7 @@
   open(9, file=name_out)
   write(6, *) '# Now creating the file:', trim(name_out)
 
-  do s = grid % n_faces+1, grid % n_faces+NSsh
+  do s = grid % n_faces + 1, grid % n_faces + grid % n_sh
     write(9,*) grid % faces_n_nodes(s) 
     if(grid % faces_n_nodes(s)==3) then
       write(9,*) grid % faces_n(1,s),  &

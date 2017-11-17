@@ -40,7 +40,6 @@ module gen_mod
                           copy_cond(:,:)
 
   integer :: Nsurf
-  integer :: NSsh                  ! number of shadow faces
 
   integer :: WallFacFst, WallFacLst 
 

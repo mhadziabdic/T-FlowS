@@ -212,7 +212,6 @@
 
     call Save_Shadows(grid,         &
                       sub,          &
-                      n_nodes_sub,  &
                       n_cells_sub)
 
     call Save_Cns_Geo(grid,              &
@@ -316,9 +315,12 @@
 
   call Save_Gmv_Cells(grid, 0, grid % n_nodes, grid % n_cells)
   call Save_Gmv_Faces(grid, 0, grid % n_nodes)
-  call Save_Shadows  (grid, 0, grid % n_nodes, grid % n_cells)
+  call Save_Shadows  (grid, 0, grid % n_cells)
 
-  call Save_Cas(grid, 0, grid % n_nodes, grid % n_cells, grid % n_faces+NSsh)
+  call Save_Cas(grid, 0,                        &
+                grid % n_nodes,                 &
+                grid % n_cells,                 &
+                grid % n_faces + grid % n_sh)
 
   call Save_Eps_Decomposed(grid)
 

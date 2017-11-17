@@ -10,4 +10,4 @@
   dom % n_lines = n
   allocate(dom % lines(n))
 
-  end subroutine Domain_Mod_Allocate_Lines
+  end subroutine

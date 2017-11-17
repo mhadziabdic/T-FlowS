@@ -17,7 +17,7 @@
   real :: Distance       
   real :: Distance_Squared       
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, c1, c2, m, n, s, c_1, c_2
+  integer :: c, c1, c2, m, n, s, c_1, c_2, new_face_1, new_face_2
   integer :: wall_mark
   real    :: local_x_node(4), local_y_node(4), local_z_node(4)
   real    :: x_cell_tmp, y_cell_tmp, z_cell_tmp    
@@ -282,7 +282,7 @@
     !   <= gives:      Dx,Dy,Dz                   !
     !---------------------------------------------!
     if(rrun) then
-    NSsh = 0
+    grid % n_sh = 0
     do s = 1, grid % n_faces
 
       ! Initialize
@@ -299,7 +299,7 @@
              grid % sy(s) * (grid % yc(c2) - grid % yc(c1) ) +  &
              grid % sz(s) * (grid % zc(c2) - grid % zc(c1) ))  < 0.0 ) then
 
-          NSsh = NSsh + 2
+          grid % n_sh = grid % n_sh + 2
  
           ! Find the coordinates of ...
           m=SideCc(s,2)
@@ -323,32 +323,34 @@
                      + grid % zn(grid % cells_n(f4n(m,4), c2)))
  
             ! Add shadow faces
-            grid % faces_n_nodes(grid % n_faces+NSsh-1) = 4
-            grid % faces_c(1,grid % n_faces+NSsh-1) = c1 
-            grid % faces_c(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
-            grid % faces_n(1,grid % n_faces+NSsh-1) = grid % faces_n(1,s)
-            grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
-            grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
-            grid % faces_n(4,grid % n_faces+NSsh-1) = grid % faces_n(4,s)
-            grid % sx(grid % n_faces+NSsh-1) = grid % sx(s)
-            grid % sy(grid % n_faces+NSsh-1) = grid % sy(s)
-            grid % sz(grid % n_faces+NSsh-1) = grid % sz(s)
-            grid % xf(grid % n_faces+NSsh-1) = grid % xf(s)
-            grid % yf(grid % n_faces+NSsh-1) = grid % yf(s)
-            grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
-            grid % faces_n_nodes(grid % n_faces+NSsh) = 4
-            grid % faces_c(1, grid % n_faces+NSsh) = c2 
-            grid % faces_c(2, grid % n_faces+NSsh) = -grid % n_bnd_cells-1
-            grid % faces_n(1,grid % n_faces+NSsh) = grid % cells_n(f4n(m,1), c2)
-            grid % faces_n(2,grid % n_faces+NSsh) = grid % cells_n(f4n(m,2), c2)
-            grid % faces_n(3,grid % n_faces+NSsh) = grid % cells_n(f4n(m,3), c2)
-            grid % faces_n(4,grid % n_faces+NSsh) = grid % cells_n(f4n(m,4), c2)
-            grid % sx(grid % n_faces+NSsh) = grid % sx(s)
-            grid % sy(grid % n_faces+NSsh) = grid % sy(s)
-            grid % sz(grid % n_faces+NSsh) = grid % sz(s)
-            grid % xf(grid % n_faces+NSsh) = xs2
-            grid % yf(grid % n_faces+NSsh) = ys2
-            grid % zf(grid % n_faces+NSsh) = zs2
+            new_face_1 = grid % n_faces+grid % n_sh-1
+            new_face_2 = grid % n_faces+grid % n_sh  
+            grid % faces_n_nodes(new_face_1) = 4
+            grid % faces_c(1, new_face_1) = c1 
+            grid % faces_c(2, new_face_1) = -grid % n_bnd_cells-1
+            grid % faces_n(1, new_face_1) = grid % faces_n(1,s)
+            grid % faces_n(2, new_face_1) = grid % faces_n(2,s)
+            grid % faces_n(3, new_face_1) = grid % faces_n(3,s)
+            grid % faces_n(4, new_face_1) = grid % faces_n(4,s)
+            grid % sx(new_face_1) = grid % sx(s)
+            grid % sy(new_face_1) = grid % sy(s)
+            grid % sz(new_face_1) = grid % sz(s)
+            grid % xf(new_face_1) = grid % xf(s)
+            grid % yf(new_face_1) = grid % yf(s)
+            grid % zf(new_face_1) = grid % zf(s)
+            grid % faces_n_nodes(new_face_2) = 4
+            grid % faces_c(1, new_face_2) = c2 
+            grid % faces_c(2, new_face_2) = -grid % n_bnd_cells-1
+            grid % faces_n(1, new_face_2) = grid % cells_n(f4n(m,1), c2)
+            grid % faces_n(2, new_face_2) = grid % cells_n(f4n(m,2), c2)
+            grid % faces_n(3, new_face_2) = grid % cells_n(f4n(m,3), c2)
+            grid % faces_n(4, new_face_2) = grid % cells_n(f4n(m,4), c2)
+            grid % sx(new_face_2) = grid % sx(s)
+            grid % sy(new_face_2) = grid % sy(s)
+            grid % sz(new_face_2) = grid % sz(s)
+            grid % xf(new_face_2) = xs2
+            grid % yf(new_face_2) = ys2
+            grid % zf(new_face_2) = zs2
           else if(grid % faces_n_nodes(s) == 3) then  
 
             ! Coordinates of the shadow face
@@ -365,30 +367,32 @@
                              + grid % zn(grid % cells_n(f3n(m,3), c2)) )
 
             ! Add shadow faces
-            grid % faces_n_nodes(grid % n_faces+NSsh-1) = 3
-            grid % faces_c(1,grid % n_faces+NSsh-1) = c1 
-            grid % faces_c(2,grid % n_faces+NSsh-1) = -grid % n_bnd_cells-1
-            grid % faces_n(1, grid % n_faces+NSsh-1) = grid % faces_n(1,s)
-            grid % faces_n(2,grid % n_faces+NSsh-1) = grid % faces_n(2,s)
-            grid % faces_n(3,grid % n_faces+NSsh-1) = grid % faces_n(3,s)
-            grid % sx(grid % n_faces+NSsh-1) = grid % sx(s)
-            grid % sy(grid % n_faces+NSsh-1) = grid % sy(s)
-            grid % sz(grid % n_faces+NSsh-1) = grid % sz(s)
-            grid % xf(grid % n_faces+NSsh-1) = grid % xf(s)
-            grid % yf(grid % n_faces+NSsh-1) = grid % yf(s)
-            grid % zf(grid % n_faces+NSsh-1) = grid % zf(s)
-            grid % faces_n_nodes(grid % n_faces+NSsh) = 3
-            grid % faces_c(1, grid % n_faces+NSsh) = c2 
-            grid % faces_c(2, grid % n_faces+NSsh) = -grid % n_bnd_cells-1
-            grid % faces_n(1,grid % n_faces+NSsh) = grid % cells_n(f3n(m,1), c2)
-            grid % faces_n(2,grid % n_faces+NSsh) = grid % cells_n(f3n(m,2), c2)
-            grid % faces_n(3,grid % n_faces+NSsh) = grid % cells_n(f3n(m,3), c2)
-            grid % sx(grid % n_faces+NSsh) = grid % sx(s)
-            grid % sy(grid % n_faces+NSsh) = grid % sy(s)
-            grid % sz(grid % n_faces+NSsh) = grid % sz(s)
-            grid % xf(grid % n_faces+NSsh) = xs2
-            grid % yf(grid % n_faces+NSsh) = ys2
-            grid % zf(grid % n_faces+NSsh) = zs2
+            new_face_1 = grid % n_faces+grid % n_sh-1
+            new_face_2 = grid % n_faces+grid % n_sh  
+            grid % faces_n_nodes(new_face_1) = 3
+            grid % faces_c(1, new_face_1) = c1 
+            grid % faces_c(2, new_face_1) = -grid % n_bnd_cells-1
+            grid % faces_n(1, new_face_1) = grid % faces_n(1,s)
+            grid % faces_n(2, new_face_1) = grid % faces_n(2,s)
+            grid % faces_n(3, new_face_1) = grid % faces_n(3,s)
+            grid % sx(new_face_1) = grid % sx(s)
+            grid % sy(new_face_1) = grid % sy(s)
+            grid % sz(new_face_1) = grid % sz(s)
+            grid % xf(new_face_1) = grid % xf(s)
+            grid % yf(new_face_1) = grid % yf(s)
+            grid % zf(new_face_1) = grid % zf(s)
+            grid % faces_n_nodes(new_face_2) = 3
+            grid % faces_c(1, new_face_2) = c2 
+            grid % faces_c(2, new_face_2) = -grid % n_bnd_cells-1
+            grid % faces_n(1, new_face_2) = grid % cells_n(f3n(m,1), c2)
+            grid % faces_n(2, new_face_2) = grid % cells_n(f3n(m,2), c2)
+            grid % faces_n(3, new_face_2) = grid % cells_n(f3n(m,3), c2)
+            grid % sx(new_face_2) = grid % sx(s)
+            grid % sy(new_face_2) = grid % sy(s)
+            grid % sz(new_face_2) = grid % sz(s)
+            grid % xf(new_face_2) = xs2
+            grid % yf(new_face_2) = ys2
+            grid % zf(new_face_2) = zs2
           end if 
 
           grid % dx(s)=grid % xf(s)-xs2  !------------------------!
@@ -398,7 +402,7 @@
         endif !  S*(c2-c1) < 0.0
       end if  !  c2 > 0
     end do    !  sides  
-    write(*,*) '# Number of shadow faces: ', NSsh
+    write(*,*) '# Number of shadow faces: ', grid % n_sh
     end if
 
   !----------------------------------!

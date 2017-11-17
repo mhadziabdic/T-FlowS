@@ -70,7 +70,7 @@
   open(9, file=name_in)
   write(6, *) 'Now reading the file:', name_in
 
-  do s = grid % n_faces+1,grid % n_faces+NSsh
+  do s = grid % n_faces+1,grid % n_faces + grid % n_sh
     read(9,*) grid % faces_n_nodes(s)
     if(grid % faces_n_nodes(s)==3) then
       read(9,*) grid % faces_n(1,s),  &

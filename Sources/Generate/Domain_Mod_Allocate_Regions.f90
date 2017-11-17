@@ -10,4 +10,4 @@
   dom % n_regions = n
   allocate(dom % regions(n))
 
-  end subroutine Domain_Mod_Allocate_Regions
+  end subroutine

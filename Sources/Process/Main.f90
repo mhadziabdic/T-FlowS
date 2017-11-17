@@ -137,11 +137,13 @@
 
   call cpu_time(start)
 
-  ! Test the precision
-  open(90,FORM='unformatted',file='processor.real');
-  write(90) 3.1451592
-  close(90)
-               
+  !--------------------------------!
+  !   Splash out the logo screen   !             
+  !--------------------------------!
+  if(this_proc  < 2) then
+    call logo
+  endif
+
   !------------------------------!
   !   Start parallel execution   !
   !------------------------------!
@@ -149,15 +151,16 @@
 
   call Timex(CPUtim) 
 
-  !-------------------------------------------------------------!
-  !   Open the command file and initialize line count to zero   !
-  !-------------------------------------------------------------!
+  !--------------------------------------------!
+  !   Open the command file, initialize line   !
+  !    count to zero, and read problem name    ! 
+  !--------------------------------------------!
   open(CMN_FILE, file='T-FlowS.cmn')    
   cmn_line_count = 0
 
-  if(this_proc  < 2) then
-    call logo
-  endif
+  if(this_proc < 2) write(*,*) '# Input problem name:'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)  
+  read(line % tokens(1), '(A80)')  name
 
   call Wait   
 
@@ -165,9 +168,10 @@
   call IniPar
   
   ! Load the finite volume grid      
-  call Load_Cns       (grid)
+  call Load_Cns       (grid, this_proc)
+  call Read_Problem           ! bad practice, should be avoided
   call Allocate_Memory(grid)
-  call Load_Geo       (grid)
+  call Load_Geo       (grid, this_proc)
   call BufLoa
   call Exchange(grid, grid % vol(-grid % n_bnd_cells))
 

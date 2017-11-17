@@ -4,14 +4,14 @@
 !   Creates the file "name.ln.gmv" to check the cell connections.              !
 !                                                                              !
 !   Links between the computational cells have been introduced as aditional    !
-!   cells of general type. Cell centers are introduced as aditional nodes      !
-!   with numbers grid % n_nodes+1 to grid % n_nodes+grid % n_cells. Material of this links is different than       !
-!   from the cells, so that they can be visualised  more easily in GMV.        !
+!   cells of general type. Cell centers are introduced as aditional nodes.     !
+!   Material of these links is different than from the cells, so that they     !
+!   can be visualised  more easily in GMV.                                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod 
-  use gen_mod 
-  use div_mod 
+  use all_mod, only: name
+  use div_mod, only: BuSeIn, BuReIn
+  use gen_mod, only: NewN, NewC, NewS
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none

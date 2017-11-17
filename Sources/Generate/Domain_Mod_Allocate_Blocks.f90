@@ -10,4 +10,4 @@
   dom % n_blocks = n
   allocate(dom % blocks(n))
 
-  end subroutine Domain_Mod_Allocate_Blocks
+  end subroutine

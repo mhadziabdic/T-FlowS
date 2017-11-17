@@ -30,4 +30,4 @@
     name_out(len_trim(name)+6:len_trim(name)+6+lext-1) = ext(1:lext) 
   end if 
 
-  end subroutine Name_File
+  end subroutine

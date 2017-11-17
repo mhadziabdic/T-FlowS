@@ -46,7 +46,7 @@
   write(9) NCsub
   write(9) NBCsub+NBFsub 
   write(9) NSsub+NBFsub-NCFsub
-  write(9) NSsh
+  write(9) grid % n_sh  ! not sure how meaningful this is
   write(9) grid % n_materials
   write(9) grid % n_boundary_conditions
 

@@ -154,6 +154,8 @@
       allocate (VAR7y(-grid % n_bnd_cells:grid % n_cells)); VAR7y=0.
       allocate (VAR7z(-grid % n_bnd_cells:grid % n_cells)); VAR7z=0.
 
+      allocate (Eps_tot(-grid % n_bnd_cells:grid % n_cells)); Eps_tot=0.
+
 !      allocate (VAR8x(-grid % n_bnd_cells:grid % n_cells)); VAR8x=0.
 !      allocate (VAR8y(-grid % n_bnd_cells:grid % n_cells)); VAR8y=0.
 !      allocate (VAR8z(-grid % n_bnd_cells:grid % n_cells)); VAR8z=0.

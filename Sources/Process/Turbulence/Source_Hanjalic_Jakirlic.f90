@@ -21,18 +21,23 @@
   real    :: n1,n2,n3,AA2,AA3,AA,Ret,ff2,fd,FF1,CC,C1W,C2W,fw,uu_nn
   real    :: e11,e12,e13,e21,e22,e23,e31,e32,e33
   real    :: Eps11,Eps12,Eps13,Eps21,Eps22,Eps23,Eps31,Eps32,Eps33
-  real    :: Feps, CC1P, phi2_nn
+  real    :: Feps, phi2_nn
   real    :: fss,E2,E3,EE,CC1,CC2
   real    :: Uxx, Uyy, Uzz, Uxy, Uxz, Uyz, Uyx, Uzx, Uzy
+  real    :: Vxx, Vyy, Vzz, Vxy, Vxz, Vyz
+  real    :: Wxx, Wyy, Wzz, Wxy, Wxz, Wyz
   real    :: r13, r23
   real    :: S11, S22, S33, S12, S13, S21, S31, S23, S32
   real    :: V11, V22, V33, V12, V13, V21, V31, V23, V32
-  real    :: CC3, CC4, CC5, a_lk_s_lk, a_mn_a_mn
+  real    :: a_lk_s_lk, a_mn_a_mn
   real    :: VAR1w_11, VAR1w_22, VAR1w_33, VAR1w_12, VAR1w_13, VAR1w_23
   real    :: VAR2w_11, VAR2w_22, VAR2w_33, VAR2w_12, VAR2w_13, VAR2w_23
   real    :: VAR1_11, VAR1_22, VAR1_33, VAR1_12, VAR1_13, VAR1_23
   real    :: VAR2_11, VAR2_22, VAR2_33, VAR2_12, VAR2_13, VAR2_23
   real    :: P11, P22, P33, P12, P13, P23, Eps1, Eps2
+  real    :: duu_dx,duu_dy,duu_dz,dvv_dx,dvv_dy,dvv_dz,dww_dx,dww_dy,dww_dz
+  real    :: duv_dx,duv_dy,duv_dz,duw_dx,duw_dy,duw_dz,dvw_dx,dvw_dy,dvw_dz
+  real    :: dUdx, dUdy, dUdz, dVdx, dVdy, dVdz, dWdx, dWdy, dWdz 
   real,allocatable :: Diss1(:)
 !==============================================================================!
 
@@ -40,172 +45,184 @@
   EE = 0.5
   AA = 0.5
 
-  do c=1,grid % n_cells
+  do c = 1, grid % n_cells
     Kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), 1.0e-7)
     Lsc(c)=  (Kin % n(c))**1.5/Eps % n(c)
     Tsc(c)=  Kin % n(c)/Eps % n(c)
   end do
 
+  call GraPhi(grid, Kin%n,1,VAR6x,.TRUE.)             ! dK/dx
+  call GraPhi(grid, Kin%n,2,VAR6y,.TRUE.)             ! dK/dy
+  call GraPhi(grid, Kin%n,3,VAR6z,.TRUE.)             ! dK/dz
+
+  call GraPhi(grid, VAR6x,1,VAR7x,.TRUE.)             ! d^2 K / dx^2
+  call GraPhi(grid, VAR6y,2,VAR7y,.TRUE.)             ! d^2 K / dy^2
+  call GraPhi(grid, VAR6z,3,VAR7z,.TRUE.)             ! d^2 K / dz^2
+
+  do c = 1, grid % n_cells
+    Eps_tot(c) = Eps%n(c) + 0.5*VISc*(VAR7x(c)+VAR7y(c)+VAR7z(c))
+  end do
+
 !====================================================================!  
 ! Below is one of versions of HJ model that required much more memory!
 !====================================================================!  
-! if(var == 23) then
-!   call GraPhi(grid,uu%n,1,VAR3x, .TRUE.) ! duu/dx  
-!   call GraPhi(grid,uu%n,2,VAR3y, .TRUE.) ! duu/dy  
-!   call GraPhi(grid,uu%n,3,VAR3z, .TRUE.) ! duu/dz  
-!
-!   call GraPhi(grid,vv%n,1,VAR4x, .TRUE.) ! duw/dx  
-!   call GraPhi(grid,vv%n,2,VAR4y, .TRUE.) ! duw/dy  
-!   call GraPhi(grid,vv%n,3,VAR4z, .TRUE.) ! duw/dz  
-!
-!   call GraPhi(grid,ww%n,1,VAR5x, .TRUE.) ! duw/dx  
-!   call GraPhi(grid,ww%n,2,VAR5y, .TRUE.) ! duw/dy  
-!   call GraPhi(grid,ww%n,3,VAR5z, .TRUE.) ! duw/dz  
-!
-!   call GraPhi(grid,uv%n,1,VAR6x, .TRUE.) ! duv/dx  
-!   call GraPhi(grid,uv%n,2,VAR6y, .TRUE.) ! duv/dy  
-!   call GraPhi(grid,uv%n,3,VAR6z, .TRUE.) ! duv/dz  
-!
-!   call GraPhi(grid,uw%n,1,VAR7x, .TRUE.) ! duw/dx  
-!   call GraPhi(grid,uw%n,2,VAR7y, .TRUE.) ! duw/dy  
-!   call GraPhi(grid,uw%n,3,VAR7z, .TRUE.) ! duw/dz  
-!
-!   call GraPhi(grid,vw%n,1,VAR8x, .TRUE.) ! duw/dx  
-!   call GraPhi(grid,vw%n,2,VAR8y, .TRUE.) ! duw/dy  
-!   call GraPhi(grid,vw%n,3,VAR8z, .TRUE.) ! duw/dz  
-!
-!   call GraPhi(grid,Ux,1,VAR1x, .TRUE.)  ! d2U/dxdx
-!   call GraPhi(grid,Uy,2,VAR1y, .TRUE.)  ! d2U/dydy
-!   call GraPhi(grid,Uz,3,VAR1z, .TRUE.)  ! d2U/dzdz
-!   call GraPhi(grid,Ux,2,VAR2x, .TRUE.)  ! d2U/dxdy
-!   call GraPhi(grid,Ux,3,VAR2y, .TRUE.)  ! d2U/dxdz
-!   call GraPhi(grid,Uy,3,VAR2z, .TRUE.)  ! d2U/dydz
-!
-!   call GraPhi(grid,Vx,1,VAR9x, .TRUE.)  ! d2V/dxdx
-!   call GraPhi(grid,Vy,2,VAR9y, .TRUE.)  ! d2V/dydy
-!   call GraPhi(grid,Vz,3,VAR9z, .TRUE.)  ! d2V/dzdz
-!   call GraPhi(grid,Vx,2,VAR10x, .TRUE.)  ! d2V/dxdy
-!   call GraPhi(grid,Vx,3,VAR10y, .TRUE.)  ! d2V/dxdz
-!   call GraPhi(grid,Vy,3,VAR10z, .TRUE.)  ! d2V/dydz
-!
-!   call GraPhi(grid,Wx,1,VAR11x, .TRUE.)  ! d2W/dxdx
-!   call GraPhi(grid,Wy,2,VAR11y, .TRUE.)  ! d2W/dydy
-!   call GraPhi(grid,Wz,3,VAR11z, .TRUE.)  ! d2W/dzdz
-!   call GraPhi(grid,Wx,2,VAR12x, .TRUE.)  ! d2W/dxdy
-!   call GraPhi(grid,Wx,3,VAR12y, .TRUE.)  ! d2W/dxdz
-!   call GraPhi(grid,Wy,3,VAR12z, .TRUE.)  ! d2W/dydz
-!
-!   do c=1,grid % n_cells
-!     Uxx = VAR1x(c)
-!     Uyy = VAR1y(c)
-!     Uzz = VAR1z(c)
-!     Uxy = VAR2x(c)
-!     Uxz = VAR2y(c)
-!     Uyz = VAR2z(c)
-!     Vxx = VAR9x(c)
-!     Vyy = VAR9y(c)
-!     Vzz = VAR9z(c)
-!     Vxy = VAR10x(c)
-!     Vxz = VAR10y(c)
-!     Vyz = VAR10z(c)
-!     Wxx = VAR11x(c)
-!     Wyy = VAR11y(c)
-!     Wzz = VAR11z(c)
-!     Wxy = VAR12x(c)
-!     Wxz = VAR12y(c)
-!     Wyz = VAR12z(c)
-!     dUdx= Ux(c) 
-!     dUdy= Uy(c) 
-!     dUdz= Uz(c) 
-!     dVdx= Vx(c) 
-!     dVdy= Vy(c) 
-!     dVdz= Vz(c) 
-!     dWdx= Wx(c) 
-!     dWdy= Wy(c) 
-!     dWdz= Wz(c) 
-!     duu_dx = VAR3x(c)  
-!     duu_dy = VAR3y(c)  
-!     duu_dz = VAR3z(c)  
-!     dvv_dx = VAR4x(c)  
-!     dvv_dy = VAR4y(c)  
-!     dvv_dz = VAR4z(c)  
-!     dww_dx = VAR5x(c)  
-!     dww_dy = VAR5y(c)  
-!     dww_dz = VAR5z(c)  
-!     duv_dx = VAR6x(c)  
-!     duv_dy = VAR6y(c)  
-!     duv_dz = VAR6z(c)  
-!     duw_dx = VAR7x(c)  
-!     duw_dy = VAR7y(c)  
-!     duw_dz = VAR7z(c)  
-!     dvw_dx = VAR8x(c)  
-!     dvw_dy = VAR8y(c)  
-!     dvw_dz = VAR8z(c)  
-!
-!     Diss1(c) =  -2.0*VISc*(duu_dx*Uxx + duv_dy*Uyy + duw_dz*Uzz + &
-!                           Uxy*(duv_dx+duu_dy) + Uxz*(duw_dx+duu_dz) + Uyz*(duw_dy + duv_dz) +&
-!                           duv_dx*Vxx + dvv_dy*Vyy + dvw_dz*Vzz + &
-!                           Vxy*(dvv_dx+duv_dy) + Vxz*(dvw_dx+duv_dz) + Vyz*(dvw_dy + dvv_dz) +&
-!                           duw_dx*Wxx + dvw_dy*Wyy + dww_dz*Wzz + &
-!                           Wxy*(dvw_dx+duw_dy) + Wxz*(dww_dx+duw_dy) + Wyz*(dww_dy + dvw_dz) +&
-!   0.32*Kin%n(c)/Eps%n(c)*(Uxx    * (duu_dx*dUdx  + duv_dx*dUdy  + duw_dx*dUdz ) + & 
-!                           Uyy    * (duv_dy*dUdx  + dvv_dy*dUdy  + dvw_dy*dUdz ) + & 
-!                           Uzz    * (duw_dz*dUdx  + dvw_dz*dUdy  + dww_dz*dUdz ) + & 
-!                           Uxy    * (duu_dy*dUdx  + duv_dy*dUdy  + duw_dy*dUdz   + &
-!                                     duv_dx*dUdx  + dvv_dx*dUdy  + dvw_dx*dUdz ) + & 
-!                           Uxz    * (duu_dz*dUdx  + duv_dz*dUdy  + duw_dz*dUdz   + &
-!                                     duw_dx*dUdx  + dvw_dx*dUdy  + dww_dx*dUdz ) + &
-!                           Uyz    * (duv_dz*dUdx  + dvv_dz*dUdy  + dvw_dz*dUdz   + &
-!                                     duw_dy*dUdx  + dvw_dy*dUdy  + dww_dy*dUdz ) + &
-!                           Vxx    * (duu_dx*dVdx  + duv_dx*dVdy  + duw_dx*dVdz ) + & 
-!                           Vyy    * (duv_dy*dVdx  + dvv_dy*dVdy  + dvw_dy*dVdz ) + & 
-!                           Vzz    * (duw_dz*dVdx  + dvw_dz*dVdy  + dww_dz*dVdz ) + & 
-!                           Vxy    * (duu_dy*dVdx  + duv_dy*dVdy  + duw_dy*dVdz   + &
-!                                     duv_dx*dVdx  + dvv_dx*dVdy  + dvw_dx*dVdz ) + & 
-!                           Vxz    * (duu_dz*dVdx  + duv_dz*dVdy  + duw_dz*dVdz   + &
-!                                     duw_dx*dVdx  + dvw_dx*dVdy  + dww_dx*dVdz ) + &
-!                           Vyz    * (duv_dz*dVdx  + dvv_dz*dVdy  + dvw_dz*dVdz   + &
-!                                     duw_dy*dVdx  + dvw_dy*dVdy  + dww_dy*dVdz ) + &
-!                           Wxx    * (duu_dx*dWdx  + duv_dx*dWdy  + duw_dx*dWdz ) + & 
-!                           Wyy    * (duv_dy*dWdx  + dvv_dy*dWdy  + dvw_dy*dWdz ) + & 
-!                           Wzz    * (duw_dz*dWdx  + dvw_dz*dWdy  + dww_dz*dWdz ) + & 
-!                           Wxy    * (duu_dy*dWdx  + duv_dy*dWdy  + duw_dy*dWdz   + &
-!                                     duv_dx*dWdx  + dvv_dx*dWdy  + dvw_dx*dWdz ) + & 
-!                           Wxz    * (duu_dz*dWdx  + duv_dz*dWdy  + duw_dz*dWdz   + &
-!                                     duw_dx*dWdx  + dvw_dx*dWdy  + dww_dx*dWdz ) + &
-!                           Wyz    * (duv_dz*dWdx  + dvv_dz*dWdy  + dvw_dz*dWdz   + &
-!                                     duw_dy*dWdx  + dvw_dy*dWdy  + dww_dy*dWdz ))) 
-!   end do
-! end if
+  if(name_phi == "23") then
+    call GraPhi(grid, uu%n,1,VAR3x, .TRUE.) ! duu/dx  
+    call GraPhi(grid, uu%n,2,VAR3y, .TRUE.) ! duu/dy  
+    call GraPhi(grid, uu%n,3,VAR3z, .TRUE.) ! duu/dz  
+
+    call GraPhi(grid, vv%n,1,VAR4x, .TRUE.) ! duw/dx  
+    call GraPhi(grid, vv%n,2,VAR4y, .TRUE.) ! duw/dy  
+    call GraPhi(grid, vv%n,3,VAR4z, .TRUE.) ! duw/dz  
+
+    call GraPhi(grid, ww%n,1,VAR5x, .TRUE.) ! duw/dx  
+    call GraPhi(grid, ww%n,2,VAR5y, .TRUE.) ! duw/dy  
+    call GraPhi(grid, ww%n,3,VAR5z, .TRUE.) ! duw/dz  
+
+    call GraPhi(grid, uv%n,1,VAR6x, .TRUE.) ! duv/dx  
+    call GraPhi(grid, uv%n,2,VAR6y, .TRUE.) ! duv/dy  
+    call GraPhi(grid, uv%n,3,VAR6z, .TRUE.) ! duv/dz  
+
+    call GraPhi(grid, uw%n,1,VAR7x, .TRUE.) ! duw/dx  
+    call GraPhi(grid, uw%n,2,VAR7y, .TRUE.) ! duw/dy  
+    call GraPhi(grid, uw%n,3,VAR7z, .TRUE.) ! duw/dz  
+
+    call GraPhi(grid, vw%n,1,VAR8x, .TRUE.) ! duw/dx  
+    call GraPhi(grid, vw%n,2,VAR8y, .TRUE.) ! duw/dy  
+    call GraPhi(grid, vw%n,3,VAR8z, .TRUE.) ! duw/dz  
+
+    call GraPhi(grid, Ux,1,VAR1x, .TRUE.)  ! d2U/dxdx
+    call GraPhi(grid, Uy,2,VAR1y, .TRUE.)  ! d2U/dydy
+    call GraPhi(grid, Uz,3,VAR1z, .TRUE.)  ! d2U/dzdz
+    call GraPhi(grid, Ux,2,VAR2x, .TRUE.)  ! d2U/dxdy
+    call GraPhi(grid, Ux,3,VAR2y, .TRUE.)  ! d2U/dxdz
+    call GraPhi(grid, Uy,3,VAR2z, .TRUE.)  ! d2U/dydz
+
+    call GraPhi(grid, Vx,1,VAR9x, .TRUE.)  ! d2V/dxdx
+    call GraPhi(grid, Vy,2,VAR9y, .TRUE.)  ! d2V/dydy
+    call GraPhi(grid, Vz,3,VAR9z, .TRUE.)  ! d2V/dzdz
+    call GraPhi(grid, Vx,2,VAR10x, .TRUE.)  ! d2V/dxdy
+    call GraPhi(grid, Vx,3,VAR10y, .TRUE.)  ! d2V/dxdz
+    call GraPhi(grid, Vy,3,VAR10z, .TRUE.)  ! d2V/dydz
+
+    call GraPhi(grid, Wx,1,VAR11x, .TRUE.)  ! d2W/dxdx
+    call GraPhi(grid, Wy,2,VAR11y, .TRUE.)  ! d2W/dydy
+    call GraPhi(grid, Wz,3,VAR11z, .TRUE.)  ! d2W/dzdz
+    call GraPhi(grid, Wx,2,VAR12x, .TRUE.)  ! d2W/dxdy
+    call GraPhi(grid, Wx,3,VAR12y, .TRUE.)  ! d2W/dxdz
+    call GraPhi(grid, Wy,3,VAR12z, .TRUE.)  ! d2W/dydz
+
+    do c = 1, grid % n_cells
+      Uxx = VAR1x(c)
+      Uyy = VAR1y(c)
+      Uzz = VAR1z(c)
+      Uxy = VAR2x(c)
+      Uxz = VAR2y(c)
+      Uyz = VAR2z(c)
+      Vxx = VAR9x(c)
+      Vyy = VAR9y(c)
+      Vzz = VAR9z(c)
+      Vxy = VAR10x(c)
+      Vxz = VAR10y(c)
+      Vyz = VAR10z(c)
+      Wxx = VAR11x(c)
+      Wyy = VAR11y(c)
+      Wzz = VAR11z(c)
+      Wxy = VAR12x(c)
+      Wxz = VAR12y(c)
+      Wyz = VAR12z(c)
+      dUdx= Ux(c) 
+      dUdy= Uy(c) 
+      dUdz= Uz(c) 
+      dVdx= Vx(c) 
+      dVdy= Vy(c) 
+      dVdz= Vz(c) 
+      dWdx= Wx(c) 
+      dWdy= Wy(c) 
+      dWdz= Wz(c) 
+      duu_dx = VAR3x(c)  
+      duu_dy = VAR3y(c)  
+      duu_dz = VAR3z(c)  
+      dvv_dx = VAR4x(c)  
+      dvv_dy = VAR4y(c)  
+      dvv_dz = VAR4z(c)  
+      dww_dx = VAR5x(c)  
+      dww_dy = VAR5y(c)  
+      dww_dz = VAR5z(c)  
+      duv_dx = VAR6x(c)  
+      duv_dy = VAR6y(c)  
+      duv_dz = VAR6z(c)  
+      duw_dx = VAR7x(c)  
+      duw_dy = VAR7y(c)  
+      duw_dz = VAR7z(c)  
+      dvw_dx = VAR8x(c)  
+      dvw_dy = VAR8y(c)  
+      dvw_dz = VAR8z(c)  
+
+      Diss1(c) =  -2.0*VISc*(duu_dx*Uxx + duv_dy*Uyy + duw_dz*Uzz + &
+                            Uxy*(duv_dx+duu_dy) + Uxz*(duw_dx+duu_dz) + Uyz*(duw_dy + duv_dz) +&
+                            duv_dx*Vxx + dvv_dy*Vyy + dvw_dz*Vzz + &
+                            Vxy*(dvv_dx+duv_dy) + Vxz*(dvw_dx+duv_dz) + Vyz*(dvw_dy + dvv_dz) +&
+                            duw_dx*Wxx + dvw_dy*Wyy + dww_dz*Wzz + &
+                            Wxy*(dvw_dx+duw_dy) + Wxz*(dww_dx+duw_dy) + Wyz*(dww_dy + dvw_dz) +&
+    0.32*Kin%n(c)/Eps%n(c)*(Uxx    * (duu_dx*dUdx  + duv_dx*dUdy  + duw_dx*dUdz ) + & 
+                            Uyy    * (duv_dy*dUdx  + dvv_dy*dUdy  + dvw_dy*dUdz ) + & 
+                            Uzz    * (duw_dz*dUdx  + dvw_dz*dUdy  + dww_dz*dUdz ) + & 
+                            Uxy    * (duu_dy*dUdx  + duv_dy*dUdy  + duw_dy*dUdz   + &
+                                      duv_dx*dUdx  + dvv_dx*dUdy  + dvw_dx*dUdz ) + & 
+                            Uxz    * (duu_dz*dUdx  + duv_dz*dUdy  + duw_dz*dUdz   + &
+                                      duw_dx*dUdx  + dvw_dx*dUdy  + dww_dx*dUdz ) + &
+                            Uyz    * (duv_dz*dUdx  + dvv_dz*dUdy  + dvw_dz*dUdz   + &
+                                      duw_dy*dUdx  + dvw_dy*dUdy  + dww_dy*dUdz ) + &
+                            Vxx    * (duu_dx*dVdx  + duv_dx*dVdy  + duw_dx*dVdz ) + & 
+                            Vyy    * (duv_dy*dVdx  + dvv_dy*dVdy  + dvw_dy*dVdz ) + & 
+                            Vzz    * (duw_dz*dVdx  + dvw_dz*dVdy  + dww_dz*dVdz ) + & 
+                            Vxy    * (duu_dy*dVdx  + duv_dy*dVdy  + duw_dy*dVdz   + &
+                                      duv_dx*dVdx  + dvv_dx*dVdy  + dvw_dx*dVdz ) + & 
+                            Vxz    * (duu_dz*dVdx  + duv_dz*dVdy  + duw_dz*dVdz   + &
+                                      duw_dx*dVdx  + dvw_dx*dVdy  + dww_dx*dVdz ) + &
+                            Vyz    * (duv_dz*dVdx  + dvv_dz*dVdy  + dvw_dz*dVdz   + &
+                                      duw_dy*dVdx  + dvw_dy*dVdy  + dww_dy*dVdz ) + &
+                            Wxx    * (duu_dx*dWdx  + duv_dx*dWdy  + duw_dx*dWdz ) + & 
+                            Wyy    * (duv_dy*dWdx  + dvv_dy*dWdy  + dvw_dy*dWdz ) + & 
+                            Wzz    * (duw_dz*dWdx  + dvw_dz*dWdy  + dww_dz*dWdz ) + & 
+                            Wxy    * (duu_dy*dWdx  + duv_dy*dWdy  + duw_dy*dWdz   + &
+                                      duv_dx*dWdx  + dvv_dx*dWdy  + dvw_dx*dWdz ) + & 
+                            Wxz    * (duu_dz*dWdx  + duv_dz*dWdy  + duw_dz*dWdz   + &
+                                      duw_dx*dWdx  + dvw_dx*dWdy  + dww_dx*dWdz ) + &
+                            Wyz    * (duv_dz*dWdx  + dvv_dz*dWdy  + dvw_dz*dWdz   + &
+                                      duw_dy*dWdx  + dvw_dy*dWdy  + dww_dy*dWdz ))) 
+    end do
+  end if
 
   if(name_phi == 'EPS') then
   do i=1,3
     if(i == 1) then
-      call GraPhi(grid,Ux,1,VAR2x, .TRUE.)  ! d2U/dxdx
-      call GraPhi(grid,Ux,2,VAR2y, .TRUE.)  ! d2U/dxdy
-      call GraPhi(grid,Ux,3,VAR2z, .TRUE.)  ! d2U/dxdz
-      call GraPhi(grid,Uy,2,VAR1x, .TRUE.) ! d2U/dydy
-      call GraPhi(grid,Uy,3,VAR1y, .TRUE.) ! d2U/dydz
-      call GraPhi(grid,Uz,3,VAR1z, .TRUE.) ! d2U/dzdz
+      call GraPhi(grid, Ux,1,VAR2x, .TRUE.)  ! d2U/dxdx
+      call GraPhi(grid, Ux,2,VAR2y, .TRUE.)  ! d2U/dxdy
+      call GraPhi(grid, Ux,3,VAR2z, .TRUE.)  ! d2U/dxdz
+      call GraPhi(grid, Uy,2,VAR1x, .TRUE.) ! d2U/dydy
+      call GraPhi(grid, Uy,3,VAR1y, .TRUE.) ! d2U/dydz
+      call GraPhi(grid, Uz,3,VAR1z, .TRUE.) ! d2U/dzdz
     end if
     if(i == 2) then
-      call GraPhi(grid,Vx,1,VAR2x, .TRUE.)  ! d2V/dxdx
-      call GraPhi(grid,Vx,2,VAR2y, .TRUE.)  ! d2V/dxdy
-      call GraPhi(grid,Vx,3,VAR2z, .TRUE.)  ! d2V/dxdz
-      call GraPhi(grid,Vy,2,VAR1x, .TRUE.) ! d2V/dydy
-      call GraPhi(grid,Vy,3,VAR1y, .TRUE.) ! d2V/dydz
-      call GraPhi(grid,Vz,3,VAR1z, .TRUE.) ! d2V/dzdz
+      call GraPhi(grid, Vx,1,VAR2x, .TRUE.)  ! d2V/dxdx
+      call GraPhi(grid, Vx,2,VAR2y, .TRUE.)  ! d2V/dxdy
+      call GraPhi(grid, Vx,3,VAR2z, .TRUE.)  ! d2V/dxdz
+      call GraPhi(grid, Vy,2,VAR1x, .TRUE.) ! d2V/dydy
+      call GraPhi(grid, Vy,3,VAR1y, .TRUE.) ! d2V/dydz
+      call GraPhi(grid, Vz,3,VAR1z, .TRUE.) ! d2V/dzdz
     end if
     if(i == 3) then
-      call GraPhi(grid,Wx,1,VAR2x, .TRUE.)  ! d2W/dxdx
-      call GraPhi(grid,Wx,2,VAR2y, .TRUE.)  ! d2W/dxdy
-      call GraPhi(grid,Wx,3,VAR2z, .TRUE.)  ! d2W/dxdz
-      call GraPhi(grid,Wy,2,VAR1x, .TRUE.) ! d2W/dydy
-      call GraPhi(grid,Wy,3,VAR1y, .TRUE.) ! d2W/dydz
-      call GraPhi(grid,Wz,3,VAR1z, .TRUE.) ! d2W/dzdz
+      call GraPhi(grid, Wx,1,VAR2x, .TRUE.)  ! d2W/dxdx
+      call GraPhi(grid, Wx,2,VAR2y, .TRUE.)  ! d2W/dxdy
+      call GraPhi(grid, Wx,3,VAR2z, .TRUE.)  ! d2W/dxdz
+      call GraPhi(grid, Wy,2,VAR1x, .TRUE.) ! d2W/dydy
+      call GraPhi(grid, Wy,3,VAR1y, .TRUE.) ! d2W/dydz
+      call GraPhi(grid, Wz,3,VAR1z, .TRUE.) ! d2W/dzdz
     end if
 
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       if(i == 1) then
         Uxx = VAR2x(c)
         Uxy = VAR2y(c)
@@ -217,7 +234,7 @@
         Uzy = Uyz
         Uzz = VAR1z(c)
         Diss1(c) = &
-                3.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
+                2.0*0.25*VISc*Kin%n(c)/Eps_tot(c)*&
                (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+&
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+&
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+&
@@ -239,7 +256,7 @@
         Uzy = Uyz
         Uzz = VAR1z(c)
         Diss1(c) = Diss1(c) +&
-                3.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
+                2.0*0.25*VISc*Kin%n(c)/Eps_tot(c)*&
                 (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+&
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+&
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+&
@@ -261,7 +278,7 @@
         Uzy = Uyz
         Uzz = VAR1z(c)
         Diss1(c) = Diss1(c) +&
-                3.0*0.25*VISc*Kin%n(c)/Eps%n(c)*&
+                2.0*0.25*VISc*Kin%n(c)/Eps_tot(c)*&
                 (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+&
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+&
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+&
@@ -276,9 +293,9 @@
   end do  ! i
   end if                               
 
-  call GraPhi(grid,Lsc,1,VAR2x,.TRUE.)             ! df22/dx
-  call GraPhi(grid,Lsc,2,VAR2y,.TRUE.)             ! df22/dy
-  call GraPhi(grid,Lsc,3,VAR2z,.TRUE.)             ! df22/dz
+  call GraPhi(grid, Lsc,1,VAR2x,.TRUE.)             ! df22/dx
+  call GraPhi(grid, Lsc,2,VAR2y,.TRUE.)             ! df22/dy
+  call GraPhi(grid, Lsc,3,VAR2z,.TRUE.)             ! df22/dz
 
   r23 = 2.0/3.0 
   r13 = 1.0/3.0 
@@ -302,25 +319,25 @@
     a23 = vw % n(c)/Kin % n(c)    
     a32 = a23
     
-   S11 = Ux(c)
-   S22 = Vy(c)
-   S33 = Wz(c)
-   S12 = 0.5*(Uy(c)+Vx(c))
-   S21 = S12
-   S13 = 0.5*(Uz(c)+Wx(c))
-   S31 = S13
-   S23 = 0.5*(Vz(c)+Wy(c))
-   S32 = S23
+    S11 = Ux(c)
+    S22 = Vy(c)
+    S33 = Wz(c)
+    S12 = 0.5*(Uy(c)+Vx(c))
+    S21 = S12
+    S13 = 0.5*(Uz(c)+Wx(c))
+    S31 = S13
+    S23 = 0.5*(Vz(c)+Wy(c))
+    S32 = S23
 
-   V11 = 0.0
-   V22 = 0.0
-   V33 = 0.0
-   V12 = 0.5*(Uy(c)-Vx(c)) - omegaZ
-   V21 = -V12 + omegaZ
-   V13 = 0.5*(Uz(c)-Wx(c)) + omegaY
-   V31 = -V13 - omegaY
-   V23 = 0.5*(Vz(c)-Wy(c)) - omegaX
-   V32 = -V23 + omegaX
+    V11 = 0.0
+    V22 = 0.0
+    V33 = 0.0
+    V12 = 0.5*(Uy(c)-Vx(c)) - omegaZ
+    V21 = -V12 + omegaZ
+    V13 = 0.5*(Uz(c)-Wx(c)) + omegaY
+    V31 = -V13 - omegaY
+    V23 = 0.5*(Vz(c)-Wy(c)) - omegaX
+    V32 = -V23 + omegaX
 
     AA2=(a11**2)+(a22**2)+(a33**2)+2*((a12**2)+(a13**2)+(a23**2))
 
@@ -332,16 +349,6 @@
     AA=max(AA,0.0)
     AA=min(AA,1.0)
  
-    Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+TINY)
-    Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
-    ff2=min((Ret/150)**1.5, 1.0)
-    fd=1.0/(1.0+0.1*Ret)
-    FF1=min(0.6, AA2)
-    CC=2.5*AA*FF1**0.25*ff2
-    C1W=max((1.0-0.7*CC), 0.3)
-    C2W=min(AA,0.3)
-    fw=min((Kin%n(c)**1.5)/(2.5*Eps%n(c)*WallDs(c)),1.4)
-
     uu_nn     = (uu % n(c)*n1*n1+uv % n(c)*n1*n2+uw % n(c)*n1*n3 &
                + uv % n(c)*n2*n1+vv % n(c)*n2*n2+vw % n(c)*n2*n3 &
                + uw % n(c)*n3*n1+vw % n(c)*n3*n2+ww % n(c)*n3*n3)
@@ -351,7 +358,7 @@
  
     EE=AA
     fss=1.0-(AA**0.5*EE**2.0)
-    do icont=1,7
+    do icont=1,6
       Eps11= (1.0 - fss)*r23*Eps %n(c) + fss * uu%n(c)/Kin%n(c) * Eps%n(c)
       Eps22= (1.0 - fss)*r23*Eps %n(c) + fss * vv%n(c)/Kin%n(c) * Eps%n(c)
       Eps33= (1.0 - fss)*r23*Eps %n(c) + fss * ww%n(c)/Kin%n(c) * Eps%n(c)
@@ -384,21 +391,17 @@
       fss=1.0-(AA**0.5*EE**2.0)
     end do
      
-    fss=1.0-(AA**0.5*EE**2.0)
+    Ret= (Kin % n(c)*Kin % n(c))/(VISc*Eps_tot(c)+tiny)
+    Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
     ff2=min((Ret/150)**1.5, 1.0)
     fd=1.0/(1.0+0.1*Ret)
     FF1=min(0.6, AA2)
     CC=2.5*AA*FF1**0.25*ff2
+    CC1=CC+SQRT(AA)*(EE**2)
+    CC2=0.8*SQRT(AA)
     C1W=max((1.0-0.7*CC), 0.3)
     C2W=min(AA,0.3)
-    fw=min((Kin%n(c)**1.5)/(2.5*Eps%n(c)*WallDs(c)),1.4)
-    CC1=CC+(AA**0.5)*(EE**2)
-    CC2=0.8*(AA**0.5)
-    CC3=1.067*(AA**0.5)
-    CC4=0.8*(AA**0.5)
-    CC5=0.8*(AA**0.5)
-    CC1P = max(0.8*AA2,0.5)*CC1
-
+    fw=min((Kin%n(c)**1.5)/(2.5*Eps_tot(c)*WallDs(c)),1.4)
 
     P11     = -2.0*(uu %n(c)*Ux(c) + uv % n(c)*Uy(c) + uw % n(c)*Uz(c)) &
               -2.0*omegaY*2.0*uw%n(c) + 2.0*omegaZ*2.0*uv%n(c) 
@@ -422,7 +425,6 @@
     VAR1_12 = -CC1*Eps%n(c)*a12 
     VAR1_13 = -CC1*Eps%n(c)*a13 
     VAR1_23 = -CC1*Eps%n(c)*a23 
-                                
 
     VAR2_11 = -CC2*(P11 - r23*Pk(c))
     VAR2_22 = -CC2*(P22 - r23*Pk(c))
@@ -456,21 +458,11 @@
     ! uu stress
     if(name_phi == 'UU') then
 !==============================================================================================================================!
-      b(c) = b(c) + (  max(P11,0.0)+CC1*Eps%n(c)*r23  &
-                     + max(VAR2_11,0.0)               &
-                     + max(VAR1w_11,0.0)              &
-                      +max(VAR2w_11,0.0) )*grid % vol(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c))                      &
-                          + (   CC1 *Eps%n(c)/Kin%n(c)               &
-                              + C1W *fw*Eps%n(c)/Kin%n(c)*3.0*n1*n1  &
-                              + fss*Eps%n(c)/Kin%n(c))*grid % vol(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c))         &
-                          + (  max(-P11,0.0)            &
-                             + max(-VAR2_11,0.0)        &
-                             + max(-VAR1w_11,0.0)       &
-                             + max(-VAR2w_11,0.0)       &
-                             + (1.0-fss)*r23*Eps%n(c))  &
-                             / max(uu%n(c),1.0e-10) * grid % vol(c) 
+      b(c) = b(c) + (max(P11,0.0)+CC1*Eps%n(c)*r23+max(VAR2_11,0.0)+max(VAR1w_11,0.0)+max(VAR2w_11,0.0))*grid % vol(c) 
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*Eps%n(c)/Kin%n(c)+C1W*fw*Eps%n(c)/Kin%n(c)*3.0*n1*n1 + &
+                      fss*Eps%n(c)/Kin%n(c))*grid % vol(c) 
+      A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P11,0.0)+max(-VAR2_11,0.0)+max(-VAR1w_11,0.0)+max(-VAR2w_11,0.0) + &
+                      (1.0-fss)*r23*Eps%n(c))/max(uu%n(c),1.0e-10)*grid % vol(c) 
 !==============================================================================================================================!
     ! vv stress
     else if(name_phi == 'VV') then
@@ -513,8 +505,8 @@
                       fss*Eps%n(c)/Kin%n(c))*grid % vol(c) 
 !==============================================================================================================================!
 !==============================================================================================================================!
-    ! Eps equation
-    else if(name_phi == 'EPS') then
+    ! Epsilon equation
+    else if(name_phi == 'EPS') then 
       Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
       Eps1 = 1.44*Pk(c)*Eps%n(c)/Kin%n(c)
       Eps2 = Ce2*Feps*Eps%n(c)/Kin%n(c)
@@ -528,12 +520,12 @@
     VAR6x(c) = sqrt(0.5*(uu%n(c)+vv%n(c)+ww%n(c)))    
   end do 
 
-  if(name_phi == 'EPS') then 
-    call GraPhi(grid,VAR6x,1,VAR7x,.TRUE.)             ! dK/dx
-    call GraPhi(grid,VAR6x,2,VAR7y,.TRUE.)             ! dK/dy
-    call GraPhi(grid,VAR6x,3,VAR7z,.TRUE.)             ! dK/dz
+  if(name_phi == 'EPS') then
+    call GraPhi(grid, VAR6x,1,VAR7x,.TRUE.)             ! dK/dx
+    call GraPhi(grid, VAR6x,2,VAR7y,.TRUE.)             ! dK/dy
+    call GraPhi(grid, VAR6x,3,VAR7z,.TRUE.)             ! dK/dz
     do c = 1, grid % n_cells
-      Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+TINY)
+      Ret= (Kin % n(c)**2)/(VISc*Eps % n(c)+tiny)
       Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
       b(c) = b(c) + (Ce2*Feps*Eps%n(c)/Kin%n(c)*(VISc*(VAR7x(c)*VAR7x(c)+&
                     VAR7y(c)*VAR7y(c)+VAR7z(c)*VAR7z(c))))*grid % vol(c)
@@ -542,15 +534,13 @@
 
   if(name_phi == 'EPS') then
     do s = 1, grid % n_faces
-      c1=grid % faces_c(1,s)
-      c2=grid % faces_c(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
 
       ! Calculate a values of dissipation  on wall
       if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
         if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
-          Eps%n(c2) = VISc*(  VAR7x(c1)*VAR7x(c1)  &
-                            + VAR7y(c1)*VAR7y(c1)  &
-                            + VAR7z(c1)*VAR7z(c1) ) 
+          Eps%n(c2) = VISc*(VAR7x(c1)*VAR7x(c1)+VAR7y(c1)*VAR7y(c1)+VAR7z(c1)*VAR7z(c1)) 
         end if   ! end if of BC=wall
       end if    ! end if of c2<0
     end do
@@ -558,5 +548,3 @@
   deallocate (Diss1)
 
   end subroutine
-
-

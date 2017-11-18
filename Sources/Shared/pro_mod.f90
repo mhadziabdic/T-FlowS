@@ -71,6 +71,9 @@ module pro_mod
   ! For advection schemes
   real,allocatable :: phi_max(:), phi_min(:) 
 
+  ! Total dissipation in HJ model
+  real,allocatable :: eps_tot(:)
+
   ! Velocity components
   type(Var_Type) :: U
   type(Var_Type) :: V

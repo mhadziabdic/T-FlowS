@@ -29,7 +29,7 @@
       !   Compute the production term   !
       !---------------------------------!
       Xrat  = VIS % n(c)/VISc
-      Fv1   = Xrat**3.0/(Xrat**3.0 + Cvis1**3.0)
+      Fv1   = Xrat**3/(Xrat**3 + Cvis1**3)
       Fv2   = 1.0 - Xrat/(1.0 + Xrat*Fv1)
       SS    = Vort(c) + VIS % n(c)*Fv2/(kappa**2*WallDs(c)**2)
       ProdV = Cb1 * DENc(material(c)) * SS * VIS % n(c)
@@ -39,17 +39,18 @@
       !   Compute the destruction term   !
       !----------------------------------!
       R     = VIS % n(c)/(SS * kappa**2 * WallDs(c)**2)
-      GG    = R + Cw2*(R**6.0 - R)
-      Fw    = GG*((1.0 + Cw3**6.0)/(GG**6 + Cw3**6))**(1.0/6.0)
+      GG    = R + Cw2*(R**6 - R)
+      Fw    = GG*((1.0 + Cw3**6)/(GG**6 + Cw3**6))**(1.0/6.0)
       DistV = Cw1* DENc(material(c)) * Fw * (VIS % n(c)/WallDs(c)**2)
       A % val(A % dia(c)) = A % val(A % dia(c)) + DistV * grid % vol(c)
  
       !--------------------------------------------!
       !   Compute the first-order diffusion term   !
       !--------------------------------------------!
-      Dif   = Cb2 * DENc(material(c)) * (  phi_x(c)**2   &
-                                         + phi_y(c)**2   &
-                                         + phi_z(c)**2) / SIGMAv
+      Dif   = Cb2                                  &
+            * DENc(material(c))                    &
+            * (phi_x(c) + phi_y(c) + phi_z(c))**2  &
+            / SIGMAv
       b(c)  = b(c) + Dif * grid % vol(c)
     end do
 
@@ -62,7 +63,7 @@
       !   Compute the production term   !
       !---------------------------------!
       Xrat  = VIS % n(c)/VISc
-      Fv1   = Xrat**3.0/(Xrat**3 + Cvis1**3)
+      Fv1   = Xrat**3/(Xrat**3 + Cvis1**3)
       Fv2   = 1.0 - Xrat/(1.0 + Xrat*Fv1)
       SS    = Vort(c) + VIS % n(c)*Fv2/(kappa**2*dist**2)
       ProdV = Cb1 * DENc(material(c)) * SS * VIS % n(c)
@@ -72,7 +73,7 @@
       !   Compute the destruction  term   !
       !-----------------------------------!
       R     = VIS % n(c)/(SS * kappa**2 * dist**2)
-      GG    = R + Cw2*(R**6.0 - R)
+      GG    = R + Cw2*(R**6 - R)
       Fw    = GG*((1.0 + Cw3**6)/(GG**6 + Cw3**6))**(1.0/6.0)
       DistV = Cw1* DENc(material(c)) * Fw * (VIS % n(c)/dist**2)
       A % val(A % dia(c)) = A % val(A % dia(c)) + DistV * grid % vol(c)
@@ -80,7 +81,10 @@
       !--------------------------------------------!
       !   Compute the first-order diffusion term   !
       !--------------------------------------------!
-      Dif   = Cb2 * DENc(material(c)) * (PHIx(c) + PHIy(c) + PHIz(c))**2/SIGMAv
+      Dif   = Cb2                                  &
+            * DENc(material(c))                    &
+            * (phi_x(c) + phi_y(c) + phi_z(c))**2  &
+            / SIGMAv
       b(c)  = b(c) + Dif * grid % vol(c)
     end do 
   end if

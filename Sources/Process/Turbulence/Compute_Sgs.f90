@@ -22,10 +22,10 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, s, c1, c2 
   real    :: Nx, Ny, Nz
-  real    :: Cs, R
+  real    :: Cs
   real    :: Stot, lf, UtauL, Uff 
   real    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus 
-  real    :: fun
+  real    :: Nc2
 !==============================================================================!
   
   !---------------!
@@ -34,9 +34,9 @@
   !               !
   !---------------!
   if(BUOY==YES) then
-    call GraPhi(T % n,1,PHIx,.TRUE.)            ! dT/dx
-    call GraPhi(T % n,2,PHIy,.TRUE.)            ! dT/dy
-    call GraPhi(T % n,3,PHIz,.TRUE.)            ! dT/dz
+    call GraPhi(grid, T % n,1,PHIx,.TRUE.)            ! dT/dx
+    call GraPhi(grid, T % n,2,PHIy,.TRUE.)            ! dT/dy
+    call GraPhi(grid, T % n,3,PHIz,.TRUE.)            ! dT/dz
   end if 
  
   if(MODE == SMAG) then
@@ -47,9 +47,11 @@
       ! since the subdomains which do not "touch" wall
       ! has near(c) = 0. 
       if(near(c) /= 0) then
-        Uff = (VISc*(U % n(near(c)) * U % n(near(c))    & 
-                   + V % n(near(c)) * V % n(near(c))    &
-                   + W % n(near(c)) * W % n(near(c)))**0.5/(WallDs(near(c))+tiny) )**0.5    
+        Uff = sqrt( VISc  &
+                    * sqrt(  U % n(near(c)) * U % n(near(c))    & 
+                           + V % n(near(c)) * V % n(near(c))    &
+                           + W % n(near(c)) * W % n(near(c)))   &
+                   / (WallDs(near(c))+TINY) )
         yPlus = WallDs(c) * Uff / VISc
         Cs = Cs0 * (1.0-exp(-yPlus/25.0))
       else  
@@ -85,6 +87,14 @@
               * (lf*lf)            &          ! delta^2 
               * (0.5*0.5)          &          ! Cs^2   
               * WALEv(c) 
+    end do
+  end if
+
+  if(BUOY==YES) then
+    do c = 1, grid % n_cells
+      Nc2 = -(grav_x*PHIx(c)+grav_y*PHIy(c)+grav_z*PHIz(c))/Tref
+      Nc2 = max(0.0, Nc2) 
+      VISt(c) = VISt(c)*sqrt(1.0 - min(2.5*Nc2/(Shear(c)*Shear(c)),1.0))
     end do
   end if
 

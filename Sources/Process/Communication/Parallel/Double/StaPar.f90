@@ -15,12 +15,12 @@
 
   CALL MPI_INIT(ERROR)
 
-  CALL MPI_COMM_SIZE(MPI_COMM_WORLD,                                &
-                     n_proc,                                          &
+  CALL MPI_COMM_SIZE(MPI_COMM_WORLD,  &
+                     n_proc,          &
                      error) 
 
-  CALL MPI_COMM_RANK(MPI_COMM_WORLD,                                &
-                     this_proc,                                          &
+  CALL MPI_COMM_RANK(MPI_COMM_WORLD,  &
+                     this_proc,       &
                      error)
 
   this_proc=this_proc+1
@@ -30,4 +30,4 @@
     this_proc = 0
   endif
 
-  end subroutine StaPar
+  end subroutine

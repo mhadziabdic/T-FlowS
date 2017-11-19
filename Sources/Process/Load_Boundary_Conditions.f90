@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Load_Boundary_Conditions(in_out)
+  subroutine Load_Boundary_Conditions(grid, in_out)
 !------------------------------------------------------------------------------!
 !   Reads: name.b                                                              !
 !----------------------------------[Modules]-----------------------------------!
@@ -7,16 +7,18 @@
   use pro_mod
   use rans_mod
   use par_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  logical       :: in_out
+  type(Grid_Type) :: grid
+  logical         :: in_out
 !----------------------------------[Calling]-----------------------------------!
-  real          :: Distance
+  real :: Distance
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, n, n_bnd_cond, n_points, n_initial_cond, s
-  integer           :: m, c1, c2, bc, mt, i
+  integer           :: c, n, n_points, n_initial_cond, s
+  integer           :: m, c1, bc, mt, i
   character(len=80) :: name_bou, name_prof(128), dir, bc_name, mt_name
   integer           :: typBou(128)
   real              :: xyz(10024)
@@ -36,281 +38,289 @@
   !-------------------------!
   !   Phisical properties   !
   !-------------------------!
-  call ReadC(9,inp,tn,ts,te)
-  read(inp,*) Nmat
-  do mt = 1,Nmat
+  call Tokenizer_Mod_Read_Line(9)
+  read(line % tokens(1), *) grid % n_materials
+  do mt = 1,grid % n_materials
 
-    call ReadC(9,inp,tn,ts,te)
-    call To_Upper_Case(  inp(ts(1):te(1))  )
-    call To_Upper_Case(  inp(ts(2):te(2))  )
-    read(inp(ts(1):te(1)),*) mt_name
+    call Tokenizer_Mod_Read_Line(9)
+    call To_Upper_Case(  line % tokens(1)  )
+    call To_Upper_Case(  line % tokens(2)  )
+    read(line % tokens(1),*) mt_name
 
     ! Find material index
-    do i=1, size(grid % materials) 
+    do i=1, grid % n_materials 
       if(mt_name == grid % materials(i) % name) n=i      
     end do
 
-    if( inp(ts(2):te(2))  ==  'FLUID') then 
+    if( line % tokens(2)  ==  'FLUID') then 
       StateMat(n)=FLUID
-    else if( inp(ts(2):te(2))  ==  'SOLID') then 
+    else if( line % tokens(2)  ==  'SOLID') then 
       StateMat(n)=SOLID
     else 
       if(this_proc < 2) write(*,*) 'Load_Boundary_Conditions: Unknown material state'
       stop  
     end if
-    read(inp(ts(3):te(3)),*) VISc
-    read(inp(ts(4):te(4)),*) DENc(n)
-    if(HOT==YES) read(inp(ts(5):te(5)),*) CONc(n)
-    if(HOT==YES) read(inp(ts(6):te(6)),*) CAPc(n)
+    read(line % tokens(3),*) VISc
+    read(line % tokens(4),*) DENc(n)
+    if(HOT==YES) read(line % tokens(5),*) CONc(n)
+    if(HOT==YES) read(line % tokens(6),*) CAPc(n)
   end do
   
   !-----------------------------------------------------!
   !   Boundary conditions 1 - read them from the file   !
   !-----------------------------------------------------!
-  call ReadC(9,inp,tn,ts,te)
-  read(inp,*) n_bnd_cond
+  call Tokenizer_Mod_Read_Line(9)
+  read(line % tokens(1), *) grid % n_boundary_conditions
+  write(*,*) 'Found ', grid % n_boundary_conditions, ' boundary conditions'
 
-  do bc = 1,n_bnd_cond  ! number of boundary conditions
+  do bc = 1, grid % n_boundary_conditions  ! number of boundary conditions
 
-    call ReadC(9,inp,tn,ts,te)
-    call To_Upper_Case(  inp(ts(1):te(1))  )
-    call To_Upper_Case(  inp(ts(2):te(2))  )
-    call To_Upper_Case(  inp(ts(3):te(3))  )
-    read(inp(ts(1):te(1)),*) bc_name
+    call Tokenizer_Mod_Read_Line(9)
+    call To_Upper_Case(  line % tokens(1)  )
+    call To_Upper_Case(  line % tokens(2)  )
+    call To_Upper_Case(  line % tokens(3)  )
+    read(line % tokens(1),*) bc_name
 
     ! Find b.c. index
-    do i=1, size(grid % boundary_conditions) 
-      if(bc_name == grid % boundary_conditions(i) % name) n=i      
+    n = -1
+    do i=1, grid % n_boundary_conditions 
+      if(bc_name .eq. grid % boundary_conditions(i) % name) n=i      
     end do
+    if( n == -1 ) then
+      write(*,*) '# Critical, failed to find boundary condition ', bc_name
+      write(*,*) '# Exiting!'
+      stop
+    end if 
 
-    if( inp(ts(2):te(2)) == 'INFLOW') then 
+    if( line % tokens(2) == 'INFLOW') then 
       typBou(n)=INFLOW
       PER_BC = NO
-    else if( inp(ts(2):te(2)) == 'WALL') then 
+    else if( line % tokens(2) == 'WALL') then 
       typBou(n)=WALL
-    else if( inp(ts(2):te(2)) == 'OUTFLOW') then 
+    else if( line % tokens(2) == 'OUTFLOW') then 
       typBou(n)=OUTFLOW
-    else if( inp(ts(2):te(2)) == 'SYMMETRY') then 
+    else if( line % tokens(2) == 'SYMMETRY') then 
       typBou(n)=SYMMETRY
-    else if( inp(ts(2):te(2)) == 'WALLFLUX') then 
+    else if( line % tokens(2) == 'WALLFLUX') then 
       typBou(n)=WALLFL
-    else if( inp(ts(2):te(2)) == 'CONVECTIVE') then 
+    else if( line % tokens(2) == 'CONVECTIVE') then 
       typBou(n)=CONVECT
-    else if( inp(ts(2):te(2)) == 'PRESSURE') then 
+    else if( line % tokens(2) == 'PRESSURE') then 
       typBou(n)=PRESSURE
     else
-      if(this_proc < 2) write(*,*) 'Load_Boundary_Conditions: Unknown boundary condition type: ', inp(ts(2):te(2))
+      if(this_proc < 2)  &
+        write(*,*) '# Load_Boundary_Conditions: '//        &
+                   '# Unknown boundary condition type: ',  &
+                   line % tokens(2)
       stop  
     end if
-    if( inp(ts(3):te(3))  ==  'FILE') then
-      read(inp(ts(4):te(4)),'(A80)') name_prof(n)
-      write(*,*) 'n =            ', n
-      write(*,*) 'name_prof(n) = ', name_prof(n)
+    if( line % tokens(3)  ==  'FILE') then
+      read(line % tokens(4),'(A80)') name_prof(n)
     else
-      read(inp(ts(3):te(3)),*) U % bound(n)
-      read(inp(ts(4):te(4)),*) V % bound(n)
-      read(inp(ts(5):te(5)),*) W % bound(n)
+      read(line % tokens(3),*) U % bound(n)
+      read(line % tokens(4),*) V % bound(n)
+      read(line % tokens(5),*) W % bound(n)
       if(typBou(n)==PRESSURE) then
-        read(inp(ts(6):te(6)),*) P % bound(n)
+        read(line % tokens(6),*) P % bound(n)
         if(HOT==YES) then 
-          read(inp(ts(7):te(7)),*) T % bound(n)
+          read(line % tokens(7),*) T % bound(n)
           if(SIMULA==EBM.or.SIMULA==HJ) then
-            read(inp(ts(8):te(8)),*)   uu % bound(n)
-            read(inp(ts(9):te(9)),*)   vv % bound(n)
-            read(inp(ts(10):te(10)),*) ww % bound(n)
-            read(inp(ts(11):te(11)),*) uv % bound(n)
-            read(inp(ts(12):te(12)),*) uw % bound(n)
-            read(inp(ts(13):te(13)),*) vw % bound(n)
-            read(inp(ts(14):te(14)),*) Eps% bound(n)
-            if(SIMULA==EBM) read(inp(ts(15):te(15)),*) f22 % bound(n)
+            read(line % tokens(8),*)   uu % bound(n)
+            read(line % tokens(9),*)   vv % bound(n)
+            read(line % tokens(10),*) ww % bound(n)
+            read(line % tokens(11),*) uv % bound(n)
+            read(line % tokens(12),*) uw % bound(n)
+            read(line % tokens(13),*) vw % bound(n)
+            read(line % tokens(14),*) Eps% bound(n)
+            if(SIMULA==EBM) read(line % tokens(15),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(inp(ts(8):te(8)),*) Kin % bound(n)
-            read(inp(ts(9):te(9)),*) Eps % bound(n)
+            read(line % tokens(8),*) Kin % bound(n)
+            read(line % tokens(9),*) Eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(inp(ts(8):te(8)),*) Kin % bound(n)
-            read(inp(ts(9):te(9)),*) Eps % bound(n)
-            read(inp(ts(10):te(10)),*) v_2 % bound(n)
-            read(inp(ts(11):te(11)),*) f22 % bound(n)
+            read(line % tokens(8),*) Kin % bound(n)
+            read(line % tokens(9),*) Eps % bound(n)
+            read(line % tokens(10),*) v_2 % bound(n)
+            read(line % tokens(11),*) f22 % bound(n)
           end if
           if(SIMULA == SPA_ALL) then
-            read(inp(ts(8):te(8)),*) VIS % bound(n)
+            read(line % tokens(8),*) VIS % bound(n)
           end if
           if(SIMULA == DES_SPA) then
-            read(inp(ts(8):te(8)),*) VIS % bound(n)
+            read(line % tokens(8),*) VIS % bound(n)
           end if
         else  ! HOT .ne. YES
           if(SIMULA==EBM.or.SIMULA==HJ) then
-            read(inp(ts(7):te(7)),*)   uu % bound(n)
-            read(inp(ts(8):te(8)),*)   vv % bound(n)
-            read(inp(ts(9):te(9)),*) ww % bound(n)
-            read(inp(ts(10):te(10)),*) uv % bound(n)
-            read(inp(ts(11):te(11)),*) uw % bound(n)
-            read(inp(ts(12):te(12)),*) vw % bound(n)
-            read(inp(ts(13):te(13)),*) Eps% bound(n)
-            if(SIMULA==EBM) read(inp(ts(14):te(14)),*) f22 % bound(n)
+            read(line % tokens(7),*)   uu % bound(n)
+            read(line % tokens(8),*)   vv % bound(n)
+            read(line % tokens(9),*) ww % bound(n)
+            read(line % tokens(10),*) uv % bound(n)
+            read(line % tokens(11),*) uw % bound(n)
+            read(line % tokens(12),*) vw % bound(n)
+            read(line % tokens(13),*) Eps% bound(n)
+            if(SIMULA==EBM) read(line % tokens(14),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(inp(ts(7):te(7)),*) Kin % bound(n)
-            read(inp(ts(8):te(8)),*) Eps % bound(n)
+            read(line % tokens(7),*) Kin % bound(n)
+            read(line % tokens(8),*) Eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(inp(ts(7):te(7)),*) Kin % bound(n)
-            read(inp(ts(8):te(8)),*) Eps % bound(n)
-            read(inp(ts(9):te(9)),*) v_2  % bound(n)
-            read(inp(ts(10):te(10)),*) f22 % bound(n)
+            read(line % tokens(7),*) Kin % bound(n)
+            read(line % tokens(8),*) Eps % bound(n)
+            read(line % tokens(9),*) v_2  % bound(n)
+            read(line % tokens(10),*) f22 % bound(n)
           end if
           if(SIMULA == SPA_ALL) then
-            read(inp(ts(7):te(7)),*) VIS % bound(n)
+            read(line % tokens(7),*) VIS % bound(n)
           end if
           if(SIMULA == DES_SPA) then
-            read(inp(ts(7):te(7)),*) VIS % bound(n)
+            read(line % tokens(7),*) VIS % bound(n)
           end if
         end if  ! HOT == YES
         name_prof(n)=''
       else   ! typBou .ne. PRESSURE
         if(HOT==YES) then 
-          read(inp(ts(6):te(6)),*) T % bound(n)
+          read(line % tokens(6),*) T % bound(n)
           if(SIMULA==EBM.or.SIMULA==HJ) then
-            read(inp(ts(7):te(7)),*) uu % bound(n)
-            read(inp(ts(8):te(8)),*) vv % bound(n)
-            read(inp(ts(9):te(9)),*) ww % bound(n)
-            read(inp(ts(10):te(10)),*) uv % bound(n)
-            read(inp(ts(11):te(11)),*) uw % bound(n)
-            read(inp(ts(12):te(12)),*) vw % bound(n)
-            read(inp(ts(13):te(13)),*) Eps% bound(n)
-            if(SIMULA==EBM) read(inp(ts(14):te(14)),*) f22 % bound(n)
+            read(line % tokens(7),*) uu % bound(n)
+            read(line % tokens(8),*) vv % bound(n)
+            read(line % tokens(9),*) ww % bound(n)
+            read(line % tokens(10),*) uv % bound(n)
+            read(line % tokens(11),*) uw % bound(n)
+            read(line % tokens(12),*) vw % bound(n)
+            read(line % tokens(13),*) Eps% bound(n)
+            if(SIMULA==EBM) read(line % tokens(14),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(inp(ts(7):te(7)),*) Kin % bound(n)
-            read(inp(ts(8):te(8)),*) Eps % bound(n)
+            read(line % tokens(7),*) Kin % bound(n)
+            read(line % tokens(8),*) Eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(inp(ts(7):te(7)),*) Kin % bound(n)
-            read(inp(ts(8):te(8)),*) Eps % bound(n)
-            read(inp(ts(9):te(9)),*) v_2 % bound(n)
-            read(inp(ts(10):te(10)),*) f22 % bound(n)
+            read(line % tokens(7),*) Kin % bound(n)
+            read(line % tokens(8),*) Eps % bound(n)
+            read(line % tokens(9),*) v_2 % bound(n)
+            read(line % tokens(10),*) f22 % bound(n)
           end if
           if(SIMULA == SPA_ALL) then
-            read(inp(ts(7):te(7)),*) VIS % bound(n)
+            read(line % tokens(7),*) VIS % bound(n)
           end if
           if(SIMULA == DES_SPA) then
-            read(inp(ts(7):te(7)),*) VIS % bound(n)
+            read(line % tokens(7),*) VIS % bound(n)
           end if
         else  ! HOT .ne. YES
           if(SIMULA==EBM.or.SIMULA==HJ) then
-            read(inp(ts(6):te(6)),*) uu % bound(n)
-            read(inp(ts(7):te(7)),*) vv % bound(n)
-            read(inp(ts(8):te(8)),*) ww % bound(n)
-            read(inp(ts(9):te(9)),*) uv % bound(n)
-            read(inp(ts(10):te(10)),*) uw % bound(n)
-            read(inp(ts(11):te(11)),*) vw % bound(n)
-            read(inp(ts(12):te(12)),*) Eps% bound(n)
-            if(SIMULA==EBM) read(inp(ts(13):te(13)),*) f22 % bound(n)
+            read(line % tokens(6),*) uu % bound(n)
+            read(line % tokens(7),*) vv % bound(n)
+            read(line % tokens(8),*) ww % bound(n)
+            read(line % tokens(9),*) uv % bound(n)
+            read(line % tokens(10),*) uw % bound(n)
+            read(line % tokens(11),*) vw % bound(n)
+            read(line % tokens(12),*) Eps% bound(n)
+            if(SIMULA==EBM) read(line % tokens(13),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(inp(ts(6):te(6)),*) Kin % bound(n)
-            read(inp(ts(7):te(7)),*) Eps % bound(n)
+            read(line % tokens(6),*) Kin % bound(n)
+            read(line % tokens(7),*) Eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(inp(ts(6):te(6)),*) Kin % bound(n)
-            read(inp(ts(7):te(7)),*) Eps % bound(n)
-            read(inp(ts(8):te(8)),*) v_2  % bound(n)
-            read(inp(ts(9):te(9)),*) f22 % bound(n)
+            read(line % tokens(6),*) Kin % bound(n)
+            read(line % tokens(7),*) Eps % bound(n)
+            read(line % tokens(8),*) v_2  % bound(n)
+            read(line % tokens(9),*) f22 % bound(n)
           end if
           if(SIMULA == SPA_ALL) then
-            read(inp(ts(6):te(6)),*) VIS % bound(n)
+            read(line % tokens(6),*) VIS % bound(n)
           end if
           if(SIMULA == DES_SPA) then
-            read(inp(ts(6):te(6)),*) VIS % bound(n)
+            read(line % tokens(6),*) VIS % bound(n)
           end if
         end if  ! HOT == YES
         name_prof(n)=''
       end if  ! typBou == PRESSURE
-    end if    ! inp .not. file
+    end if    
   end do      
 
   !------------------------!
   !   Initial conditions   !
   !------------------------!
-  call ReadC(9,inp,tn,ts,te)
-  read(inp,*) n_initial_cond
+  call Tokenizer_Mod_Read_Line(9)
+  read(line % tokens(1), *) n_initial_cond
   write(*,*) '# Number of initial conditions: ', n_initial_cond
-  if(n_initial_cond > Nmat) then
+  if(n_initial_cond > grid % n_materials) then
     if(this_proc < 2) write(*,*) 'Warning: there are more initial conditions then materials'
   end if
 
   do n=1,n_initial_cond
-    call ReadC(9,inp,tn,ts,te)
-    call To_Upper_Case(inp(ts(2):te(2)))
+    call Tokenizer_Mod_Read_Line(9)
+    call To_Upper_Case(line % tokens(2))
 
     ! Initial conditions given in GMV file
-    if(inp(ts(2):te(2)) == 'FILE') then
-      read(inp(ts(3):te(3)),'(A80)') namIni(n)
+    if(line % tokens(2) == 'FILE') then
+      read(line % tokens(3),'(A80)') namIni(n)
       write(*,*) '@Load_Boundary_Conditions: material ', n, '; init. cond. given by file: ', namIni(n)
     else
       namIni(n) = ''
 
       ! Initial conditions given by constant
-      read(inp(ts(2):te(2)),*) U % init(n)
-      read(inp(ts(3):te(3)),*) V % init(n)
-      read(inp(ts(4):te(4)),*) W % init(n)
+      read(line % tokens(2),*) U % init(n)
+      read(line % tokens(3),*) V % init(n)
+      read(line % tokens(4),*) W % init(n)
  
       if(HOT==YES) then
-        read(inp(ts(5):te(5)),*) T % init(n)
+        read(line % tokens(5),*) T % init(n)
         if(SIMULA==EBM.or.SIMULA==HJ) then
-          read(inp(ts(6):te(6)),*) uu % init(n)
-          read(inp(ts(7):te(7)),*) vv % init(n)
-          read(inp(ts(8):te(8)),*) ww % init(n)
-          read(inp(ts(9):te(9)),*) uv % init(n)
-          read(inp(ts(10):te(10)),*) uw % init(n)
-          read(inp(ts(11):te(11)),*) vw % init(n)
-          read(inp(ts(12):te(12)),*) Eps% init(n)
-          if(SIMULA==EBM) read(inp(ts(13):te(13)),*) f22 % init(n)
+          read(line % tokens(6),*) uu % init(n)
+          read(line % tokens(7),*) vv % init(n)
+          read(line % tokens(8),*) ww % init(n)
+          read(line % tokens(9),*) uv % init(n)
+          read(line % tokens(10),*) uw % init(n)
+          read(line % tokens(11),*) vw % init(n)
+          read(line % tokens(12),*) Eps% init(n)
+          if(SIMULA==EBM) read(line % tokens(13),*) f22 % init(n)
         end if
         if(SIMULA==K_EPS) then
-          read(inp(ts(6):te(6)),*) Kin % init(n)
-          read(inp(ts(7):te(7)),*) Eps % init(n)
+          read(line % tokens(6),*) Kin % init(n)
+          read(line % tokens(7),*) Eps % init(n)
         end if
         if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-          read(inp(ts(6):te(6)),*) Kin % init(n)
-          read(inp(ts(7):te(7)),*) Eps % init(n)
-          read(inp(ts(8):te(8)),*) v_2  % init(n)
-          read(inp(ts(9):te(9)),*) f22 % init(n)
+          read(line % tokens(6),*) Kin % init(n)
+          read(line % tokens(7),*) Eps % init(n)
+          read(line % tokens(8),*) v_2  % init(n)
+          read(line % tokens(9),*) f22 % init(n)
         end if
         if(SIMULA == SPA_ALL) then
-          read(inp(ts(6):te(6)),*) VIS % init(n)
+          read(line % tokens(6),*) VIS % init(n)
         end if
         if(SIMULA == DES_SPA) then
-          read(inp(ts(6):te(6)),*) VIS % init(n)
+          read(line % tokens(6),*) VIS % init(n)
         end if
       else ! HOT /= YES
         if(SIMULA==EBM.or.SIMULA==HJ) then
-          read(inp(ts(5):te(5)),*) uu % init(n)
-          read(inp(ts(6):te(6)),*) vv % init(n)
-          read(inp(ts(7):te(7)),*) ww % init(n)
-          read(inp(ts(8):te(8)),*) uv % init(n)
-          read(inp(ts(9):te(9)),*) uw % init(n)
-          read(inp(ts(10):te(10)),*) vw % init(n)
-          read(inp(ts(11):te(11)),*) Eps% init(n)
-          if(SIMULA==EBM) read(inp(ts(12):te(12)),*) f22 % init(n)
+          read(line % tokens(5),*) uu % init(n)
+          read(line % tokens(6),*) vv % init(n)
+          read(line % tokens(7),*) ww % init(n)
+          read(line % tokens(8),*) uv % init(n)
+          read(line % tokens(9),*) uw % init(n)
+          read(line % tokens(10),*) vw % init(n)
+          read(line % tokens(11),*) Eps% init(n)
+          if(SIMULA==EBM) read(line % tokens(12),*) f22 % init(n)
         end if
         if(SIMULA==K_EPS) then
-          read(inp(ts(5):te(5)),*) Kin % init(n)
-          read(inp(ts(6):te(6)),*) Eps % init(n)
+          read(line % tokens(5),*) Kin % init(n)
+          read(line % tokens(6),*) Eps % init(n)
         end if
         if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-          read(inp(ts(5):te(5)),*) Kin % init(n)
-          read(inp(ts(6):te(6)),*) Eps % init(n)
-          read(inp(ts(7):te(7)),*) v_2  % init(n)
-          read(inp(ts(8):te(8)),*) f22 % init(n)
+          read(line % tokens(5),*) Kin % init(n)
+          read(line % tokens(6),*) Eps % init(n)
+          read(line % tokens(7),*) v_2  % init(n)
+          read(line % tokens(8),*) f22 % init(n)
         end if
         if(SIMULA == SPA_ALL) then
-          read(inp(ts(5):te(5)),*) VIS % init(n)
+          read(line % tokens(5),*) VIS % init(n)
         end if
         if(SIMULA == DES_SPA) then
-          read(inp(ts(5):te(5)),*) VIS % init(n)
+          read(line % tokens(5),*) VIS % init(n)
         end if
       end if
     end if
@@ -321,11 +331,14 @@
   !----------------------------------------------------------------------!
   !   Boundary conditions 2 - distribute them over computational cells   !
   !----------------------------------------------------------------------!
-  do n=1,n_bnd_cond
+  do n=1,grid % n_boundary_conditions
+
+    write(*,*) 'Boundary condition: ', n
+    write(*,*) 'file: ', name_prof(n)
 
     ! Boundary condition is given by a single constant
     if(name_prof(n) == '') then 
-      do c=-1,-NbC,-1
+      do c = -1,-grid % n_bnd_cells,-1
         if(bcmark(c) == n) then
           TypeBC(c) = typBou(n)
 
@@ -379,51 +392,51 @@
     else
       open(9, file=name_prof(n))
       if(this_proc < 2) write(*,*) '# Now reading the file:', name_prof(n)
-      call ReadC(9,inp,tn,ts,te)
-      read(inp(ts(1):te(1)),*) n_points                  ! number of points
-      call ReadC(9,inp,tn,ts,te)
-      read(inp(ts(1):te(1)),*) dir  ! direction
+      call Tokenizer_Mod_Read_Line(9)
+      read(line % tokens(1),*) n_points                  ! number of points
+      call Tokenizer_Mod_Read_Line(9)
+      read(line % tokens(1),*) dir  ! direction
       call To_Upper_Case(dir)
       if(dir=="XPL" .or. dir=="YPL" .or. dir=="ZPL") then
         do m=1,n_points
-          call ReadC(9,inp,tn,ts,te)
-          read(inp(ts(1):te(1)),*) x1(m)
-          read(inp(ts(2):te(2)),*) x2(m)
-          read(inp(ts(3):te(3)),*) U % pro(m)
-          read(inp(ts(4):te(4)),*) V % pro(m)
-          read(inp(ts(5):te(5)),*) W % pro(m)
+          call Tokenizer_Mod_Read_Line(9)
+          read(line % tokens(1),*) x1(m)
+          read(line % tokens(2),*) x2(m)
+          read(line % tokens(3),*) U % pro(m)
+          read(line % tokens(4),*) V % pro(m)
+          read(line % tokens(5),*) W % pro(m)
           if(SIMULA == EBM) then
-            read(inp(ts(6):te(6)),*) uu % pro(m)
-            read(inp(ts(7):te(7)),*) vv % pro(m)
-            read(inp(ts(8):te(8)),*) ww % pro(m)
-            read(inp(ts(9):te(9)),*) uv % pro(m)
-            read(inp(ts(10):te(10)),*) uw % pro(m)
-            read(inp(ts(11):te(11)),*) vw % pro(m)
-            read(inp(ts(12):te(12)),*) f22 % pro(m)
-            read(inp(ts(13):te(13)),*) Eps % pro(m)
+            read(line % tokens(6),*) uu % pro(m)
+            read(line % tokens(7),*) vv % pro(m)
+            read(line % tokens(8),*) ww % pro(m)
+            read(line % tokens(9),*) uv % pro(m)
+            read(line % tokens(10),*) uw % pro(m)
+            read(line % tokens(11),*) vw % pro(m)
+            read(line % tokens(12),*) f22 % pro(m)
+            read(line % tokens(13),*) Eps % pro(m)
           end if
         end do  
 
         ! Set the closest point
-        do c=-1,-NbC,-1
+        do c = -1,-grid % n_bnd_cells,-1
           if(bcmark(c) == n) then
             TypeBC(c) = typBou(n)
             if(in_out) then    !if .true. set boundary values, otherwise, just set TypeBC
               Mres = HUGE
               do s=1,n_points
                 if(dir=="XPL") then
-                  if(Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0) < Mres) then
-                    Mres = Distance(x1(s),x2(s),0.0,yc(c),zc(c),0.0)
+                  if(Distance(x1(s),x2(s),0.0,grid % yc(c),grid % zc(c),0.0) < Mres) then
+                    Mres = Distance(x1(s),x2(s),0.0,grid % yc(c),grid % zc(c),0.0)
                     c1 = s
                   end if
                 else if(dir=="YPL") then
-                  if(Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0) < Mres) then
-                    Mres = Distance(x1(s),x2(s),0.0,xc(c),zc(c),0.0)
+                  if(Distance(x1(s),x2(s),0.0,grid % xc(c),grid % zc(c),0.0) < Mres) then
+                    Mres = Distance(x1(s),x2(s),0.0,grid % xc(c),grid % zc(c),0.0)
                     c1 = s
                   end if
                 else if(dir=="ZPL") then
-                  if(Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0) < Mres) then
-                    Mres = Distance(x1(s),x2(s),0.0,xc(c),yc(c),0.0)
+                  if(Distance(x1(s),x2(s),0.0,grid % xc(c),grid % yc(c),0.0) < Mres) then
+                    Mres = Distance(x1(s),x2(s),0.0,grid % xc(c),grid % yc(c),0.0)
                     c1 = s
                   end if
                 end if
@@ -457,63 +470,63 @@
               end if        
             end if    !end if(in_out)
           end if      !end if(bcmark(c) == n)
-        end do        !end do c=-1,-NbC,-1
+        end do        !end do c = -1,-grid % n_bnd_cells,-1
       else  ! dir == "XPL" ...
         do m=1,n_points
-          call ReadC(9,inp,tn,ts,te)
-          read(inp(ts(1):te(1)),*) xyz(m)
-          read(inp(ts(2):te(2)),*) U % pro(m)
-          read(inp(ts(3):te(3)),*) V % pro(m)
-          read(inp(ts(4):te(4)),*) W % pro(m)
+          call Tokenizer_Mod_Read_Line(9)
+          read(line % tokens(1),*) xyz(m)
+          read(line % tokens(2),*) U % pro(m)
+          read(line % tokens(3),*) V % pro(m)
+          read(line % tokens(4),*) W % pro(m)
           if(HOT==YES) then
-            read(inp(ts(5):te(5)),*) T % pro(m)
+            read(line % tokens(5),*) T % pro(m)
             if(SIMULA==K_EPS) then
-              read(inp(ts(6):te(6)),*) Kin % pro(m)
-              read(inp(ts(7):te(7)),*) Eps % pro(m)
+              read(line % tokens(6),*) Kin % pro(m)
+              read(line % tokens(7),*) Eps % pro(m)
             end if
             if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-              read(inp(ts(6):te(6)),*) Kin % pro(m)
-              read(inp(ts(7):te(7)),*) Eps % pro(m)
-              read(inp(ts(8):te(8)),*) v_2 % pro(m)
-              read(inp(ts(9):te(9)),*) f22 % pro(m)
+              read(line % tokens(6),*) Kin % pro(m)
+              read(line % tokens(7),*) Eps % pro(m)
+              read(line % tokens(8),*) v_2 % pro(m)
+              read(line % tokens(9),*) f22 % pro(m)
             end if
             if(SIMULA == SPA_ALL) then
-              read(inp(ts(6):te(6)),*) VIS % pro(m)
+              read(line % tokens(6),*) VIS % pro(m)
             end if
             if(SIMULA == DES_SPA) then
-              read(inp(ts(6):te(6)),*) VIS % pro(m)
+              read(line % tokens(6),*) VIS % pro(m)
             end if
           else
             if(SIMULA==K_EPS) then
-              read(inp(ts(5):te(5)),*) Kin % pro(m)
-              read(inp(ts(6):te(6)),*) Eps % pro(m)
+              read(line % tokens(5),*) Kin % pro(m)
+              read(line % tokens(6),*) Eps % pro(m)
             end if
             if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-              read(inp(ts(5):te(5)),*) Kin % pro(m)
-              read(inp(ts(6):te(6)),*) Eps % pro(m)
-              read(inp(ts(7):te(7)),*) v_2 % pro(m)
-              read(inp(ts(8):te(8)),*) f22 % pro(m)
+              read(line % tokens(5),*) Kin % pro(m)
+              read(line % tokens(6),*) Eps % pro(m)
+              read(line % tokens(7),*) v_2 % pro(m)
+              read(line % tokens(8),*) f22 % pro(m)
             end if
             if(SIMULA == SPA_ALL) then
-              read(inp(ts(5):te(5)),*) VIS % pro(m)
+              read(line % tokens(5),*) VIS % pro(m)
             end if
             if(SIMULA == DES_SPA) then
-              read(inp(ts(5):te(5)),*) VIS % pro(m)
+              read(line % tokens(5),*) VIS % pro(m)
             end if
             if(SIMULA == EBM) then
-              read(inp(ts(5):te(5)),*) uu % pro(m)
-              read(inp(ts(6):te(6)),*) vv % pro(m)
-              read(inp(ts(7):te(7)),*) ww % pro(m)
-              read(inp(ts(8):te(8)),*) uv % pro(m)
-              read(inp(ts(9):te(9)),*) uw % pro(m)
-              read(inp(ts(10):te(10)),*) vw % pro(m)
-              read(inp(ts(11):te(11)),*) f22% pro(m)
-              read(inp(ts(12):te(12)),*) Eps% pro(m)
+              read(line % tokens(5),*) uu % pro(m)
+              read(line % tokens(6),*) vv % pro(m)
+              read(line % tokens(7),*) ww % pro(m)
+              read(line % tokens(8),*) uv % pro(m)
+              read(line % tokens(9),*) uw % pro(m)
+              read(line % tokens(10),*) vw % pro(m)
+              read(line % tokens(11),*) f22% pro(m)
+              read(line % tokens(12),*) Eps% pro(m)
             end if
           end if  
         end do
            
-        do c=-1,-NbC,-1
+        do c = -1,-grid % n_bnd_cells,-1
           if(bcmark(c) == n) then
             TypeBC(c) = typBou(n)
           
@@ -525,33 +538,33 @@
 
                 ! Compute the weight factors
                 if( (dir == 'X' .or. dir == 'x') .and.                  &
-                   xc(c) >= xyz(m) .and. xc(c) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1)-xc(c) ) / ( xyz(m+1) - xyz(m) )
+                   grid % xc(c) >= xyz(m) .and. grid % xc(c) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1)-grid % xc(c) ) / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 else if( (dir == 'Y' .or. dir == 'y') .and.             &
-                     yc(c) >= xyz(m) .and. yc(c) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1)-yc(c) ) / ( xyz(m+1) - xyz(m) )
+                     grid % yc(c) >= xyz(m) .and. grid % yc(c) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1)-grid % yc(c) ) / ( xyz(m+1) - xyz(m) )
                     here = .TRUE.
                 else if( (dir == 'Z' .or. dir == 'z') .and.             &
-                     zc(c) >= xyz(m) .and. zc(c) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1)-zc(c) ) / ( xyz(m+1) - xyz(m) )
+                     grid % zc(c) >= xyz(m) .and. grid % zc(c) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1)-grid % zc(c) ) / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 else if( (dir == 'RX' .or. dir == 'rx') .and.           &
-                       sqrt(yc(c)*yc(c)+zc(c)*zc(c)) >= xyz(m) .and.      &
-                     sqrt(yc(c)*yc(c)+zc(c)*zc(c)) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1) - sqrt(yc(c)*yc(c)+zc(c)*zc(c)) )     &
+                       sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) >= xyz(m) .and.      &
+                     sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1) - sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) )     &
                      / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 else if( (dir == 'RY' .or. dir == 'ry') .and.           &
-                     sqrt(xc(c)*xc(c)+zc(c)*zc(c)) >= xyz(m) .and.      &
-                     sqrt(xc(c)*xc(c)+zc(c)*zc(c)) <= xyz(m+1) ) then
-                  wi = ( xyz(m+1) - sqrt(xc(c)*xc(c)+zc(c)*zc(c)) )     &
+                     sqrt(grid % xc(c)*grid % xc(c)+grid % zc(c)*grid % zc(c)) >= xyz(m) .and.      &
+                     sqrt(grid % xc(c)*grid % xc(c)+grid % zc(c)*grid % zc(c)) <= xyz(m+1) ) then
+                  wi = ( xyz(m+1) - sqrt(grid % xc(c)*grid % xc(c)+grid % zc(c)*grid % zc(c)) )     &
                      / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 else if( (dir == 'RZ' .or. dir == 'rz') .and.           &
-                     sqrt(xc(c)*xc(c)+yc(c)*yc(c)) <= xyz(m) .and.      &
-                     sqrt(xc(c)*xc(c)+yc(c)*yc(c)) >= xyz(m+1) ) then
-                    wi = ( xyz(m+1) - sqrt(xc(c)*xc(c)+yc(c)*yc(c)) )     &
+                     sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) <= xyz(m) .and.      &
+                     sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) >= xyz(m+1) ) then
+                    wi = ( xyz(m+1) - sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) )     &
                      / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 end if
@@ -592,8 +605,8 @@
   !-------------------------------------!
   !   Finally handle the buffer cells   !
   !-------------------------------------!
-  do c=-1,-NbC,-1
+  do c = -1,-grid % n_bnd_cells,-1
     if(bcmark(c) == BUFFER) TypeBC(c)=BUFFER 
   end do
 
-  end subroutine Load_Boundary_Conditions
+  end subroutine

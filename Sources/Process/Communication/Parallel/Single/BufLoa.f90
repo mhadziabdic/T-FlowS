@@ -92,4 +92,4 @@
 !->>>    write(*,'(A2,I2,3I7)') 'PE',this_proc, sub, NBBs(sub), NBBe(sub)
 !->>>  end do   ! through subdomains
 
-  end subroutine BufLoa
+  end subroutine

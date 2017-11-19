@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Distribute_Regions
+  subroutine Distribute_Regions(dom, grid)
 !------------------------------------------------------------------------------!
 !   Distribute regions (which are defined in .dom file) to materials and       !
 !   boundary conditions.                                                       !
@@ -11,10 +11,14 @@
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Domain_Type) :: dom
+  type(Grid_Type)   :: grid
 !---------------------------------[Interface]----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
   integer :: b, i, j, k, n, c, r
+  integer :: n_mat, n_bnd         ! number of materials and boundary conditions   
   integer :: is, js, ks, ie, je, ke, face 
   integer :: ci, cj, ck
   logical :: found
@@ -26,7 +30,7 @@
   !-----------------------------------------!
 
   ! Initialize all the material markers to 1 
-  do c=1,nc
+  do c = 1, grid % n_cells
     material(c) = 1
   end do
 
@@ -36,10 +40,10 @@
   allocate(grid % boundary_conditions(dom % n_regions + 1))
 
   ! Set the bare bones - minimal materials and boundary conditions
-  Nmat = 1
-  Nbnd = 1
-  grid % materials(Nmat)           % name = "FLUID"
-  grid % boundary_conditions(Nbnd) % name = "WALL"
+  n_mat = 1
+  n_bnd = 1
+  grid % materials(n_mat)           % name = "FLUID"
+  grid % boundary_conditions(n_bnd) % name = "WALL"
 
   do n = 1, dom % n_regions
 
@@ -100,20 +104,20 @@
     if(face /= 0) then  
 
       found = .false. 
-      do r=1,Nbnd
+      do r=1,n_bnd
         if( grid % boundary_conditions(r) % name ==   &
             dom % regions(n) % name ) found = .true.
       end do
       if( .not. found) then
-        Nbnd = Nbnd + 1
-        grid % boundary_conditions(Nbnd) % name = dom % regions(n) % name
+        n_bnd = n_bnd + 1
+        grid % boundary_conditions(n_bnd) % name = dom % regions(n) % name
       end if
 
       do i=is,ie
         do j=js,je
           do k=ks,ke
             c = dom % blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
-            grid % cells_c(face,c) = -Nbnd
+            grid % cells_c(face,c) = -n_bnd
           end do
         end do
       end do
@@ -122,20 +126,20 @@
      else 
 
       found = .false. 
-      do r=1,Nmat
+      do r=1,n_mat
         if(grid % materials(r) % name ==  &
            dom % regions(n) % name) found = .true.
       end do
       if( .not. found) then
-        Nmat = Nmat + 1
-        grid % materials(Nmat) % name = dom % regions(n) % name
+        n_mat = n_mat + 1
+        grid % materials(n_mat) % name = dom % regions(n) % name
       end if
 
       do i=is,ie
         do j=js,je
           do k=ks,ke
             c = dom % blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
-            material(c) = Nmat
+            material(c) = n_mat
           end do
         end do
       end do
@@ -144,20 +148,24 @@
 
   end do  !  n_regions
 
+  ! Store the number of materials and boundary conditions
+  grid % n_materials           = n_mat
+  grid % n_boundary_conditions = n_bnd
+
   write(*,*) '#==================================================='
   write(*,*) '# Found following boundary conditions:'
   write(*,*) '#---------------------------------------------------'
-  do n=1,Nbnd
-    write(*,*) '# ', grid % boundary_conditions(n) % name
+  do n = 1, grid % n_boundary_conditions
+    write(*,*) '# ', trim(grid % boundary_conditions(n) % name)
   end do
   write(*,*) '#---------------------------------------------------'
 
   write(*,*) '#==================================================='
   write(*,*) '# Found following materials:'
   write(*,*) '#---------------------------------------------------'
-  do n=1,Nmat
-    write(*,*) '# ', grid % materials(n) % name
+  do n = 1, grid % n_materials
+    write(*,*) '# ', trim(grid % materials(n) % name)
   end do
   write(*,*) '#---------------------------------------------------'
 
-  end subroutine Distribute_Regions
+  end subroutine

@@ -3,10 +3,12 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use gen_mod 
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, n, s
+  type(Grid_Type) :: grid     ! grid to be converted
+  integer         :: c, n, s
 !==============================================================================!
 
   call Logo
@@ -21,45 +23,67 @@
   write(*,*) '#------------------------------------------------------'
   read(*,*) name
 
-  call Load_Neu
-  call Grid_Topology
-  call Find_Sides
-  call Compute_Geometry
-  
-  call Connect_Domains
+  call Load_Neu        (grid)
+  call Grid_Topology   (grid)
+  call Find_Faces      (grid)
+  call Compute_Geometry(grid)
+  call Connect_Domains (grid)
 
-  do n=1,NN
+  do n=1,grid % n_nodes
     NewN(n) = n 
   end do  
-  do c=-NbC,NC
+  do c=-grid % n_bnd_cells,grid % n_cells
     NewC(c) = c 
   end do  
-  do s=1,NS 
+  do s=1,grid % n_faces 
     NewS(s) = s
   end do  
 
-  ! Count all materials
-  call Count_Materials
+  call Save_Gmv_Cells(grid, 0,            &
+                      grid % n_nodes,     &
+                      grid % n_cells,     &
+                      grid % n_faces,     &
+                      grid % n_bnd_cells)
 
-  call Save_Gmv_Grid(0, NN, NC, NS, NbC)
-  call Save_Cns_Geo(0, NC, NS, NBC, 0, 0) 
-  call Save_Gmv_Links(0, NN, NC, NS, NbC, 0)
+  call Save_Gmv_Faces(grid, 0,            &
+                      grid % n_nodes)        ! save grid for checking b.c. 
+
+  call Save_Shadows  (grid, 0,            &
+                      grid % n_cells)             ! save shadows 
+
+  call Save_Cns_Geo  (grid, 0,             &
+                      grid % n_cells,      &
+                      grid % n_faces,      &
+                      grid % n_bnd_cells,  &
+                      0, 0) 
+
+  ! Save links for checking
+  call Save_Gmv_Links(grid, 0,             &
+                      grid % n_nodes,      &
+                      grid % n_cells,      &
+                      grid % n_faces,      &
+                      grid % n_bnd_cells,  &
+                      0)
 
   ! Create output for Fluent
-  NewC(-NBC-1) = -NBC-1
-! call Save_Cas(0, NN, NC, NS+NSsh, NBC) ! save grid for postprocessing
+  NewC(-grid % n_bnd_cells-1) = -grid % n_bnd_cells-1
+  call Save_Cas(grid, 0,                        &
+                grid % n_nodes,                 &
+                grid % n_cells,                 &
+                grid % n_faces + grid % n_sh,   &
+                grid % n_bnd_cells)      ! save grid for postprocessing
                                          ! with Fluent
 
   ! Create 1D file (used for channel or pipe flow) 
-  call Probe_1D_Nodes
+  call Probe_1D_Nodes(grid)
 
   ! Make .eps figures
   write(*,*) '# Making three .eps cuts through the domain.'
-  call Save_Eps_Cut(Dy, Dz, 'x')
-  call Save_Eps_Cut(Dz, Dx, 'y')
-  call Save_Eps_Cut(Dx, Dy, 'z')
+  call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x')
+  call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y')
+  call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z')
  
   write(*,*) '# Making a 3D shaded .eps figure of the domain.'
-  call Save_Eps_Whole(NSsh)   ! Draw the domain with shadows
+  call Save_Eps_Whole(grid, grid % n_sh)   ! draw the domain with shadows
 
-  end program Neu2TFlowS 
+  end program

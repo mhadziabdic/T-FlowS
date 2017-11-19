@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Ini()
+  subroutine Save_Ini(grid)
 !------------------------------------------------------------------------------!
 !   
 !------------------------------------------------------------------------------!
@@ -9,10 +9,13 @@
   use les_mod
   use par_mod
   use rans_mod
+  use Tokenizer_Mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, Nvar, var, c1, c2, s, SC, nn
+  integer           :: c, nn
   character(len=80) :: name_out, answer
   character(len=4)  :: ext
 !==============================================================================!
@@ -20,9 +23,9 @@
   ! store the name
   if(this_proc  < 2)                                                     &
   write(*,*) '# Now saving initial files [skip cancels]:'  
-  call ReadC(CMN_FILE,inp,tn,ts,te)
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
   
-  read(inp(ts(1):te(1)), '(A80)')  name_out
+  read(line % tokens(1), '(A80)')  name_out
   answer=name_out
   call To_Upper_Case(answer)
   
@@ -35,19 +38,19 @@
   ext = '.xyz'
   call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
-  do c= 1, NC
+  do c= 1, grid % n_cells
     nn = nn + 1
   end do    ! through centers 
   write(9,'(I10)') nn
-  do c= 1, NC
-    write(9,'(3E25.8)') xc(c),yc(c),zc(c)
+  do c= 1, grid % n_cells
+    write(9,'(3E25.8)') grid % xc(c),grid % yc(c),grid % zc(c)
   end do    ! through centers 
   close(9)
 
   ext = '.U__'
   call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
-  do c= 1, NC
+  do c= 1, grid % n_cells
     write(9,'(7E18.8)') U % n(c), U % o(c), U % C(c), U % Co(c),  &
                         U % Do(c), U % X(c), U % Xo(c)
   end do    ! through centers 
@@ -56,7 +59,7 @@
   ext = '.V__'
   call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
-  do c= 1, NC
+  do c= 1, grid % n_cells
     write(9,'(7E18.8)') V % n(c), V % o(c), V % C(c), V % Co(c),  &
                         V % Do(c), V % X(c), V % Xo(c)
   end do    ! through centers 
@@ -65,7 +68,7 @@
   ext = '.W__'
   call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
-  do c= 1, NC
+  do c= 1, grid % n_cells
     write(9,'(7E18.8)') W % n(c), W % o(c), W % C(c), W % Co(c),  &
                         W % Do(c), W % X(c), W % Xo(c)
   end do    ! through centers 
@@ -74,7 +77,7 @@
   ext = '.P__'
   call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
-  do c= 1, NC
+  do c= 1, grid % n_cells
     write(9,'(5E18.8)') P % n(c), PP % n(c), Px(c), Py(c),  &
                         Pz(c)
   end do    ! through centers 
@@ -84,7 +87,7 @@
     ext = '.T__'
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
-    do c= 1, NC
+    do c= 1, grid % n_cells
       write(9,'(7E18.8)') T % n(c), T % o(c), T % C(c), T % Co(c),  &
                           T % Do(c), T % X(c), T % Xo(c)
     end do    ! through centers 
@@ -95,7 +98,7 @@
     ext = '.Kin'
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
-    do c= 1, NC
+    do c= 1, grid % n_cells
       write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % C(c), Kin % Co(c),  &
                           Kin % Do(c), Kin % X(c), Kin % Xo(c)
     end do    ! through centers 
@@ -104,7 +107,7 @@
     ext = '.Eps'
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
-    do c= 1, NC
+    do c= 1, grid % n_cells
       write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % C(c), Eps % Co(c),  &
                           Eps % Do(c), Eps % X(c), Eps % Xo(c)
     end do    ! through centers 
@@ -113,7 +116,7 @@
     ext = '.v_2'
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
-    do c= 1, NC
+    do c= 1, grid % n_cells
       write(9,'(7E18.8)') v_2 % n(c), v_2 % o(c), v_2 % C(c), v_2 % Co(c),  &
                           v_2 % Do(c), v_2 % X(c), v_2 % Xo(c)
     end do    ! through centers 
@@ -122,7 +125,7 @@
     ext = '.f22'
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
-    do c= 1, NC
+    do c= 1, grid % n_cells
       write(9,'(7E18.8)') f22 % n(c), f22 % o(c),  &
                           f22 % Do(c), f22 % X(c), f22 % Xo(c)
     end do    ! through centers 
@@ -133,7 +136,7 @@
     ext = '.Kin'
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
-    do c= 1, NC
+    do c= 1, grid % n_cells
       write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % C(c), Kin % Co(c),  &
                           Kin % Do(c), Kin % X(c), Kin % Xo(c)
     end do    ! through centers 
@@ -142,7 +145,7 @@
     ext = '.Eps'
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
-    do c= 1, NC
+    do c= 1, grid % n_cells
       write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % C(c), Eps % Co(c),  &
                           Eps % Do(c), Eps % X(c), Eps % Xo(c)
     end do    ! through centers 
@@ -151,4 +154,4 @@
 
   name = answer 
 
-  end subroutine Save_Ini
+  end subroutine

@@ -3,7 +3,7 @@ noinst_LIBRARIES = libCommunication.a
 libCommunication_a_SOURCES =	\
   BufLoa.f90			\
   EndPar.f90			\
-  Exchng.f90			\
+  Exchange.f90			\
   GloMax.f90			\
   GloMin.f90			\
   GloSum.f90			\
@@ -12,8 +12,8 @@ libCommunication_a_SOURCES =	\
   Timex.f90			\
   Wait.f90
 
-SUBDIRS = ../../Shared/Modules
+SUBDIRS = ../../Shared
 
-LDADD = ../../SharedModules/libSharedModules.a
+LDADD = ../../Shared/libShared.a
 
 INCLUDE = -I@top_srcdir@/

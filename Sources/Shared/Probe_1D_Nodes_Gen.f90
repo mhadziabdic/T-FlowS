@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Probe_1D_Nodes_Gen
+  subroutine Probe_1D_Nodes_Gen(grid)
 !------------------------------------------------------------------------------!
 !   This subroutine finds the coordinate of nodes in non-homogeneous           !
 !   direction and write them in file name.1D                                   !
@@ -10,14 +10,15 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  logical :: isit
+  type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------! 
   include "Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: n_prob, p, c, n
+  integer           :: n_prob, p, n
   real              :: n_p(10000)
   character(len=80) :: name_prob
   character(len=80) :: answer
+  logical           :: isit
 !==============================================================================!
 
   write(*,*) '#==========================================='
@@ -37,7 +38,7 @@
   !-----------------------------!
   !   Browse through all nodes  !
   !-----------------------------!
-  do n =  1, NN 
+  do n = 1, grid % n_nodes 
 
     ! Try to find the cell among the probes
     do p=1,n_prob
@@ -86,7 +87,7 @@
   !--------------------!
   name_prob = name
   name_prob(len_trim(name)+1:len_trim(name)+3) = '.1D'
-  write(6, *) 'Now creating the file:', name_prob
+  write(6, *) 'Now creating the file:', trim(name_prob)
   open(9, file=name_prob)
   ! Write the number of probes 
   write(9,'(I8)') n_prob
@@ -102,4 +103,4 @@
 
   close(9)
 
-  end subroutine Probe_1D_Nodes_Gen
+  end subroutine

@@ -1,15 +1,18 @@
 !==============================================================================!
-  subroutine Save_Eps_Decomposed()
+  subroutine Save_Eps_Decomposed(grid)
 !------------------------------------------------------------------------------!
 !   Saves the whole grid in encapsulated postscript.                           !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-  use par_mod
+  use div_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------!
   real :: Distance
 !-----------------------------------[Locals]-----------------------------------!
@@ -27,8 +30,8 @@
 !==============================================================================!
 
   ! Allocate the memory
-  allocate(indx(NS)); indx=0
-  allocate(work(NS)); work=0   
+  allocate(indx(grid % n_faces)); indx=0
+  allocate(work(grid % n_faces)); work=0   
 
   !------------------------------!
   !   Set the processor colors   !
@@ -62,14 +65,14 @@
   !------------------------------!
   !   Input camera coordinates   !
   !------------------------------!
-1 write(6,*) 'Enter the camera coordinates (skip to exit): '
-  call ReadC(5,inp,tn,ts,te)
-  if(tn == 1) then
-    read(inp, *) answer
+1 write(*,*) '# Enter the camera coordinates (skip to exit): '
+  call Tokenizer_Mod_Read_Line(5)
+  if(line % n_tokens == 1) then
+    read(line % whole, *) answer
     call To_Upper_Case(answer)
     if(answer == 'SKIP') return 
-  else if(tn == 3) then
-    read(inp, *) xk, yk, zk 
+  else if(line % n_tokens == 3) then
+    read(line % whole, *) xk, yk, zk 
   end if
   alfa = acos( xk / sqrt(xk*xk+yk*yk) )
   beta = acos( yk / sqrt(xk*xk+yk*yk) )
@@ -84,18 +87,18 @@
   !   Create .eps file   !
   !                      !
   !----------------------!
-  write(6,*) 'Enter the file name (without extension): '
-  call ReadC(5,inp,tn,ts,te)
-  read(inp, *) name_eps 
+  write(6,*) '# Enter the file name (without extension): '
+  call Tokenizer_Mod_Read_Line(5)
+  read(line % whole, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
-  write(6, *) 'Now creating the file:', name_eps
+  write(6, *) '# Now creating the file:', trim(name_eps)
 
-  xmax=maxval(grid % xn(1:NN))
-  ymax=maxval(grid % yn(1:NN))
-  zmax=maxval(grid % zn(1:NN))
-  xmin=minval(grid % xn(1:NN))
-  ymin=minval(grid % yn(1:NN))
-  zmin=minval(grid % zn(1:NN))
+  xmax=maxval(grid % xn(1:grid % n_nodes))
+  ymax=maxval(grid % yn(1:grid % n_nodes))
+  zmax=maxval(grid % zn(1:grid % n_nodes))
+  xmin=minval(grid % xn(1:grid % n_nodes))
+  ymin=minval(grid % yn(1:grid % n_nodes))
+  zmin=minval(grid % zn(1:grid % n_nodes))
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin),(zmax-zmin))
   sclp = 0.005 
 
@@ -104,7 +107,7 @@
   xmaxb=-1000000
   yminb=+1000000
   ymaxb=-1000000
-  do n=1,Nn
+  do n = 1, grid % n_nodes
     if(xk  < 0.0 .and. yk  > 0.0) then
       xp1= - grid % xn(n) * sin(alfa) - grid % yn(n) * sin(beta)
     else if(xk  > 0.0 .and. yk  < 0.0) then
@@ -160,31 +163,32 @@
   write(9, '(I6,A)') int(real(boxsize)/sclp), ' scalefont' 
   write(9, '(A)') 'setfont'
 
-  do s=1,NS
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+  do s = 1, grid % n_faces
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     indx(s) = s
-    work(s) = Distance(xk,yk,zk,                              &
-                       f(s)*xc(c1)+(1.-f(s))*(xc(c2)+Dx(s)),  &
-                       f(s)*yc(c1)+(1.-f(s))*(yc(c2)+Dy(s)),  &
-                       f(s)*zc(c1)+(1.-f(s))*(zc(c2)+Dz(s)) )
+    work(s) = Distance(xk,yk,zk,                                            &
+                f(s)*grid % xc(c1)+(1.-f(s))*(grid % xc(c2)+grid % dx(s)),  &
+                f(s)*grid % yc(c1)+(1.-f(s))*(grid % yc(c2)+grid % dy(s)),  &
+                f(s)*grid % zc(c1)+(1.-f(s))*(grid % zc(c2)+grid % dz(s)) )
   end do
-  call Sort_Real_By_Index(work,indx,NS,-2)
+  call Sort_Real_By_Index(work,indx,grid % n_faces,-2)
 
-  do s0=1,NS
+  do s0 = 1, grid % n_faces
     s=indx(s0)
 
-    shade=                                                          &
-   (Sx(s)*nx+Sy(s)*ny+Sz(s)*nz)                                     &
-    /sqrt(Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))
+    shade = (grid % sx(s)*nx + grid % sy(s)*ny + grid % sz(s)*nz)  &
+          / sqrt(  grid % sx(s)*grid % sx(s)                       &
+                 + grid % sy(s)*grid % sy(s)                       &
+                 + grid % sz(s)*grid % sz(s)  )
     shade=abs(shade)
     shade=0.4+0.6*shade
 
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if(c2 < 0 .or. &
-      ( abs(Dx(s))+abs(Dy(s))+abs(Dz(s)) ) > 0. ) then 
+      ( abs(grid % dx(s))+abs(grid % dy(s))+abs(grid % dz(s)) ) > 0. ) then 
 
       x1 = grid % xn(grid % faces_n(1,s))
       x2 = grid % xn(grid % faces_n(2,s))
@@ -287,4 +291,4 @@
   deallocate(indx)
   deallocate(work)
 
-  end subroutine Save_Eps_Decomposed
+  end subroutine

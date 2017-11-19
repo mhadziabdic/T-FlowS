@@ -1,16 +1,19 @@
 !==============================================================================!
-  PROGRAM Generator
+  program Generator
 !------------------------------------------------------------------------------!
 !   Block structured mesh generation and unstructured cell refinement.         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Domain_Mod  ! domain as defined in ".d" file.
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c,s,n
+  type(Domain_Type) :: dom    ! domain to be used
+  type(Grid_Type)   :: grid   ! grid which will be generated
+  integer           :: c, s, n
 !==============================================================================!
 
   ! Test the precision
@@ -18,58 +21,81 @@
   write(90) 3.1451592
   close(90)
 
+  ! Open with a logo
   call Logo
 
-  call Load_Domain
-  call Compute_Node_Coordinates
-  call Distribute_Regions
-  call Connect_Blocks
-  call Connect_Periodicity
-  call CopyBC
-  call TopSys(.false.)  ! trial run 
-  call Compute_Grid_Geometry(.false.)
-  call Smooth_Grid
+  call Load_Domain             (dom, grid)
+  call Compute_Node_Coordinates(dom, grid)
+  call Distribute_Regions      (dom, grid)
+  call Connect_Blocks          (dom, grid)
+  call Connect_Periodicity     (dom, grid)
+  call Connect_Copy            (dom)
 
-  call Refine_Grid
-
-  call TopSys(.true.) ! real run
-  call Compute_Grid_Geometry(.true.)
+  ! From this point on, domain is not used anymore
+  call Determine_Grid_Connectivity(grid, .false.)  ! trial run 
+  call Compute_Grid_Geometry      (grid, .false.)
+  call Smooth_Grid                (grid)
+  call Refine_Grid                (grid)
+  call Determine_Grid_Connectivity(grid, .true.) ! real run
+  call Compute_Grid_Geometry      (grid, .true.)
 
   ! Prepare for saving
-  do n=1,NN
+  do n = 1,grid % n_nodes
     NewN(n)=n
   end do
-  do c=-NBC,NC
+  do c = -grid % n_bnd_cells,grid % n_cells
     NewC(c)=c
   end do
-  do s=1,NS
+  do s = 1,grid % n_faces
     NewS(s)=s
   end do
 
   ! Save the grid
-  call Save_Gmv_Grid(0, NN, NC)            ! save grid for postprocessing
-  call Save_Cns_Geo(0, NC, NS, NBC, 0, 0)  ! saved data for processing
+  call Save_Gmv_Cells(grid, 0,         &
+                      grid % n_nodes,  &
+                      grid % n_cells)     ! save grid for postprocessing
 
-  call Save_Gmv_Links(0, NN, NC, NS, NbC, 0)
+  call Save_Gmv_Faces(grid, 0,         &
+                      grid % n_nodes)     ! save grid for checking b.c. 
+
+  call Save_Shadows  (grid, 0,         &
+                      grid % n_cells)     ! save shadows 
+
+  call Save_Cns_Geo(grid, 0,                  &
+                    grid % n_cells,           &
+                    grid % n_faces,           &
+                    grid % n_bnd_cells,  &
+                    0, 0)  ! saved data for processing
+
+  ! Save links for checking
+  call Save_Gmv_Links(grid, 0,                  &
+                      grid % n_nodes,           &
+                      grid % n_cells,           &
+                      grid % n_faces,           &
+                      grid % n_bnd_cells,  &
+                      0)
 
   ! Save the 1D probe (good for the channel flow)
-  call Probe_1D_Nodes_Gen
+  call Probe_1D_Nodes_Gen(grid)
 
   ! Save the 2D probe (good for the channel flow)
-  call Probe_2D
+  call Probe_2D(grid)
 
   ! Create output for Fluent
-  NewC(-NBC-1) = -NBC-1
-  call Save_Cas(0, NN, NC, NS+NSsh) ! save grid for postprocessing
-                                    ! with Fluent
-  ! Make eps figures
-  call Save_Eps_Cut(Dy,Dz,'x') 
-  call Save_Eps_Cut(Dz,Dx,'y') 
-  call Save_Eps_Cut(Dx,Dy,'z') 
+  NewC(-grid % n_bnd_cells-1) = -grid % n_bnd_cells-1
+  call Save_Cas(grid, 0,              &
+                grid % n_nodes,       &
+                grid % n_cells,       &
+                grid % n_faces + grid % n_sh)  ! save grid for Fluent
 
-  call Save_Eps_Whole(NSsh)  ! draw the domain with shadows
+  ! Make eps figures
+  call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x') 
+  call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y') 
+  call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z') 
+
+  call Save_Eps_Whole(grid, grid % n_sh)  ! draw the domain with shadows
 
   ! Write something on the screen
-  call Print_Grid_Statistics
+  call Print_Grid_Statistics(grid)
 
-  end PROGRAM Generator 
+  end program

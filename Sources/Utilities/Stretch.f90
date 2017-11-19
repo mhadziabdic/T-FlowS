@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: N, i, node, case
+  integer           :: n, i, case
   real              :: x0, delx, t, dt, ddt, pr, xi
   real              :: x(0:1000)
   real              :: w
@@ -19,7 +19,7 @@
   write(*,*) 'Weigth: '
   read(*,*)  w
   write(*,*) 'Number of cells: '
-  read(*,*)  N
+  read(*,*)  n
 
   x(0) = x0
 
@@ -27,10 +27,10 @@
   !   Linear distribution   !
   !-------------------------!
   if(w  > 0.0) then
-    ddt = ( 2.0*(1.0-w) ) / ( 1.0*N*(1.0*N-1.0)*(1.0+w) )
+    ddt = ( 2.0*(1.0-w) ) / ( 1.0*n*(1.0*n-1.0)*(1.0+w) )
     t=0.0
-    do i=1,N
-      dt=1.0/(1.0*N)+(1.0*i-0.5*(1.0*N+1)) * ddt
+    do i=1,n
+      dt=1.0/(1.0*n)+(1.0*i-0.5*(1.0*n+1)) * ddt
       t=t+dt
       x(i) = x0 + t*delx
     end do
@@ -51,10 +51,10 @@
       case = 3 
     endif
 
-    do i=1,N
-      if(case == 1) xi = -1.0*(1.0*i)/(1.0*N)
-      if(case == 2) xi =  1.0 - 1.0*(1.0*i)/(1.0*N)
-      if(case == 3) xi = -1.0 + 2.0*(1.0*i)/(1.0*N)
+    do i=1,n
+      if(case == 1) xi = -1.0*(1.0*i)/(1.0*n)
+      if(case == 2) xi =  1.0 - 1.0*(1.0*i)/(1.0*n)
+      if(case == 3) xi = -1.0 + 2.0*(1.0*i)/(1.0*n)
       if    (case == 1) then
         x(i) = x0 - (tanh(xi*atanh(pr))/pr)*delx
       elseif(case == 2) then
@@ -70,7 +70,7 @@
   !   Print out the distribution   !
   !--------------------------------!
   write(*,*) ' number:   node:                  cell:'
-  do i=N,1,-1
+  do i=n,1,-1
     write(*,'(I6,F12.6,A10)') i+1, x(i),              ' +-------+'
     write(*,'(I6,A23,F12.6)') i,  '|   o   | ', 0.5*(x(i)+x(i-1))
   end do
@@ -81,7 +81,7 @@
 
   open(3,file=file1) 
   
-  do i = 1, N
+  do i = 1, n
   
    write(3,*) 0.5*(x(i)+x(i-1)) 
 

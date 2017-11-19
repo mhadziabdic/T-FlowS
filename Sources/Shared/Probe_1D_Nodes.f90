@@ -1,16 +1,16 @@
 !==============================================================================!
-  subroutine Probe_1D_Nodes
+  subroutine Probe_1D_Nodes(grid)
 !------------------------------------------------------------------------------!
 !   This subroutine finds the coordinate of cell-centers in non-homogeneous    !
 !   direction and write them in file called "name.1D"                          !
 !------------------------------------------------------------------------------!
-  use all_mod
+  use all_mod, only: name
   use gen_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  logical :: isit
+  type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------! 
   include "Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
@@ -18,6 +18,7 @@
   real              :: n_p(10000)
   character(len=80) :: name_prob
   character(len=80) :: answer
+  logical           :: isit
 !==============================================================================!
 
   write(*,*) '#==========================================='
@@ -37,7 +38,7 @@
   !-----------------------------!
   !   Browse through all cells  !
   !-----------------------------!
-  do c=-NbC, NC
+  do c = -grid % n_bnd_cells, grid % n_cells
     do n = 1, grid % cells_n_nodes(c)
 
       ! Try to find the cell among the probes
@@ -91,7 +92,7 @@
   !--------------------!
   name_prob = name
   name_prob(len_trim(name)+1:len_trim(name)+3) = '.1D'
-  write(6, *) '# Now creating the file:', name_prob
+  write(6, *) '# Now creating the file:', trim(name_prob)
   open(9, file=name_prob)
 
   ! Write the number of probes 
@@ -108,4 +109,4 @@
 
   close(9)
 
-  end subroutine Probe_1D_Nodes
+  end subroutine

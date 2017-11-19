@@ -81,56 +81,56 @@
       if(cj /= c) then
 
 !--- Test velocitys
-        Ua = Ua + volume(cj) * U % n(cj)
-        Va = Va + volume(cj) * V % n(cj)
-        Wa = Wa + volume(cj) * W % n(cj)
+        Ua = Ua + grid % vol(cj) * U % n(cj)
+        Va = Va + grid % vol(cj) * V % n(cj)
+        Wa = Wa + grid % vol(cj) * W % n(cj)
 
 !--- Test stresses
-        UUa = UUa + volume(cj) * U % n(cj) * U % n(cj)
-        VVa = VVa + volume(cj) * V % n(cj) * V % n(cj)
-        WWa = WWa + volume(cj) * W % n(cj) * W % n(cj)
-        UVa = UVa + volume(cj) * U % n(cj) * V % n(cj)
-        UWa = UWa + volume(cj) * U % n(cj) * W % n(cj)
-        VWa = VWa + volume(cj) * V % n(cj) * W % n(cj)
+        UUa = UUa + grid % vol(cj) * U % n(cj) * U % n(cj)
+        VVa = VVa + grid % vol(cj) * V % n(cj) * V % n(cj)
+        WWa = WWa + grid % vol(cj) * W % n(cj) * W % n(cj)
+        UVa = UVa + grid % vol(cj) * U % n(cj) * V % n(cj)
+        UWa = UWa + grid % vol(cj) * U % n(cj) * W % n(cj)
+        VWa = VWa + grid % vol(cj) * V % n(cj) * W % n(cj)
 
 !--- Test Mija
-        M11a = M11a + volume(cj) * Shear(cj) * Ux(cj)
-        M22a = M22a + volume(cj) * Shear(cj) * Vy(cj)
-        M33a = M33a + volume(cj) * Shear(cj) * Wz(cj)
-        M12a = M12a + volume(cj) * Shear(cj)                &    
+        M11a = M11a + grid % vol(cj) * Shear(cj) * Ux(cj)
+        M22a = M22a + grid % vol(cj) * Shear(cj) * Vy(cj)
+        M33a = M33a + grid % vol(cj) * Shear(cj) * Wz(cj)
+        M12a = M12a + grid % vol(cj) * Shear(cj)                &    
                * 0.5 * ( Uy(cj) + Vx(cj) ) 
-        M13a = M13a + volume(cj) * Shear(cj)                &
+        M13a = M13a + grid % vol(cj) * Shear(cj)                &
                * 0.5 * ( Uz(cj) + Wx(cj) )     
-        M23a = M23a + volume(cj) * Shear(cj)                &
+        M23a = M23a + grid % vol(cj) * Shear(cj)                &
                * 0.5 * ( Vz(cj) + Wy(cj) )
 
 !--- Test volume 
-        DE = DE + volume(cj) 
+        DE = DE + grid % vol(cj) 
       end if
     end do
 
 !--- Now it's taking into account influence of central cell
 !--- within test molecule
     
-    DE = DE + volume(c)
+    DE = DE + grid % vol(c)
 
-    Ua = Ua + volume(c) * U % n(c)
-    Va = Va + volume(c) * V % n(c)
-    Wa = Wa + volume(c) * W % n(c)
+    Ua = Ua + grid % vol(c) * U % n(c)
+    Va = Va + grid % vol(c) * V % n(c)
+    Wa = Wa + grid % vol(c) * W % n(c)
 
-    UUa = UUa + volume(c) * U % n(c) * U % n(c)
-    VVa = VVa + volume(c) * V % n(c) * V % n(c)
-    WWa = WWa + volume(c) * W % n(c) * W % n(c)
-    UVa = UVa + volume(c) * U % n(c) * V % n(c)
-    UWa = UWa + volume(c) * U % n(c) * W % n(c)
-    VWa = VWa + volume(c) * V % n(c) * W % n(c)
+    UUa = UUa + grid % vol(c) * U % n(c) * U % n(c)
+    VVa = VVa + grid % vol(c) * V % n(c) * V % n(c)
+    WWa = WWa + grid % vol(c) * W % n(c) * W % n(c)
+    UVa = UVa + grid % vol(c) * U % n(c) * V % n(c)
+    UWa = UWa + grid % vol(c) * U % n(c) * W % n(c)
+    VWa = VWa + grid % vol(c) * V % n(c) * W % n(c)
 
-    M11a = M11a + volume(c) * Shear(c) * Ux(c)
-    M22a = M22a + volume(c) * Shear(c) * Vy(c)
-    M33a = M33a + volume(c) * Shear(c) * Wz(c)
-    M12a = M12a + volume(c) * Shear(c) * 0.5 * ( Uy(c) + Vx(c) ) 
-    M13a = M13a + volume(c) * Shear(c) * 0.5 * ( Uz(c) + Wx(c) )
-    M23a = M23a + volume(c) * Shear(c) * 0.5 * ( Vz(c) + Wy(c) )
+    M11a = M11a + grid % vol(c) * Shear(c) * Ux(c)
+    M22a = M22a + grid % vol(c) * Shear(c) * Vy(c)
+    M33a = M33a + grid % vol(c) * Shear(c) * Wz(c)
+    M12a = M12a + grid % vol(c) * Shear(c) * 0.5 * ( Uy(c) + Vx(c) ) 
+    M13a = M13a + grid % vol(c) * Shear(c) * 0.5 * ( Uz(c) + Wx(c) )
+    M23a = M23a + grid % vol(c) * Shear(c) * 0.5 * ( Vz(c) + Wy(c) )
 
     
 !--- Now calculating test values
@@ -164,7 +164,7 @@
   call GraPhi(W % filt, 3, Wz,.TRUE.)    ! dW/dz
 
   do c=1,NC
-    Lg  = volume(c)**0.33333    
+    Lg  = grid % vol(c)**ONE_THIRD
     Lf  = 2.0 * Lg
 
     ShearTest(c) = sqrt(2.0*(Ux(c)*Ux(c) + Vy(c)*Vy(c) + Wz(c)*Wz(c) + &

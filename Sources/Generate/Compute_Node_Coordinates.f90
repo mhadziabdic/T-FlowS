@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Compute_Node_Coordinates
+  subroutine Compute_Node_Coordinates(dom, grid)
 !------------------------------------------------------------------------------!
 !   Calculate node coordinates inside the domain, block by block.              !
 !------------------------------------------------------------------------------!
@@ -10,6 +10,9 @@
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Domain_Type) :: dom
+  type(Grid_Type)   :: grid
 !----------------------------------[Calling]-----------------------------------!
   integer :: Is_Line_in_Block
 !---------------------------------[Interface]----------------------------------!
@@ -30,8 +33,8 @@
   !------------------------------------!
   !   Calculate the node coordinates   !
   !------------------------------------!
-  nn = 0  ! initialize n.o.n.
-  nc = 0  ! initialize n.o.v.
+  grid % n_nodes = 0  ! initialize n.o.n.
+  grid % n_cells = 0  ! initialize n.o.v.
 
   do b = 1, size(dom % blocks)
 
@@ -41,49 +44,49 @@
     nk=dom % blocks(b) % resolutions(3)   
 
     ! ( 1 )
-    n = nn + ( 1-1)*ni*nj + ( 1-1)*ni +  1
+    n = grid % n_nodes + ( 1-1)*ni*nj + ( 1-1)*ni +  1
     grid % xn(n) = dom % points(dom % blocks(b) % corners(1)) % x
     grid % yn(n) = dom % points(dom % blocks(b) % corners(1)) % y 
     grid % zn(n) = dom % points(dom % blocks(b) % corners(1)) % z 
 
     ! ( 2 )
-    n = nn + ( 1-1)*ni*nj + ( 1-1)*ni + ni
+    n = grid % n_nodes + ( 1-1)*ni*nj + ( 1-1)*ni + ni
     grid % xn(n) = dom % points(dom % blocks(b) % corners(2)) % x
     grid % yn(n) = dom % points(dom % blocks(b) % corners(2)) % y
     grid % zn(n) = dom % points(dom % blocks(b) % corners(2)) % z
 
     ! ( 3 )
-    n = nn + ( 1-1)*ni*nj + (nj-1)*ni +  1
+    n = grid % n_nodes + ( 1-1)*ni*nj + (nj-1)*ni +  1
     grid % xn(n) = dom % points(dom % blocks(b) % corners(3)) % x
     grid % yn(n) = dom % points(dom % blocks(b) % corners(3)) % y
     grid % zn(n) = dom % points(dom % blocks(b) % corners(3)) % z
 
     ! ( 4 )
-    n = nn + ( 1-1)*ni*nj + (nj-1)*ni + ni
+    n = grid % n_nodes + ( 1-1)*ni*nj + (nj-1)*ni + ni
     grid % xn(n) = dom % points(dom % blocks(b) % corners(4)) % x
     grid % yn(n) = dom % points(dom % blocks(b) % corners(4)) % y
     grid % zn(n) = dom % points(dom % blocks(b) % corners(4)) % z
 
     ! ( 5 ) !
-    n = nn + (nk-1)*ni*nj + ( 1-1)*ni +  1
+    n = grid % n_nodes + (nk-1)*ni*nj + ( 1-1)*ni +  1
     grid % xn(n) = dom % points(dom % blocks(b) % corners(5)) % x
     grid % yn(n) = dom % points(dom % blocks(b) % corners(5)) % y
     grid % zn(n) = dom % points(dom % blocks(b) % corners(5)) % z
 
     ! ( 6 ) !
-    n = nn + (nk-1)*ni*nj + ( 1-1)*ni + ni
+    n = grid % n_nodes + (nk-1)*ni*nj + ( 1-1)*ni + ni
     grid % xn(n) = dom % points(dom % blocks(b) % corners(6)) % x
     grid % yn(n) = dom % points(dom % blocks(b) % corners(6)) % y
     grid % zn(n) = dom % points(dom % blocks(b) % corners(6)) % z
 
     ! ( 7 ) !
-    n = nn + (nk-1)*ni*nj + (nj-1)*ni +  1
+    n = grid % n_nodes + (nk-1)*ni*nj + (nj-1)*ni +  1
     grid % xn(n) = dom % points(dom % blocks(b) % corners(7)) % x
     grid % yn(n) = dom % points(dom % blocks(b) % corners(7)) % y
     grid % zn(n) = dom % points(dom % blocks(b) % corners(7)) % z
 
     ! ( 8 ) !
-    n = nn + (nk-1)*ni*nj + (nj-1)*ni + ni
+    n = grid % n_nodes + (nk-1)*ni*nj + (nj-1)*ni + ni
     grid % xn(n) = dom % points(dom % blocks(b) % corners(8)) % x
     grid % yn(n) = dom % points(dom % blocks(b) % corners(8)) % y
     grid % zn(n) = dom % points(dom % blocks(b) % corners(8)) % z
@@ -94,7 +97,8 @@
     !------------------------------!
     do l=1, size(dom % lines)
 
-      bl = Is_Line_in_Block(dom % lines(l) % points(1),  &
+      bl = Is_Line_in_Block(dom,                         &
+                            dom % lines(l) % points(1),  &
                             dom % lines(l) % points(2),  &
                             b)
 
@@ -219,7 +223,7 @@
             j=trans(2,1)+trans(2,2)*ig
             k=trans(3,1)+trans(3,2)*ig
 
-            n = nn + (k-1)*ni*nj + (j-1)*ni + i
+            n = grid % n_nodes + (k-1)*ni*nj + (j-1)*ni + i
             grid % xn(n) = dom % lines(l) % x(ig)
             grid % yn(n) = dom % lines(l) % y(ig)
             grid % zn(n) = dom % lines(l) % z(ig)
@@ -233,8 +237,9 @@
           ie=trans(1,1)+trans(1,2)*dom % lines(l) % resolution
           je=trans(2,1)+trans(2,2)*dom % lines(l) % resolution
           ke=trans(3,1)+trans(3,2)*dom % lines(l) % resolution
-          call Distribute_Nodes(b, dom % lines(l) % weight,  &
-                                   is, js, ks, ie, je, ke)
+          call Distribute_Nodes(dom, grid,                   &
+                                b, dom % lines(l) % weight,  &
+                                is, js, ks, ie, je, ke)
         endif  
 
       endif ! if the block contains
@@ -246,19 +251,22 @@
     !-----------!
     do k=1,nk,nk-1
       do j=1,nj,nj-1
-        call Distribute_Nodes(b, dom % blocks(b) % weights(1), 1,j,k,ni,j,k)
+        call Distribute_Nodes(dom, grid,  &
+                              b, dom % blocks(b) % weights(1), 1,j,k,ni,j,k)
       end do
     end do
 
     do k=1,nk,nk-1
       do i=1,ni,ni-1
-        call Distribute_Nodes(b, dom % blocks(b) % weights(2), i,1,k,i,nj,k)
+        call Distribute_Nodes(dom, grid,  &
+                              b, dom % blocks(b) % weights(2), i,1,k,i,nj,k)
       end do
     end do
 
     do j=1,nj,nj-1
       do i=1,ni,ni-1
-        call Distribute_Nodes(b, dom % blocks(b) % weights(3), i,j,1,i,j,nk)
+        call Distribute_Nodes(dom, grid,  &
+                              b, dom % blocks(b) % weights(3), i,j,1,i,j,nk)
       end do
     end do
 
@@ -274,12 +282,14 @@
     k = 1
     if( .not. Approx(dom % blocks(b) % face_weights(fc,1),1.0 ) ) then
       do j=1,nj
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,1),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,1),  &
                               1,j,k,ni,j,k)
       end do
     else ! dom % lines in the j direction
       do i=1,ni
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,2),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,2),  &
                               i,1,k,i,nj,k)
       end do
     endif
@@ -289,12 +299,14 @@
     k = nk
     if( .not. Approx(dom % blocks(b) % face_weights(fc,1),1.0 ) ) then
      do j=1,nj
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,1),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,1),  &
                               1,j,k,ni,j,k)
       end do
     else ! dom % lines in the j direction
       do i=1,ni
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,2),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,2),  &
                               i,1,k,i,nj,k)
       end do
     endif
@@ -304,12 +316,14 @@
     i = 1
     if( .not. Approx(dom % blocks(b) % face_weights(fc,3),1.0 ) ) then
       do j=1,nj
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,3),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,3),  &
                               i,j,1,i,j,nk)
       end do
     else ! dom % lines in the j direction
       do k=1,nk
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,2),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,2),  &
                               i,1,k,i,nj,k)
       end do
     end if 
@@ -319,12 +333,14 @@
     i = ni
     if( .not. Approx(dom % blocks(b) % face_weights(fc,3),1.0 ) ) then
       do j=1,nj
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,3),  & 
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,3),  & 
                               i,j,1,i,j,nk)
       end do
     else ! dom % lines in the j direction
       do k=1,nk
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,2),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,2),  &
                               i,1,k,i,nj,k)
       end do
     end if 
@@ -334,12 +350,14 @@
     j = 1
     if( .not. Approx(dom % blocks(b) % face_weights(fc,3),1.0 ) ) then
       do i=1,ni
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,3),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,3),  &
                               i,j,1,i,j,nk)
       end do
     else ! dom % lines in the i direction
       do k=1,nk
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,1),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,1),  &
                               1,j,k,ni,j,k)
       end do
     endif
@@ -349,12 +367,14 @@
     j = nj
     if( .not. Approx(dom % blocks(b) % face_weights(fc,3),1.0 ) ) then
       do i=1,ni
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,3),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,3),  &
                               i,j,1,i,j,nk)
       end do
     else ! dom % lines in the i direction
       do k=1,nk
-        call Distribute_Nodes(b, dom % blocks(b) % face_weights(fc,1),  &
+        call Distribute_Nodes(dom, grid,                                &
+                              b, dom % blocks(b) % face_weights(fc,1),  &
                               1,j,k,ni,j,k)
       end do
     endif
@@ -365,19 +385,22 @@
     if( .not. Approx( dom % blocks(b) % weights(3), 1.0 ) ) then
       do i=1,ni
         do j=1,nj
-          call Distribute_Nodes(b, dom % blocks(b) % weights(3), i,j,1,i,j,nk)
+          call Distribute_Nodes(dom, grid,  &
+                                b, dom % blocks(b) % weights(3), i,j,1,i,j,nk)
         end do
       end do
     else if( .not. Approx( dom % blocks(b) % weights(1), 1.0 ) ) then
       do k=1,nk
         do j=1,nj
-          call Distribute_Nodes(b, dom % blocks(b) % weights(1), 1,j,k,ni,j,k)
+          call Distribute_Nodes(dom, grid,  &
+                                b, dom % blocks(b) % weights(1), 1,j,k,ni,j,k)
         end do
       end do
     else if( .not. Approx( dom % blocks(b) % weights(2), 1.0 ) ) then
       do k=1,nk
         do i=1,ni
-          call Distribute_Nodes(b, dom % blocks(b) % weights(2), i,1,k,i,nj,k)
+          call Distribute_Nodes(dom, grid,  &
+                                b, dom % blocks(b) % weights(2), i,1,k,i,nj,k)
         end do
       end do
     else
@@ -385,10 +408,10 @@
       do i=1,ni
         do j=1,nj
           do k=1,nk
-            n = nn+(k-1)*ni*nj + (j-1)*ni + i
-            call Laplac(b, i, j, k, 0.333, 0.333, 0.334,           &
-                                    0.333, 0.333, 0.334,           &
-                                    0.333, 0.333, 0.334)
+            n = grid % n_nodes+(k-1)*ni*nj + (j-1)*ni + i
+            call Laplac(dom, grid, b, i, j, k, ONE_THIRD, ONE_THIRD, ONE_THIRD,  &
+                                               ONE_THIRD, ONE_THIRD, ONE_THIRD,  &
+                                               ONE_THIRD, ONE_THIRD, ONE_THIRD)
           end do
         end do
       end do
@@ -405,8 +428,8 @@
     do k=1,ck
       do j=1,cj
         do i=1,ci
-          c = nc + (k-1)*ci*cj + (j-1)*ci + i ! cell 
-          n = nn + (k-1)*ni*nj + (j-1)*ni + i ! 1st node
+          c = grid % n_cells + (k-1)*ci*cj + (j-1)*ci + i ! cell 
+          n = grid % n_nodes + (k-1)*ni*nj + (j-1)*ni + i ! 1st node
 
           ! Nodes
           grid % cells_n(1,c) = n
@@ -438,11 +461,11 @@
       end do
     end do
 
-    dom % blocks(b) % n_nodes = nn       ! old number of nodes, for fusion 
-    dom % blocks(b) % n_cells = nc       ! old number of volumes, for fusion
-    nn = nn + ni*nj*nk
-    nc = nc + ci*cj*ck
+    dom % blocks(b) % n_nodes = grid % n_nodes       ! old number of nodes, for fusion 
+    dom % blocks(b) % n_cells = grid % n_cells       ! old number of volumes, for fusion
+    grid % n_nodes = grid % n_nodes + ni*nj*nk
+    grid % n_cells = grid % n_cells + ci*cj*ck
 
   end do   ! through dom % blocks 
 
-  end subroutine Compute_Node_Coordinates
+  end subroutine

@@ -9,14 +9,14 @@ AC_PROG_RANLIB
 
 AC_OUTPUT( 
   Makefile				\
-  Shared/Modules/Makefile		\
   Shared/Makefile			\
   Generate/Makefile			\
   Divide/Makefile			\
   Neu2TFlowS/Makefile			\
   Process/Makefile			\
   Process/Communication/Makefile	\
-  Process/Linear_Solvers/Makefile	\
+  Process/Solvers/Makefile		\
+  Process/Turbulence/Makefile		\
   Process/User/Makefile			\
   Utilities/Makefile
 )

@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Smooth_Grid
+  subroutine Smooth_Grid(grid)
 !------------------------------------------------------------------------------!
 !   Smooths the grid lines by a Laplacian-like algorythm.                      !
 !------------------------------------------------------------------------------!
@@ -9,6 +9,8 @@
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: c, n, i, j, k, m
   real                 :: x_new_tmp, y_new_tmp, z_new_tmp    
@@ -27,7 +29,7 @@
 
   write(*,*) '# Now smoothing the cells. This may take a while !' 
 
-  do n=1,Nn
+  do n = 1, grid % n_nodes
     node_to_nodes(n,0) = 0
   end do 
 
@@ -37,7 +39,7 @@
   x_min=+HUGE
   y_min=+HUGE
   z_min=+HUGE
-  do n=1,Nn
+  do n = 1, grid % n_nodes
     x_max=max(grid % xn(n), x_max) 
     y_max=max(grid % yn(n), y_max) 
     z_max=max(grid % zn(n), z_max) 
@@ -49,10 +51,10 @@
   !-----------------------!
   !   Connect the nodes   !
   !-----------------------!
-  do c=1,Nc                        ! through cells
-    do i=1,8                       ! through nodes of a cell 
+  do c = 1, grid % n_cells         ! through cells
+    do i = 1, 8                    ! through nodes of a cell 
       n = grid % cells_n(i,c)      ! first cell
-      do j=1,8                     ! through nodes of a cell 
+      do j = 1, 8                  ! through nodes of a cell 
         m = grid % cells_n(j,c)    ! second cell 
         if(n /=  m) then 
           do k=1,node_to_nodes(n,0)
@@ -68,11 +70,11 @@
   !----------------------------!
   !   Browse through regions   !
   !----------------------------!
-  do reg=1,n_smoothing_regions
+  do reg = 1, n_smoothing_regions
     if( ( .not. smooth_in_x(reg) ) .and.  &
         ( .not. smooth_in_y(reg) ) .and.  &
         ( .not. smooth_in_z(reg) ) ) then
-      do n=1,Nn
+      do n = 1, grid % n_nodes
         x1=smooth_regions(reg,1)
         y1=smooth_regions(reg,2)
         z1=smooth_regions(reg,3)
@@ -91,19 +93,19 @@
   !---------------------!
   !   Smooth the grid   !
   !---------------------!
-  do reg=1,n_smoothing_regions
+  do reg = 1, n_smoothing_regions
     write(*,*) '# Now smoothing region ',reg,' with:',              &
                 smooth_iters(reg), ' iterations.'
 
-    do j=1,smooth_iters(reg)         
+    do j = 1, smooth_iters(reg)         
 
       ! Calculate new coordinates using the old values 
-      do n=1,Nn
+      do n = 1, grid % n_nodes
         if(node_to_nodes(n,0)   >  0) then
           x_new_tmp=0.0
           y_new_tmp=0.0
           z_new_tmp=0.0
-          do i=1,node_to_nodes(n,0)
+          do i = 1, node_to_nodes(n,0)
             x_new_tmp = x_new_tmp + grid % xn(node_to_nodes(n,i))
             y_new_tmp = y_new_tmp + grid % yn(node_to_nodes(n,i))
             z_new_tmp = z_new_tmp + grid % zn(node_to_nodes(n,i))
@@ -127,7 +129,7 @@
       end do
 
       ! Update coordinates
-      do n=1,Nn
+      do n = 1, grid % n_nodes
         if(node_to_nodes(n,0)   >  0) then
 
           x1=smooth_regions(reg,1)
@@ -173,4 +175,4 @@
   deallocate(z_node_new)
   deallocate(node_to_nodes)
 
-  end subroutine Smooth_Grid
+  end subroutine

@@ -1,20 +1,23 @@
-!======================================================================!
-  subroutine Probe_2D 
-!----------------------------------------------------------------------!
-! Finds coordinates of all the planes for the channel flow.            !
-! It assumes that homogeneous directions of the flow are x and y.      !
-!----------------------------------------------------------------------!
-  use all_mod
-!----------------------------------------------------------------------!
+!==============================================================================!
+  subroutine Probe_2D(grid) 
+!------------------------------------------------------------------------------!
+! Finds coordinates of all the planes for the channel flow.                    !
+! It assumes that homogeneous directions of the flow are x and y.              !
+!------------------------------------------------------------------------------!
+  use all_mod, only: name
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!------------------------------[Calling]-------------------------------! 
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+!----------------------------------[Calling]-----------------------------------! 
   include "Approx.int"
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer           :: n_prob, p, c
   real              :: yp(20000), zp(20000)
   character(len=80) :: name_prob
   character(len=80) :: answer
-!======================================================================!
+!==============================================================================!
 
   write(*,*) '#==============================='
   write(*,*) '# Looking for homogeneous plane '
@@ -33,33 +36,33 @@
   !-----------------------------!
   !   Browse through all cells  !
   !-----------------------------!
-  do c=1,NC
+  do c=1,grid % n_cells
 
     ! Try to find the cell among the probes
     do p=1,n_prob
       if(answer=='YZ') then
-        if( Approx(yc(c), yp(p)) .and. &  
-            Approx(zc(c), zp(p)) ) go to 1
+        if( Approx(grid % yc(c), yp(p)) .and. &  
+            Approx(grid % zc(c), zp(p)) ) go to 1
       else if(answer=='ZX') then
-        if( Approx(xc(c), yp(p)) .and. &  
-            Approx(zc(c), zp(p)) ) go to 1
+        if( Approx(grid % xc(c), yp(p)) .and. &  
+            Approx(grid % zc(c), zp(p)) ) go to 1
       else if(answer=='XY') then
-        if( Approx(xc(c), yp(p)) .and. &  
-            Approx(yc(c), zp(p)) ) go to 1
+        if( Approx(grid % xc(c), yp(p)) .and. &  
+            Approx(grid % yc(c), zp(p)) ) go to 1
       end if
     end do 
 
     ! Couldn't find a cell among the probes, add a new one
     n_prob = n_prob+1
     if(answer=='YZ') then
-      yp(n_prob)=yc(c)
-      zp(n_prob)=zc(c)
+      yp(n_prob)=grid % yc(c)
+      zp(n_prob)=grid % zc(c)
     else if(answer=='ZX') then
-      yp(n_prob)=xc(c)
-      zp(n_prob)=zc(c)
+      yp(n_prob)=grid % xc(c)
+      zp(n_prob)=grid % zc(c)
     else if(answer=='XY') then
-      yp(n_prob)=xc(c)
-      zp(n_prob)=yc(c)
+      yp(n_prob)=grid % xc(c)
+      zp(n_prob)=grid % yc(c)
     end if 
 
     if(n_prob == 20000) then
@@ -73,7 +76,7 @@
   !--------------------!
   name_prob = name
   name_prob(len_trim(name)+1:len_trim(name)+3) = '.2D'
-  write(6, *) '# Now creating the file:', name_prob
+  write(6, *) '# Now creating the file:', trim(name_prob)
   open(9, file=name_prob)
 
   ! Write the number of probes 
@@ -86,4 +89,4 @@
 
   close(9)
 
-  end subroutine Probe_2D
+  end subroutine

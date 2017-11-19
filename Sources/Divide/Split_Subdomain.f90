@@ -1,30 +1,31 @@
-!======================================================================!
-  subroutine Split_Subdomain(sub, n_parts)
-!----------------------------------------------------------------------!
-!   Splits a (sub) domain by a selected technique.                     !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine Split_Subdomain(grid, sub, n_parts)
+!------------------------------------------------------------------------------!
+!   Splits a (sub) domain by a selected technique.                             !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod 
   use div_mod
-  use par_mod 
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
-  integer :: sub                           ! subdomain to be splitted
-  integer :: n_parts                          ! number of new partitions
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+  integer         :: sub      ! subdomain to be splitted
+  integer         :: n_parts  ! number of new partitions
+!-----------------------------------[Locals]-----------------------------------!
   character :: dir                         ! direction for splitting
   integer   :: c, ic, j
   integer   :: n_filled
   real      :: xmax,ymax,zmax,xmin,ymin,zmin, delx,dely,delz,dxyz 
-!======================================================================!
+!==============================================================================!
 
   !-----------------------------------------! 
   !   Find the smallest moment of inertia   !
   !-----------------------------------------! 
   if(division_algorithm == INERTIAL) then
-    call Inertia(sub)
+    call Inertia(grid, sub)
   end if
 
   !----------------------------------------------! 
@@ -37,14 +38,14 @@
     xmin=+HUGE
     ymin=+HUGE
     zmin=+HUGE
-    do c=1,NC
+    do c = 1, grid % n_cells
       if(proces(c) == sub) then
-        xmax=max(xmax, xc(c))
-        ymax=max(ymax, yc(c))
-        zmax=max(zmax, zc(c))
-        xmin=min(xmin, xc(c))
-        ymin=min(ymin, yc(c))
-        zmin=min(zmin, zc(c))
+        xmax=max(xmax, grid % xc(c))
+        ymax=max(ymax, grid % yc(c))
+        zmax=max(zmax, grid % zc(c))
+        xmin=min(xmin, grid % xc(c))
+        ymin=min(ymin, grid % yc(c))
+        zmin=min(zmin, grid % zc(c))
       end if
     end do
     delx = xmax - xmin
@@ -57,7 +58,7 @@
     if(delx == dxyz) dir='x'
   end if
 
-  do j=1,n_parts-1
+  do j = 1, n_parts-1
 
     n_filled   = 0
 
@@ -67,7 +68,7 @@
     if(division_algorithm==COORDINATE) then
 
       if(dir == 'x') then
-        do c=1,NC
+        do c = 1, grid % n_cells
           ic=ix(c)
           if(proces(ic) == sub) then
             proces(ic) = n_sub+j
@@ -78,7 +79,7 @@
       end if
 
       if(dir == 'y') then
-        do c=1,NC
+        do c = 1, grid % n_cells
           ic=iy(c)
           if(proces(ic) == sub) then
             proces(ic) = n_sub+j
@@ -89,7 +90,7 @@
       end if
 
       if(dir == 'z') then
-        do c=1,NC
+        do c = 1, grid % n_cells
           ic=iz(c)
           if(proces(ic) == sub) then
             proces(ic) = n_sub+j
@@ -101,7 +102,7 @@
     end if
 
     if(division_algorithm==INERTIAL) then
-      do c=1,NC
+      do c = 1, grid % n_cells
         ic=iin(c)
         if(proces(ic) == sub) then
           proces(ic) = n_sub+j
@@ -121,4 +122,4 @@
 
   n_sub = n_sub + n_parts - 1
 
-  end subroutine Split_Subdomain
+  end subroutine

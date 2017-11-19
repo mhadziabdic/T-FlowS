@@ -51,17 +51,6 @@
     Tsc(c)=  Kin % n(c)/Eps % n(c)
   end do
 
-<<<<<<< HEAD:Sources/Process/SourcesHJ.f90
-  call GraPhi(Kin%n,1,VAR6x,.TRUE.)             ! dK/dx
-  call GraPhi(Kin%n,2,VAR6y,.TRUE.)             ! dK/dy
-  call GraPhi(Kin%n,3,VAR6z,.TRUE.)             ! dK/dz
-
-  call GraPhi(VAR6x,1,VAR7x,.TRUE.)             ! dK/dx
-  call GraPhi(VAR6y,2,VAR7y,.TRUE.)             ! dK/dy
-  call GraPhi(VAR6z,3,VAR7z,.TRUE.)             ! dK/dz
-
-  do c = 1, NC
-=======
   call GraPhi(grid, Kin%n,1,VAR6x,.TRUE.)             ! dK/dx
   call GraPhi(grid, Kin%n,2,VAR6y,.TRUE.)             ! dK/dy
   call GraPhi(grid, Kin%n,3,VAR6z,.TRUE.)             ! dK/dz
@@ -71,7 +60,6 @@
   call GraPhi(grid, VAR6z,3,VAR7z,.TRUE.)             ! d^2 K / dz^2
 
   do c = 1, grid % n_cells
->>>>>>> 77a0dfd04f33aeb0ac6ea1ace412064246261650:Sources/Process/Turbulence/Source_Hanjalic_Jakirlic.f90
     Eps_tot(c) = Eps%n(c) + 0.5*VISc*(VAR7x(c)+VAR7y(c)+VAR7z(c))
   end do
 
@@ -414,10 +402,6 @@
     C1W=max((1.0-0.7*CC), 0.3)
     C2W=min(AA,0.3)
     fw=min((Kin%n(c)**1.5)/(2.5*Eps_tot(c)*WallDs(c)),1.4)
-<<<<<<< HEAD:Sources/Process/SourcesHJ.f90
-
-=======
->>>>>>> 77a0dfd04f33aeb0ac6ea1ace412064246261650:Sources/Process/Turbulence/Source_Hanjalic_Jakirlic.f90
 
     P11     = -2.0*(uu %n(c)*Ux(c) + uv % n(c)*Uy(c) + uw % n(c)*Uz(c)) &
               -2.0*omegaY*2.0*uw%n(c) + 2.0*omegaZ*2.0*uv%n(c) 

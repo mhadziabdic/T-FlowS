@@ -299,14 +299,8 @@
       call Compute_Sgs_Hybrid(grid)
     end if
 
-<<<<<<< HEAD
-    call CalcConvect
-    if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_RSM
-
-=======
     call CalcConvect(grid)
     if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_EBM(grid)
->>>>>>> 77a0dfd04f33aeb0ac6ea1ace412064246261650
     
     do ini=1,Nini                   !  FRACTION & SIMPLE  
 
@@ -489,19 +483,10 @@
           call Compute_F22(grid, 12, f22, phix, phiy, phiz) 
         end if 
 
-<<<<<<< HEAD
-        call GraPhi(Eps % n,1,PHIx,.TRUE.)             ! df22/dx
-        call GraPhi(Eps % n,2,PHIy,.TRUE.)             ! df22/dy
-        call GraPhi(Eps % n,3,PHIz,.TRUE.)             ! df22/dz
-        call CalcStresses(13, Eps, PHIx, PHIy, PHIz) 
-
-        call CalcVISt_RSM
-=======
         call GraPhi(grid, Eps % n,1,phix,.TRUE.)             ! df22/dx
         call GraPhi(grid, Eps % n,2,phiy,.TRUE.)             ! df22/dy
         call GraPhi(grid, Eps % n,3,phiz,.TRUE.)             ! df22/dz
         call Compute_Stresses(grid, 13, Eps, phix, phiy, phiz) 
->>>>>>> 77a0dfd04f33aeb0ac6ea1ace412064246261650
       end if                 
 
       if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA) then

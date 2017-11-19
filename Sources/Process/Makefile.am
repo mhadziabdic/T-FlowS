@@ -12,15 +12,6 @@ Process_SOURCES =	 			\
   Compute_Pressure_Fractional.f90		\
   Compute_Pressure_Simple.f90			\
   CalcShear.f90					\
-<<<<<<< HEAD
-  CalcStresses.f90				\
-  CalcTurb.f90					\
-  CalcVISt_RSM.f90				\
-  CalcVISt_KEps.f90				\
-  CalcVISt_KEPSV2F.f90				\
-  CalcVISt_SPA_ALL.f90				\
-=======
->>>>>>> 77a0dfd04f33aeb0ac6ea1ace412064246261650
   CalcVort.f90					\
   Compute_Minimum_Maximum.f90			\
   Compute_Fluxes.f90				\

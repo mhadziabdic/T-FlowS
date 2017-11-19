@@ -74,9 +74,6 @@ module pro_mod
   ! Total dissipation in HJ model
   real,allocatable :: eps_tot(:)
 
-  ! Total dissipation in HJ model
-  real,allocatable :: Eps_tot(:)
-
   ! Velocity components
   type(Var_Type) :: U
   type(Var_Type) :: V

@@ -23,7 +23,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c
 !==============================================================================!
-
+  
   call Exchange(grid, ui)
   call Exchange(grid, vi)
   call Exchange(grid, wi)
@@ -47,9 +47,9 @@
              0.5*(Uz(c) + Wx(c))*(Uz(c) + Wx(c)) + & 
              0.5*(Vx(c) + Uy(c))*(Vx(c) + Uy(c)) 
 
-     Vort(c) = - (0.5*(Vz(c) - Wy(c))*(Vz(c) - Wy(c)) + &
-                  0.5*(Uz(c) - Wx(c))*(Uz(c) - Wx(c)) + &
-                  0.5*(Vx(c) - Uy(c))*(Vx(c) - Uy(c)))
+    Vort(c) = - (0.5*(Vz(c) - Wy(c))*(Vz(c) - Wy(c)) + &
+                 0.5*(Uz(c) - Wx(c))*(Uz(c) - Wx(c)) + &
+                 0.5*(Vx(c) - Uy(c))*(Vx(c) - Uy(c)))
 
   end do 
 

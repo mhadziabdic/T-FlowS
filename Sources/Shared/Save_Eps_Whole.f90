@@ -1,18 +1,20 @@
 !==============================================================================!
-  subroutine Save_Eps_Whole(NSsh0)
+  subroutine Save_Eps_Whole(grid, NSsh0)
 !------------------------------------------------------------------------------!
 !   Saves the whole grid in encapsulated postscript.                           !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !----------------------------------[Calling]-----------------------------------!
   real :: Distance
 !---------------------------------[Arguments]----------------------------------!
-  integer :: NSsh0  ! if 0, shadow will not be drawn 
+  type(Grid_Type) :: grid
+  integer         :: NSsh0  ! if 0, shadow will not be drawn 
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: n, s, s0, c1, c2
   integer             :: xmaxb, xminb, ymaxb, yminb, xlegend
@@ -28,8 +30,8 @@
 !==============================================================================!
 
   ! Allocate the memory
-  allocate(indx(max(NS+NSsh0, grid % max_n_faces))); indx=0
-  allocate(work(max(NS+NSsh0, grid % max_n_faces))); work=0
+  allocate(indx(max(grid % n_faces + NSsh0, grid % max_n_faces))); indx=0
+  allocate(work(max(grid % n_faces + NSsh0, grid % max_n_faces))); work=0
 
   BCcount = 0
 
@@ -48,9 +50,9 @@
   red(n) = 1.00; green(n) = 0.00; blue(n) = 1.00;  n=n+1 ! magenta
   red(n) = 1.00; green(n) = 1.00; blue(n) = 0.00;  n=n+1 ! yellow
   red(n) = 0.00; green(n) = 1.00; blue(n) = 1.00;  n=n+1 ! cyan
-  red(n) = 1.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! light Red
-  red(n) = 0.50; green(n) = 1.00; blue(n) = 0.50;  n=n+1 ! light Green
-  red(n) = 0.50; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! light Blue
+  red(n) = 1.00; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! light red
+  red(n) = 0.50; green(n) = 1.00; blue(n) = 0.50;  n=n+1 ! light green
+  red(n) = 0.50; green(n) = 0.50; blue(n) = 1.00;  n=n+1 ! light blue
   red(n) = 0.50; green(n) = 0.50; blue(n) = 0.50;  n=n+1 ! gray           
 
   !------------------------------!
@@ -58,13 +60,13 @@
   !------------------------------!
 1 write(*,*) '# Enter the camera coordinates (skip to exit): '
   write(*,*) '#---------------------------------------------'
-  call ReadC(5,inp,tn,ts,te)
-  if(tn == 1) then 
-    read(inp, *) answer
+  call Tokenizer_Mod_Read_Line(5)
+  if(line % n_tokens == 1) then 
+    read(line % whole, *) answer
     call To_Upper_Case(answer)
     if(answer == 'SKIP') return  
-  else if(tn == 3) then 
-    read(inp, *) xk, yk, zk  
+  else if(line % n_tokens == 3) then 
+    read(line % whole, *) xk, yk, zk  
   end if  
   alfa = acos( xk / sqrt(xk*xk+yk*yk) )
   beta = acos( yk / sqrt(xk*xk+yk*yk) )
@@ -80,30 +82,30 @@
   !                      !
   !----------------------!
   write(*,*) '# G-> Gray or C-> Coloured (by boundary conditions): '
-  call ReadC(5,inp,tn,ts,te)
-  read(inp, *) colour 
+  call Tokenizer_Mod_Read_Line(5)
+  read(line % whole, *) colour 
   call To_Upper_Case(colour);
   write(*,*) '# Enter the file name (without extension): '
-  call ReadC(5,inp,tn,ts,te)
-  read(inp, *) name_eps 
+  call Tokenizer_Mod_Read_Line(5)
+  read(line % whole, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
-  write(*, *) '# Now creating the file:', name_eps
+  write(*, *) '# Now creating the file:', trim(name_eps)
 
-  xmax=maxval(grid % xn(1:NN))
-  ymax=maxval(grid % yn(1:NN))
-  zmax=maxval(grid % zn(1:NN))
-  xmin=minval(grid % xn(1:NN))
-  ymin=minval(grid % yn(1:NN))
-  zmin=minval(grid % zn(1:NN))
+  xmax=maxval(grid % xn(1:grid % n_nodes))
+  ymax=maxval(grid % yn(1:grid % n_nodes))
+  zmax=maxval(grid % zn(1:grid % n_nodes))
+  xmin=minval(grid % xn(1:grid % n_nodes))
+  ymin=minval(grid % yn(1:grid % n_nodes))
+  zmin=minval(grid % zn(1:grid % n_nodes))
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin),(zmax-zmin))
   sclp = 0.005 
 
-!---- Find the bounding box
+  ! Find the bounding box
   xminb=+1000000
   xmaxb=-1000000
   yminb=+1000000
   ymaxb=-1000000
-  do n=1,Nn
+  do n = 1, grid % n_nodes
     if(xk  < 0.0 .and. yk  > 0.0) then
       xp1=-grid % xn(n)*sin(alfa)-grid % yn(n)*sin(beta)
     else if(xk  > 0.0 .and. yk  < 0.0) then
@@ -165,23 +167,24 @@
   write(9, '(I6,A)') int(real(boxsize)/sclp), ' scalefont'
   write(9, '(A)') 'setfont'
 
-  do s=1,NS+NSsh0
+  do s = 1, grid % n_faces+NSsh0
     indx(s) = s
-    work(s)  = Distance(xk,yk,zk,xsp(s),ysp(s),zsp(s))
+    work(s) = Distance(xk, yk, zk, grid % xf(s), grid % yf(s), grid % zf(s))
   end do
-  call Sort_Real_By_Index(work,indx,NS+NSsh0,-2)
+  call Sort_Real_By_Index(work, indx, grid % n_faces+NSsh0, -2)
 
-  do s0=1,NS+NSsh0
+  do s0=1,grid % n_faces+NSsh0
     s=indx(s0)
 
-    shade=                                                          &
-   (Sx(s)*nx+Sy(s)*ny+Sz(s)*nz)                                     &
-    /sqrt(Sx(s)*Sx(s)+Sy(s)*Sy(s)+Sz(s)*Sz(s))
-    shade=abs(shade)
-    shade=0.4+0.6*shade
+    shade = (grid % sx(s)*nx+grid % sy(s)*ny+grid % sz(s)*nz)  &
+          / sqrt(grid % sx(s)*grid % sx(s) +  &
+                 grid % sy(s)*grid % sy(s) +  &
+                 grid % sz(s)*grid % sz(s))
+    shade = abs(shade)
+    shade = 0.4 + 0.6*shade
 
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     if(c2 < 0 .or. material(c1) /= material(c2) ) then 
 
@@ -229,27 +232,27 @@
       yp3=(-x3*cos(alfa)-y3*cos(beta))*cos(gama) + z3*sin(gama)
       yp4=(-x4*cos(alfa)-y4*cos(beta))*cos(gama) + z4*sin(gama)
 
-      if(s <= NS) then
+      if(s <= grid % n_faces) then
         if(colour(1:1) == 'G') then
-          if(grid % faces_n_nodes(s) == 4)                                       &
+          if(grid % faces_n_nodes(s) == 4)                          &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A9,F4.2,A15)')  &
-                       'gs np 0 slw ',                                 &
+                       'gs np 0 slw ',                              &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             &
                     int(sclf*xp2),int(sclf*yp2), ' l ',             &
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     int(sclf*xp4),int(sclf*yp4), ' l ',             &
                     ' cp   gs ',shade,' sg f gr   s gr'
-          if(grid % faces_n_nodes(s) == 3)                                       &
+          if(grid % faces_n_nodes(s) == 3)                          &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A9,F4.2,A15)')         &
-                      'gs np 0 slw ',                                 &
+                      'gs np 0 slw ',                               &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             &
                     int(sclf*xp2),int(sclf*yp2), ' l ',             &
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     ' cp   gs ',shade,' sg f gr   s gr'
         else
-          if(grid % faces_n_nodes(s) == 4)                                       &
+          if(grid % faces_n_nodes(s) == 4)                          &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)') &
-                      'gs np 0 slw ',                                 &
+                      'gs np 0 slw ',                               &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             & 
                     int(sclf*xp2),int(sclf*yp2), ' l ',             &
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
@@ -260,7 +263,7 @@
                     blue(BCmark(c2)),                               &
                     ' srgb f gr s gr'
 
-          if(grid % faces_n_nodes(s) == 3)                                       &
+          if(grid % faces_n_nodes(s) == 3)                          &
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')        &
                     'gs np 0 slw ',                                 &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             & 
@@ -272,21 +275,21 @@
                     blue(BCmark(c2)),                               &
                     ' srgb f gr s gr'
         end if ! colour
-      else if(s > NS) then
+      else if(s > grid % n_faces) then
         if(grid % faces_n_nodes(s) == 4) then
           write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A9)')           &
-                        'gs np 0 slw ',                                 &
+                        'gs np 0 slw ',                             &
                     int(sclf*xp1),int(sclf*yp1), ' m ',             &
                     int(sclf*xp2),int(sclf*yp2), ' l ',             &
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     int(sclf*xp4),int(sclf*yp4), ' l ',             &
                     ' cp s gr '
         else if(grid % faces_n_nodes(s) == 3) then
-          write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A9)')           &
-                      'gs np 0 slw ',                          &
-                    int(sclf*xp1),int(sclf*yp1), ' m ',      &
-                    int(sclf*xp2),int(sclf*yp2), ' l ',      &
-                    int(sclf*xp3),int(sclf*yp3), ' l ',      &
+          write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,A9)')                  &
+                      'gs np 0 slw ',                               &
+                    int(sclf*xp1),int(sclf*yp1), ' m ',             &
+                    int(sclf*xp2),int(sclf*yp2), ' l ',             &
+                    int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     ' cp s gr '
         end if
       end if
@@ -302,18 +305,18 @@
     iy1 = ymaxb
     ix2 = ix1+boxsize
     iy2 = iy1+boxsize
-    do n=1,10
+    do n = 1, 10
       if( BCcount(n) > 0 ) then
         iy1 = iy1 - boxsize
         iy2 = iy2 - boxsize
-        write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)') &
-                  'gs np 0 slw ',                                 &
-                  int(1.0/sclp*ix1),int(1.0/sclp*iy1), ' m ',     &
-                  int(1.0/sclp*ix1),int(1.0/sclp*iy2), ' l ',     &
-                  int(1.0/sclp*ix2),int(1.0/sclp*iy2), ' l ',     &
-                  int(1.0/sclp*ix2),int(1.0/sclp*iy1), ' l ',     &
-                  ' cp gs ',                                      &
-                  red(n), green(n), blue(n),                      &
+        write(9,'(A12,2I8,A3,2I8,A3,2I8,A3,2I8,A3,A7,3F5.2,A15)')  &
+                  'gs np 0 slw ',                                  &
+                  int(1.0/sclp*ix1),int(1.0/sclp*iy1), ' m ',      &
+                  int(1.0/sclp*ix1),int(1.0/sclp*iy2), ' l ',      &
+                  int(1.0/sclp*ix2),int(1.0/sclp*iy2), ' l ',      &
+                  int(1.0/sclp*ix2),int(1.0/sclp*iy1), ' l ',      &
+                  ' cp gs ',                                       &
+                  red(n), green(n), blue(n),                       &
                   ' srgb f gr s gr'
         write(9,'(A6,2I8,A13,I3, A1, A6)')                         &
                   'gs np ',                                        &
@@ -334,4 +337,4 @@
   deallocate(indx)
   deallocate(work)
 
-  end subroutine Save_Eps_Whole
+  end subroutine

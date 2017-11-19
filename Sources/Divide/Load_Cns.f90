@@ -1,68 +1,75 @@
 !==============================================================================!
-  subroutine Load_Cns
+  subroutine Load_Cns(grid, this_proc)
 !------------------------------------------------------------------------------!
-! Reads:  name.cns
+!   Reads: .cns file.                                                          !
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use gen_mod 
-  use div_mod
-  use par_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+  integer         :: this_proc  ! needed if called from Processor
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, n, s
-  character(len=80) :: dum_s, name_in
+  character(len=80) :: name_in
 !==============================================================================!
 
   !-------------------------------!
   !     Read the file with the    !
   !   connections between cells   !
   !-------------------------------!
-  name_in = name
-  name_in(len_trim(name)+1:len_trim(name)+4) = '.cns'
+  call Name_File(this_proc, name_in, '.cns', len_trim('.cns'))  
 
-  open(9, file=name_in,FORM='unformatted')
-  write(*,'(A24,A)') '# Now reading the file: ', name_in
+  open(9, file=name_in,form='unformatted')
+  if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 
-  ! Number of cells
-  read(9) NC
-  read(9) NbC
-  read(9) NS
-  read(9) NSsh
-  read(9) Nmat
-  read(9) Nbnd
-  allocate(grid % materials(Nmat))
-  allocate(grid % boundary_conditions(Nbnd))
-  do n=1,Nmat
+  ! Number of cells, boundary cells and sides
+  read(9) grid % n_cells
+  read(9) grid % n_bnd_cells
+  read(9) grid % n_faces
+  read(9) grid % n_sh
+
+  ! Allocate memory =--> carefull, there is no checking!
+  call Grid_Mod_Allocate_Cells(grid, grid % n_bnd_cells, grid % n_cells) 
+  call Grid_Mod_Allocate_Faces(grid, grid % n_faces) 
+
+  ! Number of materials and boundary conditions
+  read(9) grid % n_materials
+  read(9) grid % n_boundary_conditions
+
+  allocate(grid % materials          (grid % n_materials))
+  allocate(grid % boundary_conditions(grid % n_boundary_conditions))
+
+  ! Materials' and boundary conditions' keys
+  do n = 1, grid % n_materials
     read(9) grid % materials(n) % name
   end do
-  do n=1,Nbnd
+  do n = 1, grid % n_boundary_conditions
     read(9) grid % boundary_conditions(n) % name
   end do
 
-  allocate (material(-NbC:NC))
-  read(9) (material(c), c=1,NC)
-  read(9) (material(c), c=-1,-NBC,-1)
+  allocate (material(-grid % n_bnd_cells:grid % n_cells))
+  read(9) (material(c), c =  1, grid % n_cells)
+  read(9) (material(c), c = -1,-grid % n_bnd_cells,-1)
 
   ! Faces
-  allocate (SideC(0:2,NS+NSsh))
-  read(9) (SideC(0,s), s=1,NS)
-  read(9) (SideC(1,s), s=1,NS)
-  read(9) (SideC(2,s), s=1,NS)
+  read(9) (grid % faces_c(1,s), s = 1, grid % n_faces)
+  read(9) (grid % faces_c(2,s), s = 1, grid % n_faces)
 
   ! Boundary cells
-  allocate (bcmark(-NbC-1:-1)); bcmark=0
-  allocate (CopyC(-NbC:-1));    CopyC=0
-  read(9) (bcmark(c), c=-1,-NbC, -1)
-  read(9) (CopyC(c), c=-1,-NbC, -1)
+  allocate (bcmark(-grid % n_bnd_cells-1:-1)); bcmark=0
+  allocate (CopyC(-grid % n_bnd_cells:-1));    CopyC=0
+  read(9) (bcmark(c), c=-1,-grid % n_bnd_cells, -1)
+  read(9) (CopyC(c), c=-1,-grid % n_bnd_cells, -1)
  
-  read(9) n_copy
-  write(*,*) n_copy
-  allocate (CopyS(2,n_copy))
-  read(9) (CopyS(1,s), s=1,n_copy)
-  read(9) (CopyS(2,s), s=1,n_copy)
+  read(9) grid % n_copy
+  write(*,*) '# Number of copy cells/faces: ', grid % n_copy
+  allocate (CopyS(2,grid % n_copy))
+  read(9) (CopyS(1,s), s=1,grid % n_copy)
+  read(9) (CopyS(2,s), s=1,grid % n_copy)
 
   close(9)
 
-  end subroutine Load_Cns
+  end subroutine

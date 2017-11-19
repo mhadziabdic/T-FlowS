@@ -23,4 +23,4 @@
 
   deallocate(work)
 
-  end subroutine Sort_Int_By_Index
+  end subroutine

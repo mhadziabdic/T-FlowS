@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Find_Surface(n1, n2, n3, n4, block, face) 
+  subroutine Find_Surface(dom, n1, n2, n3, n4, block, face) 
 !------------------------------------------------------------------------------!
 !   Searches for a block where the surface defined by n1, n2, n3, n4 is.       !
 !------------------------------------------------------------------------------!
@@ -8,6 +8,7 @@
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
+  type(Domain_Type)    :: dom
   integer, intent(in)  :: n1, n2, n3, n4
   integer, intent(out) :: block, face
 !-----------------------------------[Locals]-----------------------------------!
@@ -36,4 +37,4 @@
 1 block=b
   face =fc
 
-  end subroutine Find_Surface
+  end subroutine

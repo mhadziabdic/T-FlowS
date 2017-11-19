@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine CalcMn_Cylind(n0, n1)   
+  subroutine CalcMn_Cylind(grid, n0, n1)   
 !----------------------------------------------------------------------!
 !   Calculates time averaged velocity and velocity fluctuations.       !
 !----------------------------------------------------------------------!
@@ -8,10 +8,12 @@
   use pro_mod
   use les_mod
   use rans_mod
+  use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
-  integer :: n0, n1
+  type(Grid_Type) :: grid
+  integer         :: n0, n1
 !-------------------------------[Locals]-------------------------------!
   integer :: c, n
   real    :: Urad_mean, Utan_mean, R, Urad, Utan
@@ -20,18 +22,18 @@
   n=n1-n0
 
   if(n  > -1) then
-    do c=-NbC,NC
+    do c=-grid % n_bnd_cells,grid % n_cells
 !-----------------------!
 !      mean values      !
 !-----------------------!
-      R           = (xc(c)*xc(c) + yc(c)*yc(c))**0.5 + tiny
+      R           = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5 + tiny
       U % mean(c) = ( U % mean(c) * (1.*n) + U % n(c) ) / (1.*(n+1))
       V % mean(c) = ( V % mean(c) * (1.*n) + V % n(c) ) / (1.*(n+1))
       W % mean(c) = ( W % mean(c) * (1.*n) + W % n(c) ) / (1.*(n+1))
       P % mean(c) = ( P % mean(c) * (1.*n) + P % n(c) ) / (1.*(n+1))
 
-      Urad        = (U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R)
-      Utan        = (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R)
+      Urad        = (U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R)
+      Utan        = (-U % n(c) * grid % yc(c) / R  + V % n(c) * grid % xc(c) / R)
 
 !------------------------------!
 !      fluctuating values      !
@@ -69,12 +71,12 @@
   end if
 
   if(n  > -1) then
-    do c=-NbC,NC
-      R           = (xc(c)*xc(c) + yc(c)*yc(c))**0.5 + tiny
-      Urad_mean   = (U % mean(c) * xc(c) / R  + V % mean(c) * yc(c) / R)
-      Utan_mean   = (-U % mean(c) * yc(c) / R  + V % mean(c) * xc(c) / R)
-      Urad        = (U % n(c) * xc(c) / R  + V % n(c) * yc(c) / R)
-      Utan        = (-U % n(c) * yc(c) / R  + V % n(c) * xc(c) / R)
+    do c=-grid % n_bnd_cells,grid % n_cells
+      R           = (grid % xc(c)*grid % xc(c) + grid % yc(c)*grid % yc(c))**0.5 + tiny
+      Urad_mean   = (U % mean(c) * grid % xc(c) / R  + V % mean(c) * grid % yc(c) / R)
+      Utan_mean   = (-U % mean(c) * grid % yc(c) / R  + V % mean(c) * grid % xc(c) / R)
+      Urad        = (U % n(c) * grid % xc(c) / R  + V % n(c) * grid % yc(c) / R)
+      Utan        = (-U % n(c) * grid % yc(c) / R  + V % n(c) * grid % xc(c) / R)
 
       uuu % mean(c) = ( uuu % mean(c) * (1.*n) +   &
       (Urad - Urad_mean)**3.0 ) / (1.*(n+1))
@@ -115,6 +117,4 @@
     end do
   end if
 
-  RETURN 
-
-  end subroutine CalcMn_Cylind
+  end subroutine

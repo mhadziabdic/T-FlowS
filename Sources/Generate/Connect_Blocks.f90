@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Connect_Blocks
+  subroutine Connect_Blocks(dom, grid)
 !------------------------------------------------------------------------------!
 !   Solve the cell connectivity after block by block grid generation           !
 !------------------------------------------------------------------------------!
@@ -10,6 +10,9 @@
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Domain_Type) :: dom
+  type(Grid_Type)   :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, n                         ! counters
   integer :: b1, b2                          ! block 1 and 2
@@ -28,7 +31,7 @@
 !==============================================================================!
 
   ! Initialize the NewN array
-  do n=1,NN
+  do n = 1, grid % n_nodes
     NewN(n)=n
   end do
 
@@ -78,7 +81,7 @@
             g4=n14
 
             ! Find local nodes (1-8) from blocks 1 and 2 on generic surface
-            do n=1,8
+            do n = 1, 8
               if(dom % blocks(b1) % corners(n) == g1) l11=n
               if(dom % blocks(b2) % corners(n) == g1) l21=n
               if(dom % blocks(b1) % corners(n) == g2) l12=n
@@ -270,21 +273,21 @@
   end do          ! b2 
 
 
-  do n=1,NN
+  do n = 1, grid % n_nodes
     grid % xn(NewN(n)) = grid % xn(n)
     grid % yn(NewN(n)) = grid % yn(n)
     grid % zn(NewN(n)) = grid % zn(n)
   end do
 
-  NN=NN-del
+  grid % n_nodes = grid % n_nodes - del
 
   ! Skip the merged points in the node() structure
-  do i=1,NC
-    do n=1,8
-      grid % cells_n(n,i) = NewN(grid % cells_n(n,i))
+  do i = 1, grid % n_cells
+    do n = 1, 8
+      grid % cells_n(n,i) = NewN(grid % cells_n(n, i))
     end do
   end do
 
   write(*, '(I8)') del       
 
-  end subroutine Connect_Blocks   
+  end subroutine

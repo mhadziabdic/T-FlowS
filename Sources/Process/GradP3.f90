@@ -1,149 +1,151 @@
-!======================================================================!
-  subroutine GradP3(PHI, PHI_x, PHI_y, PHI_z)
-!----------------------------------------------------------------------!
-! Calculates gradient of generic variable PHI. PHI may stand either    !
-! for pressure (P) or pressure corrections (PP). This procedure also   !
-! handles different materials.                                         ! 
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!==============================================================================!
+  subroutine GradP3(grid, phi, phi_x, phi_y, phi_z)
+!------------------------------------------------------------------------------!
+!   Calculates gradient of generic variable phi. phi may stand either          !
+!   for pressure (P) or pressure corrections (PP). This procedure also         !
+!   handles different materials.                                               ! 
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
-!----------------------------------------------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
-!-----------------------------[Arguments]------------------------------!
-  real :: PHI(-NbC:NC),                                             &
-          PHI_x(-NbC:NC),                                           &
-          PHI_y(-NbC:NC),                                           &
-          PHI_z(-NbC:NC)
-!-------------------------------[Locals]-------------------------------!
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+  real            :: phi(  -grid % n_bnd_cells:grid % n_cells),        &
+                     phi_x(-grid % n_bnd_cells:grid % n_cells),        &
+                     phi_y(-grid % n_bnd_cells:grid % n_cells),        &
+                     phi_z(-grid % n_bnd_cells:grid % n_cells)
+!-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2
-  real    :: PHI_s, xs, ys, zs 
-!======================================================================!
+  real    :: phi_s, xs, ys, zs 
+!==============================================================================!
  
-  call Exchng(PHI)
+  call Exchange(grid, phi)
 
   Ps = 0.0
 
-  do c=1,NC
-    PHI_x(c)=0.0
-    PHI_y(c)=0.0
-    PHI_z(c)=0.0
+  do c = 1, grid % n_cells
+    phi_x(c)=0.0
+    phi_y(c)=0.0
+    phi_z(c)=0.0
   end do
 
-!----------------------------------------------------------------!
-!     First step: without any wall influence, except outflow     !
-!----------------------------------------------------------------!
-  do s=1,NS
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+  !------------------------------------------------------------!
+  !   First step: without any wall influence, except outflow   !
+  !------------------------------------------------------------!
+  do s = 1, grid % n_faces
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 > 0                            .or. &
        c2 < 0 .and. TypeBC(c2) == BUFFER .or. &
        c2 < 0 .and. TypeBC(c2) == OUTFLOW) then  
       if( StateMat(material(c1))==FLUID .and. &
           StateMat(material(c2))==FLUID ) then  
-        PHI_s = f(s)*PHI(c1)+(1.0-f(s))*PHI(c2)  
-        PHI_x(c1) = PHI_x(c1) + PHI_s * Sx(s)
-        PHI_y(c1) = PHI_y(c1) + PHI_s * Sy(s)
-        PHI_z(c1) = PHI_z(c1) + PHI_s * Sz(s)
-        PHI_x(c2) = PHI_x(c2) - PHI_s * Sx(s)
-        PHI_y(c2) = PHI_y(c2) - PHI_s * Sy(s)
-        PHI_z(c2) = PHI_z(c2) - PHI_s * Sz(s)
+        phi_s = f(s)*phi(c1)+(1.0-f(s))*phi(c2)  
+        phi_x(c1) = phi_x(c1) + phi_s * grid % sx(s)
+        phi_y(c1) = phi_y(c1) + phi_s * grid % sy(s)
+        phi_z(c1) = phi_z(c1) + phi_s * grid % sz(s)
+        phi_x(c2) = phi_x(c2) - phi_s * grid % sx(s)
+        phi_y(c2) = phi_y(c2) - phi_s * grid % sy(s)
+        phi_z(c2) = phi_z(c2) - phi_s * grid % sz(s)
       end if
     end if
   end do
 
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(StateMat(material(c))==FLUID) then
-      PHI_x(c)=PHI_x(c)/volume(c)
-      PHI_y(c)=PHI_y(c)/volume(c)
-      PHI_z(c)=PHI_z(c)/volume(c)
+      phi_x(c) = phi_x(c) / grid % vol(c)
+      phi_y(c) = phi_y(c) / grid % vol(c)
+      phi_z(c) = phi_z(c) / grid % vol(c)
     end if
   end do
 
-!----------------------------------------------------------------!
-!     Second step: extrapolate to boundaries, except outflow     !
-!----------------------------------------------------------------!
-  do s=1,NS
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+  !------------------------------------------------------------!
+  !   Second step: extrapolate to boundaries, except outflow   !
+  !------------------------------------------------------------!
+  do s = 1, grid % n_faces
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0               .and. &
        TypeBC(c2) /= BUFFER .and. &
        TypeBC(c2) /= OUTFLOW) then  
       if(StateMat(material(c1))==FLUID) then
-        Ps(s) = (   PHI(c1)                     +     &
-                    PHI_x(c1) * (xc(c2)-xc(c1)) +     &
-                    PHI_y(c1) * (yc(c2)-yc(c1)) +     &
-                    PHI_z(c1) * (zc(c2)-zc(c1))   ) / &
-              ( 1.0 - (  Sx(s) * (xc(c2)-xc(c1))      & 
-                       + Sy(s) * (yc(c2)-yc(c1))      &
-                       + Sz(s) * (zc(c2)-zc(c1))  ) / volume(c1)  )
+        Ps(s) = (   phi(c1)                     +     &
+                    phi_x(c1) * (grid % xc(c2)-grid % xc(c1)) +     &
+                    phi_y(c1) * (grid % yc(c2)-grid % yc(c1)) +     &
+                    phi_z(c1) * (grid % zc(c2)-grid % zc(c1))   ) / &
+              ( 1.0 - (  grid % sx(s) * (grid % xc(c2)-grid % xc(c1))      & 
+                       + grid % sy(s) * (grid % yc(c2)-grid % yc(c1))      &
+                       + grid % sz(s) * (grid % zc(c2)-grid % zc(c1))  ) / grid % vol(c1)  )
       end if
     end if
 
-!---- Handle two materials
+    ! Handle two materials
     if(c2 > 0 .or. c2 < 0 .and. TypeBC(c2) == BUFFER) then  
       if( StateMat(material(c1))==FLUID .and. &
           StateMat(material(c2))==SOLID ) then  
-        xs = xsp(s) 
-        ys = ysp(s) 
-        zs = zsp(s) 
-        Ps(s) = (   PHI(c1)                 +     &
-                    PHI_x(c1) * (xs-xc(c1)) +     &
-                    PHI_y(c1) * (ys-yc(c1)) +     &
-                    PHI_z(c1) * (zs-zc(c1))   ) / &
-              ( 1.0 - (  Sx(s) * (xs-xc(c1))      & 
-                       + Sy(s) * (ys-yc(c1))      &
-                       + Sz(s) * (zs-zc(c1))  ) / volume(c1)  )
+        xs = grid % xf(s) 
+        ys = grid % yf(s) 
+        zs = grid % zf(s) 
+        Ps(s) = (   phi(c1)                 +     &
+                    phi_x(c1) * (xs-grid % xc(c1)) +     &
+                    phi_y(c1) * (ys-grid % yc(c1)) +     &
+                    phi_z(c1) * (zs-grid % zc(c1))   ) / &
+              ( 1.0 - (  grid % sx(s) * (xs-grid % xc(c1))      & 
+                       + grid % sy(s) * (ys-grid % yc(c1))      &
+                       + grid % sz(s) * (zs-grid % zc(c1))  ) / grid % vol(c1)  )
       end if
       if( StateMat(material(c1))==SOLID .and. &
           StateMat(material(c2))==FLUID ) then  
-        xs = xsp(s) 
-        ys = ysp(s) 
-        zs = zsp(s) 
-        Ps(s) = (   PHI(c2)                 +     &
-                    PHI_x(c2) * (xs-xc(c2)) +     &
-                    PHI_y(c2) * (ys-yc(c2)) +     &
-                    PHI_z(c2) * (zs-zc(c2))   ) / &
-              ( 1.0 + (  Sx(s) * (xs-xc(c2))      & 
-                       + Sy(s) * (ys-yc(c2))      &
-                       + Sz(s) * (zs-zc(c2))  ) / volume(c2)  )
+        xs = grid % xf(s) 
+        ys = grid % yf(s) 
+        zs = grid % zf(s) 
+        Ps(s) = (   phi(c2)                 +     &
+                    phi_x(c2) * (xs-grid % xc(c2)) +     &
+                    phi_y(c2) * (ys-grid % yc(c2)) +     &
+                    phi_z(c2) * (zs-grid % zc(c2))   ) / &
+              ( 1.0 + (  grid % sx(s) * (xs-grid % xc(c2))      & 
+                       + grid % sy(s) * (ys-grid % yc(c2))      &
+                       + grid % sz(s) * (zs-grid % zc(c2))  ) / grid % vol(c2)  )
       end if
     end if ! c2 < 0
   end do
 
-!-------------------------------------------------!
-!     Third step: compute the final gradients     !
-!-------------------------------------------------!
-  do s=1,NS
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+  !---------------------------------------------!
+  !   Third step: compute the final gradients   !
+  !---------------------------------------------!
+  do s = 1, grid % n_faces
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0               .and. &
        TypeBC(c2) /= BUFFER .and. &
        TypeBC(c2) /= OUTFLOW) then  
-      PHI_x(c1) = PHI_x(c1) + Ps(s) * Sx(s)/volume(c1)
-      PHI_y(c1) = PHI_y(c1) + Ps(s) * Sy(s)/volume(c1)
-      PHI_z(c1) = PHI_z(c1) + Ps(s) * Sz(s)/volume(c1)
+      phi_x(c1) = phi_x(c1) + Ps(s) * grid % sx(s) / grid % vol(c1)
+      phi_y(c1) = phi_y(c1) + Ps(s) * grid % sy(s) / grid % vol(c1)
+      phi_z(c1) = phi_z(c1) + Ps(s) * grid % sz(s) / grid % vol(c1)
     end if
 
-!---- Handle two materials
+    ! Handle two materials
     if(c2 > 0 .or. c2 < 0 .and. TypeBC(c2) == BUFFER) then  
       if( StateMat(material(c1))==FLUID .and. &
           StateMat(material(c2))==SOLID ) then  
-        PHI_x(c1) = PHI_x(c1) + Ps(s) * Sx(s)/volume(c1)
-        PHI_y(c1) = PHI_y(c1) + Ps(s) * Sy(s)/volume(c1)
-        PHI_z(c1) = PHI_z(c1) + Ps(s) * Sz(s)/volume(c1)
+        phi_x(c1) = phi_x(c1) + Ps(s) * grid % sx(s) / grid % vol(c1)
+        phi_y(c1) = phi_y(c1) + Ps(s) * grid % sy(s) / grid % vol(c1)
+        phi_z(c1) = phi_z(c1) + Ps(s) * grid % sz(s) / grid % vol(c1)
       end if 
       if( StateMat(material(c1))==SOLID .and. &
           StateMat(material(c2))==FLUID ) then  
-        PHI_x(c2) = PHI_x(c2) - Ps(s) * Sx(s)/volume(c2)
-        PHI_y(c2) = PHI_y(c2) - Ps(s) * Sy(s)/volume(c2)
-        PHI_z(c2) = PHI_z(c2) - Ps(s) * Sz(s)/volume(c2)
+        phi_x(c2) = phi_x(c2) - Ps(s) * grid % sx(s) / grid % vol(c2)
+        phi_y(c2) = phi_y(c2) - Ps(s) * grid % sy(s) / grid % vol(c2)
+        phi_z(c2) = phi_z(c2) - Ps(s) * grid % sz(s) / grid % vol(c2)
       end if 
     end if  ! c2 < 0
   end do
 
-  call Exchng(PHI_x)
-  call Exchng(PHI_y)
-  call Exchng(PHI_z)
+  call Exchange(grid, phi_x)
+  call Exchange(grid, phi_y)
+  call Exchange(grid, phi_z)
 
-  end subroutine GradP3
+  end subroutine

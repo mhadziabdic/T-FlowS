@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Connect_Periodicity
+  subroutine Connect_Periodicity(dom, grid)
 !------------------------------------------------------------------------------!
 !   Solve the cell connectivity for periodic boundary conditions.              !
 !------------------------------------------------------------------------------!
@@ -10,6 +10,9 @@
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Domain_Type) :: dom
+  type(Grid_Type)   :: grid
 !----------------------------------[Calling]-----------------------------------!
   logical :: Are_Nodes_Twins
 !-----------------------------------[Locals]-----------------------------------!
@@ -285,7 +288,7 @@
   !   Twin of my twin   ! 
   !   is also my twin   !
   !---------------------!
-  do n1=1,NN
+  do n1=1,grid % n_nodes
     do i1=1,TwinN(n1,0)
       n2=TwinN(n1,i1) 
       do i2=1,TwinN(n2,0)
@@ -302,4 +305,4 @@
     end do
   end do
 
-  end subroutine Connect_Periodicity
+  end subroutine

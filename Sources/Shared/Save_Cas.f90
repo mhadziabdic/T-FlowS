@@ -1,10 +1,10 @@
 !==============================================================================!
-  subroutine Save_Cas(sub, NNsub, NCsub, NSsub)
+  subroutine Save_Cas(grid, sub, NNsub, NCsub, NSsub)
 !------------------------------------------------------------------------------!
-!   Writes: NAME.cas                                                           !
+!   Writes: ".cas" file                                                        !
 !                                                                              !
 !   See also: number                                                           !
-!   NSsub holds (has to hold) NS + NSsh                                        !
+!   NSsub holds (has to hold) grid % n_faces + grid % n_sh                     !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
@@ -12,7 +12,8 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer   :: sub, NNsub, NCsub, NSsub
+  type(Grid_Type) :: grid
+  integer         :: sub, NNsub, NCsub, NSsub
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c,  c1,  c2,  n, s, Nfac, NtotFac 
   character(len=80) :: name_out
@@ -25,7 +26,7 @@
   !----------------------!
   call Name_File(sub, name_out, '.cas', len_trim('.cas'))
   open(9, file=name_out)
-  write(*,*) '# Now creating the file:', name_out
+  write(*,*) '# Now creating the file:', trim(name_out)
 
   !-----------!
   !           !
@@ -58,7 +59,7 @@
 
   ! Regular node section
   write(9,'(A7,Z9,Z9,A4)') '(10 (7 ', 1, NNsub, ' 1)('
-  do n=1,NN
+  do n = 1, grid % n_nodes
     if(NewN(n) /= 0) write(9, '(3E15.7)') grid % xn(n),  &
                                           grid % yn(n),  &
                                           grid % zn(n)
@@ -83,14 +84,14 @@
   !   Faces on the boundary   !
   !---------------------------!
   NtotFac = 0
-  BCmark(-NbC-1) = 20  ! set the type for periodic.
+  BCmark(-grid % n_bnd_cells-1) = 20  ! set the type for periodic.
   ! It has to be 19+1, where 19 is max number of boundary. 
   ! See ReadFluentNeu.f90
 
   do n=1,19   ! browse through boundary condition types
     Nfac = 0
     do s=1,NSsub   ! count the faces with boundary condition "n" 
-        c2 = SideC(2,s)
+        c2 = grid % faces_c(2,s)
         if(c2 < 0) then
           if(BCmark(c2) == n) Nfac=Nfac+1
         end if 
@@ -98,10 +99,11 @@
 
     if(Nfac /= 0) then
       write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
-      write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 100+n, NtotFac+1, NtotFac+Nfac, ' 3 0)('
-      do s=1,NS+NSsh
-          c1 = SideC(1,s)
-          c2 = SideC(2,s)
+      write(9,'(A5,Z9,Z9,Z9,A6)')  &
+              '(13 (', 100+n, NtotFac+1, NtotFac+Nfac, ' 3 0)('
+      do s=1,grid % n_faces + grid % n_sh
+          c1 = grid % faces_c(1,s)
+          c2 = grid % faces_c(2,s)
           if(c2 < 0) then  
             if(BCmark(c2) == n) then 
               if(grid % faces_n_nodes(s) == 3) then
@@ -132,10 +134,11 @@
 
   ! periodic.shadow
   write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
-  write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 5, NtotFac+1, NtotFac+NSsh/2, ' 8 0)('
-  do s=NS+1,NS+NSsh,2  ! =--> or maybe: do s=NS+1,NS+NSsh/2
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+  write(9,'(A5,Z9,Z9,Z9,A6)')  &
+          '(13 (', 5, NtotFac+1, NtotFac+grid % n_sh/2, ' 8 0)('
+  do s=grid % n_faces+1,grid % n_faces+grid % n_sh, 2
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     if(c2 < 0) then
       if(BCmark(c2) == n) then
         if(grid % faces_n_nodes(s) == 3) then
@@ -159,10 +162,11 @@
 
   ! Periodic
   write(9,'(A26,I3,A3)') '(0 "Sides on the boundary ', n, ' ")'
-  write(9,'(A5,Z9,Z9,Z9,A6)') '(13 (', 6, NtotFac+1+NSsh/2, NtotFac+NSsh, ' c 0)('
-  do s=NS+2,NS+NSsh,2  ! =--> or maybe: do s=NS+1,NS+NSsh/2
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
+  write(9,'(A5,Z9,Z9,Z9,A6)')  &
+          '(13 (', 6, NtotFac+1+grid % n_sh/2, NtotFac+grid % n_sh, ' c 0)('
+  do s=grid % n_faces+2,grid % n_faces+grid % n_sh, 2
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == n) then
           if(grid % faces_n_nodes(s) == 3) then
@@ -184,13 +188,13 @@
   end do
   write(9,'(A2)') '))' 
 
-  write(9,'(A7,Z9,Z9,A6)') '(18 (', NtotFac+1, NtotFac+NSsh/2, ' 6 5)('
-  do s=NtotFac+1, NtotFac+NSsh/2     ! =-> ili mozda: "do s=NS+1,NS+NSsh,2" ??
-    write(9,'(Z9,Z9)') s, s+NSsh/2 
+  write(9,'(A7,Z9,Z9,A6)') '(18 (', NtotFac+1, NtotFac+grid % n_sh/2, ' 6 5)('
+  do s=NtotFac+1, NtotFac+grid % n_sh/2 
+    write(9,'(Z9,Z9)') s, s+grid % n_sh/2 
   end do
   write(9,'(A2)') '))' 
 
-  NtotFac = NtotFac + NSsh
+  NtotFac = NtotFac + grid % n_sh
 
   !-------------------------!
   !   Faces in the domain   !
@@ -199,10 +203,12 @@
   ! First count the cell faces on the material interface
   Nfac = 0
   do s=1,NSsub
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
-      if(c2 > 0 .and. (material(NewC(c1)) /= material(NewC(c2))) ) then
-        NFac = NFac+1 
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
+      if(c2 > 0) then
+        if( (material(NewC(c1)) /= material(NewC(c2))) ) then
+          NFac = NFac+1 
+        end if
       end if
   end do
   write(*,*) '# Number of cell faces at interface: ', Nfac
@@ -210,22 +216,24 @@
   write(9,'(A33)') '(0 "Sides on material interface")'
   write(9,'(A7,Z9,Z9,A6)') '(13 (3 ', NtotFac+1, NtotFac+Nfac, ' 2 0)('
   do s=1,NSsub
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
-      if(c2 > 0 .and. (material(NewC(c1)) /= material(NewC(c2))) ) then
-        if(grid % faces_n_nodes(s) == 3) then
-          write(9,'(6Z9)')                 &
-            3, NewN(grid % faces_n(1,s)),  &
-               NewN(grid % faces_n(2,s)),  &
-               NewN(grid % faces_n(3,s)),  &
-               NewC(c1), NewC(c2)
-        else if(grid % faces_n_nodes(s) == 4) then
-          write(9,'(7Z9)')                 &
-            4, NewN(grid % faces_n(1,s)),  &
-               NewN(grid % faces_n(2,s)),  & 
-               NewN(grid % faces_n(3,s)),  &
-               NewN(grid % faces_n(4,s)),  &
-               NewC(c1), NewC(c2)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
+      if(c2 > 0) then
+        if( (material(NewC(c1)) /= material(NewC(c2))) ) then
+          if(grid % faces_n_nodes(s) == 3) then
+            write(9,'(6Z9)')                 &
+              3, NewN(grid % faces_n(1,s)),  &
+                 NewN(grid % faces_n(2,s)),  &
+                 NewN(grid % faces_n(3,s)),  &
+                 NewC(c1), NewC(c2)
+          else if(grid % faces_n_nodes(s) == 4) then
+            write(9,'(7Z9)')                 &
+              4, NewN(grid % faces_n(1,s)),  &
+                 NewN(grid % faces_n(2,s)),  & 
+                 NewN(grid % faces_n(3,s)),  &
+                 NewN(grid % faces_n(4,s)),  &
+                 NewC(c1), NewC(c2)
+          end if 
         end if 
       end if
   end do
@@ -234,28 +242,30 @@
   ! Faces in the domain
   NtotFac = NtotFac+Nfac
   write(9,'(A25)') '(0 "Sides in the domain")'
-  write(9,'(A7,Z9,Z9,A6)') '(13 (4 ', NtotFac+1, NSsub-NSsh/2, ' 2 0)('
+  write(9,'(A7,Z9,Z9,A6)') '(13 (4 ', NtotFac+1, NSsub-grid % n_sh/2, ' 2 0)('
   do s=1,NSsub
-      c1 = SideC(1,s)
-      c2 = SideC(2,s)
-      if(c2 < 0) c2=0
-      if(c2 > 0 .and. (material(NewC(c1)) == material(NewC(c2))) .and. &
-         Dx(s)==0.0 .and. Dy(s)==0.0 .and. Dz(s)==0 ) then
-        if(grid % faces_n_nodes(s) == 3) then
-          write(9,'(6Z9)')                 &
-            3, NewN(grid % faces_n(1,s)),  &
-               NewN(grid % faces_n(2,s)),  &
-               NewN(grid % faces_n(3,s)),  &
-               NewC(c1), NewC(c2)
-        else if(grid % faces_n_nodes(s) == 4) then
-          write(9,'(7Z9)')                 &
-            4, NewN(grid % faces_n(1,s)),  &
-               NewN(grid % faces_n(2,s)),  &
-               NewN(grid % faces_n(3,s)),  &
-               NewN(grid % faces_n(4,s)),  &
-               NewC(c1), NewC(c2)
-        end if
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
+    if(c2 < 0) c2=0
+    if(c2 > 0 .and. (material(NewC(c1)) == material(NewC(c2))) .and. &
+      grid % dx(s) == 0.0 .and.  &
+      grid % dy(s) == 0.0 .and.  &
+      grid % dz(s) == 0.0 ) then
+      if(grid % faces_n_nodes(s) == 3) then
+        write(9,'(6Z9)')                 &
+          3, NewN(grid % faces_n(1,s)),  &
+             NewN(grid % faces_n(2,s)),  &
+             NewN(grid % faces_n(3,s)),  &
+             NewC(c1), NewC(c2)
+      else if(grid % faces_n_nodes(s) == 4) then
+        write(9,'(7Z9)')                 &
+          4, NewN(grid % faces_n(1,s)),  &
+             NewN(grid % faces_n(2,s)),  &
+             NewN(grid % faces_n(3,s)),  &
+             NewN(grid % faces_n(4,s)),  &
+             NewC(c1), NewC(c2)
       end if
+    end if
   end do
   write(9,'(A2)') '))'
 
@@ -273,7 +283,7 @@
 
   ! Regular cell section
   write(9,'(A7,Z9,Z9,A6)') '(12 (1 ', 1, NCsub, ' 1 0)('
-  do c=1,NC
+  do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
       if(grid % cells_n_nodes(c) == 8) then       ! hexahedra   
         write(9, *) ' 4 ' 
@@ -317,4 +327,4 @@
   write(9,'(A5,I6,A18)') '(45 (', 110 , ' wall wall-10) ())'
   write(9,'(A5,I6,A18)') '(45 (', 111 , ' wall period ) ())'
 
-  end subroutine Save_Cas
+  end subroutine

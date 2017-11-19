@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Load_Ini()
+  subroutine Load_Ini(grid)
 !------------------------------------------------------------------------------!
 ! This version of Load_Ini is optimised for very large meshes
 ! Program SUB_INI needs to be used to create files needed by this_proc
@@ -10,12 +10,15 @@
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Tokenizer_Mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+  type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------!
   real             :: Distance
 !-----------------------------------[Locals]-----------------------------------!
-  integer          :: j, k,  c, nearest_cell, var, Nvar, c1, c2, s 
+  integer          :: j, k,  c, nearest_cell, c1, c2, s 
   integer          :: NCold  
   real,allocatable :: Xold(:),Yold(:),Zold(:)
   real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v_2old(:), f22old(:)
@@ -25,20 +28,16 @@
   real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v_2Doold(:), f22Doold(:)
   real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v_2Xold(:), f22Xold(:)
   real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v_2Xoold(:), f22Xoold(:)
-  real,allocatable :: Pold(:)
-  real,allocatable :: PPold(:)
-  real,allocatable :: Pxold(:),Pyold(:),Pzold(:)
-  real             :: Us, Ws, Vs, R, Rnew, Rold
-  real             :: new_distance, old_distance
+  real             :: Us, Ws, Vs
+  real             :: old_distance
 
   ! Variables for ReadC:
-  character(len=80) :: namCoo, answer, answer_hot
-  character(len=4)  :: ext
+  character(len=80) :: answer
   character(len=80) :: name_in
 !==============================================================================!  
 
-  call ReadC(CMN_FILE,inp,tn,ts,te)
-  read(inp(ts(1):te(1)), '(A80)') name_in
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(line % tokens(1), '(A80)') name_in
   answer=name_in
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return
@@ -185,14 +184,14 @@
   nearest_cell = 0
   near = 0
   old_distance = HUGE
-    do c = 1, NC
+    do c = 1, grid % n_cells
       if(this_proc < 2) then
-        if(mod(c,20000) == 0) write(*,*) (100.*c/(1.*NC)), '% complete...'  
+        if(mod(c,20000) == 0) write(*,*) (100.*c/(1.*grid % n_cells)), '% complete...'  
       end if
       old_distance = HUGE
       do k = 1, j
-        if(Distance(Xold(k),Yold(k),Zold(k),xc(c),yc(c),zc(c)) < old_distance) then
-          old_distance = Distance(Xold(k),Yold(k),Zold(k),xc(c),yc(c),zc(c))       
+        if(Distance(Xold(k),Yold(k),Zold(k),grid % xc(c),grid % yc(c),grid % zc(c)) < old_distance) then
+          old_distance = Distance(Xold(k),Yold(k),Zold(k),grid % xc(c),grid % yc(c),grid % zc(c))       
           nearest_cell =  k
         end if 
       end do  
@@ -250,15 +249,17 @@
         F22 % Xo(c) = F22Xoold(near(c)) 
       end if
     end do
-  do s=1, NS
-    c1=SideC(1,s)
-    c2=SideC(2,s)
+  do s = 1, grid % n_faces
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     ! Interpolate density and velocity
     Us = f(s) * U % n(c1) + (1.0-f(s)) * U % n(c2)
     Vs = f(s) * V % n(c1) + (1.0-f(s)) * V % n(c2)
     Ws = f(s) * W % n(c1) + (1.0-f(s)) * W % n(c2)
-    Flux(s) = ( Us*Sx(s) + Vs*Sy(s) + Ws*Sz(s) )
+    Flux(s) = (  Us * grid % sx(s)  &
+               + Vs * grid % sy(s)  &
+               + Ws * grid % sz(s) )
   end do 
 
   name = answer
@@ -328,11 +329,10 @@
     deallocate(TXoold)
   end if
 
-
   write(*,*) 'Finished with Load_Ini  Processor: ', this_proc
 
   ! Restore the name
   name = answer
 
-  end subroutine Load_Ini
+  end subroutine
 

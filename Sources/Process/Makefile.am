@@ -1,43 +1,43 @@
 bin_PROGRAMS = Process
 
 Process_SOURCES =	 			\
-  CalBou.f90					\
-  Calc3.f90					\
+  Allocate_Memory.f90				\
+  Allocate_Variables.f90			\
+  Balance_Mass.f90				\
+  Update_Boundary_Values.f90			\
   CalcConvect.f90				\
-  CalcF22.f90					\
-  CalcFlux.f90					\
-  CalcG.f90					\
+  Compute_Gradient_Matrix.f90			\
   CalcMn_Cylind.f90				\
-  CalcMn.f90					\
-  CalcPF.f90					\
-  CalcPS.f90					\
-  CalcSc.f90					\
-  CalcSGS_Dynamic.f90				\
-  CalcSGS.f90					\
-  CalcSGS_hybrid.f90				\
+  Compute_Mean.f90				\
+  Compute_Pressure_Fractional.f90		\
+  Compute_Pressure_Simple.f90			\
   CalcShear.f90					\
+<<<<<<< HEAD
   CalcStresses.f90				\
   CalcTurb.f90					\
   CalcVISt_RSM.f90				\
   CalcVISt_KEps.f90				\
   CalcVISt_KEPSV2F.f90				\
   CalcVISt_SPA_ALL.f90				\
+=======
+>>>>>>> 77a0dfd04f33aeb0ac6ea1ace412064246261650
   CalcVort.f90					\
-  CalcWALE.f90					\
-  CalMinMax.f90					\
-  ConvScheme.f90				\
-  CorBad.f90					\
-  CorUVW.f90					\
-  FindBad.f90					\
-  ForAPF.f90					\
-  GeoAloc.f90					\
+  Compute_Minimum_Maximum.f90			\
+  Compute_Fluxes.f90				\
+  Compute_Geometry.f90				\
+  Compute_Scalar.f90				\
+  Advection_Scheme.f90				\
+  Correct_Bad.f90				\
+  Correct_Velocity.f90				\
+  Find_Bad.f90					\
+  Pressure_Matrix_Fractional.f90		\
   GraCorNew.f90					\
   GradP3.f90					\
   GradP.f90					\
   GraPhiCor.f90					\
   GraPhi.f90					\
   IniPar.f90					\
-  IniVar.f90					\
+  Initialize_Variables.f90			\
   Load_Boundary_Conditions.f90			\
   Load_Cns.f90					\
   Load_Ini.f90					\
@@ -45,9 +45,9 @@ Process_SOURCES =	 			\
   Load_Restart_Ini.f90				\
   Logo_Process.f90				\
   Main.f90   					\
-  ModOut.f90					\
   NearWallCell.f90				\
   NewUVW.f90					\
+  Read_Problem.f90				\
   Save_Dat_Results.f90				\
   Save_Dat_Scalar.f90				\
   Save_Ini.f90					\
@@ -55,28 +55,17 @@ Process_SOURCES =	 			\
   Save_Restart.f90				\
   ReaCom.f90					\
   SavParView.f90				\
-  Scale.f90					\
-  SourceEpsKEps.f90				\
-  SourceEpsKEPSV2F.f90				\
-  SourceF22_EBM.f90				\
-  SourceF22KEPSV2F.f90				\
-  SourceKinKEps.f90				\
-  SourceKinKEPSV2F.f90				\
-  SourcesEBM.f90				\
-  SourcesHJ.f90					\
-  SourceV2KEPSV2F.f90				\
-  SourceVisSpalart.f90				\
-  UnkAloc.f90
+  Time_And_Length_Scale.f90
 
-SUBDIRS = ../Shared/Modules			\
-          Communication				\
-          Linear_Solvers			\
+SUBDIRS = Communication				\
+          Solvers				\
+          Turbulence				\
           User					\
           ../Shared
 
-LDADD = ../Shared/Modules/libSharedModules.a	\
-        Communication/libCommunication.a	\
-        Linear_Solvers/libLinear_Solvers.a	\
+LDADD = Communication/libCommunication.a	\
+        Solvers/libSolvers.a			\
+        Turbulence/libTurbulence.a		\
         User/libUser.a				\
         ../Shared/libShared.a
 

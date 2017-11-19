@@ -1,14 +1,15 @@
 !==============================================================================!
-  subroutine Probe_1D
+  subroutine Probe_1D(grid)
 !------------------------------------------------------------------------------!
 !   This subroutine finds the coordinate of cell-centers in non-homogeneous    !
 !   direction and write them in file called "name.1D"                          !
 !------------------------------------------------------------------------------!
-  use all_mod
+  use all_mod, only: name
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
   logical :: isit
 !----------------------------------[Calling]-----------------------------------! 
   include "Approx.int"
@@ -33,24 +34,24 @@
   !-----------------------------!
   !   Browse through all cells  !
   !-----------------------------!
-  do c=1,NC
+  do c = 1, grid % n_cells
 
     ! Try to find the cell among the probes
     do p=1,n_prob
       if(answer == 'X') then
-        if( Approx(xc(c), zp(p), 1.0e-9)) go to 1
+        if( Approx(grid % xc(c), zp(p), 1.0e-9)) go to 1
       else if(answer == 'Y') then
-        if( Approx(yc(c), zp(p), 1.0e-9)) go to 1
+        if( Approx(grid % yc(c), zp(p), 1.0e-9)) go to 1
       else if(answer == 'Z') then
-        if( Approx(zc(c), zp(p), 1.0e-9)) go to 1
+        if( Approx(grid % zc(c), zp(p), 1.0e-9)) go to 1
       end if
     end do 
 
     ! Couldn't find a cell among the probes, add a new one
     n_prob = n_prob + 1
-    if(answer=='X') zp(n_prob)=xc(c)
-    if(answer=='Y') zp(n_prob)=yc(c)
-    if(answer=='Z') zp(n_prob)=zc(c)
+    if(answer=='X') zp(n_prob) = grid % xc(c)
+    if(answer=='Y') zp(n_prob) = grid % yc(c)
+    if(answer=='Z') zp(n_prob) = grid % zc(c)
 
     if(n_prob == 1000) then
       write(*,*) '# Probe 1D: Not a 1D (channel flow) problem.'
@@ -66,7 +67,7 @@
   !--------------------!
   name_prob = name
   name_prob(len_trim(name)+1:len_trim(name)+4) = '.1Dc'
-  write(6, *) '# Now creating the file:', name_prob
+  write(6, *) '# Now creating the file:', trim(name_prob)
   open(9, file=name_prob)
 
   ! Write the number of probes 
@@ -79,4 +80,4 @@
 
   close(9)
 
-  end subroutine Probe_1D
+  end subroutine

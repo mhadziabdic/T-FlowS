@@ -1,111 +1,112 @@
-!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%!
-!                    ________  ______                                  !
-!                   |        ||      \                                 !
-!                   `--.  .--'|  ,-.  \________  ___                   !
-!                      |  |___|  |_/  /  _  \  \/  /                   !
-!                      |  |___|      /  _____\    /                    !
-!                      |  |   |  |\  \  \____/    \                    !
-!                      |__|   |__| \__\_____/__/\__\                   !
-!                                                                      !
-!                   UNSTRUCTURED PRAGMATIC LES SOLVER                  !
-!                                                                      !
-!----------------------------------------------------------------------!
-!                                                                      !
-!   Pragmatic means that it can use both FRACTIONAL STEP and SIMPLE    !
-!                                                                      !
-!                            version: Chatou                           !
-!                                                                      !
-!----------------------------------------------------------------------!
-!                                                                      !
-!                                     Bojan NICENO                     !
-!                                     Delft University of Technology   !
-!                                     Faculty of Applied Sciences      !
-!                                     Section Thermofluids             !
-!                                     niceno@ws.tn.tudelft.nl          !
-!                                                                      !
-!======================================================================!
+!==============================================================================!
   program Processor
-!----------------------------------------------------------------------!
-!   Unstructured Finite Volume LES/RANS solver.                        !
-!   Authors: Bojan NICENO & Muhamed HADZIABDIC                         !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
+!------------------------------------------------------------------------------!
+!   Unstructured Finite Volume LES/RANS solver.                                !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
-  use sol_mod, only: D
   use les_mod
   use par_mod
   use rans_mod
-!----------------------------------------------------------------------!
+  use Tokenizer_Mod
+  use Grid_Mod
+  use Var_Mod
+  use Solvers_Mod, only: D
+!------------------------------------------------------------------------------!
   implicit none
-!------------------------------[Calling]-------------------------------!
-  real :: CorUVW
-!-------------------------------[Locals]-------------------------------!
-  integer          :: i, m, n, Ndtt_temp, HOTtemp, SIMULAtemp, c, Nproc 
-  real             :: Mres, CPUtim
-  real             :: start, finish
-  character        :: namSav*10
-  logical          :: restar, multiple 
-!-----------------------------[Interfaces]-----------------------------!
+!----------------------------------[Calling]-----------------------------------!
+  real :: Correct_Velocity
+!-----------------------------------[Locals]-----------------------------------!
+  integer           :: i, m, n, Ndtt_temp
+  real              :: Mres, CPUtim
+  real              :: start, finish
+  character(len=10) :: name_save
+  logical           :: restar, multiple 
+!---------------------------------[Interfaces]---------------------------------!
   interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine NewUVW(var, Ui, dUidi, dUidj, dUidk,  &
+    subroutine NewUVW(grid, var, Ui, dUidi, dUidj, dUidk,  &
                       Si, Sj, Sk, Di, Dj, Dk, Hi, dUjdi, dUkdi) 
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
+      use Grid_Mod
       implicit none
-      integer       :: var
-      type(Unknown) :: Ui
-      real          :: dUidi(-NbC:NC), dUidj(-NbC:NC), dUidk(-NbC:NC)
-      real          :: Si(NS), Sj(NS), Sk(NS) 
-      real          :: Di(NS), Dj(NS), Dk(NS) 
-      real          :: Hi(-NbC:NC), dUjdi(-NbC:NC), dUkdi(-NbC:NC) 
-    end subroutine NewUVW
+      type(Grid_Type) :: grid
+      integer         :: var
+      type(Var_Type)  :: Ui
+      real            :: dUidi(-grid % n_bnd_cells:grid % n_cells),  &
+                         dUidj(-grid % n_bnd_cells:grid % n_cells),  &
+                         dUidk(-grid % n_bnd_cells:grid % n_cells)
+      real            :: Si(grid % n_faces),  &
+                         Sj(grid % n_faces),  &
+                         Sk(grid % n_faces) 
+      real            :: Di(grid % n_faces),  &
+                         Dj(grid % n_faces),  &
+                         Dk(grid % n_faces) 
+      real            :: Hi   (-grid % n_bnd_cells:grid % n_cells),  &
+                         dUjdi(-grid % n_bnd_cells:grid % n_cells),  &
+                         dUkdi(-grid % n_bnd_cells:grid % n_cells) 
+    end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine CalcSc(var, PHI, dPHIdx, dPHIdy, dPHIdz)
+    subroutine Compute_Scalar(grid, var, phi, dphidx, dphidy, dphidz)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
+      use Grid_Mod
       implicit none
-      integer       :: var
-      type(Unknown) :: PHI
-      real          :: dPHIdx(-NbC:NC),dPHIdy(-NbC:NC),dPHIdz(-NbC:NC)
-    end subroutine CalcSc
+      type(Grid_Type) :: grid
+      integer         :: var
+      type(Var_Type)  :: phi
+      real            :: dphidx(-grid % n_bnd_cells:grid % n_cells),  &
+                         dphidy(-grid % n_bnd_cells:grid % n_cells),  &
+                         dphidz(-grid % n_bnd_cells:grid % n_cells)
+    end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine CalcTurb(var, PHI, dPHIdx, dPHIdy, dPHIdz, Nstep)  
+    subroutine Compute_Turbulent(grid, var, phi, dphidx, dphidy, dphidz, Nstep)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
+      use Grid_Mod
       implicit none
-      integer       :: var, Nstep
-      type(Unknown) :: PHI
-      real          :: dPHIdx(-NbC:NC),dPHIdy(-NbC:NC),dPHIdz(-NbC:NC)
-    end subroutine CalcTurb
+      type(Grid_Type) :: grid
+      integer        :: var, Nstep
+      type(Var_Type) :: phi
+      real           :: dphidx(-grid % n_bnd_cells:grid % n_cells),  &
+                        dphidy(-grid % n_bnd_cells:grid % n_cells),  &
+                        dphidz(-grid % n_bnd_cells:grid % n_cells)
+    end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Save_Gmv_Results(namAut)  
+    subroutine Save_Gmv_Results(grid, namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
+      use Grid_Mod
       implicit none
-       character, optional :: namAut*(*)
-    end  subroutine Save_Gmv_Results  
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Save_Dat_Results(namAut)  
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      use all_mod
-      use pro_mod
-      implicit none
+      type(Grid_Type) :: grid
       character, optional :: namAut*(*)
-    end subroutine Save_Dat_Results  
+    end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Save_Restart(namAut)  
+    subroutine Save_Dat_Results(grid, namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
       use pro_mod
+      use Grid_Mod
       implicit none
+      type(Grid_Type) :: grid
       character, optional :: namAut*(*)
-    end subroutine Save_Restart  
+    end subroutine
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
+    subroutine Save_Restart(grid, namAut)  
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
+      use all_mod
+      use pro_mod
+      use Grid_Mod
+      implicit none
+      type(Grid_Type)     :: grid
+      character, optional :: namAut*(*)
+    end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine UserProbe2D(namAut)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
@@ -113,59 +114,71 @@
       use pro_mod
       implicit none
       character, optional :: namAut*(*)
-    end subroutine UserProbe2D
+    end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-    subroutine CalcShear(Ui, Vi, Wi, She)
+    subroutine CalcShear(grid, Ui, Vi, Wi, She)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
       use all_mod
       use pro_mod
       use les_mod
+      use Grid_Mod
       implicit none
-      real          :: Ui(-NbC:NC), Vi(-NbC:NC), Wi(-NbC:NC)
-      real          :: She(-NbC:NC)
-    end subroutine CalcShear
+      type(Grid_Type) :: grid
+      real            :: Ui(-grid % n_bnd_cells:grid % n_cells),  &
+                         Vi(-grid % n_bnd_cells:grid % n_cells),  &
+                         Wi(-grid % n_bnd_cells:grid % n_cells)
+      real            :: She(-grid % n_bnd_cells:grid % n_cells)
+    end subroutine
   end interface
 !======================================================================!
 
+  ! Grid used in computations
+  type(Grid_Type) :: grid  
+
   call cpu_time(start)
-!---- Test the precision
-  open(90,FORM='unformatted',file='Processor.real');
-  write(90) 3.1451592
-  close(90)
-               
-!//////////////////////////////////!
-!     Start parallel execution     !
-!//////////////////////////////////!
-  call StaPar  
 
-  call Timex(CPUtim) 
-
-!/////////////////////////////////////////////////////////////////!
-!     Open the command file and initialize line count to zero     !
-!/////////////////////////////////////////////////////////////////!
-  open(CMN_FILE, file='T-FlowS.cmn')    
-  cmn_line_count = 0
-
+  !--------------------------------!
+  !   Splash out the logo screen   !             
+  !--------------------------------!
   if(this_proc  < 2) then
     call logo
   endif
 
+  !------------------------------!
+  !   Start parallel execution   !
+  !------------------------------!
+  call StaPar()
+
+  call Timex(CPUtim) 
+
+  !--------------------------------------------!
+  !   Open the command file, initialize line   !
+  !    count to zero, and read problem name    ! 
+  !--------------------------------------------!
+  open(CMN_FILE, file='T-FlowS.cmn')    
+  cmn_line_count = 0
+
+  if(this_proc < 2) write(*,*) '# Input problem name:'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)  
+  read(line % tokens(1), '(A80)')  name
+
   call Wait   
 
-!---- initialize parameters
+  ! Initialize parameters
   call IniPar
   
-!---- load the finite volume grid      
-  call Load_Cns
-  call GeoAloc
-  call Load_Geo
+  ! Load the finite volume grid      
+  call Load_Cns       (grid, this_proc)
+  call Read_Problem           ! bad practice, should be avoided
+  call Allocate_Memory(grid)
+  call Load_Geo       (grid, this_proc)
   call BufLoa
-  call Exchng(volume(-NbC))
+  call Exchange(grid, grid % vol(-grid % n_bnd_cells))
 
   call wait   
 
-  call Matrix_Topology(A)
-  call Matrix_Topology(D)
+  call Matrix_Mod_Topology(grid, A)
+  call Matrix_Mod_Topology(grid, D)
 
   call Wait   
 
@@ -176,41 +189,29 @@
 !<<<<<<<<<<<<<<<<<<<!
   Ndt  = 0
   Ndtt = 0
-  call Load_Restart(restar)
+  call Load_Restart(grid, restar)
 
   if(restar) then
-    call Load_Boundary_Conditions(.false.)
+    call Load_Boundary_Conditions(grid, .FALSE.)
   end if
 
-!----- Read command file (T-FlowS.cmn) 
-1 call ReaCom(restar)
+  ! Read command file (T-FlowS.cmn) 
+  call ReaCom(grid, restar)
 
-!----- Initialize variables
+  ! Initialize variables
   if(.not. restar) then
-    call Load_Boundary_Conditions(.true.)
-    call IniVar 
+    call Load_Boundary_Conditions(grid, .TRUE.)
+    call Initialize_Variables(grid)
     call Wait
   end if   
 
-  write(*,*) 'Before Load_Ini() at line: ', cmn_line_count
+  ! Interpolate between diff. meshes
+  call Load_Ini(grid)
 
-!----- Interpolate between diff. meshes
-  call Load_Ini()
-
-  write(*,*) 'After Load_Ini() at line: ', cmn_line_count
-
-  if(.not. restar) then
-!BOJAN    do m=1,Nmat
-!BOJAN      if(SHAKE(m) == YES) then
-!BOJAN        call UserPerturb2(5.0,0,m)
-!BOJAN      end if
-!BOJAN    end do  
-  end if
-
-!----- Check if there are more materials
+  ! Check if there are more materials
   multiple = .FALSE.
   i = StateMat(1)
-  do m=1,Nmat
+  do m=1,grid % n_materials
     if(StateMat(m) /= i) multiple = .TRUE.
   end do
 
@@ -236,17 +237,17 @@
 
   write(*,*) 'At line: ', cmn_line_count
 
-!----- Loading data from previous computation   
-!  if(this_proc<2) write(*,*)'Reading data from previous computation on the same mesh'
-  call Load_Restart_Ini
+  ! Loading data from previous computation   
+  !  if(this_proc<2) write(*,*)'Reading data from previous computation on the same mesh'
+  call Load_Restart_Ini(grid)
 
-!----- Prepare ...
-  call Calc3()
-  call FindBad()
-  if(SIMULA==LES.and.MODE==SMAG.and..NOT.restar) call NearWallCell()
+  ! Prepare ...
+  call Compute_Geometry(grid)
+  call Find_Bad        (grid)
+  if(SIMULA==LES.and.MODE==SMAG.and..NOT.restar) call NearWallCell(grid)
 
-!----- Prepare the gradient matrix for velocities
-  call CalcG(.TRUE.) 
+  ! Prepare the gradient matrix for velocities
+  call Compute_Gradient_Matrix(grid, .TRUE.) 
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 !        LET THE TIME        !
@@ -259,11 +260,11 @@
   LinMon3 = '# [3]'
   LineRes = '#'
 
-  if(ALGOR  ==  FRACT) call ForAPF() 
+  if(ALGOR  ==  FRACT) call Pressure_Matrix_Fractional(grid)
 
-!---- Print the areas of monitoring planes
+  ! Print the areas of monitoring planes
   if(this_proc < 2) then
-    do m=1,Nmat
+    do m=1,grid % n_materials
       write(*,'(A5,I2,A2,1PE12.3)') '# Ax(',m,')=', AreaX(m)
       write(*,'(A5,I2,A2,1PE12.3)') '# Ay(',m,')=', AreaY(m)
       write(*,'(A5,I2,A2,1PE12.3)') '# Az(',m,')=', AreaZ(m)
@@ -282,223 +283,248 @@
     end if
 
     if(SIMULA==DES_SPA) then
-      call CalcShear(U % n, V % n, W % n, Shear)
-      call CalcVort(U % n, V % n, W % n, Vort)
+      call CalcShear(grid, U % n, V % n, W % n, Shear)
+      call CalcVort (grid, U % n, V % n, W % n, Vort)
     end if
 
     if(SIMULA == LES) then
-      call CalcShear(U % n, V % n, W % n, Shear)
-      if(MODE == DYN) call CalcSGS_Dynamic() 
-      if(MODE == WALE) call CalcWALE() 
-      call CalcSGS()
+      call CalcShear(grid, U % n, V % n, W % n, Shear)
+      if(MODE == DYN) call Compute_Sgs_Dynamic(grid) 
+      if(MODE == WALE) call CalcWALE(grid) 
+      call Compute_Sgs(grid)
     end if  
+
     If(SIMULA==HYB_ZETA) then  
-      call CalcSGS_Dynamic()      
-      call CalcSGS_hybrid()
+      call Compute_Sgs_Dynamic(grid)      
+      call Compute_Sgs_Hybrid(grid)
     end if
 
+<<<<<<< HEAD
     call CalcConvect
     if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_RSM
 
+=======
+    call CalcConvect(grid)
+    if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_EBM(grid)
+>>>>>>> 77a0dfd04f33aeb0ac6ea1ace412064246261650
     
     do ini=1,Nini                   !  FRACTION & SIMPLE  
 
       if(.NOT. multiple) then 
-        call GradP(P % n,Px,Py,Pz)
+        call GradP(grid, P % n, Px, Py, Pz)
       else 
-        call GradP3(P % n,Px,Py,Pz)
+        call GradP3(grid, P % n, Px, Py, Pz)
       end if
-      call GraPhi(U % n, 1, Ux,.TRUE.)    ! dU/dx
-      call GraPhi(U % n, 2, Uy,.TRUE.)    ! dU/dy
-      call GraPhi(U % n, 3, Uz,.TRUE.)    ! dU/dz
-      call GraPhi(V % n, 1, Vx,.TRUE.)    ! dV/dx
-      call GraPhi(V % n, 2, Vy,.TRUE.)    ! dV/dy
-      call GraPhi(V % n, 3, Vz,.TRUE.)    ! dV/dz
-      call GraPhi(W % n, 1, Wx,.TRUE.)    ! dW/dx
-      call GraPhi(W % n, 2, Wy,.TRUE.)    ! dW/dy 
-      call GraPhi(W % n, 3, Wz,.TRUE.)    ! dW/dz
-!---- U velocity component --------------------------------!
-      call NewUVW(1, U,                 &   
-                     Ux,   Uy,   Uz,    & 
-                     Sx,   Sy,   Sz,    &                             
-                     Dx,   Dy,   Dz,    &                             
-                     Px,   Vx,   Wx)      ! dP/dx, dV/dx, dW/dx
+    
+      call GraPhi(grid, U % n, 1, Ux, .TRUE.)    ! dU/dx
+      call GraPhi(grid, U % n, 2, Uy, .TRUE.)    ! dU/dy
+      call GraPhi(grid, U % n, 3, Uz, .TRUE.)    ! dU/dz
+      call GraPhi(grid, V % n, 1, Vx, .TRUE.)    ! dV/dx
+      call GraPhi(grid, V % n, 2, Vy, .TRUE.)    ! dV/dy
+      call GraPhi(grid, V % n, 3, Vz, .TRUE.)    ! dV/dz
+      call GraPhi(grid, W % n, 1, Wx, .TRUE.)    ! dW/dx
+      call GraPhi(grid, W % n, 2, Wy, .TRUE.)    ! dW/dy 
+      call GraPhi(grid, W % n, 3, Wz, .TRUE.)    ! dW/dz
 
+      ! U velocity component
+      call NewUVW(grid, 1,              &
+                  U,                 &   
+                  Ux,   Uy,   Uz,    & 
+                  grid % sx,   grid % sy,   grid % sz,    &                             
+                  grid % dx,   grid % dy,   grid % dz,    &                             
+                  Px,   Vx,   Wx)      ! dP/dx, dV/dx, dW/dx
 
-!---- V velocity component --------------------------------!
-      call NewUVW(2, V,                 &
-                     Vy,   Vx,   Vz,    & 
-                     Sy,   Sx,   Sz,    &
-                     Dy,   Dx,   Dz,    &
-                     Py,   Uy,   Wy)      ! dP/dy, dU/dy, dW/dy
+      ! V velocity component
+      call NewUVW(grid, 2,              &
+                  V,                 &
+                  Vy,   Vx,   Vz,    & 
+                  grid % sy,   grid % sx,   grid % sz,    &
+                  grid % dy,   grid % dx,   grid % dz,    &
+                  Py,   Uy,   Wy)      ! dP/dy, dU/dy, dW/dy
 
-!---- W velocity component --------------------------------!
-      call NewUVW(3, W,                 & 
-                     Wz,   Wx,   Wy,    & 
-                     Sz,   Sx,   Sy,    &                         
-                     Dz,   Dx,   Dy,    &                         
-                     Pz,   Uz,   Vz)      ! dP/dz, dU/dz, dV/dz
+      ! W velocity component
+      call NewUVW(grid, 3,              &
+                  W,                 & 
+                  Wz,   Wx,   Wy,    & 
+                  grid % sz,   grid % sx,   grid % sy,    &                         
+                  grid % dz,   grid % dx,   grid % dy,    &                         
+                  Pz,   Uz,   Vz)      ! dP/dz, dU/dz, dV/dz
 
       if(ALGOR == FRACT) then
-        call Exchng(A % sav)  
-        call ModOut()
-        call CalcPF()
+        call Exchange(grid, A % sav)  
+        call Balance_Mass(grid)
+        call Compute_Pressure_Fractional(grid)
       endif
       if(ALGOR == SIMPLE) then
-        call Exchng(A % sav)  
-        call ModOut()
-        call CalcPS()
+        call Exchange(grid, A % sav)  
+        call Balance_Mass(grid)
+        call Compute_Pressure_Simple(grid)
       end if
 
       if(.NOT. multiple) then 
-        call GradP(PP % n,Px,Py,Pz)
+        call GradP(grid, PP % n,Px,Py,Pz)
       else 
-        call GradP3(PP % n,Px,Py,Pz)
+        call GradP3(grid, PP % n,Px,Py,Pz)
       end if
 
-      call CalcFlux
-      Mres = CorUVW() !  project the velocities
+      call Compute_Fluxes(grid)
+      Mres = Correct_Velocity(grid) !  project the velocities
 
-!---- Temperature
+      ! Temperature
       if(HOT==YES) then
-        call GraPhi(T % n,1,PHIx,.TRUE.)            ! dT/dx
-        call GraPhi(T % n,2,PHIy,.TRUE.)            ! dT/dy
-        call GraPhi(T % n,3,PHIz,.TRUE.)            ! dT/dz
-!!!!        call GraCorNew(T % n,PHIx,PHIy,PHIz)    ! 2mat
-        call CalcSc(5, T, PHIx, PHIy, PHIz)  ! dT/dx, dT/dy, dT/dz
+        call GraPhi(grid, T % n,1,phix,.TRUE.)            ! dT/dx
+        call GraPhi(grid, T % n,2,phiy,.TRUE.)            ! dT/dy
+        call GraPhi(grid, T % n,3,phiz,.TRUE.)            ! dT/dz
+!!!!        call GraCorNew(grid, T % n,phix,phiy,phiz)    ! 2mat
+        call Compute_Scalar(grid, 5, T,  &
+                            phix, phiy, phiz)  ! dT/dx, dT/dy, dT/dz
       end if 
 
-!---- Rans models
+      ! Rans models
       if(SIMULA==K_EPS.or.SIMULA == HYB_PITM) then
-!---- Update the values at boundaries
-        call CalBou
-        call CalcShear(U % n, V % n, W % n, Shear)
-        call GraPhi(Kin % n,1,PHIx,.TRUE.)             ! dK/dx
-        call GraPhi(Kin % n,2,PHIy,.TRUE.)             ! dK/dy
-        call GraPhi(Kin % n,3,PHIz,.TRUE.)             ! dK/dz
-        call CalcTurb(6, Kin, PHIx, PHIy, PHIz, n) ! dK/dx, dK/dy, dK/dz
 
-        call GraPhi(Eps % n,1,PHIx,.TRUE.)           ! dEps/dx
-        call GraPhi(Eps % n,2,PHIy,.TRUE.)           ! dEps/dy
-        call GraPhi(Eps % n,3,PHIz,.TRUE.)           ! dEps/dz
-        call CalcTurb(7, Eps, PHIx, PHIy, PHIz, n)
-        call CalcVISt_KEps()
+        ! Update the values at boundaries
+        call Update_Boundary_Values(grid)
+        call CalcShear(grid, U % n, V % n, W % n, Shear)
+        call GraPhi(grid, Kin % n,1,phix,.TRUE.)             ! dK/dx
+        call GraPhi(grid, Kin % n,2,phiy,.TRUE.)             ! dK/dy
+        call GraPhi(grid, Kin % n,3,phiz,.TRUE.)             ! dK/dz
+        call Compute_Turbulent(grid, 6, Kin,  &
+                               phix, phiy, phiz, n) ! dK/dx, dK/dy, dK/dz
+
+        call GraPhi(grid, Eps % n,1,phix,.TRUE.)           ! dEps/dx
+        call GraPhi(grid, Eps % n,2,phiy,.TRUE.)           ! dEps/dy
+        call GraPhi(grid, Eps % n,3,phiz,.TRUE.)           ! dEps/dz
+        call Compute_Turbulent(grid, 7,  &
+                               Eps, phix, phiy, phiz, n)
+        call CalcVISt_KEps(grid)
       end if 
 
-      if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA == HYB_ZETA) then
-        call CalcShear(U % n, V % n, W % n, Shear)
+      if(SIMULA == K_EPS_VV .or.  &
+         SIMULA == ZETA     .or.  &
+         SIMULA == HYB_ZETA) then
+        call CalcShear(grid, U % n, V % n, W % n, Shear)
 
-        call GraPhi(Kin % n,1,PHIx,.TRUE.)             ! dK/dx
-        call GraPhi(Kin % n,2,PHIy,.TRUE.)             ! dK/dy
-        call GraPhi(Kin % n,3,PHIz,.TRUE.)             ! dK/dz
-        call CalcTurb(6, Kin, PHIx, PHIy, PHIz, n) ! dK/dx, dK/dy, dK/dz
+        call GraPhi(grid, Kin % n,1,phix,.TRUE.)             ! dK/dx
+        call GraPhi(grid, Kin % n,2,phiy,.TRUE.)             ! dK/dy
+        call GraPhi(grid, Kin % n,3,phiz,.TRUE.)             ! dK/dz
+        call Compute_Turbulent(grid, 6,   &
+                               Kin, phix, phiy, phiz, n) ! dK/dx, dK/dy, dK/dz
 
-        call GraPhi(Eps % n,1,PHIx,.TRUE.)             ! dEps/dx
-        call GraPhi(Eps % n,2,PHIy,.TRUE.)             ! dEps/dy
-        call GraPhi(Eps % n,3,PHIz,.TRUE.)             ! dEps/dz
-        call CalcTurb(7, Eps, PHIx, PHIy, PHIz, n)
+        call GraPhi(grid, Eps % n,1,phix,.TRUE.)             ! dEps/dx
+        call GraPhi(grid, Eps % n,2,phiy,.TRUE.)             ! dEps/dy
+        call GraPhi(grid, Eps % n,3,phiz,.TRUE.)             ! dEps/dz
+        call Compute_Turbulent(grid, 7, Eps, phix, phiy, phiz, n)
          
-!---- Update the values at boundaries
-        call CalBou
+        ! Update the values at boundaries
+        call Update_Boundary_Values(grid)
 
-        call GraPhi(f22 % n,1,PHIx,.TRUE.)             ! df22/dx
-        call GraPhi(f22 % n,2,PHIy,.TRUE.)             ! df22/dy
-        call GraPhi(f22 % n,3,PHIz,.TRUE.)             ! df22/dz
-        call CalcF22(8, f22, PHIx, PHIy, PHIz, n) 
+        call GraPhi(grid, f22 % n,1,phix,.TRUE.)             ! df22/dx
+        call GraPhi(grid, f22 % n,2,phiy,.TRUE.)             ! df22/dy
+        call GraPhi(grid, f22 % n,3,phiz,.TRUE.)             ! df22/dz
+        call Compute_F22(grid, 8, f22, phix, phiy, phiz, n) 
 
-        call GraPhi(v_2 % n,1,PHIx,.TRUE.)             ! dv_2/dx
-        call GraPhi(v_2 % n,2,PHIy,.TRUE.)             ! dv_2/dy
-        call GraPhi(v_2 % n,3,PHIz,.TRUE.)             ! dv_2/dz
-        call CalcTurb(9, v_2, PHIx, PHIy, PHIz, n)  
+        call GraPhi(grid, v_2 % n,1,phix,.TRUE.)             ! dv_2/dx
+        call GraPhi(grid, v_2 % n,2,phiy,.TRUE.)             ! dv_2/dy
+        call GraPhi(grid, v_2 % n,3,phiz,.TRUE.)             ! dv_2/dz
+        call Compute_Turbulent(grid, 9, v_2, phix, phiy, phiz, n)  
 
-        call CalcVISt_KepsV2F()
+        call CalcVISt_KepsV2F(grid)
       end if                 
 
       if(SIMULA==EBM.or.SIMULA==HJ) then
 
-!---- Update the values at boundaries
-        call CalBou
+        ! Update the values at boundaries
+        call Update_Boundary_Values(grid)
 
-        if(SIMULA==EBM) call Scale()  
+        if(SIMULA==EBM) call Time_And_Length_Scale(grid)
 
-        call GraPhi(U % n, 1, Ux,.TRUE.)    ! dU/dx
-        call GraPhi(U % n, 2, Uy,.TRUE.)    ! dU/dy
-        call GraPhi(U % n, 3, Uz,.TRUE.)    ! dU/dz
+        call GraPhi(grid, U % n, 1, Ux,.TRUE.)    ! dU/dx
+        call GraPhi(grid, U % n, 2, Uy,.TRUE.)    ! dU/dy
+        call GraPhi(grid, U % n, 3, Uz,.TRUE.)    ! dU/dz
  
-        call GraPhi(V % n, 1, Vx,.TRUE.)    ! dV/dx
-        call GraPhi(V % n, 2, Vy,.TRUE.)    ! dV/dy
-        call GraPhi(V % n, 3, Vz,.TRUE.)    ! dV/dz
+        call GraPhi(grid, V % n, 1, Vx,.TRUE.)    ! dV/dx
+        call GraPhi(grid, V % n, 2, Vy,.TRUE.)    ! dV/dy
+        call GraPhi(grid, V % n, 3, Vz,.TRUE.)    ! dV/dz
 
-        call GraPhi(W % n, 1, Wx,.TRUE.)    ! dW/dx
-        call GraPhi(W % n, 2, Wy,.TRUE.)    ! dW/dy 
-        call GraPhi(W % n, 3, Wz,.TRUE.)    ! dW/dz
+        call GraPhi(grid, W % n, 1, Wx,.TRUE.)    ! dW/dx
+        call GraPhi(grid, W % n, 2, Wy,.TRUE.)    ! dW/dy 
+        call GraPhi(grid, W % n, 3, Wz,.TRUE.)    ! dW/dz
 
-        call GraPhi(uu % n,1,PHIx,.TRUE.)             ! dK/dx
-        call GraPhi(uu % n,2,PHIy,.TRUE.)             ! dK/dy
-        call GraPhi(uu % n,3,PHIz,.TRUE.)             ! dK/dz
-        call CalcStresses(6, uu, PHIx, PHIy, PHIz) ! dK/dx, dK/dy, dK/dz
+        call GraPhi(grid, uu % n,1,phix,.TRUE.)             ! dK/dx
+        call GraPhi(grid, uu % n,2,phiy,.TRUE.)             ! dK/dy
+        call GraPhi(grid, uu % n,3,phiz,.TRUE.)             ! dK/dz
+        call Compute_Stresses(grid, 6, uu, phix, phiy, phiz) ! dK/dx, dK/dy, dK/dz
 
-        call GraPhi(vv % n,1,PHIx,.TRUE.)             ! dEps/dx
-        call GraPhi(vv % n,2,PHIy,.TRUE.)             ! dEps/dy
-        call GraPhi(vv % n,3,PHIz,.TRUE.)             ! dEps/dz
-        call CalcStresses(7, vv, PHIx, PHIy, PHIz)
+        call GraPhi(grid, vv % n,1,phix,.TRUE.)             ! dEps/dx
+        call GraPhi(grid, vv % n,2,phiy,.TRUE.)             ! dEps/dy
+        call GraPhi(grid, vv % n,3,phiz,.TRUE.)             ! dEps/dz
+        call Compute_Stresses(grid, 7, vv, phix, phiy, phiz)
          
-        call GraPhi(ww % n,1,PHIx,.TRUE.)             ! df22/dx
-        call GraPhi(ww % n,2,PHIy,.TRUE.)             ! df22/dy
-        call GraPhi(ww % n,3,PHIz,.TRUE.)             ! df22/dz
-        call CalcStresses(8, ww, PHIx, PHIy, PHIz) 
+        call GraPhi(grid, ww % n,1,phix,.TRUE.)             ! df22/dx
+        call GraPhi(grid, ww % n,2,phiy,.TRUE.)             ! df22/dy
+        call GraPhi(grid, ww % n,3,phiz,.TRUE.)             ! df22/dz
+        call Compute_Stresses(grid, 8, ww, phix, phiy, phiz) 
 
 
-        call GraPhi(uv % n,1,PHIx,.TRUE.)             ! dv_2/dx
-        call GraPhi(uv % n,2,PHIy,.TRUE.)             ! dv_2/dy
-        call GraPhi(uv % n,3,PHIz,.TRUE.)             ! dv_2/dz
-        call CalcStresses(9, uv, PHIx, PHIy, PHIz)  
+        call GraPhi(grid, uv % n,1,phix,.TRUE.)             ! dv_2/dx
+        call GraPhi(grid, uv % n,2,phiy,.TRUE.)             ! dv_2/dy
+        call GraPhi(grid, uv % n,3,phiz,.TRUE.)             ! dv_2/dz
+        call Compute_Stresses(grid, 9, uv, phix, phiy, phiz)  
 
-        call GraPhi(uw % n,1,PHIx,.TRUE.)             ! df22/dx
-        call GraPhi(uw % n,2,PHIy,.TRUE.)             ! df22/dy
-        call GraPhi(uw % n,3,PHIz,.TRUE.)             ! df22/dz
-        call CalcStresses(10, uw, PHIx, PHIy, PHIz) 
+        call GraPhi(grid, uw % n,1,phix,.TRUE.)             ! df22/dx
+        call GraPhi(grid, uw % n,2,phiy,.TRUE.)             ! df22/dy
+        call GraPhi(grid, uw % n,3,phiz,.TRUE.)             ! df22/dz
+        call Compute_Stresses(grid, 10, uw, phix, phiy, phiz) 
 
-        call GraPhi(vw % n,1,PHIx,.TRUE.)             ! df22/dx
-        call GraPhi(vw % n,2,PHIy,.TRUE.)             ! df22/dy
-        call GraPhi(vw % n,3,PHIz,.TRUE.)             ! df22/dz
-        call CalcStresses(11, vw, PHIx, PHIy, PHIz) 
+        call GraPhi(grid, vw % n,1,phix,.TRUE.)             ! df22/dx
+        call GraPhi(grid, vw % n,2,phiy,.TRUE.)             ! df22/dy
+        call GraPhi(grid, vw % n,3,phiz,.TRUE.)             ! df22/dz
+        call Compute_Stresses(grid, 11, vw, phix, phiy, phiz) 
 
         if(SIMULA==EBM) then
-          call GraPhi(f22 % n,1,PHIx,.TRUE.)             ! df22/dx
-          call GraPhi(f22 % n,2,PHIy,.TRUE.)             ! df22/dy
-          call GraPhi(f22 % n,3,PHIz,.TRUE.)             ! df22/dz
-          call CalcF22(12, f22, PHIx, PHIy, PHIz) 
+          call GraPhi(grid, f22 % n,1,phix,.TRUE.)             ! df22/dx
+          call GraPhi(grid, f22 % n,2,phiy,.TRUE.)             ! df22/dy
+          call GraPhi(grid, f22 % n,3,phiz,.TRUE.)             ! df22/dz
+          call Compute_F22(grid, 12, f22, phix, phiy, phiz) 
         end if 
 
+<<<<<<< HEAD
         call GraPhi(Eps % n,1,PHIx,.TRUE.)             ! df22/dx
         call GraPhi(Eps % n,2,PHIy,.TRUE.)             ! df22/dy
         call GraPhi(Eps % n,3,PHIz,.TRUE.)             ! df22/dz
         call CalcStresses(13, Eps, PHIx, PHIy, PHIz) 
 
         call CalcVISt_RSM
+=======
+        call GraPhi(grid, Eps % n,1,phix,.TRUE.)             ! df22/dx
+        call GraPhi(grid, Eps % n,2,phiy,.TRUE.)             ! df22/dy
+        call GraPhi(grid, Eps % n,3,phiz,.TRUE.)             ! df22/dz
+        call Compute_Stresses(grid, 13, Eps, phix, phiy, phiz) 
+>>>>>>> 77a0dfd04f33aeb0ac6ea1ace412064246261650
       end if                 
 
       if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA) then
-        call CalcShear(U % n, V % n, W % n, Shear)
-        call CalcVort(U % n, V % n, W % n, Vort)
+        call CalcShear(grid, U % n, V % n, W % n, Shear)
+        call CalcVort(grid, U % n, V % n, W % n, Vort)
 
-!---- Update the values at boundaries
-        call CalBou
+        ! Update the values at boundaries
+        call Update_Boundary_Values(grid)
 
-        call GraPhi(VIS % n,1,PHIx,.TRUE.)             ! dVIS/dx
-        call GraPhi(VIS % n,2,PHIy,.TRUE.)             ! dVIS/dy
-        call GraPhi(VIS % n,3,PHIz,.TRUE.)             ! dVIS/dz
-        call CalcTurb(6, VIS, PHIx, PHIy, PHIz, n)        ! dVIS/dx, dVIS/dy, dVIS/dz
-        call CalcVISt_SPA_ALL(n)
+        call GraPhi(grid, VIS % n,1,phix,.TRUE.)             ! dVIS/dx
+        call GraPhi(grid, VIS % n,2,phiy,.TRUE.)             ! dVIS/dy
+        call GraPhi(grid, VIS % n,3,phiz,.TRUE.)             ! dVIS/dz
+        call Compute_Turbulent(grid, 6,  &
+                               VIS, phix, phiy, phiz, n)  ! dVIS/dx, dVIS/dy, dVIS/dz
+        call CalcVISt_SPA_ALL(grid, n)
       end if
 
-!---- Update the values at boundaries                         <
-      call CalBou()
+      ! Update the values at boundaries
+      call Update_Boundary_Values(grid)
 
       write(LineRes(2:5),'(I4)') ini
 
-!----- End of the current iteration 
+      ! End of the current iteration 
       if(Cm(1) /= 0) write(*,'(A100)') LineRes     
 
       if(ALGOR == SIMPLE) then
@@ -507,17 +533,17 @@
       endif
     end do 
 
-!----- End of the current time step
+    ! End of the current time step
 4   if(Cm(1) /= 0) then
       write(*,'(A138)') LinMon0
-      do m=1,Nmat
+      do m=1,grid % n_materials
         if(m .eq.1) write(*,'(A138)') LinMon1
         if(m .eq.2) write(*,'(A138)') LinMon2
         if(m .eq.3) write(*,'(A138)') LinMon3
       end do
     end if
 
-!----- Write the values in monitoring points
+    ! Write the values in monitoring points
     do i=1,Nmon
       if(Cm(i)  > 0) then                               
         if(HOT==NO) then
@@ -531,11 +557,11 @@
     end do  
 
    if(PIPE==YES.or.JET==YES) then 
-     call CalcMn_Cylind(Nstat, n)  !  calculate mean values 
+     call CalcMn_Cylind(grid, Nstat, n)  !  calculate mean values 
 !BOJAN     if(BUDG == YES.and.HOT==YES) call CalcBudgets_cylind(Nbudg, n)
 !BOJAN     if(BUDG == YES.and.HOT==NO)  call CalcBudgets_cylind(Nbudg, n)
    else
-     call CalcMn(Nstat, n)  !  calculate mean values 
+     call Compute_Mean(grid, Nstat, n)  !  calculate mean values 
    end if
 
 !-----------------------------------------------------!  
@@ -562,13 +588,7 @@
 !   Pdrop = dFlux/dt/A                                !
 !                                                     !
 !-----------------------------------------------------!
-    do m=1,Nmat
-!BOJAN      if(SHAKE(m) == YES) then
-!BOJAN        if( n  < SHAKE_PER(m) .and. MOD(n+1,SHAKE_INT(m)) == 0 ) then 
-!BOJAN          call UserPerturb2(5.0,n,m)
-!BOJAN        endif 
-!BOJAN      endif
-
+    do m=1,grid % n_materials
       if( FLUXoX(m)  /=  0.0 ) then
         PdropX(m) = (FLUXoX(m)-FLUXx(m)) / (dt*AreaX(m)+TINY) 
       end if
@@ -580,17 +600,17 @@
       end if
     end do
 
-!---- Regular savings, each 1000 time steps            
+    ! Regular backup savings, each 1000 time steps            
     if(mod(n,1000) == 0) then                                
       Ndtt_temp = Ndtt
       Ndtt      = n
-      namSav = 'SAVExxxxxx'
-      write(namSav(5:10),'(I6.6)') n
-      call Save_Restart(namSav)                          
+      name_save = 'savexxxxxx'
+      write(name_save(5:10),'(I6.6)') n
+      call Save_Restart(grid, name_save)                          
       Ndtt = Ndtt_temp
     end if   
 
-!---- Is user forcing it to stop ?                    
+    ! Is user forcing it to stop ?                    
     open(1, file='exit_now', err=7, status='old') 
       call Wait
       if(this_proc < 2) close(1, status='delete')
@@ -598,23 +618,19 @@
       goto 6 
 7   continue 
 
-!---- Is user forcing it to save ?                    
+    ! Is user forcing it to save ?                    
     open(1, file='save_now', err=8, status='old') 
       call Wait
       if(this_proc < 2) close(1, status='delete')
       Ndtt_temp = Ndtt
       Ndtt      = n
-      namSav = 'SAVExxxxxx'
-      write(namSav(5:10),'(I6.6)') n
-      call Save_Restart(namSav)                          
-!      call Save_Dat_Results(namSav)
-!      call Save_Gmv_Results(namSav)
-      call SavParView(this_proc,NC,namSav, Nstat, n)
-!BOJAN      if(CHANNEL == YES) then
-!BOJAN  call UserCutLines_channel(zc)
-!BOJAN      else if(PIPE == YES) then
-!BOJAN  call UserCutLines_pipe
-!BOJAN      end if
+      name_save = 'savexxxxxx'
+      write(name_save(5:10),'(I6.6)') n
+      call Save_Restart    (grid, name_save)                          
+      call Save_Gmv_Results(grid, name_save)
+      call Save_Dat_Results(grid, name_save)
+      call User_Save_Results(grid, n)  ! write results in user-customized format
+      call SavParView(this_proc,grid % n_cells,name_save, Nstat, n)
       Ndtt = Ndtt_temp
 8   continue 
 
@@ -625,60 +641,40 @@
     close(9)
   end if
 
-5 Ndtt = n - 1                                 
+  Ndtt = n - 1                                 
 
-!--------------------------!
-!     Save the results     !
-!--------------------------!
-6 call Save_Restart                           
-  call Save_Ini
-  call Save_Gmv_Results ! Write results in GMV format. 
-!  call Save_Dat_Results ! Write results in FLUENT dat format. 
-  namSav = 'SAVExxxxxx'
-  write(namSav(5:10),'(I6.6)') n
-  call SavParView(this_proc,NC,namSav, Nstat, n)
+  !----------------------!
+  !   Save the results   !
+  !----------------------!
+6 call Save_Restart     (grid)
+  call Save_Ini         (grid)
+  call Save_Gmv_Results (grid)     ! write results in GMV format. 
+  call Save_Dat_Results (grid)     ! write results in FLUENT dat format. 
+  call User_Save_Results(grid, n)  ! write results in user-customized format
+  name_save = 'savexxxxxx'
+  write(name_save(5:10),'(I6.6)') n
+  call SavParView(this_proc, grid % n_cells, name_save, Nstat, n)
   call Wait
 
-!  call UserCutLines_Point_Cart
+  if(this_proc  < 2) write(*,*) '# Exiting !'
 
-!---- Create a cut line with normalise a values
-!  if(CHANNEL == YES) then
-!    call UserCutLines_channel(zc)
-!  else if(PIPE == YES) then
-!    call UserCutLines_pipe
-!    call UserCutLines_annulus
-!  else if(JET == YES) then
-!    call UserCutLines_Nu
-!   call UserCutLines_jet
-!    call UserProbe1D_Nusselt_jet
-!    call UserCutLines_Horiz_RANS
-!  else if(BACKSTEP == YES) then
-!    call UserBackstep        
-!    call UserBackstep_Y        
-!  else if(RB_CONV == YES) then
-!    call UserCutLines_RB_conv
-!    call UserCutLines_Point_Cart
-!  end if
- 
-3 if(this_proc  < 2) write(*,*) '# Exiting !'
-
-!////////////////////////////////!
-!     Close the command file     !
-!////////////////////////////////!
+  !----------------------------!
+  !   Close the command file   !
+  !----------------------------!
   close(CMN_FILE)                
 
-!////////////////////////////////////!
-!     Close the monitoring files     !
-!////////////////////////////////////!
+  !--------------------------------!
+  !   Close the monitoring files   !
+  !--------------------------------!
   do n=1,Nmon
     if(Cm(n)  > 0) close(10+n)
   end do
 
-!////////////////////////////////!
-!     End parallel execution     !
-!////////////////////////////////!
+  !----------------------------!
+  !   End parallel execution   !
+  !----------------------------!
   call endpar            
   call cpu_time(finish)
   if(this_proc < 2) print '("Time = ",f14.3," seconds.")',finish-start
 
-  end program Processor  
+  end program

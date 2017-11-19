@@ -12,4 +12,4 @@
 
   call MPI_FINALIZE(ERROR)
 
-  end subroutine EndPar
+  end subroutine

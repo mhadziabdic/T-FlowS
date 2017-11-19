@@ -10,6 +10,7 @@
   use les_mod
   use pro_mod
   use rans_mod
+  use Tokenizer_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
@@ -17,22 +18,14 @@
   character :: storename*80, namTem*80, namXML*80
   character :: namAut*(*)
 !-------------------------------[Locals]-------------------------------!
-  integer   :: c,  c1,  c2,  n, s, contauai
-  character :: namOut*80, Line*300, stringadummy*100, nameIn*80
+  integer   :: c, n
+  character :: name_out*80, stringadummy*100, nameIn*80
   real,allocatable :: x(:), y(:), z(:)    ! self evident
   integer,allocatable :: connessione(:,:) ! connection
   integer :: celleconnessione
-  integer :: NNsub, NmaterBC, NNsub_new, NCsub_new
+  integer :: NNsub, NCsub_new
   integer :: off_set_connection
   integer :: i
-  real,allocatable :: vettore (:)         !local vector for postprox
-  real,allocatable :: vettore2 (:)        !local vector for postprox
-  real,allocatable :: vettore3 (:)        !local vector for postprox
-  real    :: Nx, Ny, Nz
-  real    :: Cs, R, Cmu_mod
-  real    :: Stot, lf, UtauL, Uff
-  real    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus
-  real    :: frictionv(NC)
 !======================================================================!
 
   namTem = name
@@ -42,36 +35,36 @@
 !     reads GMV file      !
 !                         !
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
-  call Name_File(sub, namOut, '.gmv', len_trim('.gmv'))
-  open(9, file=namOut)
+  call Name_File(sub, name_out, '.gmv', len_trim('.gmv'))
+  open(9, file=name_out)
   if (this_proc <2) then
-    write(*,*) 'Now reading the file: ', namOut
+    write(*,*) 'Now reading the file: ', name_out
   end if
 !---------------!
 !     start     !
 !---------------!
-  call ReadC(9,inp,tn,ts,te)  !read 'gmvinput ascii' line
+  call Tokenizer_Mod_Read_Line(9)  !read 'gmvinput ascii' line
 !---------------!
 !     nodes     !
 !---------------!
-  call ReadC(9,inp,tn,ts,te)
-  read(inp(ts(1):te(1)),*) stringadummy
-  read(inp(ts(2):te(2)),*) NNsub
+  call Tokenizer_Mod_Read_Line(9)
+  read(line % tokens(1),*) stringadummy
+  read(line % tokens(2),*) NNsub
   allocate(x(NNsub)); x=0.
   allocate(y(NNsub)); y=0.
   allocate(z(NNsub)); z=0.
   
   do n=1,NNsub
-    call ReadC(9,inp,tn,ts,te)                           
-    read(inp(ts(1):te(1)),*) x(n)
+    call Tokenizer_Mod_Read_Line(9)                           
+    read(line % tokens(1),*) x(n)
   end do
   do n=1,NNsub
-    call ReadC(9,inp,tn,ts,te)                           
-    read(inp(ts(1):te(1)),*) y(n)
+    call Tokenizer_Mod_Read_Line(9)                           
+    read(line % tokens(1),*) y(n)
   end do
   do n=1,NNsub
-    call ReadC(9,inp,tn,ts,te)                           
-    read(inp(ts(1):te(1)),*) z(n)
+    call Tokenizer_Mod_Read_Line(9)                           
+    read(line % tokens(1),*) z(n)
   end do
 
 !----------------------!
@@ -81,9 +74,9 @@
   celleconnessione = 0
   off_set_connection = 0
 
-  call ReadC(9,inp,tn,ts,te)                           
-  read(inp(ts(1):te(1)),*) stringadummy
-  read(inp(ts(2):te(2)),*) NCsub_new
+  call Tokenizer_Mod_Read_Line(9)                           
+  read(line % tokens(1),*) stringadummy
+  read(line % tokens(2),*) NCsub_new
 
   if (NCsub_new.ne.NCsub) then 
      write(*,*) 'number of cells read and processed is different, exiting!'
@@ -93,9 +86,9 @@
   allocate(connessione(NCsub,9)); connessione=0
 
   do n=1,NCsub
-    call ReadC(9,inp,tn,ts,te)                           
-    read(inp(ts(1):te(1)),*) stringadummy
-    read(inp(ts(2):te(2)),*) off_set_connection
+    call Tokenizer_Mod_Read_Line(9)                           
+    read(line % tokens(1),*) stringadummy
+    read(line % tokens(2),*) off_set_connection
     if (n==1) then 
        connessione(n,1) = off_set_connection
     else
@@ -104,9 +97,9 @@
     
     celleconnessione = celleconnessione + off_set_connection
 
-    call ReadC(9,inp,tn,ts,te)
+    call Tokenizer_Mod_Read_Line(9)
     do c=1,off_set_connection
-      read(inp(ts(c):te(c)),*) connessione(n,c+1)
+      read(line % tokens(c),*) connessione(n,c+1)
     end do
   end do
 
@@ -342,10 +335,7 @@
     end if
   end if
 
-call wait
-
-1290 continue
-
+  call wait
 
   write(9,'(A17)') '      </CellData>'
   
@@ -492,4 +482,4 @@ call wait
 
   return
 
-  end subroutine SavParView
+  end subroutine

@@ -1,14 +1,17 @@
 !==============================================================================!
-  subroutine Save_Dat_Results(name_aut)
+  subroutine Save_Dat_Results(grid, name_aut)
 !------------------------------------------------------------------------------!
-! Writes: name.dat                                                             !
+!   Writes: name.dat                                                           !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
   use par_mod, only: this_proc
   use rans_mod
+  use Tokenizer_Mod
+  use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: c,  c2,  n, s, Nadd
   integer             :: Nfac(10), NtotFac
@@ -26,8 +29,8 @@
   else
     if(this_proc  < 2)  &
       write(*,*) '# Input result file name [skip cancels]:'
-    call ReadC(CMN_FILE,inp,tn,ts,te)  
-    read(inp(ts(1):te(1)),'(A80)')  name
+    call Tokenizer_Mod_Read_Line(CMN_FILE)  
+    read(line % tokens(1),'(A80)')  name
     answer=name
     call To_Upper_Case(answer) 
     if(answer == 'SKIP') then
@@ -45,17 +48,17 @@
   !----------------------!
   call Name_File(this_proc, name_out, '.dat', len_trim('.dat'))
   open(9, file=name_out)
-  if(this_proc  < 2) write(*,*) '# Now creating the file:', name_out  
+  if(this_proc  < 2) write(*,*) '# Now creating the file:', trim(name_out)
 
-    call GraPhi(U % n, 1, Ux,.true.)    ! dU/dx
-    call GraPhi(V % n, 1, Vx,.true.)    ! dU/dx
-    call GraPhi(W % n, 1, Wx,.true.)    ! dU/dx
-    call GraPhi(U % n, 2, Uy,.true.)    ! dU/dx
-    call GraPhi(V % n, 2, Vy,.true.)    ! dU/dx
-    call GraPhi(W % n, 2, Wy,.true.)    ! dU/dx
-    call GraPhi(U % n, 3, Uz,.true.)    ! dU/dx
-    call GraPhi(V % n, 3, Vz,.true.)    ! dU/dx
-    call GraPhi(W % n, 3, Wz,.true.)    ! dU/dx
+    call GraPhi(grid, U % n, 1, Ux,.true.)    ! dU/dx
+    call GraPhi(grid, V % n, 1, Vx,.true.)    ! dU/dx
+    call GraPhi(grid, W % n, 1, Wx,.true.)    ! dU/dx
+    call GraPhi(grid, U % n, 2, Uy,.true.)    ! dU/dx
+    call GraPhi(grid, V % n, 2, Vy,.true.)    ! dU/dx
+    call GraPhi(grid, W % n, 2, Wy,.true.)    ! dU/dx
+    call GraPhi(grid, U % n, 3, Uz,.true.)    ! dU/dx
+    call GraPhi(grid, V % n, 3, Vz,.true.)    ! dU/dx
+    call GraPhi(grid, W % n, 3, Wz,.true.)    ! dU/dx
 
   !-----------!
   !   Start   !
@@ -86,8 +89,8 @@
   !   Velocities   !
   !----------------!
   write(9,'(A16)') '(0 "velocities")'
-  write(9,'(A16,I9,I9,A2)') '(300 (2 1 3 0 0 ',  1, NC, ')(' 
-  do c=1,NC
+  write(9,'(A16,I9,I9,A2)') '(300 (2 1 3 0 0 ',  1, grid % n_cells, ')(' 
+  do c = 1, grid % n_cells
     write(9,'(3F14.6)') U % n(c), V % n(c), W % n(c) 
   end do  
   write(9,'(A2)') '))'
@@ -108,8 +111,8 @@
   !   Other scalars   !
   !-------------------!
   if(TGV == YES) then
-    do c =  1, NC
-      R   = R + (U % n(c) - (-sin(xc(c))*cos(yc(c))*exp(-2.0*VISc*Time)))**2.0
+    do c = 1, grid % n_cells
+      R   = R + (U % n(c) - (-sin(grid % xc(c))*cos(grid % yc(c))*exp(-2.0*VISc*Time)))**2
       RR  = RR + U % n(c)*U % n(c)
       PP % n(c) = sqrt(R/RR) 
     end do
@@ -253,8 +256,8 @@
   NtotFac = 0
   do n=1,10   ! Browse through boundary condition types
     Nfac(n) = 0
-    do s=1,NS   ! Count the faces with boundary condition "n"
-      c2 = SideC(2,s)
+    do s = 1, grid % n_faces   ! Count the faces with boundary condition "n"
+      c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(BCmark(c2) == n) Nfac(n)=Nfac(n)+1
       end if
@@ -265,7 +268,7 @@
     NtotFac = NtotFac+Nfac(n)
   end do   ! n -> boundary condition types
 
-  write(9,'(I8)') NC
+  write(9,'(I8)') grid % n_cells
   do n=1,10
     write(9,'(I8)') Nfac(n)
   end do
@@ -275,4 +278,4 @@
   ! Restore the name
   name = store_name  
 
-  end subroutine Save_Dat_Results
+  end subroutine

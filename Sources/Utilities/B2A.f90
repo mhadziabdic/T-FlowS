@@ -58,7 +58,6 @@
 
 !///// sides
   allocate (SideC(0:2,NS))
-  read(9) (SideC(0,s), s=1,NS)
   read(9) (SideC(1,s), s=1,NS)
   read(9) (SideC(2,s), s=1,NS)
 

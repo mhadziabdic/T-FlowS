@@ -24,4 +24,4 @@
 
   deallocate(work)
 
-  end subroutine RNSort
+  end subroutine

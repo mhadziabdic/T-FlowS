@@ -1,21 +1,24 @@
 !==============================================================================!
-  subroutine Save_Eps_Cut(face_g_dx,face_g_dy,dir)
+  subroutine Save_Eps_Cut(grid, face_g_dx, face_g_dy, dir)
 !------------------------------------------------------------------------------!
 !   Writes grid in encapsulated postscript format.                             !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use allp_mod
+  use all_mod, only: name
   use gen_mod
+  use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  real      :: xg(grid % max_n_nodes),  &
-               yg(grid % max_n_nodes),  &
-               zg(grid % max_n_nodes)
-  real      :: face_g_dx(grid % max_n_faces),  &
-               face_g_dy(grid % max_n_faces) 
-  character :: dir
+  type(Grid_Type) :: grid
+  real            :: xg(grid % max_n_nodes),  &  ! if I recall correctly (BN)
+                     yg(grid % max_n_nodes),  &  ! these were supposed to be
+                     zg(grid % max_n_nodes)      ! general coordnates
+  real            :: face_g_dx(grid % max_n_faces),  &
+                     face_g_dy(grid % max_n_faces) 
+  character       :: dir
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c1, c2, count, lw
   character(len=80) :: name_eps, answer
@@ -28,8 +31,8 @@
   write(*,'(A39)')        ' #-----------------------------------------------'
 
   write(*,*) '# Enter the ',dir,' coordinate for cutting or type skip to exit: '
-  call ReadC(5,inp,tn,ts,te)
-  read(inp, *) answer
+  call Tokenizer_Mod_Read_Line(5)
+  read(line % whole, *) answer
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return  
   read(answer, *) z0
@@ -44,29 +47,29 @@
   name_eps = name
   name_eps(len_trim(name)+1:len_trim(name)+6) = '. .eps'
   name_eps(len_trim(name)+2:len_trim(name)+2) = dir
-  write(*, *) '# Now creating the file:', name_eps
+  write(*, *) '# Now creating the file:', trim(name_eps)
 
   if(dir == 'x') then
-    xmax=maxval(grid % yn(1:NN))
-    ymax=maxval(grid % zn(1:NN))
-    zmax=maxval(grid % xn(1:NN))
-    xmin=minval(grid % yn(1:NN))
-    ymin=minval(grid % zn(1:NN))
-    zmin=minval(grid % xn(1:NN))
+    xmax=maxval(grid % yn(1:grid % n_nodes))
+    ymax=maxval(grid % zn(1:grid % n_nodes))
+    zmax=maxval(grid % xn(1:grid % n_nodes))
+    xmin=minval(grid % yn(1:grid % n_nodes))
+    ymin=minval(grid % zn(1:grid % n_nodes))
+    zmin=minval(grid % xn(1:grid % n_nodes))
   else if(dir == 'y') then
-    xmax=maxval(grid % zn(1:NN))
-    ymax=maxval(grid % xn(1:NN))
-    zmax=maxval(grid % yn(1:NN))
-    xmin=minval(grid % zn(1:NN))
-    ymin=minval(grid % xn(1:NN))
-    zmin=minval(grid % yn(1:NN))
+    xmax=maxval(grid % zn(1:grid % n_nodes))
+    ymax=maxval(grid % xn(1:grid % n_nodes))
+    zmax=maxval(grid % yn(1:grid % n_nodes))
+    xmin=minval(grid % zn(1:grid % n_nodes))
+    ymin=minval(grid % xn(1:grid % n_nodes))
+    zmin=minval(grid % yn(1:grid % n_nodes))
   else if(dir == 'z') then
-    xmax=maxval(grid % xn(1:NN))
-    ymax=maxval(grid % yn(1:NN))
-    zmax=maxval(grid % zn(1:NN))
-    xmin=minval(grid % xn(1:NN))
-    ymin=minval(grid % yn(1:NN))
-    zmin=minval(grid % zn(1:NN))
+    xmax=maxval(grid % xn(1:grid % n_nodes))
+    ymax=maxval(grid % yn(1:grid % n_nodes))
+    zmax=maxval(grid % zn(1:grid % n_nodes))
+    xmin=minval(grid % xn(1:grid % n_nodes))
+    ymin=minval(grid % yn(1:grid % n_nodes))
+    zmin=minval(grid % zn(1:grid % n_nodes))
   end if
 
   sclf = 100000.0/max((xmax-xmin),(ymax-ymin))
@@ -97,9 +100,9 @@
   write(9, '(A24)') '% Scale:                '
   write(9, '(2F10.6,A4)') sclp,sclp, ' sc '
 
-  do s=1,NS
-    c1 = SideC(1,s)
-    c2 = SideC(2,s)
+  do s = 1, grid % n_faces
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
 
     x1 = xg(grid % faces_n(1,s))
     y1 = yg(grid % faces_n(1,s))
@@ -176,7 +179,7 @@
                 int(sclf*xin(1)),int(sclf*yin(1)), ' m ',           &
                 int(sclf*xin(2)),int(sclf*yin(2)), ' l ',           &
                 ' cp s gr' 
-      if( Dx(s) /= 0.0 .or. Dy(s) /= 0.0 ) then
+      if( grid % dx(s) /= 0.0 .or. grid % dy(s) /= 0.0 ) then
         write(9,'(A6,I2,A5,2I8,A3,2I8,A3,A8)')                      &
                   'gs np ',lw,' slw ',                              &
                   int(sclf*(xin(1)-face_g_dx(s))),                  &
@@ -212,4 +215,4 @@
 
   close(9)
 
-  end subroutine Save_Eps_Cut
+  end subroutine

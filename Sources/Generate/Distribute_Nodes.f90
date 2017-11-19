@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Distribute_Nodes(b, w, is, js, ks, ie, je, ke)
+  subroutine Distribute_Nodes(dom, grid, b, w, is, js, ks, ie, je, ke)
 !------------------------------------------------------------------------------!
 !   Places the nodes on the line defined with local block position             !
 !------------------------------------------------------------------------------!
@@ -11,6 +11,8 @@
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
+  type(Domain_Type)   :: dom
+  type(Grid_Type)     :: grid
   integer, intent(in) :: b, is, js, ks, ie, je, ke
   real,    intent(in) :: w
 !----------------------------------[Calling]-----------------------------------!
@@ -24,12 +26,12 @@
   nj = dom % blocks(b) % resolutions(2)
   nk = dom % blocks(b) % resolutions(3)   
 
-  x0   = grid % xn(NN+(ks-1)*ni*nj+(js-1)*ni+is)
-  y0   = grid % yn(NN+(ks-1)*ni*nj+(js-1)*ni+is)
-  z0   = grid % zn(NN+(ks-1)*ni*nj+(js-1)*ni+is)
-  delx = grid % xn(NN+(ke-1)*ni*nj+(je-1)*ni+ie) - x0
-  dely = grid % yn(NN+(ke-1)*ni*nj+(je-1)*ni+ie) - y0
-  delz = grid % zn(NN+(ke-1)*ni*nj+(je-1)*ni+ie) - z0
+  x0   = grid % xn(grid % n_nodes+(ks-1)*ni*nj+(js-1)*ni+is)
+  y0   = grid % yn(grid % n_nodes+(ks-1)*ni*nj+(js-1)*ni+is)
+  z0   = grid % zn(grid % n_nodes+(ks-1)*ni*nj+(js-1)*ni+is)
+  delx = grid % xn(grid % n_nodes+(ke-1)*ni*nj+(je-1)*ni+ie) - x0
+  dely = grid % yn(grid % n_nodes+(ke-1)*ni*nj+(je-1)*ni+ie) - y0
+  delz = grid % zn(grid % n_nodes+(ke-1)*ni*nj+(je-1)*ni+ie) - z0
 
   n = max( (ie-is), (je-js),  (ke-ks) )
 
@@ -45,7 +47,7 @@
           if( ie /= is ) then
             dt=1.0/(1.0*n)+(1.0*i-0.5*(1.0*n+1)) * ddt
             t=t+dt
-            node = NN + (k-1)*ni*nj + (j-1)*ni + i+1
+            node = grid % n_nodes + (k-1)*ni*nj + (j-1)*ni + i+1
             if( (i  < ie).and.(grid % xn(node) == HUGE) ) then 
               grid % xn(node) = x0 + t*delx
               grid % yn(node) = y0 + t*dely
@@ -55,7 +57,7 @@
           if( je /= js ) then
             dt=1.0/(1.0*n)+(1.0*j-0.5*(1.0*n+1)) * ddt
             t=t+dt
-            node = NN + (k-1)*ni*nj + (j-0)*ni + i 
+            node = grid % n_nodes + (k-1)*ni*nj + (j-0)*ni + i 
             if( (j  < je).and.(grid % xn(node) == HUGE) ) then 
               grid % xn(node) = x0 + t*delx
               grid % yn(node) = y0 + t*dely
@@ -65,7 +67,7 @@
           if( ke /= ks ) then
             dt=1.0/(1.0*n)+(1.0*k-0.5*(1.0*n+1)) * ddt
             t=t+dt
-            node = NN + (k-0)*ni*nj + (j-1)*ni + i 
+            node = grid % n_nodes + (k-0)*ni*nj + (j-1)*ni + i 
             if( (k  < ke).and.(grid % xn(node) == HUGE) ) then 
               grid % xn(node) = x0 + t*delx
               grid % yn(node) = y0 + t*dely
@@ -99,7 +101,7 @@
             if(case == 1) xi = -1.0*(1.0*i)/(1.0*n)
             if(case == 2) xi =  1.0 - 1.0*(1.0*i)/(1.0*n)
             if(case == 3) xi = -1.0 + 2.0*(1.0*i)/(1.0*n)
-            node = NN + (k-1)*ni*nj + (j-1)*ni + i+1
+            node = grid % n_nodes + (k-1)*ni*nj + (j-1)*ni + i+1
             if( (i  < ie).and.(grid % xn(node) == HUGE) ) then 
               if    (case == 1) then
                 grid % xn(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
@@ -126,7 +128,7 @@
             if(case == 1) xi = -1.0*(1.0*j)/(1.0*n)
             if(case == 2) xi =  1.0 - 1.0*(1.0*j)/(1.0*n)
             if(case == 3) xi = -1.0 + 2.0*(1.0*j)/(1.0*n)
-            node = NN + (k-1)*ni*nj + (j-0)*ni + i 
+            node = grid % n_nodes + (k-1)*ni*nj + (j-0)*ni + i 
             if( (j  < je).and.(grid % xn(node) == HUGE) ) then 
               if    (case == 1) then
                 grid % xn(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
@@ -153,7 +155,7 @@
             if(case == 1) xi = -1.0*(1.0*k)/(1.0*n)
             if(case == 2) xi =  1.0 - 1.0*(1.0*k)/(1.0*n)
             if(case == 3) xi = -1.0 + 2.0*(1.0*k)/(1.0*n)
-            node = NN + (k-0)*ni*nj + (j-1)*ni + i 
+            node = grid % n_nodes + (k-0)*ni*nj + (j-1)*ni + i 
             if( (k  < ke).and.(grid % xn(node) == HUGE) ) then 
               if    (case == 1) then
                 grid % xn(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
@@ -182,4 +184,4 @@
 
   endif
 
-  end subroutine Distribute_Nodes
+  end subroutine

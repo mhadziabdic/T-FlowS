@@ -13,10 +13,11 @@ rm -fR aclocal.m4 autom4te.cache/ config.log config.status configure
 rm -fR Makefile.in */Makefile.in */*/Makefile.in */*/*/Makefile.in */*/*/*/Makefile.in
 rm -fR Makefile */Makefile */*/Makefile */*/*/Makefile */*/*/*/Makefile
 rm -fR *.real */*.real */*/*.real */*/*/*.real */*/*/*/*.real
-rm -fR *.mod */*.mod */*/*.mod */*/*/*.mod */*/*/*/*.mod
 rm -fR *.o */*.o */*/*.o */*/*/*.o */*/*/*/*.o
+rm -fR Modules/*.mod
 rm -fR Process/Communication/*.f90
 rm -fR Divide/Divide
 rm -fR Generate/Generate
 rm -fR Neu2TFlowS/Neu2TFlowS
 rm -fR Process/Process
+rm -fR Utilities/.deps

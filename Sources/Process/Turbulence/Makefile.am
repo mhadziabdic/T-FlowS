@@ -5,9 +5,9 @@ libTurbulence_a_SOURCES =	\
   rans_mod.f90			\
   Compute_Sgs_Dynamic.f90	\
   Compute_Sgs_Hybrid.f90	\
-  CalcVISt_EBM.f90		\
   CalcVISt_KEps.f90		\
   CalcVISt_KEPSV2F.f90		\
+  CalcVISt_RSM.f90		\
   CalcVISt_SPA_ALL.f90		\
   CalcWALE.f90			\
   Compute_F22.f90		\

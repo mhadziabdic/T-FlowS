@@ -1,11 +1,11 @@
 !==============================================================================!
-  subroutine Grid_Mod_Allocate_Cells(grid, nb, nc)
+  subroutine Grid_Mod_Allocate_Cells(grid, nc, nb)
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: nb        ! number of cells on the bounday
   integer         :: nc        ! number of cells inside
+  integer         :: nb        ! number of cells on the bounday
 !==============================================================================!
 
   ! Store number of cells and boundary cells

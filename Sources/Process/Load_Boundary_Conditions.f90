@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Load_Boundary_Conditions(grid, in_out)
 !------------------------------------------------------------------------------!
-!   Reads: name.b                                                              !
+!   Reads: .bnd file                                                           !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
@@ -31,7 +31,7 @@
   !   Read the file with boundary conditions   !
   !--------------------------------------------!
   name_bou = name
-  name_bou(len_trim(name)+1:len_trim(name)+2) = '.b'
+  name_bou(len_trim(name)+1:len_trim(name)+4) = '.bnd'
   open(9, file=name_bou)
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_bou
 
@@ -84,6 +84,7 @@
     ! Find b.c. index
     n = -1
     do i=1, grid % n_boundary_conditions 
+write(*,*) 'grid % boundary_conditions(i) % name = ', grid % boundary_conditions(i) % name
       if(bc_name .eq. grid % boundary_conditions(i) % name) n=i      
     end do
     if( n == -1 ) then

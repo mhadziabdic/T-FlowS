@@ -39,11 +39,10 @@
   allocate(grid % materials          (dom % n_regions + 1))
   allocate(grid % boundary_conditions(dom % n_regions + 1))
 
-  ! Set the bare bones - minimal materials and boundary conditions
+  ! Set the bare bones - one material minimum, and call it "AIR"
+  n_bnd = 0
   n_mat = 1
-  n_bnd = 1
-  grid % materials(n_mat)           % name = "FLUID"
-  grid % boundary_conditions(n_bnd) % name = "WALL"
+  grid % materials(n_mat) % name = "AIR"
 
   do n = 1, dom % n_regions
 
@@ -106,7 +105,7 @@
       found = .false. 
       do r=1,n_bnd
         if( grid % boundary_conditions(r) % name ==   &
-            dom % regions(n) % name ) found = .true.
+            dom % regions(n) % name ) found = .TRUE.
       end do
       if( .not. found) then
         n_bnd = n_bnd + 1
@@ -128,7 +127,7 @@
       found = .false. 
       do r=1,n_mat
         if(grid % materials(r) % name ==  &
-           dom % regions(n) % name) found = .true.
+           dom % regions(n) % name) found = .TRUE.
       end do
       if( .not. found) then
         n_mat = n_mat + 1

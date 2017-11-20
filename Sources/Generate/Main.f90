@@ -6,7 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
-  use Domain_Mod  ! domain as defined in ".d" file.
+  use Domain_Mod  ! domain as defined in ".dom" file.
   use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none

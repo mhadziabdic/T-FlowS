@@ -32,8 +32,8 @@
   read(9) grid % n_sh
 
   ! Allocate memory =--> carefull, there is no checking!
-  call Grid_Mod_Allocate_Cells(grid, grid % n_bnd_cells, grid % n_cells) 
-  call Grid_Mod_Allocate_Faces(grid, grid % n_faces) 
+  call Grid_Mod_Allocate_Cells(grid, grid % n_cells, grid % n_bnd_cells) 
+  call Grid_Mod_Allocate_Faces(grid, grid % n_faces, grid % n_sh) 
 
   ! Number of materials and boundary conditions
   read(9) grid % n_materials

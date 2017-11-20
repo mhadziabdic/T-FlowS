@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Load_Domain(dom, grid)
 !------------------------------------------------------------------------------!
-!   Reads: name.d                                                              !
+!   Reads: .dom file                                                           !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use gen_mod
@@ -38,7 +38,7 @@
   read(line % tokens(1), *) name
 
   domain_name = name
-  domain_name(len_trim(name)+1:len_trim(name)+2) = '.d'
+  domain_name(len_trim(name)+1:len_trim(name)+4) = '.dom'
   write(*, *) '# Now reading the file: ', domain_name
   open(9, file=domain_name)
 
@@ -82,12 +82,13 @@
   call Grid_Mod_Allocate_Nodes(grid,  &
                                grid % max_n_nodes) 
 
-  call Grid_Mod_Allocate_Cells(grid,                         &
-                               grid % max_n_bnd_cells,  &
-                               grid % max_n_nodes) 
+  call Grid_Mod_Allocate_Cells(grid,                    &
+                               grid % max_n_nodes,      &
+                               grid % max_n_bnd_cells) 
 
-  call Grid_Mod_Allocate_Faces(grid,  &
-                               grid % max_n_faces) 
+  call Grid_Mod_Allocate_Faces(grid,                &
+                               grid % max_n_faces,  &
+                               0)                      ! no shadow faces
 
   ! Variables declared in gen_mod.h90:
   allocate (walln(grid % max_n_nodes))

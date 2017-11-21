@@ -1,5 +1,11 @@
 !==============================================================================!
-  subroutine Save_Cns_Geo(grid, sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub)
+  subroutine Save_Cns_Geo(grid,             &
+                          sub,              &  ! subdomain
+                          n_cells_sub,      &  ! number of cells in the sub. 
+                          n_faces_sub,      &  ! number of faces in the sub.
+                          n_bnd_cells_sub,  &  ! number of bnd. cells in sub
+                          n_buf_cells_sub,  &  ! number of buffer cells in sub.
+                          NCFsub)
 !------------------------------------------------------------------------------!
 !   Writes: name.cns, name.geo                                                 !
 !----------------------------------[Modules]-----------------------------------!
@@ -11,7 +17,8 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: sub, NCsub, NSsub, NBCsub, NBFsub, NCFsub
+  integer         :: sub, n_cells_sub, n_faces_sub, n_bnd_cells_sub,  &
+                     n_buf_cells_sub, NCFsub
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: b, c, s, n, c1, c2, count, var, subo 
   character(len=80)    :: name_out
@@ -21,15 +28,17 @@
 !   The files name.cns and name.geo should merge into one file in some         !
 !   of the future releases.                                                    !
 !                                                                              !
-!   sub    - subdomain number                                                  !
-!   NCsub  - number of cells in subdomain                                      !
-!   NSsub  - number of sides in subdomain, but without sides on buffer         !
-!   NBCsub - number of physicall boundary cells in subdomain                   !
-!   NBFsub - number of buffer boundary faces in subdomain                      !
+!   sub             - subdomain number                                         !
+!   n_cells_sub     - number of cells in subdomain                             !
+!   n_faces_sub     - number of sides in subdomain, but without sides on buffer!
+!   n_bnd_cells_sub - number of physicall boundary cells in subdomain          !
+!   n_buf_cells_sub - number of buffer boundary faces in subdomain             !
 !------------------------------------------------------------------------------!
 
-  allocate(iwork(-grid % n_bnd_cells:grid % n_faces,0:2)); iwork=0
-  allocate(work(grid % n_faces));           work=0
+  allocate(iwork(-n_buf_cells_sub-grid % n_bnd_cells:grid % n_faces,0:2)); 
+  iwork=0
+  allocate(work(grid % n_faces));           
+  work=0
 
   !----------------------!
   !                      !
@@ -43,9 +52,9 @@
   !-----------------------------------------------!
   !   Number of cells, boundary cells ans sides   !
   !-----------------------------------------------!
-  write(9) NCsub
-  write(9) NBCsub+NBFsub 
-  write(9) NSsub+NBFsub-NCFsub
+  write(9) n_cells_sub
+  write(9) n_bnd_cells_sub+n_buf_cells_sub 
+  write(9) n_faces_sub+n_buf_cells_sub-NCFsub
   write(9) grid % n_sh  ! not sure how meaningful this is
   write(9) grid % n_materials
   write(9) grid % n_boundary_conditions
@@ -86,7 +95,7 @@
   end do
 
   ! Buffer boundary cell centers
-  do s = 1, NBFsub
+  do s = 1, n_buf_cells_sub
     count=count+1
     iwork(count,1) = material(BuReIn(s))
   end do
@@ -97,9 +106,9 @@
   !-----------!
   count=0
 
-  ! NSsub physical faces
+  ! n_faces_sub physical faces
   do s = 1, grid % n_faces  ! OK, later chooses just sides with NewS
-    if( NewS(s)  > 0  .and.  NewS(s) <= NSsub ) then
+    if( NewS(s)  > 0  .and.  NewS(s) <= n_faces_sub ) then
       count=count+1 
       iwork(count,0) = 0 
       iwork(count,1) = NewC(grid % faces_c(1,s))
@@ -107,8 +116,8 @@
     end if
   end do 
 
-  ! NBFsub buffer faces (copy faces here, avoid them with BufPos) 
-  do s = 1, NBFsub
+  ! n_buf_cells_sub buffer faces (copy faces here, avoid them with BufPos) 
+  do s = 1, n_buf_cells_sub
     if(BufPos(s)  < 0) then         ! normal buffer (non-copy) 
       count=count+1 
       iwork(count,0) = BuReIn(s)    ! old cell number
@@ -126,7 +135,7 @@
   !--------------! 
   count=0          ! count goes to negative
 
-  ! NBCsub physical boundary cells
+  ! n_bnd_cells_sub physical boundary cells
   do c = -1,-grid % n_bnd_cells,-1  ! OK, later chooses just cells with NewC
     if(NewC(c) /= 0) then
       count=count-1 
@@ -135,7 +144,7 @@
       iwork(count,2) = NewC(CopyC(c)) 
       if(CopyC(c) /= 0) then
         if(proces(CopyC(c)) /= sub) then
-          do b=1,NBFsub
+          do b=1,n_buf_cells_sub
             if(BuReIn(b) == CopyC(c)) then
               write(*,*) BufPos(b) 
               write(*,*) grid % xc(CopyC(c)),  &
@@ -149,13 +158,13 @@
     end if
   end do 
 
-! ! NBFsub buffer cells
-! do c = 1, NBFsub
-!   count=count-1 
-!   ! nekad bio i: -NBCsub-c, 
-!   iwork(count,1) = BUFFER 
-!   iwork(count,2) = 0        ! hmm ? unused ? hmm ?
-! end do 
+  ! n_buf_cells_sub buffer cells
+  do c = 1, n_buf_cells_sub
+    count=count-1 
+    ! nekad bio i: -n_bnd_cells_sub-c, 
+    iwork(count,1) = BUFFER 
+    iwork(count,2) = 0        ! hmm ? unused ? hmm ?
+  end do 
 
   write(9) (iwork(c,1), c=-1,count,-1)
   write(9) (iwork(c,2), c=-1,count,-1)
@@ -218,7 +227,7 @@
     end do 
 
     ! Buffer boundary cell centers
-    do s = 1, NBFsub
+    do s = 1, n_buf_cells_sub
       count=count+1
       if(var ==  1) work(count) = grid % xc(BuReIn(s))
       if(var ==  2) work(count) = grid % yc(BuReIn(s))
@@ -267,12 +276,12 @@
   !   Faces   !
   !-----------!
 
-  ! From 1 to NSsub -> cell faces for which both cells are inside sub
+  ! From 1 to n_faces_sub -> cell faces for which both cells are inside sub
   do var=1,10
   count=0
 
   do s = 1, grid % n_faces
-    if(NewS(s)  > 0 .and. NewS(s) <= NSsub) then
+    if(NewS(s)  > 0 .and. NewS(s) <= n_faces_sub) then
       count=count+1
       if(var ==  1)  work(count) = grid % sx(s)
       if(var ==  2)  work(count) = grid % sy(s)
@@ -287,10 +296,10 @@
     end if 
   end do
 
-  ! From NSsub+1 to NSsub + NBFsub (think: are they in right order ?)
+  ! From n_faces_sub+1 to n_faces_sub + n_buf_cells_sub (think: are they in right order ?)
   do subo = 1, n_sub
     do s = 1, grid % n_faces
-      if(NewS(s)  > NSsub .and. NewS(s) <= NSsub+NBFsub) then
+      if(NewS(s)  > n_faces_sub .and. NewS(s) <= n_faces_sub+n_buf_cells_sub) then
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
         if(c2  > 0) then

@@ -495,9 +495,9 @@
         VAR1z(c) = -0.22*Tsc(c)*&
                    (uw%n(c)*phi_x(c)+vw%n(c)*phi_y(c)+ww%n(c)*phi_z(c))
       end do
-      call GraPhi(VAR1x,1,VAR2x,.TRUE.)
-      call GraPhi(VAR1y,2,VAR2y,.TRUE.)
-      call GraPhi(VAR1z,3,VAR2z,.TRUE.)
+      call GraPhi(grid, VAR1x,1,VAR2x,.TRUE.)
+      call GraPhi(grid, VAR1y,2,VAR2y,.TRUE.)
+      call GraPhi(grid, VAR1z,3,VAR2z,.TRUE.)
       do c = 1, grid % n_cells
         b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
       end do

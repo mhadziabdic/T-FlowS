@@ -73,7 +73,7 @@
   !-------------------------!
   if(MODE == LRe) then
 
-   call CalcShear(U % n, V % n, W % n, Shear)
+   call Compute_Shear_And_Vorticity(grid)
    call GraPhi(Shear,1,PHIx, .TRUE.)  ! dU/dx
    call GraPhi(Shear,2,PHIy, .TRUE.)  ! dW/dy
    call GraPhi(Shear,3,PHIz, .TRUE.)  ! dV/dz

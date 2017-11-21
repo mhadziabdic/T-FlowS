@@ -48,7 +48,6 @@
   end do
   do n = 1, grid % n_boundary_conditions
     read(9) grid % boundary_conditions(n) % name
-write(*,*) 'grid % boundary_conditions(n) % name = ', grid % boundary_conditions(n) % name
   end do
 
   ! Cell materials

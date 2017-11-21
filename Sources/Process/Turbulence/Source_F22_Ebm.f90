@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine SourceF22_EBM(grid)
+  subroutine Source_F22_Ebm(grid)
 !------------------------------------------------------------------------------!
 !   Calculate source terms in eliptic relaxation equation                      !
 !   and imposing  boundary condition forf22                                    !

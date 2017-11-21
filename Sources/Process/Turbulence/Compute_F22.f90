@@ -234,7 +234,7 @@
   !                                     !
   !-------------------------------------!
   if(SIMULA == EBM) then
-    call SourceF22_EBM
+    call Source_F22_Ebm(grid)
   else
     call Source_F22_K_Eps_V2_F(grid)
   end if

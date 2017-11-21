@@ -7,6 +7,7 @@
   use all_mod 
   use gen_mod 
   use Grid_Mod
+  use Tokenizer_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -18,7 +19,7 @@
   real :: Distance_Squared    
   real :: Tol
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: c, c1, c2, n, s, ss, cc2, c_max, nnn, hh, mm
+  integer              :: c, c1, c2, n, s, ss, cc2, c_max, nnn, hh, mm, b
   integer              :: c11, c12, c21, c22, s1, s2, bou_cen
   integer              :: new_face_1, new_face_2
   integer              :: type_per, n_per, number_sides, dir, option
@@ -35,6 +36,7 @@
   real, allocatable    :: xspr(:), yspr(:), zspr(:)
   real, allocatable    :: b_coor(:), phi_face(:)
   integer, allocatable :: b_face(:), face_copy(:)
+  character(len=80)    :: name_per
 !==============================================================================!
 !
 !                                n3 
@@ -288,18 +290,37 @@
 
   allocate(face_copy(grid % n_faces)); face_copy=0
 
+  write(*,*) 'Number of boundary conditions: ', grid % n_boundary_conditions
+
 2 n_per = 0 
   write(*,*) '#======================================================'
-  write(*,*) '# Type the periodic-boundary-condition marker number.'
-  write(*,*) '# Type 0 if there is none !'
+  write(*,*) '# Enter the periodic-boundary-condition name.'
+  write(*,*) '# Type skip if there is none !'
   write(*,*) '#------------------------------------------------------'
   write(*,*) '# (Please note that the periodic boundaries have to be' 
   write(*,*) '#  the last on the list of the boundary conditions.'
   write(*,*) '#  Their BC markers have to be larger than the markers'
   write(*,*) '#  of all the other boundary conditions.)'
   write(*,*) '#------------------------------------------------------'
-  read(*,*) type_per
-  if( type_per == 0 ) goto 1  
+  call Tokenizer_Mod_Read_Line(5)
+  name_per = line % tokens(1)
+  call To_Upper_Case(name_per)
+  if( name_per == 'SKIP' ) then
+    type_per = 0
+    goto 1  
+  end if
+  type_per = -1
+  do b=1, grid % n_boundary_conditions
+    if( name_per == grid % boundary_conditions(b) % name ) then
+      type_per = b
+    end if
+  end do
+  if( type_per == -1 ) then
+    write(*,*) '# Critical error: boundary condition ', trim(name_per),  &
+               ' can''t be found!'
+    write(*,*) '# Exiting! '
+    stop
+  end if
 
   if(option == 2) then
 
@@ -549,10 +570,10 @@
                            + p_k*(grid % zf(ss)))  &
                         / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
                     if((Det) > (per_max)) then
-                      write(*,*) '# Warning!  Potentially a bug in ...'
-                      write(*,*) '# ... Compute_Geometry, line 557'
-                      write(*,*) '# Contact developers, and if you ... '
-                      write(*,*) '# ... are one of them, fix it!'   
+!                     write(*,*) '# Warning!  Potentially a bug in ...'
+!                     write(*,*) '# ... Compute_Geometry, line 557'
+!                     write(*,*) '# Contact developers, and if you ... '
+!                     write(*,*) '# ... are one of them, fix it!'   
                       if(abs((grid % xf(ss) - grid % xf(s))) < Tol .and.  &
                          abs((grid % yf(ss) - grid % yf(s))) < Tol) then
                         mm = hh + c_max/2 

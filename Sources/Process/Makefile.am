@@ -11,7 +11,7 @@ Process_SOURCES =	 			\
   Compute_Mean.f90				\
   Compute_Pressure_Fractional.f90		\
   Compute_Pressure_Simple.f90			\
-  CalcShear.f90					\
+  Compute_Shear_And_Vorticity.f90		\
   CalcVort.f90					\
   Compute_Minimum_Maximum.f90			\
   Compute_Fluxes.f90				\

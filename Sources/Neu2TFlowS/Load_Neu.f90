@@ -7,8 +7,8 @@
   use all_mod 
   use gen_mod 
   use neu_mod 
-  use Tokenizer_Mod
   use Grid_Mod
+  use Tokenizer_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -126,7 +126,7 @@
   end if
 
   grid % n_materials = 1
-  grid % materials(1) % name = "FLUID"
+  grid % materials(1) % name = "AIR"
 
   do j = 1, n_blocks
     call Tokenizer_Mod_Read_Line(9)        ! ELEMENT GROUP

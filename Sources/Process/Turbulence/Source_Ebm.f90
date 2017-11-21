@@ -27,9 +27,9 @@
   real,allocatable :: Diss1(:)
 !==============================================================================!
 
-  call GraPhi(f22 % n, 1, VAR2x, .TRUE.)             ! df22/dx
-  call GraPhi(f22 % n, 2, VAR2y, .TRUE.)             ! df22/dy
-  call GraPhi(f22 % n, 3, VAR2z, .TRUE.)             ! df22/dz
+  call GraPhi(grid, f22 % n, 1, VAR2x, .TRUE.)             ! df22/dx
+  call GraPhi(grid, f22 % n, 2, VAR2y, .TRUE.)             ! df22/dy
+  call GraPhi(grid, f22 % n, 3, VAR2z, .TRUE.)             ! df22/dz
 
   call Time_And_Length_Scale(grid)
 

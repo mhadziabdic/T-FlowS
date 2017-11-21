@@ -35,14 +35,14 @@ CHANNEL HOT
 #---------------------------------------------
 # Restart file name (SKIP to exit)
 #---------------------------------------------
-#skip
-SAVE002000
+skip
+
 
 #=============================================
 # Number of time steps
 # Type -1 to go out without any computations. 
 #---------------------------------------------
-2001
+2000
 
 #---------------------------------------------
 # Starting time step for collecting statistics
@@ -100,8 +100,8 @@ SAVE002000
 # DES_SPA     - DES model  
 # SPA_ALL     - Spalart-Allmaras model 
 #--------------------------------------------------------------------
-#ZETA
-SPA_ALL
+ZETA
+
 #---------------------------------------------
 # Perturbation of velocity field (NO or YES) 
 # This is needed for LES or DNS of channel or
@@ -284,12 +284,12 @@ skip
 # (NAME or SKIP)
 # This option is obsolete.
 #---------------------------------------------
-skip 
+#skip 
 
 #---------------------------------------------
 # Writing the result in Fluent format
 # (NAME or SKIP)
 # This obsolete option is obsolete.
 #---------------------------------------------
-skip
+#skip
 

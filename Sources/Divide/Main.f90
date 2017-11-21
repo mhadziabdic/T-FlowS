@@ -23,11 +23,6 @@
 
   call cpu_time(start)
 
-  ! Test the precision
-  open(90,FORM='unformatted',file='Divisor.real');
-  write(90) 3.1451592
-  close(90)
-               
   call Logo
 
   write(*,'(A41)') '# Input problem name: (without extension)'

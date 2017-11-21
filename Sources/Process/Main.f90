@@ -116,18 +116,15 @@
       character, optional :: namAut*(*)
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-    subroutine CalcShear(grid, Ui, Vi, Wi, She)
+    subroutine Compute_Shear_And_Vorticity(grid)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
       use all_mod
       use pro_mod
       use les_mod
+      use rans_mod
       use Grid_Mod
       implicit none
       type(Grid_Type) :: grid
-      real            :: Ui(-grid % n_bnd_cells:grid % n_cells),  &
-                         Vi(-grid % n_bnd_cells:grid % n_cells),  &
-                         Wi(-grid % n_bnd_cells:grid % n_cells)
-      real            :: She(-grid % n_bnd_cells:grid % n_cells)
     end subroutine
   end interface
 !======================================================================!
@@ -283,12 +280,12 @@
     end if
 
     if(SIMULA==DES_SPA) then
-      call CalcShear(grid, U % n, V % n, W % n, Shear)
+      call Compute_Shear_And_Vorticity(grid)
       call CalcVort (grid, U % n, V % n, W % n, Vort)
     end if
 
     if(SIMULA == LES) then
-      call CalcShear(grid, U % n, V % n, W % n, Shear)
+      call Compute_Shear_And_Vorticity(grid)
       if(MODE == DYN) call Compute_Sgs_Dynamic(grid) 
       if(MODE == WALE) call CalcWALE(grid) 
       call Compute_Sgs(grid)
@@ -379,7 +376,7 @@
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
-        call CalcShear(grid, U % n, V % n, W % n, Shear)
+        call Compute_Shear_And_Vorticity(grid)
         call GraPhi(grid, Kin % n,1,phix,.TRUE.)             ! dK/dx
         call GraPhi(grid, Kin % n,2,phiy,.TRUE.)             ! dK/dy
         call GraPhi(grid, Kin % n,3,phiz,.TRUE.)             ! dK/dz
@@ -397,7 +394,7 @@
       if(SIMULA == K_EPS_VV .or.  &
          SIMULA == ZETA     .or.  &
          SIMULA == HYB_ZETA) then
-        call CalcShear(grid, U % n, V % n, W % n, Shear)
+        call Compute_Shear_And_Vorticity(grid)
 
         call GraPhi(grid, Kin % n,1,phix,.TRUE.)             ! dK/dx
         call GraPhi(grid, Kin % n,2,phiy,.TRUE.)             ! dK/dy
@@ -492,7 +489,7 @@
       end if                 
 
       if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA) then
-        call CalcShear(grid, U % n, V % n, W % n, Shear)
+        call Compute_Shear_And_Vorticity(grid)
         call CalcVort(grid, U % n, V % n, W % n, Vort)
 
         ! Update the values at boundaries

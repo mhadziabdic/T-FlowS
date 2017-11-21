@@ -21,7 +21,7 @@
   real    :: Cmu_mod                                        
 !==============================================================================!
 
-  call CalcShear(U % n, V % n, W % n, Shear)
+  call Compute_Shear_And_Vorticity(grid)
 
   if(SIMULA == HJ) then
     do c=1, grid % n_cells

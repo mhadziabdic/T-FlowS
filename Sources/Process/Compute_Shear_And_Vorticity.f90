@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine CalcShear(grid, ui, vi, wi, She)
+  subroutine Compute_Shear_And_Vorticity(grid)
 !------------------------------------------------------------------------------!
 !   Computes the magnitude of the shear stress.                                !
 !------------------------------------------------------------------------------!
@@ -16,44 +16,40 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  real            :: ui(-grid % n_bnd_cells:grid % n_cells),  &
-                     vi(-grid % n_bnd_cells:grid % n_cells),  &
-                     wi(-grid % n_bnd_cells:grid % n_cells)
-  real            :: She(-grid % n_bnd_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c
 !==============================================================================!
   
-  call Exchange(grid, ui)
-  call Exchange(grid, vi)
-  call Exchange(grid, wi)
+  call Exchange(grid, u % n)
+  call Exchange(grid, v % n)
+  call Exchange(grid, w % n)
 
   !---------------!
   !   SGS terms   !
   !---------------!
-  call GraPhi(grid, ui, 1, Ux, .TRUE.)  ! dU/dx
-  call GraPhi(grid, ui, 2, Uy, .TRUE.)  ! dU/dy
-  call GraPhi(grid, ui, 3, Uz, .TRUE.)  ! dU/dz
-  call GraPhi(grid, vi, 1, Vx, .TRUE.)  ! dV/dx
-  call GraPhi(grid, vi, 2, Vy, .TRUE.)  ! dV/dy
-  call GraPhi(grid, vi, 3, Vz, .TRUE.)  ! dV/dz
-  call GraPhi(grid, wi, 1, Wx, .TRUE.)  ! dW/dx
-  call GraPhi(grid, wi, 2, Wy, .TRUE.)  ! dW/dy
-  call GraPhi(grid, wi, 3, Wz, .TRUE.)  ! dW/dz
+  call GraPhi(grid, u % n, 1, Ux, .TRUE.)  ! dU/dx
+  call GraPhi(grid, u % n, 2, Uy, .TRUE.)  ! dU/dy
+  call GraPhi(grid, u % n, 3, Uz, .TRUE.)  ! dU/dz
+  call GraPhi(grid, v % n, 1, Vx, .TRUE.)  ! dV/dx
+  call GraPhi(grid, v % n, 2, Vy, .TRUE.)  ! dV/dy
+  call GraPhi(grid, v % n, 3, Vz, .TRUE.)  ! dV/dz
+  call GraPhi(grid, w % n, 1, Wx, .TRUE.)  ! dW/dx
+  call GraPhi(grid, w % n, 2, Wy, .TRUE.)  ! dW/dy
+  call GraPhi(grid, w % n, 3, Wz, .TRUE.)  ! dW/dz
 
   do c = 1, grid % n_cells
-    She(c) = Ux(c)*Ux(c) + Vy(c)*Vy(c) + Wz(c)*Wz(c) + &
-             0.5*(Vz(c) + Wy(c))*(Vz(c) + Wy(c)) + & 
-             0.5*(Uz(c) + Wx(c))*(Uz(c) + Wx(c)) + & 
-             0.5*(Vx(c) + Uy(c))*(Vx(c) + Uy(c)) 
+    Shear(c) = Ux(c)*Ux(c) + Vy(c)*Vy(c) + Wz(c)*Wz(c) +  &
+               0.5*(Vz(c) + Wy(c))*(Vz(c) + Wy(c)) +      & 
+               0.5*(Uz(c) + Wx(c))*(Uz(c) + Wx(c)) +      & 
+               0.5*(Vx(c) + Uy(c))*(Vx(c) + Uy(c)) 
 
-    Vort(c) = - (0.5*(Vz(c) - Wy(c))*(Vz(c) - Wy(c)) + &
-                 0.5*(Uz(c) - Wx(c))*(Uz(c) - Wx(c)) + &
+    Vort(c) = - (0.5*(Vz(c) - Wy(c))*(Vz(c) - Wy(c)) +   &
+                 0.5*(Uz(c) - Wx(c))*(Uz(c) - Wx(c)) +   &
                  0.5*(Vx(c) - Uy(c))*(Vx(c) - Uy(c)))
 
   end do 
 
-  She  = sqrt(2.0 * She)
-  Vort = sqrt(2.0 * abs(Vort))
+  Shear = sqrt(2.0 * Shear)
+  Vort  = sqrt(2.0 * abs(Vort))
 
   end subroutine

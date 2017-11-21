@@ -16,11 +16,6 @@
   integer           :: c, s, n
 !==============================================================================!
 
-  ! Test the precision
-  open(90,FORM='unformatted',file='Generator.real'); 
-  write(90) 3.1451592
-  close(90)
-
   ! Open with a logo
   call Logo
 

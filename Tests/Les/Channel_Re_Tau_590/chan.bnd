@@ -4,7 +4,7 @@
 %                                                             %
 %  It is organised as follows:                                %
 %                                                             %
-%    - First line:   visc, dens, conduc, capac                %
+%    - First line:   visc, dens                               %
 %    - Second line:  number of boundary conditions (Nbound)   %
 %    - All the remaining Nbound lines:                        %
 %        mark  type        U     V     W                      %
@@ -23,23 +23,15 @@
 %                                                             % 
 %-------------------------------------------------------------%
   1
-  1   FLUID    15.11e-6  1.00  21.28e-6 1.0   
-%  1   FLUID    0.001685  1.00  0.00237 1.0  
+  air   FLUID    0.0001  1.00 0.0001408 1.0
     
 %---------------------------------------------------%
 % This is the default boundary condition, allways 1 %  
 %---------------------------------------------------%
-%                        U     V     W     T      Kin     Eps    v_2     f22     TT
-  2
-  1       WALL          0.0   0.0   0.0  15.0    0.0    0.0   0.0   0.00   0.0
-  2       WALL          0.0   0.0   0.0   5.0    0.0    0.0   0.0   0.00   0.0
+%                        U        V       W    Kin        Eps       vi2 
+   1
+   wall    WALLFLUX  0.0   0.0  0.0  0.1 
 
-
-%==========%
-% SYMMETRY %
-%==========%
-
-%-- initial conditions:  U, V, W, T, Kin, Eps, v_2, f22, TT
-%-- 1 - LES , 2 - RANS
+%-- initial conditions:  U, V, W, Kin, Eps
   1
-  1   0.0   0.0   0.1   10.0   0.01  0.001  0.05  0.01  0.0
+  1   1.00   0.0     0.0   20.0

@@ -13,11 +13,6 @@
 
   call Logo
 
-  ! Test the precision
-  open(90,FORM='unformatted',file='Neu2FlowS.real');
-  write(90) 3.1451592
-  close(90)  
-
   write(*,*) '#======================================================'
   write(*,*) '# Enter the Fluent''s (*.NEU) file name (without ext.):'
   write(*,*) '#------------------------------------------------------'

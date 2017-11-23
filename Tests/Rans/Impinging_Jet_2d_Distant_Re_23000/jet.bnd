@@ -10,7 +10,7 @@
 #------------------------#
 #  No.   Type         VISc     DENc     CONs      CAPc
    1
- fluid   Fluid       1.00E-4   1.00    1.40e-4    1.0 
+  air    Fluid       1.00E-4   1.00    1.40e-4    1.0 
 
 #------------------------#
 #-- boundary condition --#

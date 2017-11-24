@@ -57,7 +57,8 @@
     else if( line % tokens(2)  ==  'SOLID') then 
       StateMat(n)=SOLID
     else 
-      if(this_proc < 2) write(*,*) 'Load_Boundary_Conditions: Unknown material state'
+      if(this_proc < 2)  &
+        write(*,*) '# Load_Boundary_Conditions: Unknown material state'
       stop  
     end if
     read(line % tokens(3),*) VISc
@@ -71,7 +72,7 @@
   !-----------------------------------------------------!
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *) grid % n_boundary_conditions
-  write(*,*) 'Found ', grid % n_boundary_conditions, ' boundary conditions'
+  write(*,*) '# Found ', grid % n_boundary_conditions, ' boundary conditions'
 
   do bc = 1, grid % n_boundary_conditions  ! number of boundary conditions
 
@@ -84,7 +85,6 @@
     ! Find b.c. index
     n = -1
     do i=1, grid % n_boundary_conditions 
-write(*,*) 'grid % boundary_conditions(i) % name = ', grid % boundary_conditions(i) % name
       if(bc_name .eq. grid % boundary_conditions(i) % name) n=i      
     end do
     if( n == -1 ) then

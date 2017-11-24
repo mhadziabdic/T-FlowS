@@ -24,21 +24,21 @@
   !    periodic part of the pressure to     !
   !    obtain divergence free velocity      !
   !- - - - - - - - - - - - - - - - - - - -  !
-  !   For SOLIDs, Px, Py and Pz are zero    !
+  !   For SOLIDs, px, py and pz are zero    !
   !   so this loop will not correct SOLID   !
   !   velocities.                           !
   !-----------------------------------------!
   if(ALGOR == FRACT) then
     do c = 1, grid % n_cells
-      U % n(c) = U % n(c) - Px(c) * grid % vol(c) / A % sav(c)
-      V % n(c) = V % n(c) - Py(c) * grid % vol(c) / A % sav(c)
-      W % n(c) = W % n(c) - Pz(c) * grid % vol(c) / A % sav(c)
+      U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
+      V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
+      W % n(c) = W % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
     end do 
   else ! algorythm is SIMPLE
     do c = 1, grid % n_cells
-      U % n(c) = U % n(c) - Px(c) * grid % vol(c) / A % sav(c)
-      V % n(c) = V % n(c) - Py(c) * grid % vol(c) / A % sav(c)
-      W % n(c) = W % n(c) - Pz(c) * grid % vol(c) / A % sav(c)
+      U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
+      V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
+      W % n(c) = W % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
     end do 
   end if
 

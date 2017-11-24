@@ -11,13 +11,16 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  character(len=*) :: name_phi
-  type(Var_Type)   :: phi
-  type(Grid_Type)  :: grid
+  character(len=*)        :: name_phi
+  type(Var_Type)          :: phi
+  type(Grid_Type), target :: grid
 !==============================================================================!
 
   ! Store variable name
   phi % name = name_phi
+
+  ! Store grid for which the variable is defined
+  phi % pnt_grid => grid
 
   ! Values in the new (n) time step
   allocate (phi % n (-grid % n_bnd_cells : grid % n_cells));   phi % n = 0.

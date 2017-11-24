@@ -174,9 +174,9 @@
     read(line % tokens(2),'(A8)') answer
     call To_Upper_Case(answer)
     if(answer == 'HRE') then
-      MODE = HRE
+      MODE = HIGH_RE
     else if(answer == 'LRE') then
-      MODE = LRE 
+      MODE = LOW_RE 
     else
       if(this_proc  < 2) then
         write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &

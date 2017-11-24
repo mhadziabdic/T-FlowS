@@ -99,8 +99,6 @@
     write(9,'(1F16.6)') (Ynd(c),c=1,grid % n_cells)
     write(9, *) 'Uf 0'
     write(9,'(1F16.6)') (Uf(c),c=1,grid % n_cells)
-    write(9, *) 'uv 0'
-    write(9,'(1F16.6)') (VISt(c)*Uz(c),c=1,grid % n_cells)
   end if 
 
   !--------------!
@@ -119,8 +117,6 @@
     write(9,'(1F16.6)') ( Pk(c),c=1,grid % n_cells)
     write(9, *) 'VISt 0'
     write(9,'(1F16.6)') (VISt(c),c=1,grid % n_cells)
-    write(9, *) 'uw 0'
-    write(9,'(1F16.6)') (-VISt(c)*Uz(c),c=1,grid % n_cells)  
   end if 
 
   !-------------!

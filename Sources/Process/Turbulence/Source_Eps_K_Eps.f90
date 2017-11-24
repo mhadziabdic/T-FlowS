@@ -29,7 +29,7 @@
   real    :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
 !==============================================================================!
 
-  if(MODE == HRe) then
+  if(MODE == HIGH_RE) then
     do c = 1, grid % n_cells
 
       ! Positive contribution:
@@ -71,7 +71,7 @@
   !-------------------------!
   !   Jones-Launder model   !
   !-------------------------!
-  if(MODE == LRe) then
+  if(MODE == LOW_RE) then
 
    call Compute_Shear_And_Vorticity(grid)
    call GraPhi(Shear,1,PHIx, .TRUE.)  ! dU/dx

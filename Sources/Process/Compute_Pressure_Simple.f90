@@ -110,9 +110,9 @@
       end if 
 
       ! Interpolate pressure gradients
-      dPxi=.5*( Px(c1) + Px(c2) )*grid % dx(s)
-      dPyi=.5*( Py(c1) + Py(c2) )*grid % dy(s)
-      dPzi=.5*( Pz(c1) + Pz(c2) )*grid % dz(s)
+      dPxi=.5*( p % x(c1) + p % x(c2) )*grid % dx(s)
+      dPyi=.5*( p % y(c1) + p % y(c2) )*grid % dy(s)
+      dPzi=.5*( p % z(c1) + p % z(c2) )*grid % dz(s)
 
       ! Calculate flux through cell face
       Flux(s) = DENs * (  Us*grid % sx(s)       &

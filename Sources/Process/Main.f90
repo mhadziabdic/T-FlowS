@@ -50,34 +50,6 @@
                          dUkdi(-grid % n_bnd_cells:grid % n_cells) 
     end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Compute_Scalar(grid, var, phi, dphidx, dphidy, dphidz)
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      use all_mod
-      use pro_mod
-      use Grid_Mod
-      implicit none
-      type(Grid_Type) :: grid
-      integer         :: var
-      type(Var_Type)  :: phi
-      real            :: dphidx(-grid % n_bnd_cells:grid % n_cells),  &
-                         dphidy(-grid % n_bnd_cells:grid % n_cells),  &
-                         dphidz(-grid % n_bnd_cells:grid % n_cells)
-    end subroutine
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Compute_Turbulent(grid, var, phi, dphidx, dphidy, dphidz, Nstep)  
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      use all_mod
-      use pro_mod
-      use Grid_Mod
-      implicit none
-      type(Grid_Type) :: grid
-      integer        :: var, Nstep
-      type(Var_Type) :: phi
-      real           :: dphidx(-grid % n_bnd_cells:grid % n_cells),  &
-                        dphidy(-grid % n_bnd_cells:grid % n_cells),  &
-                        dphidz(-grid % n_bnd_cells:grid % n_cells)
-    end subroutine
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Save_Gmv_Results(grid, namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod
@@ -114,17 +86,6 @@
       use pro_mod
       implicit none
       character, optional :: namAut*(*)
-    end subroutine
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-    subroutine Compute_Shear_And_Vorticity(grid)
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-      use all_mod
-      use pro_mod
-      use les_mod
-      use rans_mod
-      use Grid_Mod
-      implicit none
-      type(Grid_Type) :: grid
     end subroutine
   end interface
 !======================================================================!
@@ -296,50 +257,47 @@
       call Compute_Sgs_Hybrid(grid)
     end if
 
-    call CalcConvect(grid)
+    call Convective_Outflow(grid)
     if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_RSM(grid)
     
     do ini=1,Nini                   !  FRACTION & SIMPLE  
 
       if(.NOT. multiple) then 
-        call GradP(grid, P % n, Px, Py, Pz)
+        call GradP(grid, P % n, p % x, p % y, p % z)
       else 
-        call GradP3(grid, P % n, Px, Py, Pz)
+        call GradP3(grid, P % n, p % x, p % y, p % z)
       end if
     
-      call GraPhi(grid, U % n, 1, Ux, .TRUE.)    ! dU/dx
-      call GraPhi(grid, U % n, 2, Uy, .TRUE.)    ! dU/dy
-      call GraPhi(grid, U % n, 3, Uz, .TRUE.)    ! dU/dz
-      call GraPhi(grid, V % n, 1, Vx, .TRUE.)    ! dV/dx
-      call GraPhi(grid, V % n, 2, Vy, .TRUE.)    ! dV/dy
-      call GraPhi(grid, V % n, 3, Vz, .TRUE.)    ! dV/dz
-      call GraPhi(grid, W % n, 1, Wx, .TRUE.)    ! dW/dx
-      call GraPhi(grid, W % n, 2, Wy, .TRUE.)    ! dW/dy 
-      call GraPhi(grid, W % n, 3, Wz, .TRUE.)    ! dW/dz
+      call GraPhi(grid, U % n, 1, U % x, .TRUE.)    ! dU/dx
+      call GraPhi(grid, U % n, 2, U % y, .TRUE.)    ! dU/dy
+      call GraPhi(grid, U % n, 3, U % z, .TRUE.)    ! dU/dz
+      call GraPhi(grid, V % n, 1, V % x, .TRUE.)    ! dV/dx
+      call GraPhi(grid, V % n, 2, V % y, .TRUE.)    ! dV/dy
+      call GraPhi(grid, V % n, 3, V % z, .TRUE.)    ! dV/dz
+      call GraPhi(grid, W % n, 1, W % x, .TRUE.)    ! dW/dx
+      call GraPhi(grid, W % n, 2, W % y, .TRUE.)    ! dW/dy 
+      call GraPhi(grid, W % n, 3, W % z, .TRUE.)    ! dW/dz
 
       ! U velocity component
-      call NewUVW(grid, 1,              &
-                  U,                 &   
-                  Ux,   Uy,   Uz,    & 
+      call NewUVW(grid, 1, U,                             &
+                  U % x,   U % y,   U % z,                & 
                   grid % sx,   grid % sy,   grid % sz,    &                             
                   grid % dx,   grid % dy,   grid % dz,    &                             
-                  Px,   Vx,   Wx)      ! dP/dx, dV/dx, dW/dx
+                  p % x,   V % x,   W % x)      ! dP/dx, dV/dx, dW/dx
 
       ! V velocity component
-      call NewUVW(grid, 2,              &
-                  V,                 &
-                  Vy,   Vx,   Vz,    & 
+      call NewUVW(grid, 2, v,                             &
+                  V % y,   V % x,   V % z,                & 
                   grid % sy,   grid % sx,   grid % sz,    &
                   grid % dy,   grid % dx,   grid % dz,    &
-                  Py,   Uy,   Wy)      ! dP/dy, dU/dy, dW/dy
+                  p % y,   U % y,   W % y)      ! dP/dy, dU/dy, dW/dy
 
       ! W velocity component
-      call NewUVW(grid, 3,              &
-                  W,                 & 
-                  Wz,   Wx,   Wy,    & 
+      call NewUVW(grid, 3, w,                             &
+                  W % z,   W % x,   W % y,                & 
                   grid % sz,   grid % sx,   grid % sy,    &                         
                   grid % dz,   grid % dx,   grid % dy,    &                         
-                  Pz,   Uz,   Vz)      ! dP/dz, dU/dz, dV/dz
+                  p % z,   U % z,   V % z)      ! dP/dz, dU/dz, dV/dz
 
       if(ALGOR == FRACT) then
         call Exchange(grid, A % sav)  
@@ -353,9 +311,9 @@
       end if
 
       if(.NOT. multiple) then 
-        call GradP(grid, PP % n,Px,Py,Pz)
+        call GradP(grid,  PP % n, p % x, p % y, p % z)
       else 
-        call GradP3(grid, PP % n,Px,Py,Pz)
+        call GradP3(grid, PP % n, p % x, p % y, p % z)
       end if
 
       call Compute_Fluxes(grid)
@@ -363,12 +321,7 @@
 
       ! Temperature
       if(HOT==YES) then
-        call GraPhi(grid, T % n,1,phix,.TRUE.)            ! dT/dx
-        call GraPhi(grid, T % n,2,phiy,.TRUE.)            ! dT/dy
-        call GraPhi(grid, T % n,3,phiz,.TRUE.)            ! dT/dz
-!!!!        call GraCorNew(grid, T % n,phix,phiy,phiz)    ! 2mat
-        call Compute_Scalar(grid, 5, T,  &
-                            phix, phiy, phiz)  ! dT/dx, dT/dy, dT/dz
+        call Compute_Scalar(grid, 5, T)
       end if 
 
       ! Rans models
@@ -377,17 +330,8 @@
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
         call Compute_Shear_And_Vorticity(grid)
-        call GraPhi(grid, Kin % n,1,phix,.TRUE.)             ! dK/dx
-        call GraPhi(grid, Kin % n,2,phiy,.TRUE.)             ! dK/dy
-        call GraPhi(grid, Kin % n,3,phiz,.TRUE.)             ! dK/dz
-        call Compute_Turbulent(grid, 6, Kin,  &
-                               phix, phiy, phiz, n) ! dK/dx, dK/dy, dK/dz
-
-        call GraPhi(grid, Eps % n,1,phix,.TRUE.)           ! dEps/dx
-        call GraPhi(grid, Eps % n,2,phiy,.TRUE.)           ! dEps/dy
-        call GraPhi(grid, Eps % n,3,phiz,.TRUE.)           ! dEps/dz
-        call Compute_Turbulent(grid, 7,  &
-                               Eps, phix, phiy, phiz, n)
+        call Compute_Turbulent(grid, 6, Kin, n)
+        call Compute_Turbulent(grid, 7, Eps, n)
         call CalcVISt_KEps(grid)
       end if 
 
@@ -396,29 +340,15 @@
          SIMULA == HYB_ZETA) then
         call Compute_Shear_And_Vorticity(grid)
 
-        call GraPhi(grid, Kin % n,1,phix,.TRUE.)             ! dK/dx
-        call GraPhi(grid, Kin % n,2,phiy,.TRUE.)             ! dK/dy
-        call GraPhi(grid, Kin % n,3,phiz,.TRUE.)             ! dK/dz
-        call Compute_Turbulent(grid, 6,   &
-                               Kin, phix, phiy, phiz, n) ! dK/dx, dK/dy, dK/dz
-
-        call GraPhi(grid, Eps % n,1,phix,.TRUE.)             ! dEps/dx
-        call GraPhi(grid, Eps % n,2,phiy,.TRUE.)             ! dEps/dy
-        call GraPhi(grid, Eps % n,3,phiz,.TRUE.)             ! dEps/dz
-        call Compute_Turbulent(grid, 7, Eps, phix, phiy, phiz, n)
+        call Compute_Turbulent(grid, 6, Kin, n)
+        call Compute_Turbulent(grid, 7, Eps, n)
          
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        call GraPhi(grid, f22 % n,1,phix,.TRUE.)             ! df22/dx
-        call GraPhi(grid, f22 % n,2,phiy,.TRUE.)             ! df22/dy
-        call GraPhi(grid, f22 % n,3,phiz,.TRUE.)             ! df22/dz
-        call Compute_F22(grid, 8, f22, phix, phiy, phiz, n) 
+        call Compute_F22(grid, 8, f22) 
 
-        call GraPhi(grid, v_2 % n,1,phix,.TRUE.)             ! dv_2/dx
-        call GraPhi(grid, v_2 % n,2,phiy,.TRUE.)             ! dv_2/dy
-        call GraPhi(grid, v_2 % n,3,phiz,.TRUE.)             ! dv_2/dz
-        call Compute_Turbulent(grid, 9, v_2, phix, phiy, phiz, n)  
+        call Compute_Turbulent(grid, 9, v_2, n)  
 
         call CalcVISt_KepsV2F(grid)
       end if                 
@@ -430,60 +360,31 @@
 
         if(SIMULA==EBM) call Time_And_Length_Scale(grid)
 
-        call GraPhi(grid, U % n, 1, Ux,.TRUE.)    ! dU/dx
-        call GraPhi(grid, U % n, 2, Uy,.TRUE.)    ! dU/dy
-        call GraPhi(grid, U % n, 3, Uz,.TRUE.)    ! dU/dz
+        call GraPhi(grid, U % n, 1, U % x,.TRUE.)    ! dU/dx
+        call GraPhi(grid, U % n, 2, U % y,.TRUE.)    ! dU/dy
+        call GraPhi(grid, U % n, 3, U % z,.TRUE.)    ! dU/dz
  
-        call GraPhi(grid, V % n, 1, Vx,.TRUE.)    ! dV/dx
-        call GraPhi(grid, V % n, 2, Vy,.TRUE.)    ! dV/dy
-        call GraPhi(grid, V % n, 3, Vz,.TRUE.)    ! dV/dz
+        call GraPhi(grid, V % n, 1, V % x,.TRUE.)    ! dV/dx
+        call GraPhi(grid, V % n, 2, V % y,.TRUE.)    ! dV/dy
+        call GraPhi(grid, V % n, 3, V % z,.TRUE.)    ! dV/dz
 
-        call GraPhi(grid, W % n, 1, Wx,.TRUE.)    ! dW/dx
-        call GraPhi(grid, W % n, 2, Wy,.TRUE.)    ! dW/dy 
-        call GraPhi(grid, W % n, 3, Wz,.TRUE.)    ! dW/dz
+        call GraPhi(grid, W % n, 1, W % x,.TRUE.)    ! dW/dx
+        call GraPhi(grid, W % n, 2, W % y,.TRUE.)    ! dW/dy 
+        call GraPhi(grid, W % n, 3, W % z,.TRUE.)    ! dW/dz
 
-        call GraPhi(grid, uu % n,1,phix,.TRUE.)             ! dK/dx
-        call GraPhi(grid, uu % n,2,phiy,.TRUE.)             ! dK/dy
-        call GraPhi(grid, uu % n,3,phiz,.TRUE.)             ! dK/dz
-        call Compute_Stresses(grid, 6, uu, phix, phiy, phiz) ! dK/dx, dK/dy, dK/dz
+        call Compute_Stresses(grid, 6, uu)
+        call Compute_Stresses(grid, 7, vv)
+        call Compute_Stresses(grid, 8, ww) 
 
-        call GraPhi(grid, vv % n,1,phix,.TRUE.)             ! dEps/dx
-        call GraPhi(grid, vv % n,2,phiy,.TRUE.)             ! dEps/dy
-        call GraPhi(grid, vv % n,3,phiz,.TRUE.)             ! dEps/dz
-        call Compute_Stresses(grid, 7, vv, phix, phiy, phiz)
-         
-        call GraPhi(grid, ww % n,1,phix,.TRUE.)             ! df22/dx
-        call GraPhi(grid, ww % n,2,phiy,.TRUE.)             ! df22/dy
-        call GraPhi(grid, ww % n,3,phiz,.TRUE.)             ! df22/dz
-        call Compute_Stresses(grid, 8, ww, phix, phiy, phiz) 
-
-
-        call GraPhi(grid, uv % n,1,phix,.TRUE.)             ! dv_2/dx
-        call GraPhi(grid, uv % n,2,phiy,.TRUE.)             ! dv_2/dy
-        call GraPhi(grid, uv % n,3,phiz,.TRUE.)             ! dv_2/dz
-        call Compute_Stresses(grid, 9, uv, phix, phiy, phiz)  
-
-        call GraPhi(grid, uw % n,1,phix,.TRUE.)             ! df22/dx
-        call GraPhi(grid, uw % n,2,phiy,.TRUE.)             ! df22/dy
-        call GraPhi(grid, uw % n,3,phiz,.TRUE.)             ! df22/dz
-        call Compute_Stresses(grid, 10, uw, phix, phiy, phiz) 
-
-        call GraPhi(grid, vw % n,1,phix,.TRUE.)             ! df22/dx
-        call GraPhi(grid, vw % n,2,phiy,.TRUE.)             ! df22/dy
-        call GraPhi(grid, vw % n,3,phiz,.TRUE.)             ! df22/dz
-        call Compute_Stresses(grid, 11, vw, phix, phiy, phiz) 
+        call Compute_Stresses(grid,  9, uv)  
+        call Compute_Stresses(grid, 10, uw) 
+        call Compute_Stresses(grid, 11, vw) 
 
         if(SIMULA==EBM) then
-          call GraPhi(grid, f22 % n,1,phix,.TRUE.)             ! df22/dx
-          call GraPhi(grid, f22 % n,2,phiy,.TRUE.)             ! df22/dy
-          call GraPhi(grid, f22 % n,3,phiz,.TRUE.)             ! df22/dz
-          call Compute_F22(grid, 12, f22, phix, phiy, phiz) 
+          call Compute_F22(grid, 12, f22) 
         end if 
 
-        call GraPhi(grid, Eps % n,1,phix,.TRUE.)             ! df22/dx
-        call GraPhi(grid, Eps % n,2,phiy,.TRUE.)             ! df22/dy
-        call GraPhi(grid, Eps % n,3,phiz,.TRUE.)             ! df22/dz
-        call Compute_Stresses(grid, 13, Eps, phix, phiy, phiz) 
+        call Compute_Stresses(grid, 13, Eps) 
  
         call CalcVISt_RSM(grid)
       end if                 
@@ -495,11 +396,7 @@
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        call GraPhi(grid, VIS % n,1,phix,.TRUE.)             ! dVIS/dx
-        call GraPhi(grid, VIS % n,2,phiy,.TRUE.)             ! dVIS/dy
-        call GraPhi(grid, VIS % n,3,phiz,.TRUE.)             ! dVIS/dz
-        call Compute_Turbulent(grid, 6,  &
-                               VIS, phix, phiy, phiz, n)  ! dVIS/dx, dVIS/dy, dVIS/dz
+        call Compute_Turbulent(grid, 6, vis, n)
         call CalcVISt_SPA_ALL(grid, n)
       end if
 

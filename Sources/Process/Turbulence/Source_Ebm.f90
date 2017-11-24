@@ -35,12 +35,20 @@
 
   r13 = 1.0/3.0 
   do  c = 1, grid % n_cells
-    Kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)),1.0e-12)
-    Pk(c)      = max(-(uu % n(c)*Ux(c) + uv % n(c)*Uy(c) + uw % n(c)*Uz(c) +&
-                   uv % n(c)*Vx(c) + vv % n(c)*Vy(c) + vw % n(c)*Vz(c) +&
-                   uw % n(c)*Wx(c) + vw % n(c)*Wy(c) + ww % n(c)*Wz(c)),1.0e-12)                
+    Kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), 1.0e-12)
+    Pk(c)      = max(-(  uu % n(c) * u % x(c)  &
+                       + uv % n(c) * u % y(c)  &
+                       + uw % n(c) * u % z(c)  &
+                       + uv % n(c) * v % x(c)  &
+                       + vv % n(c) * v % y(c)  &
+                       + vw % n(c) * v % z(c)  &
+                       + uw % n(c) * w % x(c)  &
+                       + vw % n(c) * w % y(c)  &
+                       + ww % n(c) * w % z(c)), 1.0e-12)                
   
-    mag = max(1.0e-12,sqrt(VAR2x(c)*VAR2x(c)+VAR2y(c)*VAR2y(c)+VAR2z(c)*VAR2z(c)))       
+    mag = max(1.0e-12,sqrt(  VAR2x(c)*VAR2x(c)  &
+                           + VAR2y(c)*VAR2y(c)  &
+                           + VAR2z(c)*VAR2z(c)))       
     n1 = VAR2x(c)/mag 
     n2 = VAR2y(c)/mag 
     n3 = VAR2z(c)/mag 
@@ -55,24 +63,24 @@
     b23 = vw % n(c)/(2.0*Kin % n(c))    
     b32 = b23
     
-    S11 = Ux(c) 
-    S22 = Vy(c) 
-    S33 = Wz(c) 
-    S12 = 0.5*(Uy(c)+Vx(c)) 
+    S11 = u % x(c) 
+    S22 = v % y(c) 
+    S33 = w % z(c) 
+    S12 = 0.5*(u % y(c)+v % x(c)) 
     S21 = S12
-    S13 = 0.5*(Uz(c)+Wx(c)) 
+    S13 = 0.5*(u % z(c)+w % x(c)) 
     S31 = S13 
-    S23 = 0.5*(Vz(c)+Wy(c)) 
+    S23 = 0.5*(v % z(c)+w % y(c)) 
     S32 = S23 
 
     V11 = 0.0
     V22 = 0.0
     V33 = 0.0
-    V12 = 0.5*(Uy(c)-Vx(c)) - omegaZ
+    V12 = 0.5*(u % y(c)-v % x(c)) - omegaZ
     V21 = -V12 + omegaZ
-    V13 = 0.5*(Uz(c)-Wx(c)) + omegaY
+    V13 = 0.5*(u % z(c)-w % x(c)) + omegaY
     V31 = -V13 - omegaY
-    V23 = 0.5*(Vz(c)-Wy(c)) - omegaX
+    V23 = 0.5*(v % z(c)-w % y(c)) - omegaX
     V32 = -V23 + omegaX
 
     b_mn_b_mn = b11*b11 + b22*b22 + b33*b33 + 2.0*(b12*b12+b13*b13+b23*b23)
@@ -94,7 +102,7 @@
                  g5*Kin%n(c)*(2.0*(b11*V11+b12*V12+b13*V13))
 
 
-      Prod = -2.0*(uu%n(c)*Ux(c) + uv % n(c)*Uy(c) + uw % n(c)*Uz(c))  &
+      Prod = -2.0*(uu%n(c)*u % x(c) + uv % n(c)*u % y(c) + uw % n(c)*u % z(c))  &
              -2.0*omegaY*2.0*uw%n(c) + 2.0*omegaZ*2.0*uv%n(c)   
 
 
@@ -120,7 +128,7 @@
                  g4*Kin%n(c)*(2.0*(b21*S21+b22*S22+b23*S23)-2.0/3.0 * b_lk_s_lk) +&
                  g5*Kin%n(c)*(2.0*(b21*V21+b22*V22+b23*V23))
 
-      Prod = -2.0*(uv % n(c)*Vx(c) + vv%n(c)*Vy(c) + vw % n(c)*Vz(c))  &
+      Prod = -2.0*(uv % n(c)*v % x(c) + vv%n(c)*v % y(c) + vw % n(c)*v % z(c))  &
              +2.0*omegaX*2.0*vw%n(c) - 2.0*omegaZ*2.0*uw%n(c)   
 
 
@@ -149,7 +157,7 @@
                  g4*Kin%n(c)*(2.0*(b31*S31+b32*S32+b33*S33)-2.0/3.0 * b_lk_s_lk) +&
                  g5*Kin%n(c)*(2.0*(b31*V31+b32*V32+b33*V33))
 
-      Prod = -2.0*(uw % n(c)*Wx(c) + vw % n(c)*Wy(c) + ww%n(c)*Wz(c))  &
+      Prod = -2.0*(uw % n(c)*w % x(c) + vw % n(c)*w % y(c) + ww%n(c)*w % z(c))  &
              -2.0*omegaX*2.0*vw%n(c) + 2.0*omegaY*2.0*uw%n(c) 
 
       PHI_tot = (1.0-f22 % n(c)*f22 % n(c))*PHI_wall &
@@ -179,8 +187,8 @@
                  g5*Kin%n(c)*(b11*V21+b12*V22+b13*V23 + &
                               b21*V11+b22*V12+b23*V13)
  
-      Prod = -(uu % n(c)*Vx(c) + uw % n(c)*Vz(c) + uv%n(c)*(Vy(c)+Ux(c)) +&
-               vv % n(c)*Uy(c) + vw % n(c)*Uz(c)) &
+      Prod = -(uu % n(c)*v % x(c) + uw % n(c)*v % z(c) + uv%n(c)*(v % y(c)+u % x(c)) +&
+               vv % n(c)*u % y(c) + vw % n(c)*u % z(c)) &
              +2.0*omegaX*uw%n(c) - 2.0*omegaY*vw%n(c) + 2.0*omegaZ*(vv%n(c)-uu%n(c))  
 
       PHI_tot = (1.0-f22 % n(c)*f22 % n(c))*PHI_wall &
@@ -210,8 +218,8 @@
                  g5*Kin%n(c)*(b11*V31+b12*V32+b13*V33 + &
                               b31*V11+b32*V12+b33*V13)
 
-      Prod = -(uu % n(c)*Wx(c) + uv % n(c)*Wy(c)+ uw%n(c)*(Wz(c)+Ux(c)) +&
-               vw % n(c)*Uy(c) + ww % n(c)*Uz(c)) & 
+      Prod = -(uu % n(c)*w % x(c) + uv % n(c)*w % y(c)+ uw%n(c)*(w % z(c)+u % x(c)) +&
+               vw % n(c)*u % y(c) + ww % n(c)*u % z(c)) & 
              -2.0*omegaX*uv%n(c)-2.0*omegaY*(ww%n(c)-uu%n(c))+2.0*omegaZ*vw%n(c)   
 
       PHI_tot = (1.0-f22 % n(c)*f22 % n(c))*PHI_wall &
@@ -240,8 +248,8 @@
                  g5*Kin%n(c)*(b21*V31+b22*V32+b23*V33 + &
                               b31*V21+b32*V22+b33*V23)
 
-      Prod = -(uv % n(c)*Wx(c) + vv % n(c)*Wy(c)+ vw%n(c)*(Wz(c)+Vy(c))+&
-               uw % n(c)*Vx(c) + ww % n(c)*Vz(c))  &
+      Prod = -(uv % n(c)*w % x(c) + vv % n(c)*w % y(c)+ vw%n(c)*(w % z(c)+v % y(c))+&
+               uw % n(c)*v % x(c) + ww % n(c)*v % z(c))  &
              -2.0*omegaX*(vw%n(c)-ww%n(c))+2.0*omegaY*uv%n(c)-2.0*omegaZ*uw%n(c)   
 
       PHI_tot = (1.0-f22 % n(c)*f22 % n(c))*PHI_wall &

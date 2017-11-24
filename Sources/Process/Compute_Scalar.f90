@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Compute_Scalar(grid, var, phi, phi_x, phi_y, phi_z)
+  subroutine Compute_Scalar(grid, var, phi)
 !------------------------------------------------------------------------------!
 !   Purpose: Solve transport equation for scalar (such as temperature)         !
 !------------------------------------------------------------------------------!
@@ -16,9 +16,6 @@
   type(Grid_Type) :: grid
   integer         :: var
   type(Var_Type)  :: phi
-  real            :: phi_x(-grid % n_bnd_cells:grid % n_cells),  &
-                     phi_y(-grid % n_bnd_cells:grid % n_cells),  &
-                     phi_z(-grid % n_bnd_cells:grid % n_cells)
 !----------------------------------[Calling]-----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------! 
@@ -88,14 +85,19 @@
     do c = 1, grid % n_cells
       phi % oo(c)  = phi % o(c)
       phi % o (c)  = phi % n(c)
-      phi % Coo(c) = phi % Co(c)
-      phi % Co (c) = 0.0
-      phi % Doo(c) = phi % Do(c)
-      phi % Do (c) = 0.0 
-      phi % Xoo(c) = phi % Xo(c)
-      phi % Xo (c) = phi % X(c) 
+      phi % a_oo(c) = phi % a_o(c)
+      phi % a_o (c) = 0.0
+      phi % d_oo(c) = phi % d_o(c)
+      phi % d_o (c) = 0.0 
+      phi % c_oo(c) = phi % c_o(c)
+      phi % c_o (c) = phi % c(c) 
     end do
   end if
+
+  ! Gradients
+  call GraPhi(grid, phi % n, 1, phix, .TRUE.)
+  call GraPhi(grid, phi % n, 2, phiy, .TRUE.)
+  call GraPhi(grid, phi % n, 3, phiz, .TRUE.)
 
   !---------------!
   !               !
@@ -113,8 +115,8 @@
 
   ! New values
 1 do c = 1, grid % n_cells
-    phi % C(c) = 0.0
-    phi % X(c) = 0.0  ! use phi % X for upwind advective fluxes
+    phi % a(c) = 0.0
+    phi % c(c) = 0.0  ! use phi % c for upwind advective fluxes
   end do
 
   !----------------------------------!
@@ -131,7 +133,7 @@
     if(BLEND_TEM(material(c1)) /= NO .or.  &
        BLEND_TEM(material(c2)) /= NO) then
       call Advection_Scheme(grid, phis, s, phi % n,     &
-                      phi_x, phi_y, phi_z,              &
+                      phix, phiy, phiz,              &
                       grid % dx, grid % dy, grid % dz,  &
                       max(BLEND_TEM(material(c1)),      &
                           BLEND_TEM(material(c2))) ) 
@@ -143,30 +145,30 @@
     ! Central differencing for advection
     if(ini.eq.1) then
       if(c2.gt.0) then
-        phi % Co(c1) = phi % Co(c1)-Flux(s)*phis*CAPs
-        phi % Co(c2) = phi % Co(c2)+Flux(s)*phis*CAPs
+        phi % a_o(c1) = phi % a_o(c1)-Flux(s)*phis*CAPs
+        phi % a_o(c2) = phi % a_o(c2)+Flux(s)*phis*CAPs
       else
-        phi % Co(c1)=phi % Co(c1)-Flux(s)*phis*CAPs
+        phi % a_o(c1)=phi % a_o(c1)-Flux(s)*phis*CAPs
       endif
     end if
     if(c2.gt.0) then
-      phi % C(c1) = phi % C(c1)-Flux(s)*phis*CAPs
-      phi % C(c2) = phi % C(c2)+Flux(s)*phis*CAPs
+      phi % a(c1) = phi % a(c1)-Flux(s)*phis*CAPs
+      phi % a(c2) = phi % a(c2)+Flux(s)*phis*CAPs
     else
-      phi % C(c1) = phi % C(c1)-Flux(s)*phis*CAPs
+      phi % a(c1) = phi % a(c1)-Flux(s)*phis*CAPs
     endif
  
     ! Upwind
     if(BLEND_TEM(material(c1)) /= NO .or. BLEND_TEM(material(c2)) /= NO) then
       if(Flux(s).lt.0) then   ! from c2 to c1
-        phi % X(c1) = phi % X(c1)-Flux(s)*phi % n(c2) * CAPs
+        phi % c(c1) = phi % c(c1)-Flux(s)*phi % n(c2) * CAPs
         if(c2.gt.0) then
-          phi % X(c2) = phi % X(c2)+Flux(s)*phi % n(c2) * CAPs
+          phi % c(c2) = phi % c(c2)+Flux(s)*phi % n(c2) * CAPs
         endif
       else
-        phi % X(c1) = phi % X(c1)-Flux(s)*phi % n(c1) * CAPs
+        phi % c(c1) = phi % c(c1)-Flux(s)*phi % n(c1) * CAPs
         if(c2.gt.0) then
-          phi % X(c2) = phi % X(c2)+Flux(s)*phi % n(c1) * CAPs
+          phi % c(c2) = phi % c(c2)+Flux(s)*phi % n(c1) * CAPs
         endif
       end if
     end if   ! BLEND_TEM
@@ -182,7 +184,7 @@
   if(CONVEC.eq.AB) then
     do c = 1, grid % n_cells
       b(c) = b(c) + URFC_Tem(material(c)) * &
-                    (1.5*phi % Co(c) - 0.5*phi % Coo(c) - phi % X(c))
+                    (1.5*phi % a_o(c) - 0.5*phi % a_oo(c) - phi % c(c))
     end do
   endif
 
@@ -190,7 +192,7 @@
   if(CONVEC.eq.CN) then
     do c = 1, grid % n_cells
       b(c) = b(c) + URFC_Tem(material(c)) * &
-                    (0.5 * ( phi % C(c) + phi % Co(c) ) - phi % X(c))
+                    (0.5 * ( phi % a(c) + phi % a_o(c) ) - phi % c(c))
     end do
   endif
 
@@ -198,7 +200,7 @@
   if(CONVEC.eq.FI) then
     do c = 1, grid % n_cells
       b(c) = b(c) + URFC_Tem(material(c)) * &
-                    (phi % C(c)-phi % X(c))
+                    (phi % a(c)-phi % c(c))
     end do
   end if
 
@@ -208,9 +210,9 @@
   !              !
   !--------------!
 
-  ! Set phi % X back to zero 
+  ! Set phi % c back to zero 
   do c = 1, grid % n_cells
-    phi % X(c) = 0.0  
+    phi % c(c) = 0.0  
   end do
 
   !----------------------------!
@@ -234,9 +236,9 @@
     ! Gradients on the cell face 
     if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
       if(material(c1) == material(c2)) then
-        phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
-        phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
-        phizS1 = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
+        phixS1 = fF(s)*phix(c1) + (1.0-fF(s))*phix(c2) 
+        phiyS1 = fF(s)*phiy(c1) + (1.0-fF(s))*phiy(c2)
+        phizS1 = fF(s)*phiz(c1) + (1.0-fF(s))*phiz(c2)
         phixS2 = phixS1 
         phiyS2 = phiyS1 
         phizS2 = phizS1 
@@ -246,21 +248,21 @@
                               + CAPc(material(c2))*VISt(c2)/Prt )
         CONeff2 = CONeff1 
       else 
-        phixS1 = phi_x(c1) 
-        phiyS1 = phi_y(c1) 
-        phizS1 = phi_z(c1) 
-        phixS2 = phi_x(c2) 
-        phiyS2 = phi_y(c2) 
-        phizS2 = phi_z(c2) 
+        phixS1 = phix(c1) 
+        phiyS1 = phiy(c1) 
+        phizS1 = phiz(c1) 
+        phixS2 = phix(c2) 
+        phiyS2 = phiy(c2) 
+        phizS2 = phiz(c2) 
         CONeff1 =   CONc(material(c1))                 &
                   + CAPc(material(c1))*VISt(c1)/Prt   
         CONeff2 =   CONc(material(c2))                 &
                   + CAPc(material(c2))*VISt(c2)/Prt   
       end if
     else
-      phixS1 = phi_x(c1) 
-      phiyS1 = phi_y(c1) 
-      phizS1 = phi_z(c1) 
+      phixS1 = phix(c1) 
+      phiyS1 = phiy(c1) 
+      phizS1 = phiz(c1) 
       phixS2 = phixS1 
       phiyS2 = phiyS1 
       phizS2 = phizS1 
@@ -304,25 +306,25 @@
     if(ini.lt.2) then
       if(c2.gt.0) then
         if(material(c1) == material(c2)) then
-          phi % Do(c1) = phi % Do(c1)  &
+          phi % d_o(c1) = phi % d_o(c1)  &
                        + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1)) 
-          phi % Do(c2) = phi % Do(c2)  &
+          phi % d_o(c2) = phi % d_o(c2)  &
                        - CONeff2*Scoef(s)*(phi % n(c2) - phi % n(c1))   
         else
-          phi % Do(c1) = phi % Do(c1)            &
+          phi % d_o(c1) = phi % d_o(c1)            &
                        + 2.*CONc(material(c1))   &
                        * Scoef(s) * (phiside(s) - phi % n(c1)) 
-          phi % Do(c2) = phi % Do(c2)            &
+          phi % d_o(c2) = phi % d_o(c2)            &
                        - 2.*CONc(material(c2))   &
                        * Scoef(s)*(phi % n(c2) - phiside(s))   
         end if
       else
         if(TypeBC(c2).ne.SYMMETRY) then 
           if(material(c1) == material(c2)) then
-            phi % Do(c1) = phi % Do(c1)  &
+            phi % d_o(c1) = phi % d_o(c1)  &
                 + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1))   
           else
-            phi % Do(c1) = phi % Do(c1)  &
+            phi % d_o(c1) = phi % d_o(c1)  &
                 + 2.*CONc(material(c1))*Scoef(s)*(phiside(s)-phi % n(c1)) 
           end if
         end if
@@ -330,9 +332,9 @@
     end if
 
     ! Cross diffusion part
-    phi % X(c1) = phi % X(c1) + FUex1 - FUim1 
+    phi % c(c1) = phi % c(c1) + FUex1 - FUim1 
     if(c2.gt.0) then
-      phi % X(c2) = phi % X(c2) - FUex2 + FUim2 
+      phi % c(c2) = phi % c(c2) - FUex2 + FUim2 
     end if 
 
     ! Calculate the coefficients for the sysytem matrix
@@ -416,14 +418,14 @@
   ! Adams-Bashfort scheeme for diffusion fluxes
   if(DIFFUS.eq.AB) then 
     do c = 1, grid % n_cells
-      b(c)  = b(c) + 1.5*phi % Do(c) - 0.5*phi % Doo(c)
+      b(c)  = b(c) + 1.5*phi % d_o(c) - 0.5*phi % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
   if(DIFFUS.eq.CN) then 
     do c = 1, grid % n_cells
-      b(c)  = b(c) + 0.5*phi % Do(c)
+      b(c)  = b(c) + 0.5*phi % d_o(c)
     end do  
   end if
 
@@ -433,18 +435,18 @@
   ! Adams-Bashfort scheeme for cross diffusion 
   if(CROSS.eq.AB) then
     do c = 1, grid % n_cells
-      b(c)  = b(c) + 1.5*phi % Xo(c) - 0.5*phi % Xoo(c)
+      b(c)  = b(c) + 1.5*phi % c_o(c) - 0.5*phi % c_oo(c)
     end do 
   end if
 
   ! Crank-Nicholson scheme for cross difusive terms
   if(CROSS.eq.CN) then
     do c = 1, grid % n_cells
-      if( (phi % X(c)+phi % Xo(c))  >= 0) then
-        b(c)  = b(c) + 0.5*(phi % X(c) + phi % Xo(c))
+      if( (phi % c(c)+phi % c_o(c))  >= 0) then
+        b(c)  = b(c) + 0.5*(phi % c(c) + phi % c_o(c))
       else
         A % val(A % dia(c)) = A % val(A % dia(c)) &
-             - 0.5 * (phi % X(c) + phi % Xo(c)) / (phi % n(c)+1.e-6)
+             - 0.5 * (phi % c(c) + phi % c_o(c)) / (phi % n(c)+1.e-6)
       end if
     end do
   end if
@@ -452,11 +454,11 @@
   ! Fully implicit treatment for cross difusive terms
   if(CROSS.eq.FI) then
     do c = 1, grid % n_cells
-      if(phi % X(c) >= 0) then
-        b(c)  = b(c) + phi % X(c)
+      if(phi % c(c) >= 0) then
+        b(c)  = b(c) + phi % c(c)
       else
         A % val(A % dia(c)) = A % val(A % dia(c))  &
-                            - phi % X(c)/(phi % n(c)+1.e-6)
+                            - phi % c(c)/(phi % n(c)+1.e-6)
       end if
     end do
   end if
@@ -489,11 +491,11 @@
     if(MODE/=HYB) then
       do c = 1, grid % n_cells
         VAR1x(c) = -0.22*Tsc(c) *&
-                   (uu%n(c)*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c))
+                   (uu%n(c)*phix(c)+uv%n(c)*phiy(c)+uw%n(c)*phiz(c))
         VAR1y(c) = -0.22*Tsc(c)*&
-                   (uv%n(c)*phi_x(c)+vv%n(c)*phi_y(c)+vw%n(c)*phi_z(c))
+                   (uv%n(c)*phix(c)+vv%n(c)*phiy(c)+vw%n(c)*phiz(c))
         VAR1z(c) = -0.22*Tsc(c)*&
-                   (uw%n(c)*phi_x(c)+vw%n(c)*phi_y(c)+ww%n(c)*phi_z(c))
+                   (uw%n(c)*phix(c)+vw%n(c)*phiy(c)+ww%n(c)*phiz(c))
       end do
       call GraPhi(grid, VAR1x,1,VAR2x,.TRUE.)
       call GraPhi(grid, VAR1y,2,VAR2y,.TRUE.)
@@ -517,9 +519,9 @@
 
         Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
         if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
-          phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
-          phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
-          phizS1 = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
+          phixS1 = fF(s)*phix(c1) + (1.0-fF(s))*phix(c2) 
+          phiyS1 = fF(s)*phiy(c1) + (1.0-fF(s))*phiy(c2)
+          phizS1 = fF(s)*phiz(c1) + (1.0-fF(s))*phiz(c2)
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 
@@ -527,9 +529,9 @@
              + (1.-f(s))*(CAPc(material(c2))*VISt(c2)/Prt )
           CONeff2 = CONeff1 
         else
-          phixS1 = phi_x(c1) 
-          phiyS1 = phi_y(c1) 
-          phizS1 = phi_z(c1) 
+          phixS1 = phix(c1) 
+          phiyS1 = phiy(c1) 
+          phizS1 = phiz(c1) 
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 

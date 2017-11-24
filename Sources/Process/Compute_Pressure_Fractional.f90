@@ -71,14 +71,14 @@
     if( c2  > 0 .or. c2  < 0 .and. TypeBC(c2) == BUFFER) then 
 
       ! Extract the "centred" pressure terms from cell velocities
-      Us = f(s)*      (U % n(c1)+Px(c1)*grid % vol(c1)/A % sav(c1))       &
-         + (1.0-f(s))*(U % n(c2)+Px(c2)*grid % vol(c2)/A % sav(c2))
+      Us = f(s)*      (U % n(c1) + p % x(c1)*grid % vol(c1)/A % sav(c1))       &
+         + (1.0-f(s))*(U % n(c2) + p % x(c2)*grid % vol(c2)/A % sav(c2))
 
-      Vs = f(s)*      (V % n(c1)+Py(c1)*grid % vol(c1)/A % sav(c1))       &
-         + (1.0-f(s))*(V % n(c2)+Py(c2)*grid % vol(c2)/A % sav(c2))
+      Vs = f(s)*      (V % n(c1) + p % y(c1)*grid % vol(c1)/A % sav(c1))       &
+         + (1.0-f(s))*(V % n(c2) + p % y(c2)*grid % vol(c2)/A % sav(c2))
 
-      Ws = f(s)*      (W % n(c1)+Pz(c1)*grid % vol(c1)/A % sav(c1))       &
-         + (1.0-f(s))*(W % n(c2)+Pz(c2)*grid % vol(c2)/A % sav(c2))
+      Ws = f(s)*      (W % n(c1) + p % z(c1)*grid % vol(c1)/A % sav(c1))       &
+         + (1.0-f(s))*(W % n(c2) + p % z(c2)*grid % vol(c2)/A % sav(c2))
 
       ! Add the "staggered" pressure terms to face velocities
       Us= Us + (P % n(c1)-P % n(c2))*grid % sx(s)*                         &

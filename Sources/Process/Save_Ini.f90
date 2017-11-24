@@ -51,8 +51,8 @@
   call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
   do c= 1, grid % n_cells
-    write(9,'(7E18.8)') U % n(c), U % o(c), U % C(c), U % Co(c),  &
-                        U % Do(c), U % X(c), U % Xo(c)
+    write(9,'(7E18.8)') U % n(c), U % o(c), U % a(c), U % a_o(c),  &
+                        U % d_o(c), U % c(c), U % c_o(c)
   end do    ! through centers 
   close(9)
 
@@ -60,8 +60,8 @@
   call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
   do c= 1, grid % n_cells
-    write(9,'(7E18.8)') V % n(c), V % o(c), V % C(c), V % Co(c),  &
-                        V % Do(c), V % X(c), V % Xo(c)
+    write(9,'(7E18.8)') V % n(c), V % o(c), V % a(c), V % a_o(c),  &
+                        V % d_o(c), V % c(c), V % c_o(c)
   end do    ! through centers 
   close(9)
 
@@ -69,8 +69,8 @@
   call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
   do c= 1, grid % n_cells
-    write(9,'(7E18.8)') W % n(c), W % o(c), W % C(c), W % Co(c),  &
-                        W % Do(c), W % X(c), W % Xo(c)
+    write(9,'(7E18.8)') W % n(c), W % o(c), W % a(c), W % a_o(c),  &
+                        W % d_o(c), W % c(c), W % c_o(c)
   end do    ! through centers 
   close(9)
 
@@ -78,8 +78,7 @@
   call Name_File(this_proc, name_out, ext, len_trim(ext))
   open(9,file=name_out)
   do c= 1, grid % n_cells
-    write(9,'(5E18.8)') P % n(c), PP % n(c), Px(c), Py(c),  &
-                        Pz(c)
+    write(9,'(5E18.8)') P % n(c), PP % n(c), p % x(c), p % y(c), p % z(c)
   end do    ! through centers 
   close(9)
  
@@ -88,8 +87,8 @@
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') T % n(c), T % o(c), T % C(c), T % Co(c),  &
-                          T % Do(c), T % X(c), T % Xo(c)
+      write(9,'(7E18.8)') T % n(c), T % o(c), T % a(c), T % a_o(c),  &
+                          T % d_o(c), T % c(c), T % c_o(c)
     end do    ! through centers 
     close(9)
   end if 
@@ -99,8 +98,8 @@
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % C(c), Kin % Co(c),  &
-                          Kin % Do(c), Kin % X(c), Kin % Xo(c)
+      write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % a(c), Kin % a_o(c),  &
+                          Kin % d_o(c), Kin % c(c), Kin % c_o(c)
     end do    ! through centers 
     close(9)
 
@@ -108,8 +107,8 @@
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % C(c), Eps % Co(c),  &
-                          Eps % Do(c), Eps % X(c), Eps % Xo(c)
+      write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % a(c), Eps % a_o(c),  &
+                          Eps % d_o(c), Eps % c(c), Eps % c_o(c)
     end do    ! through centers 
     close(9)
 
@@ -117,8 +116,8 @@
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') v_2 % n(c), v_2 % o(c), v_2 % C(c), v_2 % Co(c),  &
-                          v_2 % Do(c), v_2 % X(c), v_2 % Xo(c)
+      write(9,'(7E18.8)') v_2 % n(c), v_2 % o(c), v_2 % a(c), v_2 % a_o(c),  &
+                          v_2 % d_o(c), v_2 % c(c), v_2 % c_o(c)
     end do    ! through centers 
     close(9)
 
@@ -127,7 +126,7 @@
     open(9,file=name_out)
     do c= 1, grid % n_cells
       write(9,'(7E18.8)') f22 % n(c), f22 % o(c),  &
-                          f22 % Do(c), f22 % X(c), f22 % Xo(c)
+                          f22 % d_o(c), f22 % c(c), f22 % c_o(c)
     end do    ! through centers 
     close(9)
   end if
@@ -137,8 +136,8 @@
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % C(c), Kin % Co(c),  &
-                          Kin % Do(c), Kin % X(c), Kin % Xo(c)
+      write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % a(c), Kin % a_o(c),  &
+                          Kin % d_o(c), Kin % c(c), Kin % c_o(c)
     end do    ! through centers 
     close(9)
 
@@ -146,8 +145,8 @@
     call Name_File(this_proc, name_out, ext, len_trim(ext))
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % C(c), Eps % Co(c),  &
-                          Eps % Do(c), Eps % X(c), Eps % Xo(c)
+      write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % a(c), Eps % a_o(c),  &
+                          Eps % d_o(c), Eps % c(c), Eps % c_o(c)
     end do    ! through centers 
     close(9)
   end if

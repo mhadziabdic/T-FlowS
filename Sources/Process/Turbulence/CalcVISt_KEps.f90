@@ -42,7 +42,7 @@
   yPlus = 0.0 
   Prturb = 0.9
 
-  if(MODE == HRe) then
+  if(MODE == HIGH_RE) then
     do c = 1, grid % n_cells
       VISt(c) = Cmu * DENc(material(c)) * Kin%n(c) * Kin%n(c) / (Eps % n(c)+1.0e-14)
     end do
@@ -73,7 +73,7 @@
     end if   
   end if
   
-  if(MODE==LRe) then
+  if(MODE==LOW_RE) then
     do c = 1, grid % n_cells 
       Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
       Fmu = exp(-3.4/(1.0 + 0.02*Ret)**2.0) 

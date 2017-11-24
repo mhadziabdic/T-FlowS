@@ -1,14 +1,18 @@
 !==============================================================================!
-  subroutine Var_Mod_Allocate_Statistics(phi, n_bnd_cells, n_cells)
+  subroutine Var_Mod_Allocate_Statistics(phi)
 !------------------------------------------------------------------------------!
 !   This is to allocate additional values for statistics.                      !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Var_Type) :: phi
-  integer        :: n_bnd_cells
-  integer        :: n_cells
+!-----------------------------------[Locals]-----------------------------------!
+  integer :: n_cells, n_bnd_cells
 !------------------------------------------------------------------------------!
+
+  ! Fetch resolutions
+  n_bnd_cells = phi % pnt_grid % n_bnd_cells
+  n_cells     = phi % pnt_grid % n_cells
 
   ! Terms for statistics
   allocate (phi % mean(-n_bnd_cells: n_cells));  phi % mean = 0.

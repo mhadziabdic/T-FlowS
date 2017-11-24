@@ -21,23 +21,6 @@ module pro_mod
   ! Used in Dynamic Smgaorinsky model 
   real,allocatable    :: Aval_dif(:)
 
-  ! Correlation points
-  real :: R11_1, R11_2, R11_3, R11_4, R11_5
-  real :: R11_6, R11_7, R11_8, R11_9, R11_10
-  real :: A11_1, A11_2, A11_3, A11_4, A11_5
-  real :: A11_6, A11_7, A11_8, A11_9, A11_10
-
-
-  ! Velocity derivativeses dP/dx .... 
-  real,allocatable :: Ux(:), Uy(:), Uz(:)
-  real,allocatable :: Vx(:), Vy(:), Vz(:)
-  real,allocatable :: Wx(:), Wy(:), Wz(:)
-
-  ! Pressure derivativeses dP/dx .... 
-  real,allocatable :: Px(:), Py(:), Pz(:)
-
-  real,allocatable :: Kx(:)
-
   ! Pressure at the cell faces  
   real,allocatable :: Ps(:)
 
@@ -123,9 +106,9 @@ module pro_mod
   !-------------------------!
   integer :: K_EPS
   integer :: K_EPS_VV   
-  integer :: HRe  
+  integer, parameter :: HIGH_RE = 30
   integer :: MODE   
-  integer :: LRe    
+  integer, parameter :: LOW_RE = 29    
   integer :: SPA_ALL
   integer :: DES_SPA
   integer :: J_L    
@@ -161,11 +144,6 @@ module pro_mod
   integer,allocatable :: WallFace(:)
 
   logical,allocatable :: IsNearWall(:)
-  logical,allocatable :: IsNearPeri(:)
-  logical,allocatable :: IsNearWall_2(:)
-  logical,allocatable :: IsNearWall_3(:)
-  logical,allocatable :: IsNearInflow(:)
-  logical,allocatable :: ConvZone1(:)
 
   ! Cells which are bad for calculation of gradients
   logical,allocatable :: BadForG(:)
@@ -208,10 +186,6 @@ module pro_mod
   ! results between different meshes tranfer (LoaIni)
   integer          :: NClast, N_sign, eqn
   integer,allocatable :: near(:)
-  integer,allocatable :: near_2(:)
-  integer,allocatable :: near_3(:)
-  integer,allocatable :: connect(:)
-  integer,allocatable :: connect2(:)
 
   ! Residuals                
   real    :: errmax, res(100)  

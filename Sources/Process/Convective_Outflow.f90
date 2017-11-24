@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine CalcConvect(grid)
+  subroutine Convective_Outflow(grid)
 !------------------------------------------------------------------------------!
 !   Extrapoloate variables on the boundaries where needed.                     !
 !------------------------------------------------------------------------------!
@@ -25,15 +25,15 @@
     ! On the boundary perform the extrapolation
     if(c2  < 0) then
       if( (TypeBC(c2) == CONVECT) ) then
-        U % n(c2) = U % n(c2) - ( Ubulk(material(c1)) * Ux(c1)        & 
-                                + Vbulk(material(c1)) * Uy(c1)        &
-                                + Wbulk(material(c1)) * Uz(c1) ) * dt
-        V % n(c2) = V % n(c2) - ( Ubulk(material(c1)) * Vx(c1)        & 
-                                + Vbulk(material(c1)) * Vy(c1)        &
-                                + Wbulk(material(c1)) * Vz(c1) ) * dt
-        W % n(c2) = W % n(c2) - ( Ubulk(material(c1)) * Wx(c1)        & 
-                                + Vbulk(material(c1)) * Wy(c1)        &
-                                + Wbulk(material(c1)) * Wz(c1) ) * dt
+        U % n(c2) = U % n(c2) - ( Ubulk(material(c1)) * u % x(c1)         & 
+                                + Vbulk(material(c1)) * u % y(c1)         &
+                                + Wbulk(material(c1)) * u % z(c1) ) * dt
+        V % n(c2) = V % n(c2) - ( Ubulk(material(c1)) * v % x(c1)         & 
+                                + Vbulk(material(c1)) * v % y(c1)         &
+                                + Wbulk(material(c1)) * v % z(c1) ) * dt
+        W % n(c2) = W % n(c2) - ( Ubulk(material(c1)) * w % x(c1)         & 
+                                + Vbulk(material(c1)) * w % y(c1)         &
+                                + Wbulk(material(c1)) * w % z(c1) ) * dt
       end if
     end if
   end do

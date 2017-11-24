@@ -121,7 +121,7 @@
   j = NCold
   do k = 1, j
     if(this_proc < 2) then
-      if(mod(k,20000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'  
+      if(mod(k,20000) == 0) write(*,*) (100.*k/(1.*j)), '% c_omplete...'  
     end if
     if(SIMULA == LES) then 
       if(HOTini==YES) then
@@ -186,7 +186,7 @@
   old_distance = HUGE
     do c = 1, grid % n_cells
       if(this_proc < 2) then
-        if(mod(c,20000) == 0) write(*,*) (100.*c/(1.*grid % n_cells)), '% complete...'  
+        if(mod(c,20000) == 0) write(*,*) (100.*c/(1.*grid % n_cells)), '% c_omplete...'  
       end if
       old_distance = HUGE
       do k = 1, j
@@ -195,58 +195,58 @@
           nearest_cell =  k
         end if 
       end do  
-      U % n(c)  = Uold(nearest_cell) 
-      U % o(c)  = Uoold(nearest_cell) 
-      U % C(c)  = UCold(nearest_cell) 
-      U % Co(c) = UCoold(nearest_cell) 
-      U % Do(c) = UDoold(nearest_cell) 
-      U % X(c)  = UXold(nearest_cell) 
-      U % Xo(c) = UXoold(nearest_cell) 
-      V % n(c)  = Vold(nearest_cell) 
-      V % o(c)  = Voold(nearest_cell) 
-      V % C(c)  = VCold(nearest_cell) 
-      V % Co(c) = VCoold(nearest_cell) 
-      V % Do(c) = VDoold(nearest_cell) 
-      V % X(c)  = VXold(nearest_cell) 
-      V % Xo(c) = VXoold(nearest_cell) 
-      W % n(c)  = Wold(nearest_cell) 
-      W % o(c)  = Woold(nearest_cell) 
-      W % C(c)  = WCold(nearest_cell) 
-      W % Co(c) = WCoold(nearest_cell) 
-      W % Do(c) = WDoold(nearest_cell) 
-      W % X(c)  = WXold(nearest_cell) 
-      W % Xo(c) = WXoold(nearest_cell) 
+      U % n(c)   = Uold(nearest_cell) 
+      U % o(c)   = Uoold(nearest_cell) 
+      U % a(c)   = UCold(nearest_cell) 
+      U % a_o(c) = UCoold(nearest_cell) 
+      U % d_o(c) = UDoold(nearest_cell) 
+      U % c(c)   = UXold(nearest_cell) 
+      U % c_o(c) = UXoold(nearest_cell) 
+      V % n(c)   = Vold(nearest_cell) 
+      V % o(c)   = Voold(nearest_cell) 
+      V % a(c)   = VCold(nearest_cell) 
+      V % a_o(c) = VCoold(nearest_cell) 
+      V % d_o(c) = VDoold(nearest_cell) 
+      V % c(c)   = VXold(nearest_cell) 
+      V % c_o(c) = VXoold(nearest_cell) 
+      W % n(c)   = Wold(nearest_cell) 
+      W % o(c)   = Woold(nearest_cell) 
+      W % a(c)   = WCold(nearest_cell) 
+      W % a_o(c) = WCoold(nearest_cell) 
+      W % d_o(c) = WDoold(nearest_cell) 
+      W % c(c)   = WXold(nearest_cell) 
+      W % c_o(c) = WXoold(nearest_cell) 
       if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==K_EPS) then
-        Kin % n(c)  = Kold(near(c)) 
-        Kin % o(c)  = Koold(near(c)) 
-        Kin % C(c)  = KCold(near(c)) 
-        Kin % Co(c) = KCoold(near(c)) 
-        Kin % Do(c) = KDoold(near(c)) 
-        Kin % X(c)  = KXold(near(c)) 
-        Kin % Xo(c) = KXoold(near(c)) 
+        Kin % n(c)   = Kold(near(c)) 
+        Kin % o(c)   = Koold(near(c)) 
+        Kin % a(c)   = KCold(near(c)) 
+        Kin % a_o(c) = KCoold(near(c)) 
+        Kin % d_o(c) = KDoold(near(c)) 
+        Kin % c(c)   = KXold(near(c)) 
+        Kin % c_o(c) = KXoold(near(c)) 
 
-        Eps % n(c)  = Eold(near(c)) 
-        Eps % o(c)  = Eoold(near(c)) 
-        Eps % C(c)  = ECold(near(c)) 
-        Eps % Co(c) = ECoold(near(c)) 
-        Eps % Do(c) = EDoold(near(c)) 
-        Eps % X(c)  = EXold(near(c)) 
-        Eps % Xo(c) = EXoold(near(c)) 
+        Eps % n(c)   = Eold(near(c)) 
+        Eps % o(c)   = Eoold(near(c)) 
+        Eps % a(c)   = ECold(near(c)) 
+        Eps % a_o(c) = ECoold(near(c)) 
+        Eps % d_o(c) = EDoold(near(c)) 
+        Eps % c(c)   = EXold(near(c)) 
+        Eps % c_o(c) = EXoold(near(c)) 
       end if
       if(SIMULA==K_EPS_VV.or.SIMULA==ZETA) then
-        v_2 % n(c)  = v_2old(near(c)) 
-        v_2 % o(c)  = v_2oold(near(c)) 
-        v_2 % C(c)  = v_2Cold(near(c)) 
-        v_2 % Co(c) = v_2Coold(near(c)) 
-        v_2 % Do(c) = v_2Doold(near(c)) 
-        v_2 % X(c)  = v_2Xold(near(c)) 
-        v_2 % Xo(c) = v_2Xoold(near(c)) 
+        v_2 % n(c)   = v_2old(near(c)) 
+        v_2 % o(c)   = v_2oold(near(c)) 
+        v_2 % a(c)   = v_2Cold(near(c)) 
+        v_2 % a_o(c) = v_2Coold(near(c)) 
+        v_2 % d_o(c) = v_2Doold(near(c)) 
+        v_2 % c(c)   = v_2Xold(near(c)) 
+        v_2 % c_o(c) = v_2Xoold(near(c)) 
 
-        F22 % n(c)  = F22old(near(c)) 
-        F22 % o(c)  = F22oold(near(c)) 
-        F22 % Do(c) = F22Doold(near(c)) 
-        F22 % X(c)  = F22Xold(near(c)) 
-        F22 % Xo(c) = F22Xoold(near(c)) 
+        F22 % n(c)   = F22old(near(c)) 
+        F22 % o(c)   = F22oold(near(c)) 
+        F22 % d_o(c) = F22Doold(near(c)) 
+        F22 % c(c)   = F22Xold(near(c)) 
+        F22 % c_o(c) = F22Xoold(near(c)) 
       end if
     end do
   do s = 1, grid % n_faces

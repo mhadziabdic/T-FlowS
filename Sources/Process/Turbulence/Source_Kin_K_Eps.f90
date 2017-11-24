@@ -21,7 +21,7 @@
   !-----------------------------------------------!
   !  Compute the sources in the near wall cells   !
   !-----------------------------------------------!
-  if(MODE == HRe) then
+  if(MODE == HIGH_RE) then
     do s = 1, grid % n_faces
       c1=grid % faces_c(1,s)
       c2=grid % faces_c(2,s)
@@ -100,7 +100,7 @@
   !--------------------------------------------------------!
   !   Jones-Launder model and Launder-Sharma + Yap model   !
   !--------------------------------------------------------!
-  if(MODE == LRe) then
+  if(MODE == LOW_RE) then
     do c = 1, grid % n_cells
 
       ! Production:

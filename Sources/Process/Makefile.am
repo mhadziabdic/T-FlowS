@@ -5,7 +5,7 @@ Process_SOURCES =	 			\
   Allocate_Variables.f90			\
   Balance_Mass.f90				\
   Update_Boundary_Values.f90			\
-  CalcConvect.f90				\
+  Convective_Outflow.f90			\
   Compute_Gradient_Matrix.f90			\
   CalcMn_Cylind.f90				\
   Compute_Mean.f90				\

@@ -1,6 +1,5 @@
 !==============================================================================!
-  subroutine Compute_Stresses(grid, var, phi,             &
-                              phi_x, phi_y, phi_z)
+  subroutine Compute_Stresses(grid, var, phi)
 !------------------------------------------------------------------------------!
 !   Discretizes and solves transport equation for Re stresses for RSM.         !
 !   EBM and HJ are calling this subroutine.                                    !
@@ -19,9 +18,6 @@
   type(Grid_Type) :: grid
   integer         :: var
   type(Var_Type)  :: phi
-  real            :: phi_x(-grid % n_bnd_cells:grid % n_cells),  &
-                     phi_y(-grid % n_bnd_cells:grid % n_cells),  &
-                     phi_z(-grid % n_bnd_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter, miter, mat
   real    :: Fex, Fim
@@ -29,7 +25,7 @@
   real    :: A0, A12, A21
   real    :: error
   real    :: VISeff
-  real    :: phi_xS, phi_yS, phi_zS
+  real    :: phix_f, phiy_f, phiz_f
   real    :: VIStS
 !==============================================================================!
 !                                                                              ! 
@@ -62,14 +58,19 @@
     do c = 1, grid % n_cells
       phi % oo(c)  = phi % o(c)
       phi % o (c)  = phi % n(c)
-      phi % Coo(c) = phi % Co(c)
-      phi % Co (c) = 0.0 
-      phi % Doo(c) = phi % Do(c)
-      phi % Do (c) = 0.0 
-      phi % Xoo(c) = phi % Xo(c)
-      phi % Xo (c) = phi % X(c) 
+      phi % a_oo(c) = phi % a_o(c)
+      phi % a_o (c) = 0.0 
+      phi % d_oo(c) = phi % d_o(c)
+      phi % d_o (c) = 0.0 
+      phi % c_oo(c) = phi % c_o(c)
+      phi % c_o (c) = phi % c(c) 
     end do
   end if
+
+  ! Gradients
+  call GraPhi(grid, phi % n, 1, phix, .TRUE.)
+  call GraPhi(grid, phi % n, 2, phiy, .TRUE.)
+  call GraPhi(grid, phi % n, 3, phiz, .TRUE.)
 
   !---------------!
   !               !
@@ -87,8 +88,8 @@
 
   ! New values
 1 do c = 1, grid % n_cells
-    phi % C(c)    = 0.0
-    phi % X(c)    = 0.0
+    phi % a(c)    = 0.0
+    phi % c(c)    = 0.0
   end do
 
   !----------------------------!
@@ -105,39 +106,39 @@
 
       if( BLEND_TUR(material(c1)) /= NO .or.  &
           BLEND_TUR(material(c2)) /= NO ) then
-        call Advection_Scheme(grid, phis, s, phi % n, phi_x, phi_y, phi_z,  &
-                        grid % dx, grid % dy, grid % dz,        &
-                        max(BLEND_TUR(material(c1)),            &
-                            BLEND_TUR(material(c2))) ) 
+        call Advection_Scheme(grid, phis, s, phi % n, phix, phiy, phiz,  &
+                              grid % dx, grid % dy, grid % dz,           &
+                              max( BLEND_TUR(material(c1)),              &
+                                   BLEND_TUR(material(c2))) ) 
       end if 
 
       ! Central differencing for advection
       if(ini == 1) then 
         if(c2  > 0) then
-          phi % Co(c1)=phi % Co(c1)-Flux(s)*phis
-          phi % Co(c2)=phi % Co(c2)+Flux(s)*phis
+          phi % a_o(c1)=phi % a_o(c1)-Flux(s)*phis
+          phi % a_o(c2)=phi % a_o(c2)+Flux(s)*phis
         else
-          phi % Co(c1)=phi % Co(c1)-Flux(s)*phis
+          phi % a_o(c1)=phi % a_o(c1)-Flux(s)*phis
         endif 
       end if
       if(c2  > 0) then
-        phi % C(c1)=phi % C(c1)-Flux(s)*phis
-        phi % C(c2)=phi % C(c2)+Flux(s)*phis
+        phi % a(c1)=phi % a(c1)-Flux(s)*phis
+        phi % a(c2)=phi % a(c2)+Flux(s)*phis
       else
-        phi % C(c1)=phi % C(c1)-Flux(s)*phis
+        phi % a(c1)=phi % a(c1)-Flux(s)*phis
       endif 
 
       ! Upwind 
       if(BLEND_TUR(material(c1)) /= NO .or. BLEND_TUR(material(c2)) /= NO) then
         if(Flux(s)  < 0) then   ! from c2 to c1
-          phi % X(c1)=phi % X(c1)-Flux(s)*phi % n(c2)
+          phi % c(c1)=phi % c(c1)-Flux(s)*phi % n(c2)
           if(c2  > 0) then
-            phi % X(c2)=phi % X(c2)+Flux(s)*phi % n(c2)
+            phi % c(c2)=phi % c(c2)+Flux(s)*phi % n(c2)
           endif
         else 
-          phi % X(c1)=phi % X(c1)-Flux(s)*phi % n(c1)
+          phi % c(c1)=phi % c(c1)-Flux(s)*phi % n(c1)
           if(c2  > 0) then
-            phi % X(c2)=phi % X(c2)+Flux(s)*phi % n(c1)
+            phi % c(c2)=phi % c(c2)+Flux(s)*phi % n(c1)
           endif
         end if
       end if   ! BLEND_TUR 
@@ -169,7 +170,7 @@
   if(CONVEC == AB) then
     do c=1,grid % n_cells
       b(c) = b(c) + URFC_Tur(material(c)) * &
-                    (1.5*phi % Co(c) - 0.5*phi % Coo(c) - phi % X(c))
+                    (1.5*phi % a_o(c) - 0.5*phi % a_oo(c) - phi % c(c))
     end do  
   endif
 
@@ -177,7 +178,7 @@
   if(CONVEC == CN) then
     do c = 1, grid % n_cells
       b(c) = b(c) + URFC_Tur(material(c)) * &
-                    (0.5 * ( phi % C(c) + phi % Co(c) ) - phi % X(c))
+                    (0.5 * ( phi % a(c) + phi % a_o(c) ) - phi % c(c))
     end do  
   endif
 
@@ -185,13 +186,13 @@
   if(CONVEC == FI) then
     do c=1,grid % n_cells
       b(c) = b(c) + URFC_Tur(material(c)) * &
-                    (phi % C(c) - phi % X(c))
+                    (phi % a(c) - phi % c(c))
     end do  
   end if     
             
   ! New values
   do c = 1, grid % n_cells
-    phi % X(c) = 0.0
+    phi % c(c) = 0.0
   end do
   
   !------------------!
@@ -226,24 +227,24 @@
       end if
     end if
 
-    phi_xS = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
-    phi_yS = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
-    phi_zS = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
+    phix_f = fF(s)*phix(c1) + (1.0-fF(s))*phix(c2)
+    phiy_f = fF(s)*phiy(c1) + (1.0-fF(s))*phiy(c2)
+    phiz_f = fF(s)*phiz(c1) + (1.0-fF(s))*phiz(c2)
 
 
     ! Total (exact) diffusive flux plus turb. diffusion
-    Fex = VISeff * (  phi_xS * grid % sx(s)  &
-                    + phi_yS * grid % sy(s)  &
-                    + phi_zS * grid % sz(s) ) 
+    Fex = VISeff * (  phix_f * grid % sx(s)  &
+                    + phiy_f * grid % sy(s)  &
+                    + phiz_f * grid % sz(s) ) 
 
     A0 = VISeff * Scoef(s) 
 
     ! Implicit diffusive flux
     ! (this is a very crude approximation: Scoef is
     !  not corrected at interface between materials)
-    Fim=( phi_xS*grid % dx(s)                      &
-         +phi_yS*grid % dy(s)                      &
-         +phi_zS*grid % dz(s))*A0
+    Fim=( phix_f*grid % dx(s)                      &
+         +phiy_f*grid % dy(s)                      &
+         +phiz_f*grid % dz(s))*A0
 
     ! This is yet another crude approximation:
     ! A0 is calculated approximatelly
@@ -258,19 +259,19 @@
     ! Straight diffusion part 
     if(ini == 1) then
       if(c2  > 0) then
-        phi % Do(c1) = phi % Do(c1) + (phi % n(c2)-phi % n(c1))*A0   
-        phi % Do(c2) = phi % Do(c2) - (phi % n(c2)-phi % n(c1))*A0    
+        phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
+        phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*A0    
       else
         if(TypeBC(c2) /= SYMMETRY) then
-          phi % Do(c1) = phi % Do(c1) + (phi % n(c2)-phi % n(c1))*A0   
+          phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
         end if 
       end if 
     end if
 
     ! Cross diffusion part
-    phi % X(c1) = phi % X(c1) + Fex - Fim 
+    phi % c(c1) = phi % c(c1) + Fex - Fim 
     if(c2  > 0) then
-      phi % X(c2) = phi % X(c2) - Fex + Fim 
+      phi % c(c2) = phi % c(c2) - Fex + Fim 
     end if 
 
     ! Compute coefficients for the sysytem matrix
@@ -330,27 +331,27 @@
     if(SIMULA==HJ) then        
       do c=1,grid % n_cells
         VAR1x(c) = CmuD/phi % Sigma*Kin%n(c)/Eps%n(c)*&
-                   ((uu%n(c))*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c)) - &
-                   VISc*phi_x(c)
+                   ((uu%n(c))*phix(c)+uv%n(c)*phiy(c)+uw%n(c)*phiz(c)) - &
+                   VISc*phix(c)
 
         VAR1y(c) = CmuD/phi % Sigma*Kin%n(c)/Eps%n(c)*&
-                   (uv%n(c)*phi_x(c)+(vv%n(c))*phi_y(c)+vw%n(c)*phi_z(c)) - &
-                   VISc*phi_y(c)
+                   (uv%n(c)*phix(c)+(vv%n(c))*phiy(c)+vw%n(c)*phiz(c)) - &
+                   VISc*phiy(c)
 
         VAR1z(c) = CmuD/phi % Sigma*Kin%n(c)/Eps%n(c)*&
-                   (uw%n(c)*phi_x(c)+vw%n(c)*phi_y(c)+(ww%n(c))*phi_z(c)) - &
-                   VISc*phi_z(c) 
+                   (uw%n(c)*phix(c)+vw%n(c)*phiy(c)+(ww%n(c))*phiz(c)) - &
+                   VISc*phiz(c) 
       end do
     else if(SIMULA==EBM) then
       do c=1,grid % n_cells
         VAR1x(c) = CmuD/phi % Sigma*Tsc(c)*&
-                   ((uu%n(c))*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c)) 
+                   ((uu%n(c))*phix(c)+uv%n(c)*phiy(c)+uw%n(c)*phiz(c)) 
 
         VAR1y(c) = CmuD/phi % Sigma*Tsc(c)*&
-                   (uv%n(c)*phi_x(c)+(vv%n(c))*phi_y(c)+vw%n(c)*phi_z(c)) 
+                   (uv%n(c)*phix(c)+(vv%n(c))*phiy(c)+vw%n(c)*phiz(c)) 
 
         VAR1z(c) = CmuD/phi % Sigma*Tsc(c)*&
-                   (uw%n(c)*phi_x(c)+vw%n(c)*phi_y(c)+(ww%n(c))*phi_z(c)) 
+                   (uw%n(c)*phix(c)+vw%n(c)*phiy(c)+(ww%n(c))*phiz(c)) 
       end do
     end if
     call GraPhi(grid, VAR1x,1,VAR2x,.TRUE.)
@@ -372,16 +373,16 @@
 
         VISeff = (fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2)) 
 
-        phi_xS = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
-        phi_yS = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
-        phi_zS = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
-        Fex = VISeff * (  phi_xS * grid % sx(s)  &
-                        + phi_yS * grid % sy(s)  &
-                        + phi_zS * grid % sz(s))
+        phix_f = fF(s)*phix(c1) + (1.0-fF(s))*phix(c2)
+        phiy_f = fF(s)*phiy(c1) + (1.0-fF(s))*phiy(c2)
+        phiz_f = fF(s)*phiz(c1) + (1.0-fF(s))*phiz(c2)
+        Fex = VISeff * (  phix_f * grid % sx(s)  &
+                        + phiy_f * grid % sy(s)  &
+                        + phiz_f * grid % sz(s))
         A0 = VISeff * Scoef(s)
-        Fim = (   phi_xS * grid % dx(s)      &
-                + phi_yS * grid % dy(s)      &
-                + phi_zS * grid % dz(s)) * A0
+        Fim = (   phix_f * grid % dx(s)      &
+                + phiy_f * grid % dy(s)      &
+                + phiz_f * grid % dz(s)) * A0
 
         b(c1) = b(c1) - VISeff*(phi%n(c2)-phi%n(c1))*Scoef(s)- Fex + Fim
         if(c2  > 0) then
@@ -398,14 +399,14 @@
   ! Adams-Bashfort scheeme for diffusion fluxes
   if(DIFFUS == AB) then 
     do c=1,grid % n_cells
-      b(c) = b(c) + 1.5 * phi % Do(c) - 0.5 * phi % Doo(c)
+      b(c) = b(c) + 1.5 * phi % d_o(c) - 0.5 * phi % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
   if(DIFFUS == CN) then 
     do c=1,grid % n_cells
-      b(c) = b(c) + 0.5 * phi % Do(c)
+      b(c) = b(c) + 0.5 * phi % d_o(c)
     end do  
   end if
                  
@@ -415,21 +416,21 @@
   ! Adams-Bashfort scheeme for cross diffusion 
   if(CROSS == AB) then
     do c=1,grid % n_cells
-      b(c) = b(c) + 1.5 * phi % Xo(c) - 0.5 * phi % Xoo(c)
+      b(c) = b(c) + 1.5 * phi % c_o(c) - 0.5 * phi % c_oo(c)
     end do 
   end if
     
   ! Crank-Nicholson scheme for cross difusive terms
   if(CROSS == CN) then
     do c=1,grid % n_cells
-      b(c) = b(c) + 0.5 * phi % X(c) + 0.5 * phi % Xo(c)
+      b(c) = b(c) + 0.5 * phi % c(c) + 0.5 * phi % c_o(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
   if(CROSS == FI) then
     do c=1,grid % n_cells
-      b(c) = b(c) + phi % X(c) 
+      b(c) = b(c) + phi % c(c) 
     end do 
   end if
 

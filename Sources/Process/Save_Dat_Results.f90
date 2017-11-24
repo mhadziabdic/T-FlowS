@@ -50,16 +50,6 @@
   open(9, file=name_out)
   if(this_proc  < 2) write(*,*) '# Now creating the file:', trim(name_out)
 
-    call GraPhi(grid, U % n, 1, Ux,.true.)    ! dU/dx
-    call GraPhi(grid, V % n, 1, Vx,.true.)    ! dU/dx
-    call GraPhi(grid, W % n, 1, Wx,.true.)    ! dU/dx
-    call GraPhi(grid, U % n, 2, Uy,.true.)    ! dU/dx
-    call GraPhi(grid, V % n, 2, Vy,.true.)    ! dU/dx
-    call GraPhi(grid, W % n, 2, Wy,.true.)    ! dU/dx
-    call GraPhi(grid, U % n, 3, Uz,.true.)    ! dU/dx
-    call GraPhi(grid, V % n, 3, Vz,.true.)    ! dU/dx
-    call GraPhi(grid, W % n, 3, Wz,.true.)    ! dU/dx
-
   !-----------!
   !   Start   !
   !-----------!

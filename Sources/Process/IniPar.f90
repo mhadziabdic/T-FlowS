@@ -44,8 +44,6 @@
   GAMMA      = 27
 !---- for wall functions
   MODE       = 28
-  LRe        = 29
-  HRe        = 30
 !---- LowRe k-eps models
   J_L        = 31  
   S_L_Y      = 32 

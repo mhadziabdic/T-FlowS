@@ -27,25 +27,27 @@
   !---------------!
   !   SGS terms   !
   !---------------!
-  call GraPhi(grid, u % n, 1, Ux, .TRUE.)  ! dU/dx
-  call GraPhi(grid, u % n, 2, Uy, .TRUE.)  ! dU/dy
-  call GraPhi(grid, u % n, 3, Uz, .TRUE.)  ! dU/dz
-  call GraPhi(grid, v % n, 1, Vx, .TRUE.)  ! dV/dx
-  call GraPhi(grid, v % n, 2, Vy, .TRUE.)  ! dV/dy
-  call GraPhi(grid, v % n, 3, Vz, .TRUE.)  ! dV/dz
-  call GraPhi(grid, w % n, 1, Wx, .TRUE.)  ! dW/dx
-  call GraPhi(grid, w % n, 2, Wy, .TRUE.)  ! dW/dy
-  call GraPhi(grid, w % n, 3, Wz, .TRUE.)  ! dW/dz
+  call GraPhi(grid, u % n, 1, u % x, .TRUE.)  ! dU/dx
+  call GraPhi(grid, u % n, 2, u % y, .TRUE.)  ! dU/dy
+  call GraPhi(grid, u % n, 3, u % z, .TRUE.)  ! dU/dz
+  call GraPhi(grid, v % n, 1, v % x, .TRUE.)  ! dV/dx
+  call GraPhi(grid, v % n, 2, v % y, .TRUE.)  ! dV/dy
+  call GraPhi(grid, v % n, 3, v % z, .TRUE.)  ! dV/dz
+  call GraPhi(grid, w % n, 1, w % x, .TRUE.)  ! dW/dx
+  call GraPhi(grid, w % n, 2, w % y, .TRUE.)  ! dW/dy
+  call GraPhi(grid, w % n, 3, w % z, .TRUE.)  ! dW/dz
 
   do c = 1, grid % n_cells
-    Shear(c) = Ux(c)*Ux(c) + Vy(c)*Vy(c) + Wz(c)*Wz(c) +  &
-               0.5*(Vz(c) + Wy(c))*(Vz(c) + Wy(c)) +      & 
-               0.5*(Uz(c) + Wx(c))*(Uz(c) + Wx(c)) +      & 
-               0.5*(Vx(c) + Uy(c))*(Vx(c) + Uy(c)) 
+    Shear(c) = u % x(c)**2                     &
+             + v % y(c)**2                     &
+             + w % z(c)**2                     &
+             + 0.5 * (v % z(c) + w % y(c))**2  & 
+             + 0.5 * (u % z(c) + w % x(c))**2  & 
+             + 0.5 * (v % x(c) + u % y(c))**2
 
-    Vort(c) = - (0.5*(Vz(c) - Wy(c))*(Vz(c) - Wy(c)) +   &
-                 0.5*(Uz(c) - Wx(c))*(Uz(c) - Wx(c)) +   &
-                 0.5*(Vx(c) - Uy(c))*(Vx(c) - Uy(c)))
+    Vort(c) = - (  0.5*(v % z(c) - w % y(c))**2   &
+                 + 0.5*(u % z(c) - w % x(c))**2   &
+                 + 0.5*(v % x(c) - u % y(c))**2)
 
   end do 
 

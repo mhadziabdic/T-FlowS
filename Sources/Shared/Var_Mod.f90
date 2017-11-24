@@ -10,6 +10,9 @@
   !   Var type   !
   !--------------!
   type Var_Type         
+
+    type(Grid_Type), pointer :: pnt_grid  ! grid for which it is defined
+
     character(len=4)  :: name                  ! variable name, always make it 
                                                ! uppercase and keep very short
     real, allocatable :: n(:)                  ! new value
@@ -28,7 +31,6 @@
     real              :: init(1024)            ! initial values
     real              :: pro(11024)            ! inlfow profile
     real              :: Sigma                 ! sigma
-    type(Grid_Type), pointer :: pnt_grid
   end type
 
   contains 

@@ -166,7 +166,7 @@
     if(answer == 'HYB') then
       MODE = HYB 
     else
-      HYB = 10000
+      MODE = PURE
     end if
   end if 
 

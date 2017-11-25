@@ -21,9 +21,6 @@ module pro_mod
   ! Used in Dynamic Smgaorinsky model 
   real,allocatable    :: Aval_dif(:)
 
-  ! Pressure at the cell faces  
-  real,allocatable :: Ps(:)
-
   real,allocatable :: VAR1x(:),   VAR1y(:),   VAR1z(:)
   real,allocatable :: VAR2x(:),   VAR2y(:),   VAR2z(:)
   real,allocatable :: VAR3x(:),   VAR3y(:),   VAR3z(:)
@@ -58,33 +55,33 @@ module pro_mod
   real,allocatable :: eps_tot(:)
 
   ! Velocity components
-  type(Var_Type) :: U
-  type(Var_Type) :: V
-  type(Var_Type) :: W
+  type(Var_Type) :: u
+  type(Var_Type) :: v
+  type(Var_Type) :: w
 
   ! Temperature
-  type(Var_Type) :: T
+  type(Var_Type) :: t
   type(Var_Type) :: tt
   type(Var_Type) :: ut
   type(Var_Type) :: vt
   type(Var_Type) :: wt
 
   ! Pressure 
-  type(Var_Type) :: P  
-  type(Var_Type) :: PP
+  type(Var_Type) :: p  
+  type(Var_Type) :: pp
 
 !=====================================================================!
 !        Hybrid apriori variables
 !=====================================================================!
 
   ! Velocity components
-  type(Var_Type) :: U_r
-  type(Var_Type) :: V_r
-  type(Var_Type) :: W_r
+  type(Var_Type) :: u_r
+  type(Var_Type) :: v_r
+  type(Var_Type) :: w_r
 
   ! Pressure
-  type(Var_Type) :: P_r
-  type(Var_Type) :: PP_r
+  type(Var_Type) :: p_r
+  type(Var_Type) :: pp_r
 
   ! Turbulent viscosity
   real,allocatable :: VISt_sgs(:)
@@ -104,33 +101,53 @@ module pro_mod
   !-------------------------!
   !   Algorythm parameters  !
   !-------------------------!
-  integer :: K_EPS
-  integer :: K_EPS_VV   
-  integer, parameter :: HIGH_RE = 30
-  integer :: MODE   
-  integer, parameter :: LOW_RE = 29    
-  integer :: SPA_ALL
-  integer :: DES_SPA
-  integer :: J_L    
-  integer :: NAG     
-  integer :: S_L_Y   
-  integer :: WOLF   
-  integer :: ZETA   
-  integer :: HYB_ZETA   
-  integer :: HYB_PITM   
-  integer :: RNG   
-  integer :: SMAG
-  integer :: DYN 
-  integer :: WALE
-  integer :: MIX  
-  integer :: ZPANS  
-  integer :: ZETAM  
-  integer :: EBM
-  integer :: HYB
-  integer :: HJ
-  integer :: WF
-  integer :: STAN
-  integer :: BUOY
+  integer, parameter :: AB       =  1
+  integer, parameter :: CN       =  2
+  integer, parameter :: FI       =  3
+  integer, parameter :: LIN      =  4
+  integer, parameter :: PAR      =  5
+  integer, parameter :: SIMPLE   =  6
+  integer, parameter :: FRACT    =  7
+
+  !-----------------------!
+  !   Advection schemes   !
+  !-----------------------!
+  integer, parameter :: CDS       = 20
+  integer, parameter :: QUICK     = 21 
+  integer, parameter :: LUDS      = 22
+  integer, parameter :: MINMOD    = 23
+  integer, parameter :: SMART     = 24
+  integer, parameter :: AVL_SMART = 25
+  integer, parameter :: SUPERBEE  = 26
+  integer, parameter :: GAMMA     = 27
+  
+  !-----------------------!
+  !   Turbulence models   !
+  !-----------------------!
+  integer, parameter :: LES      = 12
+  integer, parameter :: DNS      = 13
+  integer, parameter :: K_EPS    = 14
+  integer, parameter :: K_EPS_VV = 15
+  integer, parameter :: SPA_ALL  = 16
+  integer, parameter :: DES_SPA  = 17
+  integer, parameter :: ZETA     = 18
+  integer, parameter :: EBM      = 19
+  integer, parameter :: LOW_RE   = 29    
+  integer, parameter :: HIGH_RE  = 30
+  integer, parameter :: J_L      = 31  
+  integer, parameter :: S_L_Y    = 32 
+  integer, parameter :: NAG      = 33
+  integer, parameter :: RNG      = 34
+  integer, parameter :: SMAG     = 35
+  integer, parameter :: WALE     = 36
+  integer, parameter :: DYN      = 37
+  integer, parameter :: MIX      = 38
+  integer, parameter :: HYB_ZETA = 39
+  integer, parameter :: HYB_PITM = 40
+  integer, parameter :: HJ       = 41
+  integer, parameter :: ZETAM    = 42
+  integer, parameter :: HYB      = 43
+  integer, parameter :: PURE     = 44  ! as opposite of hybrid ;)
 
   ! Mass fluxes throught cell faces
   real,allocatable :: Flux(:) 
@@ -212,19 +229,17 @@ module pro_mod
   !     Algorythm parameters     !
   !------------------------------!
   integer :: INERT,    CONVEC,    CROSS,    DIFFUS 
-  integer :: LIN,      PAR,       AB,       CN,       FI
-  integer :: ALGOR,    SIMPLE,    FRACT
-  integer :: SIMULA,   DNS,       LES 
-  integer :: POSPRO,   AVS,       GMV
-  integer :: CHANNEL,  TEST,      OTHER,    HOT, HOTini, PIPE, JET, ROT, TGV, BUDG, URANS 
+  integer :: ALGOR
+  integer :: SIMULA
+  integer :: POSPRO
+  integer :: CHANNEL,  TEST,      OTHER,    HOT, HOTini, PIPE, JET, ROT, TGV, URANS 
   integer :: BACKSTEP, AHILL, RB_CONV
-  integer :: ROUGH, PER_BC 
+  integer :: ROUGH, PER_BC, BUOY 
   integer :: SGDH, GGDH, BS
   integer :: SHAKE(100),    BLEND(100),BLEND_TUR(100), BLEND_TEM(100)
   integer :: SHAKE_PER(100),SHAKE_INT(100)
   integer :: PREC 
-  integer :: CDS,      QUICK,    LUDS,     MINMOD,   SMART,    AVL_SMART, &
-             SUPERBEE, GAMMA, RES_INI 
+  integer :: RES_INI, MODE, BUDG 
   integer :: XHOM,     YHOM,     ZHOM
 
   integer,parameter :: MAXM=100 

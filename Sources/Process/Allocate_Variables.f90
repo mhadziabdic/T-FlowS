@@ -39,8 +39,6 @@
   call Var_Mod_Allocate_Statistics(w)
   call Var_Mod_Allocate_Statistics(p)
 
-  allocate (Ps(grid % n_faces)); Ps=0.;
-
   allocate (PHI1x(-grid % n_bnd_cells:grid % n_cells)); PHI1x=0.
   allocate (PHI1y(-grid % n_bnd_cells:grid % n_cells)); PHI1y=0.
   allocate (PHI1z(-grid % n_bnd_cells:grid % n_cells)); PHI1z=0.

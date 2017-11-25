@@ -9,6 +9,7 @@ libShared_a_SOURCES = 		\
   Material_Mod.f90 		\
   Grid_Mod.f90			\
   Matrix_Mod.f90 		\
+  Work_Mod.f90 			\
   Solvers_Mod.f90		\
   Var_Mod.f90			\
   div_mod.f90			\

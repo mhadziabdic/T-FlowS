@@ -15,9 +15,12 @@
 !   incomplete Cholesky preconditioning)                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
+  use par_mod
   use Matrix_Mod
   use Solvers_Mod
-  use par_mod
+  use Work_Mod, only: p1 => r_cell_01,  &
+                      p2 => r_cell_02,  &
+                      q1 => r_cell_03
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -28,7 +31,7 @@
   real              :: tol                !  tolerance
   real              :: ini_res, fin_res   !  residual
 !-----------------------------------[Locals]-----------------------------------!
-  real    :: alfa, beta, rho, rhoold, bnrm2, sum1, sum2, error
+  real    :: alfa, beta, rho, rhoold, bnrm2, error
   integer :: i, j, k, iter, sub
 !==============================================================================!
            

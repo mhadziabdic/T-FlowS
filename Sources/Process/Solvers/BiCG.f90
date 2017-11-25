@@ -15,9 +15,14 @@
 !   incomplete Cholesky preconditioning)                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
+  use par_mod
   use Matrix_Mod
   use Solvers_Mod
-  use par_mod
+  use Work_Mod, only: p1 => r_cell_01,  &
+                      p2 => r_cell_02,  &
+                      q1 => r_cell_03,  &
+                      q2 => r_cell_04,  &
+                      r2 => r_cell_05   
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -28,7 +33,7 @@
   real              :: tol                !  tolerance
   real              :: ini_res, fin_res   !  residual
 !-----------------------------------[Locals]-----------------------------------!
-  real    :: alfa, beta, rho, rhoold, bnrm2, sum1, sum2, error
+  real    :: alfa, beta, rho, rhoold, bnrm2, error
   integer :: i, j, k, iter, sub
 !==============================================================================!
 
@@ -97,8 +102,8 @@
     !    solve Mz = r      !
     !   (q instead of z)   !
     !----------------------!
-    call Prec_Solve(N, NB, A, D, q1, r1, prec) 
-    call Prec_Solve(N, NB, A, D, q2, r2, prec) 
+    call Prec_Solve(N, NB, A, D, q1, r1(1), prec) 
+    call Prec_Solve(N, NB, A, D, q2, r2(1), prec) 
 
     !-----------------!
     !   rho = (z,r)   !

@@ -588,7 +588,7 @@
 
   niter=miter
 
-  call cg(grid % n_cells, grid % n_bnd_cells, A,           & 
+  call cgs(grid % n_cells, grid % n_bnd_cells, A,           & 
           ui % n, b, PREC,        &
           niter,U % STol, res(var), error)
 

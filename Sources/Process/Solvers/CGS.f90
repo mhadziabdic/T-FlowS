@@ -15,9 +15,18 @@
 !   incomplete Cholesky preconditioning)                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
+  use par_mod
   use Matrix_Mod
   use Solvers_Mod
-  use par_mod
+  use Work_Mod, only: p1         => r_cell_01,  &
+                      p2         => r_cell_02,  &
+                      q1         => r_cell_03,  &
+                      q2         => r_cell_04,  &
+                      r2         => r_cell_05,  &
+                      u1         => r_cell_06,  &
+                      u2         => r_cell_07,  &
+                      v2         => r_cell_08,  &   
+                      u1_plus_q1 => r_cell_09
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -117,7 +126,7 @@
     !---------------------!
     !   Solve M p2 = u2   !
     !---------------------!
-    call Prec_Solve(N, NB, A, D, p2, u2, prec) 
+    call Prec_Solve(N, NB, A, D, p2, u2(1), prec) 
 
     !--------------!
     !   v2 = Ap2   !  
@@ -163,7 +172,7 @@
     do i=1,N
       u1_plus_q1(i) = u1(i) + q1(i)
     end do
-    call Prec_Solve(N, NB, A, D, p1, u1_plus_q1, prec) 
+    call Prec_Solve(N, NB, A, D, p1, u1_plus_q1(1), prec) 
 
     !---------------------!
     !   x = x + alfa p1   !

@@ -5,9 +5,9 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
-  use les_mod
   use par_mod
   use Grid_Mod
+  use Work_Mod
   use Matrix_Mod
   use Solvers_Mod
 !------------------------------------------------------------------------------!
@@ -23,12 +23,15 @@
   allocate (fF(grid % n_faces));  fF = 0.0  
 
   ! Variables defined in sol.h90:
-  call Solvers_Mod_Allocate_Vectors(grid % n_bnd_cells, grid % n_cells)
   call Matrix_Mod_Allocate(grid, D)
 
   ! Variables defined in pro_mod.h90:
   call Matrix_Mod_Allocate(grid, A)
   allocate (b(grid % n_cells));  b=0
+
+  ! Working arrays
+  call Work_Mod_Allocate_Real_Cells(grid, 15)
+  call Work_Mod_Allocate_Real_Faces(grid,  1)
 
   allocate (Scoef(grid % n_faces)); Scoef=0.
 

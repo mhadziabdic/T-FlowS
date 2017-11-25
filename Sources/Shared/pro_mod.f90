@@ -8,7 +8,6 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 module pro_mod
 
-  use allp_mod, only: YES, NO
   use Var_Mod
   use Matrix_Mod
 
@@ -17,9 +16,6 @@ module pro_mod
   ! Right hand side for velocity and pressure equations 
   type(Matrix_Type) :: A  ! system matrix for all variables
   real,allocatable  :: b(:)
-
-  ! Used in Dynamic Smgaorinsky model 
-  real,allocatable    :: Aval_dif(:)
 
   real,allocatable :: VAR1x(:),   VAR1y(:),   VAR1z(:)
   real,allocatable :: VAR2x(:),   VAR2y(:),   VAR2z(:)
@@ -70,34 +66,11 @@ module pro_mod
   type(Var_Type) :: p  
   type(Var_Type) :: pp
 
-!=====================================================================!
-!        Hybrid apriori variables
-!=====================================================================!
-
-  ! Velocity components
-  type(Var_Type) :: u_r
-  type(Var_Type) :: v_r
-  type(Var_Type) :: w_r
-
-  ! Pressure
-  type(Var_Type) :: p_r
-  type(Var_Type) :: pp_r
-
   ! Turbulent viscosity
   real,allocatable :: VISt_sgs(:)
   real,allocatable :: VISt_eff(:)
   real,allocatable :: Ptt(:)
 
-  ! Reynolds stresses
-  type(Var_Type) :: uu_r, vv_r, ww_r, uv_r, uw_r, vw_r
-
-  ! Mass fluxes throught cell faces
-  real,allocatable :: Flux_r(:), Alfa_lim(:)
-
-  ! Mass fluxes throught the whole domain
-  real,allocatable :: FLUXx_r(:),  FLUXy_r(:),  FLUXz_r(:)
-!=====================================================================!
- 
   !-------------------------!
   !   Algorythm parameters  !
   !-------------------------!
@@ -167,19 +140,17 @@ module pro_mod
   integer,allocatable :: NumGood(:),   & 
                          NumNeig(:)
 
-  ! Mass fluxes throught the whole domain
+  ! Mass fluxes, bulk velocities and pressure drops for each material
   real,allocatable :: MassIn(:), MasOut(:) 
   real,allocatable :: FLUXx(:),  FLUXy(:),  FLUXz(:)
   real,allocatable :: FLUXoX(:), FLUXoY(:), FLUXoZ(:) 
   real,allocatable :: Ubulk(:),  Vbulk(:),  Wbulk(:)
+  real,allocatable :: PdropX(:), PdropY(:), PdropZ(:)
 
   ! Viscosity, Density, Conductivity
   integer :: StateMat(100)
   integer :: SimulMat(100)
   real    :: VISc, DENc(100), CONc(100), CAPc(100)
-
-  ! Average velocity 
-  real    :: Uaver
 
   ! angular velocity 
   real    :: omegaX, omegaY, omegaZ, omega
@@ -201,11 +172,11 @@ module pro_mod
 
   ! Integer variable needed for interpolation of
   ! results between different meshes tranfer (LoaIni)
-  integer          :: NClast, N_sign, eqn
+  integer             :: NClast, N_sign, eqn
   integer,allocatable :: near(:)
 
   ! Residuals                
-  real    :: errmax, res(100)  
+  real :: errmax, res(100)  
 
   ! Monitoring planes for each material (domain)
   real,allocatable :: xp(:), yp(:), zp(:)

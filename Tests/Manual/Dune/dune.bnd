@@ -1,8 +1,16 @@
-%-- phisical properties
+#=====================#
+# phisical properties #
+#---------------------#
   1
-  1  Fluid  0.01  1.00  
-%-- boundary conditions 
+  air  fluid  0.01  1.00  
+
+#=====================#
+# Boundary conditions #
+#---------------------#
    1 
-   default    WALL      0.0      0.0   0.0
-%-- initial conditions  
+   static_wall    wall      0.0      0.0   0.0
+
+#====================#
+# Initial conditions # 
+#--------------------#
    0

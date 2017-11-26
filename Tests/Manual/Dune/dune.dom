@@ -66,11 +66,34 @@
  4  20  5  30 
     1.00  1.0  -.9 
     4  5  9 10 14 15 19  20 
-# Lines & Surfaces
+
+#==================#
+# Lines & Surfaces #
+#------------------#
  0
  0
-# Boundary conditions
- 0
+
+#=====================#
+# Boundary conditions #
+#---------------------#
+ 8
+    1     Kmin
+        1   static_wall
+    2     Kmax
+        1   static_wall
+    3     Kmin
+        2   static_wall
+    4     Kmax
+        2   static_wall
+    5     Kmin
+        1   static_wall
+    6     Kmax
+        1   static_wall
+    7     Kmin
+        2   static_wall
+    8     Kmax
+        2   static_wall
+
 #=====================#
 # Periodic Boundaries # 
 #---------------------#
@@ -85,12 +108,17 @@
        8  9 19 18
     5  4  5 15 11
        9 10 20 19
+
 #===================#
 #  Copy boundaries  #
 #-------------------#
    0
-# Refinement regions
+
+#====================#
+# Refinement regions #
+#--------------------#
  0
+
 #===========#
 # Smoothing #
 #-----------#

@@ -609,7 +609,7 @@
       dsc2=Distance(xc2, yc2, zc2, grid % xf(s), grid % yf(s), grid % zf(s))
   
       ! Interpolation factor
-      f(s) = dsc2 / (dsc1+dsc2)   ! not checked
+      grid % f(s) = dsc2 / (dsc1 + dsc2)
     end do 
   end if 
 

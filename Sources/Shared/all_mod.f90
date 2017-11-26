@@ -11,8 +11,8 @@ module all_mod
   !----------------------------------------------------!
   !   Geometrical quantities for describing the grid   !
   !----------------------------------------------------!
-  real,allocatable :: delta(:)             ! delta (max(dx,dy,dz))
-  real,allocatable :: WallDs(:), f(:)
+  real,allocatable :: delta(:)   ! delta (max(dx,dy,dz))
+  real,allocatable :: WallDs(:)
 
   !----------------------------------------!
   !   Variables for ease of input/output   !

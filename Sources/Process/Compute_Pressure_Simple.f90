@@ -14,26 +14,26 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter
-  real    :: Us, Vs, Ws, DENs, A12      
+  real    :: Us, Vs, Ws, DENs, A12, fs
   real    :: Pmax, Pmin
   real    :: error
   real    :: SMDPN
   real    :: dPxi, dPyi, dPzi
 !==============================================================================!
 !     
-!  The form of equations which I am solving:    
+!   The form of equations which I am solving:    
 !     
-!     /               /            
-!    |               |             
-!    | rho u dS = dt | GRAD pp dS
-!    |               |             
-!   /               /              
+!      /               /            
+!     |               |             
+!     | rho u dS = dt | GRAD pp dS
+!     |               |             
+!    /               /              
 !
-!  Dimension of the system under consideration
+!   Dimension of the system under consideration
 !   
 !     [App] {pp} = {bpp}               [kg/s]
 !   
-!  Dimensions of certain variables
+!   Dimensions of certain variables
 !
 !     APP            [ms]
 !     PP             [kg/ms^2]
@@ -57,15 +57,16 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
+    fs = grid % f(s)
 
-    DENs =      f(s)  * DENc(material(c1))     &
-         + (1.0-f(s)) * DENc(material(c2))
+    DENs =      fs  * DENc(material(c1))     &
+         + (1.0-fs) * DENc(material(c2))
 
     ! Handle materials
     ! if( StateMat(material(c1))==FLUID .and.        &
     !   StateMat(material(c2))==FLUID) then
-    !   DENs =      f(s)  * DENc(material(c1))       &
-    !        + (1.0-f(s)) * DENc(material(c2))
+    !   DENs =      fs  * DENc(material(c1))       &
+    !        + (1.0-fs) * DENc(material(c2))
     !   else if( StateMat(material(c1))==FLUID .and. &
     !            StateMat(material(c2))==SOLID) then
     !     DENs = DENc(material(c1)) 
@@ -73,8 +74,8 @@
     !            StateMat(material(c2))==FLUID) then
     !     DENs = DENc(material(c2)) 
     !   else
-    !     DENs =      f(s)  * DENc(material(c1))     &
-    !          + (1.0-f(s)) * DENc(material(c2))
+    !     DENs =      fs  * DENc(material(c1))     &
+    !          + (1.0-fs) * DENc(material(c2))
     ! end if  
 
     ! Face is inside the domain
@@ -88,9 +89,9 @@
                + grid % sz(s)*grid % dz(s) )  
 
       ! Interpolate velocity 
-      Us = f(s) * U % n(c1) + (1.0-f(s)) * U % n(c2)
-      Vs = f(s) * V % n(c1) + (1.0-f(s)) * V % n(c2)
-      Ws = f(s) * W % n(c1) + (1.0-f(s)) * W % n(c2)
+      Us = fs * U % n(c1) + (1.0-fs) * U % n(c2)
+      Vs = fs * V % n(c1) + (1.0-fs) * V % n(c2)
+      Ws = fs * W % n(c1) + (1.0-fs) * W % n(c2)
 
       ! Calculate coeficients for the system matrix
       if(c2  > 0) then 

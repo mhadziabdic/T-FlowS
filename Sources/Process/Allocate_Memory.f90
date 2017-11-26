@@ -19,7 +19,6 @@
   ! Variables defined in all.h90:
   allocate (delta (-grid % n_bnd_cells:grid % n_cells));  delta  = 0.0  
   allocate (WallDs(-grid % n_bnd_cells:grid % n_cells));  WallDs = 0.0       
-  allocate (f (grid % n_faces));  f  = 0.0  
   allocate (fF(grid % n_faces));  fF = 0.0  
 
   ! Variables defined in sol.h90:

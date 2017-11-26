@@ -254,9 +254,9 @@
     c2 = grid % faces_c(2,s)
 
     ! Interpolate density and velocity
-    Us = f(s) * U % n(c1) + (1.0-f(s)) * U % n(c2)
-    Vs = f(s) * V % n(c1) + (1.0-f(s)) * V % n(c2)
-    Ws = f(s) * W % n(c1) + (1.0-f(s)) * W % n(c2)
+    Us = grid % f(s) * U % n(c1) + (1.0 - grid % f(s)) * U % n(c2)
+    Vs = grid % f(s) * V % n(c1) + (1.0 - grid % f(s)) * V % n(c2)
+    Ws = grid % f(s) * W % n(c1) + (1.0 - grid % f(s)) * W % n(c2)
     Flux(s) = (  Us * grid % sx(s)  &
                + Vs * grid % sy(s)  &
                + Ws * grid % sz(s) )

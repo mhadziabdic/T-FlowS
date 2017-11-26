@@ -56,7 +56,7 @@
     c1 = grid % faces_c(1,s)                                 ! 2mat
     c2 = grid % faces_c(2,s)                                 ! 2mat
                                                   ! 2mat
-    fF(s) = f(s)                                  ! 2mat
+    fF(s) = grid % f(s)                           ! 2mat
                                                   ! 2mat 
     if( StateMat(material(c1))==FLUID .and.  &    ! 2mat
         StateMat(material(c2))==SOLID ) then      ! 2mat

@@ -21,7 +21,7 @@
   character(len=80)   :: name_eps, answer
   real                :: sclf, sclp, xmax,xmin,ymax,ymin,zmax,zmin
   real                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,        &
-                         xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade,     &
+                         xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade,fs,  &
                          xp1,yp1,xp2,yp2,xp3,yp3,xp4,yp4 
   real                :: red(MAXPRO), green(MAXPRO), blue(MAXPRO)
   integer,allocatable :: indx(:)
@@ -166,11 +166,12 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
+    fs = grid % f(s)
     indx(s) = s
     work(s) = Distance(xk,yk,zk,                                            &
-                f(s)*grid % xc(c1)+(1.-f(s))*(grid % xc(c2)+grid % dx(s)),  &
-                f(s)*grid % yc(c1)+(1.-f(s))*(grid % yc(c2)+grid % dy(s)),  &
-                f(s)*grid % zc(c1)+(1.-f(s))*(grid % zc(c2)+grid % dz(s)) )
+                fs*grid % xc(c1)+(1.-fs)*(grid % xc(c2)+grid % dx(s)),  &
+                fs*grid % yc(c1)+(1.-fs)*(grid % yc(c2)+grid % dy(s)),  &
+                fs*grid % zc(c1)+(1.-fs)*(grid % zc(c2)+grid % dz(s)) )
   end do
   call Sort_Real_By_Index(work,indx,grid % n_faces,-2)
 

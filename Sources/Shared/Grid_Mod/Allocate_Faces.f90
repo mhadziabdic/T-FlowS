@@ -28,8 +28,11 @@
   allocate(grid % dz(nf+ns));  grid % dz = 0.0
 
   ! Face center coordinates
-  allocate(grid % xf(nf+ns));  grid % dx = 0.0
-  allocate(grid % yf(nf+ns));  grid % dy = 0.0
-  allocate(grid % zf(nf+ns));  grid % dz = 0.0
+  allocate(grid % xf(nf+ns));  grid % xf = 0.0
+  allocate(grid % yf(nf+ns));  grid % yf = 0.0
+  allocate(grid % zf(nf+ns));  grid % zf = 0.0
+
+  ! Weight factors
+  allocate(grid % f(nf+ns));   grid % f = 0.0
 
   end subroutine

@@ -130,7 +130,8 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
 
-    phis=f(s)*phi % n(c1) + (1.0-f(s))*phi % n(c2)
+    phis =      grid % f(s)  * phi % n(c1)   &
+         + (1.0-grid % f(s)) * phi % n(c2)
 
  
     if(BLEND_TEM(material(c1)) /= NO .or.  &
@@ -142,8 +143,8 @@
                           BLEND_TEM(material(c2))) ) 
     end if 
 
-    CAPs = f(s)       * CAPc(material(c1)) &
-         + (1.0-f(s)) * CAPc(material(c2))
+    CAPs = grid % f(s)       * CAPc(material(c1)) &
+         + (1.0-grid % f(s)) * CAPc(material(c2))
 
     ! Central differencing for advection
     if(ini.eq.1) then
@@ -233,7 +234,7 @@
             (VISt(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c1)+1.0e-12) ))) )
       Prt2 = 1.0/( 0.5882 + 0.228*(VISt(c2)/(VISc+1.0e-12)) - 0.0441*                  &
            (VISt(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c2)+1.0e-12) ))) )
-       Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
+      Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
     end if
 
     ! Gradients on the cell face 
@@ -245,10 +246,10 @@
         phixS2 = phixS1 
         phiyS2 = phiyS1 
         phizS2 = phizS1 
-        CONeff1 =      f(s) * ( CONc(material(c1))                 &
-                              + CAPc(material(c1))*VISt(c1)/Prt ) &
-                + (1.-f(s)) * ( CONc(material(c2))                 &
-                              + CAPc(material(c2))*VISt(c2)/Prt )
+        CONeff1 =      grid % f(s) * ( CONc(material(c1))                 &
+                                     + CAPc(material(c1))*VISt(c1)/Prt )  &
+                + (1.-grid % f(s)) * ( CONc(material(c2))                 &
+                                     + CAPc(material(c2))*VISt(c2)/Prt )
         CONeff2 = CONeff1 
       else 
         phixS1 = phi_x(c1) 
@@ -528,8 +529,8 @@
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 
-          CONeff1 = f(s)*(CAPc(material(c1))*VISt(c1)/Prt ) &
-             + (1.-f(s))*(CAPc(material(c2))*VISt(c2)/Prt )
+          CONeff1 =       grid % f(s)  * (CAPc(material(c1))*VISt(c1)/Prt )  &
+                  + (1. - grid % f(s)) * (CAPc(material(c2))*VISt(c2)/Prt )
           CONeff2 = CONeff1 
         else
           phixS1 = phi_x(c1) 

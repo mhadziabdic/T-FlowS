@@ -105,7 +105,8 @@
 
     ! Velocities on "orthogonal" cell centers 
     if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
-      phis=f(s)*phi % n(c1) + (1.0-f(s))*phi % n(c2)
+      phis =        grid % f(s)  * phi % n(c1)   &
+           + (1.0 - grid % f(s)) * phi % n(c2)
 
       if( BLEND_TUR(material(c1)) /= NO .or.  &
           BLEND_TUR(material(c2)) /= NO ) then
@@ -119,30 +120,30 @@
       ! Central differencing for advection
       if(ini == 1) then 
         if(c2  > 0) then
-          phi % a_o(c1)=phi % a_o(c1)-Flux(s)*phis
-          phi % a_o(c2)=phi % a_o(c2)+Flux(s)*phis
+          phi % a_o(c1) = phi % a_o(c1) - Flux(s)*phis
+          phi % a_o(c2) = phi % a_o(c2) + Flux(s)*phis
         else
-          phi % a_o(c1)=phi % a_o(c1)-Flux(s)*phis
+          phi % a_o(c1) = phi % a_o(c1) - Flux(s)*phis
         endif 
       end if
       if(c2  > 0) then
-        phi % a(c1)=phi % a(c1)-Flux(s)*phis
-        phi % a(c2)=phi % a(c2)+Flux(s)*phis
+        phi % a(c1) = phi % a(c1) - Flux(s)*phis
+        phi % a(c2) = phi % a(c2) + Flux(s)*phis
       else
-        phi % a(c1)=phi % a(c1)-Flux(s)*phis
+        phi % a(c1) = phi % a(c1) - Flux(s)*phis
       endif 
 
       ! Upwind 
       if(BLEND_TUR(material(c1)) /= NO .or. BLEND_TUR(material(c2)) /= NO) then
         if(Flux(s)  < 0) then   ! from c2 to c1
-          phi % c(c1)=phi % c(c1)-Flux(s)*phi % n(c2)
+          phi % c(c1)=phi % c(c1) - Flux(s) * phi % n(c2)
           if(c2  > 0) then
-            phi % c(c2)=phi % c(c2)+Flux(s)*phi % n(c2)
+            phi % c(c2)=phi % c(c2) + Flux(s) * phi % n(c2)
           endif
         else 
-          phi % c(c1)=phi % c(c1)-Flux(s)*phi % n(c1)
+          phi % c(c1)=phi % c(c1) - Flux(s) * phi % n(c1)
           if(c2  > 0) then
-            phi % c(c2)=phi % c(c2)+Flux(s)*phi % n(c1)
+            phi % c(c2)=phi % c(c2) + Flux(s) * phi % n(c1)
           endif
         end if
       end if   ! BLEND_TUR 

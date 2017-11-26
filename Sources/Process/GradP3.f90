@@ -44,7 +44,7 @@
        c2 < 0 .and. TypeBC(c2) == OUTFLOW) then  
       if( StateMat(material(c1))==FLUID .and. &
           StateMat(material(c2))==FLUID ) then  
-        phi_s = f(s)*phi(c1)+(1.0-f(s))*phi(c2)  
+        phi_s = grid % f(s)*phi(c1)+(1.0-grid % f(s))*phi(c2)  
         phi_x(c1) = phi_x(c1) + phi_s * grid % sx(s)
         phi_y(c1) = phi_y(c1) + phi_s * grid % sy(s)
         phi_z(c1) = phi_z(c1) + phi_s * grid % sz(s)

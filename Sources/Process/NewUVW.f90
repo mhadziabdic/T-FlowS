@@ -155,7 +155,7 @@
     c2 = grid % faces_c(2,s) 
 
     ! Central differencing
-    uis=f(s)*ui % n(c1) + (1.0-f(s))*ui % n(c2)
+    uis = grid % f(s) * ui % n(c1) + (1.0 - grid % f(s)) * ui % n(c2)
 
     if(BLEND(material(c1)) /= NO .or. BLEND(material(c2)) /= NO) then
       call Advection_Scheme(grid, uis, s, ui % n, ui_i, ui_j, ui_k, Di, Dj, Dk, &
@@ -244,7 +244,9 @@
 
     VISeff = fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2) + VISc
 
-    if(SIMULA==HYB_ZETA) VISeff = fF(s)*VISt_eff(c1)+(1.0-fF(s))*VISt_eff(c2) + VISc
+    if(SIMULA==HYB_ZETA) then
+      VISeff = fF(s)*VISt_eff(c1)+(1.0-fF(s))*VISt_eff(c2) + VISc
+    end if
 
     if(c2 < 0 .and. SIMULA == LES) then
       if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then

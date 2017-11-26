@@ -59,12 +59,12 @@
   c2 = grid % faces_c(2,s)
 
   if(Flux(s) > 0.0) then ! goes from c1 to c2
-    fj   = 1.0 - f(s)
+    fj   = 1.0 - grid % f(s)
     C    = c1
     D    = c2
     sign = +1.0
   else ! Flux(s) < 0.0   ! goes from c2 to c1
-    fj = f(s)
+    fj = grid % f(s)
     C    = c2
     D    = c1
     sign = -1.0
@@ -130,9 +130,11 @@
     GammaC = phiUstar/Beta
 
     if(phiUstar < Beta.and.phiUstar > 0.0) then
-      phi_f = (1.0 - GammaC*(1.0 - f(s)))*phi(C) + GammaC*(1.0 - f(s))*phi(D)
+      phi_f = (1.0 - GammaC*(1.0 - grid % f(s))) * phi(C)   &
+                   + GammaC*(1.0 - grid % f(s))  * phi(D)
     else if(phiUstar < 1.0.and.phiUstar >= Beta) then
-       phi_f = f(s)*phi(C) + (1.0 - f(s))*phi(D)
+       phi_f =        grid % f(s)  * phi(C)  &
+             + (1.0 - grid % f(s)) * phi(D)
     else
       phi_f = phi(C)
     end if

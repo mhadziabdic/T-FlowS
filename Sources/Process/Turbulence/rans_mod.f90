@@ -14,18 +14,25 @@
   implicit none
 
   ! Turbulence models variables
-  type(Var_Type) :: KIN
-  type(Var_Type) :: EPS
-  type(Var_Type) :: V_2
-  type(Var_Type) :: F22
-  type(Var_Type) :: VIS
+  type(Var_Type) :: kin
+  type(Var_Type) :: eps
+  type(Var_Type) :: v_2
+  type(Var_Type) :: f22
+  type(Var_Type) :: vis
 
+  ! Reynolds stresses
   type(Var_Type) :: uu
   type(Var_Type) :: vv
   type(Var_Type) :: ww
   type(Var_Type) :: uv
   type(Var_Type) :: uw
   type(Var_Type) :: vw
+ 
+  ! Temperature fluctuations
+  type(Var_Type) :: tt
+  type(Var_Type) :: ut
+  type(Var_Type) :: vt
+  type(Var_Type) :: wt
  
   ! Constants for the k-eps model:
   real :: Ce1, Ce2, Ce3, Cmu, Cmu25, Cmu75, kappa, Elog, Zo
@@ -37,6 +44,9 @@
 
   ! Constants for the Spalart-Allmaras model:
   real :: Cb1, Cb2, SIGMAv, Cw1, Cw2, Cw3, Cvis1
+
+  ! Total dissipation in HJ model
+  real,allocatable :: eps_tot(:)
 
   ! Vorticity
   real,allocatable :: Vort(:), VortMean(:)
@@ -74,25 +84,29 @@
 
   real,allocatable :: Fs(:)
 
-  real,allocatable :: nn1(:)
-  real,allocatable :: nn2(:)
-  real,allocatable :: nn3(:)
-
-  real,allocatable :: Bud1(:)
-  real,allocatable :: Bud2(:)
-  real,allocatable :: Bud3(:)
-  real,allocatable :: Bud4(:)
-  real,allocatable :: Bud5(:)
-  real,allocatable :: Bud6(:)
-  real,allocatable :: Bud7(:)
-  real,allocatable :: Bud8(:)
-  real,allocatable :: Bud9(:)
- 
-  real,allocatable :: uu_star(:)
-  real,allocatable :: vv_star(:)
-  real,allocatable :: ww_star(:)
-  real,allocatable :: uv_star(:)
-  real,allocatable :: uw_star(:)
-  real,allocatable :: vw_star(:)
+  ! These are some working variables for RSM models
+  real,allocatable :: VAR1x(:),   VAR1y(:),   VAR1z(:)
+  real,allocatable :: VAR2x(:),   VAR2y(:),   VAR2z(:)
+  real,allocatable :: VAR3x(:),   VAR3y(:),   VAR3z(:)
+  real,allocatable :: VAR4x(:),   VAR4y(:),   VAR4z(:)
+  real,allocatable :: VAR5x(:),   VAR5y(:),   VAR5z(:)
+  real,allocatable :: VAR6x(:),   VAR6y(:),   VAR6z(:)
+  real,allocatable :: VAR7x(:),   VAR7y(:),   VAR7z(:)
+  real,allocatable :: VAR8x(:),   VAR8y(:),   VAR8z(:)
+  real,allocatable :: VAR9x(:),   VAR9y(:),   VAR9z(:)
+  real,allocatable :: VAR10x(:),  VAR10y(:),  VAR10z(:)
+  real,allocatable :: VAR11x(:),  VAR11y(:),  VAR11z(:)
+  real,allocatable :: VAR12x(:),  VAR12y(:),  VAR12z(:)
+  real,allocatable :: PHI1x(:),   PHI1y(:),   PHI1z(:)
+  real,allocatable :: PHI2x(:),   PHI2y(:),   PHI2z(:)
+  real,allocatable :: PHI3x(:),   PHI3y(:),   PHI3z(:)
+  real,allocatable :: PHI4x(:),   PHI4y(:),   PHI4z(:)
+  real,allocatable :: PHI5x(:),   PHI5y(:),   PHI5z(:)
+  real,allocatable :: PHI6x(:),   PHI6y(:),   PHI6z(:)
+  real,allocatable :: PHI7x(:),   PHI7y(:),   PHI7z(:)
+  real,allocatable :: PHI8x(:),   PHI8y(:),   PHI8z(:)
+  real,allocatable :: PHI9x(:),   PHI9y(:),   PHI9z(:)
+  real,allocatable :: PHI10x(:),  PHI10y(:),  PHI10z(:)
+  real,allocatable :: PHI11x(:),  PHI11y(:),  PHI11z(:)
 
   end module 

@@ -10,6 +10,7 @@
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -109,11 +110,11 @@
 
   ! Pressure drops in each material (domain)
   do m = 1, grid % n_materials
-    read(9) PdropX(m), PdropY(m), PdropZ(m)
-    read(9) FLUXoX(m), FLUXoY(m), FLUXoZ(m)
-    read(9) FLUXx(m),  FLUXy(m),  FLUXz(m)
-    read(9) AreaX(m),  AreaY(m),  AreaZ(m)
-    read(9) Ubulk(m),  Vbulk(m),  Wbulk(m)
+    read(9) bulk(m) % p_drop_x,  bulk(m) % p_drop_y,  bulk(m) % p_drop_z
+    read(9) bulk(m) % flux_x_o,  bulk(m) % flux_y_o,  bulk(m) % flux_z_o
+    read(9) bulk(m) % flux_x,    bulk(m) % flux_y,    bulk(m) % flux_z
+    read(9) bulk(m) % area_x,    bulk(m) % area_y,    bulk(m) % area_z
+    read(9) bulk(m) % u,         bulk(m) % v,         bulk(m) % w
   end do
 
   ! Fluxes 

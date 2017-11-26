@@ -8,6 +8,7 @@
   use pro_mod
   use rans_mod
   use Grid_Mod
+  use Bulk_Mod
   use Work_Mod, only: t_x => r_cell_01,  &
                       t_y => r_cell_02,  &
                       t_z => r_cell_03           
@@ -28,15 +29,15 @@
     ! On the boundary perform the extrapolation
     if(c2  < 0) then
       if( (TypeBC(c2) == CONVECT) ) then
-        U % n(c2) = U % n(c2) - ( Ubulk(material(c1)) * u % x(c1)         & 
-                                + Vbulk(material(c1)) * u % y(c1)         &
-                                + Wbulk(material(c1)) * u % z(c1) ) * dt
-        V % n(c2) = V % n(c2) - ( Ubulk(material(c1)) * v % x(c1)         & 
-                                + Vbulk(material(c1)) * v % y(c1)         &
-                                + Wbulk(material(c1)) * v % z(c1) ) * dt
-        W % n(c2) = W % n(c2) - ( Ubulk(material(c1)) * w % x(c1)         & 
-                                + Vbulk(material(c1)) * w % y(c1)         &
-                                + Wbulk(material(c1)) * w % z(c1) ) * dt
+        U % n(c2) = U % n(c2) - ( bulk(material(c1)) % u * u % x(c1)         & 
+                                + bulk(material(c1)) % v * u % y(c1)         &
+                                + bulk(material(c1)) % w * u % z(c1) ) * dt
+        V % n(c2) = V % n(c2) - ( bulk(material(c1)) % u * v % x(c1)         & 
+                                + bulk(material(c1)) % v * v % y(c1)         &
+                                + bulk(material(c1)) % w * v % z(c1) ) * dt
+        W % n(c2) = W % n(c2) - ( bulk(material(c1)) % u * w % x(c1)         & 
+                                + bulk(material(c1)) % v * w % y(c1)         &
+                                + bulk(material(c1)) % w * w % z(c1) ) * dt
       end if
     end if
   end do
@@ -53,9 +54,9 @@
       ! On the boundary perform the extrapolation
       if(c2  < 0) then
         if( (TypeBC(c2) == CONVECT) ) then
-          T % n(c2) = T % n(c2) - ( Ubulk(material(c1)) * t_x(c1)        & 
-                                  + Vbulk(material(c1)) * t_y(c1)        &
-                                  + Wbulk(material(c1)) * t_z(c1) ) * dt
+          T % n(c2) = T % n(c2) - ( bulk(material(c1)) % u * t_x(c1)        & 
+                                  + bulk(material(c1)) % v * t_y(c1)        &
+                                  + bulk(material(c1)) % w * t_z(c1) ) * dt
         end if
       end if
     end do

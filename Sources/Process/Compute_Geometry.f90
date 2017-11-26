@@ -13,7 +13,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c1, c2, s, m
-  real    :: xc1, yc1, zc1, xc2, yc2, zc2, AreaTx, AreaTy, AreaTz
+  real    :: xc1, yc1, zc1, xc2, yc2, zc2, ax_t, ay_t, az_t
 !==============================================================================!
 
   !----------------------------------------------!
@@ -103,10 +103,12 @@
   !-----------------------------------------------------!
   !   Calculate total surface of the monitoring plane   !
   !-----------------------------------------------------!
-  AreaX = 0.0
-  AreaY = 0.0
-  AreaZ = 0.0
   do m = 1, grid % n_materials
+
+    bulk(m) % area_x = 0.0
+    bulk(m) % area_y = 0.0
+    bulk(m) % area_z = 0.0
+
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
@@ -119,9 +121,9 @@
           yc2=grid % yc(c1) + grid % dy(s)
           zc2=grid % zc(c1) + grid % dz(s)
  
-          AreaTx = abs(grid % sx(s))
-          AreaTy = abs(grid % sy(s))
-          AreaTz = abs(grid % sz(s))
+          ax_t = abs(grid % sx(s))
+          ay_t = abs(grid % sy(s))
+          az_t = abs(grid % sz(s))
 
           !-------!
           !   x   !
@@ -131,9 +133,9 @@
 
             ! Watch out: buffer cell faces will be counted twice
             if(c2  < 0.and.TypeBC(c2) == BUFFER) then 
-              AreaX(m) = AreaX(m) + 0.5 * AreaTx    
+              bulk(m) % area_x = bulk(m) % area_x + 0.5 * ax_t    
             else
-              AreaX(m) = AreaX(m) + AreaTx    
+              bulk(m) % area_x = bulk(m) % area_x + ax_t    
             end if
           end if
 
@@ -145,9 +147,9 @@
 
             ! Watch out: buffer cell faces will be counted twice
             if(c2  < 0.and.TypeBC(c2) == BUFFER) then 
-              AreaY(m) = AreaY(m) + 0.5 * AreaTy    
+              bulk(m) % area_y = bulk(m) % area_y + 0.5 * ay_t    
             else
-              AreaY(m) = AreaY(m) + AreaTy    
+              bulk(m) % area_y = bulk(m) % area_y + ay_t    
             end if
           end if
 
@@ -159,9 +161,9 @@
 
             ! Watch out: buffer cell faces will be counted twice
             if(c2  < 0.and.TypeBC(c2) == BUFFER) then 
-              AreaZ(m) = AreaZ(m) + 0.5 * AreaTz    
+              bulk(m) % area_z = bulk(m) % area_z + 0.5 * az_t    
             else
-              AreaZ(m) = AreaZ(m) + AreaTz    
+              bulk(m) % area_z = bulk(m) % area_z + az_t    
             end if
           end if
 
@@ -169,9 +171,9 @@
       end if  ! (c2 > 0 .and. ... )
     end do
 
-    call glosum(AreaX(m))
-    call glosum(AreaY(m))
-    call glosum(AreaZ(m))
+    call glosum(bulk(m) % area_x)
+    call glosum(bulk(m) % area_y)
+    call glosum(bulk(m) % area_z)
 
   end do ! m
 

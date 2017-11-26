@@ -42,7 +42,7 @@
   !---------------------!
   !   Preconditioning   !
   !---------------------!
-  call Prec_Form(N, A, D, prec) 
+  call Prec_Form(A, prec) 
 
   !???????????????????????????????????!
   !    This is quite tricky point.    !
@@ -104,8 +104,8 @@
     !    solve Mz = r      !
     !   (q instead of z)   !
     !----------------------!
-    call Prec_Solve(N, NB, A, D, q1, r1(1), prec) 
-    call Prec_Solve(N, NB, A, D, q2, r2(1), prec) 
+    call Prec_Solve(A, q1, r1(1), prec) 
+    call Prec_Solve(A, q2, r2(1), prec) 
 
     !-----------------!
     !   rho = (z,r)   !

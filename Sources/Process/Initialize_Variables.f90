@@ -10,6 +10,8 @@
   use par_mod
   use rans_mod
   use Grid_Mod
+  use Bulk_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -114,7 +116,7 @@
   n_heated_wall = 0
   n_convect     = 0
   do m = 1, grid % n_materials
-    MassIn(m) = 0.0
+    bulk(m) % mass_in = 0.0
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
@@ -124,7 +126,7 @@
                                        W % n(c2) * grid % sz(s) )
                                        
         if(TypeBC(c2)  ==  InFLOW) then
-          if(material(c1) == m) MassIn(m) = MassIn(m) - Flux(s) 
+          if(material(c1) == m) bulk(m) % mass_in = bulk(m) % mass_in - Flux(s) 
           Stot  = sqrt(  grid % sx(s)**2  &
                        + grid % sy(s)**2  &
                        + grid % sz(s)**2)
@@ -146,7 +148,7 @@
     call iglsum(n_symmetry)
     call iglsum(n_heated_wall)
     call iglsum(n_convect)
-    call glosum(MassIn(m))
+    call glosum(bulk(m) % mass_in)
     call glosum(Area)
   end do                  
 
@@ -155,8 +157,8 @@
   !----------------------!
   Time   = 0.0   
   if(this_proc  < 2) then
-    write(*,*) '# MassIn=', MassIn(1)
-    write(*,*) '# Average inflow velocity =', MassIn(1)/Area
+    write(*,*) '# MassIn=', bulk(1) % mass_in
+    write(*,*) '# Average inflow velocity =', bulk(1) % mass_in / Area
     write(*,*) '# number of faces on the wall        : ', n_wall
     write(*,*) '# number of inflow faces             : ', n_inflow
     write(*,*) '# number of outflow faces            : ', n_outflow

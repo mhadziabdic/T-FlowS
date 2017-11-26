@@ -1,6 +1,7 @@
 bin_PROGRAMS = Process
 
 Process_SOURCES =	 			\
+  Bulk_Mod.f90					\
   Allocate_Memory.f90				\
   Allocate_Variables.f90			\
   Balance_Mass.f90				\

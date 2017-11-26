@@ -46,7 +46,7 @@
   !---------------------!
   !   Preconditioning   !
   !---------------------!
-  call Prec_Form(N, A, D, prec)    
+  call Prec_Form(A, prec)    
 
   !???????????????????????????????????!
   !    This is quite tricky point.    !
@@ -128,7 +128,7 @@
     !---------------------!
     !   Solve M p2 = u2   !
     !---------------------!
-    call Prec_Solve(N, NB, A, D, p2, u2(1), prec) 
+    call Prec_Solve(A, p2, u2(1), prec) 
 
     !--------------!
     !   v2 = Ap2   !  
@@ -174,7 +174,7 @@
     do i=1,N
       u1_plus_q1(i) = u1(i) + q1(i)
     end do
-    call Prec_Solve(N, NB, A, D, p1, u1_plus_q1(1), prec) 
+    call Prec_Solve(A, p1, u1_plus_q1(1), prec) 
 
     !---------------------!
     !   x = x + alfa p1   !

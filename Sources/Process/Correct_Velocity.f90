@@ -8,6 +8,8 @@
   use pro_mod
   use les_mod
   use Grid_Mod
+  use Bulk_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -142,22 +144,34 @@
     end if
     do m = 1, grid % n_materials
       if(m .eq. 1) then
-        FluxM = max(abs(FLUXx(m)),  abs(FLUXy(m)),  abs(FLUXz(m)))
-        Pdrop = max(abs(PdropX(m)), abs(PdropY(m)), abs(PdropZ(m)))
+        FluxM = max( abs(bulk(m) % flux_x),  &
+                     abs(bulk(m) % flux_y),  &
+                     abs(bulk(m) % flux_z) )
+        Pdrop = max( abs(bulk(m) % p_drop_x),  &
+                     abs(bulk(m) % p_drop_y),  &
+                     abs(bulk(m) % p_drop_z))
         write(LinMon1( 79: 90), '(1PE12.3)') FluxM 
         write(LinMon1( 91:102), '(1PE12.3)') Pdrop    
         write(LinMon1(103:126), '(1PE12.3,1PE12.3)')  &
         cfl_max(m), pe_max(m)
       else if(m .eq. 2) then
-        FluxM = max(abs(FLUXx(m)),  abs(FLUXy(m)),  abs(FLUXz(m)))
-        Pdrop = max(abs(PdropX(m)), abs(PdropY(m)), abs(PdropZ(m)))
+        FluxM = max( abs(bulk(m) % flux_x),  &
+                     abs(bulk(m) % flux_y),  &
+                     abs(bulk(m) % flux_z))
+        Pdrop = max( abs(bulk(m) % p_drop_x),  &
+                     abs(bulk(m) % p_drop_y),  &
+                     abs(bulk(m) % p_drop_z))
         write(LinMon2( 79: 90), '(1PE12.3)') FluxM 
         write(LinMon2( 91:102), '(1PE12.3)') Pdrop    
         write(LinMon2(103:126), '(1PE12.3,1PE12.3)')  &
         cfl_max(m), pe_max(m)
       else if(m .eq. 3) then
-        FluxM = max(abs(FLUXx(m)),  abs(FLUXy(m)),  abs(FLUXz(m)))
-        Pdrop = max(abs(PdropX(m)), abs(PdropY(m)), abs(PdropZ(m)))
+        FluxM = max( abs(bulk(m) % flux_x),  & 
+                     abs(bulk(m) % flux_y),  &
+                     abs(bulk(m) % flux_z))
+        Pdrop = max( abs(bulk(m) % p_drop_x),  &
+                     abs(bulk(m) % p_drop_y),  &
+                     abs(bulk(m) % p_drop_z))
         write(LinMon3( 79: 90), '(1PE12.3)') FluxM 
         write(LinMon3( 91:102), '(1PE12.3)') Pdrop    
         write(LinMon3(103:126), '(1PE12.3,1PE12.3)')  &

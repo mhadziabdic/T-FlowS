@@ -10,6 +10,7 @@
   use par_mod
   use rans_mod
   use Grid_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -55,7 +56,7 @@
   allocate (PHI4y(-grid % n_bnd_cells:grid % n_cells)); PHI4y=0.
   allocate (PHI4z(-grid % n_bnd_cells:grid % n_cells)); PHI4z=0.
 
-  allocate (PHIside(grid % n_faces)); PHIside=0.
+  allocate (phi_face(grid % n_faces)); phi_face=0.
 
   allocate (phi_max(-grid % n_bnd_cells:grid % n_cells)); phi_max=0.
   allocate (phi_min(-grid % n_bnd_cells:grid % n_cells)); phi_min=0.
@@ -64,28 +65,9 @@
 
   allocate (Flux(grid % n_faces));     Flux=0.
 
-  allocate (PdropX(grid % n_materials)); PdropX=0.0
-  allocate (PdropY(grid % n_materials)); PdropY=0.0 
-  allocate (PdropZ(grid % n_materials)); PdropZ=0.0 
-
   allocate (Utau(grid % n_materials));   Utau=0.0
   allocate (Vtau(grid % n_materials));   Vtau=0.0
   allocate (Wtau(grid % n_materials));   Wtau=0.0
-
-  allocate (FLUXx(grid % n_materials));  FLUXx=0.0
-  allocate (FLUXy(grid % n_materials));  FLUXy=0.0
-  allocate (FLUXz(grid % n_materials));  FLUXz=0.0
-
-  allocate (FLUXoX(grid % n_materials)); FLUXoX=0.0
-  allocate (FLUXoY(grid % n_materials)); FLUXoY=0.0
-  allocate (FLUXoZ(grid % n_materials)); FLUXoZ=0.0
-
-  allocate (Ubulk(grid % n_materials));  Ubulk=0.0
-  allocate (Vbulk(grid % n_materials));  Vbulk=0.0
-  allocate (Wbulk(grid % n_materials));  Wbulk=0.0
-
-  allocate (MassIn(grid % n_materials)); MassIn=0.0
-  allocate (MasOut(grid % n_materials)); MasOut=0.0
 
   allocate (BadForG(grid % n_cells));  BadForG = .false.
   allocate (NumGood(grid % n_cells));  NumGood = 0          

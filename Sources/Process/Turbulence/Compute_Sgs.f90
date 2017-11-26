@@ -9,6 +9,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Parameters_Mod
   use Work_Mod, only: t_x => r_cell_01,  &
                       t_y => r_cell_02,  &
                       t_z => r_cell_03           

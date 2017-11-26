@@ -10,10 +10,11 @@
   use par_mod
   use Grid_Mod
   use Var_Mod
+  use Parameters_Mod
+  use Solvers_Mod, only: Bicg, Cg, Cgs
   use Work_Mod,    only: phi_x => r_cell_01,  &
                          phi_y => r_cell_02,  &
                          phi_z => r_cell_03           
-  use Solvers_Mod, only: Bicg, Cg, Cgs
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Arguments]--------------------------------!
@@ -318,10 +319,10 @@
         else
           phi % d_o(c1) = phi % d_o(c1)            &
                        + 2.*CONc(material(c1))   &
-                       * Scoef(s) * (phiside(s) - phi % n(c1)) 
+                       * Scoef(s) * (phi_face(s) - phi % n(c1)) 
           phi % d_o(c2) = phi % d_o(c2)            &
                        - 2.*CONc(material(c2))   &
-                       * Scoef(s)*(phi % n(c2) - phiside(s))   
+                       * Scoef(s)*(phi % n(c2) - phi_face(s))   
         end if
       else
         if(TypeBC(c2).ne.SYMMETRY) then 
@@ -330,7 +331,7 @@
                 + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1))   
           else
             phi % d_o(c1) = phi % d_o(c1)  &
-                + 2.*CONc(material(c1))*Scoef(s)*(phiside(s)-phi % n(c1)) 
+                + 2.*CONc(material(c1))*Scoef(s)*(phi_face(s)-phi % n(c1)) 
           end if
         end if
       end if 
@@ -378,8 +379,8 @@
           A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - A12
           A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - A21
         else
-          b(c1) = b(c1) + A12*phiside(s)
-          b(c2) = b(c2) + A21*phiside(s)
+          b(c1) = b(c1) + A12*phi_face(s)
+          b(c2) = b(c2) + A21*phi_face(s)
         end if
       else if(c2.lt.0) then
 
@@ -398,7 +399,7 @@
           if(material(c1) == material(c2)) then
             A % bou(c2) = -A12  ! cool parallel stuff
           else
-            b(c1) = b(c1) + A12*phiside(s)
+            b(c1) = b(c1) + A12*phi_face(s)
           end if
 
         ! In case of wallflux 

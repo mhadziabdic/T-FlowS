@@ -9,6 +9,7 @@
   use par_mod
   use Tokenizer_Mod
   use Grid_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -25,6 +26,7 @@
   real              :: wi
   real              :: x1(55555), x2(55555), Mres
   logical           :: here
+  character         :: name_ini(128)*80
 !==============================================================================!
 
   !--------------------------------------------!
@@ -258,10 +260,11 @@
 
     ! Initial conditions given in GMV file
     if(line % tokens(2) == 'FILE') then
-      read(line % tokens(3),'(A80)') namIni(n)
-      write(*,*) '@Load_Boundary_Conditions: material ', n, '; init. cond. given by file: ', namIni(n)
+      read(line % tokens(3),'(A80)') name_ini(n)
+      write(*,*) '# Load_Boundary_Conditions: material ', n,  &
+                 '; init. cond. given by file: ', name_ini(n)
     else
-      namIni(n) = ''
+      name_ini(n) = ''
 
       ! Initial conditions given by constant
       read(line % tokens(2),*) U % init(n)

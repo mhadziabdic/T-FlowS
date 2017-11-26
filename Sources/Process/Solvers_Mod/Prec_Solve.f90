@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Prec_Solve(N, NB, A, D, x, b, prec) 
+  subroutine Prec_Solve(A, x, b, prec) 
 !------------------------------------------------------------------------------!
 ! Solves the preconditioning system [D]{x}={b}                                 !
 !------------------------------------------------------------------------------!
@@ -17,16 +17,18 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer           :: N, NB
-  type(Matrix_Type) :: A
-  type(Matrix_Type) :: D    
-  real              :: x(-NB:N), b(N)
+  type(Matrix_Type) :: A           
+  real              :: x(-A % pnt_grid % n_bnd_cells : A % pnt_grid % n_cells)
+  real              :: b( A % pnt_grid % n_cells)
   integer           :: prec
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: i, j, k
+  integer :: i, j, k, N, NB
   real    :: sum1
 !==============================================================================!
            
+  N  = A % pnt_grid % n_cells
+  NB = A % pnt_grid % n_bnd_cells
+
   !---------------------------------! 
   !   1) diagonal preconditioning   !
   !---------------------------------!

@@ -11,6 +11,7 @@
   use par_mod
   use Grid_Mod
   use Var_Mod
+  use Parameters_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
   use Work_Mod,    only: phi_x => r_cell_01,  &
                          phi_y => r_cell_02,  &
@@ -107,7 +108,7 @@
            + phi_y_f * grid % sy(s)   &
            + phi_z_f * grid % sz(s) )
 
-    A0 =  Scoef(s)
+    A0 = Scoef(s)
 
     ! Implicit diffusive flux
     ! (this is a very crude approximation: Scoef is

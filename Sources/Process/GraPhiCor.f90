@@ -104,7 +104,7 @@
 
       ! The two fluxes (q1 and q2) should be the same
       phi_f = (f2 - f1) / (p1(c1) - p2(c2) + TINY)
-      phiside(s) = phi_f
+      phi_face(s) = phi_f
 
       Dxc1 = grid % xf(s) - grid % xc(c1)                     
       Dyc1 = grid % yf(s) - grid % yc(c1)                     

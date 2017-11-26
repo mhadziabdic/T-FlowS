@@ -14,7 +14,9 @@
   use rans_mod
   use par_mod
   use Grid_Mod
+  use Bulk_Mod
   use Var_Mod
+  use Parameters_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
 !------------------------------------------------------------------------------!
   implicit none
@@ -522,15 +524,15 @@
   !--------------------------!
   if(ui % name == 'U') then
     do c=1,grid % n_cells
-      b(c) = b(c)  + PdropX(material(c)) * grid % vol(c)
+      b(c) = b(c) + bulk(material(c)) % p_drop_x * grid % vol(c)
     end do
   else if(ui % name == 'V') then
     do c=1,grid % n_cells
-      b(c) = b(c)  + PdropY(material(c)) * grid % vol(c)
+      b(c) = b(c) + bulk(material(c)) % p_drop_y * grid % vol(c)
     end do
   else if(ui % name == 'W') then
     do c=1,grid % n_cells
-      b(c) = b(c)  + PdropZ(material(c)) * grid % vol(c)
+      b(c) = b(c) + bulk(material(c)) % p_drop_z * grid % vol(c)
     end do
   end if
 
@@ -591,9 +593,9 @@
 
   niter=miter
 
-  call cgs(A, ui % n, b,           &
-           PREC, niter, U % STol,  &
-           res(var), error)
+  call cg(A, ui % n, b,           &
+          PREC, niter, U % STol,  &
+          res(var), error)
 
   if(ui % name == 'U') then
     write(LineRes(17:28), '(1PE12.3)') res(var) 

@@ -12,6 +12,7 @@
   use par_mod
   use Grid_Mod
   use Var_Mod
+  use Parameters_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
   use Work_Mod,    only: phi_x => r_cell_01,  &
                          phi_y => r_cell_02,  &
@@ -243,7 +244,7 @@
                     + phiy_f * grid % sy(s)  &
                     + phiz_f * grid % sz(s) ) 
 
-    A0 = VISeff * Scoef(s) 
+    A0 = VISeff * Scoef(s)
 
     ! Implicit diffusive flux
     ! (this is a very crude approximation: Scoef is
@@ -402,10 +403,12 @@
                 + phiy_f * grid % dy(s)      &
                 + phiz_f * grid % dz(s)) * A0
 
-        b(c1) = b(c1) - VISeff * (phi % n(c2) - phi%n(c1)) * Scoef(s)    &
+        b(c1) = b(c1)                                          &
+              - VISeff * (phi % n(c2) - phi%n(c1)) * Scoef(s)  &
               - Fex + Fim
         if(c2  > 0) then
-          b(c2) = b(c2) + VISeff * (phi % n(c2) - phi%n(c1)) * Scoef(s)  &
+          b(c2) = b(c2)                                          &
+                + VISeff * (phi % n(c2) - phi%n(c1)) * Scoef(s)  &
                 + Fex - Fim
         end if
       end do

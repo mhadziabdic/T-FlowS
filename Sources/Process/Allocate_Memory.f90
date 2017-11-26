@@ -21,7 +21,7 @@
   allocate (WallDs(-grid % n_bnd_cells:grid % n_cells));  WallDs = 0.0       
   allocate (fF(grid % n_faces));  fF = 0.0  
 
-  ! Variables defined in sol.h90:
+  ! Variables defined in Solvers_Mod
   call Matrix_Mod_Allocate(grid, D)
 
   ! Variables defined in pro_mod.h90:
@@ -37,9 +37,6 @@
   allocate (xp(grid % n_materials));    xp   =0.0
   allocate (yp(grid % n_materials));    yp   =0.0
   allocate (zp(grid % n_materials));    zp   =0.0
-  allocate (AreaX(grid % n_materials)); AreaX=0.0
-  allocate (AreaY(grid % n_materials)); AreaY=0.0
-  allocate (AreaZ(grid % n_materials)); AreaZ=0.0
 
   ! Variables defined in par_mod.h90:
   allocate (BufInd(-grid % n_bnd_cells:-1)); BufInd=0

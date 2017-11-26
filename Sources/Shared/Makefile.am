@@ -8,14 +8,9 @@ libShared_a_SOURCES = 		\
   Boundary_Condition_Mod.f90	\
   Material_Mod.f90 		\
   Grid_Mod.f90			\
-  Matrix_Mod.f90 		\
   Work_Mod.f90 			\
-  Solvers_Mod.f90		\
-  Var_Mod.f90			\
-  div_mod.f90			\
   gen_mod.f90			\
-  neu_mod.f90			\
-  pro_mod.f90			\
+  div_mod.f90			\
   Approx.f90			\
   Distance.f90			\
   Distance_Squared.f90		\

@@ -1,9 +1,9 @@
 !==============================================================================!
-  subroutine Cg(A, x, r1,        &
-                prec,niter,tol,  &
-                ini_res,fin_res)
+  subroutine Cgs(A, x, r1,        &
+                 prec,niter,tol,  &
+                 ini_res,fin_res)
 !------------------------------------------------------------------------------!
-!   Solves the linear systems of equations by a precond. CG Method.            !
+!   Solves the linear systems of equations by a precond. CGS Method.           !
 !------------------------------------------------------------------------------!
 !   Allows preconditioning of the system by:                                   !
 !     1. Diagonal preconditioning                                              !
@@ -16,9 +16,15 @@
 !----------------------------------[Modules]-----------------------------------!
   use par_mod
   use Matrix_Mod
-  use Solvers_Mod
-  use Work_Mod, only: p1 => r_cell_01,  &
-                      q1 => r_cell_02
+  use Work_Mod, only: p1         => r_cell_01,  &
+                      p2         => r_cell_02,  &
+                      q1         => r_cell_03,  &
+                      q2         => r_cell_04,  &
+                      r2         => r_cell_05,  &
+                      u1         => r_cell_06,  &
+                      u2         => r_cell_07,  &
+                      v2         => r_cell_08,  &   
+                      u1_plus_q1 => r_cell_09
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -40,7 +46,7 @@
   !---------------------!
   !   Preconditioning   !
   !---------------------!
-  call Prec_Form(N, A, D, prec)
+  call Prec_Form(N, A, D, prec)    
 
   !???????????????????????????????????!
   !    This is quite tricky point.    !
@@ -50,7 +56,7 @@
   do i=1,N
     bnrm2=bnrm2+r1(i)*r1(i)
   end do  
-  call glosum(bnrm2) 
+  call glosum(bnrm2)
   bnrm2=sqrt(bnrm2)
 
   if(bnrm2 < tol) then 
@@ -58,16 +64,16 @@
     goto 1
   end if  
 
-  !----------------!
-  !   r = b - Ax   !
-  !----------------!
+  !-----------------!
+  !   r1 = b - Ax   !
+  !-----------------!
   call Residual(N, NB, A, x, r1) 
 
-  !-----------!
-  !   p = r   !
-  !-----------!
+  !-------------!
+  !   r2 = r1   !
+  !-------------!
   do i=1,N
-    p1(i)=r1(i) 
+    r2(i)=r1(i) 
   end do
 
   !--------------------------------!
@@ -77,13 +83,13 @@
   do i=1,N
     error=error + r1(i)*r1(i)
   end do
-  call glosum(error) 
+  call glosum(error)
   error  = sqrt(error)  
 
   !---------------------------------------------------------------!
   !   Residual after the correction and before the new solution   !
   !---------------------------------------------------------------!
-  ini_res=error
+  ini_res=error  
 
   if(error < tol) then
     iter=0
@@ -95,42 +101,96 @@
   !   Main loop   !
   !               !
   !---------------!
-  do iter=1, niter
+  do iter=1, niter 
 
-    !----------------------!  
-    !     solve Mz = r     !
-    !   (q instead of z)   !
-    !----------------------!
-    call Prec_Solve(N, NB, A, D, q1, r1, prec) 
-
-    !-----------------!
-    !   rho = (r,z)   !
-    !-----------------!
+    !-------------------!
+    !   rho = (r2,z1)   !
+    !-------------------!
     rho=0.0
     do i=1,N
-      rho=rho+r1(i)*q1(i)
+      rho=rho+r1(i)*r2(i)
     end do
     call glosum(rho)
 
     if(iter == 1) then
       do i=1,N
-        p1(i)=q1(i)
+        u1(i) = r1(i)
+        u2(i) = u1(i)
       end do        
     else
       beta=rho/rhoold
       do i=1,N
-        p1(i) = q1(i) + beta*p1(i)
+        u1(i) = r1(i) + beta*q1(i) 
+        u2(i) = u1(i) + beta*(q1(i) + beta*u2(i)) 
       end do
     end if
+                   
+    !---------------------!
+    !   Solve M p2 = u2   !
+    !---------------------!
+    call Prec_Solve(N, NB, A, D, p2, u2(1), prec) 
+
+    !--------------!
+    !   v2 = Ap2   !  
+    !--------------!
+    do i=1,N
+      v2(i) = 0.0                    
+      do j=A % row(i), A % row(i+1)-1   
+        k=A % col(j)                  
+        v2(i) = v2(i) + A % val(j) * p2(k)   
+      end do
+      alfa=alfa+r2(i)*v2(i)
+    end do
+    call Exchange(A % pnt_grid, p2)
+    do sub=1,n_proc
+      if(NBBe(sub)  <=  NBBs(sub)) then
+        do k=NBBs(sub),NBBe(sub),-1
+          i=BufInd(k)
+          v2(i) = v2(i) + A % bou(k)*p2(k)
+        end do
+      end if
+    end do
+
+    !------------------------!
+    !   alfa = rho/(r2,v2)   !
+    !------------------------!
+    alfa=0.0
+    do i=1,N
+      alfa=alfa+r2(i)*v2(i)
+    end do
+    call glosum(alfa) 
+    alfa=rho/alfa
+
+    !-------------------------!
+    !   q1 = u1 - alfa * v2   !
+    !-------------------------!
+    do i=1,N
+      q1(i) = u1(i) - alfa*v2(i)
+    end do
+           
+    !-------------------------------!
+    !   solve Mp1 = u1(i) + q1(i)   !
+    !-------------------------------!
+    do i=1,N
+      u1_plus_q1(i) = u1(i) + q1(i)
+    end do
+    call Prec_Solve(N, NB, A, D, p1, u1_plus_q1(1), prec) 
+
+    !---------------------!
+    !   x = x + alfa p1   !
+    !---------------------!
+    do i=1,N
+      x(i)=x(i) + alfa*p1(i)
+    end do
 
     !---------------!
-    !   q    = Ap   !     
+    !   q2 = A p1   !     
     !---------------!
     do i=1,N
-      q1(i) = 0.0                    
-      do j=A % row(i), A % row(i+1)-1  
-        k=A % col(j)                
-        q1(i) = q1(i) + A % val(j) * p1(k) 
+      q2(i) = 0.0
+      do j=A % row(i), A % row(i+1)-1
+        k=A % col(j)
+        q2(i) = q2(i) + A % val(j) * p1(k)
       end do
     end do
     call Exchange(A % pnt_grid, p1)
@@ -138,28 +198,16 @@
       if(NBBe(sub)  <=  NBBs(sub)) then
         do k=NBBs(sub),NBBe(sub),-1
           i=BufInd(k)
-          q1(i) = q1(i) + A % bou(k)*p1(k)
+          q2(i) = q2(i) + A % bou(k)*p1(k)
         end do
       end if
     end do
 
-    !------------------------!
-    !   alfa = (r,z)/(p,q)   !
-    !------------------------!
-    alfa=0.0
-    do i=1,N
-      alfa=alfa+p1(i)*q1(i)
-    end do
-    call glosum(alfa)       
-    alfa=rho/alfa
-
     !---------------------!
-    !   x = x + alfa p    !
-    !   r = r - alfa Ap   !
+    !   r = r - alfa q2   !
     !---------------------!
     do i=1,N
-      x(i)=x(i)   + alfa*p1(i)
-      r1(i)=r1(i) - alfa*q1(i)
+      r1(i)=r1(i) - alfa*q2(i)
     end do
 
     !???????????????????????!
@@ -168,8 +216,8 @@
     error=0.0
     do i=1,N
       error=error+r1(i)*r1(i)
-    end do  
-    call glosum(error)       
+    end do 
+    call glosum(error) 
     error=sqrt(error)  
 
     if(error < tol) goto 1
@@ -179,6 +227,6 @@
   end do                ! iter 
 
 1 fin_res = error
-  niter = iter
+  Niter  = iter
 
   end subroutine

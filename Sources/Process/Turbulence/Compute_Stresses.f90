@@ -12,9 +12,10 @@
   use par_mod
   use Grid_Mod
   use Var_Mod
-  use Work_Mod, only: phi_x => r_cell_01,  &
-                      phi_y => r_cell_02,  &
-                      phi_z => r_cell_03           
+  use Solvers_Mod, only: Bicg, Cg, Cgs
+  use Work_Mod,    only: phi_x => r_cell_01,  &
+                         phi_y => r_cell_02,  &
+                         phi_z => r_cell_03           
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!

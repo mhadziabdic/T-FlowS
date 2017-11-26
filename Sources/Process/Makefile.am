@@ -49,13 +49,17 @@ Process_SOURCES =	 			\
   Time_And_Length_Scale.f90
 
 SUBDIRS = Communication				\
-          Solvers				\
+          Matrix_Mod				\
+          Solvers_Mod				\
+          Var_Mod				\
           Turbulence				\
           User					\
           ../Shared
 
 LDADD = Communication/libCommunication.a	\
-        Solvers/libSolvers.a			\
+        Matrix_Mod/libMatrix_Mod.a		\
+        Solvers_Mod/libSolvers_Mod.a		\
+        Var_Mod/libVar_Mod.a			\
         Turbulence/libTurbulence.a		\
         User/libUser.a				\
         ../Shared/libShared.a

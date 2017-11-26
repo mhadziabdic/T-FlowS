@@ -8,6 +8,7 @@
   use pro_mod
   use par_mod
   use Grid_Mod
+  use Solvers_Mod, only: Bicg, Cg, Cgs
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!

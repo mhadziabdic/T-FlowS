@@ -1,6 +1,7 @@
 noinst_LIBRARIES = libTurbulence.a
 
 libTurbulence_a_SOURCES =	\
+  ../pro_mod.f90		\
   les_mod.f90			\
   rans_mod.f90			\
   Compute_Sgs_Dynamic.f90	\

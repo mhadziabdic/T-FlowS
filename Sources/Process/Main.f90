@@ -11,8 +11,10 @@
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
+  use Bulk_Mod
   use Var_Mod
   use Solvers_Mod, only: D
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !----------------------------------[Calling]-----------------------------------!
@@ -223,9 +225,9 @@
   ! Print the areas of monitoring planes
   if(this_proc < 2) then
     do m=1,grid % n_materials
-      write(*,'(A5,I2,A2,1PE12.3)') '# Ax(',m,')=', AreaX(m)
-      write(*,'(A5,I2,A2,1PE12.3)') '# Ay(',m,')=', AreaY(m)
-      write(*,'(A5,I2,A2,1PE12.3)') '# Az(',m,')=', AreaZ(m)
+      write(*,'(A5,I2,A2,1PE12.3)') '# Ax(',m,')=', bulk(m) % area_x
+      write(*,'(A5,I2,A2,1PE12.3)') '# Ay(',m,')=', bulk(m) % area_y
+      write(*,'(A5,I2,A2,1PE12.3)') '# Az(',m,')=', bulk(m) % area_z
     end do
   end if
 
@@ -470,14 +472,17 @@
 !                                                     !
 !-----------------------------------------------------!
     do m=1,grid % n_materials
-      if( FLUXoX(m)  /=  0.0 ) then
-        PdropX(m) = (FLUXoX(m)-FLUXx(m)) / (dt*AreaX(m)+TINY) 
+      if( bulk(m) % flux_x_o /=  0.0 ) then
+        bulk(m) % p_drop_x = (bulk(m) % flux_x_o - bulk(m) % flux_x)  &
+                           / (dt * bulk(m) % area_x + TINY) 
       end if
-      if( FLUXoY(m)  /=  0.0 ) then
-        PdropY(m) = (FLUXoY(m)-FLUXy(m)) / (dt*AreaY(m)+TINY) 
+      if( bulk(m) % flux_y_o /=  0.0 ) then
+        bulk(m) % p_drop_y = (bulk(m) % flux_y_o - bulk(m) % flux_y)  &
+                           / (dt * bulk(m) % area_y + TINY) 
       end if
-      if( FLUXoZ(m)  /=  0.0 ) then
-        PdropZ(m) = (FLUXoZ(m)-FLUXz(m)) / (dt*AreaZ(m)+TINY) 
+      if( bulk(m) % flux_z_o /=  0.0 ) then
+        bulk(m) % p_drop_z = (bulk(m) % flux_z_o - bulk(m) % flux_z)  &
+                           / (dt * bulk(m) % area_z + TINY) 
       end if
     end do
 

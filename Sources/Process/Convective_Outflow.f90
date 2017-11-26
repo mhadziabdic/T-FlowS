@@ -8,6 +8,9 @@
   use pro_mod
   use rans_mod
   use Grid_Mod
+  use Work_Mod, only: t_x => r_cell_01,  &
+                      t_y => r_cell_02,  &
+                      t_z => r_cell_03           
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -39,10 +42,10 @@
   end do
 
   if(HOT==YES) then
-    call GraPhi(grid, T % n, 1, phix, .TRUE.)     ! dT/dx
-    call GraPhi(grid, T % n, 2, phiy, .TRUE.)     ! dT/dy
-    call GraPhi(grid, T % n, 3, phiz, .TRUE.)     ! dT/dz
-    call GraCorNew(grid, T % n, phix, phiy, phiz) ! needed ?
+    call GraPhi(grid, t % n, 1, t_x, .TRUE.)     ! dT/dx
+    call GraPhi(grid, t % n, 2, t_y, .TRUE.)     ! dT/dy
+    call GraPhi(grid, t % n, 3, t_z, .TRUE.)     ! dT/dz
+    call GraCorNew(grid, T % n, t_x, t_y, t_z) ! needed ?
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
@@ -50,9 +53,9 @@
       ! On the boundary perform the extrapolation
       if(c2  < 0) then
         if( (TypeBC(c2) == CONVECT) ) then
-          T % n(c2) = T % n(c2) - ( Ubulk(material(c1)) * phix(c1)        & 
-                                  + Vbulk(material(c1)) * phiy(c1)        &
-                                  + Wbulk(material(c1)) * phiz(c1) ) * dt
+          T % n(c2) = T % n(c2) - ( Ubulk(material(c1)) * t_x(c1)        & 
+                                  + Vbulk(material(c1)) * t_y(c1)        &
+                                  + Wbulk(material(c1)) * t_z(c1) ) * dt
         end if
       end if
     end do

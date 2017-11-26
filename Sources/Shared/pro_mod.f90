@@ -41,7 +41,6 @@ module pro_mod
   real,allocatable :: PHI10x(:),  PHI10y(:),  PHI10z(:)
   real,allocatable :: PHI11x(:),  PHI11y(:),  PHI11z(:)
 
-  real,allocatable :: PHIx(:),   PHIy(:),   PHIz(:)
   real,allocatable :: PHIside(:)
 
   ! For advection schemes

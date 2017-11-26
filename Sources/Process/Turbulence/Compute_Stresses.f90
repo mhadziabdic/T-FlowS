@@ -12,6 +12,9 @@
   use par_mod
   use Grid_Mod
   use Var_Mod
+  use Work_Mod, only: phi_x => r_cell_01,  &
+                      phi_y => r_cell_02,  &
+                      phi_z => r_cell_03           
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -29,7 +32,7 @@
   real    :: VIStS
 !==============================================================================!
 !                                                                              ! 
-!  The form of equations which are being solved:                               !   
+!   The form of equations which are being solved:                              !   
 !                                                                              !
 !     /               /                /                     /                 !
 !    |     dphi      |                | mu_eff              |                  !
@@ -68,9 +71,9 @@
   end if
 
   ! Gradients
-  call GraPhi(grid, phi % n, 1, phix, .TRUE.)
-  call GraPhi(grid, phi % n, 2, phiy, .TRUE.)
-  call GraPhi(grid, phi % n, 3, phiz, .TRUE.)
+  call GraPhi(grid, phi % n, 1, phi_x, .TRUE.)
+  call GraPhi(grid, phi % n, 2, phi_y, .TRUE.)
+  call GraPhi(grid, phi % n, 3, phi_z, .TRUE.)
 
   !---------------!
   !               !
@@ -106,9 +109,10 @@
 
       if( BLEND_TUR(material(c1)) /= NO .or.  &
           BLEND_TUR(material(c2)) /= NO ) then
-        call Advection_Scheme(grid, phis, s, phi % n, phix, phiy, phiz,  &
-                              grid % dx, grid % dy, grid % dz,           &
-                              max( BLEND_TUR(material(c1)),              &
+        call Advection_Scheme(grid, phis, s, phi % n,           &
+                              phi_x, phi_y, phi_z,              &
+                              grid % dx, grid % dy, grid % dz,  &
+                              max( BLEND_TUR(material(c1)),     &
                                    BLEND_TUR(material(c2))) ) 
       end if 
 
@@ -170,7 +174,7 @@
   if(CONVEC == AB) then
     do c=1,grid % n_cells
       b(c) = b(c) + URFC_Tur(material(c)) * &
-                    (1.5*phi % a_o(c) - 0.5*phi % a_oo(c) - phi % c(c))
+                    (1.5 * phi % a_o(c) - 0.5 * phi % a_oo(c) - phi % c(c))
     end do  
   endif
 
@@ -227,9 +231,9 @@
       end if
     end if
 
-    phix_f = fF(s)*phix(c1) + (1.0-fF(s))*phix(c2)
-    phiy_f = fF(s)*phiy(c1) + (1.0-fF(s))*phiy(c2)
-    phiz_f = fF(s)*phiz(c1) + (1.0-fF(s))*phiz(c2)
+    phix_f = fF(s) *phi_x(c1) + (1.0 - fF(s)) * phi_x(c2)
+    phiy_f = fF(s) *phi_y(c1) + (1.0 - fF(s)) * phi_y(c2)
+    phiz_f = fF(s) *phi_z(c1) + (1.0 - fF(s)) * phi_z(c2)
 
 
     ! Total (exact) diffusive flux plus turb. diffusion
@@ -330,36 +334,48 @@
     end if 
     if(SIMULA==HJ) then        
       do c=1,grid % n_cells
-        VAR1x(c) = CmuD/phi % Sigma*Kin%n(c)/Eps%n(c)*&
-                   ((uu%n(c))*phix(c)+uv%n(c)*phiy(c)+uw%n(c)*phiz(c)) - &
-                   VISc*phix(c)
+        VAR1x(c) = CmuD / phi % Sigma * Kin % n(c) / Eps % n(c)  &
+                 * (  uu % n(c) * phi_x(c)                       &
+                    + uv % n(c) * phi_y(c)                       &
+                    + uw % n(c) * phi_z(c))                      &
+                 - VISc * phi_x(c)
 
-        VAR1y(c) = CmuD/phi % Sigma*Kin%n(c)/Eps%n(c)*&
-                   (uv%n(c)*phix(c)+(vv%n(c))*phiy(c)+vw%n(c)*phiz(c)) - &
-                   VISc*phiy(c)
+        VAR1y(c) = CmuD / phi % Sigma * Kin % n(c) / Eps % n(c)  &
+                 * (  uv % n(c) * phi_x(c)                       &
+                    + vv % n(c) * phi_y(c)                       &
+                    + vw % n(c) * phi_z(c))                      &
+                 - VISc * phi_y(c)
 
-        VAR1z(c) = CmuD/phi % Sigma*Kin%n(c)/Eps%n(c)*&
-                   (uw%n(c)*phix(c)+vw%n(c)*phiy(c)+(ww%n(c))*phiz(c)) - &
-                   VISc*phiz(c) 
+        VAR1z(c) = CmuD / phi % Sigma * Kin % n(c) / Eps % n(c)  &
+                 * (  uw % n(c) * phi_x(c)                       &
+                    + vw % n(c) * phi_y(c)                       &
+                    + ww % n(c) * phi_z(c))                      &
+                 - VISc * phi_z(c)
       end do
     else if(SIMULA==EBM) then
       do c=1,grid % n_cells
-        VAR1x(c) = CmuD/phi % Sigma*Tsc(c)*&
-                   ((uu%n(c))*phix(c)+uv%n(c)*phiy(c)+uw%n(c)*phiz(c)) 
+        VAR1x(c) = CmuD / phi % Sigma * Tsc(c)  &
+                 * (  uu % n(c) * phi_x(c)      &
+                    + uv % n(c) * phi_y(c)      &
+                    + uw % n(c) * phi_z(c)) 
 
-        VAR1y(c) = CmuD/phi % Sigma*Tsc(c)*&
-                   (uv%n(c)*phix(c)+(vv%n(c))*phiy(c)+vw%n(c)*phiz(c)) 
+        VAR1y(c) = CmuD / phi % Sigma * Tsc(c)  &
+                 * (  uv % n(c) * phi_x(c)      &
+                    + vv % n(c) * phi_y(c)      &
+                    + vw % n(c) * phi_z(c)) 
 
-        VAR1z(c) = CmuD/phi % Sigma*Tsc(c)*&
-                   (uw%n(c)*phix(c)+vw%n(c)*phiy(c)+(ww%n(c))*phiz(c)) 
+        VAR1z(c) = CmuD / phi % Sigma * Tsc(c)  &
+                 * (  uw % n(c) * phi_x(c)      &
+                    + vw % n(c) * phi_y(c)      &
+                    + ww % n(c) * phi_z(c)) 
       end do
     end if
-    call GraPhi(grid, VAR1x,1,VAR2x,.TRUE.)
-    call GraPhi(grid, VAR1y,2,VAR2y,.TRUE.)
-    call GraPhi(grid, VAR1z,3,VAR2z,.TRUE.)
+    call GraPhi(grid, VAR1x, 1, VAR2x, .TRUE.)
+    call GraPhi(grid, VAR1y, 2, VAR2y, .TRUE.)
+    call GraPhi(grid, VAR1z, 3, VAR2z, .TRUE.)
 
     do c = 1, grid % n_cells
-      b(c) = b(c) + (VAR2x(c)+VAR2y(c)+VAR2z(c)) * grid % vol(c)
+      b(c) = b(c) + (VAR2x(c) + VAR2y(c) + VAR2z(c)) * grid % vol(c)
     end do
 
     !------------------------------------------------------------------!
@@ -373,9 +389,9 @@
 
         VISeff = (fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2)) 
 
-        phix_f = fF(s)*phix(c1) + (1.0-fF(s))*phix(c2)
-        phiy_f = fF(s)*phiy(c1) + (1.0-fF(s))*phiy(c2)
-        phiz_f = fF(s)*phiz(c1) + (1.0-fF(s))*phiz(c2)
+        phix_f = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
+        phiy_f = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
+        phiz_f = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
         Fex = VISeff * (  phix_f * grid % sx(s)  &
                         + phiy_f * grid % sy(s)  &
                         + phiz_f * grid % sz(s))
@@ -384,9 +400,11 @@
                 + phiy_f * grid % dy(s)      &
                 + phiz_f * grid % dz(s)) * A0
 
-        b(c1) = b(c1) - VISeff*(phi%n(c2)-phi%n(c1))*Scoef(s)- Fex + Fim
+        b(c1) = b(c1) - VISeff * (phi % n(c2) - phi%n(c1)) * Scoef(s)    &
+              - Fex + Fim
         if(c2  > 0) then
-          b(c2) = b(c2) + VISeff*(phi%n(c2)-phi%n(c1))*Scoef(s)+ Fex - Fim
+          b(c2) = b(c2) + VISeff * (phi % n(c2) - phi%n(c1)) * Scoef(s)  &
+                + Fex - Fim
         end if
       end do
     end if

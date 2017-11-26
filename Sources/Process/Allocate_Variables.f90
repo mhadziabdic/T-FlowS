@@ -55,9 +55,6 @@
   allocate (PHI4y(-grid % n_bnd_cells:grid % n_cells)); PHI4y=0.
   allocate (PHI4z(-grid % n_bnd_cells:grid % n_cells)); PHI4z=0.
 
-  allocate (PHIx(-grid % n_bnd_cells:grid % n_cells)); PHIx=0.
-  allocate (PHIy(-grid % n_bnd_cells:grid % n_cells)); PHIy=0.
-  allocate (PHIz(-grid % n_bnd_cells:grid % n_cells)); PHIz=0.
   allocate (PHIside(grid % n_faces)); PHIside=0.
 
   allocate (phi_max(-grid % n_bnd_cells:grid % n_cells)); phi_max=0.

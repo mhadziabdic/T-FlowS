@@ -10,6 +10,9 @@
   use par_mod
   use Grid_Mod
   use Var_Mod
+  use Work_Mod, only: phi_x => r_cell_01,  &
+                      phi_y => r_cell_02,  &
+                      phi_z => r_cell_03           
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Arguments]--------------------------------!
@@ -95,9 +98,9 @@
   end if
 
   ! Gradients
-  call GraPhi(grid, phi % n, 1, phix, .TRUE.)
-  call GraPhi(grid, phi % n, 2, phiy, .TRUE.)
-  call GraPhi(grid, phi % n, 3, phiz, .TRUE.)
+  call GraPhi(grid, phi % n, 1, phi_x, .TRUE.)
+  call GraPhi(grid, phi % n, 2, phi_y, .TRUE.)
+  call GraPhi(grid, phi % n, 3, phi_z, .TRUE.)
 
   !---------------!
   !               !
@@ -133,7 +136,7 @@
     if(BLEND_TEM(material(c1)) /= NO .or.  &
        BLEND_TEM(material(c2)) /= NO) then
       call Advection_Scheme(grid, phis, s, phi % n,     &
-                      phix, phiy, phiz,              &
+                      phi_x, phi_y, phi_z,              &
                       grid % dx, grid % dy, grid % dz,  &
                       max(BLEND_TEM(material(c1)),      &
                           BLEND_TEM(material(c2))) ) 
@@ -236,9 +239,9 @@
     ! Gradients on the cell face 
     if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
       if(material(c1) == material(c2)) then
-        phixS1 = fF(s)*phix(c1) + (1.0-fF(s))*phix(c2) 
-        phiyS1 = fF(s)*phiy(c1) + (1.0-fF(s))*phiy(c2)
-        phizS1 = fF(s)*phiz(c1) + (1.0-fF(s))*phiz(c2)
+        phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
+        phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
+        phizS1 = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
         phixS2 = phixS1 
         phiyS2 = phiyS1 
         phizS2 = phizS1 
@@ -248,21 +251,21 @@
                               + CAPc(material(c2))*VISt(c2)/Prt )
         CONeff2 = CONeff1 
       else 
-        phixS1 = phix(c1) 
-        phiyS1 = phiy(c1) 
-        phizS1 = phiz(c1) 
-        phixS2 = phix(c2) 
-        phiyS2 = phiy(c2) 
-        phizS2 = phiz(c2) 
+        phixS1 = phi_x(c1) 
+        phiyS1 = phi_y(c1) 
+        phizS1 = phi_z(c1) 
+        phixS2 = phi_x(c2) 
+        phiyS2 = phi_y(c2) 
+        phizS2 = phi_z(c2) 
         CONeff1 =   CONc(material(c1))                 &
                   + CAPc(material(c1))*VISt(c1)/Prt   
         CONeff2 =   CONc(material(c2))                 &
                   + CAPc(material(c2))*VISt(c2)/Prt   
       end if
     else
-      phixS1 = phix(c1) 
-      phiyS1 = phiy(c1) 
-      phizS1 = phiz(c1) 
+      phixS1 = phi_x(c1) 
+      phiyS1 = phi_y(c1) 
+      phizS1 = phi_z(c1) 
       phixS2 = phixS1 
       phiyS2 = phiyS1 
       phizS2 = phizS1 
@@ -491,11 +494,11 @@
     if(MODE/=HYB) then
       do c = 1, grid % n_cells
         VAR1x(c) = -0.22*Tsc(c) *&
-                   (uu%n(c)*phix(c)+uv%n(c)*phiy(c)+uw%n(c)*phiz(c))
+                   (uu%n(c)*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c))
         VAR1y(c) = -0.22*Tsc(c)*&
-                   (uv%n(c)*phix(c)+vv%n(c)*phiy(c)+vw%n(c)*phiz(c))
+                   (uv%n(c)*phi_x(c)+vv%n(c)*phi_y(c)+vw%n(c)*phi_z(c))
         VAR1z(c) = -0.22*Tsc(c)*&
-                   (uw%n(c)*phix(c)+vw%n(c)*phiy(c)+ww%n(c)*phiz(c))
+                   (uw%n(c)*phi_x(c)+vw%n(c)*phi_y(c)+ww%n(c)*phi_z(c))
       end do
       call GraPhi(grid, VAR1x,1,VAR2x,.TRUE.)
       call GraPhi(grid, VAR1y,2,VAR2y,.TRUE.)
@@ -519,9 +522,9 @@
 
         Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
         if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
-          phixS1 = fF(s)*phix(c1) + (1.0-fF(s))*phix(c2) 
-          phiyS1 = fF(s)*phiy(c1) + (1.0-fF(s))*phiy(c2)
-          phizS1 = fF(s)*phiz(c1) + (1.0-fF(s))*phiz(c2)
+          phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
+          phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
+          phizS1 = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 
@@ -529,9 +532,9 @@
              + (1.-f(s))*(CAPc(material(c2))*VISt(c2)/Prt )
           CONeff2 = CONeff1 
         else
-          phixS1 = phix(c1) 
-          phiyS1 = phiy(c1) 
-          phizS1 = phiz(c1) 
+          phixS1 = phi_x(c1) 
+          phiyS1 = phi_y(c1) 
+          phizS1 = phi_z(c1) 
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 

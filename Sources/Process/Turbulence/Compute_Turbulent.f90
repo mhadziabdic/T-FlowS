@@ -12,6 +12,9 @@
   use par_mod
   use Grid_Mod
   use Var_Mod
+  use Work_Mod, only: phi_x => r_cell_01,  &
+                      phi_y => r_cell_02,  &
+                      phi_z => r_cell_03           
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -26,16 +29,16 @@
   real    :: A0, A12, A21
   real    :: error
   real    :: VISeff
-  real    :: phix_f, phiy_f, phiz_f
+  real    :: phi_x_f, phi_y_f, phi_z_f
 !==============================================================================!
 !                                                                              ! 
-!  The form of equations which are solved:                                     !   
+!   The form of equations which are solved:                                    !   
 !                                                                              !
-!     /               /                /                     /                 !
-!    |     dphi      |                | mu_eff              |                  !
-!    | rho ---- dV + | rho u phi dS = | ------ DIV phi dS + | G dV             !
-!    |      dt       |                |  sigma              |                  !
-!   /               /                /                     /                   !
+!      /               /                /                     /                !
+!     |     dphi      |                | mu_eff              |                 !
+!     | rho ---- dV + | rho u phi dS = | ------ DIV phi dS + | G dV            !
+!     |      dt       |                |  sigma              |                 !
+!    /               /                /                     /                  !
 !                                                                              !
 !------------------------------------------------------------------------------!
 
@@ -67,9 +70,9 @@
   end if
 
   ! Gradients
-  call GraPhi(grid, phi % n, 1, phix, .TRUE.)
-  call GraPhi(grid, phi % n, 2, phiy, .TRUE.)
-  call GraPhi(grid, phi % n, 3, phiz, .TRUE.)
+  call GraPhi(grid, phi % n, 1, phi_x, .TRUE.)
+  call GraPhi(grid, phi % n, 2, phi_y, .TRUE.)
+  call GraPhi(grid, phi % n, 3, phi_z, .TRUE.)
 
   !---------------!
   !               !
@@ -105,7 +108,7 @@
 
       if(BLEND_TUR(material(c1)) /= NO .or.  &
          BLEND_TUR(material(c2)) /= NO) then
-        call Advection_Scheme(grid, phis, s, phi % n, phix, phiy, phiz,  &
+        call Advection_Scheme(grid, phis, s, phi % n, phi_x, phi_y, phi_z,  &
                         grid % dx, grid % dy, grid % dz,        &
                         max(BLEND_TUR(material(c1)),            &
                             BLEND_TUR(material(c2))) ) 
@@ -216,17 +219,17 @@
     if(SIMULA==HYB_ZETA)          &
     VISeff = VISc + (fF(s)*VISt_eff(c1) + (1.0-fF(s))*VISt_eff(c2))/phi % Sigma
 
-    phix_f = fF(s)*phix(c1) + (1.0-fF(s))*phix(c2)
-    phiy_f = fF(s)*phiy(c1) + (1.0-fF(s))*phiy(c2)
-    phiz_f = fF(s)*phiz(c1) + (1.0-fF(s))*phiz(c2)
+    phi_x_f = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
+    phi_y_f = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
+    phi_z_f = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
 
     ! This implements zero gradient for k
     if(SIMULA==K_EPS.and.MODE==HIGH_RE) then
       if(c2 < 0 .and. phi % name == 'KIN') then
         if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then  
-          phix_f = 0.0 
-          phiy_f = 0.0
-          phiz_f = 0.0
+          phi_x_f = 0.0 
+          phi_y_f = 0.0
+          phi_z_f = 0.0
           VISeff  = 0.0
         end if 
       end if
@@ -236,9 +239,9 @@
       if(c2 < 0 .and. phi % name == 'KIN') then
         if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
           if(sqrt(TauWall(c1))*WallDs(c1)/VISc>2.0) then      
-            phix_f = 0.0
-            phiy_f = 0.0
-            phiz_f = 0.0
+            phi_x_f = 0.0
+            phi_y_f = 0.0
+            phi_z_f = 0.0
             VISeff  = 0.0
           end if
         end if
@@ -246,18 +249,18 @@
     end if
 
     ! Total (exact) diffusive flux
-    Fex = VISeff * (  phix_f * grid % sx(s)  &
-                    + phiy_f * grid % sy(s)  &
-                    + phiz_f * grid % sz(s) )
+    Fex = VISeff * (  phi_x_f * grid % sx(s)  &
+                    + phi_y_f * grid % sy(s)  &
+                    + phi_z_f * grid % sz(s) )
 
     A0 = VISeff * Scoef(s)
 
     ! Implicit diffusive flux
     ! (this is a very crude approximation: Scoef is
     !  not corrected at interface between materials)
-    Fim = (  phix_f * grid % dx(s)                      &
-           + phiy_f * grid % dy(s)                      &
-           + phiz_f * grid % dz(s) ) * A0
+    Fim = (  phi_x_f * grid % dx(s)                      &
+           + phi_y_f * grid % dy(s)                      &
+           + phi_z_f * grid % dz(s) ) * A0
 
     ! This is yet another crude approximation:
     ! A0 is calculated approximatelly
@@ -415,7 +418,7 @@
   end if
 
   if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA)                                &
-  call Source_Vis_Spalart_Almaras(grid, phix, phiy, phiz)
+  call Source_Vis_Spalart_Almaras(grid, phi_x, phi_y, phi_z)
 
   !---------------------------------!
   !                                 !
@@ -425,7 +428,6 @@
   do c = 1, grid % n_cells
     b(c) = b(c) + A % val(A % dia(c)) * (1.0-phi % URF)*phi % n(c) / phi % URF
     A % val(A % dia(c)) = A % val(A % dia(c)) / phi % URF
-!?????? Asave(c) = A % val(A % dia(c)) ??????
   end do
 
   if(ALGOR == SIMPLE)   miter=10

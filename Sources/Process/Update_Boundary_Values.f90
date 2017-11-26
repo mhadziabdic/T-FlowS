@@ -21,12 +21,6 @@
   Area  = 0.0
   Tflux = 0.0
 
-  if(HOT==YES) then
-    call GraPhi(grid, T % n,1, PHIx, .TRUE.)  ! dT/dx
-    call GraPhi(grid, T % n,2, PHIy, .TRUE.)  ! dT/dy
-    call GraPhi(grid, T % n,3, PHIz, .TRUE.)  ! dT/dz
-  end if
-
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)

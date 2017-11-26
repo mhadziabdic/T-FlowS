@@ -18,6 +18,6 @@
     real              :: weight      ! line weights for node clustering
     integer           :: resolution
 
-  end type Line_Type
+  end type
 
-  end module Line_Mod
+  end module

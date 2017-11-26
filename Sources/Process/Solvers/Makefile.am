@@ -1,9 +1,9 @@
 noinst_LIBRARIES = libSolvers.a
 
 libSolvers_a_SOURCES =		\
-  BiCG.f90			\
-  CG.f90			\
-  CGS.f90			\
+  Bicg.f90			\
+  Cg.f90			\
+  Cgs.f90			\
   Prec_Form.f90			\
   Prec_Solve.f90		\
   Residual.f90

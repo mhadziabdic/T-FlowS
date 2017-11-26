@@ -196,8 +196,8 @@
   ! Value 1.e-12 keeps the solution stable
   if(ALGOR == FRACT)  niter = 200
   if(ALGOR == SIMPLE) niter =  15
-  call cg(grid % n_cells, grid % n_bnd_cells, A,             &  
-          PP % n, b, PREC, niter, PP % STol,  &
+  call cg(A, PP % n, b,            &
+          PREC, niter, PP % STol,  &
           res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)
   write(LineRes(89:92),  '(I4)')      niter

@@ -585,9 +585,9 @@
   if(ALGOR == FRACT)    miter=5 
 
   niter=miter
-  call bicg(grid % n_cells, grid % n_bnd_cells, A,           & 
-            phi % n, b, PREC,     &
-            niter,phi % STol, res(var), error)
+  call bicg(A, phi % n, b,            &
+            PREC, niter, phi % STol,  &
+            res(var), error)
   write(LineRes(65:76),  '(1PE12.3)') res(var)
   write(LineRes(93:96),  '(I4)')      niter       
 

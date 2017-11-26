@@ -434,9 +434,9 @@
   if(ALGOR == FRACT)    miter=5
 
   niter=miter
-  call cg(grid % n_cells, grid % n_bnd_cells, A,           &
-         phi % n, b, PREC,      &
-         niter,phi % STol, res(var), error)
+  call cg(A, phi % n, b,            &
+          PREC, niter, phi % STol,  &
+          res(var), error)
 
   do c = 1, grid % n_cells
     if( phi%n(c)<0.0)then

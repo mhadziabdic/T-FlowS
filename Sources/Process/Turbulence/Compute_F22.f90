@@ -259,9 +259,9 @@
   if(ALGOR == FRACT)    miter=5
 
   niter=miter
-  call cg(grid % n_cells, grid % n_bnd_cells, A,  & 
-          phi % n, b, PREC,        &
-          niter,phi % STol, res(var), error)
+  call cg(A, phi % n, b,            &
+          PREC, niter, phi % STol,  &
+          res(var), error)
   
   if(this_proc < 2) write(*,*) '# ', phi % name, res(var), niter 
 

@@ -526,9 +526,9 @@
   if(ALGOR == FRACT)    miter=5
 
   niter=miter
-  call cg(grid % n_cells, grid % n_bnd_cells, A,           &
-           phi % n, b, PREC,    &
-           niter,phi % STol, res(var), error)
+  call cg(A, phi % n, b,            &
+          PREC, niter, phi % STol,  &
+          res(var), error)
 
   !k-eps  if(var == 1) then
   !k-eps    write(LineRes(17:28), '(1PE12.3)') res(var) 

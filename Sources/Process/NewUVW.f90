@@ -588,9 +588,9 @@
 
   niter=miter
 
-  call cgs(grid % n_cells, grid % n_bnd_cells, A,           & 
-          ui % n, b, PREC,        &
-          niter,U % STol, res(var), error)
+  call cgs(A, ui % n, b,           &
+           PREC, niter, U % STol,  &
+           res(var), error)
 
   if(ui % name == 'U') then
     write(LineRes(17:28), '(1PE12.3)') res(var) 

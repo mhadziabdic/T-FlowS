@@ -12,9 +12,15 @@
   use Var_Mod
   use Parameters_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
-  use Work_Mod,    only: phi_x => r_cell_01,  &
-                         phi_y => r_cell_02,  &
-                         phi_z => r_cell_03           
+  use Work_Mod,    only: phi_x       => r_cell_01,  &
+                         phi_y       => r_cell_02,  &
+                         phi_z       => r_cell_03,  &
+                         u1uj_phij   => r_cell_04,  &
+                         u2uj_phij   => r_cell_05,  &
+                         u3uj_phij   => r_cell_06,  &
+                         u1uj_phij_x => r_cell_07,  &
+                         u2uj_phij_y => r_cell_08,  &
+                         u3uj_phij_z => r_cell_09    
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Arguments]--------------------------------!
@@ -496,18 +502,20 @@
   if(SIMULA==EBM.or.SIMULA==HJ) then
     if(MODE/=HYB) then
       do c = 1, grid % n_cells
-        VAR1x(c) = -0.22*Tsc(c) *&
+        u1uj_phij(c) = -0.22*Tsc(c) *&
                    (uu%n(c)*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c))
-        VAR1y(c) = -0.22*Tsc(c)*&
+        u2uj_phij(c) = -0.22*Tsc(c)*&
                    (uv%n(c)*phi_x(c)+vv%n(c)*phi_y(c)+vw%n(c)*phi_z(c))
-        VAR1z(c) = -0.22*Tsc(c)*&
+        u3uj_phij(c) = -0.22*Tsc(c)*&
                    (uw%n(c)*phi_x(c)+vw%n(c)*phi_y(c)+ww%n(c)*phi_z(c))
       end do
-      call GraPhi(grid, VAR1x,1,VAR2x,.TRUE.)
-      call GraPhi(grid, VAR1y,2,VAR2y,.TRUE.)
-      call GraPhi(grid, VAR1z,3,VAR2z,.TRUE.)
+      call GraPhi(grid, u1uj_phij, 1, u1uj_phij_x, .TRUE.)
+      call GraPhi(grid, u2uj_phij, 2, u2uj_phij_y, .TRUE.)
+      call GraPhi(grid, u3uj_phij, 3, u3uj_phij_z, .TRUE.)
       do c = 1, grid % n_cells
-        b(c) = b(c) - (VAR2x(c)+VAR2y(c)+VAR2z(c))*grid % vol(c)
+        b(c) = b(c) - (  u1uj_phij_x(c)  &
+                       + u2uj_phij_y(c)  &
+                       + u3uj_phij_z(c) ) * grid % vol(c)
       end do
 
       !------------------------------------------------------------------!

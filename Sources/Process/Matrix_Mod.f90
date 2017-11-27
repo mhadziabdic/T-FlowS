@@ -34,6 +34,9 @@
   !   A % dia = [   1   5   9  12 ]                                    !
   !--------------------------------------------------------------------!
   type Matrix_Type
+
+    type(Grid_Type), pointer :: pnt_grid
+
     integer                  :: nonzeros  ! number of nonzero entries
     real,    allocatable     :: val(:)    ! value
     real,    allocatable     :: sav(:)    ! saved value
@@ -43,7 +46,6 @@
     integer, allocatable     :: dia(:)    ! diagonal positions 
     integer, allocatable     :: pos(:,:)  ! position in the matrix
     integer, allocatable     :: mir(:)    ! mirror positions   
-    type(Grid_Type), pointer :: pnt_grid
   end type 
 
   contains

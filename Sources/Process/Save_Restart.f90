@@ -243,12 +243,12 @@
     end if
 
     if(URANS == YES) then
-      write(9) (VAR10x(c),  c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR10y(c),  c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR10z(c),  c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR11x(c),  c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR11y(c),  c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR11z(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR10x(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR10y(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR10z(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR11x(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR11y(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR11z(c),  c = -grid % n_bnd_cells,grid % n_cells)
     end if  
   end if
 

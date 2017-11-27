@@ -8,7 +8,10 @@
   use all_mod
   use pro_mod
   use rans_mod
-  use grid_mod
+  use Grid_Mod
+  use Work_Mod, only: f22_x => r_cell_01,  &
+                      f22_y => r_cell_02,  &
+                      f22_z => r_cell_03
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -24,16 +27,15 @@
   real    :: Uxx, Uyy, Uzz, Uxy, Uxz, Uyz, Uzy, Uzx, Uyx               
   real    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, uiujn, Ce11, uu_nn 
   real    :: Diss_wall, Diss_hom, r13, r23
-  real,allocatable :: Diss1(:)
 !==============================================================================!
 
-  call GraPhi(grid, f22 % n, 1, VAR2x, .TRUE.)             ! df22/dx
-  call GraPhi(grid, f22 % n, 2, VAR2y, .TRUE.)             ! df22/dy
-  call GraPhi(grid, f22 % n, 3, VAR2z, .TRUE.)             ! df22/dz
+  call GraPhi(grid, f22 % n, 1, f22_x, .TRUE.)             ! df22/dx
+  call GraPhi(grid, f22 % n, 2, f22_y, .TRUE.)             ! df22/dy
+  call GraPhi(grid, f22 % n, 3, f22_z, .TRUE.)             ! df22/dz
 
   call Time_And_Length_Scale(grid)
 
-  r13 = 1.0/3.0 
+  r13 = ONE_THIRD
   do  c = 1, grid % n_cells
     Kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), 1.0e-12)
     Pk(c)      = max(-(  uu % n(c) * u % x(c)  &
@@ -46,12 +48,10 @@
                        + vw % n(c) * w % y(c)  &
                        + ww % n(c) * w % z(c)), 1.0e-12)                
   
-    mag = max(1.0e-12,sqrt(  VAR2x(c)*VAR2x(c)  &
-                           + VAR2y(c)*VAR2y(c)  &
-                           + VAR2z(c)*VAR2z(c)))       
-    n1 = VAR2x(c)/mag 
-    n2 = VAR2y(c)/mag 
-    n3 = VAR2z(c)/mag 
+    mag = max(1.0e-12, sqrt(  f22_x(c)**2 + f22_y(c)**2 + f22_z(c)**2))       
+    n1 = f22_x(c) / mag 
+    n2 = f22_y(c) / mag 
+    n3 = f22_z(c) / mag 
 
     b11 = uu % n(c)/(2.0*Kin % n(c)) - r13 
     b22 = vv % n(c)/(2.0*Kin % n(c)) - r13

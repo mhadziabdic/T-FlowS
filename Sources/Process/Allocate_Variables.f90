@@ -40,22 +40,6 @@
   call Var_Mod_Allocate_Statistics(w)
   call Var_Mod_Allocate_Statistics(p)
 
-  allocate (PHI1x(-grid % n_bnd_cells:grid % n_cells)); PHI1x=0.
-  allocate (PHI1y(-grid % n_bnd_cells:grid % n_cells)); PHI1y=0.
-  allocate (PHI1z(-grid % n_bnd_cells:grid % n_cells)); PHI1z=0.
-
-  allocate (PHI2x(-grid % n_bnd_cells:grid % n_cells)); PHI2x=0.
-  allocate (PHI2y(-grid % n_bnd_cells:grid % n_cells)); PHI2y=0.
-  allocate (PHI2z(-grid % n_bnd_cells:grid % n_cells)); PHI2z=0.
-
-  allocate (PHI3x(-grid % n_bnd_cells:grid % n_cells)); PHI3x=0.
-  allocate (PHI3y(-grid % n_bnd_cells:grid % n_cells)); PHI3y=0.
-  allocate (PHI3z(-grid % n_bnd_cells:grid % n_cells)); PHI3z=0.
-
-  allocate (PHI4x(-grid % n_bnd_cells:grid % n_cells)); PHI4x=0.
-  allocate (PHI4y(-grid % n_bnd_cells:grid % n_cells)); PHI4y=0.
-  allocate (PHI4z(-grid % n_bnd_cells:grid % n_cells)); PHI4z=0.
-
   allocate (phi_face(grid % n_faces)); phi_face=0.
 
   allocate (phi_max(-grid % n_bnd_cells:grid % n_cells)); phi_max=0.
@@ -86,56 +70,13 @@
   !   Reynolds stress models   !
   !----------------------------!
   if(SIMULA==EBM.or.SIMULA==HJ) then
-    allocate (VAR1x(-grid % n_bnd_cells:grid % n_cells)); VAR1x=0.
-    allocate (VAR1y(-grid % n_bnd_cells:grid % n_cells)); VAR1y=0.
-    allocate (VAR1z(-grid % n_bnd_cells:grid % n_cells)); VAR1z=0.
-
-    allocate (VAR2x(-grid % n_bnd_cells:grid % n_cells)); VAR2x=0.
-    allocate (VAR2y(-grid % n_bnd_cells:grid % n_cells)); VAR2y=0.
-    allocate (VAR2z(-grid % n_bnd_cells:grid % n_cells)); VAR2z=0.
     if(URANS == YES) then    
-      allocate (VAR10x(-grid % n_bnd_cells:grid % n_cells)); VAR10x=0.
-      allocate (VAR10y(-grid % n_bnd_cells:grid % n_cells)); VAR10y=0.
-      allocate (VAR10z(-grid % n_bnd_cells:grid % n_cells)); VAR10z=0.
-
-      allocate (VAR11x(-grid % n_bnd_cells:grid % n_cells)); VAR11x=0.
-      allocate (VAR11y(-grid % n_bnd_cells:grid % n_cells)); VAR11y=0.
-      allocate (VAR11z(-grid % n_bnd_cells:grid % n_cells)); VAR11z=0.
+!
+!     Should something be done here?
+!
     end if
     if(SIMULA == HJ) then
-!      allocate (VAR3x(-grid % n_bnd_cells:grid % n_cells)); VAR3x=0.
-!      allocate (VAR3y(-grid % n_bnd_cells:grid % n_cells)); VAR3y=0.
-!      allocate (VAR3z(-grid % n_bnd_cells:grid % n_cells)); VAR3z=0.
-
-!      allocate (VAR4x(-grid % n_bnd_cells:grid % n_cells)); VAR4x=0.
-!      allocate (VAR4y(-grid % n_bnd_cells:grid % n_cells)); VAR4y=0.
-!      allocate (VAR4z(-grid % n_bnd_cells:grid % n_cells)); VAR4z=0.
-
-!      allocate (VAR5x(-grid % n_bnd_cells:grid % n_cells)); VAR5x=0.
-!      allocate (VAR5y(-grid % n_bnd_cells:grid % n_cells)); VAR5y=0.
-!      allocate (VAR5z(-grid % n_bnd_cells:grid % n_cells)); VAR5z=0.
-
-      allocate (VAR6x(-grid % n_bnd_cells:grid % n_cells)); VAR6x=0.
-      allocate (VAR6y(-grid % n_bnd_cells:grid % n_cells)); VAR6y=0.
-      allocate (VAR6z(-grid % n_bnd_cells:grid % n_cells)); VAR6z=0.
-
-      allocate (VAR7x(-grid % n_bnd_cells:grid % n_cells)); VAR7x=0.
-      allocate (VAR7y(-grid % n_bnd_cells:grid % n_cells)); VAR7y=0.
-      allocate (VAR7z(-grid % n_bnd_cells:grid % n_cells)); VAR7z=0.
-
       allocate (Eps_tot(-grid % n_bnd_cells:grid % n_cells)); Eps_tot=0.
-
-!      allocate (VAR8x(-grid % n_bnd_cells:grid % n_cells)); VAR8x=0.
-!      allocate (VAR8y(-grid % n_bnd_cells:grid % n_cells)); VAR8y=0.
-!      allocate (VAR8z(-grid % n_bnd_cells:grid % n_cells)); VAR8z=0.
-
-!      allocate (VAR9x(-grid % n_bnd_cells:grid % n_cells)); VAR9x=0.
-!      allocate (VAR9y(-grid % n_bnd_cells:grid % n_cells)); VAR9y=0.
-!      allocate (VAR9z(-grid % n_bnd_cells:grid % n_cells)); VAR9z=0.
-
-!      allocate (VAR12x(-grid % n_bnd_cells:grid % n_cells)); VAR12x=0.
-!      allocate (VAR12y(-grid % n_bnd_cells:grid % n_cells)); VAR12y=0.
-!      allocate (VAR12z(-grid % n_bnd_cells:grid % n_cells)); VAR12z=0.
     end if  ! SIMULA == HJ
 
     ! Reynolds stresses
@@ -319,30 +260,6 @@
       allocate (Diss_vw_mean(1:grid % n_cells)); Diss_vw_mean  =0.
 
       allocate (Diss_sgs_mean(1:grid % n_cells)); Diss_sgs_mean  =0.
-
-      allocate (PHI5x(-grid % n_bnd_cells:grid % n_cells)); PHI5x=0.
-      allocate (PHI5y(-grid % n_bnd_cells:grid % n_cells)); PHI5y=0.
-      allocate (PHI5z(-grid % n_bnd_cells:grid % n_cells)); PHI5z=0.
-
-      allocate (PHI6x(-grid % n_bnd_cells:grid % n_cells)); PHI6x=0.
-      allocate (PHI6y(-grid % n_bnd_cells:grid % n_cells)); PHI6y=0.
-      allocate (PHI6z(-grid % n_bnd_cells:grid % n_cells)); PHI6z=0.
-
-      allocate (PHI7x(-grid % n_bnd_cells:grid % n_cells)); PHI7x=0.
-      allocate (PHI7y(-grid % n_bnd_cells:grid % n_cells)); PHI7y=0.
-      allocate (PHI7z(-grid % n_bnd_cells:grid % n_cells)); PHI7z=0.
-
-      allocate (PHI8x(-grid % n_bnd_cells:grid % n_cells)); PHI8x=0.
-      allocate (PHI8y(-grid % n_bnd_cells:grid % n_cells)); PHI8y=0.
-      allocate (PHI8z(-grid % n_bnd_cells:grid % n_cells)); PHI8z=0.
-
-      allocate (PHI9x(-grid % n_bnd_cells:grid % n_cells)); PHI9x=0.
-      allocate (PHI9y(-grid % n_bnd_cells:grid % n_cells)); PHI9y=0.
-      allocate (PHI9z(-grid % n_bnd_cells:grid % n_cells)); PHI9z=0.
-
-      allocate (PHI10x(-grid % n_bnd_cells:grid % n_cells)); PHI10x=0.
-      allocate (PHI10y(-grid % n_bnd_cells:grid % n_cells)); PHI10y=0.
-      allocate (PHI10z(-grid % n_bnd_cells:grid % n_cells)); PHI10z=0.
 
       if(HOT==YES) then
         allocate (Put_mean(1:grid % n_cells));  Put_mean =0.

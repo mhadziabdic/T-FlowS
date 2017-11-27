@@ -19,6 +19,6 @@
     real    :: weights(3)         ! block weights for node clustering
     real    :: face_weights(6,3)  ! block weights for node clustering
 
-  end type Block_Type
+  end type
 
-  end module Block_Mod
+  end module

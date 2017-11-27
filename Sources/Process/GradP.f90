@@ -23,8 +23,6 @@
  
   call Exchange(grid, phi)
 
-  Ps = 0.0
-
   do c = 1, grid % n_cells
     phi_x(c)=0.0
     phi_y(c)=0.0

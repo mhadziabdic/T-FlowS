@@ -26,8 +26,9 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
-  use Solvers_Mod, only: p1, p2  ! bad practice
   use Grid_Mod
+  use Work_Mod, only: p1 => r_cell_01,  &
+                      p2 => r_cell_02
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -123,14 +124,14 @@
       phi_f = (L1/D1*phi(c1) + L2/D2*phi(c2)) / (L1/D1 + L2/D2)
 
       ! Remember it !
-      phiside(s) = phi_f
+      phi_face(s) = phi_f
 
-      Dxc1 = grid % xf(s)-grid % xc(c1)                     
-      Dyc1 = grid % yf(s)-grid % yc(c1)                     
-      Dzc1 = grid % zf(s)-grid % zc(c1)                     
-      Dxc2 = grid % xf(s)-grid % xc(c2)                     
-      Dyc2 = grid % yf(s)-grid % yc(c2)                     
-      Dzc2 = grid % zf(s)-grid % zc(c2)                     
+      Dxc1 = grid % xf(s) - grid % xc(c1)                     
+      Dyc1 = grid % yf(s) - grid % yc(c1)                     
+      Dzc1 = grid % zf(s) - grid % zc(c1)                     
+      Dxc2 = grid % xf(s) - grid % xc(c2)                     
+      Dyc2 = grid % yf(s) - grid % yc(c2)                     
+      Dzc2 = grid % zf(s) - grid % zc(c2)                     
 
       ! Now update the gradients
       phi_x(c1)=phi_x(c1)+phi_f*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1)

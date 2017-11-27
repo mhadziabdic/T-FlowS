@@ -9,6 +9,7 @@
   use pro_mod
   use rans_mod
   use Grid_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -81,8 +82,8 @@
 
         ! Linearization of the near wall terms helps to get more  
          ! stable solution, especially for small wall distance.
-         A0 = Scoef(s) 
-         b(c1) = b(c1) + A0*f22%n(c2)
+         A0 = Scoef(s)
+         b(c1) = b(c1) + A0 * f22 % n(c2)
        end if   ! end if of BC=wall
      end if    ! end if of c2<0
    end do
@@ -109,7 +110,7 @@
         ! Linearization of the near wall terms helps to get more  
          ! stable solution, especially for small wall distance.
          A0 = Scoef(s)
-         b(c1) = b(c1) + A0*f22%n(c2)
+         b(c1) = b(c1) + A0 * f22 % n(c2)
        end if   ! end if of BC=wall
      end if    ! end if of c2<0
    end do

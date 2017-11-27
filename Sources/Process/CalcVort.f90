@@ -12,58 +12,45 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Work_Mod, only: u_x => r_cell_01,  &
+                      u_y => r_cell_02,  &
+                      u_z => r_cell_03,  &
+                      v_x => r_cell_04,  &
+                      v_y => r_cell_05,  &
+                      v_z => r_cell_06,  &
+                      w_x => r_cell_07,  &
+                      w_y => r_cell_08,  &
+                      w_z => r_cell_09           
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, i 
-  real    :: Sjk
+  integer :: c
 !==============================================================================!
 
-  call Exchange(grid, U % n)
-  call Exchange(grid, V % n)
-  call Exchange(grid, W % n)
+  call Exchange(grid, u % n)
+  call Exchange(grid, v % n)
+  call Exchange(grid, w % n)
 
-  !---------------!
-  !               !
-  !   SGS terms   !
-  !               !
-  !---------------!
-  do i = 1, 3        
+  call GraPhi(grid, u % n, 1, u_x, .TRUE.)  ! du/dx
+  call GraPhi(grid, u % n, 2, u_y, .TRUE.)  ! du/dy
+  call GraPhi(grid, u % n, 3, u_z, .TRUE.)  ! du/dz
 
-    if(i == 1) then
-      call GraPhi(grid, W % n, 2, PHIy, .TRUE.)  ! dW/dy
-      call GraPhi(grid, V % n, 3, PHIz, .TRUE.)  ! dV/dz
-    end if
-    if(i == 2) then
-      call GraPhi(grid, W % n, 1, PHIx, .TRUE.)  ! dW/dx
-      call GraPhi(grid, U % n, 3, PHIz, .TRUE.)  ! dU/dz
-    end if
-    if(i == 3) then
-      call GraPhi(grid, V % n, 1, PHIx, .TRUE.)  ! dV/dx
-      call GraPhi(grid, U % n, 2, PHIy, .TRUE.)  ! dU/dy
-    end if
+  call GraPhi(grid, v % n, 1, v_x, .TRUE.)  ! dv/dx
+  call GraPhi(grid, v % n, 2, v_y, .TRUE.)  ! dv/dy
+  call GraPhi(grid, v % n, 3, v_z, .TRUE.)  ! dv/dz
 
-    do c = 1, grid % n_cells
-      if(i == 1) then
-        Sjk = 0.5*(PHIy(c)-PHIz(c)) ! Syz=Szy:  .5(dV/dz+dW/dy)
-        Vort(c) = 2.0*Sjk*Sjk   
-      end if
-      if(i == 2) then
-        Sjk = 0.5*(PHIx(c)-PHIz(c)) ! Sxz=Szx:  .5(dU/dz+dW/dx)
-        Vort(c) = Vort(c) + 2.0*Sjk*Sjk  
-      end if
-      if(i == 3) then
-        Sjk = 0.5*(PHIx(c)-PHIy(c)) ! Sxy=Syx:  .5(dV/dx+dU/dy)
-        Vort(c) = Vort(c) + 2.0*Sjk*Sjk 
-      end if
-    end do 
-
-  end do  ! i
+  call GraPhi(grid, w % n, 1, w_x, .TRUE.)  ! dw/dx
+  call GraPhi(grid, w % n, 2, w_y, .TRUE.)  ! dw/dy
+  call GraPhi(grid, w % n, 3, w_z, .TRUE.)  ! dw/dz
 
   do c = 1, grid % n_cells
-    Vort(c) = sqrt(abs(2.0 * Vort(c)))
+    vort(c) = 2.0 * (0.5 * (w_y(c) - v_z(c)))**2  &
+            + 2.0 * (0.5 * (w_x(c) - u_z(c)))**2  &
+            + 2.0 * (0.5 * (v_x(c) - u_y(c)))**2
+
+    vort(c) = sqrt(abs(2.0 * vort(c)))
   end do
 
   end subroutine

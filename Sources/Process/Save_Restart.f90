@@ -6,10 +6,11 @@
   use all_mod
   use pro_mod
   use les_mod
-  use par_mod
+  use par_mod, only: this_proc
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -54,7 +55,7 @@
   write(9)       Cm,        0,        0,        0,        0,        0
   write(9)    ALGOR,    INERT,   CONVEC,    CROSS,   DIFFUS,   SIMULA
   write(9)   POSPRO,  CHANNEL,     TEST,    OTHER,      HOT,        0
-  write(9)    BLEND,      HYB,   PER_BC,     MODE,     PIPE,        0
+  write(9)    BLEND,        0,   PER_BC,     MODE,     PIPE,        0
   write(9)        0,        0,        0,        0,        0,        0
   write(9)        0,        0,        0,        0,        0,        0
   write(9)        0,        0,        0,        0,        0,        0
@@ -73,45 +74,45 @@
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
 
-  write(9) (U % n(c),   c = -grid % n_bnd_cells,grid % n_cells)
-  write(9) (V % n(c),   c = -grid % n_bnd_cells,grid % n_cells)
-  write(9) (W % n(c),   c = -grid % n_bnd_cells,grid % n_cells)
-  write(9) (U % o(c),   c = 1, grid % n_cells)
-  write(9) (V % o(c),   c = 1, grid % n_cells)
-  write(9) (W % o(c),   c = 1, grid % n_cells)
+  write(9) (U % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
+  write(9) (V % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
+  write(9) (W % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
+  write(9) (U % o(c),  c = 1, grid % n_cells)
+  write(9) (V % o(c),  c = 1, grid % n_cells)
+  write(9) (W % o(c),  c = 1, grid % n_cells)
 
-  write(9) (U % C(c),   c = 1, grid % n_cells)
-  write(9) (V % C(c),   c = 1, grid % n_cells)
-  write(9) (W % C(c),   c = 1, grid % n_cells)
-  write(9) (U % Co(c),  c = 1, grid % n_cells)
-  write(9) (V % Co(c),  c = 1, grid % n_cells)
-  write(9) (W % Co(c),  c = 1, grid % n_cells)
+  write(9) (U % a(c),    c = 1, grid % n_cells)
+  write(9) (V % a(c),    c = 1, grid % n_cells)
+  write(9) (W % a(c),    c = 1, grid % n_cells)
+  write(9) (U % a_o(c),  c = 1, grid % n_cells)
+  write(9) (V % a_o(c),  c = 1, grid % n_cells)
+  write(9) (W % a_o(c),  c = 1, grid % n_cells)
 
-  write(9) (U % Do(c),  c = 1, grid % n_cells)
-  write(9) (V % Do(c),  c = 1, grid % n_cells)
-  write(9) (W % Do(c),  c = 1, grid % n_cells)
+  write(9) (U % d_o(c),  c = 1, grid % n_cells)
+  write(9) (V % d_o(c),  c = 1, grid % n_cells)
+  write(9) (W % d_o(c),  c = 1, grid % n_cells)
 
-  write(9) (U % X(c),   c = 1, grid % n_cells)
-  write(9) (V % X(c),   c = 1, grid % n_cells)
-  write(9) (W % X(c),   c = 1, grid % n_cells)
-  write(9) (U % Xo(c),  c = 1, grid % n_cells)
-  write(9) (V % Xo(c),  c = 1, grid % n_cells)
-  write(9) (W % Xo(c),  c = 1, grid % n_cells)
+  write(9) (U % c(c),    c = 1, grid % n_cells)
+  write(9) (V % c(c),    c = 1, grid % n_cells)
+  write(9) (W % c(c),    c = 1, grid % n_cells)
+  write(9) (U % c_o(c),  c = 1, grid % n_cells)
+  write(9) (V % c_o(c),  c = 1, grid % n_cells)
+  write(9) (W % c_o(c),  c = 1, grid % n_cells)
 
   write(9) (P % n(c),   c = -grid % n_bnd_cells,grid % n_cells)
   write(9) (PP % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
 
-  write(9) (Px(c),   c = -grid % n_bnd_cells,grid % n_cells)
-  write(9) (Py(c),   c = -grid % n_bnd_cells,grid % n_cells)
-  write(9) (Pz(c),   c = -grid % n_bnd_cells,grid % n_cells)
+  write(9) (p % x(c),  c = -grid % n_bnd_cells,grid % n_cells)
+  write(9) (p % y(c),  c = -grid % n_bnd_cells,grid % n_cells)
+  write(9) (p % z(c),  c = -grid % n_bnd_cells,grid % n_cells)
 
   ! Pressure drops in each material (domain)
   do m=1,grid % n_materials
-    write(9) PdropX(m), PdropY(m), PdropZ(m)
-    write(9) FLUXoX(m), FLUXoY(m), FLUXoZ(m)
-    write(9) FLUXx(m),  FLUXy(m),  FLUXz(m)
-    write(9) AreaX(m),  AreaY(m),  AreaZ(m)
-    write(9) Ubulk(m),  Vbulk(m),  Wbulk(m)
+    write(9) bulk(m) % p_drop_x,  bulk(m) % p_drop_y,  bulk(m) % p_drop_z
+    write(9) bulk(m) % flux_x_o,  bulk(m) % flux_y_o,  bulk(m) % flux_z_o
+    write(9) bulk(m) % flux_x,    bulk(m) % flux_y,    bulk(m) % flux_z
+    write(9) bulk(m) % area_x,    bulk(m) % area_y,    bulk(m) % area_z
+    write(9) bulk(m) % u,         bulk(m) % v,         bulk(m) % w
   end do
 
   ! Fluxes 
@@ -121,113 +122,113 @@
     write(9) (T % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (T % q(c),    c = -grid % n_bnd_cells,-1)
     write(9) (T % o(c),    c = 1, grid % n_cells)
-    write(9) (T % C(c),    c = 1, grid % n_cells)
-    write(9) (T % Co(c),   c = 1, grid % n_cells)
-    write(9) (T % Do(c),   c = 1, grid % n_cells)
-    write(9) (T % X(c),    c = 1, grid % n_cells)
-    write(9) (T % Xo(c),   c = 1, grid % n_cells)
+    write(9) (T % a(c),    c = 1, grid % n_cells)
+    write(9) (T % a_o(c),  c = 1, grid % n_cells)
+    write(9) (T % d_o(c),  c = 1, grid % n_cells)
+    write(9) (T % c(c),    c = 1, grid % n_cells)
+    write(9) (T % c_o(c),  c = 1, grid % n_cells)
   end if
 
   if(SIMULA==K_EPS.or.SIMULA==ZETA.or.&
      SIMULA==K_EPS_VV.or.SIMULA==HYB_ZETA.or.SIMULA == HYB_PITM) then 
     write(9) (Kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (Kin % o(c),    c = 1, grid % n_cells)
-    write(9) (Kin % C(c),    c = 1, grid % n_cells)
-    write(9) (Kin % Co(c),   c = 1, grid % n_cells)
-    write(9) (Kin % Do(c),   c = 1, grid % n_cells)
-    write(9) (Kin % X(c),    c = 1, grid % n_cells)
-    write(9) (Kin % Xo(c),   c = 1, grid % n_cells)
+    write(9) (Kin % a(c),    c = 1, grid % n_cells)
+    write(9) (Kin % a_o(c),  c = 1, grid % n_cells)
+    write(9) (Kin % d_o(c),  c = 1, grid % n_cells)
+    write(9) (Kin % c(c),    c = 1, grid % n_cells)
+    write(9) (Kin % c_o(c),  c = 1, grid % n_cells)
 
     write(9) (Eps % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (Eps % o(c),    c = 1, grid % n_cells)
-    write(9) (Eps % C(c),    c = 1, grid % n_cells)
-    write(9) (Eps % Co(c),   c = 1, grid % n_cells)
-    write(9) (Eps % Do(c),   c = 1, grid % n_cells)
-    write(9) (Eps % X(c),    c = 1, grid % n_cells)
-    write(9) (Eps % Xo(c),   c = 1, grid % n_cells)
+    write(9) (Eps % a(c),    c = 1, grid % n_cells)
+    write(9) (Eps % a_o(c),  c = 1, grid % n_cells)
+    write(9) (Eps % d_o(c),  c = 1, grid % n_cells)
+    write(9) (Eps % c(c),    c = 1, grid % n_cells)
+    write(9) (Eps % c_o(c),  c = 1, grid % n_cells)
 
-    write(9) (Pk(c),     c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (Uf(c),     c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (Ynd(c),    c = -grid % n_bnd_cells,grid % n_cells) 
-    write(9) (VISwall(c),c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (TauWall(c),c= 1,grid % n_cells)
+    write(9) (Pk(c),       c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (Uf(c),       c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (Ynd(c),      c = -grid % n_bnd_cells,grid % n_cells) 
+    write(9) (VISwall(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (TauWall(c),  c= 1,grid % n_cells)
   end if
 
   if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA == HYB_ZETA) then
-    write(9) (v_2%n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (v_2%o(c),   c = 1, grid % n_cells)
-    write(9) (v_2%C(c),   c = 1, grid % n_cells)
-    write(9) (v_2%Co(c),  c = 1, grid % n_cells)
-    write(9) (v_2%Do(c),  c = 1, grid % n_cells)
-    write(9) (v_2%X(c),   c = 1, grid % n_cells)
-    write(9) (v_2%Xo(c),  c = 1, grid % n_cells)
+    write(9) (v_2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (v_2 % o(c),    c = 1, grid % n_cells)
+    write(9) (v_2 % a(c),    c = 1, grid % n_cells)
+    write(9) (v_2 % a_o(c),  c = 1, grid % n_cells)
+    write(9) (v_2 % d_o(c),  c = 1, grid % n_cells)
+    write(9) (v_2 % c(c),    c = 1, grid % n_cells)
+    write(9) (v_2 % c_o(c),  c = 1, grid % n_cells)
 
-    write(9) (f22%n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (f22%o(c),   c = 1, grid % n_cells)
-    write(9) (f22%Do(c),  c = 1, grid % n_cells)
-    write(9) (f22%X(c),   c = 1, grid % n_cells)
-    write(9) (f22%Xo(c),  c = 1, grid % n_cells)
+    write(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (f22 % o(c),    c = 1, grid % n_cells)
+    write(9) (f22 % d_o(c),  c = 1, grid % n_cells)
+    write(9) (f22 % c(c),    c = 1, grid % n_cells)
+    write(9) (f22 % c_o(c),  c = 1, grid % n_cells)
  
-    write(9) (Tsc(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (Lsc(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (Tsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (Lsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if 
 
   if(SIMULA==EBM.or.SIMULA==HJ) then
-    write(9) (uu  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (uu  % o(c),    c = 1, grid % n_cells)
-    write(9) (uu  % C(c),    c = 1, grid % n_cells)
-    write(9) (uu  % Co(c),   c = 1, grid % n_cells)
-    write(9) (uu  % Do(c),   c = 1, grid % n_cells)
-    write(9) (uu  % X(c),    c = 1, grid % n_cells)
-    write(9) (uu  % Xo(c),   c = 1, grid % n_cells)
+    write(9) (uu % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (uu % o(c),    c = 1, grid % n_cells)
+    write(9) (uu % a(c),    c = 1, grid % n_cells)
+    write(9) (uu % a_o(c),  c = 1, grid % n_cells)
+    write(9) (uu % d_o(c),  c = 1, grid % n_cells)
+    write(9) (uu % c(c),    c = 1, grid % n_cells)
+    write(9) (uu % c_o(c),  c = 1, grid % n_cells)
 
-    write(9) (vv  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (vv  % o(c),    c = 1, grid % n_cells)
-    write(9) (vv  % C(c),    c = 1, grid % n_cells)
-    write(9) (vv  % Co(c),   c = 1, grid % n_cells)
-    write(9) (vv  % Do(c),   c = 1, grid % n_cells)
-    write(9) (vv  % X(c),    c = 1, grid % n_cells)
-    write(9) (vv  % Xo(c),   c = 1, grid % n_cells)
+    write(9) (vv % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (vv % o(c),    c = 1, grid % n_cells)
+    write(9) (vv % a(c),    c = 1, grid % n_cells)
+    write(9) (vv % a_o(c),  c = 1, grid % n_cells)
+    write(9) (vv % d_o(c),  c = 1, grid % n_cells)
+    write(9) (vv % c(c),    c = 1, grid % n_cells)
+    write(9) (vv % c_o(c),  c = 1, grid % n_cells)
 
-    write(9) (ww  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (ww  % o(c),    c = 1, grid % n_cells)
-    write(9) (ww  % C(c),    c = 1, grid % n_cells)
-    write(9) (ww  % Co(c),   c = 1, grid % n_cells)
-    write(9) (ww  % Do(c),   c = 1, grid % n_cells)
-    write(9) (ww  % X(c),    c = 1, grid % n_cells)
-    write(9) (ww  % Xo(c),   c = 1, grid % n_cells)
+    write(9) (ww % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (ww % o(c),    c = 1, grid % n_cells)
+    write(9) (ww % a(c),    c = 1, grid % n_cells)
+    write(9) (ww % a_o(c),  c = 1, grid % n_cells)
+    write(9) (ww % d_o(c),  c = 1, grid % n_cells)
+    write(9) (ww % c(c),    c = 1, grid % n_cells)
+    write(9) (ww % c_o(c),  c = 1, grid % n_cells)
 
-    write(9) (uv  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (uv  % o(c),    c = 1, grid % n_cells)
-    write(9) (uv  % C(c),    c = 1, grid % n_cells)
-    write(9) (uv  % Co(c),   c = 1, grid % n_cells)
-    write(9) (uv  % Do(c),   c = 1, grid % n_cells)
-    write(9) (uv  % X(c),    c = 1, grid % n_cells)
-    write(9) (uv  % Xo(c),   c = 1, grid % n_cells)
+    write(9) (uv % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (uv % o(c),    c = 1, grid % n_cells)
+    write(9) (uv % a(c),    c = 1, grid % n_cells)
+    write(9) (uv % a_o(c),  c = 1, grid % n_cells)
+    write(9) (uv % d_o(c),  c = 1, grid % n_cells)
+    write(9) (uv % c(c),    c = 1, grid % n_cells)
+    write(9) (uv % c_o(c),  c = 1, grid % n_cells)
 
-    write(9) (uw  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (uw  % o(c),    c = 1, grid % n_cells)
-    write(9) (uw  % C(c),    c = 1, grid % n_cells)
-    write(9) (uw  % Co(c),   c = 1, grid % n_cells)
-    write(9) (uw  % Do(c),   c = 1, grid % n_cells)
-    write(9) (uw  % X(c),    c = 1, grid % n_cells)
-    write(9) (uw  % Xo(c),   c = 1, grid % n_cells)
+    write(9) (uw % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (uw % o(c),    c = 1, grid % n_cells)
+    write(9) (uw % a(c),    c = 1, grid % n_cells)
+    write(9) (uw % a_o(c),  c = 1, grid % n_cells)
+    write(9) (uw % d_o(c),  c = 1, grid % n_cells)
+    write(9) (uw % c(c),    c = 1, grid % n_cells)
+    write(9) (uw % c_o(c),  c = 1, grid % n_cells)
 
-    write(9) (vw  % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (vw  % o(c),    c = 1, grid % n_cells)
-    write(9) (vw  % C(c),    c = 1, grid % n_cells)
-    write(9) (vw  % Co(c),   c = 1, grid % n_cells)
-    write(9) (vw  % Do(c),   c = 1, grid % n_cells)
-    write(9) (vw  % X(c),    c = 1, grid % n_cells)
-    write(9) (vw  % Xo(c),   c = 1, grid % n_cells)
+    write(9) (vw % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (vw % o(c),    c = 1, grid % n_cells)
+    write(9) (vw % a(c),    c = 1, grid % n_cells)
+    write(9) (vw % a_o(c),  c = 1, grid % n_cells)
+    write(9) (vw % d_o(c),  c = 1, grid % n_cells)
+    write(9) (vw % c(c),    c = 1, grid % n_cells)
+    write(9) (vw % c_o(c),  c = 1, grid % n_cells)
 
     write(9) (Eps % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (Eps % o(c),    c = 1, grid % n_cells)
-    write(9) (Eps % C(c),    c = 1, grid % n_cells)
-    write(9) (Eps % Co(c),   c = 1, grid % n_cells)
-    write(9) (Eps % Do(c),   c = 1, grid % n_cells)
-    write(9) (Eps % X(c),    c = 1, grid % n_cells)
-    write(9) (Eps % Xo(c),   c = 1, grid % n_cells)
+    write(9) (Eps % a(c),    c = 1, grid % n_cells)
+    write(9) (Eps % a_o(c),  c = 1, grid % n_cells)
+    write(9) (Eps % d_o(c),  c = 1, grid % n_cells)
+    write(9) (Eps % c(c),    c = 1, grid % n_cells)
+    write(9) (Eps % c_o(c),  c = 1, grid % n_cells)
 
     write(9) (Pk(c),         c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (Kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
@@ -236,29 +237,29 @@
     if(SIMULA==EBM) then
       write(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
       write(9) (f22 % o(c),    c = 1, grid % n_cells)
-      write(9) (f22 % Do(c),   c = 1, grid % n_cells)
-      write(9) (f22 % X(c),    c = 1, grid % n_cells)
-      write(9) (f22 % Xo(c),   c = 1, grid % n_cells)
+      write(9) (f22 % d_o(c),  c = 1, grid % n_cells)
+      write(9) (f22 % c(c),    c = 1, grid % n_cells)
+      write(9) (f22 % c_o(c),  c = 1, grid % n_cells)
     end if
 
     if(URANS == YES) then
-      write(9) (VAR10x(c),    c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR10y(c),    c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR10z(c),    c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR11x(c),    c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR11y(c),    c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (VAR11z(c),    c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR10x(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR10y(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR10z(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR11x(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR11y(c),  c = -grid % n_bnd_cells,grid % n_cells)
+!     write(9) (VAR11z(c),  c = -grid % n_bnd_cells,grid % n_cells)
     end if  
   end if
 
   if(SIMULA == SPA_ALL.or.SIMULA==DES_SPA) then
     write(9) (VIS % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (VIS % o(c),    c = 1, grid % n_cells)
-    write(9) (VIS % C(c),    c = 1, grid % n_cells)
-    write(9) (VIS % Co(c),   c = 1, grid % n_cells)
-    write(9) (VIS % Do(c),   c = 1, grid % n_cells)
-    write(9) (VIS % X(c),    c = 1, grid % n_cells)
-    write(9) (VIS % Xo(c),   c = 1, grid % n_cells)
+    write(9) (VIS % a(c),    c = 1, grid % n_cells)
+    write(9) (VIS % a_o(c),  c = 1, grid % n_cells)
+    write(9) (VIS % d_o(c),  c = 1, grid % n_cells)
+    write(9) (VIS % c(c),    c = 1, grid % n_cells)
+    write(9) (VIS % c_o(c),  c = 1, grid % n_cells)
 
     write(9) (Vort(c),       c = -grid % n_bnd_cells,grid % n_cells)
   end if

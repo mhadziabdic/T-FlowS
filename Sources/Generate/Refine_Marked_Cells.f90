@@ -49,10 +49,10 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-  write(*,*) '#=============================================='
-  write(*,*) '# Refine: Number of nodes: ', grid % n_nodes 
-  write(*,*) '#         Number of cells: ', grid % n_cells 
-  write(*,*) '#----------------------------------------------'
+  print *, '#=============================================='
+  print *, '# Refine: Number of nodes: ', grid % n_nodes 
+  print *, '#         Number of cells: ', grid % n_cells 
+  print *, '#----------------------------------------------'
 
   n_cells_old = grid % n_cells 
   n_nodes_old = grid % n_nodes
@@ -827,8 +827,8 @@
     end if   
   end do
 
-  write(*,*) '# Number of nodes after the refinement: ', grid % n_nodes 
-  write(*,*) '# Number of cells after the refinement: ', grid % n_cells 
+  print *, '# Number of nodes after the refinement: ', grid % n_nodes 
+  print *, '# Number of cells after the refinement: ', grid % n_cells 
 
   !------------------------------------------!
   !                                          !
@@ -914,7 +914,7 @@
       NewN(c) = c - del 
     endif 
   end do
-  write(*,*) '# Deleted cells:', del
+  print *, '# Deleted cells:', del
 
   do c = 1, grid % n_cells
     if(NewN(c) /= -1) then
@@ -943,7 +943,7 @@
 
   grid % n_cells = grid % n_cells - del    
 
-  write(*,*) '# Number of cells after the renumeration: ', grid % n_cells 
+  print *, '# Number of cells after the renumeration: ', grid % n_cells 
 
   deallocate(node_n2)
   deallocate(node_n4)

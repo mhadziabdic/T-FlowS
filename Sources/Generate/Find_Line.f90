@@ -29,10 +29,10 @@
     end do     
   end do 
 
-  write(*,*) '# Error message form Generator'
-  write(*,*) '# You tried to define the line', n1, n2, ' but it'
-  write(*,*) '# doesn''t exists in the block specifications.'
-  write(*,*) '# Exiting !'
+  print *, '# Error message form Generator'
+  print *, '# You tried to define the line', n1, n2, ' but it'
+  print *, '# doesn''t exists in the block specifications.'
+  print *, '# Exiting !'
   stop
 
 1 return

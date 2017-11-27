@@ -9,6 +9,7 @@
   use par_mod
   use Tokenizer_Mod
   use Grid_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -25,6 +26,7 @@
   real              :: wi
   real              :: x1(55555), x2(55555), Mres
   logical           :: here
+  character         :: name_ini(128)*80
 !==============================================================================!
 
   !--------------------------------------------!
@@ -57,7 +59,8 @@
     else if( line % tokens(2)  ==  'SOLID') then 
       StateMat(n)=SOLID
     else 
-      if(this_proc < 2) write(*,*) 'Load_Boundary_Conditions: Unknown material state'
+      if(this_proc < 2)  &
+        write(*,*) '# Load_Boundary_Conditions: Unknown material state'
       stop  
     end if
     read(line % tokens(3),*) VISc
@@ -71,7 +74,7 @@
   !-----------------------------------------------------!
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *) grid % n_boundary_conditions
-  write(*,*) 'Found ', grid % n_boundary_conditions, ' boundary conditions'
+  write(*,*) '# Found ', grid % n_boundary_conditions, ' boundary conditions'
 
   do bc = 1, grid % n_boundary_conditions  ! number of boundary conditions
 
@@ -84,7 +87,6 @@
     ! Find b.c. index
     n = -1
     do i=1, grid % n_boundary_conditions 
-write(*,*) 'grid % boundary_conditions(i) % name = ', grid % boundary_conditions(i) % name
       if(bc_name .eq. grid % boundary_conditions(i) % name) n=i      
     end do
     if( n == -1 ) then
@@ -258,10 +260,11 @@ write(*,*) 'grid % boundary_conditions(i) % name = ', grid % boundary_conditions
 
     ! Initial conditions given in GMV file
     if(line % tokens(2) == 'FILE') then
-      read(line % tokens(3),'(A80)') namIni(n)
-      write(*,*) '@Load_Boundary_Conditions: material ', n, '; init. cond. given by file: ', namIni(n)
+      read(line % tokens(3),'(A80)') name_ini(n)
+      write(*,*) '# Load_Boundary_Conditions: material ', n,  &
+                 '; init. cond. given by file: ', name_ini(n)
     else
-      namIni(n) = ''
+      name_ini(n) = ''
 
       ! Initial conditions given by constant
       read(line % tokens(2),*) U % init(n)

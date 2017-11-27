@@ -63,6 +63,9 @@
     ! Face coordinates 
     real, allocatable :: xf(:), yf(:), zf(:)
     
+    ! Face weight-factor
+    real, allocatable :: f(:)
+    
     !-------------------------!
     !  Node-based variables   !
     !-------------------------!
@@ -80,9 +83,6 @@
     integer :: max_n_faces
 
   end type
-
-  ! If defined like this, one can easily think of multiple grids
-  ! type(Grid_Type) :: grid
 
   contains
  

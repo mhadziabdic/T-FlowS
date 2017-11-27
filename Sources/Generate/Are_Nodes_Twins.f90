@@ -30,7 +30,7 @@
     Are_Nodes_Twins = .FALSE.
     return
   else
-    write(*,*) 'Are_Nodes_Twins:   Major trouble !    Stopping !'
+    print *, '# Are_Nodes_Twins:   Major trouble !    Stopping !'
     stop
   endif
 

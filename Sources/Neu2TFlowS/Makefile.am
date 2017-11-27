@@ -1,6 +1,7 @@
 bin_PROGRAMS = Neu2TFlowS
 
 Neu2TFlowS_SOURCES =		\
+  neu_mod.f90			\
   Compute_Geometry.f90		\
   Connect_Domains.f90		\
   Find_Faces.f90		\

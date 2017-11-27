@@ -26,7 +26,7 @@
   !----------------------!
   call Name_File(sub, name_out, '.cas', len_trim('.cas'))
   open(9, file=name_out)
-  write(*,*) '# Now creating the file:', trim(name_out)
+  print *, '# Creating the file:', trim(name_out)
 
   !-----------!
   !           !
@@ -127,7 +127,10 @@
     end if
 
     ! Prepare for next boundary
-    write(*,*) '# Number of faces:', Nfac, NtotFac+1, NtotFac+Nfac
+    if( Nfac > 0 ) then
+      print 1, '# Number of faces:', Nfac, NtotFac+1, NtotFac+Nfac
+1     format(a19, 3i8)
+    end if
     NtotFac = NtotFac+Nfac
 
   end do   ! n -> boundary condition types 
@@ -211,7 +214,7 @@
         end if
       end if
   end do
-  write(*,*) '# Number of cell faces at interface: ', Nfac
+  print *, '# Number of cell faces at interface: ', Nfac
 
   write(9,'(A33)') '(0 "Sides on material interface")'
   write(9,'(A7,Z9,Z9,A6)') '(13 (3 ', NtotFac+1, NtotFac+Nfac, ' 2 0)('
@@ -294,9 +297,9 @@
       else if(grid % cells_n_nodes(c) == 5) then  ! pyramid    
         write(9, *) ' 5 '
       else
-        write(*,*) 'Unsupported cell type with ', &
+        print *, 'Unsupported cell type with ', &
                     grid % cells_n_nodes(c), ' nodes.'
-        write(*,*) 'Exiting'
+        print *, 'Exiting'
         stop 
       end if 
     end if

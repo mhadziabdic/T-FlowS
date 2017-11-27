@@ -915,8 +915,6 @@
   !------------------------------------------------------------!
   !   Calculate the interpolation factors for the cell sides   !
   !------------------------------------------------------------!
-  allocate(f(grid % n_faces+max(grid % n_cells,grid % n_bnd_cells))); f=0.0
-
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
@@ -936,7 +934,7 @@
                     grid % xf(s), grid % yf(s), grid % zf(s))
 
     ! Interpolation factor
-    f(s) = dsc2 / (dsc1+dsc2)   ! not checked
+    grid % f(s) = dsc2 / (dsc1 + dsc2)
   end do 
 
   write(*,*) '# Interpolation factors calculated !'

@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Source_Kin_K_Eps(grid)
 !------------------------------------------------------------------------------!
-!   Computes the source terms in Kin transport equation for k-epsilon model    !
+!   Computes the source terms in kin transport equation for k-epsilon model    !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -9,6 +9,10 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Parameters_Mod
+  use Work_Mod, only: kin_x => r_cell_01,  &
+                      kin_y => r_cell_02,  &
+                      kin_z => r_cell_03           
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -21,7 +25,7 @@
   !-----------------------------------------------!
   !  Compute the sources in the near wall cells   !
   !-----------------------------------------------!
-  if(MODE == HRe) then
+  if(MODE == HIGH_RE) then
     do s = 1, grid % n_faces
       c1=grid % faces_c(1,s)
       c2=grid % faces_c(2,s)
@@ -49,26 +53,26 @@
 
           ! Compute nondimensional wall distance and wall-shear stress
           if(ROUGH == NO) then
-            Ynd(c1) = sqrt(Kin % n(c1)) * Cmu25 * WallDs(c1)  &
+            Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * WallDs(c1)  &
                     / VISc
             TauWall(c1) = abs(DENc(material(c1))                   &
-                        * kappa * sqrt(Kin % n(c1)) * Cmu25 * Utan &
+                        * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan &
                         / (log(Elog*Ynd(c1))))  
 
             ! Compute production in the first wall cell 
-            Pk(c1) = TauWall(c1) * Cmu25 * sqrt(Kin % n(c1)) &
+            Pk(c1) = TauWall(c1) * Cmu25 * sqrt(kin % n(c1)) &
                    / (kappa*WallDs(c1))
 
           else if(ROUGH==YES) then
-            Ynd(c1) = sqrt(Kin % n(c1)) * Cmu25 * (WallDs(c1)+Zo)  &
+            Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * (WallDs(c1)+Zo)  &
                     / VISc
             TauWall(c1) = abs(DENc(material(c1))                     &
-                        * kappa * sqrt(Kin % n(c1)) * Cmu25 * Utan   &
+                        * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan   &
                         / (log((WallDs(c1)+Zo)/Zo)))  
 
-            Pk(c1) = TauWall(c1) * Cmu25 * sqrt(Kin % n(c1)) &
+            Pk(c1) = TauWall(c1) * Cmu25 * sqrt(kin % n(c1)) &
                    / (kappa*(WallDs(c1)+Zo))
-            Kin % n(c2) = TauWall(c1)/0.09**0.5
+            kin % n(c2) = TauWall(c1)/0.09**0.5
           end if  
 
           ! Filling up the source term
@@ -92,7 +96,7 @@
 
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c))                          &
-                          + DENc(material(c)) * Eps % n(c) / Kin % n(c)  &
+                          + DENc(material(c)) * eps % n(c) / kin % n(c)  &
                           * grid % vol(c)
     end do
   end if    ! end if mode = wf 
@@ -100,7 +104,7 @@
   !--------------------------------------------------------!
   !   Jones-Launder model and Launder-Sharma + Yap model   !
   !--------------------------------------------------------!
-  if(MODE == LRe) then
+  if(MODE == LOW_RE) then
     do c = 1, grid % n_cells
 
       ! Production:
@@ -108,25 +112,25 @@
       b(c) = b(c) + Pk(c) * grid % vol(c)
 
       ! Dissipation:
-      A % val(A % dia(c)) = A % val(A % dia(c)) + DENc(material(c))*Eps%n(c)/(Kin%n(c)+TINY)*grid % vol(c)
+      A % val(A % dia(c)) = A % val(A % dia(c)) + DENc(material(c))*eps%n(c)/(kin%n(c)+TINY)*grid % vol(c)
 
-      ! Preparation of Kin for the boundary condition. Kin variable is temporaraly borrowed.
-      Kin % n(c) = sqrt(Kin % n(c))
+      ! Preparation of kin for the boundary condition. kin variable is temporaraly borrowed.
+      kin % n(c) = sqrt(kin % n(c))
     end do
 
-    call GraPhi(Kin % n,1,PHIx,.TRUE.)             ! dK/dx
-    call GraPhi(Kin % n,2,PHIy,.TRUE.)             ! dK/dy
-    call GraPhi(Kin % n,3,PHIz,.TRUE.)             ! dK/dz
+    call GraPhi(kin % n, 1, kin_x, .TRUE.)  ! dK/dx
+    call GraPhi(kin % n, 2, kin_y, .TRUE.)  ! dK/dy
+    call GraPhi(kin % n, 3, kin_z, .TRUE.)  ! dK/dz
 
     do c = 1, grid % n_cells
 
-      ! Turning Kin back to its real value
-      Kin % n(c) = Kin % n(c) * Kin % n(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c))              &
-                          + 2.0 * VISc*(  PHIx(c)*PHIx(c)    &
-                                        + PHIy(c)*PHIy(c)    &
-                                        + PHIz(c)*PHIz(c))   &
-                           * grid % vol(c) / (Kin % n(c) + TINY)          
+      ! Turning kin back to its real value
+      kin % n(c) = kin % n(c) * kin % n(c) 
+      A % val(A % dia(c)) = A % val(A % dia(c))           &
+                          + 2.0 * VISc*(  kin_x(c)**2     &
+                                        + kin_y(c)**2     &
+                                        + kin_z(c)**2 )   &
+                           * grid % vol(c) / (kin % n(c) + TINY)          
     end do
   end if
 
@@ -140,11 +144,11 @@
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c))      &
                           + DENc(material(c))        &
-                          * Eps % n(c) / Kin % n(c)  &
+                          * eps % n(c) / kin % n(c)  &
                           * grid % vol(c)
     end do
   end if
 
-  call Exchange(grid, Kin % n)
+  call Exchange(grid, kin % n)
 
   end subroutine

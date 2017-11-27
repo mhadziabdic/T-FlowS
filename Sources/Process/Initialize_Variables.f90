@@ -10,6 +10,8 @@
   use par_mod
   use rans_mod
   use Grid_Mod
+  use Bulk_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -18,11 +20,10 @@
   real    :: Stot
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, m, s, n
-  integer :: n1, n2, n3, n4, n5, n6
+  integer :: n_wall, n_inflow, n_outflow, n_symmetry, n_heated_wall, n_convect
 !==============================================================================!
 
   Area  = 0.0
-  Uaver = 0.0
   write(*,*) 'grid % n_materials: ', grid % n_materials
   do n = 1, grid % n_materials
     do c = 1, grid % n_cells
@@ -65,41 +66,41 @@
         Ynd(c)      = 30.0
       end if
       if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
-        Kin % n(c)    = Kin % init(material(c))
-        Kin % o(c)    = Kin % init(material(c))
-        Kin % oo(c)   = Kin % init(material(c))
-        Eps % n(c)  =   Eps % init(material(c))
-        Eps % o(c)  =   Eps % init(material(c))
-        Eps % oo(c) =   Eps % init(material(c))
-        f22 % n(c)  =   f22 % init(material(c))
-        f22 % o(c)  =   f22 % init(material(c))
-        f22 % oo(c) =   f22 % init(material(c))
-        v_2 % n(c)  =   v_2 % init(material(c))
-        v_2 % o(c)  =   v_2 % init(material(c))
-        v_2 % oo(c) =   v_2 % init(material(c))
-        Uf(c)       =   0.047
-         Ynd(c)      =   30.0
+        Kin % n(c)  = Kin % init(material(c))
+        Kin % o(c)  = Kin % init(material(c))
+        Kin % oo(c) = Kin % init(material(c))
+        Eps % n(c)  = Eps % init(material(c))
+        Eps % o(c)  = Eps % init(material(c))
+        Eps % oo(c) = Eps % init(material(c))
+        f22 % n(c)  = f22 % init(material(c))
+        f22 % o(c)  = f22 % init(material(c))
+        f22 % oo(c) = f22 % init(material(c))
+        v_2 % n(c)  = v_2 % init(material(c))
+        v_2 % o(c)  = v_2 % init(material(c))
+        v_2 % oo(c) = v_2 % init(material(c))
+        Uf(c)       = 0.047
+        Ynd(c)      = 30.0
       end if
       if(SIMULA == SPA_ALL .or. SIMULA==DES_SPA) then      
-        VIS % n(c)    = VIS % init(material(c))
-        VIS % o(c)    = VIS % init(material(c))
-        VIS % oo(c)   = VIS % init(material(c))
+        VIS % n(c)  = VIS % init(material(c))
+        VIS % o(c)  = VIS % init(material(c))
+        VIS % oo(c) = VIS % init(material(c))
       end if
     end do 
   end do   !end do n=1,grid % n_materials
 
   if(TGV == YES) then
     do c = 1, grid % n_cells
-      U % n(c)    = -sin(grid % xc(c))*cos(grid % yc(c))
-      U % o(c)    = -sin(grid % xc(c))*cos(grid % yc(c))
-      U % oo(c)   = -sin(grid % xc(c))*cos(grid % yc(c))
-      V % n(c)    = cos(grid % xc(c))*sin(grid % yc(c))
-      V % o(c)    = cos(grid % xc(c))*sin(grid % yc(c))
-      V % oo(c)   = cos(grid % xc(c))*sin(grid % yc(c))
-      W % n(c)    = 0.0
-      W % o(c)    = 0.0
-      W % oo(c)   = 0.0
-      P % n(c)    = 0.25*(cos(2*grid % xc(c)) + cos(2*grid % yc(c)))
+      U % n(c)  = -sin(grid % xc(c))*cos(grid % yc(c))
+      U % o(c)  = -sin(grid % xc(c))*cos(grid % yc(c))
+      U % oo(c) = -sin(grid % xc(c))*cos(grid % yc(c))
+      V % n(c)  =  cos(grid % xc(c))*sin(grid % yc(c))
+      V % o(c)  =  cos(grid % xc(c))*sin(grid % yc(c))
+      V % oo(c) =  cos(grid % xc(c))*sin(grid % yc(c))
+      W % n(c)  = 0.0
+      W % o(c)  = 0.0
+      W % oo(c) = 0.0
+      P % n(c)  = 0.25*(cos(2*grid % xc(c)) + cos(2*grid % yc(c)))
     end do
   end if
 
@@ -108,14 +109,14 @@
   !   and initializes the Flux(s)   ! 
   !   at both inflow and outflow    !
   !---------------------------------!
-  n1 = 0
-  n2 = 0
-  n3 = 0
-  n4 = 0
-  n5 = 0
-  n6 = 0
+  n_wall        = 0
+  n_inflow      = 0
+  n_outflow     = 0
+  n_symmetry    = 0
+  n_heated_wall = 0
+  n_convect     = 0
   do m = 1, grid % n_materials
-    MassIn(m) = 0.0
+    bulk(m) % mass_in = 0.0
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
@@ -125,29 +126,29 @@
                                        W % n(c2) * grid % sz(s) )
                                        
         if(TypeBC(c2)  ==  InFLOW) then
-          if(material(c1) == m) MassIn(m) = MassIn(m) - Flux(s) 
+          if(material(c1) == m) bulk(m) % mass_in = bulk(m) % mass_in - Flux(s) 
           Stot  = sqrt(  grid % sx(s)**2  &
                        + grid % sy(s)**2  &
                        + grid % sz(s)**2)
           Area  = Area  + Stot
         endif
-        if(TypeBC(c2)  ==  WALL)     n1=n1+1 
-        if(TypeBC(c2)  ==  InFLOW)   n2=n2+1  
-        if(TypeBC(c2)  ==  OUTFLOW)  n3=n3+1 
-        if(TypeBC(c2)  ==  SYMMETRY) n4=n4+1 
-        if(TypeBC(c2)  ==  WALLFL)   n5=n5+1 
-        if(TypeBC(c2)  ==  COnVECT)  n6=n6+1 
+        if(TypeBC(c2)  ==  WALL)     n_wall        = n_wall        + 1 
+        if(TypeBC(c2)  ==  INFLOW)   n_inflow      = n_inflow      + 1  
+        if(TypeBC(c2)  ==  OUTFLOW)  n_outflow     = n_outflow     + 1 
+        if(TypeBC(c2)  ==  SYMMETRY) n_symmetry    = n_symmetry    + 1 
+        if(TypeBC(c2)  ==  WALLFL)   n_heated_wall = n_heated_wall + 1 
+        if(TypeBC(c2)  ==  CONVECT)  n_convect     = n_convect     + 1 
       else
         Flux(s) = 0.0 
       end if
     end do
-    call iglsum(n1)
-    call iglsum(n2)
-    call iglsum(n3)
-    call iglsum(n4)
-    call iglsum(n5)
-    call iglsum(n6)
-    call glosum(MassIn(m))
+    call iglsum(n_wall)
+    call iglsum(n_inflow)
+    call iglsum(n_outflow)
+    call iglsum(n_symmetry)
+    call iglsum(n_heated_wall)
+    call iglsum(n_convect)
+    call glosum(bulk(m) % mass_in)
     call glosum(Area)
   end do                  
 
@@ -155,17 +156,15 @@
   !   Initializes time   ! 
   !----------------------!
   Time   = 0.0   
-  Uaver  = MassIn(1)/(Area + TINY) 
   if(this_proc  < 2) then
-    write(*,*) '# MassIn=', MassIn(1)
-    write(*,*) '# Average inflow velocity =', MassIn(1)/Area
-    write(*,*) '# number of faces on the wall        : ',n1
-    write(*,*) '# number of inflow faces             : ',n2
-    write(*,*) '# number of outflow faces            : ',n3
-    write(*,*) '# number of symetry faces            : ',n4
-    write(*,*) '# number of faces on the heated wall : ',n5
-    write(*,*) '# number of convective outflow faces : ',n6
-
+    write(*,*) '# MassIn=', bulk(1) % mass_in
+    write(*,*) '# Average inflow velocity =', bulk(1) % mass_in / Area
+    write(*,*) '# number of faces on the wall        : ', n_wall
+    write(*,*) '# number of inflow faces             : ', n_inflow
+    write(*,*) '# number of outflow faces            : ', n_outflow
+    write(*,*) '# number of symetry faces            : ', n_symmetry
+    write(*,*) '# number of faces on the heated wall : ', n_heated_wall
+    write(*,*) '# number of convective outflow faces : ', n_convect
     write(*,*) '# Variables initialized !'
   end if
 

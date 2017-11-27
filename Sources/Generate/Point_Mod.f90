@@ -16,6 +16,6 @@
     real :: y
     real :: z
 
-  end type Point_Type
+  end type
 
-  end module Point_Mod
+  end module

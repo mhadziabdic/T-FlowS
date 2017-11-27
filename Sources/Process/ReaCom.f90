@@ -11,6 +11,7 @@
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -166,7 +167,7 @@
     if(answer == 'HYB') then
       MODE = HYB 
     else
-      HYB = 10000
+      MODE = PURE
     end if
   end if 
 
@@ -174,9 +175,9 @@
     read(line % tokens(2),'(A8)') answer
     call To_Upper_Case(answer)
     if(answer == 'HRE') then
-      MODE = HRE
+      MODE = HIGH_RE
     else if(answer == 'LRE') then
-      MODE = LRE 
+      MODE = LOW_RE 
     else
       if(this_proc  < 2) then
         write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
@@ -734,12 +735,12 @@
       write(*,*) '# Enter Pdrop (x, y, z) for domain ', m
     call Tokenizer_Mod_Read_Line(CMN_FILE) 
     if(.not. restar) then 
-      read(line % tokens(1), *)  PdropX(m)
-      read(line % tokens(2), *)  PdropY(m)
-      read(line % tokens(3), *)  PdropZ(m)
-      UTau(m) = sqrt(abs(PdropX(m))) ! assuming: delta=1, nu=1 
-      VTau(m) = sqrt(abs(PdropY(m))) ! assuming: delta=1, nu=1 
-      WTau(m) = sqrt(abs(PdropZ(m))) ! assuming: delta=1, nu=1 
+      read(line % tokens(1), *)  bulk(m) % p_drop_x
+      read(line % tokens(2), *)  bulk(m) % p_drop_y
+      read(line % tokens(3), *)  bulk(m) % p_drop_z
+      UTau(m) = sqrt(abs(bulk(m) % p_drop_x)) ! assuming: delta=1, nu=1 
+      VTau(m) = sqrt(abs(bulk(m) % p_drop_y)) ! assuming: delta=1, nu=1 
+      WTau(m) = sqrt(abs(bulk(m) % p_drop_z)) ! assuming: delta=1, nu=1 
     else
       read(line % tokens(1), *)  dummy
       read(line % tokens(2), *)  dummy
@@ -756,9 +757,9 @@
 
     call Tokenizer_Mod_Read_Line(CMN_FILE) 
     if(.not. restar) then 
-      read(line % tokens(1), *)  FLUXoX(m)
-      read(line % tokens(2), *)  FLUXoY(m)
-      read(line % tokens(3), *)  FLUXoZ(m)
+      read(line % tokens(1), *)  bulk(m) % flux_x_o
+      read(line % tokens(2), *)  bulk(m) % flux_y_o
+      read(line % tokens(3), *)  bulk(m) % flux_z_o
     end if
     if(restar) then      
       read(line % tokens(1), *)  dummy

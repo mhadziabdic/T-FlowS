@@ -7,6 +7,8 @@
   use all_mod
   use pro_mod
   use Grid_Mod
+  use Parameters_Mod
+  use Solvers_Mod, only: Bicg, Cg, Cgs
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -15,23 +17,23 @@
   integer :: s, c, c1, c2, niter
   real    :: Pmax, Pmin
   real    :: error
-  real    :: Us, Vs, Ws, DENs
+  real    :: Us, Vs, Ws, DENs, fs
   real    :: A12
 !==============================================================================!
 !     
-!  The form of equations which I am solving:    
+!   The form of equations which are being solved:
 !     
-!     /               /            
-!    |               |             
-!    | rho u dS = dt | GRAD pp dS
-!    |               |             
-!   /               /              
+!      /               /            
+!     |               |             
+!     | rho u dS = dt | GRAD pp dS
+!     |               |             
+!    /               /              
 !
-!  Dimension of the system under consideration
+!   Dimension of the system under consideration
 !   
 !     [App] {pp} = {bpp}               [kg/s]
 !   
-!  Dimensions of certain variables
+!   Dimensions of certain variables
 !
 !     APP            [ms]
 !     PP,            [kg/ms^2]
@@ -50,12 +52,13 @@
   do s=1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
+    fs = grid % f(s)
 
     ! Handle two materials
     if( StateMat(material(c1))==FLUID .and.      &
         StateMat(material(c2))==FLUID) then
-      DENs =      f(s)  * DENc(material(c1))     &
-           + (1.0-f(s)) * DENc(material(c2))
+      DENs =      fs  * DENc(material(c1))     &
+           + (1.0-fs) * DENc(material(c2))
     else if( StateMat(material(c1))==FLUID .and. &
              StateMat(material(c2))==SOLID) then
       DENs = DENc(material(c1)) 
@@ -63,30 +66,30 @@
              StateMat(material(c2))==FLUID) then
       DENs = DENc(material(c2)) 
     else
-      DENs =      f(s)  * DENc(material(c1))     &
-           + (1.0-f(s)) * DENc(material(c2))
+      DENs =      fs  * DENc(material(c1))     &
+           + (1.0-fs) * DENc(material(c2))
     end if  
 
     ! Face is inside the domain
     if( c2  > 0 .or. c2  < 0 .and. TypeBC(c2) == BUFFER) then 
 
       ! Extract the "centred" pressure terms from cell velocities
-      Us = f(s)*      (U % n(c1)+Px(c1)*grid % vol(c1)/A % sav(c1))       &
-         + (1.0-f(s))*(U % n(c2)+Px(c2)*grid % vol(c2)/A % sav(c2))
+      Us = fs*      (U % n(c1) + p % x(c1)*grid % vol(c1)/A % sav(c1))       &
+         + (1.0-fs)*(U % n(c2) + p % x(c2)*grid % vol(c2)/A % sav(c2))
 
-      Vs = f(s)*      (V % n(c1)+Py(c1)*grid % vol(c1)/A % sav(c1))       &
-         + (1.0-f(s))*(V % n(c2)+Py(c2)*grid % vol(c2)/A % sav(c2))
+      Vs = fs*      (V % n(c1) + p % y(c1)*grid % vol(c1)/A % sav(c1))       &
+         + (1.0-fs)*(V % n(c2) + p % y(c2)*grid % vol(c2)/A % sav(c2))
 
-      Ws = f(s)*      (W % n(c1)+Pz(c1)*grid % vol(c1)/A % sav(c1))       &
-         + (1.0-f(s))*(W % n(c2)+Pz(c2)*grid % vol(c2)/A % sav(c2))
+      Ws = fs*      (W % n(c1) + p % z(c1)*grid % vol(c1)/A % sav(c1))       &
+         + (1.0-fs)*(W % n(c2) + p % z(c2)*grid % vol(c2)/A % sav(c2))
 
       ! Add the "staggered" pressure terms to face velocities
       Us= Us + (P % n(c1)-P % n(c2))*grid % sx(s)*                         &
-         ( f(s)/A % sav(c1) + (1.0-f(s))/A % sav(c2) )
+         ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
       Vs=Vs+(P % n(c1)-P % n(c2))*grid % sy(s)*                            &
-         ( f(s)/A % sav(c1) + (1.0-f(s))/A % sav(c2) )
+         ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
       Ws=Ws+(P % n(c1)-P % n(c2))*grid % sz(s)*                            &
-         ( f(s)/A % sav(c1) + (1.0-f(s))/A % sav(c2) )
+         ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
 
       ! Now calculate the flux through cell face
       Flux(s) = DENs * ( Us*grid % sx(s) + Vs*grid % sy(s) + Ws*grid % sz(s) )
@@ -94,7 +97,7 @@
       A12=DENs*(  grid % sx(s)*grid % sx(s)  &
                 + grid % sy(s)*grid % sy(s)  &
                 + grid % sz(s)*grid % sz(s))
-      A12=A12*(f(s)/A % sav(c1)+(1.-f(s))/A % sav(c2))
+      A12=A12*(fs/A % sav(c1)+(1.-fs)/A % sav(c2))
 
       if(c2  > 0) then 
         A % val(A % pos(1,s)) = -A12
@@ -196,8 +199,8 @@
   ! Value 1.e-12 keeps the solution stable
   if(ALGOR == FRACT)  niter = 200
   if(ALGOR == SIMPLE) niter =  15
-  call cg(grid % n_cells, grid % n_bnd_cells, A,             &  
-          PP % n, b, PREC, niter, PP % STol,  &
+  call cg(A, PP % n, b,            &
+          PREC, niter, PP % STol,  &
           res(4), error) 
   write(LineRes(53:64),  '(1PE12.3)') res(4)
   write(LineRes(89:92),  '(I4)')      niter

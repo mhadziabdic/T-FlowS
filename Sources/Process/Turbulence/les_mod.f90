@@ -12,14 +12,13 @@ module les_mod
 
   implicit none 
 
-!----- Variables relevant for LES computations
+  ! Variables relevant for LES computations
   real             :: ReTau, Cs0, Kflow  
   real,allocatable :: Utau(:), Vtau(:), Wtau(:)
   real,allocatable :: Cdyn(:), Cdyn_mean(:)
 
-!----- Pressure drop: for each material (domain) and for
-!      each direction
-  real,allocatable :: PdropX(:), PdropY(:), PdropZ(:)
+  ! Used in Dynamic Smgaorinsky model 
+  real,allocatable :: Aval_dif(:)
 
 !----- Fluctuating values
 !  type(Var_Type) :: uu, vv, ww, uv, uw, vw

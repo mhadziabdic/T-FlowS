@@ -231,7 +231,7 @@
                            + (local_x_node(1)-local_x_node(3))  & 
                            * (local_y_node(3)+local_y_node(1)) )
       else
-        write(*,*) 'Compute_Grid_Geometry: something horrible has happened !'
+        print *, '# Compute_Grid_Geometry: something horrible has happened !'
         stop
       end if
 
@@ -402,7 +402,7 @@
         endif !  S*(c2-c1) < 0.0
       end if  !  c2 > 0
     end do    !  sides  
-    write(*,*) '# Number of shadow faces: ', grid % n_sh
+    print *, '# Number of shadow faces: ', grid % n_sh
     end if
 
   !----------------------------------!
@@ -514,22 +514,22 @@
   !----------------------------------------------------------!
   WallDs = HUGE 
 
-  write(*,*)   '#======================================================='
+  print *,   '#======================================================='
   if(rrun) then
-    write(*,*) '# Computing the distance to the walls (2/2)'           
+    print *, '# Computing the distance to the walls (2/2)'           
   else            
-    write(*,*) '# Computing the distance to the walls (1/2)'           
+    print *, '# Computing the distance to the walls (1/2)'           
   end if 
-  write(*,*)   '#-------------------------------------------------------'
-  write(*,*)   '# Insert the highest BC marker which represents the wall'
-  write(*,*)   '# for computing the distance to the wall (0 to skip)'
-  write(*,*)   '# If you skip this, smoothing will not work properly'
-  write(*,*)   '#-------------------------------------------------------'
+  print *,   '#-------------------------------------------------------'
+  print *,   '# Insert the highest BC marker which represents the wall'
+  print *,   '# for computing the distance to the wall (0 to skip)'
+  print *,   '# If you skip this, smoothing will not work properly'
+  print *,   '#-------------------------------------------------------'
   read(*,*) wall_mark   
 
   if(wall_mark == 0) then
     WallDs = 1.0
-    write(*,*) '# Distance to the wall set to 1 everywhere !'            
+    print *, '# Distance to the wall set to 1 everywhere !'            
   else 
     do c1=1, grid % n_cells 
       do s = WallFacFst, WallFacLst      ! 1, grid % n_faces
@@ -553,9 +553,9 @@
       WallDs(c)=sqrt(WallDs(c))
     end do
 
-    write(*,*) '# Maximal distance to the wall: ',  &
+    print *, '# Maximal distance to the wall: ',  &
                   maxval(WallDs(1:grid % n_cells))
-    write(*,*) '# Minimal distance to the wall: ',  &
+    print *, '# Minimal distance to the wall: ',  &
                   minval(WallDs(1:grid % n_cells))
   end if
 
@@ -609,7 +609,7 @@
       dsc2=Distance(xc2, yc2, zc2, grid % xf(s), grid % yf(s), grid % zf(s))
   
       ! Interpolation factor
-      f(s) = dsc2 / (dsc1+dsc2)   ! not checked
+      grid % f(s) = dsc2 / (dsc1 + dsc2)
     end do 
   end if 
 

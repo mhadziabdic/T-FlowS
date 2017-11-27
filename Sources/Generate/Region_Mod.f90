@@ -24,6 +24,6 @@
     ! Stores the name of the boundary condition (or material)
     character(len=80) :: name
 
-  end type Region_Type
+  end type
 
-  end module Region_Mod
+  end module

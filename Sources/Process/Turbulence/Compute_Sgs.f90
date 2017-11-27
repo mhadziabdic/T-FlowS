@@ -9,6 +9,10 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Parameters_Mod
+  use Work_Mod, only: t_x => r_cell_01,  &
+                      t_y => r_cell_02,  &
+                      t_z => r_cell_03           
 !------------------------------------------------------------------------------!
 !   Near(c) is the number of corresponding cell on the nearest wall.           !
 !   In case that, in parallel executions, the subdomain does not have          !
@@ -34,9 +38,9 @@
   !               !
   !---------------!
   if(BUOY==YES) then
-    call GraPhi(grid, T % n,1,PHIx,.TRUE.)            ! dT/dx
-    call GraPhi(grid, T % n,2,PHIy,.TRUE.)            ! dT/dy
-    call GraPhi(grid, T % n,3,PHIz,.TRUE.)            ! dT/dz
+    call GraPhi(grid, t % n, 1, t_x, .TRUE.)  ! dT/dx
+    call GraPhi(grid, t % n, 2, t_y, .TRUE.)  ! dT/dy
+    call GraPhi(grid, t % n, 3, t_z, .TRUE.)  ! dT/dz
   end if 
  
   if(MODE == SMAG) then
@@ -77,7 +81,7 @@
                 * (lf*lf)                 &          ! delta^2 
                 * Cdyn(c)                 &          ! Cdynamic   
                 * sqrt(Shear(c)*Shear(c)  &
-                + 2.5*(grav_x*PHIx(c) + grav_y*PHIy(c) + grav_z*PHIz(c)))  
+                + 2.5*(grav_x*t_x(c) + grav_y*t_y(c) + grav_z*t_z(c)))  
       end do
     end if     
   else if(MODE == WALE) then
@@ -92,9 +96,12 @@
 
   if(BUOY==YES) then
     do c = 1, grid % n_cells
-      Nc2 = -(grav_x*PHIx(c)+grav_y*PHIy(c)+grav_z*PHIz(c))/Tref
+      Nc2 = -(  grav_x * t_x(c)   &
+              + grav_y * t_y(c)   &
+              + grav_z * t_z(c))  &
+          / Tref
       Nc2 = max(0.0, Nc2) 
-      VISt(c) = VISt(c)*sqrt(1.0 - min(2.5*Nc2/(Shear(c)*Shear(c)),1.0))
+      VISt(c) = VISt(c) * sqrt(1.0 - min(2.5*Nc2/(Shear(c)**2), 1.0))
     end do
   end if
 

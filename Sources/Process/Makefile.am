@@ -1,11 +1,12 @@
 bin_PROGRAMS = Process
 
 Process_SOURCES =	 			\
+  Bulk_Mod.f90					\
   Allocate_Memory.f90				\
   Allocate_Variables.f90			\
   Balance_Mass.f90				\
   Update_Boundary_Values.f90			\
-  CalcConvect.f90				\
+  Convective_Outflow.f90			\
   Compute_Gradient_Matrix.f90			\
   CalcMn_Cylind.f90				\
   Compute_Mean.f90				\
@@ -49,13 +50,17 @@ Process_SOURCES =	 			\
   Time_And_Length_Scale.f90
 
 SUBDIRS = Communication				\
-          Solvers				\
+          Matrix_Mod				\
+          Solvers_Mod				\
+          Var_Mod				\
           Turbulence				\
           User					\
           ../Shared
 
 LDADD = Communication/libCommunication.a	\
-        Solvers/libSolvers.a			\
+        Matrix_Mod/libMatrix_Mod.a		\
+        Solvers_Mod/libSolvers_Mod.a		\
+        Var_Mod/libVar_Mod.a			\
         Turbulence/libTurbulence.a		\
         User/libUser.a				\
         ../Shared/libShared.a

@@ -14,7 +14,10 @@
   use rans_mod
   use par_mod
   use Grid_Mod
+  use Bulk_Mod
   use Var_Mod
+  use Parameters_Mod
+  use Solvers_Mod, only: Bicg, Cg, Cgs
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -117,12 +120,12 @@
     do c=1,grid % n_cells
       ui % oo(c)  = ui % o(c)
       ui % o (c)  = ui % n(c)
-      ui % Coo(c) = ui % Co(c)
-      ui % Co (c) = 0.0 
-      ui % Doo(c) = ui % Do(c)
-      ui % Do (c) = 0.0 
-      ui % Xoo(c) = ui % Xo(c)
-      ui % Xo (c) = ui % X(c) 
+      ui % a_oo(c) = ui % a_o(c)
+      ui % a_o (c) = 0.0 
+      ui % d_oo(c) = ui % d_o(c)
+      ui % d_o (c) = 0.0 
+      ui % c_oo(c) = ui % c_o(c)
+      ui % c_o (c) = ui % c(c) 
     end do
   end if
 
@@ -142,8 +145,8 @@
 
   ! New values
 1 do c=1,grid % n_cells
-    ui % C(c)    = 0.0
-    ui % X(c)    = 0.0
+    ui % a(c)    = 0.0
+    ui % c(c)    = 0.0
   end do
 
   !----------------------------!
@@ -155,7 +158,7 @@
     c2 = grid % faces_c(2,s) 
 
     ! Central differencing
-    uis=f(s)*ui % n(c1) + (1.0-f(s))*ui % n(c2)
+    uis = grid % f(s) * ui % n(c1) + (1.0 - grid % f(s)) * ui % n(c2)
 
     if(BLEND(material(c1)) /= NO .or. BLEND(material(c2)) /= NO) then
       call Advection_Scheme(grid, uis, s, ui % n, ui_i, ui_j, ui_k, Di, Dj, Dk, &
@@ -165,31 +168,31 @@
     ! Central differencing for advection
     if(ini == 1) then 
       if(c2  > 0) then
-        ui % Co(c1)=ui % Co(c1)-Flux(s)*uis
-        ui % Co(c2)=ui % Co(c2)+Flux(s)*uis
+        ui % a_o(c1)=ui % a_o(c1)-Flux(s)*uis
+        ui % a_o(c2)=ui % a_o(c2)+Flux(s)*uis
       else
-        ui % Co(c1)=ui % Co(c1)-Flux(s)*uis
+        ui % a_o(c1)=ui % a_o(c1)-Flux(s)*uis
       endif 
     end if
 
     if(c2  > 0) then
-      ui % C(c1)=ui % C(c1)-Flux(s)*uis
-      ui % C(c2)=ui % C(c2)+Flux(s)*uis
+      ui % a(c1)=ui % a(c1)-Flux(s)*uis
+      ui % a(c2)=ui % a(c2)+Flux(s)*uis
     else
-      ui % C(c1)=ui % C(c1)-Flux(s)*uis
+      ui % a(c1)=ui % a(c1)-Flux(s)*uis
     endif 
 
     ! Upwind 
     if(BLEND(material(c1)) /= NO .or. BLEND(material(c2)) /= NO) then
       if(Flux(s)  < 0) then   ! from c2 to c1
-        ui % X(c1)=ui % X(c1)-Flux(s)*ui % n(c2)
+        ui % c(c1)=ui % c(c1)-Flux(s)*ui % n(c2)
         if(c2  > 0) then
-          ui % X(c2)=ui % X(c2)+Flux(s)*ui % n(c2)
+          ui % c(c2)=ui % c(c2)+Flux(s)*ui % n(c2)
         endif
       else 
-        ui % X(c1)=ui % X(c1)-Flux(s)*ui % n(c1)
+        ui % c(c1)=ui % c(c1)-Flux(s)*ui % n(c1)
         if(c2  > 0) then
-          ui % X(c2)=ui % X(c2)+Flux(s)*ui % n(c1)
+          ui % c(c2)=ui % c(c2)+Flux(s)*ui % n(c1)
         endif
       end if
     end if   ! BLEND 
@@ -203,7 +206,7 @@
   if(CONVEC == AB) then
     do c=1,grid % n_cells
       b(c) = b(c) + URFC(material(c)) * & 
-                    (1.5*ui % Co(c) - 0.5*ui % Coo(c) - ui % X(c))
+                    (1.5*ui % a_o(c) - 0.5*ui % a_oo(c) - ui % c(c))
     end do  
   endif
 
@@ -211,7 +214,7 @@
   if(CONVEC == CN) then
     do c=1,grid % n_cells
       b(c) = b(c) + URFC(material(c)) * & 
-                    (0.5 * ( ui % C(c) + ui % Co(c) ) - ui % X(c))
+                    (0.5 * ( ui % a(c) + ui % a_o(c) ) - ui % c(c))
     end do  
   endif
 
@@ -219,13 +222,13 @@
   if(CONVEC == FI) then
     do c=1,grid % n_cells
       b(c) = b(c) + URFC(material(c)) * & 
-                    (ui % C(c) - ui % X(c))
+                    (ui % a(c) - ui % c(c))
     end do  
   end if     
           
   ! New values
   do c=1,grid % n_cells
-    ui % X(c) = 0.0
+    ui % c(c) = 0.0
   end do
 
   !------------------!
@@ -244,7 +247,9 @@
 
     VISeff = fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2) + VISc
 
-    if(SIMULA==HYB_ZETA) VISeff = fF(s)*VISt_eff(c1)+(1.0-fF(s))*VISt_eff(c2) + VISc
+    if(SIMULA==HYB_ZETA) then
+      VISeff = fF(s)*VISt_eff(c1)+(1.0-fF(s))*VISt_eff(c2) + VISc
+    end if
 
     if(c2 < 0 .and. SIMULA == LES) then
       if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
@@ -252,7 +257,10 @@
       end if
     end if 
 
-    if(SIMULA == ZETA.or.SIMULA==K_EPS_VV.or.(SIMULA == K_EPS.and.MODE==HRe).or.SIMULA==HYB_ZETA) then
+    if( SIMULA == ZETA                       .or.  &
+        SIMULA == K_EPS_VV                   .or.  &
+       (SIMULA == K_EPS .and. MODE==HIGH_RE) .or.  &
+        SIMULA == HYB_ZETA) then
       if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
         if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
           VISeff = VISwall(c1)
@@ -321,19 +329,19 @@
     ! Straight diffusion part 
     if(ini == 1) then
       if(c2  > 0) then
-        ui % Do(c1) = ui % Do(c1) + (ui % n(c2)-ui % n(c1))*A0   
-        ui % Do(c2) = ui % Do(c2) - (ui % n(c2)-ui % n(c1))*A0    
+        ui % d_o(c1) = ui % d_o(c1) + (ui % n(c2)-ui % n(c1))*A0   
+        ui % d_o(c2) = ui % d_o(c2) - (ui % n(c2)-ui % n(c1))*A0    
       else
         if(TypeBC(c2) /= SYMMETRY) then
-          ui % Do(c1) = ui % Do(c1) + (ui % n(c2)-ui % n(c1))*A0   
+          ui % d_o(c1) = ui % d_o(c1) + (ui % n(c2)-ui % n(c1))*A0   
         end if 
       end if 
     end if
 
     ! Cross diffusion part
-    ui % X(c1) = ui % X(c1) + Fex - Fim + Fstress
+    ui % c(c1) = ui % c(c1) + Fex - Fim + Fstress
     if(c2  > 0) then
-      ui % X(c2) = ui % X(c2) - Fex + Fim - Fstress
+      ui % c(c2) = ui % c(c2) - Fex + Fim - Fstress
     end if 
 
      ! Compute the coefficients for the sysytem matrix
@@ -446,14 +454,14 @@
   ! Adams-Bashfort scheeme for diffusion fluxes
   if(DIFFUS == AB) then 
     do c=1,grid % n_cells
-      b(c) = b(c) + 1.5 * ui % Do(c) - 0.5 * ui % Doo(c)
+      b(c) = b(c) + 1.5 * ui % d_o(c) - 0.5 * ui % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
   if(DIFFUS == CN) then 
     do c=1,grid % n_cells
-      b(c) = b(c) + 0.5 * ui % Do(c)
+      b(c) = b(c) + 0.5 * ui % d_o(c)
     end do  
   end if
              
@@ -463,21 +471,21 @@
   ! Adams-Bashfort scheeme for cross diffusion 
   if(CROSS == AB) then
     do c=1,grid % n_cells
-      b(c) = b(c) + 1.5 * ui % Xo(c) - 0.5 * ui % Xoo(c)
+      b(c) = b(c) + 1.5 * ui % c_o(c) - 0.5 * ui % c_oo(c)
     end do 
   end if
 
   ! Crank-Nicholson scheme for cross difusive terms
   if(CROSS == CN) then
     do c=1,grid % n_cells
-      b(c) = b(c) + 0.5 * ui % X(c) + 0.5 * ui % Xo(c)
+      b(c) = b(c) + 0.5 * ui % c(c) + 0.5 * ui % c_o(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
   if(CROSS == FI) then
     do c=1,grid % n_cells
-      b(c) = b(c) + ui % X(c)
+      b(c) = b(c) + ui % c(c)
     end do 
   end if
 
@@ -516,15 +524,15 @@
   !--------------------------!
   if(ui % name == 'U') then
     do c=1,grid % n_cells
-      b(c) = b(c)  + PdropX(material(c)) * grid % vol(c)
+      b(c) = b(c) + bulk(material(c)) % p_drop_x * grid % vol(c)
     end do
   else if(ui % name == 'V') then
     do c=1,grid % n_cells
-      b(c) = b(c)  + PdropY(material(c)) * grid % vol(c)
+      b(c) = b(c) + bulk(material(c)) % p_drop_y * grid % vol(c)
     end do
   else if(ui % name == 'W') then
     do c=1,grid % n_cells
-      b(c) = b(c)  + PdropZ(material(c)) * grid % vol(c)
+      b(c) = b(c) + bulk(material(c)) % p_drop_z * grid % vol(c)
     end do
   end if
 
@@ -585,9 +593,9 @@
 
   niter=miter
 
-  call cg(grid % n_cells, grid % n_bnd_cells, A,           & 
-          ui % n, b, PREC,        &
-          niter,U % STol, res(var), error)
+  call cg(A, ui % n, b,           &
+          PREC, niter, U % STol,  &
+          res(var), error)
 
   if(ui % name == 'U') then
     write(LineRes(17:28), '(1PE12.3)') res(var) 

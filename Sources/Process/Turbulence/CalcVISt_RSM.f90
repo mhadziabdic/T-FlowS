@@ -12,6 +12,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -27,20 +28,28 @@
     do c=1, grid % n_cells
       Kin % n(c) = 0.5*max(uu%n(c)+vv%n(c)+ww%n(c),1.0e-12)
 
-      Cmu_mod = max(-(uu%n(c)*Ux(c)+vv%n(c)*Vy(c)+ww%n(c)*Wz(c)+&
-                  uv%n(c)*(Vx(c)+Uy(c))+uw%n(c)*(Uz(c)+&
-                  Wx(c))+vw%n(c)*(Vz(c)+Wy(c)))/max(Kin%n(c)*Kin%n(c)/Eps_tot(c)*Shear(c)*Shear(c),1.0e-12),0.0)
+      Cmu_mod = max(-(  uu % n(c) * u % x(c)  &
+                      + vv % n(c) * v % y(c)  &
+                      + ww % n(c) * w % z(c)  &
+                      + uv % n(c) * (v % x(c) + u % y(c))  &
+                      + uw % n(c) * (u % z(c) + w % x(c))  &
+                      + vw % n(c) * (v % z(c) + w % y(c))) &
+               / max(Kin % n(c)**2 / Eps_tot(c) * Shear(c)**2, 1.0e-12), 0.0)
 
       Cmu_mod = min(0.12,Cmu_mod) 
-      VISt(c) = Cmu_mod*DENc(material(c)) * Kin%n(c) * Kin%n(c) / Eps_tot(c)
+      VISt(c) = Cmu_mod * DENc(material(c)) * Kin % n(c)**2 / Eps_tot(c)
     end do 
   else if(SIMULA==EBM) then
     do c=1, grid % n_cells
       Kin % n(c) = 0.5*max(uu%n(c)+vv%n(c)+ww%n(c),1.0e-12)
 
-      Cmu_mod = max(-(uu%n(c)*Ux(c)+vv%n(c)*Vy(c)+ww%n(c)*Wz(c)+&
-                  uv%n(c)*(Vx(c)+Uy(c))+uw%n(c)*(Uz(c)+&
-                  Wx(c))+vw%n(c)*(Vz(c)+Wy(c)))/max(Kin%n(c)*Kin%n(c)/Eps%n(c)*Shear(c)*Shear(c),1.0e-12),0.0)
+      Cmu_mod = max(-(  uu % n(c) * u % x(c)  &
+                      + vv % n(c) * v % y(c)  &
+                      + ww % n(c) * w % z(c)  &
+                      + uv % n(c) * (v % x(c) + u % y(c))  &
+                      + uw % n(c) * (u % z(c) + w % x(c))  &
+                      + vw % n(c) * (v % z(c) + w % y(c))) &
+               / max(Kin % n(c)**2 / Eps % n(c) * Shear(c)**2, 1.0e-12), 0.0)
 
       Cmu_mod = min(0.12,Cmu_mod)
       VISt(c) = Cmu_mod*DENc(material(c)) * Kin%n(c) * Kin%n(c) / Eps % n(c)

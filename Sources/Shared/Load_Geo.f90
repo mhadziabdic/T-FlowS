@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 !   Reads:  name.geo                                                           !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod, only: delta, WallDs, f
+  use all_mod, only: delta, WallDs
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -43,7 +43,7 @@
   read(9) (grid % dy(s), s = 1, grid % n_faces)
   read(9) (grid % dz(s), s = 1, grid % n_faces)
 
-  read(9) (f(s), s = 1, grid % n_faces)
+  read(9) (grid % f(s), s = 1, grid % n_faces)
 
   read(9) (grid % xf(s), s = 1, grid % n_faces)
   read(9) (grid % yf(s), s = 1, grid % n_faces)

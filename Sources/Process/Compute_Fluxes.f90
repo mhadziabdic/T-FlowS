@@ -19,9 +19,9 @@
 
   do m = 1, grid % n_materials
 
-    FLUXx(m) = 0.0
-    FLUXy(m) = 0.0
-    FLUXz(m) = 0.0
+    bulk(m) % flux_x = 0.0
+    bulk(m) % flux_y = 0.0
+    bulk(m) % flux_z = 0.0
 
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
@@ -36,13 +36,24 @@
           yc2=grid % yc(c1) + grid % dy(s) 
           zc2=grid % zc(c1) + grid % dz(s)
 
-          if((xc1 <= xp(m)).and.(xc2 > xp(m))) FLUXx(m) = FLUXx(m) + Flux(s)
-          if((yc1 <= yp(m)).and.(yc2 > yp(m))) FLUXy(m) = FLUXy(m) + Flux(s)
-          if((zc1 <= zp(m)).and.(zc2 > zp(m))) FLUXz(m) = FLUXz(m) + Flux(s)
+          if((xc1 <= xp(m)).and.(xc2 > xp(m)))  &
+            bulk(m) % flux_x = bulk(m) % flux_x + Flux(s)
 
-          if((xc2 < xp(m)).and.(xc1 >= xp(m))) FLUXx(m) = FLUXx(m) - Flux(s)
-          if((yc2 < yp(m)).and.(yc1 >= yp(m))) FLUXy(m) = FLUXy(m) - Flux(s)
-          if((zc2 < zp(m)).and.(zc1 >= zp(m))) FLUXz(m) = FLUXz(m) - Flux(s)
+          if((yc1 <= yp(m)).and.(yc2 > yp(m)))  &
+            bulk(m) % flux_y = bulk(m) % flux_y + Flux(s)
+
+          if((zc1 <= zp(m)).and.(zc2 > zp(m)))  &
+            bulk(m) % flux_z = bulk(m) % flux_z + Flux(s)
+
+          if((xc2 < xp(m)).and.(xc1 >= xp(m)))  &
+            bulk(m) % flux_x = bulk(m) % flux_x - Flux(s)
+
+          if((yc2 < yp(m)).and.(yc1 >= yp(m)))  &
+            bulk(m) % flux_y = bulk(m) % flux_y - Flux(s)
+
+          if((zc2 < zp(m)).and.(zc1 >= zp(m)))  &
+            bulk(m) % flux_z = bulk(m) % flux_z - Flux(s)
+
         end if ! material 1&2
       else if(c2 < 0.and.TypeBC(c2) == BUFFER) then
         if( (material(c1)==m) .and. (material(c1) == material(c2)) ) then
@@ -53,24 +64,35 @@
           yc2=grid % yc(c1) + grid % dy(s) 
           zc2=grid % zc(c1) + grid % dz(s)
 
-          if((xc1 <= xp(m)).and.(xc2 > xp(m))) FLUXx(m) = FLUXx(m) + .5*Flux(s)
-          if((yc1 <= yp(m)).and.(yc2 > yp(m))) FLUXy(m) = FLUXy(m) + .5*Flux(s)
-          if((zc1 <= zp(m)).and.(zc2 > zp(m))) FLUXz(m) = FLUXz(m) + .5*Flux(s)
+          if((xc1 <= xp(m)).and.(xc2 > xp(m)))  &
+            bulk(m) % flux_x = bulk(m) % flux_x + .5*Flux(s)
 
-          if((xc2 < xp(m)).and.(xc1 >= xp(m))) FLUXx(m) = FLUXx(m) - .5*Flux(s)
-          if((yc2 < yp(m)).and.(yc1 >= yp(m))) FLUXy(m) = FLUXy(m) - .5*Flux(s)
-          if((zc2 < zp(m)).and.(zc1 >= zp(m))) FLUXz(m) = FLUXz(m) - .5*Flux(s)
+          if((yc1 <= yp(m)).and.(yc2 > yp(m)))  &
+            bulk(m) % flux_y = bulk(m) % flux_y + .5*Flux(s)
+
+          if((zc1 <= zp(m)).and.(zc2 > zp(m)))  &
+            bulk(m) % flux_z = bulk(m) % flux_z + .5*Flux(s)
+
+          if((xc2 < xp(m)).and.(xc1 >= xp(m)))  &
+            bulk(m) % flux_x = bulk(m) % flux_x - .5*Flux(s)
+
+          if((yc2 < yp(m)).and.(yc1 >= yp(m)))  &
+            bulk(m) % flux_y = bulk(m) % flux_y - .5*Flux(s)
+
+          if((zc2 < zp(m)).and.(zc1 >= zp(m)))  &
+            bulk(m) % flux_z = bulk(m) % flux_z - .5*Flux(s)
+
         end if ! material 1&2
       end if   ! c2 > 0
     end do
 
-    call glosum(FLUXx(m))
-    call glosum(FLUXy(m))
-    call glosum(FLUXz(m))
+    call glosum(bulk(m) % flux_x)
+    call glosum(bulk(m) % flux_y)
+    call glosum(bulk(m) % flux_z)
 
-    Ubulk(m) = FLUXx(m) / (AreaX(m) + TINY)
-    Vbulk(m) = FLUXy(m) / (AreaY(m) + TINY)
-    Wbulk(m) = FLUXz(m) / (AreaZ(m) + TINY)
+    bulk(m) % u = bulk(m) % flux_x / (bulk(m) % area_x + TINY)
+    bulk(m) % v = bulk(m) % flux_y / (bulk(m) % area_y + TINY)
+    bulk(m) % w = bulk(m) % flux_z / (bulk(m) % area_z + TINY)
 
   end do ! m
 

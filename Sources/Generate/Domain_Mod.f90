@@ -26,7 +26,7 @@
     type(Line_Type),   allocatable :: lines(:)
     type(Region_Type), allocatable :: regions(:)
 
-  end type Domain_Type
+  end type
 
   !---------------------------!
   !   Member-like functions   !

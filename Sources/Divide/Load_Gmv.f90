@@ -46,7 +46,6 @@
   ! Variables defined in all_mod.h90:
   allocate (delta(-grid % n_bnd_cells:grid % n_cells));  delta=0.0
   allocate (WallDs(grid % n_faces));                     WallDs=0.0
-  allocate (f(grid % n_faces));                          f=0.0
 
   ! Variables declared in gen_mod.h90:
   allocate (NewC(-grid % n_bnd_cells-1:grid % n_cells)); NewC = 0 

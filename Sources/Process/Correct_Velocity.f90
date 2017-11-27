@@ -8,6 +8,8 @@
   use pro_mod
   use les_mod
   use Grid_Mod
+  use Bulk_Mod
+  use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -24,21 +26,21 @@
   !    periodic part of the pressure to     !
   !    obtain divergence free velocity      !
   !- - - - - - - - - - - - - - - - - - - -  !
-  !   For SOLIDs, Px, Py and Pz are zero    !
+  !   For SOLIDs, px, py and pz are zero    !
   !   so this loop will not correct SOLID   !
   !   velocities.                           !
   !-----------------------------------------!
   if(ALGOR == FRACT) then
     do c = 1, grid % n_cells
-      U % n(c) = U % n(c) - Px(c) * grid % vol(c) / A % sav(c)
-      V % n(c) = V % n(c) - Py(c) * grid % vol(c) / A % sav(c)
-      W % n(c) = W % n(c) - Pz(c) * grid % vol(c) / A % sav(c)
+      U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
+      V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
+      W % n(c) = W % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
     end do 
   else ! algorythm is SIMPLE
     do c = 1, grid % n_cells
-      U % n(c) = U % n(c) - Px(c) * grid % vol(c) / A % sav(c)
-      V % n(c) = V % n(c) - Py(c) * grid % vol(c) / A % sav(c)
-      W % n(c) = W % n(c) - Pz(c) * grid % vol(c) / A % sav(c)
+      U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
+      V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
+      W % n(c) = W % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
     end do 
   end if
 
@@ -142,22 +144,34 @@
     end if
     do m = 1, grid % n_materials
       if(m .eq. 1) then
-        FluxM = max(abs(FLUXx(m)),  abs(FLUXy(m)),  abs(FLUXz(m)))
-        Pdrop = max(abs(PdropX(m)), abs(PdropY(m)), abs(PdropZ(m)))
+        FluxM = max( abs(bulk(m) % flux_x),  &
+                     abs(bulk(m) % flux_y),  &
+                     abs(bulk(m) % flux_z) )
+        Pdrop = max( abs(bulk(m) % p_drop_x),  &
+                     abs(bulk(m) % p_drop_y),  &
+                     abs(bulk(m) % p_drop_z))
         write(LinMon1( 79: 90), '(1PE12.3)') FluxM 
         write(LinMon1( 91:102), '(1PE12.3)') Pdrop    
         write(LinMon1(103:126), '(1PE12.3,1PE12.3)')  &
         cfl_max(m), pe_max(m)
       else if(m .eq. 2) then
-        FluxM = max(abs(FLUXx(m)),  abs(FLUXy(m)),  abs(FLUXz(m)))
-        Pdrop = max(abs(PdropX(m)), abs(PdropY(m)), abs(PdropZ(m)))
+        FluxM = max( abs(bulk(m) % flux_x),  &
+                     abs(bulk(m) % flux_y),  &
+                     abs(bulk(m) % flux_z))
+        Pdrop = max( abs(bulk(m) % p_drop_x),  &
+                     abs(bulk(m) % p_drop_y),  &
+                     abs(bulk(m) % p_drop_z))
         write(LinMon2( 79: 90), '(1PE12.3)') FluxM 
         write(LinMon2( 91:102), '(1PE12.3)') Pdrop    
         write(LinMon2(103:126), '(1PE12.3,1PE12.3)')  &
         cfl_max(m), pe_max(m)
       else if(m .eq. 3) then
-        FluxM = max(abs(FLUXx(m)),  abs(FLUXy(m)),  abs(FLUXz(m)))
-        Pdrop = max(abs(PdropX(m)), abs(PdropY(m)), abs(PdropZ(m)))
+        FluxM = max( abs(bulk(m) % flux_x),  & 
+                     abs(bulk(m) % flux_y),  &
+                     abs(bulk(m) % flux_z))
+        Pdrop = max( abs(bulk(m) % p_drop_x),  &
+                     abs(bulk(m) % p_drop_y),  &
+                     abs(bulk(m) % p_drop_z))
         write(LinMon3( 79: 90), '(1PE12.3)') FluxM 
         write(LinMon3( 91:102), '(1PE12.3)') Pdrop    
         write(LinMon3(103:126), '(1PE12.3,1PE12.3)')  &

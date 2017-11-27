@@ -151,20 +151,20 @@
   grid % n_materials           = n_mat
   grid % n_boundary_conditions = n_bnd
 
-  write(*,*) '#==================================================='
-  write(*,*) '# Found following boundary conditions:'
-  write(*,*) '#---------------------------------------------------'
+  print *, '#==================================================='
+  print *, '# Found following boundary conditions:'
+  print *, '#---------------------------------------------------'
   do n = 1, grid % n_boundary_conditions
-    write(*,*) '# ', trim(grid % boundary_conditions(n) % name)
+    print *, '# ', trim(grid % boundary_conditions(n) % name)
   end do
-  write(*,*) '#---------------------------------------------------'
+  print *, '#---------------------------------------------------'
 
-  write(*,*) '#==================================================='
-  write(*,*) '# Found following materials:'
-  write(*,*) '#---------------------------------------------------'
+  print *, '#==================================================='
+  print *, '# Found following materials:'
+  print *, '#---------------------------------------------------'
   do n = 1, grid % n_materials
-    write(*,*) '# ', trim(grid % materials(n) % name)
+    print *, '# ', trim(grid % materials(n) % name)
   end do
-  write(*,*) '#---------------------------------------------------'
+  print *, '#---------------------------------------------------'
 
   end subroutine

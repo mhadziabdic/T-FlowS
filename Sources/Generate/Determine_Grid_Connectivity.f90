@@ -23,7 +23,7 @@
                 4, 6, 8, 7, 5, 8,  &
                 3, 2, 4, 3, 1, 6  /
 
-  write(*,*) '# Now determining the topology. This may take a while !'
+  print *, '# Now determining the topology. This may take a while !'
 
   !------------------------------!
   !                              !
@@ -111,8 +111,8 @@
   end do     ! pass
   WallFacLst = grid % n_faces
 
-  write(*,*) '# Wall and interface faces start at: ', WallFacFst 
-  write(*,*) '# Wall and interface faces end at  : ', WallFacLst
+  print *, '# Wall and interface faces start at: ', WallFacFst 
+  print *, '# Wall and interface faces end at  : ', WallFacLst
 
   if(.NOT. rrun) then
   grid % n_bnd_cells = 0
@@ -169,11 +169,11 @@
   !   Is there enough allocated memory   !
   !--------------------------------------!
   if( grid % n_faces  > grid % max_n_faces ) then
-    write(*,*) '# Error message from Generator'
-    write(*,*) '# The number sides is: ',              grid % n_faces
-    write(*,*) '# There is space available only for:', grid % max_n_faces
-    write(*,*) '# Increase the number of faces in .dom file'
-    write(*,*) '# and recompile the code. Good Luck !'
+    print *, '# Error message from Generator'
+    print *, '# The number sides is: ',              grid % n_faces
+    print *, '# There is space available only for:', grid % max_n_faces
+    print *, '# Increase the number of faces in .dom file'
+    print *, '# and recompile the code. Good Luck !'
     stop
   end if 
 

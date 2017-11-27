@@ -28,10 +28,10 @@
     end do     
   end do 
 
-  write(*,*) '# Error message from Generator'
-  write(*,*) '# You tried to define the surface', n1, n2, n3, n4
-  write(*,*) '# but it doesn''t exists in the block specifications.'
-  write(*,*) '# Exiting !'
+  print *, '# Error message from Generator'
+  print *, '# You tried to define the surface', n1, n2, n3, n4
+  print *, '# but it doesn''t exists in the block specifications.'
+  print *, '# Exiting !'
   stop
 
 1 block=b

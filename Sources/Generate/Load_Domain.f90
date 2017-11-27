@@ -31,9 +31,9 @@
                     3, 2, 4, 3, 1, 6  /
 !------------------------------------------------------------------------------!
 
-  write(*,*) '#========================================'
-  write(*,*) '# Input problem name: (without extension)'
-  write(*,*) '#----------------------------------------'
+  print *, '#========================================'
+  print *, '# Input problem name: (without extension)'
+  print *, '#----------------------------------------'
   call Tokenizer_Mod_Read_Line(5) 
   read(line % tokens(1), *) name
 
@@ -53,10 +53,10 @@
   !---------------------!
   !   Allocate memory   !
   !---------------------!
-  write(*,*) '# Allocating memory for: ' 
-  write(*,*) '#', grid % max_n_nodes, ' nodes and cells' 
-  write(*,*) '#', grid % max_n_bnd_cells, ' boundary cells'         
-  write(*,*) '#', grid % max_n_faces, ' cell faces' 
+  print *, '# Allocating memory for: ' 
+  print *, '#', grid % max_n_nodes, ' nodes and cells' 
+  print *, '#', grid % max_n_bnd_cells, ' boundary cells'         
+  print *, '#', grid % max_n_faces, ' cell faces' 
 
   ! Variables declared in all_mod.h90:
   allocate (delta (-grid % max_n_bnd_cells:grid % max_n_nodes))
@@ -111,7 +111,7 @@
   allocate (level(grid % max_n_nodes))
   level=0
 
-  write(*,*) '# Allocation successfull !'
+  print *, '# Allocation successfull !'
 
   !-------------!
   !   Corners   !
@@ -186,7 +186,7 @@
       dom % blocks(b) % weights(2) = 1.0 / dom % blocks(b) % weights(2)
       call Swap_Integers(dom % blocks(b) % resolutions(1),  &
                          dom % blocks(b) % resolutions(2))
-      write(*,*) 'Warning: Block ',b,' was not properly oriented'
+      print *, 'Warning: Block ',b,' was not properly oriented'
     end if
   end do                 ! through dom % blocks
 
@@ -269,7 +269,7 @@
     call Tokenizer_Mod_Read_Line(9)
     read(line % whole,*) dum, n1, n2, n3, n4
     call Find_Surface(dom, n1, n2, n3, n4, b, fc)
-    write(*,*) '# block: ', b, ' surf: ', fc
+    print *, '# block: ', b, ' surf: ', fc
     n = (b-1)*6 + fc         ! surface number
 
     call Tokenizer_Mod_Read_Line(9)
@@ -295,21 +295,21 @@
 
   if( (n_faces_check > grid % max_n_faces) .or.  &
       (n_nodes_check > grid % max_n_nodes) ) then
-    write(*,*) '# Error message from TFlowS:'
+    print *, '# Error message from TFlowS:'
   end if
 
   if( n_faces_check  > grid % max_n_faces ) then
-    write(*,*) '# The estimated number of sides is :', n_faces_check
-    write(*,*) '# There is space available only for:', grid % max_n_faces
-    write(*,*) '# Increase the parameter grid % max_n_faces in the input file'
-    write(*,*) '# and re-run the code !'
+    print *, '# The estimated number of sides is :', n_faces_check
+    print *, '# There is space available only for:', grid % max_n_faces
+    print *, '# Increase the parameter grid % max_n_faces in the input file'
+    print *, '# and re-run the code !'
   end if
 
   if( n_nodes_check  > grid % max_n_nodes ) then
-    write(*,*) '# The estimated number of nodes is :', n_nodes_check
-    write(*,*) '# There is space available only for:', grid % max_n_nodes
-    write(*,*) '# Increase the parameter grid % max_n_nodes in the input file'
-    write(*,*) '# and re-run the code !'
+    print *, '# The estimated number of nodes is :', n_nodes_check
+    print *, '# There is space available only for:', grid % max_n_nodes
+    print *, '# Increase the parameter grid % max_n_nodes in the input file'
+    print *, '# and re-run the code !'
   end if 
 
   if( (n_faces_check > grid % max_n_faces) .or.  &
@@ -362,7 +362,7 @@
   !-------------------------!
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *)  n_periodic_cond      ! number of periodic boundaries
-  write(*,*) '# Number of periodic boundaries: ', n_periodic_cond 
+  print *, '# Number of periodic boundaries: ', n_periodic_cond 
 
   allocate (periodic_cond(n_periodic_cond,8))
 
@@ -380,7 +380,7 @@
   !---------------------!
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *)  n_copy_cond  ! number of copy boundaries
-  write(*,*) '# Number of copy boundaries: ', n_copy_cond
+  print *, '# Number of copy boundaries: ', n_copy_cond
 
   allocate (copy_cond(n_copy_cond,8))
 
@@ -401,13 +401,13 @@
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *) n_refine_levels ! number of refinement levels
 
-  write(*,*) '# Number of refinement levels: ', n_refine_levels
+  print *, '# Number of refinement levels: ', n_refine_levels
 
   allocate (refined_regions(n_refine_levels, 1024, 0:6))
   allocate (n_refined_regions(n_refine_levels))
 
   do l=1,n_refine_levels
-    write(*,*) 'Level: ', l
+    print *, 'Level: ', l
     call Tokenizer_Mod_Read_Line(9)
     read(line % tokens(2), *) n_refined_regions(l)  
 
@@ -423,7 +423,7 @@
       elseif(answer == 'PLANE') then
         refined_regions(l,n,0) = PLANE
       else
-        write(*,*) 'Error in input file: ', answer 
+        print *, 'Error in input file: ', answer 
         stop
       endif 
 
@@ -441,7 +441,7 @@
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *) n_smoothing_regions  ! number of smoothing regions 
 
-  write(*,*) '# Number of (non)smoothing regions: ', n_smoothing_regions 
+  print *, '# Number of (non)smoothing regions: ', n_smoothing_regions 
 
   allocate (smooth_in_x   (n_smoothing_regions))
   allocate (smooth_in_y   (n_smoothing_regions))

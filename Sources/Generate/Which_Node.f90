@@ -19,7 +19,7 @@
   Which_Node = 0
 
   if (c  < 0) then 
-    write(*,*) '# Which node: Cell non existent !'
+    print *, '# Which node: Cell non existent !'
     return
   endif
 
@@ -40,11 +40,11 @@
   end do
 
   Which_Node = 0
-  write(*,*) '# Which node: Trouble, node not found !'
-  write(*,*) '# x, y, z = ', grid % xn(n),  &
+  print *, '# Which node: Trouble, node not found !'
+  print *, '# x, y, z = ', grid % xn(n),  &
                              grid % yn(n),  &
                              grid % zn(n)
-  write(*,*) '# cell    = ', c, level(c)
+  print *, '# cell    = ', c, level(c)
   return
 
 1 Which_Node = i

@@ -27,7 +27,7 @@
   allocate(z_node_new(grid % max_n_nodes)); z_node_new=0
   allocate(node_to_nodes(grid % max_n_nodes,0:40)); node_to_nodes=0
 
-  write(*,*) '# Now smoothing the cells. This may take a while !' 
+  print *, '# Now smoothing the cells. This may take a while !' 
 
   do n = 1, grid % n_nodes
     node_to_nodes(n,0) = 0
@@ -94,7 +94,7 @@
   !   Smooth the grid   !
   !---------------------!
   do reg = 1, n_smoothing_regions
-    write(*,*) '# Now smoothing region ',reg,' with:',              &
+    print *, '# Now smoothing region ',reg,' with:',              &
                 smooth_iters(reg), ' iterations.'
 
     do j = 1, smooth_iters(reg)         

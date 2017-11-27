@@ -38,7 +38,7 @@
 
   do b = 1, size(dom % blocks)
 
-    write(*,*) '# Generating block: ', b
+    print *, '# Generating block: ', b
     ni=dom % blocks(b) % resolutions(1)
     nj=dom % blocks(b) % resolutions(2)
     nk=dom % blocks(b) % resolutions(3)   
@@ -215,9 +215,9 @@
 
         ! Line is defined point by point
         if( Approx( dom % lines(l) % weight, 0.0) ) then
-          write(*,*) '# Line: ', l
-          write(*,*) '# l1= ', l1
-          write(*,*) '# l2= ', l2
+          print *, '# Line: ', l
+          print *, '# l1= ', l1
+          print *, '# l2= ', l2
           do ig=1,dom % lines(l) % resolution
             i=trans(1,1)+trans(1,2)*ig
             j=trans(2,1)+trans(2,2)*ig

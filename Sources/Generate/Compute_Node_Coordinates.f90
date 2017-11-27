@@ -214,7 +214,7 @@
         endif ! l1-l2
 
         ! Line is defined point by point
-        if(dom % lines(l) % weight ==  0.0) then
+        if( Approx( dom % lines(l) % weight, 0.0) ) then
           write(*,*) '# Line: ', l
           write(*,*) '# l1= ', l1
           write(*,*) '# l2= ', l2

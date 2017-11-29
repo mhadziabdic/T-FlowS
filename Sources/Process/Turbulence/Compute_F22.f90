@@ -9,8 +9,9 @@
   use les_mod
   use rans_mod
   use par_mod
-  use Grid_Mod
   use Var_Mod
+  use Grid_Mod
+  use Info_Mod
   use Parameters_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
   use Work_Mod,    only: phi_x => r_cell_01,  &
@@ -265,7 +266,7 @@
           PREC, niter, phi % STol,  &
           res(var), error)
   
-  if(this_proc < 2) write(*,*) '# ', phi % name, res(var), niter 
+  call Info_Mod_Iter_Fill_At(3, 4, phi % name, niter, res(var))
 
   call Exchange(grid, phi % n)
 

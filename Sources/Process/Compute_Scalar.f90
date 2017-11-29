@@ -8,8 +8,9 @@
   use pro_mod
   use rans_mod
   use par_mod
-  use Grid_Mod
   use Var_Mod
+  use Grid_Mod
+  use Info_Mod
   use Parameters_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
   use Work_Mod,    only: phi_x       => r_cell_01,  &
@@ -599,8 +600,7 @@
   call bicg(A, phi % n, b,            &
             PREC, niter, phi % STol,  &
             res(var), error)
-  write(LineRes(65:76),  '(1PE12.3)') res(var)
-  write(LineRes(93:96),  '(I4)')      niter       
+  call Info_Mod_Iter_Fill_At(2, 4, phi % name, niter, res(var))
 
   call Exchange(grid, phi % n)
 

@@ -13,11 +13,12 @@
   use les_mod
   use rans_mod
   use par_mod
+  use Var_Mod
   use Grid_Mod
   use Bulk_Mod
-  use Var_Mod
+  use Info_Mod
   use Parameters_Mod
-  use Solvers_Mod, only: Bicg, Cg, Cgs
+  use Solvers_Mod,     only: Bicg, Cg, Cgs
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -598,16 +599,13 @@
           res(var), error)
 
   if(ui % name == 'U') then
-    write(LineRes(17:28), '(1PE12.3)') res(var) 
-    write(LineRes(77:80), '(I4)')      niter 
+    call Info_Mod_Iter_Fill_At(2, 1, ui % name, niter, res(var))
   end if
   if(ui % name == 'V') then
-    write(LineRes(29:40), '(1PE12.3)') res(var) 
-    write(LineRes(81:84), '(I4)')      niter 
+    call Info_Mod_Iter_Fill_At(2, 2, ui % name, niter, res(var))
   end if
   if(ui % name == 'W') then
-    write(LineRes(41:52), '(1PE12.3)') res(var) 
-    write(LineRes(85:88), '(I4)')      niter 
+    call Info_Mod_Iter_Fill_At(2, 3, ui % name, niter, res(var))
   end if
 
   call Exchange(grid, ui % n)

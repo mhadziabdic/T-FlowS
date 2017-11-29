@@ -9,6 +9,7 @@
   use les_mod
   use Grid_Mod
   use Bulk_Mod
+  use Info_Mod
   use Parameters_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -17,7 +18,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer   :: c, c1, c2, s, m
   real      :: cfl_max(256), pe_max(256)
-  real      :: CFLs, PeS
+  real      :: cfl_t, pe_t
   real      :: Pdrop, FluxM
 !==============================================================================!
 
@@ -113,73 +114,37 @@
   !   Calculate the CFL number   !
   !     and the Peclet number    !
   !------------------------------!
-  do m = 1, grid % n_materials
-    cfl_max(m) = 0.0
-    pe_max(m)  = 0.0
-    do s = 1, grid % n_faces
-      c1 = grid % faces_c(1,s)
-      c2 = grid % faces_c(2,s)
-      if( (material(c1) .eq. m) .or. (material(c2) .eq. m) ) then
-        if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
-          CFLs = abs( dt * Flux(s) /                &
-                      ( Scoef(s) *                  &
-                      (  grid % dx(s)*grid % dx(s)  &
-                       + grid % dy(s)*grid % dy(s)  &
-                       + grid % dz(s)*grid % dz(s)) ) )
-          PeS  = abs( Flux(s) / Scoef(s) / (VISc+TINY) )
-          cfl_max(m) = max( cfl_max(m), CFLs ) 
-          pe_max(m)  = max( pe_max(m),  PeS  ) 
-        end if
+  m = 1
+  cfl_max(m) = 0.0
+  pe_max(m)  = 0.0
+  do s = 1, grid % n_faces
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
+    if( (material(c1) .eq. m) .or. (material(c2) .eq. m) ) then
+      if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
+        cfl_t = abs( dt * Flux(s) /                &
+                     ( Scoef(s) *                  &
+                     (  grid % dx(s)*grid % dx(s)  &
+                      + grid % dy(s)*grid % dy(s)  &
+                      + grid % dz(s)*grid % dz(s)) ) )
+        pe_t  = abs( Flux(s) / Scoef(s) / (VISc+TINY) )
+        cfl_max(m) = max( cfl_max(m), cfl_t ) 
+        pe_max(m)  = max( pe_max(m),  pe_t  ) 
       end if
-    end do
-    call glomax(cfl_max(m))
-    call glomax(pe_max(m))
-  end do
-
-  if(Cm(1) /= 0) then     
-    write(LinMon0( 19: 66), '(1PE12.3,1PE12.3,1PE12.3,1PE12.3)')  &
-          U % n(Cm(1)),  V % n(Cm(1)),  W % n(Cm(1)),  P % n(Cm(1))
-    if(HOT==YES) then
-      write(LinMon0( 67: 78), '(1PE12.3)') T % n(Cm(1)) 
     end if
-    do m = 1, grid % n_materials
-      if(m .eq. 1) then
-        FluxM = max( abs(bulk(m) % flux_x),  &
-                     abs(bulk(m) % flux_y),  &
-                     abs(bulk(m) % flux_z) )
-        Pdrop = max( abs(bulk(m) % p_drop_x),  &
-                     abs(bulk(m) % p_drop_y),  &
-                     abs(bulk(m) % p_drop_z))
-        write(LinMon1( 79: 90), '(1PE12.3)') FluxM 
-        write(LinMon1( 91:102), '(1PE12.3)') Pdrop    
-        write(LinMon1(103:126), '(1PE12.3,1PE12.3)')  &
-        cfl_max(m), pe_max(m)
-      else if(m .eq. 2) then
-        FluxM = max( abs(bulk(m) % flux_x),  &
-                     abs(bulk(m) % flux_y),  &
-                     abs(bulk(m) % flux_z))
-        Pdrop = max( abs(bulk(m) % p_drop_x),  &
-                     abs(bulk(m) % p_drop_y),  &
-                     abs(bulk(m) % p_drop_z))
-        write(LinMon2( 79: 90), '(1PE12.3)') FluxM 
-        write(LinMon2( 91:102), '(1PE12.3)') Pdrop    
-        write(LinMon2(103:126), '(1PE12.3,1PE12.3)')  &
-        cfl_max(m), pe_max(m)
-      else if(m .eq. 3) then
-        FluxM = max( abs(bulk(m) % flux_x),  & 
-                     abs(bulk(m) % flux_y),  &
-                     abs(bulk(m) % flux_z))
-        Pdrop = max( abs(bulk(m) % p_drop_x),  &
-                     abs(bulk(m) % p_drop_y),  &
-                     abs(bulk(m) % p_drop_z))
-        write(LinMon3( 79: 90), '(1PE12.3)') FluxM 
-        write(LinMon3( 91:102), '(1PE12.3)') Pdrop    
-        write(LinMon3(103:126), '(1PE12.3,1PE12.3)')  &
-        cfl_max(m), pe_max(m)
-      end if
-    end do
-    write(LineRes(  5: 16), '(1PE12.3)') errmax 
-  end if 
+  end do
+  call glomax(cfl_max(m))
+  call glomax(pe_max(m))
+
+  call Info_Mod_Iter_Fill_At(1, 2, 'dum', -1, errmax)
+  call Info_Mod_Bulk_Fill(cfl_max(m),          &
+                          pe_max(m),           &                            
+                          bulk(m) % flux_x,    &
+                          bulk(m) % flux_y,    &
+                          bulk(m) % flux_z,    &
+                          bulk(m) % p_drop_x,  &
+                          bulk(m) % p_drop_y,  &
+                          bulk(m) % p_drop_z)
 
   Correct_Velocity = errmax ! /(velmax+TINY)
 

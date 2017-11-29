@@ -8,8 +8,9 @@
   use pro_mod
   use par_mod
   use Grid_Mod
+  use Info_Mod
   use Parameters_Mod
-  use Solvers_Mod, only: Bicg, Cg, Cgs
+  use Solvers_Mod,     only: Bicg, Cg, Cgs
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -190,8 +191,7 @@
   call bicg(A, PP % n, b,            &
             PREC, niter, PP % STol,  &
             res(4), error) 
-  write(LineRes(53:64),  '(1PE12.3)') res(4)
-  write(LineRes(89:92),  '(I4)')      niter
+  call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, res(4))
 
   !-------------------------------!
   !   Update the pressure field   !

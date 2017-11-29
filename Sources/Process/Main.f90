@@ -15,6 +15,7 @@
   use Var_Mod
   use Solvers_Mod, only: D
   use Parameters_Mod
+  use Info_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !----------------------------------[Calling]-----------------------------------!
@@ -22,7 +23,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: i, m, n, Ndtt_temp
   real              :: Mres, CPUtim
-  real              :: start, finish
+  real              :: wall_time_start, wall_time_current
   character(len=10) :: name_save
   logical           :: restar, multiple 
 !---------------------------------[Interfaces]---------------------------------!
@@ -95,7 +96,8 @@
   ! Grid used in computations
   type(Grid_Type) :: grid  
 
-  call cpu_time(start)
+  ! Get starting time
+  call cpu_time(wall_time_start)
 
   !--------------------------------!
   !   Splash out the logo screen   !             
@@ -142,11 +144,11 @@
 
   call Wait   
 
-!>>>>>>>>>>>>>>>>>>>!
-!                   !
-!     TIME LOOP     !
-!                   !
-!<<<<<<<<<<<<<<<<<<<!
+  !---------------!
+  !               !
+  !   Time loop   !
+  !               !
+  !---------------!
   Ndt  = 0
   Ndtt = 0
   call Load_Restart(grid, restar)
@@ -209,18 +211,10 @@
   ! Prepare the gradient matrix for velocities
   call Compute_Gradient_Matrix(grid, .TRUE.) 
 
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-!        LET THE TIME        !
-!     INTEGRATION  BEGIN     !
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<!
-
-  LinMon0 = ' '
-  LinMon1 = '# [1]'
-  LinMon2 = '# [2]'
-  LinMon3 = '# [3]'
-  LineRes = '#'
-
-  if(ALGOR  ==  FRACT) call Pressure_Matrix_Fractional(grid)
+  ! Prepare matrix for fractional step method
+  if(ALGOR  ==  FRACT) then 
+    call Pressure_Matrix_Fractional(grid)
+  end if
 
   ! Print the areas of monitoring planes
   if(this_proc < 2) then
@@ -233,14 +227,24 @@
 
   if(Ndt == 0)  goto 6 
 
+  !---------------!
+  !               !
+  !   Time loop   !
+  !               !
+  !---------------!
   do n=Ndtt+1, Ndt 
 
-    Time = Time + dt
+    time = time + dt
 
-    if(Cm(1) > 0) then
-      write(LinMon0(1: 6), '(I6)')      n;    
-      write(LinMon0(7:18), '(1PE12.3)') Time; 
-    end if
+    ! Start info boxes.
+    call Info_Mod_Time_Start()
+    call Info_Mod_Iter_Start()
+    call Info_Mod_Bulk_Start()
+
+    ! Initialize and print time info box
+    call cpu_time(wall_time_current)
+    call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
+    call Info_Mod_Time_Print()
 
     if(SIMULA==DES_SPA) then
       call Compute_Shear_And_Vorticity(grid)
@@ -262,7 +266,12 @@
     call Convective_Outflow(grid)
     if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_RSM(grid)
     
+    !--------------------------!
+    !   Inner-iteration loop   !
+    !--------------------------!
     do ini=1,Nini                   !  FRACTION & SIMPLE  
+
+      call Info_Mod_Iter_Fill(ini)
 
       if(.NOT. multiple) then 
         call GradP(grid, P % n, p % x, p % y, p % z)
@@ -270,15 +279,16 @@
         call GradP3(grid, P % n, p % x, p % y, p % z)
       end if
     
-      call GraPhi(grid, U % n, 1, U % x, .TRUE.)    ! dU/dx
-      call GraPhi(grid, U % n, 2, U % y, .TRUE.)    ! dU/dy
-      call GraPhi(grid, U % n, 3, U % z, .TRUE.)    ! dU/dz
-      call GraPhi(grid, V % n, 1, V % x, .TRUE.)    ! dV/dx
-      call GraPhi(grid, V % n, 2, V % y, .TRUE.)    ! dV/dy
-      call GraPhi(grid, V % n, 3, V % z, .TRUE.)    ! dV/dz
-      call GraPhi(grid, W % n, 1, W % x, .TRUE.)    ! dW/dx
-      call GraPhi(grid, W % n, 2, W % y, .TRUE.)    ! dW/dy 
-      call GraPhi(grid, W % n, 3, W % z, .TRUE.)    ! dW/dz
+      ! Compute velocity gradients
+      call GraPhi(grid, U % n, 1, U % x, .TRUE.)
+      call GraPhi(grid, U % n, 2, U % y, .TRUE.)
+      call GraPhi(grid, U % n, 3, U % z, .TRUE.)
+      call GraPhi(grid, V % n, 1, V % x, .TRUE.)
+      call GraPhi(grid, V % n, 2, V % y, .TRUE.)
+      call GraPhi(grid, V % n, 3, V % z, .TRUE.)
+      call GraPhi(grid, W % n, 1, W % x, .TRUE.)
+      call GraPhi(grid, W % n, 2, W % y, .TRUE.)
+      call GraPhi(grid, W % n, 3, W % z, .TRUE.)
 
       ! U velocity component
       call NewUVW(grid, 1, U,                             &
@@ -405,26 +415,17 @@
       ! Update the values at boundaries
       call Update_Boundary_Values(grid)
 
-      write(LineRes(2:5),'(I4)') ini
-
       ! End of the current iteration 
-      if(Cm(1) /= 0) write(*,'(A100)') LineRes     
+      call Info_Mod_Iter_Print()
 
       if(ALGOR == SIMPLE) then
         if( res(1) <= SIMTol .and. res(2) <= SIMTol .and. &
-           res(3) <= SIMTol .and. res(4) <= SIMTol ) goto 4 
+            res(3) <= SIMTol .and. res(4) <= SIMTol ) goto 4 
       endif
     end do 
 
     ! End of the current time step
-4   if(Cm(1) /= 0) then
-      write(*,'(A138)') LinMon0
-      do m=1,grid % n_materials
-        if(m .eq.1) write(*,'(A138)') LinMon1
-        if(m .eq.2) write(*,'(A138)') LinMon2
-        if(m .eq.3) write(*,'(A138)') LinMon3
-      end do
-    end if
+4   call Info_Mod_Bulk_Print()
 
     ! Write the values in monitoring points
     do i=1,Nmon
@@ -447,30 +448,28 @@
      call Compute_Mean(grid, Nstat, n)  !  calculate mean values 
    end if
 
-!-----------------------------------------------------!  
-!                                                     ! 
-!   Recalculate the pressure drop                     !
-!   to keep the constant mass flux                    !
-!                                                     !
-!   First Newtons law:                                !
-!   ~~~~~~~~~~~~~~~~~~                                !
-!   F = m * a                                         !
-!                                                     !
-!   where:                                            !
-!   ~~~~~~                                            !
-!   a = dv / dt = dFlux / dt * 1 / (A * rho)          !
-!   m = rho * V                                       !
-!   F = Pdrop * l * A = Pdrop * V                     !
-!                                                     !
-!   finally:                                          !
-!   ~~~~~~~~                                          !
-!   Pdrop * V = rho * V * dFlux / dt * 1 / (A * rho)  !
-!                                                     !
-!   after cancelling: V and rho, it yields:           !
-!                                                     !
-!   Pdrop = dFlux/dt/A                                !
-!                                                     !
-!-----------------------------------------------------!
+    !-----------------------------------------------------!  
+    !   Recalculate the pressure drop                     !
+    !   to keep the constant mass flux                    !
+    !                                                     !
+    !   First Newtons law:                                !
+    !                                                     !
+    !   F = m * a                                         !
+    !                                                     !
+    !   where:                                            !
+    !                                                     !
+    !   a = dv / dt = dFlux / dt * 1 / (A * rho)          !
+    !   m = rho * V                                       !
+    !   F = Pdrop * l * A = Pdrop * V                     !
+    !                                                     !
+    !   finally:                                          !
+    !                                                     !
+    !   Pdrop * V = rho * V * dFlux / dt * 1 / (A * rho)  !
+    !                                                     !
+    !   after cancelling: V and rho, it yields:           !
+    !                                                     !
+    !   Pdrop = dFlux/dt/A                                !
+    !-----------------------------------------------------!
     do m=1,grid % n_materials
       if( bulk(m) % flux_x_o /=  0.0 ) then
         bulk(m) % p_drop_x = (bulk(m) % flux_x_o - bulk(m) % flux_x)  &
@@ -553,14 +552,12 @@
   !   Close the monitoring files   !
   !--------------------------------!
   do n=1,Nmon
-    if(Cm(n)  > 0) close(10+n)
+    if(Cm(n) > 0) close(10+n)
   end do
 
   !----------------------------!
   !   End parallel execution   !
   !----------------------------!
-  call endpar            
-  call cpu_time(finish)
-  if(this_proc < 2) print '("Time = ",f14.3," seconds.")',finish-start
+  call EndPar            
 
   end program

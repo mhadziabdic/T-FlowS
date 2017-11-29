@@ -126,43 +126,4 @@ module pro_mod
 
   integer :: Ndt, Ndtt, Nstat, Nini, ini, Ndyn, Nstat2, NewSta, NK, Nbudg 
 
-  !------------------------------------------------------------------!
-  ! LineMon:   1:  6 -> Time step 
-  ! ~~~~~~~~   7: 18 -> Time                
-  !           19: 66 -> U,V,W,P monitoring
-  !           67: 78 -> T  monitoring 
-  !           79: 90 -> FLUXx
-  !           91:102 -> P drop
-  !          103:114 -> CFL
-  !          115:126 -> Pe
-  !          127:138 -> Kin.en.           
-  !------------------------------------------------------------------!
-  character*138 :: LinMon0 ! everything that goes on the screen
-  character*138 :: LinMon1 ! everything that goes on the screen
-  character*138 :: LinMon2 ! everything that goes on the screen
-  character*138 :: LinMon3 ! everything that goes on the screen
-  character*138 :: LinMon4 ! everything that goes on the screen
-  character*138 :: LinMon5 ! everything that goes on the screen
-  character*138 :: LinMon6 ! everything that goes on the screen
-  character*138 :: LinMon7 ! everything that goes on the screen
-  character*138 :: LinMon8 ! everything that goes on the screen
-  character*138 :: LinMon9 ! everything that goes on the screen
-
-  !------------------------------------------------------------------!
-  ! LineRes:   1:  1 -> #
-  ! ~~~~~~~~   2:  4 -> ini
-  !            5: 16 -> errmax 
-  !           17: 28 -> res U
-  !           29: 40 -> res V
-  !           41: 52 -> res W
-  !           53: 64 -> res PP
-  !           65: 76 -> res T
-  !           77: 80 -> iter U
-  !           81: 84 -> iter V
-  !           85: 88 -> iter W
-  !           89: 92 -> iter P
-  !           93: 96 -> iter T
-  !------------------------------------------------------------------!
-  character*100 :: LineRes              ! everything that goes on the screen
-
-end module
+ end module

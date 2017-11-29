@@ -10,8 +10,9 @@
   use les_mod
   use rans_mod
   use par_mod
-  use Grid_Mod
   use Var_Mod
+  use Grid_Mod
+  use Info_Mod
   use Parameters_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
   use Work_Mod,    only: phi_x       => r_cell_01,  &
@@ -542,13 +543,20 @@
   call cg(A, phi % n, b,            &
           PREC, niter, phi % STol,  &
           res(var), error)
-
-  !k-eps  if(var == 1) then
-  !k-eps    write(LineRes(17:28), '(1PE12.3)') res(var) 
-  !k-eps    write(LineRes(77:80), '(I4)')      niter 
-  !k-eps  end if
-
-  if(this_proc < 2) write(*,*) '# ', phi % name, res(var), niter 
+  if( phi % name == 'UU' )   &
+    call Info_Mod_Iter_Fill_At(3, 1, phi % name, niter, res(var))
+  if( phi % name == 'VV' )   &
+    call Info_Mod_Iter_Fill_At(3, 2, phi % name, niter, res(var))
+  if( phi % name == 'WW' )   &
+    call Info_Mod_Iter_Fill_At(3, 3, phi % name, niter, res(var))
+  if( phi % name == 'UV' )   &
+    call Info_Mod_Iter_Fill_At(4, 1, phi % name, niter, res(var))
+  if( phi % name == 'UW' )   &
+    call Info_Mod_Iter_Fill_At(4, 2, phi % name, niter, res(var))
+  if( phi % name == 'VW' )   &
+    call Info_Mod_Iter_Fill_At(4, 3, phi % name, niter, res(var))
+  if( phi % name == 'EPS' )  &
+    call Info_Mod_Iter_Fill_At(4, 4, phi % name, niter, res(var))
 
   if(phi % name == 'EPS') then
     do c= 1, grid % n_cells

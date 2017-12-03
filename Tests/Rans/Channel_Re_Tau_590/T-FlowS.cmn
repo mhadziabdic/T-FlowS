@@ -284,12 +284,12 @@ skip
 # (NAME or SKIP)
 # This option is obsolete.
 #---------------------------------------------
-#skip 
+skip 
 
 #---------------------------------------------
 # Writing the result in Fluent format
 # (NAME or SKIP)
 # This obsolete option is obsolete.
 #---------------------------------------------
-#skip
+skip
 

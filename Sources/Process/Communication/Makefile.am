@@ -1,6 +1,9 @@
 noinst_LIBRARIES = libCommunication.a
 
 libCommunication_a_SOURCES =	\
+  ../Parameters_Mod.f90		\
+  ../Bulk_Mod.f90		\
+  ../Info_Mod.f90		\
   BufLoa.f90			\
   EndPar.f90			\
   Exchange.f90			\

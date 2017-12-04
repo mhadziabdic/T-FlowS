@@ -52,7 +52,7 @@ else
   OPTIMIZE=""
   if [ $# -gt 1 ]; then
     if [ $2 = "DEBUG" ]; then
-      OPTIMIZE="-g"
+      OPTIMIZE="-g -Wall -fcheck=all"
     elif [ $2 = "SLOW" ]; then
       OPTIMIZE="-O0"
     elif [ $2 = "FAST" ]; then
@@ -106,37 +106,39 @@ else
 
   # GNU
   if [ $1 = "GNU" ]; then
+    echo $OPTIMIZE
+    echo '-fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Sequential/*.f90 . ; cd ../..
-#   ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
-    ./configure FC=$COMPILER  FCFLAGS='-g -Wall -fcheck=all -fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -J'$PWD'/Modules '"$OPTIMIZE"
 
   # GNU-MPI
   elif [ $1 = "GNU-MPI" ]; then
+    echo $OPTIMIZE
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Parallel/Double/*.f90 . ; cd ../..
-#   ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
-    ./configure FC=$COMPILER  FCFLAGS='-g -Wall -fcheck=all -fdefault-real-8 -J'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-fdefault-real-8 -J'$PWD'/Modules '"$OPTIMIZE"
 
   # INTEL
   elif [ $1 = "INTEL" ]; then
     echo $OPTIMIZE
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Sequential/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-r8 -module '$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -module '$PWD'/Modules '"$OPTIMIZE"
 
   # INTEL-MPI
   elif [ $1 = "INTEL-MPI" ]; then
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Parallel/Double/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-r8 -module '$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -module '$PWD'/Modules '"$OPTIMIZE"
 
   # PG
   elif [ $1 = "PG" ]; then
     echo $OPTIMIZE
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Sequential/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '"$OPTIMIZE"
 
   # PG-MPI
   elif [ $1 = "PG-MPI" ]; then
+    echo $OPTIMIZE
     cd Process/Communication; /bin/rm -f *.f90; ln -i -s Parallel/Double/*.f90 . ; cd ../..
-    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '$OPTIMIZE
+    ./configure FC=$COMPILER  FCFLAGS='-r8 -I'$PWD'/Modules '"$OPTIMIZE"
 
   fi
 

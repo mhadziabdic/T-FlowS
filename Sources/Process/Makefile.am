@@ -49,10 +49,10 @@ Process_SOURCES =	 			\
   SavParView.f90				\
   Time_And_Length_Scale.f90
 
-SUBDIRS = Communication				\
+SUBDIRS = Var_Mod				\
+          Communication				\
           Matrix_Mod				\
           Solvers_Mod				\
-          Var_Mod				\
           Turbulence				\
           User					\
           ../Shared

@@ -27,6 +27,7 @@ libShared_a_SOURCES = 		\
   Save_Eps_Whole.f90		\
   Save_Gmv_Links.f90		\
   Save_Gmv_Cells.f90		\
+  Save_Vtu_Cells.f90		\
   Save_Gmv_Faces.f90		\
   Save_Shadows.f90		\
   Sort_Double_Carry_Int.f90	\

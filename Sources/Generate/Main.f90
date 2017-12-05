@@ -83,6 +83,11 @@
                 grid % n_cells,       &
                 grid % n_faces + grid % n_sh)  ! save grid for Fluent
 
+  ! Create output in vtu format
+  call Save_Vtu_Cells(grid, 0,         &
+                      grid % n_nodes,  &
+                      grid % n_cells)     ! save grid for postprocessing
+
   ! Make eps figures
   call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x') 
   call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y') 

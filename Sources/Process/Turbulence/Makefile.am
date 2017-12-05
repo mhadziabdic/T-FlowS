@@ -1,9 +1,6 @@
 noinst_LIBRARIES = libTurbulence.a
 
 libTurbulence_a_SOURCES =	\
-  ../Parameters_Mod.f90		\
-  ../Bulk_Mod.f90		\
-  ../Info_Mod.f90		\
   ../pro_mod.f90		\
   les_mod.f90			\
   rans_mod.f90			\

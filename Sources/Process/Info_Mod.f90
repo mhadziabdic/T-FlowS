@@ -37,9 +37,9 @@
     character(len=L_LINE) :: lines(3)   = ''
   end type
 
-  type(Time_Info_Type) :: time_info
-  type(Iter_Info_Type) :: iter_info
-  type(Bulk_Info_Type) :: bulk_info
+  type(Time_Info_Type), save :: time_info
+  type(Iter_Info_Type), save :: iter_info
+  type(Bulk_Info_Type), save :: bulk_info
 
   contains
 

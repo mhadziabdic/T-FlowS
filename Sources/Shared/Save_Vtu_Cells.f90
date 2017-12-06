@@ -31,6 +31,7 @@
   write(9,'(a)') '<?xml version="1.0"?>'
   write(9,'(a)') '<VTKFile type="UnstructuredGrid" version="0.1" ' // &
                  'byte_order="LittleEndian">'
+  write(9,'(a)') '<UnstructuredGrid>'
   write(9,'(a,i9)',advance='no') '<Piece NumberOfPoints="', n_nodes_sub
   write(9,'(a,i9,a)')            '" NumberOfCells ="', n_cells_sub, '">'
 
@@ -58,10 +59,32 @@
   write(9,'(a)') '<DataArray type="Int32" Name="connectivity" format="ascii">'
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
-      do n = 1, grid % cells_n_nodes(c)
-        write(9,'(i9)',advance='no') NewN(grid % cells_n(n, c))-1
-      end do
-      write(9,'(a)') ''
+      if(grid % cells_n_nodes(c) == 8) then
+        write(9,'(8I9)')                                          &
+          NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,   &
+          NewN(grid % cells_n(4,c))-1, NewN(grid % cells_n(3,c))-1,   &
+          NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(6,c))-1,   &
+          NewN(grid % cells_n(8,c))-1, NewN(grid % cells_n(7,c))-1
+      else if(grid % cells_n_nodes(c) == 6) then
+        write(9,'(6I9)')                                          &
+          NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,   &
+          NewN(grid % cells_n(3,c))-1, NewN(grid % cells_n(4,c))-1,   &
+          NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(6,c))-1
+      else if(grid % cells_n_nodes(c) == 4) then
+        write(9,'(4I9)')                                          &
+          NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,   &
+          NewN(grid % cells_n(3,c))-1, NewN(grid % cells_n(4,c))-1
+      else if(grid % cells_n_nodes(c) == 5) then
+        write(9,'(5I9)')                                          &
+          NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(1,c))-1,   &
+          NewN(grid % cells_n(2,c))-1, NewN(grid % cells_n(4,c))-1,   &
+          NewN(grid % cells_n(3,c))-1
+      else
+        write(*,*) '# Unsupported cell type with ',  &
+                    grid % cells_n_nodes(c), ' nodes.'
+        write(*,*) '# Exiting'
+        stop 
+      end if
     end if
   end do  
   write(9,'(a)') '</DataArray>'
@@ -114,6 +137,7 @@
 
   write(9,'(a)') '</Cells>'
   write(9,'(a)') '</Piece>'
+  write(9,'(a)') '</UnstructuredGrid>'
   write(9,'(a)') '</VTKFile>'
 
   close(9)

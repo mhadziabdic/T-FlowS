@@ -244,7 +244,7 @@
     ! Initialize and print time info box
     call cpu_time(wall_time_current)
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
-    call Info_Mod_Time_Print()
+    if(this_proc < 2) call Info_Mod_Time_Print()
 
     if(SIMULA==DES_SPA) then
       call Compute_Shear_And_Vorticity(grid)
@@ -416,7 +416,7 @@
       call Update_Boundary_Values(grid)
 
       ! End of the current iteration 
-      call Info_Mod_Iter_Print()
+      if(this_proc < 2) call Info_Mod_Iter_Print()
 
       if(ALGOR == SIMPLE) then
         if( res(1) <= SIMTol .and. res(2) <= SIMTol .and. &
@@ -425,7 +425,7 @@
     end do 
 
     ! End of the current time step
-4   call Info_Mod_Bulk_Print()
+4   if(this_proc < 2) call Info_Mod_Bulk_Print()
 
     ! Write the values in monitoring points
     do i=1,Nmon

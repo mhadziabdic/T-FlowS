@@ -227,6 +227,9 @@
 
   if(Ndt == 0)  goto 6 
 
+  ! Update the values at boundaries
+  call Update_Boundary_Values(grid)
+
   !---------------!
   !               !
   !   Time loop   !

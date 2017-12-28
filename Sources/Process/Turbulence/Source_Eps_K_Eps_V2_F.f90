@@ -91,7 +91,7 @@
         Eps%n (c1) = EpsWall * exp(-1.0 * EBF) + EpsHom * exp(-1.0 / EBF) 
         
         if(ROUGH == YES) then
-          Eps%n(c1) = Cmu75 * Kin%n(c1)**1.5 / ((WallDs(c1)) * kappa)
+          Eps%n(c1) = Cmu75 * Kin%n(c1)**1.5 / ((WallDs(c1)+Zo) * kappa)
         end if
 
         !-Adjusting coefficient to fix Eps value in near wall calls

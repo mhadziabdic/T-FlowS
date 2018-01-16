@@ -25,7 +25,7 @@
   write(*,*) '# Insert non-homogeneous direction (x,y,z or skip)'
   write(*,*) '#-------------------------------------------------'
   read(*,*) answer
-  call touppr(answer)
+  call To_Upper_Case(answer)
   if(answer=='SKIP') return
 
   n_prob = 0

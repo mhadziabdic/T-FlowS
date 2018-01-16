@@ -58,12 +58,11 @@ cd $(PATH)
 
 #------ 2 : CGNS (latest version)
 
-git clone --depth=1  https://github.com/CGNS/CGNS.git CGNS/; cd CGNS/;
+git clone --depth=1  https://github.com/CGNS/CGNS.git CGNS/; cd CGNS/; rm -rf .git; cd src
 
 # configure for CGNS
 FLIBS=-Wl,--no-as-needed\ -ldl\ -lz  LIBS=-Wl,--no-as-needed\ -ldl\ -lz CC=mpicc FC=mpif90 ./configure --prefix=$(PATH)/CGNS/install_dir --with-hdf5=$(PATH)/HDF5/install_dir --with-fortran --enable-lfs --enable-64bit --disable-shared --disable-debug --with-zlib --disable-cgnstools --enable-64bit --enable-parallel
 
-cd src
 make
 make install
 

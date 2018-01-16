@@ -33,9 +33,9 @@
   !---------------------------!
   contains
 
-  include 'Domain_Mod_Allocate_Points.f90'
-  include 'Domain_Mod_Allocate_Blocks.f90'
-  include 'Domain_Mod_Allocate_Lines.f90'
-  include 'Domain_Mod_Allocate_Regions.f90'
+  include 'Domain_Mod/Allocate_Points.f90'
+  include 'Domain_Mod/Allocate_Blocks.f90'
+  include 'Domain_Mod/Allocate_Lines.f90'
+  include 'Domain_Mod/Allocate_Regions.f90'
 
   end module

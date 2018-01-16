@@ -8,8 +8,8 @@ Divide_SOURCES =		\
   Load_Gmv_Faces.f90		\
   Factorize_Number.f90		\
   Inertia.f90			\
-  Logo.f90			\
-  Main.f90			\
+  Logo_Div.f90			\
+  Main_Div.f90			\
   Save_Com.f90			\
   Save_Eps_Decomposed.f90	\
   Save_Scripts.f90		\

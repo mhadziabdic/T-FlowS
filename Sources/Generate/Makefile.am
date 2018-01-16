@@ -21,7 +21,7 @@ Generate_SOURCES =	 		\
   Load_Domain.f90			\
   Laplac.f90				\
   Logo.f90				\
-  Main.f90				\
+  Main_Gen.f90				\
   Print_Grid_Statistics.f90		\
   Refine_Grid.f90			\
   Refine_Marked_Cells.f90		\

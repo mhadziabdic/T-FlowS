@@ -19,6 +19,7 @@
   use Info_Mod
   use Parameters_Mod
   use Solvers_Mod,     only: Bicg, Cg, Cgs
+  use User_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -547,7 +548,7 @@
   !----------------------------------------!
   !   All other terms defined by the user  !
   !----------------------------------------!
-  if(HOT == YES) call User_Force(grid, ui, a, b)
+  if(HOT == YES) call User_Mod_Force(grid, ui, a, b)
 
 !  do c=1,grid % n_cells                                         ! 2mat
 !    if(StateMat(material(c))==SOLID) then           ! 2mat

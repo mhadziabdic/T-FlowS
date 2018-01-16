@@ -22,6 +22,7 @@
                          u1uj_phij_x => r_cell_07,  &
                          u2uj_phij_y => r_cell_08,  &
                          u3uj_phij_z => r_cell_09    
+  use User_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Arguments]--------------------------------!
@@ -580,7 +581,7 @@
     end if  
   end if  
 
-  call User_Source(grid)
+  call User_Mod_Source(grid, phi, A, b)
 
   !---------------------------------!
   !                                 !

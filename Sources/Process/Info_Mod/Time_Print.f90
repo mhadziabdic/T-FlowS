@@ -3,21 +3,28 @@
 !------------------------------------------------------------------------------!
 !   Prints information about inner iteration on the screen.                    !
 !------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
+  use par_mod    
+!------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
   integer               :: i
   character(len=L_LINE) :: tmp
 !==============================================================================!
 
-  print *, ' '
-  print *, time_info % line_lead  
+  if (this_proc < 2) then
 
-  ! Print only lines which have colon in the first column :-)
-  do i=1,6
-    print *, time_info % lines(i)
-  end do
+    print *, ' '
+    print *, time_info % line_lead  
 
-  print *, time_info % line_trail  
-  print *, ' '
+    ! Print only lines which have colon in the first column :-)
+    do i=1,6
+      print *, time_info % lines(i)
+    end do
+
+    print *, time_info % line_trail  
+    print *, ' '
+
+  end if
                  
   end subroutine

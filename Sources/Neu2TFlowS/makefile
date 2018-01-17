@@ -22,32 +22,51 @@ DIR_SHARED = ../Shared
 VPATH = $(DIR_SHARED):.
 
 # Program name (This should hardly change)
-PROGRAM = $(DIR_BINARY)/Neu2TflowS
+PROGRAM_NAME = Neu2TflowS
+PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
 
 #-------------------------------------------------------------------------
 #   Compiler and linker options
 #-------------------------------------------------------------------------
 #   Note: Changes only when support to a new Fortran compiler is added.
 #-------------------------------------------------------------------------
+
+# Fortran = gnu
 ifeq ($(FORTRAN), gnu)
   FC = gfortran
-  OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8
-  OPT_LINK = $(OPT_COMP)
-endif 
-ifeq ($(FORTRAN), intel)
-  FC = ifort
-  OPT_COMP = -module $(DIR_MODULE) -r8
-  OPT_LINK = $(OPT_COMP)
-endif 
-ifeq ($(FORTRAN), portland)
-  FC = pgfortran
-  OPT_COMP = -module $(DIR_MODULE) -r8
+  ifeq ($(DEBUG),yes)
+    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -O0 -g -Wall -fcheck=all
+  else
+    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -O3
+  endif 
   OPT_LINK = $(OPT_COMP)
 endif 
 
-$(info #----------------------------------------------)
-$(info # Compiling $(PROGRAM) with compiler $(FORTRAN))
-$(info #----------------------------------------------)
+# Fortran == intel
+ifeq ($(FORTRAN), intel)
+  FC = ifort
+  ifeq ($(DEBUG),yes)
+    OPT_COMP = -module $(DIR_MODULE) -r8 -O0 -warn all -check all -debug all
+  else
+    OPT_COMP = -module $(DIR_MODULE) -r8 -O3
+  endif
+  OPT_LINK = $(OPT_COMP)
+endif 
+
+# Fortran == portland
+ifeq ($(FORTRAN), portland)
+  FC = pgfortran
+  ifeq ($(DEBUG),yes)
+    OPT_COMP = -module $(DIR_MODULE) -r8 -O0
+  else
+    OPT_COMP = -module $(DIR_MODULE) -r8 -O3
+  endif
+  OPT_LINK = $(OPT_COMP)
+endif 
+
+$(info #---------------------------------------------------)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN))
+$(info #---------------------------------------------------)
 
 #------------------------------------------------------
 #   List of sources for modules and functions
@@ -111,8 +130,8 @@ $(DIR_OBJECT)/%.o: %.f90
 #-----------------------------------
 #   Note: Should not be modified.
 #-----------------------------------
-$(PROGRAM): $(OBJ) 
-	$(FC) $(OPT_LINK) -o $(PROGRAM) $(OBJ)
+$(PROGRAM_FILE): $(OBJ) 
+	$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ)
 
 #---------------------------------------
 #   Explicit dependencies for modules
@@ -128,4 +147,4 @@ $(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Boundary_Condition_Mod.o	\
 #   Explicit target.
 #---------------------
 clean:
-	rm -f $(DIR_OBJECT)/*.o $(DIR_MODULE)/*.mod $(PROGRAM)
+	rm -f $(DIR_OBJECT)/*.o $(DIR_MODULE)/*.mod $(PROGRAM_FILE)

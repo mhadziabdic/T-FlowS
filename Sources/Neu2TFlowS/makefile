@@ -15,7 +15,7 @@ FORTRAN = gnu
 DEBUG = no
 
 # Directories for objects and modules. (No need to change.)
-DIR_BINARY = ../Binaries
+DIR_BINARY = ../../Binaries
 DIR_MODULE = ../.Modules
 DIR_OBJECT = ../.Objects
 DIR_SHARED = ../Shared

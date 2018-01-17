@@ -14,17 +14,17 @@
 
   if (this_proc < 2) then
 
-    print *, iter_info % line_lead  
+    print '(a83)', iter_info % line_lead  
 
     ! Print only lines which have colon in the first column :-)
-    print *, iter_info % lines(1)
+    print '(a83)', iter_info % lines(1)
     do i=2,4
       tmp = iter_info % lines(i)
-      if( tmp(6:6) == ':') print *, iter_info % lines(i)
+      if( tmp(6:6) == ':') print '(a83)', iter_info % lines(i)
     end do
 
-    print *, iter_info % line_trail  
-    print *, ' '
+    print '(a83)', iter_info % line_trail  
+    print '(a83)', ' '
 
   end if
                  

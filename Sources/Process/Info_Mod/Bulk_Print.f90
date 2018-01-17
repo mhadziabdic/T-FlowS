@@ -14,13 +14,13 @@
 
   if (this_proc < 2) then
 
-    print *, bulk_info % line_lead  
-    print *, bulk_info % lines(1)
-    print *, bulk_info % line_sep
-    print *, bulk_info % lines(2)
-    print *, bulk_info % lines(3)
-    print *, bulk_info % line_trail  
-    print *, ' '
+    print '(a83)', bulk_info % line_lead  
+    print '(a83)', bulk_info % lines(1)
+    print '(a83)', bulk_info % line_sep
+    print '(a83)', bulk_info % lines(2)
+    print '(a83)', bulk_info % lines(3)
+    print '(a83)', bulk_info % line_trail  
+    print '(a83)', ' '
 
   end if
                  

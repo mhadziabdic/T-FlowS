@@ -29,7 +29,7 @@
   !   Start   !
   !-----------!
   write(9,'(a)') '<?xml version="1.0"?>'
-  write(9,'(a)') '<VTKFile type="UnstructuredGrid" version="0.1" ' // &
+  write(9,'(a)') '<VTKFile type="UnstructuredGrid" version="0.1" ' //  &
                  'byte_order="LittleEndian">'
   write(9,'(a)') '<UnstructuredGrid>'
   write(9,'(a,i9)',advance='no') '<Piece NumberOfPoints="', n_nodes_sub
@@ -39,12 +39,11 @@
   !   Nodes   !
   !-----------!
   write(9,'(a)') '<Points>'
-  write(9,'(a)') '<DataArray type="Float32" NumberOfComponents="3" ' // &
+  write(9,'(a)') '<DataArray type="Float32" NumberOfComponents="3" ' //  &
                  'format="ascii">'
   do n = 1, grid % n_nodes
-    if(NewN(n) /= 0) write(9, '(3E14.7)') grid % xn(n),  &
-                                          grid % yn(n),  &   
-                                          grid % zn(n)
+    if(NewN(n) /= 0) write(9, '(1PE15.7,1PE15.7,1PE15.7)')                &
+                                grid % xn(n), grid % yn(n), grid % zn(n)
   end do
   write(9,'(a)') '</DataArray>'
   write(9,'(a)') '</Points>'

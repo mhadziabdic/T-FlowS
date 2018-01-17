@@ -44,7 +44,7 @@
                       grid % n_nodes)        ! save grid for checking b.c. 
 
   call Save_Shadows  (grid, 0,            &
-                      grid % n_cells)             ! save shadows 
+                      grid % n_cells)        ! save shadows 
 
   call Save_Cns_Geo  (grid, 0,             &
                       grid % n_cells,      &
@@ -68,6 +68,11 @@
                 grid % n_faces + grid % n_sh,   &
                 grid % n_bnd_cells)      ! save grid for postprocessing
                                          ! with Fluent
+
+ ! Create output in vtu format
+  call Save_Vtu_Cells(grid, 0,         &
+                      grid % n_nodes,  &
+                      grid % n_cells)     ! save grid for postprocessing
 
   ! Create 1D file (used for channel or pipe flow) 
   call Probe_1D_Nodes(grid)

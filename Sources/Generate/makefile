@@ -136,4 +136,4 @@ $(DIR_OBJECT)/Domain_Mod.o:	$(DIR_OBJECT)/Point_Mod.o		\
 #   Explicit target.
 #---------------------
 clean:
-	rm -f $(OBJ) $(MOD) $(PROGRAM)
+	rm -f $(DIR_OBJECT)/*.o $(DIR_MODULE)/*.mod $(PROGRAM)

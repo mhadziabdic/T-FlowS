@@ -46,7 +46,7 @@ ifeq ($(FORTRAN), portland)
 endif 
 
 $(info #----------------------------------------------)
-$(info # Compiling $(PROGRAN) with compiler $(FORTRAN))
+$(info # Compiling $(PROGRAM) with compiler $(FORTRAN))
 $(info #----------------------------------------------)
 
 #------------------------------------------------------
@@ -129,4 +129,4 @@ $(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Boundary_Condition_Mod.o	\
 #   Explicit target.
 #---------------------
 clean:
-	rm -f $(OBJ) $(MOD) $(PROGRAM)
+	rm -f $(DIR_OBJECT)/*.o $(DIR_MODULE)/*.mod $(PROGRAM)

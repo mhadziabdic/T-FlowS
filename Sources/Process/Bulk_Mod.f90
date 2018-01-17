@@ -18,10 +18,12 @@
     real :: mass_in  
     real :: mass_out 
 
+    ! Fluxes in x, y and z direction
     real :: flux_x
     real :: flux_y
     real :: flux_z
 
+    ! Old fluxes in x, y and z direction
     real :: flux_x_o
     real :: flux_y_o
     real :: flux_z_o
@@ -34,6 +36,16 @@
     real :: v
     real :: w
 
+    ! Monitoring plane coordinates
+    real :: xp
+    real :: yp
+    real :: zp
+
   end type
+
+  contains
+
+  include 'Bulk_Mod/Monitoring_Planes_Areas.f90'
+  include 'Bulk_Mod/Compute_Fluxes.f90'
 
   end module

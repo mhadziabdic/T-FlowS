@@ -205,7 +205,8 @@
   call Load_Restart_Ini(grid)
 
   ! Prepare ...
-  call Compute_Geometry(grid)
+  call Compute_Face_Geometry(grid)
+  call Bulk_Mod_Monitoring_Planes_Areas(grid, bulk)
   call Find_Bad        (grid)
   if(SIMULA==LES.and.MODE==SMAG.and..NOT.restar) call NearWallCell(grid)
 
@@ -329,7 +330,7 @@
         call GradP3(grid, PP % n, p % x, p % y, p % z)
       end if
 
-      call Compute_Fluxes(grid)
+      call Bulk_Mod_Compute_Fluxes(grid, bulk, flux)
       Mres = Correct_Velocity(grid) !  project the velocities
 
       ! Temperature

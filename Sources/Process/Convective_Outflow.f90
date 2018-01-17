@@ -20,7 +20,7 @@
   integer :: c1, c2, s
 !==============================================================================!
 
-  call Compute_Fluxes(grid)
+  call Bulk_Mod_Compute_Fluxes(grid, bulk, flux)
 
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)

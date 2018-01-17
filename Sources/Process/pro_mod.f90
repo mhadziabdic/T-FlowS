@@ -86,9 +86,6 @@ module pro_mod
   ! Residuals                
   real :: errmax, res(100)  
 
-  ! Monitoring planes for each material (domain)
-  real,allocatable :: xp(:), yp(:), zp(:)
-
   !---------------------------!
   !     Solver parameters     !
   !---------------------------!

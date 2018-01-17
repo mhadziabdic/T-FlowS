@@ -1,17 +1,19 @@
 !==============================================================================!
-  subroutine Compute_Fluxes(grid)
+  subroutine Bulk_Mod_Compute_Fluxes(grid, bulk, flux)
 !------------------------------------------------------------------------------!
 !   Compute mass fluxes through whole domain.                                  !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
-  use les_mod
+! use pro_mod
+! use les_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type) :: grid
+  type(Grid_Type)               :: grid
+  type(Bulk_Type), dimension(:) :: bulk
+  real,            dimension(:) :: flux
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c1, c2, s, m
   real    :: xc1, yc1, zc1, xc2, yc2, zc2
@@ -36,22 +38,22 @@
           yc2=grid % yc(c1) + grid % dy(s) 
           zc2=grid % zc(c1) + grid % dz(s)
 
-          if((xc1 <= xp(m)).and.(xc2 > xp(m)))  &
+          if((xc1 <= bulk(m) % xp).and.(xc2 > bulk(m) % xp))  &
             bulk(m) % flux_x = bulk(m) % flux_x + Flux(s)
 
-          if((yc1 <= yp(m)).and.(yc2 > yp(m)))  &
+          if((yc1 <= bulk(m) % yp).and.(yc2 > bulk(m) % yp))  &
             bulk(m) % flux_y = bulk(m) % flux_y + Flux(s)
 
-          if((zc1 <= zp(m)).and.(zc2 > zp(m)))  &
+          if((zc1 <= bulk(m) % zp).and.(zc2 > bulk(m) % zp))  &
             bulk(m) % flux_z = bulk(m) % flux_z + Flux(s)
 
-          if((xc2 < xp(m)).and.(xc1 >= xp(m)))  &
+          if((xc2 < bulk(m) % xp).and.(xc1 >= bulk(m) % xp))  &
             bulk(m) % flux_x = bulk(m) % flux_x - Flux(s)
 
-          if((yc2 < yp(m)).and.(yc1 >= yp(m)))  &
+          if((yc2 < bulk(m) % yp).and.(yc1 >= bulk(m) % yp))  &
             bulk(m) % flux_y = bulk(m) % flux_y - Flux(s)
 
-          if((zc2 < zp(m)).and.(zc1 >= zp(m)))  &
+          if((zc2 < bulk(m) % zp).and.(zc1 >= bulk(m) % zp))  &
             bulk(m) % flux_z = bulk(m) % flux_z - Flux(s)
 
         end if ! material 1&2
@@ -64,22 +66,22 @@
           yc2=grid % yc(c1) + grid % dy(s) 
           zc2=grid % zc(c1) + grid % dz(s)
 
-          if((xc1 <= xp(m)).and.(xc2 > xp(m)))  &
+          if((xc1 <= bulk(m) % xp).and.(xc2 > bulk(m) % xp))  &
             bulk(m) % flux_x = bulk(m) % flux_x + .5*Flux(s)
 
-          if((yc1 <= yp(m)).and.(yc2 > yp(m)))  &
+          if((yc1 <= bulk(m) % yp).and.(yc2 > bulk(m) % yp))  &
             bulk(m) % flux_y = bulk(m) % flux_y + .5*Flux(s)
 
-          if((zc1 <= zp(m)).and.(zc2 > zp(m)))  &
+          if((zc1 <= bulk(m) % zp).and.(zc2 > bulk(m) % zp))  &
             bulk(m) % flux_z = bulk(m) % flux_z + .5*Flux(s)
 
-          if((xc2 < xp(m)).and.(xc1 >= xp(m)))  &
+          if((xc2 < bulk(m) % xp).and.(xc1 >= bulk(m) % xp))  &
             bulk(m) % flux_x = bulk(m) % flux_x - .5*Flux(s)
 
-          if((yc2 < yp(m)).and.(yc1 >= yp(m)))  &
+          if((yc2 < bulk(m) % yp).and.(yc1 >= bulk(m) % yp))  &
             bulk(m) % flux_y = bulk(m) % flux_y - .5*Flux(s)
 
-          if((zc2 < zp(m)).and.(zc1 >= zp(m)))  &
+          if((zc2 < bulk(m) % zp).and.(zc1 >= bulk(m) % zp))  &
             bulk(m) % flux_z = bulk(m) % flux_z - .5*Flux(s)
 
         end if ! material 1&2

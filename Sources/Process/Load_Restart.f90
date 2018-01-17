@@ -63,7 +63,7 @@
   read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
 
   ! 60 real parameters
-  read(9)     r_1,    r_2,    r_3,     xp,     yp,     zp  
+  read(9)     r_1,    r_2,    r_3,     bulk(1) % xp, bulk(1) % yp,  bulk(1) % zp  
   read(9)     r_1,    r_2,    r_3,    r_4,    r_4,    r_6             
   read(9)   ReTau,   Tref,    Cs0,   Tinf,    r_4,    r_6 
   read(9)      dt,   Time,  Kflow,    r_4,    r_5,    r_6 

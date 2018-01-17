@@ -110,12 +110,12 @@
   do m = 1, grid % n_materials
     if(this_proc  < 2)  then
       write(*,*) '# Enter the coordinates of monitoring plane: (', &
-                  xp(m), yp(m), zp(m), ' )'
+                  bulk(m) % xp, bulk(m) % yp, bulk(m) % zp, ' )'
     end if
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(line % tokens(1), *) xp(m)
-    read(line % tokens(2), *) yp(m)
-    read(line % tokens(3), *) zp(m)
+    read(line % tokens(1), *) bulk(m) % xp
+    read(line % tokens(2), *) bulk(m) % yp
+    read(line % tokens(3), *) bulk(m) % zp
   end do
 
   ! Kind of simulation

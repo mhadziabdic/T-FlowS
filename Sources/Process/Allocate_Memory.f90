@@ -34,10 +34,6 @@
 
   allocate (Scoef(grid % n_faces)); Scoef=0.
 
-  allocate (xp(grid % n_materials));    xp   =0.0
-  allocate (yp(grid % n_materials));    yp   =0.0
-  allocate (zp(grid % n_materials));    zp   =0.0
-
   ! Variables defined in par_mod.h90:
   allocate (BufInd(-grid % n_bnd_cells:-1)); BufInd=0
 

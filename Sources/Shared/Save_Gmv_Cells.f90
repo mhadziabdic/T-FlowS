@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Gmv_Cells(grid, sub, NNsub, NCsub)
+  subroutine Save_Gmv_Cells(grid, sub, n_nodes_sub, n_cells_sub)
 !------------------------------------------------------------------------------!
 ! Writes: NAME.gmv, NAME.faces.gmv, NAME.shadow.gmv                            !
 !----------------------------------[Modules]-----------------------------------!
@@ -10,7 +10,7 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: sub, NNsub, NCsub
+  integer         :: sub, n_nodes_sub, n_cells_sub
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, n
   character(len=80) :: name_out
@@ -33,7 +33,7 @@
   !-----------!
   !   Nodes   !
   !-----------!
-  write(9,*) 'nodes', NNsub
+  write(9,*) 'nodes', n_nodes_sub
 
   do n = 1, grid % n_nodes
     if(NewN(n) /= 0) write(9, '(1PE14.7)') grid % xn(n)
@@ -48,7 +48,7 @@
   !-----------!
   !   Cells   !
   !-----------!
-  write(9,*) 'cells', NCsub
+  write(9,*) 'cells', n_cells_sub
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
       if(grid % cells_n_nodes(c) == 8) then

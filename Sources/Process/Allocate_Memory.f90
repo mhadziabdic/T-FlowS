@@ -32,7 +32,9 @@
   call Work_Mod_Allocate_Real_Cells(grid, 15)
   call Work_Mod_Allocate_Real_Faces(grid,  1)
 
+  ! These two arrays (Scoef and TypeBC) should be handled in a more elegant way
   allocate (Scoef(grid % n_faces)); Scoef=0.
+  allocate (TypeBC(-grid % n_bnd_cells:grid % n_cells)); TypeBC=0 
 
   ! Variables defined in par_mod.h90:
   allocate (BufInd(-grid % n_bnd_cells:-1)); BufInd=0

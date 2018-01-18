@@ -1,6 +1,7 @@
 !==============================================================================!
   subroutine Save_Cns_Geo(grid,             &
                           sub,              &  ! subdomain
+                          n_nodes_sub,      &  ! number of nodes in the sub. 
                           n_cells_sub,      &  ! number of cells in the sub. 
                           n_faces_sub,      &  ! number of faces in the sub.
                           n_bnd_cells_sub,  &  ! number of bnd. cells in sub
@@ -17,8 +18,8 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: sub, n_cells_sub, n_faces_sub, n_bnd_cells_sub,  &
-                     n_buf_cells_sub, NCFsub
+  integer         :: sub, n_nodes_sub, n_cells_sub, n_faces_sub,  &
+                     n_bnd_cells_sub,  n_buf_cells_sub, NCFsub
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: b, c, s, n, c1, c2, count, var, subo 
   character(len=80)    :: name_out
@@ -29,6 +30,7 @@
 !   of the future releases.                                                    !
 !                                                                              !
 !   sub             - subdomain number                                         !
+!   n_nodes_sub     - number of nodes in subdomain                             !
 !   n_cells_sub     - number of cells in subdomain                             !
 !   n_faces_sub     - number of sides in subdomain, but without sides on buffer!
 !   n_bnd_cells_sub - number of physicall boundary cells in subdomain          !
@@ -52,6 +54,7 @@
   !-----------------------------------------------!
   !   Number of cells, boundary cells ans sides   !
   !-----------------------------------------------!
+  write(9) n_nodes_sub
   write(9) n_cells_sub
   write(9) n_bnd_cells_sub+n_buf_cells_sub 
   write(9) n_faces_sub+n_buf_cells_sub-NCFsub

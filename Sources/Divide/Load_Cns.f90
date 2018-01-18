@@ -26,6 +26,7 @@
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 
   ! Number of cells, boundary cells and sides
+  read(9) grid % n_nodes
   read(9) grid % n_cells
   read(9) grid % n_bnd_cells
   read(9) grid % n_faces
@@ -50,6 +51,7 @@
     read(9) grid % boundary_conditions(n) % name
   end do
 
+  ! Cell materials
   allocate (material(-grid % n_bnd_cells:grid % n_cells))
   read(9) (material(c), c =  1, grid % n_cells)
   read(9) (material(c), c = -1,-grid % n_bnd_cells,-1)
@@ -59,16 +61,18 @@
   read(9) (grid % faces_c(2,s), s = 1, grid % n_faces)
 
   ! Boundary cells
-  allocate (bcmark(-grid % n_bnd_cells-1:-1)); bcmark=0
-  allocate (CopyC(-grid % n_bnd_cells:-1));    CopyC=0
-  read(9) (bcmark(c), c=-1,-grid % n_bnd_cells, -1)
-  read(9) (CopyC(c), c=-1,-grid % n_bnd_cells, -1)
+  allocate (bcmark(-grid % n_bnd_cells-1:-1))
+  read(9) (bcmark(c), c = -1,-grid % n_bnd_cells, -1)
+
+  ! Boundary copy cells
+  allocate (CopyC(-grid % n_bnd_cells:-1))
+  read(9) (CopyC(c), c = -1,-grid % n_bnd_cells, -1)
  
   read(9) grid % n_copy
   write(*,*) '# Number of copy cells/faces: ', grid % n_copy
   allocate (CopyS(2,grid % n_copy))
-  read(9) (CopyS(1,s), s=1,grid % n_copy)
-  read(9) (CopyS(2,s), s=1,grid % n_copy)
+  read(9) (CopyS(1,s), s = 1,grid % n_copy)
+  read(9) (CopyS(2,s), s = 1,grid % n_copy)
 
   close(9)
 

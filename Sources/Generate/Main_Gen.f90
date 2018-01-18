@@ -56,7 +56,9 @@
   call Save_Shadows  (grid, 0,         &
                       grid % n_cells)     ! save shadows 
 
+  ! Save data for processing
   call Save_Cns_Geo(grid, 0,                  &
+                    grid % n_nodes,           &
                     grid % n_cells,           &
                     grid % n_faces,           &
                     grid % n_bnd_cells,  &

@@ -12,7 +12,7 @@
   type(Grid_Type) :: grid
   integer         :: this_proc  ! needed if called from Processor
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, s, n
+  integer           :: c, n, s
   character(len=80) :: name_in
 !==============================================================================!
 
@@ -26,7 +26,8 @@
   if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
 
   ! Number of cells, boundary cells and sides
-  read(9) grid % n_cells                                 
+  read(9) grid % n_nodes
+  read(9) grid % n_cells
   read(9) grid % n_bnd_cells
   read(9) grid % n_faces
   read(9) grid % n_sh     ! not used in Processor but OK
@@ -52,21 +53,20 @@
 
   ! Cell materials
   allocate (material(-grid % n_bnd_cells:grid % n_cells))
-  read(9) (material(c), c =  1, grid % n_cells)        
-  read(9) (material(c), c = -1,-grid % n_bnd_cells,-1) 
+  read(9) (material(c), c =  1, grid % n_cells)
+  read(9) (material(c), c = -1,-grid % n_bnd_cells,-1)
 
   ! Faces
   read(9) (grid % faces_c(1,s), s = 1, grid % n_faces)
   read(9) (grid % faces_c(2,s), s = 1, grid % n_faces)
 
   ! Boundary cells
-  allocate (TypeBC(-grid % n_bnd_cells:grid % n_cells)); TypeBC=0 
   allocate (bcmark(-grid % n_bnd_cells:-1))
-  read(9) (bcmark(c), c = -1, -grid % n_bnd_cells, -1) 
+  read(9) (bcmark(c), c = -1,-grid % n_bnd_cells, -1) 
 
   ! Boundary copy cells
   allocate (CopyC(-grid % n_bnd_cells:-1))
-  read(9) (CopyC(c), c = -1, -grid % n_bnd_cells, -1)   
+  read(9) (CopyC(c), c = -1,-grid % n_bnd_cells, -1)
 
   close(9)
 

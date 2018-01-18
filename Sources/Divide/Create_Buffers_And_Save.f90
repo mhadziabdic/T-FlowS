@@ -215,7 +215,9 @@
                       n_cells_sub)
 
     call Save_Cns_Geo(grid,              &
-                      sub, n_cells_sub,  &
+                      sub,               &
+                      n_nodes_sub,       &
+                      n_cells_sub,       &
                       n_faces_sub,       &
                       n_bnd_cells_sub,   &
                       n_buff_sub,        &

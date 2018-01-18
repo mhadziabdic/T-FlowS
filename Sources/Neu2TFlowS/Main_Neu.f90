@@ -40,13 +40,16 @@
                       grid % n_faces,     &
                       grid % n_bnd_cells)
 
+  ! Saves a file for checking b.c.
   call Save_Gmv_Faces(grid, 0,            &
-                      grid % n_nodes)        ! save grid for checking b.c. 
+                      grid % n_nodes)
 
   call Save_Shadows  (grid, 0,            &
-                      grid % n_cells)        ! save shadows 
+                      grid % n_cells)
 
+  ! Save files for processing
   call Save_Cns_Geo  (grid, 0,             &
+                      grid % n_nodes,      &
                       grid % n_cells,      &
                       grid % n_faces,      &
                       grid % n_bnd_cells,  &

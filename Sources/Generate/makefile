@@ -64,8 +64,11 @@ ifeq ($(FORTRAN), portland)
   OPT_LINK = $(OPT_COMP)
 endif 
 
-$(info #---------------------------------------------------)
+$(info #===================================================)
 $(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN))
+$(info #---------------------------------------------------)
+$(info # Usage:                                            )
+$(info #   make <FORTRAN=gnu/intel/portaln> <DEBUG=yes/no> )
 $(info #---------------------------------------------------)
 
 #------------------------------------------------------

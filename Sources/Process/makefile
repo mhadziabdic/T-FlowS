@@ -78,9 +78,12 @@ ifeq ($(MPI), yes)
   FC = mpif90
 endif
 
-$(info #---------------------------------------------------)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN))
-$(info #---------------------------------------------------)
+$(info #================================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)             )
+$(info #----------------------------------------------------------------)
+$(info # Usage:                                                         )
+$(info #   make <FORTRAN=gnu/intel/portaln> <DEBUG=yes/no> <MPI=yes/no> )
+$(info #----------------------------------------------------------------)
 
 #------------------------------------------------------
 #   List of sources for modules and functions

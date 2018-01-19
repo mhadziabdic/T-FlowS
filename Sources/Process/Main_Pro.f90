@@ -14,7 +14,7 @@
   use Bulk_Mod
   use Var_Mod
   use Solvers_Mod, only: D
-  use Parameters_Mod
+  use Constants_Pro_Mod
   use Info_Mod
   use User_Mod
 !------------------------------------------------------------------------------!
@@ -540,6 +540,7 @@
   call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
   name_save = 'savexxxxxx'
   write(name_save(5:10),'(I6.6)') n
+  call Save_Gmv_Results(grid, name_save)
   call SavParView(this_proc, grid % n_cells, name_save, Nstat, n)
   call Wait
 

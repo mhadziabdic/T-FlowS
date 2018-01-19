@@ -9,6 +9,7 @@
 module les_mod
 
   use Var_Mod
+  use Turbulence_Mod
 
   implicit none 
 
@@ -19,15 +20,6 @@ module les_mod
 
   ! Used in Dynamic Smgaorinsky model 
   real,allocatable :: Aval_dif(:)
-
-!----- Fluctuating values
-!  type(Var_Type) :: uu, vv, ww, uv, uw, vw
-!  type(Var_Type) :: TT, uT, vT, wT
-
-  type(Var_Type) :: uuu, uuv, uuw
-  type(Var_Type) :: vvu, vvv, vvw
-  type(Var_Type) :: wwu, wwv, www
-  type(Var_Type) :: uwu, uwv, uww
 
   real,allocatable :: Shear(:), ShearMean(:), Ksgs(:), TauWall(:), VISt_mean(:)
   real,allocatable :: Shear_r(:), ShearMean_r(:), WALEv(:)

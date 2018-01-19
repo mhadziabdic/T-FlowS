@@ -12,8 +12,8 @@
   character*(*) :: ext
   character*(*) :: name_out
 !-----------------------------------[Locals]-----------------------------------!
-  integer   :: c
-  character :: numb*4
+  integer          :: c
+  character(len=4) :: numb
 !==============================================================================!
 
   name_out = name

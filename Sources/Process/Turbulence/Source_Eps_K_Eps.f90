@@ -20,7 +20,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Parameters_Mod
+  use Constants_Pro_Mod
   use Work_Mod, only: shear_x => r_cell_01,  &
                       shear_y => r_cell_02,  &
                       shear_z => r_cell_03           

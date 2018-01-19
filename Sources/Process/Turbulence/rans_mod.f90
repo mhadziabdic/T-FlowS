@@ -10,6 +10,7 @@
   module rans_mod
 
   use Var_Mod
+  use Turbulence_Mod
 
   implicit none
 
@@ -20,20 +21,6 @@
   type(Var_Type) :: f22
   type(Var_Type) :: vis
 
-  ! Reynolds stresses
-  type(Var_Type) :: uu
-  type(Var_Type) :: vv
-  type(Var_Type) :: ww
-  type(Var_Type) :: uv
-  type(Var_Type) :: uw
-  type(Var_Type) :: vw
- 
-  ! Temperature fluctuations
-  type(Var_Type) :: tt
-  type(Var_Type) :: ut
-  type(Var_Type) :: vt
-  type(Var_Type) :: wt
- 
   ! Constants for the k-eps model:
   real :: Ce1, Ce2, Ce3, Cmu, Cmu25, Cmu75, kappa, Elog, Zo
  

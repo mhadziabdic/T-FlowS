@@ -103,7 +103,7 @@ SRC_MOD =  allp_mod.f90			\
            Tokenizer_Mod.f90
 
 # Sources for modules in the local directory
-SRC_MOD += Parameters_Mod.f90		\
+SRC_MOD += Constants_Pro_Mod.f90	\
            Info_Mod.f90 		\
            Bulk_Mod.f90 		\
            Var_Mod.f90			\
@@ -113,7 +113,8 @@ SRC_MOD += Parameters_Mod.f90		\
            User_Mod.f90
 
 # Sources for modules in sub-directories
-SRC_MOD += les_mod.f90			\
+SRC_MOD += Turbulence_Mod.f90		\
+           les_mod.f90			\
            rans_mod.f90			\
 
 # Sources for all functions are obtained by a shell command

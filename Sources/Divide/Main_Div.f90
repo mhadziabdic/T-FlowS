@@ -30,10 +30,10 @@
   read(line % tokens(1), *)  name
 
   ! Load the finite volume grid
-  call Load_Cns(grid, 0)
-  call Load_Gmv(grid)
-  call Load_Geo(grid, 0)
-  call Load_Gmv_Faces(grid)
+  call Load_Cns           (grid, 0)
+  call Allocate_Additional(grid)
+  call Load_Geo           (grid, 0)
+  call Load_Gmv_Faces     (grid)
 
   ! Initialize processor numbers
   do c = 1, grid % n_cells

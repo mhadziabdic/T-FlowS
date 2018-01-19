@@ -33,6 +33,7 @@
   read(9) grid % n_sh
 
   ! Allocate memory =--> carefull, there is no checking!
+  call Grid_Mod_Allocate_Nodes(grid, grid % n_nodes)
   call Grid_Mod_Allocate_Cells(grid, grid % n_cells, grid % n_bnd_cells) 
   call Grid_Mod_Allocate_Faces(grid, grid % n_faces, grid % n_sh) 
 
@@ -51,7 +52,13 @@
     read(9) grid % boundary_conditions(n) % name
   end do
 
-  ! Cell materials
+  ! Cells 
+  read(9) (grid % cells_n_nodes(c), c = 1, grid % n_cells)
+  read(9) ((grid % cells_n(n,c),              &
+            n = 1, grid % cells_n_nodes(c)),  &
+            c = 1, grid % n_cells)
+
+  ! Cells' materials
   allocate (material(-grid % n_bnd_cells:grid % n_cells))
   read(9) (material(c), c =  1, grid % n_cells)
   read(9) (material(c), c = -1,-grid % n_bnd_cells,-1)

@@ -37,9 +37,9 @@
 !   n_buf_cells_sub - number of buffer boundary faces in subdomain             !
 !------------------------------------------------------------------------------!
 
-  allocate(iwork(-n_buf_cells_sub-grid % n_bnd_cells:grid % n_faces,0:2)); 
+  allocate(iwork(-n_buf_cells_sub-grid % n_bnd_cells:(grid % n_cells*8), 0:2)) 
   iwork=0
-  allocate(work(grid % n_faces));           
+  allocate(work(grid % n_faces))           
   work=0
 
   !----------------------!
@@ -79,6 +79,30 @@
   !-----------! 
   !   Cells   ! 
   !-----------! 
+
+  ! Cells' nodes
+  count=0
+  do c = 1, grid % n_cells
+    if(NewC(c) /= 0) then
+      count=count+1
+      iwork(count,1) = grid % cells_n_nodes(c)
+    end if
+  end do 
+  write(9) (iwork(c,1), c=1,count)
+
+  ! Cells' nodes
+  count=0
+  do c = 1, grid % n_cells
+    if(NewC(c) /= 0) then
+      do n = 1, grid % cells_n_nodes(c)
+        count=count+1
+        iwork(count,1) = NewN(grid % cells_n(n,c))
+      end do
+    end if
+  end do 
+  write(9) (iwork(c,1), c=1,count)
+
+  ! Cells' materials inside the domain
   count=0
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
@@ -88,7 +112,7 @@
   end do 
   write(9) (iwork(c,1), c=1,count)
 
-  ! Physicall cells
+  ! Materials on physicall boundary cells
   count=0
   do c = -1,-grid % n_bnd_cells, -1
     if(NewC(c) /= 0) then
@@ -197,9 +221,25 @@
   open(9, file=name_out, form='unformatted')
   write(*, *) '# Now creating the file:', trim(name_out)
 
-  !---------------------------------!
-  !     cell center coordinates     !
-  !---------------------------------!
+  !----------------------!
+  !   Node coordinates   !
+  !----------------------!
+  do var = 1, 3
+    count=0
+    do n=1,grid % n_nodes
+      if(NewN(n)  > 0) then
+        count=count+1
+        if(var == 1) work(count) = grid % xn(n)
+        if(var == 2) work(count) = grid % yn(n)
+        if(var == 3) work(count) = grid % zn(n)
+      end if
+    end do 
+    write(9) (work(n), n=1,count)
+  end do
+
+  !-----------------------------!
+  !   Cell center coordinates   !
+  !-----------------------------!
   do var = 1, 3
     count=0
     do c=1,grid % n_cells

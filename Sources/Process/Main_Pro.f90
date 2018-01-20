@@ -30,30 +30,6 @@
 !---------------------------------[Interfaces]---------------------------------!
   interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine NewUVW(grid, var, Ui, dUidi, dUidj, dUidk,  &
-                      Si, Sj, Sk, Di, Dj, Dk, Hi, dUjdi, dUkdi) 
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      use all_mod
-      use pro_mod
-      use Grid_Mod
-      implicit none
-      type(Grid_Type) :: grid
-      integer         :: var
-      type(Var_Type)  :: Ui
-      real            :: dUidi(-grid % n_bnd_cells:grid % n_cells),  &
-                         dUidj(-grid % n_bnd_cells:grid % n_cells),  &
-                         dUidk(-grid % n_bnd_cells:grid % n_cells)
-      real            :: Si(grid % n_faces),  &
-                         Sj(grid % n_faces),  &
-                         Sk(grid % n_faces) 
-      real            :: Di(grid % n_faces),  &
-                         Dj(grid % n_faces),  &
-                         Dk(grid % n_faces) 
-      real            :: Hi   (-grid % n_bnd_cells:grid % n_cells),  &
-                         dUjdi(-grid % n_bnd_cells:grid % n_cells),  &
-                         dUkdi(-grid % n_bnd_cells:grid % n_cells) 
-    end subroutine
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
     subroutine Save_Gmv_Results(grid, namAut)  
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
       use all_mod

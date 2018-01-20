@@ -22,7 +22,7 @@
 !==============================================================================!  
 
   if(this_proc  < 2)                                                     &
-  print *, '# Now searching for corresponding wall cells!'
+  print *, '# Searching for corresponding wall cells!'
 
   nearest_cell = 0
   near = 0

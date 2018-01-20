@@ -21,9 +21,9 @@
   !   Create .gmv file   !
   !                      !
   !----------------------!
-  call Name_File(sub, name_out, '.gmv', len_trim('.gmv'))
+  call Name_File(sub, name_out, '.gmv')
   open(9, file=name_out)
-  write(6, *) '# Now creating the file:', trim(name_out)
+  write(6, *) '# Creating the file:', trim(name_out)
 
   !-----------!
   !   Start   !

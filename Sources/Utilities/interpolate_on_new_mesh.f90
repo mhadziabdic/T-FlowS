@@ -59,7 +59,7 @@
 
   answer = name
   naOut = answer
-  call Name_File(name, naOut, '.xyz', len_trim('.xyz'))
+  call Name_File(name, naOut, '.xyz')
 
   answer = name
   namU = answer

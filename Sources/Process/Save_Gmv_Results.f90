@@ -34,9 +34,9 @@
   !   Create .gmv results file   !
   !                              !
   !------------------------------!
-  call Name_File(this_proc, name_out, '.gmv', len_trim('.gmv'))
+  call Name_File(this_proc, name_out, '.gmv')
   open(9, file=name_out)
-  print *, '# Now creating the file:', trim(name_out)
+  print *, '# Creating the file:', trim(name_out)
 
   !-----------!
   !   Start   !

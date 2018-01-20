@@ -31,7 +31,7 @@
 
   if(n_proc == 0) return
 
-  call Name_File(this_proc, name_in, '.buf', len_trim('.buf'))
+  call Name_File(this_proc, name_in, '.buf')
   open(9, file=name_in)
   if(this_proc < 2) print *, '# Now reading the file:', name_in
 

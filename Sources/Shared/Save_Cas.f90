@@ -24,7 +24,7 @@
   !   Create .cas file   !
   !                      !
   !----------------------!
-  call Name_File(sub, name_out, '.cas', len_trim('.cas'))
+  call Name_File(sub, name_out, '.cas')
   open(9, file=name_out)
   print *, '# Creating the file:', trim(name_out)
 

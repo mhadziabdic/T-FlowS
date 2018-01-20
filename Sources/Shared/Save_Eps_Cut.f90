@@ -47,7 +47,7 @@
   name_eps = problem_name
   name_eps(len_trim(problem_name)+1:len_trim(problem_name)+6) = '. .eps'
   name_eps(len_trim(problem_name)+2:len_trim(problem_name)+2) = dir
-  write(*, *) '# Now creating the file:', trim(name_eps)
+  write(*, *) '# Creating the file:', trim(name_eps)
 
   if(dir == 'x') then
     xmax=maxval(grid % yn(1:grid % n_nodes))

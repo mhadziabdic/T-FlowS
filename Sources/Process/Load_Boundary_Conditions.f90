@@ -35,7 +35,7 @@
   name_bou = problem_name
   name_bou(len_trim(problem_name)+1:len_trim(problem_name)+4) = '.bnd'
   open(9, file=name_bou)
-  if(this_proc < 2) print *, '# Now reading the file:', name_bou
+  if(this_proc < 2) print *, '# Reading the file:', name_bou
 
   !-------------------------!
   !   Phisical properties   !
@@ -395,7 +395,7 @@
     ! Boundary condition is prescribed in a file 
     else
       open(9, file=name_prof(n))
-      if(this_proc < 2) print *, '# Now reading the file:', name_prof(n)
+      if(this_proc < 2) print *, '# Reading the file:', name_prof(n)
       call Tokenizer_Mod_Read_Line(9)
       read(line % tokens(1),*) n_points                  ! number of points
       call Tokenizer_Mod_Read_Line(9)

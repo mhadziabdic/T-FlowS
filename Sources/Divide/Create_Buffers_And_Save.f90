@@ -47,9 +47,9 @@
   !-------------------------------!
   do sub = 1, n_sub
 
-    call Name_File(sub, name_out, '.buf', len_trim('.buf'))
+    call Name_File(sub, name_out, '.buf')
     open(9, file=name_out)
-    write(*, *) '# Now creating the file:', trim(name_out)
+    print *, '# Creating the file:', trim(name_out)
 
     write(9,'(A20)') '#------------------#'
     write(9,'(A20)') '#                  #'
@@ -124,18 +124,18 @@
       end if
     end do
 
-    print *, 'Now saving subdomain ', sub, ' with:'
-    print *, n_cells_sub, ' cells'
-    print *, n_nodes_sub, ' nodes' 
-    print *, n_faces_sub, ' sides' 
-    print *, n_bnd_cells_sub, ' physical boundary cells' 
+    print *, '# Saving subdomain ', sub, ' with:'
+    print *, '# ', n_cells_sub, ' cells'
+    print *, '# ', n_nodes_sub, ' nodes' 
+    print *, '# ', n_faces_sub, ' sides' 
+    print *, '# ', n_bnd_cells_sub, ' physical boundary cells' 
 
     !--------------------!
     !   Create buffers   !
     !--------------------!
     n_buff_sub = 0
     NCFsub = 0
-    write(9,'(A30)') '# Number of physical b. cells:'
+    write(9,'(A30)') '# Number of physical boundary cells:'
     write(9,'(I8)')  n_bnd_cells_sub   
     do subo=1,n_sub
       if(subo /= sub) then
@@ -237,7 +237,7 @@
     print *, '# n_faces_sub   =', n_faces_sub
     print *, '# n_bnd_cells_sub =', n_bnd_cells_sub
 
-    print *, '# ====================================' 
+    print *, '#=====================================' 
     print *, '# Subdomain   ', sub
     print *, '# Buffer size ', n_buff_sub
     do subo=1,n_sub
@@ -248,7 +248,7 @@
           n_bnd_cells_sub+NBBe(subo) 
       end if 
     end do ! for subo
-    print *, '------------------------------------' 
+    print *, '#-----------------------------------' 
 
   end do   ! through subdomains
 
@@ -290,7 +290,7 @@
       end if
     end do
   end do
-  print *, 'Number of sides: ', grid % n_faces, n_faces_sub
+  print *, '# Number of faces: ', grid % n_faces, n_faces_sub
 
   ! It is not sorting nodes ... is it good?  I doubt
   call Grid_Mod_Sort_Cells_By_Index(grid, NewC(1), grid % n_cells)

@@ -69,8 +69,7 @@
                 grid % n_nodes,                 &
                 grid % n_cells,                 &
                 grid % n_faces + grid % n_sh,   &
-                grid % n_bnd_cells)      ! save grid for postprocessing
-                                         ! with Fluent
+                grid % n_bnd_cells)
 
  ! Create output in vtu format
   call Save_Vtu_Cells(grid, 0,         &

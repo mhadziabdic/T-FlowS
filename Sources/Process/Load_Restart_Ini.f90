@@ -88,9 +88,9 @@
   !-----------------------!
   !   Read restart file   !
   !-----------------------!
-  call Name_File(this_proc, name_in, '.restart', len_trim('.restart') )
-  open(9, file=name_in, FORM='unformatted')
-  write(6, *) '# Now reading the file:', name_in
+  call Name_File(this_proc, name_in, '.restart')
+  open(9, file=name_in, form='unformatted')
+  write(6, *) '# Reading the file:', name_in
 
   ! Version
   read(9) version ! version

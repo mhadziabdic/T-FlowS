@@ -24,7 +24,7 @@
   name_in(len_trim(problem_name)+1:len_trim(problem_name)+4) = '.neu'
 
   open(9,file=name_in)
-  print *, '# Now reading the file: ', name_in
+  print *, '# Reading the file: ', trim(name_in)
 
   ! Skip first 6 lines
   do i = 1, 6

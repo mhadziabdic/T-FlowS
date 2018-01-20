@@ -20,10 +20,10 @@
   !     Read the file with the    !
   !   connections between cells   !
   !-------------------------------!
-  call Name_File(this_proc, name_in, '.cns', len_trim('.cns'))  
+  call Name_File(this_proc, name_in, '.cns')  
 
   open(9, file=name_in,form='unformatted')
-  if(this_proc < 2) print *, '# Now reading the file:', name_in
+  if(this_proc < 2) print *, '# Reading the file:', name_in
 
   ! Number of cells, boundary cells and sides
   read(9) grid % n_nodes

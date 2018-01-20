@@ -290,7 +290,7 @@
 
   allocate(face_copy(grid % n_faces)); face_copy=0
 
-  print *, 'Number of boundary conditions: ', grid % n_boundary_conditions
+  print *, '# Number of boundary conditions: ', grid % n_boundary_conditions
 
 2 n_per = 0 
   print *, '#======================================================'

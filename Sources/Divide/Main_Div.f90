@@ -25,7 +25,7 @@
 
   call Logo_Div
 
-  write(*,'(A41)') '# Input problem name: (without extension)'
+  print *, '# Input problem name: (without extension)'
   call Tokenizer_Mod_Read_Line(5)  
   read(line % tokens(1), *)  problem_name
 

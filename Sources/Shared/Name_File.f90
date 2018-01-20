@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Name_File(sub, name_out, ext, lext)
+  subroutine Name_File(sub, name_out, ext)
 !------------------------------------------------------------------------------!
 !   Creates the file name depending on the subdomain and file type.            !
 !------------------------------------------------------------------------------!
@@ -8,26 +8,29 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer       :: sub, lext
-  character*(*) :: ext
-  character*(*) :: name_out
+  integer           :: sub
+  character(len=*)  :: name_out
+  character(len=*)  :: ext
 !-----------------------------------[Locals]-----------------------------------!
-  integer          :: c
-  character(len=4) :: numb
+  integer          :: lext
+  character(len=5) :: num_proc  ! processor number as a string
+  character(len=7) :: num_time  ! time step number as a string
 !==============================================================================!
 
+  ! Take the extension length
+  lext = len_trim(ext)
+
+  ! Set the stem to problem name
   name_out = problem_name
 
-  if(sub == 0) then
-    name_out(len_trim(problem_name)+1:len_trim(problem_name)+1+lext-1) = ext(1:lext) 
-  else
-    write(numb,'(I4)') sub
-    write(name_out(len_trim(problem_name)+1:len_trim(problem_name)+5),'(A5)') '-0000' 
-    do c=1,4
-      if( numb(c:c) >= '0' .and. numb(c:c) <= '9' )                 &
-        name_out(len_trim(problem_name)+1+c:len_trim(problem_name)+1+c) = numb(c:c)
-    end do
-    name_out(len_trim(problem_name)+6:len_trim(problem_name)+6+lext-1) = ext(1:lext) 
+  ! For parallel runs, add processor number
+  if(sub > 0) then
+    write(num_proc,'(i5.5)') sub
+    write(name_out(len_trim(name_out)+1:len_trim(name_out)+3),'(a3)') '-pu' 
+    write(name_out(len_trim(name_out)+1:len_trim(name_out)+5),'(a5)') num_proc
   end if 
+
+  ! Add file extension
+  name_out(len_trim(name_out)+1:len_trim(name_out)+lext) = ext(1:lext) 
 
   end subroutine

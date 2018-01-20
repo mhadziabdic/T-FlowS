@@ -23,9 +23,8 @@
   real :: Correct_Velocity
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: i, m, n, Ndtt_temp
-  real              :: Mres, CPUtim
-  real              :: wall_time_start, wall_time_current
-  character(len=10) :: name_save
+  real              :: mres, wall_time_start, wall_time_current
+  character(len=80) :: name_save
   logical           :: restar, multiple 
 !---------------------------------[Interfaces]---------------------------------!
   interface
@@ -88,8 +87,6 @@
   !------------------------------!
   call StaPar()
 
-  call Timex(CPUtim) 
-
   !--------------------------------------------!
   !   Open the command file, initialize line   !
   !    count to zero, and read problem name    ! 
@@ -131,7 +128,7 @@
   call Load_Restart(grid, restar)
 
   if(restar) then
-    call Load_Boundary_Conditions(grid, .FALSE.)
+    call Load_Boundary_Conditions(grid, .false.)
   end if
 
   ! Read command file (T-FlowS.cmn) 
@@ -139,7 +136,7 @@
 
   ! Initialize variables
   if(.not. restar) then
-    call Load_Boundary_Conditions(grid, .TRUE.)
+    call Load_Boundary_Conditions(grid, .true.)
     call Initialize_Variables(grid)
     call Wait
   end if   
@@ -148,10 +145,10 @@
   call Load_Ini(grid)
 
   ! Check if there are more materials
-  multiple = .FALSE.
+  multiple = .false.
   i = StateMat(1)
   do m=1,grid % n_materials
-    if(StateMat(m) /= i) multiple = .TRUE.
+    if(StateMat(m) /= i) multiple = .true.
   end do
 
   ! Loading data from previous computation   
@@ -165,7 +162,7 @@
   if(SIMULA==LES.and.MODE==SMAG.and..NOT.restar) call NearWallCell(grid)
 
   ! Prepare the gradient matrix for velocities
-  call Compute_Gradient_Matrix(grid, .TRUE.) 
+  call Compute_Gradient_Matrix(grid, .true.) 
 
   ! Prepare matrix for fractional step method
   if(ALGOR  ==  FRACT) then 
@@ -236,15 +233,15 @@
       end if
     
       ! Compute velocity gradients
-      call GraPhi(grid, U % n, 1, U % x, .TRUE.)
-      call GraPhi(grid, U % n, 2, U % y, .TRUE.)
-      call GraPhi(grid, U % n, 3, U % z, .TRUE.)
-      call GraPhi(grid, V % n, 1, V % x, .TRUE.)
-      call GraPhi(grid, V % n, 2, V % y, .TRUE.)
-      call GraPhi(grid, V % n, 3, V % z, .TRUE.)
-      call GraPhi(grid, W % n, 1, W % x, .TRUE.)
-      call GraPhi(grid, W % n, 2, W % y, .TRUE.)
-      call GraPhi(grid, W % n, 3, W % z, .TRUE.)
+      call GraPhi(grid, U % n, 1, U % x, .true.)
+      call GraPhi(grid, U % n, 2, U % y, .true.)
+      call GraPhi(grid, U % n, 3, U % z, .true.)
+      call GraPhi(grid, V % n, 1, V % x, .true.)
+      call GraPhi(grid, V % n, 2, V % y, .true.)
+      call GraPhi(grid, V % n, 3, V % z, .true.)
+      call GraPhi(grid, W % n, 1, W % x, .true.)
+      call GraPhi(grid, W % n, 2, W % y, .true.)
+      call GraPhi(grid, W % n, 3, W % z, .true.)
 
       ! U velocity component
       call NewUVW(grid, 1, U,                             &
@@ -328,17 +325,17 @@
 
         if(SIMULA==EBM) call Time_And_Length_Scale(grid)
 
-        call GraPhi(grid, U % n, 1, U % x,.TRUE.)    ! dU/dx
-        call GraPhi(grid, U % n, 2, U % y,.TRUE.)    ! dU/dy
-        call GraPhi(grid, U % n, 3, U % z,.TRUE.)    ! dU/dz
+        call GraPhi(grid, U % n, 1, U % x,.true.)    ! dU/dx
+        call GraPhi(grid, U % n, 2, U % y,.true.)    ! dU/dy
+        call GraPhi(grid, U % n, 3, U % z,.true.)    ! dU/dz
  
-        call GraPhi(grid, V % n, 1, V % x,.TRUE.)    ! dV/dx
-        call GraPhi(grid, V % n, 2, V % y,.TRUE.)    ! dV/dy
-        call GraPhi(grid, V % n, 3, V % z,.TRUE.)    ! dV/dz
+        call GraPhi(grid, V % n, 1, V % x,.true.)    ! dV/dx
+        call GraPhi(grid, V % n, 2, V % y,.true.)    ! dV/dy
+        call GraPhi(grid, V % n, 3, V % z,.true.)    ! dV/dz
 
-        call GraPhi(grid, W % n, 1, W % x,.TRUE.)    ! dW/dx
-        call GraPhi(grid, W % n, 2, W % y,.TRUE.)    ! dW/dy 
-        call GraPhi(grid, W % n, 3, W % z,.TRUE.)    ! dW/dz
+        call GraPhi(grid, W % n, 1, W % x,.true.)    ! dW/dx
+        call GraPhi(grid, W % n, 2, W % y,.true.)    ! dW/dy 
+        call GraPhi(grid, W % n, 3, W % z,.true.)    ! dW/dz
 
         call Compute_Stresses(grid, 6, uu)
         call Compute_Stresses(grid, 7, vv)
@@ -442,11 +439,12 @@
     end do
 
     ! Regular backup savings, each 1000 time steps            
-    if(mod(n,1000) == 0) then                                
+    if(mod(n,10) == 0) then                                
       Ndtt_temp = Ndtt
       Ndtt      = n
-      name_save = 'savexxxxxx'
-      write(name_save(5:10),'(I6.6)') n
+      name_save = name
+      write(name_save(len_trim(name)+1:len_trim(name)+3), '(a3)'),   '-t='
+      write(name_save(len_trim(name)+4:len_trim(name)+9), '(i6.6)'), n
       call Save_Restart(grid, name_save)                          
       Ndtt = Ndtt_temp
     end if   
@@ -465,8 +463,10 @@
       if(this_proc < 2) close(1, status='delete')
       Ndtt_temp = Ndtt
       Ndtt      = n
-      name_save = 'savexxxxxx'
-      write(name_save(5:10),'(I6.6)') n
+      name_save = name
+      write(name_save(len_trim(name)+1:len_trim(name)+3), '(a3)'),   '-t='
+      write(name_save(len_trim(name)+4:len_trim(name)+9), '(i6.6)'), n
+      call Save_Restart(grid, name_save)                          
       call Save_Restart    (grid, name_save)                          
       call Save_Gmv_Results(grid, name_save)
       call Save_Dat_Results(grid, name_save)
@@ -492,8 +492,9 @@
   call Save_Gmv_Results (grid)         ! write results in GMV format. 
   call Save_Dat_Results (grid)         ! write results in FLUENT dat format. 
   call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
-  name_save = 'savexxxxxx'
-  write(name_save(5:10),'(I6.6)') n
+  name_save = name
+  write(name_save(len_trim(name)+1:len_trim(name)+3), '(a3)'),   '-t='
+  write(name_save(len_trim(name)+4:len_trim(name)+9), '(i6.6)'), n
   call Save_Gmv_Results(grid, name_save)
   call SavParView(this_proc, grid % n_cells, name_save, Nstat, n)
   call Wait

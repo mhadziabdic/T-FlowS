@@ -17,7 +17,7 @@ module all_mod
   !----------------------------------------!
   !   Variables for ease of input/output   !
   !----------------------------------------!
-  character(len=80)  :: name
+  character(len=80)  :: problem_name
 
   !-------------------------------------------!
   !   Logical quantities desribing the grid   !

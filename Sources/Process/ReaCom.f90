@@ -67,8 +67,8 @@
   end do
 
   ! Find the monitoring cells
-  nammon=name 
-  nammon(len_trim(name)+1:len_trim(name)+10)="-monit.000"
+  nammon=problem_name 
+  nammon(len_trim(problem_name)+1:len_trim(problem_name)+10)='-monit.000'
   l=len_trim(nammon) 
   do j = 1, Nmon
     Mres(j)=HUGE

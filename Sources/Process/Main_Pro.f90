@@ -66,7 +66,7 @@
 
   if(this_proc < 2) print *, '# Input problem name:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)  
-  read(line % tokens(1), '(A80)')  name
+  read(line % tokens(1), '(A80)')  problem_name
 
   call Wait   
 
@@ -413,9 +413,11 @@
     inquire(file='save_now', exist=save_now)
 
     ! Form the file name
-    name_save = name
-    write(name_save(len_trim(name)+1:len_trim(name)+3), '(a3)'),   '-ts'
-    write(name_save(len_trim(name)+4:len_trim(name)+9), '(i6.6)'), n
+    name_save = problem_name
+    write(name_save(len_trim(problem_name)+1:                    &
+                    len_trim(problem_name)+3), '(a3)'),   '-ts'
+    write(name_save(len_trim(problem_name)+4:                    &
+                    len_trim(problem_name)+9), '(i6.6)'), n
 
     ! Is it time to save the restart file?
     if(save_now .or. exit_now .or. mod(n,10) == 0) then

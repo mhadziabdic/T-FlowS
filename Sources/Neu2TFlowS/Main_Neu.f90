@@ -16,7 +16,7 @@
   print *, '#======================================================'
   print *, '# Enter the Fluent''s (*.NEU) file name (without ext.):'
   print *, '#------------------------------------------------------'
-  read(*,*) name
+  read(*,*) problem_name
 
   call Load_Neu        (grid)
   call Grid_Topology   (grid)

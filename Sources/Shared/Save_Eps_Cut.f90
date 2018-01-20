@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use allp_mod
-  use all_mod, only: name
+  use all_mod, only: problem_name
   use gen_mod
   use Tokenizer_Mod
   use Grid_Mod
@@ -44,9 +44,9 @@
   !   Create .eps file   !
   !                      !
   !----------------------!
-  name_eps = name
-  name_eps(len_trim(name)+1:len_trim(name)+6) = '. .eps'
-  name_eps(len_trim(name)+2:len_trim(name)+2) = dir
+  name_eps = problem_name
+  name_eps(len_trim(problem_name)+1:len_trim(problem_name)+6) = '. .eps'
+  name_eps(len_trim(problem_name)+2:len_trim(problem_name)+2) = dir
   write(*, *) '# Now creating the file:', trim(name_eps)
 
   if(dir == 'x') then

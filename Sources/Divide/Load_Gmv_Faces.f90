@@ -17,8 +17,8 @@
   character(len=80) :: dum_s, name_in
 !==============================================================================!
 
-  name_in = name
-  name_in(len_trim(name)+1:len_trim(name)+10) = '.faces.gmv'
+  name_in = problem_name
+  name_in(len_trim(problem_name)+1:len_trim(problem_name)+10) = '.faces.gmv'
   print *, '# Now reading the file:', name_in
   open(9, file=name_in)
 

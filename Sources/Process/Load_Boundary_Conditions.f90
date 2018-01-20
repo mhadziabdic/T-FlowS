@@ -32,8 +32,8 @@
   !--------------------------------------------!
   !   Read the file with boundary conditions   !
   !--------------------------------------------!
-  name_bou = name
-  name_bou(len_trim(name)+1:len_trim(name)+4) = '.bnd'
+  name_bou = problem_name
+  name_bou(len_trim(problem_name)+1:len_trim(problem_name)+4) = '.bnd'
   open(9, file=name_bou)
   if(this_proc < 2) print *, '# Now reading the file:', name_bou
 

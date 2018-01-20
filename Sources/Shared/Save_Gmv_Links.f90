@@ -9,7 +9,7 @@
 !   can be visualised  more easily in GMV.                                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod, only: name
+  use all_mod, only: problem_name
   use div_mod, only: BuSeIn, BuReIn
   use gen_mod, only: NewN, NewC, NewS
   use Grid_Mod
@@ -29,9 +29,9 @@
   !   Create .gmv file   !
   !                      !
   !----------------------!
-  name_out = name         
+  name_out = problem_name         
 
-  call Name_File(sub, name_out, '.ln.gmv', len_trim('.ln.gmv'))
+  call Name_File(sub, name_out, '.links.gmv', len_trim('.links.gmv'))
   open(9, file=name_out)
   write(6, *) '# Now creating the file:', trim(name_out)
 

@@ -22,9 +22,9 @@
 !==============================================================================!
 
   ! Store the name
-  store_name = name     
+  store_name = problem_name     
 
-  name = name_save  
+  problem_name = name_save  
 
   call Wait 
 
@@ -210,6 +210,6 @@
   close(9)
 
   ! Restore the name
-  name = store_name
+  problem_name = store_name
 
   end subroutine

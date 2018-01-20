@@ -82,8 +82,8 @@
   endif
 
   ! Save the name
-  answer = name
-  name = name_in
+  answer = problem_name
+  problem_name = name_in
 
   !-----------------------!
   !   Read restart file   !
@@ -305,7 +305,7 @@
   close(9)
 
   ! Restore the name
-  name = answer 
+  problem_name = answer 
 
   print *, 'Leaving Load_Restart_Ini.f90'
 

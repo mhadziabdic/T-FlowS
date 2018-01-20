@@ -85,8 +85,8 @@
   !--------------------!
   !   Create 1D file   !
   !--------------------!
-  name_prob = name
-  name_prob(len_trim(name)+1:len_trim(name)+3) = '.1D'
+  name_prob = problem_name
+  name_prob(len_trim(problem_name)+1:len_trim(problem_name)+3) = '.1D'
   write(6, *) 'Now creating the file:', trim(name_prob)
   open(9, file=name_prob)
   ! Write the number of probes 

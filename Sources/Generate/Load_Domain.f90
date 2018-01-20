@@ -35,10 +35,10 @@
   print *, '# Input problem name: (without extension)'
   print *, '#----------------------------------------'
   call Tokenizer_Mod_Read_Line(5) 
-  read(line % tokens(1), *) name
+  read(line % tokens(1), *) problem_name
 
-  domain_name = name
-  domain_name(len_trim(name)+1:len_trim(name)+4) = '.dom'
+  domain_name = problem_name
+  domain_name(len_trim(problem_name)+1:len_trim(problem_name)+4) = '.dom'
   write(*, *) '# Now reading the file: ', domain_name
   open(9, file=domain_name)
 

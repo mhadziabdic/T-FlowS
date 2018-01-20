@@ -29,7 +29,7 @@
   integer :: i
 !======================================================================!
 
-  namTem = name
+  namTem = problem_name
   storename = namAut
 !<<<<<<<<<<<<<<<<<<<<<<<<<!
 !                         !
@@ -106,7 +106,7 @@
 
   close(9)
 
-  name = namAut
+  problem_name = namAut
   call Name_File(sub, namXML, '.vtu', len_trim('.vtu'))
 
   open(9, file=namXML)
@@ -406,9 +406,9 @@
 
   if (n_proc > 1) then
     if(this_proc < 2) then
-    name = storename
-    call Name_File(0, name, '.pvtu', len_trim('.pvtu'))
-    open(112, file=name)
+    problem_name = storename
+    call Name_File(0, problem_name, '.pvtu', len_trim('.pvtu'))
+    open(112, file=problem_name)
     write(112,'(A21)') '<?xml version="1.0"?>'
     write(112,'(A74)') '<VTKFile type="PUnstructuredGrid" version="0.1" byte_order="LittleEndian">'
     write(112,*) '<PUnstructuredGrid GhostLevel="0">'
@@ -459,7 +459,7 @@
   write(112,*) '       <PPoints>'
   write(112,*) '         <PDataArray type="Float32" NumberOfComponents="3"/>'
   write(112,*) '       </PPoints>'
-  name = namAut
+  problem_name = namAut
   do i=1,n_proc
     call Name_File(i, nameIn, '.vtu"/>', len_trim('.vtu"/>'))
     write(112,'(A)',advance="no") '<Piece Source="'
@@ -472,7 +472,7 @@
   end if !(this_proc <2)
 
   close(9)
-  name = namTem
+  problem_name = namTem
 
   call wait
 

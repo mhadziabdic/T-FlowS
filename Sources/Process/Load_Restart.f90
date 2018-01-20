@@ -37,8 +37,8 @@
   end if
 
   ! Save the name
-  answer = name
-  name = name_in
+  answer = problem_name
+  problem_name = name_in
 
   !-----------------------!
   !   Read restart file   !
@@ -311,6 +311,6 @@
   restart = .TRUE.
 
   ! Restore the name
-  name = answer 
+  problem_name = answer 
 
   end subroutine Load_Restart 

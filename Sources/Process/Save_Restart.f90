@@ -23,8 +23,8 @@
 
   if(PRESENT(name_aut)) then
     ! Save the name
-    answer = name
-    name = name_aut
+    answer = problem_name
+    problem_name = name_aut
   else
     if(this_proc  < 2)                                                     &
       print *, '# Output restart file name [skip cancels]:'
@@ -36,8 +36,8 @@
     if(answer == 'SKIP') return 
 
     ! save the name
-    answer = name
-    name = name_out
+    answer = problem_name
+    problem_name = name_out
   end if
 
   !-------------------------!
@@ -307,6 +307,6 @@
   close(9)
 
   ! Restore the name
-  name = answer 
+  problem_name = answer 
 
   end subroutine

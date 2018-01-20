@@ -33,8 +33,8 @@
   if(answer == 'SKIP') return
   
   ! save the name
-  answer = name
-  name = name_out
+  answer = problem_name
+  problem_name = name_out
   nn = 0
   ext = '.xyz'
   call Name_File(this_proc, name_out, ext, len_trim(ext))
@@ -152,6 +152,6 @@
     close(9)
   end if
 
-  name = answer 
+  problem_name = answer 
 
   end subroutine

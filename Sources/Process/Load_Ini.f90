@@ -44,8 +44,8 @@
   if(answer == 'SKIP') return
 
   ! Save the name
-  answer = name
-  name = name_in
+  answer = problem_name
+  problem_name = name_in
 
   HOTini = NO
 
@@ -263,7 +263,7 @@
                + Ws * grid % sz(s) )
   end do 
 
-  name = answer
+  problem_name = answer
 
   deallocate(Xold)
   deallocate(Yold)
@@ -333,7 +333,7 @@
   print *, 'Finished with Load_Ini  Processor: ', this_proc
 
   ! Restore the name
-  name = answer
+  problem_name = answer
 
   end subroutine
 

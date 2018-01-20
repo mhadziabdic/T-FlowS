@@ -25,39 +25,9 @@
   integer           :: i, m, n, Ndtt_temp
   real              :: mres, wall_time_start, wall_time_current
   character(len=80) :: name_save
-  logical           :: restar, multiple 
+  logical           :: restar, multiple, save_now, exit_now
 !---------------------------------[Interfaces]---------------------------------!
   interface
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Save_Gmv_Results(grid, namAut)  
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      use all_mod
-      use pro_mod
-      use Grid_Mod
-      implicit none
-      type(Grid_Type) :: grid
-      character, optional :: namAut*(*)
-    end subroutine
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Save_Dat_Results(grid, namAut)  
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      use all_mod
-      use pro_mod
-      use Grid_Mod
-      implicit none
-      type(Grid_Type) :: grid
-      character, optional :: namAut*(*)
-    end subroutine
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-    subroutine Save_Restart(grid, namAut)  
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ! 
-      use all_mod
-      use pro_mod
-      use Grid_Mod
-      implicit none
-      type(Grid_Type)     :: grid
-      character, optional :: namAut*(*)
-    end subroutine
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine UserProbe2D(namAut)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
@@ -67,7 +37,7 @@
       character, optional :: namAut*(*)
     end subroutine
   end interface
-!======================================================================!
+!==============================================================================!
 
   ! Grid used in computations
   type(Grid_Type) :: grid  
@@ -177,8 +147,6 @@
       write(*,'(A5,I2,A2,1PE12.3)') '# Az(',m,')=', bulk(m) % area_z
     end do
   end if
-
-  if(Ndt == 0)  goto 6 
 
   !---------------!
   !               !
@@ -438,66 +406,54 @@
       end if
     end do
 
-    ! Regular backup savings, each 1000 time steps            
-    if(mod(n,10) == 0) then                                
+    !----------------------!
+    !   Save the results   !
+    !----------------------!
+    inquire(file='exit_now', exist=exit_now)
+    inquire(file='save_now', exist=save_now)
+
+    ! Form the file name
+    name_save = name
+    write(name_save(len_trim(name)+1:len_trim(name)+3), '(a3)'),   '-ts'
+    write(name_save(len_trim(name)+4:len_trim(name)+9), '(i6.6)'), n
+
+    ! Is it time to save the restart file?
+    if(save_now .or. exit_now .or. mod(n,10) == 0) then
+      call Wait
       Ndtt_temp = Ndtt
       Ndtt      = n
-      name_save = name
-      write(name_save(len_trim(name)+1:len_trim(name)+3), '(a3)'),   '-t='
-      write(name_save(len_trim(name)+4:len_trim(name)+9), '(i6.6)'), n
       call Save_Restart(grid, name_save)                          
       Ndtt = Ndtt_temp
-    end if   
+    end if
 
-    ! Is user forcing it to stop ?                    
-    open(1, file='exit_now', err=7, status='old') 
+    ! Is it time to save results for post-processing
+    if(save_now .or. exit_now .or. mod(n, 50) == 0) then
       call Wait
-      if(this_proc < 2) close(1, status='delete')
-      Ndtt = n 
-      goto 6 
-7   continue 
-
-    ! Is user forcing it to save ?                    
-    open(1, file='save_now', err=8, status='old') 
-      call Wait
-      if(this_proc < 2) close(1, status='delete')
       Ndtt_temp = Ndtt
       Ndtt      = n
-      name_save = name
-      write(name_save(len_trim(name)+1:len_trim(name)+3), '(a3)'),   '-t='
-      write(name_save(len_trim(name)+4:len_trim(name)+9), '(i6.6)'), n
-      call Save_Restart(grid, name_save)                          
-      call Save_Restart    (grid, name_save)                          
+      call Save_Vtu_Results(grid, name_save)
       call Save_Gmv_Results(grid, name_save)
       call Save_Dat_Results(grid, name_save)
       call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
-      call SavParView(this_proc,grid % n_cells,name_save, Nstat, n)
       Ndtt = Ndtt_temp
-8   continue 
+    end if
+
+    if(save_now) then
+      open (9, file='save_now', status='old')
+      close(9, status='delete')
+    end if
+
+    if(exit_now) then
+      open (9, file='exit_now', status='old')
+      close(9, status='delete')
+    end if
 
   end do                    ! n, number of time steps  
 
   if(this_proc < 2) then
-    open(9,file='stop')
+    open(9, file='stop')
     close(9)
   end if
-
-  Ndtt = n - 1                                 
-
-  !----------------------!
-  !   Save the results   !
-  !----------------------!
-6 call Save_Restart     (grid)
-  call Save_Ini         (grid)
-  call Save_Gmv_Results (grid)         ! write results in GMV format. 
-  call Save_Dat_Results (grid)         ! write results in FLUENT dat format. 
-  call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
-  name_save = name
-  write(name_save(len_trim(name)+1:len_trim(name)+3), '(a3)'),   '-t='
-  write(name_save(len_trim(name)+4:len_trim(name)+9), '(i6.6)'), n
-  call Save_Gmv_Results(grid, name_save)
-  call SavParView(this_proc, grid % n_cells, name_save, Nstat, n)
-  call Wait
 
   if(this_proc  < 2) write(*,*) '# Exiting !'
 
@@ -509,8 +465,8 @@
   !--------------------------------!
   !   Close the monitoring files   !
   !--------------------------------!
-  do n=1,Nmon
-    if(Cm(n) > 0) close(10+n)
+  do n = 1, Nmon
+    if(Cm(n) > 0) close(10 + n)
   end do
 
   !----------------------------!

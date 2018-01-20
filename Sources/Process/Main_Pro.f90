@@ -154,28 +154,6 @@
     if(StateMat(m) /= i) multiple = .TRUE.
   end do
 
-  if(this_proc  < 2)             &
-    write(*,'(A18,15A11)')  &
-    '#        N        ',   &
-    ' Mass inb. ',          &
-    '    U:     ',          &
-    '    V:     ',          &
-    '    W:     ',          &
-    '    P:     '   
-
-  if(this_proc  < 2)             &
-    write(*,'(A18,15A11)')  &
-    '  CFL max: ',          &
-    '  Pe max:  ',          &
-    '  Flux x:  ',          &
-    '  Flux y:  ',          &
-    '  Flux z:  ',          &
-    'iterations ',          &
-    '  dp/dx:   ',          &
-    '    K:     '
-
-  write(*,*) 'At line: ', cmn_line_count
-
   ! Loading data from previous computation   
   !  if(this_proc<2) write(*,*)'Reading data from previous computation on the same mesh'
   call Load_Restart_Ini(grid)

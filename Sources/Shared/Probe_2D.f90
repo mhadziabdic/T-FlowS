@@ -19,12 +19,12 @@
   character(len=80) :: answer
 !==============================================================================!
 
-  write(*,*) '#==============================='
-  write(*,*) '# Looking for homogeneous plane '
-  write(*,*) '#-------------------------------'
-  write(*,*) '# Insert homogeneous direction  '
-  write(*,*) '# (xy, yz, zx or skip)'
-  write(*,*) '#-------------------------------'
+  print *, '#==============================='
+  print *, '# Looking for homogeneous plane '
+  print *, '#-------------------------------'
+  print *, '# Insert homogeneous direction  '
+  print *, '# (xy, yz, zx or skip)'
+  print *, '#-------------------------------'
   read(*,*) answer
   call To_Upper_Case(answer)
   if(answer=='SKIP') return
@@ -66,7 +66,7 @@
     end if 
 
     if(n_prob == 20000) then
-      write(*,*) '# Probe 2D: Not a 2D problem.'
+      print *, '# Probe 2D: Not a 2D problem.'
       return
     end if
 1 end do

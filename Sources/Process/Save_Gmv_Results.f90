@@ -36,7 +36,7 @@
   !------------------------------!
   call Name_File(this_proc, name_out, '.gmv', len_trim('.gmv'))
   open(9, file=name_out)
-  write(*,*) '# Now creating the file:', trim(name_out)
+  print *, '# Now creating the file:', trim(name_out)
 
   !-----------!
   !   Start   !
@@ -88,9 +88,9 @@
         grid % cells_n(2,c), grid % cells_n(4,c),   &
         grid % cells_n(3,c)
     else
-      write(*,*) '# Unsupported cell type with ',  &
+      print *, '# Unsupported cell type with ',  &
                   grid % cells_n_nodes(c), ' nodes.'
-      write(*,*) '# Exiting'
+      print *, '# Exiting'
       stop 
     end if 
   end do  

@@ -101,7 +101,7 @@
   end do 
    
   if(K == 0) then
-    write(*,*) 'Did not find any point in define cut line position'
+    print *, 'Did not find any point in define cut line position'
     return
   else
     call RISort(z_p, order, Npoints, 2)
@@ -156,7 +156,7 @@
       end if
     end do
     end do
-    write(*,*)'finished sorting'
+    print *,'finished sorting'
 !+++++++++++++++++++++++++++++++++++!
 !   Calculating a friction velocity !
 !+++++++++++++++++++++++++++++++++++!

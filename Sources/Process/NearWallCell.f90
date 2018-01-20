@@ -22,7 +22,7 @@
 !==============================================================================!  
 
   if(this_proc  < 2)                                                     &
-  write(*,*) '# Now searching for corresponding wall cells!'
+  print *, '# Now searching for corresponding wall cells!'
 
   nearest_cell = 0
   near = 0
@@ -41,7 +41,7 @@
     near(c) = nearest_cell 
   end do
 
-  if(this_proc < 2) write(*,*) '# Searching finished'
+  if(this_proc < 2) print *, '# Searching finished'
 
   end subroutine
 

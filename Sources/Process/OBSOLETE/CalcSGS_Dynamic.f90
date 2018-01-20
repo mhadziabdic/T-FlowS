@@ -220,7 +220,7 @@
     end if 
   end do
 
-!  write(*,*) 'Max Cs = ', sqrt(MaxC), ' Min Cs = ', MinC/abs(MinC) * sqrt(abs(MinC))
-!  write(*,*) 'Cplus_avr = ', sqrt(Cplus_avr/m), ' Cminus_avr = ', -1.0 * sqrt(abs(Cminus_avr/n)), m, n
+!  print *, 'Max Cs = ', sqrt(MaxC), ' Min Cs = ', MinC/abs(MinC) * sqrt(abs(MinC))
+!  print *, 'Cplus_avr = ', sqrt(Cplus_avr/m), ' Cminus_avr = ', -1.0 * sqrt(abs(Cminus_avr/n)), m, n
   return
   end subroutine CalcSGS_Dynamic

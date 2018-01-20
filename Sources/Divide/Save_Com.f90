@@ -16,7 +16,7 @@
   do sub=1,n_sub 
     call Name_File(sub, name_out, '.com', len_trim('.com'))
     open(9, file=name_out)
-    write(*,*) '# Now creating the file:', trim(name_out)
+    print *, '# Now creating the file:', trim(name_out)
     call Name_File(sub, name_out, '.com', 0)
     write(9,*) name_out 
     close(9)

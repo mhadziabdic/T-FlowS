@@ -24,7 +24,7 @@
 !==============================================================================!
 
   if(this_proc  < 2) &              
-    write(*,*) '# Input intial restart file name [write skip to continue]:'
+    print *, '# Input intial restart file name [write skip to continue]:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1), '(A80)')  name_in
   answer=name_in
@@ -36,15 +36,15 @@
 
   ! Initiated field from previous computation 
   if(this_proc  < 2) then
-    write(*,*) '# Initialization of fields from previous computation: '
-    write(*,*) '# DNS      -> Direct Numerical Simulation'
-    write(*,*) '# LES      -> Large Eddy Simulation'
-    write(*,*) '# K_EPS    -> High Reynolds k-eps model.'
-    write(*,*) '# K_EPS_VV -> Durbin`s model.'
-    write(*,*) '# SPA_ALL  -> Spalart-Allmaras model.'
-    write(*,*) '# ZETA     -> k-eps-zeta-f model.'
-    write(*,*) '# HJ       -> HJ model.'
-    write(*,*) '# EBM      -> EBM model.'
+    print *, '# Initialization of fields from previous computation: '
+    print *, '# DNS      -> Direct Numerical Simulation'
+    print *, '# LES      -> Large Eddy Simulation'
+    print *, '# K_EPS    -> High Reynolds k-eps model.'
+    print *, '# K_EPS_VV -> Durbin`s model.'
+    print *, '# SPA_ALL  -> Spalart-Allmaras model.'
+    print *, '# ZETA     -> k-eps-zeta-f model.'
+    print *, '# HJ       -> HJ model.'
+    print *, '# EBM      -> EBM model.'
   endif
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1),'(A)')  answer
@@ -307,6 +307,6 @@
   ! Restore the name
   name = answer 
 
-  write(*,*) 'Leaving Load_Restart_Ini.f90'
+  print *, 'Leaving Load_Restart_Ini.f90'
 
   end subroutine

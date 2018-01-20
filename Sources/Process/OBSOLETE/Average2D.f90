@@ -38,7 +38,7 @@
 !======================================================================!
 
   if(this  < 2)  & 
-    write(*,*) '# Input probe file name [skip cancels]:'
+    print *, '# Input probe file name [skip cancels]:'
   call ReadC(7,inp,tn,ts,te)  
   read(inp(ts(1):te(1)),'(A80)') namPro
   answer=namPro
@@ -91,7 +91,7 @@
 !     average the results     !
 !+++++++++++++++++++++++++++++!
   do pl=1,Nprob
-    write(*,*) '->', pl
+    print *, '->', pl
     do c=1,NC
       if( Approx( y(c),y_p(pl) ) .and.  &
           Approx( z(c),z_p(pl) ) ) then

@@ -51,7 +51,7 @@
 
   call Name_File(this_proc, name_in, '.ini', len_trim('.ini'))
 
-  if(this_proc < 2) write(*,*)'now reading file:', name_in 
+  if(this_proc < 2) print *,'now reading file:', name_in 
 
   open(5, file=name_in) 
   read(5,*) NCold
@@ -122,7 +122,7 @@
   j = NCold
   do k = 1, j
     if(this_proc < 2) then
-      if(mod(k,20000) == 0) write(*,*) (100.*k/(1.*j)), '% c_omplete...'  
+      if(mod(k,20000) == 0) print *, (100.*k/(1.*j)), '% c_omplete...'  
     end if
     if(SIMULA == LES) then 
       if(HOTini==YES) then
@@ -180,14 +180,14 @@
     end if 
   end do
   close(5)
-  if(this_proc < 2) write(*,*) 'LoaInI: finished with reading the files'
+  if(this_proc < 2) print *, 'LoaInI: finished with reading the files'
 
   nearest_cell = 0
   near = 0
   old_distance = HUGE
     do c = 1, grid % n_cells
       if(this_proc < 2) then
-        if(mod(c,20000) == 0) write(*,*) (100.*c/(1.*grid % n_cells)), '% c_omplete...'  
+        if(mod(c,20000) == 0) print *, (100.*c/(1.*grid % n_cells)), '% c_omplete...'  
       end if
       old_distance = HUGE
       do k = 1, j
@@ -330,7 +330,7 @@
     deallocate(TXoold)
   end if
 
-  write(*,*) 'Finished with Load_Ini  Processor: ', this_proc
+  print *, 'Finished with Load_Ini  Processor: ', this_proc
 
   ! Restore the name
   name = answer

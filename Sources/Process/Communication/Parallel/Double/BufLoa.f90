@@ -33,7 +33,7 @@
 
   call Name_File(this_proc, name_in, '.buf', len_trim('.buf'))
   open(9, file=name_in)
-  if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
+  if(this_proc < 2) print *, '# Now reading the file:', name_in
 
   allocate (NBBs(0:n_proc))
   allocate (NBBe(0:n_proc))
@@ -42,7 +42,7 @@
   call Tokenizer_Mod_Read_Line(9)
   read(line % whole,*) NBCsub
 
-write(*,*) 'NBCsub = ', NBCsub
+print *, 'NBCsub = ', NBCsub
 
 !///// initialize 
   do sub=0,n_proc
@@ -58,14 +58,14 @@ write(*,*) 'NBCsub = ', NBCsub
       call Tokenizer_Mod_Read_Line(9)
       read(line % whole,*) subo 
 
-write(*,*) 'subo = ', subo
+print *, 'subo = ', subo
 
 !----- number of local connections with subdomain sub 
       call Tokenizer_Mod_Read_Line(9)
-write(*,*) 'whole_line = ', line % whole
+print *, 'whole_line = ', line % whole
       read(line % whole,*) NBBe(sub)
 
-write(*,*) 'whole_line = ', line % whole
+print *, 'whole_line = ', line % whole
 
       NBBs(sub) = NBBe(sub-1) - 1  
       NBBe(sub) = NBBs(sub) - NBBe(sub) + 1
@@ -92,9 +92,9 @@ write(*,*) 'whole_line = ', line % whole
 
   call wait
 
-!->>>  write(*,*) 'PE',this_proc, '#===================#' 
-!->>>  write(*,*) 'PE',this_proc, '# Check connections #' 
-!->>>  write(*,*) 'PE',this_proc, '#-------------------#' 
+!->>>  print *, 'PE',this_proc, '#===================#' 
+!->>>  print *, 'PE',this_proc, '# Check connections #' 
+!->>>  print *, 'PE',this_proc, '#-------------------#' 
 !->>>  do sub=1,n_proc
 !->>>    write(*,'(A2,I2,3I7)') 'PE',this_proc, sub, NBBs(sub), NBBe(sub)
 !->>>  end do   ! through subdomains

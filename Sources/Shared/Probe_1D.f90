@@ -20,10 +20,10 @@
   character(len=80) :: answer
 !==============================================================================!
 
-  write(*,*) '#================================================='
-  write(*,*) '# Looking for non-homogeneous directions '
-  write(*,*) '# Insert non-homogeneous direction (x,y,z or skip)'
-  write(*,*) '#-------------------------------------------------'
+  print *, '#================================================='
+  print *, '# Looking for non-homogeneous directions '
+  print *, '# Insert non-homogeneous direction (x,y,z or skip)'
+  print *, '#-------------------------------------------------'
   read(*,*) answer
   call To_Upper_Case(answer)
   if(answer=='SKIP') return
@@ -54,7 +54,7 @@
     if(answer=='Z') zp(n_prob) = grid % zc(c)
 
     if(n_prob == 1000) then
-      write(*,*) '# Probe 1D: Not a 1D (channel flow) problem.'
+      print *, '# Probe 1D: Not a 1D (channel flow) problem.'
       isit = .false.
       return
     end if

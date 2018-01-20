@@ -40,7 +40,7 @@
 !======================================================================!
 
   if(PRESENT(name_out)) then
-    write(*,*) name_out
+    print *, name_out
 !---- save the name
     namCut = name_out
   else
@@ -63,7 +63,7 @@
     end if
   end do
   Npoints = k  
-  write(*,*)' ovdje i probe2d'
+  print *,' ovdje i probe2d'
   allocate(z_p(k));      z_p     =0.0
   allocate(Np(k));       Np      =0 
   allocate(Ump(k));      Ump     =0.0
@@ -107,7 +107,7 @@
   end do 
    
   if(K == 0) then
-    write(*,*) 'Did not find any point in define cut line position'
+    print *, 'Did not find any point in define cut line position'
     return
   else
     call RISort(z_p, order, Npoints, 2)
@@ -164,7 +164,7 @@
       end if
     end do
     end do
-    write(*,*)'finished sorting'
+    print *,'finished sorting'
 !+++++++++++++++++++++++++++++++++++!
 !   Calculating a friction velocity !
 !+++++++++++++++++++++++++++++++++++!

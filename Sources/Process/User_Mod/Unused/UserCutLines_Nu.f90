@@ -38,17 +38,17 @@
 
     INQUIRE( file='rad_coordinate.dat', EXIST=THERE ) 
     if(.NOT.THERE) then
-      if(this_proc < 2) write(*,*) "==================================================================="
-      if(this_proc < 2) write(*,*) "In order to extract Nusselt number profile in asci file"
-      if(this_proc < 2) write(*,*) "You have to create an ascii file with cell-faces coordinates "
-      if(this_proc < 2) write(*,*) "in radial direction named rad_coordinate.dat."
-      if(this_proc < 2) write(*,*) "The file format should be as follows:"
-      if(this_proc < 2) write(*,*) "10  ! number of cells + 1"
-      if(this_proc < 2) write(*,*) "0.0"
-      if(this_proc < 2) write(*,*) "0.1"
-      if(this_proc < 2) write(*,*) "0.2"
-      if(this_proc < 2) write(*,*) "... "
-      if(this_proc < 2) write(*,*) "==================================================================="
+      if(this_proc < 2) print *, "==================================================================="
+      if(this_proc < 2) print *, "In order to extract Nusselt number profile in asci file"
+      if(this_proc < 2) print *, "You have to create an ascii file with cell-faces coordinates "
+      if(this_proc < 2) print *, "in radial direction named rad_coordinate.dat."
+      if(this_proc < 2) print *, "The file format should be as follows:"
+      if(this_proc < 2) print *, "10  ! number of cells + 1"
+      if(this_proc < 2) print *, "0.0"
+      if(this_proc < 2) print *, "0.1"
+      if(this_proc < 2) print *, "0.2"
+      if(this_proc < 2) print *, "... "
+      if(this_proc < 2) print *, "==================================================================="
       return
     end if
 
@@ -206,7 +206,7 @@
     deallocate(Tmp)
   end if
 
-  if(this_proc < 2) write(*,*)'Finished with Nusselt file'
+  if(this_proc < 2) print *,'Finished with Nusselt file'
 
 
 

@@ -35,7 +35,7 @@
   ym = ym / n_cells_sub
   zm = zm / n_cells_sub
 
-  write(*,*) '# Center of mass for subdomain ', sub, ' is: ', xm, ym, zm
+  print *, '# Center of mass for subdomain ', sub, ' is: ', xm, ym, zm
 
   i_matrix = 0.
   do i=1,grid % n_cells
@@ -58,11 +58,11 @@
 
   call Compute_Eigenvalues(i_matrix, 3, 3, d, v, i)
 
-  write(*,*) 'd=',d(1), d(2), d(3)
+  print *, 'd=',d(1), d(2), d(3)
 
-  write(*,*) 'v=', (v(1,i), i=1,3)
-  write(*,*) '  ', (v(2,i), i=1,3)
-  write(*,*) '  ', (v(3,i), i=1,3)
+  print *, 'v=', (v(1,i), i=1,3)
+  print *, '  ', (v(2,i), i=1,3)
+  print *, '  ', (v(3,i), i=1,3)
 
   if(min(d(1),d(2),d(3)) == d(1)) then
     d_max(1) = v(1,1)
@@ -78,7 +78,7 @@
     d_max(3) = v(3,3)
   end if 
 
-  write(*,*) '# Sorting the cells'
+  print *, '# Sorting the cells'
   do i = 1, grid % n_cells
     iin(i) = i
     criter(i) = grid % xc(i) * d_max(1) +  &

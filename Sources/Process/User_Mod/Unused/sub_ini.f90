@@ -48,13 +48,13 @@
 ! The answer name is case dependent
 !----------------------------------------------------------------------!
 
-  write(*,*)' Enter the name of data files: '
+  print *,' Enter the name of data files: '
   read(*,*) name 
-  write(*,*)' Enter the name of case files: '
+  print *,' Enter the name of case files: '
   read(*,*) namSav 
-  write(*,*)' Enter the number of subdomains: '
+  print *,' Enter the number of subdomains: '
   read(*,*) ND 
-  write(*,*)' Enter 0 if case is not HOT and 1 if case is HOT: '
+  print *,' Enter 0 if case is not HOT and 1 if case is HOT: '
   read(*,*) IND
 
   answer = name
@@ -123,50 +123,50 @@
   n = 0
   j = NCold
   do k = 1, j
-    if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
+    if(mod(k,500000) == 0) print *, (100.*k/(1.*j)), '% complete...'
     read(5,*) Xold(k), Yold(k), Zold(k)
     n = n + 1
   end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.xyz file', n
+  print *, ' Finished with reading ulaz.xyz file', n
   open(5, file=namU)
   do k = 1, j
-    if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
+    if(mod(k,500000) == 0) print *, (100.*k/(1.*j)), '% complete...'
     read(5,*) Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k)
   end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.U__ file'
+  print *, ' Finished with reading ulaz.U__ file'
   open(5, file=namV)
   do k = 1, j
-    if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
+    if(mod(k,500000) == 0) print *, (100.*k/(1.*j)), '% complete...'
     read(5,*) Vold(k), Voold(k), VCold(k), VCoold(k), VDoold(k), VXold(k), VXoold(k)
   end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.V__ file'
+  print *, ' Finished with reading ulaz.V__ file'
   open(5, file=namW)
   do k = 1, j
-    if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
+    if(mod(k,500000) == 0) print *, (100.*k/(1.*j)), '% complete...'
       read(5,*) Wold(k), Woold(k), WCold(k), WCoold(k), WDoold(k), WXold(k), WXoold(k)
     end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.W__ file'
+  print *, ' Finished with reading ulaz.W__ file'
   open(5, file=namP)
   do k = 1, j
-    if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
+    if(mod(k,500000) == 0) print *, (100.*k/(1.*j)), '% complete...'
       read(5,*) Pold(k), PPold(k), Pxold(k), Pyold(k), Pzold(k)
     end do
   close(5)
-  write(*,*) ' Finished with reading ulaz.P__ file'
+  print *, ' Finished with reading ulaz.P__ file'
 
   if(IND == 1) then
     open(5, file=namT)
     do k = 1, j
-      if(mod(k,500000) == 0) write(*,*) (100.*k/(1.*j)), '% complete...'
+      if(mod(k,500000) == 0) print *, (100.*k/(1.*j)), '% complete...'
         read(5,*) Told(k), Toold(k), TCold(k), TCoold(k), TDoold(k), TXold(k), TXoold(k) 
       end do
     close(5)
-    write(*,*) ' Finished with reading ulaz.T__ file'
-    write(*,*) 'LoaInI: finished with reading the files'
+    print *, ' Finished with reading ulaz.T__ file'
+    print *, 'LoaInI: finished with reading the files'
   end if
 
   NameOut = namSav
@@ -185,7 +185,7 @@
         write(NameOut(l1-2:l1),'(I3)') j
       end if
     end if  
-    write(*,*) NameOut
+    print *, NameOut
 
     name = NameOut
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*
@@ -195,7 +195,7 @@
     nameIn=name
     nameIn(len_trim(name)+1:len_trim(name)+4)='.cns'
     open(9, file=nameIn,FORM='unformatted')
-    write(*,*) '# Now reading the binary .cns file:', nameIn
+    print *, '# Now reading the binary .cns file:', nameIn
 
 !///// number of cells, boundary cells and sides
     read(9) NC
@@ -219,7 +219,7 @@
     nameIn = name
     nameIn(len_trim(name)+1:len_trim(name)+4)='.geo'
     open(9, file=nameIn, FORM='unformatted')
-    write(*,*) '# Now reading the binary .geo file:', nameIn
+    print *, '# Now reading the binary .geo file:', nameIn
 
     allocate (xc(-NbC:NC))
     allocate (yc(-NbC:NC))
@@ -287,7 +287,7 @@
     
     namFin=name
     namFin(len_trim(name)+1:len_trim(name)+4)='.ini'
-    write(*,*) namFin
+    print *, namFin
     open(9,file = namFin)
     n = 0
     k = 0
@@ -335,7 +335,7 @@
         end if
       end do
     end if
-    write(*,*) 'The number of cells in subdomain is: ', NC, 'Found cells: ', NN
+    print *, 'The number of cells in subdomain is: ', NC, 'Found cells: ', NN
     close(9)
     deallocate(material)
     deallocate (xc)

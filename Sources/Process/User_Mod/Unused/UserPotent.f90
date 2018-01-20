@@ -148,8 +148,8 @@
 	    PHI % n, b, PREC,                                 &
 	    niter, PHI % STol, res(1), error)
 
-  write(*,*) res(1)
-  write(*,*) niter       
+  print *, res(1)
+  print *, niter       
  
 !--------------------------------------!
 !    Handle non inflow and outflow     !

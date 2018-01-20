@@ -36,7 +36,7 @@
   !----------------------!
   call Name_File(this_proc, name_out, '.dat', len_trim('.dat'))
   open(9, file=name_out)
-  if(this_proc  < 2) write(*,*) '# Now creating the file:', trim(name_out)
+  if(this_proc  < 2) print *, '# Now creating the file:', trim(name_out)
 
   !-----------!
   !   Start   !
@@ -228,7 +228,7 @@
     end do    ! sides
 
     ! Prepare for next boundary
-    if(this_proc  < 2) write(*,*) 'Number of faces:', Nfac(n), NtotFac+1, NtotFac+Nfac(n)
+    if(this_proc  < 2) print *, 'Number of faces:', Nfac(n), NtotFac+1, NtotFac+Nfac(n)
     NtotFac = NtotFac+Nfac(n)
   end do   ! n -> boundary condition types
 

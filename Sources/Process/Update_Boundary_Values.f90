@@ -189,7 +189,7 @@
       !          Tflux = Tflux + CONeff*(T % n(c1))  &
       !                / WallDs(c1) * Stot
       !        end if
-      !        write(*,*) (T % n(c2) - T % n(c1))/WallDs(c1), PHIz(c1)
+      !        print *, (T % n(c2) - T % n(c1))/WallDs(c1), PHIz(c1)
       !        Area  = Area  + Stot
       !      end if
 
@@ -236,7 +236,7 @@
   !    Tflux  = Tflux/(Area+TINY)
   !    Qflux  = Tflux * Area/(4.0*AreaZ(1))
   !  end if 
-  !  write(*,*) Tflux
+  !  print *, Tflux
   !  This is done for pipe flow
   !  In order to be consistent we did not use ideal d*pi but Area/L where
   !  Area is total wall surface of pipe and L is lenght of pipe

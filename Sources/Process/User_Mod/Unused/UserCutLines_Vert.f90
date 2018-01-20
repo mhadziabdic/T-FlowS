@@ -227,6 +227,6 @@
   end if
 
 
-  if(this < 2) write(*,*) 'Finished with UserCutLines_Vert_Cart'
+  if(this < 2) print *, 'Finished with UserCutLines_Vert_Cart'
 
   end subroutine UserCutLines_Vert_Cart

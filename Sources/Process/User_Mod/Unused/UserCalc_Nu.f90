@@ -44,17 +44,17 @@
 
   INQUIRE( file='Stream_coord.dat', EXIST=THERE ) 
   if(.NOT.THERE) then
-    if(this < 2) write(*,*) "==================================================================="
-    if(this < 2) write(*,*) "In order to extract Nusselt number profile in asci file"
-    if(this < 2) write(*,*) "You have to create an ascii file with cell-faces coordinates "
-    if(this < 2) write(*,*) "in streamwise direction named Stream_coord.dat."
-    if(this < 2) write(*,*) "The file format should be as follows:"
-    if(this < 2) write(*,*) "10  ! number of cells + 1"
-    if(this < 2) write(*,*) "0.0"
-    if(this < 2) write(*,*) "0.1"
-    if(this < 2) write(*,*) "0.2"
-    if(this < 2) write(*,*) "... "
-    if(this < 2) write(*,*) "==================================================================="
+    if(this < 2) print *, "==================================================================="
+    if(this < 2) print *, "In order to extract Nusselt number profile in asci file"
+    if(this < 2) print *, "You have to create an ascii file with cell-faces coordinates "
+    if(this < 2) print *, "in streamwise direction named Stream_coord.dat."
+    if(this < 2) print *, "The file format should be as follows:"
+    if(this < 2) print *, "10  ! number of cells + 1"
+    if(this < 2) print *, "0.0"
+    if(this < 2) print *, "0.1"
+    if(this < 2) print *, "0.2"
+    if(this < 2) print *, "... "
+    if(this < 2) print *, "==================================================================="
     return
   end if
 
@@ -232,6 +232,6 @@
     deallocate(Tmp)
   end if
 
-  if(this < 2) write(*,*)'Finished with UserCalc_Nu'
+  if(this < 2) print *,'Finished with UserCalc_Nu'
   
 end subroutine UserCalc_Nu

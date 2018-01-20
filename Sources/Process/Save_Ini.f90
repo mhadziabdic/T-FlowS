@@ -23,7 +23,7 @@
 
   ! store the name
   if(this_proc  < 2)                                                     &
-  write(*,*) '# Now saving initial files [skip cancels]:'  
+  print *, '# Now saving initial files [skip cancels]:'  
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   
   read(line % tokens(1), '(A80)')  name_out

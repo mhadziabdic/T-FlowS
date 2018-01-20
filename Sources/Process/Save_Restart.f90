@@ -27,7 +27,7 @@
     name = name_aut
   else
     if(this_proc  < 2)                                                     &
-      write(*,*) '# Output restart file name [skip cancels]:'
+      print *, '# Output restart file name [skip cancels]:'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), '(A80)')  name_out
     answer=name_out

@@ -24,7 +24,7 @@
 !==============================================================================!
 
   Area  = 0.0
-  write(*,*) 'grid % n_materials: ', grid % n_materials
+  print *, 'grid % n_materials: ', grid % n_materials
   do n = 1, grid % n_materials
     do c = 1, grid % n_cells
       U % mean(c) = 0.0
@@ -157,15 +157,15 @@
   !----------------------!
   Time   = 0.0   
   if(this_proc  < 2) then
-    write(*,*) '# MassIn=', bulk(1) % mass_in
-    write(*,*) '# Average inflow velocity =', bulk(1) % mass_in / Area
-    write(*,*) '# number of faces on the wall        : ', n_wall
-    write(*,*) '# number of inflow faces             : ', n_inflow
-    write(*,*) '# number of outflow faces            : ', n_outflow
-    write(*,*) '# number of symetry faces            : ', n_symmetry
-    write(*,*) '# number of faces on the heated wall : ', n_heated_wall
-    write(*,*) '# number of convective outflow faces : ', n_convect
-    write(*,*) '# Variables initialized !'
+    print *, '# MassIn=', bulk(1) % mass_in
+    print *, '# Average inflow velocity =', bulk(1) % mass_in / Area
+    print *, '# number of faces on the wall        : ', n_wall
+    print *, '# number of inflow faces             : ', n_inflow
+    print *, '# number of outflow faces            : ', n_outflow
+    print *, '# number of symetry faces            : ', n_symmetry
+    print *, '# number of faces on the heated wall : ', n_heated_wall
+    print *, '# number of convective outflow faces : ', n_convect
+    print *, '# Variables initialized !'
   end if
 
   end subroutine

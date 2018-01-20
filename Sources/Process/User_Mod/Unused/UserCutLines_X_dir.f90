@@ -280,6 +280,6 @@
   end if
 
 
-  if(this < 2) write(*,*) 'Finished with UserCutLines_X_dir'
+  if(this < 2) print *, 'Finished with UserCutLines_X_dir'
 
   end subroutine UserCutLines_X_dir

@@ -36,10 +36,10 @@
   real    :: frictionv(NC)
 
 !======================================================================!
-!  write(*,*) 'writing paraview XML data file: ', namAut
+!  print *, 'writing paraview XML data file: ', namAut
 
 !  if (this < 2) then
-!      write(*,*) 'writing paraview XML data file: ', namAut
+!      print *, 'writing paraview XML data file: ', namAut
 !  end if
 
   namTem = name
@@ -52,7 +52,7 @@
   call Name_File(sub, namOut, '.gmv', len_trim('.gmv'))
   open(9, file=namOut)
 !  if (this <2) then
-!    write(*,*) 'Now reading the file: ', namOut
+!    print *, 'Now reading the file: ', namOut
 !  end if
 
 !---------------!
@@ -96,7 +96,7 @@
   read(inp(ts(2):te(2)),*) NCsub_new
 
   if (NCsub_new.ne.NCsub) then 
-     write(*,*) 'number of cells read and processed is different, exiting!'
+     print *, 'number of cells read and processed is different, exiting!'
      stop
   end if
   
@@ -406,7 +406,7 @@ end if !HOT == YES
     name = storename
     call Name_File(0, name, '.pvtu', len_trim('.pvtu'))
     open(12, file=name)
-!     write(*,*) 'writing parallel master file: ', name
+!     print *, 'writing parallel master file: ', name
      write(12,'(A21)') '<?xml version="1.0"?>'
      write(12,'(A74)') '<VTKFile type="PUnstructuredGrid" version="0.1" byte_order="LittleEndian">'
      write(12,*) '<PUnstructuredGrid GhostLevel="0">'

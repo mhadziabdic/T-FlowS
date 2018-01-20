@@ -205,9 +205,9 @@
     end do 
     close(3)
 
-    write(*,*) Wmp(1), 1.0-Rad_mp(1) 
+    print *, Wmp(1), 1.0-Rad_mp(1) 
       Ufric = (VISc*abs(Wmp(1))/(1.0-Rad_mp(1)))**0.5 
-      if(this < 2)write(*,*) 'mean Utau = ', Ufric,         &
+      if(this < 2)print *, 'mean Utau = ', Ufric,         &
        'ukupno nasao celija: ', count
 
     open(3,file='pipe_mean_plus.dat')

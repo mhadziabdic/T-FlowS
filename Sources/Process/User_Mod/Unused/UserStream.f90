@@ -133,7 +133,7 @@
 !          if(zc(c2) > half) then 
 !            b(c1) = b(c1) + Wbulk(1) * H * A12
 !            PHI % n(c2) = Wbulk(1) * H
-!            write(*,*) Wbulk(1)      
+!            print *, Wbulk(1)      
             b(c1) = b(c1) + 1.0 * H * A12
             PHI % n(c2) = 1.0 * H
           end if
@@ -167,8 +167,8 @@
   	      PHI % n, b, PREC,                                 &
 	      niter, PHI % STol, res(1), error)
 
-    write(*,*) res(5)
-    write(*,*) niter       
+    print *, res(5)
+    print *, niter       
  
 !----------------------------------!
 !    Handle inflow and outflow     !

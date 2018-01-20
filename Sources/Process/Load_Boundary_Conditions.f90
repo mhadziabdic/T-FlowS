@@ -35,7 +35,7 @@
   name_bou = name
   name_bou(len_trim(name)+1:len_trim(name)+4) = '.bnd'
   open(9, file=name_bou)
-  if(this_proc < 2) write(*,*) '# Now reading the file:', name_bou
+  if(this_proc < 2) print *, '# Now reading the file:', name_bou
 
   !-------------------------!
   !   Phisical properties   !
@@ -60,7 +60,7 @@
       StateMat(n)=SOLID
     else 
       if(this_proc < 2)  &
-        write(*,*) '# Load_Boundary_Conditions: Unknown material state'
+        print *, '# Load_Boundary_Conditions: Unknown material state'
       stop  
     end if
     read(line % tokens(3),*) VISc
@@ -74,7 +74,7 @@
   !-----------------------------------------------------!
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *) grid % n_boundary_conditions
-  write(*,*) '# Found ', grid % n_boundary_conditions, ' boundary conditions'
+  print *, '# Found ', grid % n_boundary_conditions, ' boundary conditions'
 
   do bc = 1, grid % n_boundary_conditions  ! number of boundary conditions
 
@@ -90,8 +90,8 @@
       if(bc_name .eq. grid % boundary_conditions(i) % name) n=i      
     end do
     if( n == -1 ) then
-      write(*,*) '# Critical, failed to find boundary condition ', bc_name
-      write(*,*) '# Exiting!'
+      print *, '# Critical, failed to find boundary condition ', bc_name
+      print *, '# Exiting!'
       stop
     end if 
 
@@ -112,7 +112,7 @@
       typBou(n)=PRESSURE
     else
       if(this_proc < 2)  &
-        write(*,*) '# Load_Boundary_Conditions: '//        &
+        print *, '# Load_Boundary_Conditions: '//        &
                    '# Unknown boundary condition type: ',  &
                    line % tokens(2)
       stop  
@@ -249,9 +249,9 @@
   !------------------------!
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *) n_initial_cond
-  write(*,*) '# Number of initial conditions: ', n_initial_cond
+  print *, '# Number of initial conditions: ', n_initial_cond
   if(n_initial_cond > grid % n_materials) then
-    if(this_proc < 2) write(*,*) 'Warning: there are more initial conditions then materials'
+    if(this_proc < 2) print *, 'Warning: there are more initial conditions then materials'
   end if
 
   do n=1,n_initial_cond
@@ -261,7 +261,7 @@
     ! Initial conditions given in GMV file
     if(line % tokens(2) == 'FILE') then
       read(line % tokens(3),'(A80)') name_ini(n)
-      write(*,*) '# Load_Boundary_Conditions: material ', n,  &
+      print *, '# Load_Boundary_Conditions: material ', n,  &
                  '; init. cond. given by file: ', name_ini(n)
     else
       name_ini(n) = ''
@@ -337,8 +337,8 @@
   !----------------------------------------------------------------------!
   do n=1,grid % n_boundary_conditions
 
-    write(*,*) 'Boundary condition: ', n
-    write(*,*) 'file: ', name_prof(n)
+    print *, 'Boundary condition: ', n
+    print *, 'file: ', name_prof(n)
 
     ! Boundary condition is given by a single constant
     if(name_prof(n) == '') then 
@@ -395,7 +395,7 @@
     ! Boundary condition is prescribed in a file 
     else
       open(9, file=name_prof(n))
-      if(this_proc < 2) write(*,*) '# Now reading the file:', name_prof(n)
+      if(this_proc < 2) print *, '# Now reading the file:', name_prof(n)
       call Tokenizer_Mod_Read_Line(9)
       read(line % tokens(1),*) n_points                  ! number of points
       call Tokenizer_Mod_Read_Line(9)

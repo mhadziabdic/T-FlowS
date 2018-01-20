@@ -21,17 +21,17 @@
 
   ! Type of the problem
   if(this_proc  < 2) then
-    write(*,*) '# Type of problem: '
-    write(*,*) '# CHANNEL          -> Channel flow'
-    write(*,*) '# PIPE             -> Pipe flow'
-    write(*,*) '# JET              -> Impinging jet flow'
-    write(*,*) '# TEST             -> Test Laplacian equation'
-    write(*,*) '# OTHER            -> All the other problems'
-    write(*,*) '# ROUGH            -> Problems with roughness'
-    write(*,*) '# HOT              -> Problems with temperature'
-    write(*,*) '# XHOM, YHOM, ZHOM -> Homogeneous directions'
-    write(*,*) '# TGV -> Taylor-Green Vortex test case'
-    write(*,*) '# BUOY -> Buoyancy flows (Automatically turns HOT on)' 
+    print *, '# Type of problem: '
+    print *, '# CHANNEL          -> Channel flow'
+    print *, '# PIPE             -> Pipe flow'
+    print *, '# JET              -> Impinging jet flow'
+    print *, '# TEST             -> Test Laplacian equation'
+    print *, '# OTHER            -> All the other problems'
+    print *, '# ROUGH            -> Problems with roughness'
+    print *, '# HOT              -> Problems with temperature'
+    print *, '# XHOM, YHOM, ZHOM -> Homogeneous directions'
+    print *, '# TGV -> Taylor-Green Vortex test case'
+    print *, '# BUOY -> Buoyancy flows (Automatically turns HOT on)' 
   endif
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   do it = 1, line % n_tokens
@@ -74,13 +74,13 @@
     else if(answer == 'ROUGH') then
       ROUGH = YES
     else
-      write(*,*) 'Error in input ! Exiting'
+      print *, 'Error in input ! Exiting'
       stop
     endif
   end do
 
   if(ROUGH == YES) then
-    if(this_proc < 2) write(*,*) '# Reading roughness coefficient Zo'
+    if(this_proc < 2) print *, '# Reading roughness coefficient Zo'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *) Zo
   endif
@@ -88,7 +88,7 @@
   ! Angular velocity vector
   if(ROT == YES) then
     if(this_proc  < 2)  &
-    write(*,*) '# Angular velocity vector: '
+    print *, '# Angular velocity vector: '
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *)  omegaX
     read(line % tokens(2), *)  omegaY
@@ -98,7 +98,7 @@
   ! Gravity
   if(BUOY == YES) then
     if(this_proc  < 2)  &
-    write(*,*) '# Gravitational constant in x, y and z directions: '
+    print *, '# Gravitational constant in x, y and z directions: '
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *) grav_x
     read(line % tokens(2), *) grav_y

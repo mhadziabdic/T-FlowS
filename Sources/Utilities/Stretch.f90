@@ -14,11 +14,11 @@
 
   x0=0.0
  
-  write(*,*) 'Distance: '
+  print *, 'Distance: '
   read(*,*)  delx 
-  write(*,*) 'Weigth: '
+  print *, 'Weigth: '
   read(*,*)  w
-  write(*,*) 'Number of cells: '
+  print *, 'Number of cells: '
   read(*,*)  n
 
   x(0) = x0
@@ -69,13 +69,13 @@
   !--------------------------------!
   !   Print out the distribution   !
   !--------------------------------!
-  write(*,*) ' number:   node:                  cell:'
+  print *, ' number:   node:                  cell:'
   do i=n,1,-1
     write(*,'(I6,F12.6,A10)') i+1, x(i),              ' +-------+'
     write(*,'(I6,A23,F12.6)') i,  '|   o   | ', 0.5*(x(i)+x(i-1))
   end do
   write(*,'(I6,F12.6,A10)') i+1, x(0),              ' +-------+'
-  write(*,*) 'wall:    //////////////////////////////'
+  print *, 'wall:    //////////////////////////////'
 
   file1 = 'fileout'
 

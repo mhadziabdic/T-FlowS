@@ -46,9 +46,9 @@
   y_copy = 0
   z_copy = 0
 
-1 write(*,*) '#======================================'
-  write(*,*) '# Enter the copy marker (skip to exit):'
-  write(*,*) '#--------------------------------------'
+1 print *, '#======================================'
+  print *, '# Enter the copy marker (skip to exit):'
+  print *, '#--------------------------------------'
   call Tokenizer_Mod_Read_Line(5)
   read(line % tokens(1), *) answer
   call To_Upper_Case(answer)
@@ -63,7 +63,7 @@
   !-------! 
   do s1 = 1, grid % n_faces
     if(mod(s1,100000)==0) then
-      write(*,*) ((ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100, 'Complete'
+      print *, ((ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100, 'Complete'
     end if
     c11 = grid % faces_c(1,s1)
     c12 = grid % faces_c(2,s1)
@@ -115,7 +115,7 @@
   !-------! 
   do s1 = 1, grid % n_faces
     if(mod(s1,100000)==0) then
-      write(*,*) (ONE_THIRD + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
+      print *, (ONE_THIRD + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
     end if
     c11 = grid % faces_c(1,s1)
     c12 = grid % faces_c(2,s1)
@@ -167,7 +167,7 @@
   !-------! 
   do s1 = 1, grid % n_faces
     if(mod(s1,100000)==0) then
-      write(*,*) (TWO_THIRDS + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
+      print *, (TWO_THIRDS + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
     end if
     c11 = grid % faces_c(1,s1)
     c12 = grid % faces_c(2,s1)
@@ -214,10 +214,10 @@
     end if
   end do
 
-  write(*,*) '# n copy = ', grid % n_copy
-  write(*,*) '# x copy = ', x_copy
-  write(*,*) '# x copy = ', y_copy
-  write(*,*) '# x copy = ', z_copy
+  print *, '# n copy = ', grid % n_copy
+  print *, '# x copy = ', x_copy
+  print *, '# x copy = ', y_copy
+  print *, '# x copy = ', z_copy
 
   goto 1
 

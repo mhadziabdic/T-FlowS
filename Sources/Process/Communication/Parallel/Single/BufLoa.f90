@@ -33,7 +33,7 @@
 
   call Name_File(this_proc, name_in, '.buf', len_trim('.buf'))
   open(9, file=name_in)
-  if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
+  if(this_proc < 2) print *, '# Now reading the file:', name_in
 
   allocate (NBBs(0:n_proc))
   allocate (NBBe(0:n_proc))
@@ -85,9 +85,9 @@
 
   call wait
 
-!->>>  write(*,*) 'PE',this_proc, '#===================#' 
-!->>>  write(*,*) 'PE',this_proc, '# Check connections #' 
-!->>>  write(*,*) 'PE',this_proc, '#-------------------#' 
+!->>>  print *, 'PE',this_proc, '#===================#' 
+!->>>  print *, 'PE',this_proc, '# Check connections #' 
+!->>>  print *, 'PE',this_proc, '#-------------------#' 
 !->>>  do sub=1,n_proc
 !->>>    write(*,'(A2,I2,3I7)') 'PE',this_proc, sub, NBBs(sub), NBBe(sub)
 !->>>  end do   ! through subdomains

@@ -235,7 +235,7 @@
       Tmp(i)    = 0.0 
       Rad_mp(i) =  0.0
     end do
-    if(this < 2) write(*,*) 'Finished with cut line  ', k
+    if(this < 2) print *, 'Finished with cut line  ', k
   end do   !end number of radius
 
     deallocate(Np)
@@ -254,6 +254,6 @@
     end if
 
 
-  if(this < 2) write(*,*) 'Finished with UserProbe1D_jet '
+  if(this < 2) print *, 'Finished with UserProbe1D_jet '
 
   end subroutine

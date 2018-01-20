@@ -40,7 +40,7 @@
     real                :: R, Urad_mean, Utan_mean, dummy, Lscale
 !======================================================================!
 
-    write(*,*) 'tu sam'
+    print *, 'tu sam'
     return
 
     namPro = name
@@ -326,7 +326,7 @@
 10  continue
 
     if(Ufric == 0.0) then
-      write(*,*) 'Friction velocity is zero in UserCutLines_channel.f90 !'
+      print *, 'Friction velocity is zero in UserCutLines_channel.f90 !'
       return
     end if
  

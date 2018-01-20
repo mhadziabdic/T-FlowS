@@ -24,7 +24,7 @@
   real    :: V11,  V22,  V33,  V12,  V13,  V23,  V21,  V31,  V32
 !==============================================================================!
 
-  write(*,*) '# I think there is a bug in this function (Bojan)'
+  print *, '# I think there is a bug in this function (Bojan)'
 
   !---------------!
   !               !

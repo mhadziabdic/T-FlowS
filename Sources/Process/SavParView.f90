@@ -39,7 +39,7 @@
   call Name_File(sub, name_out, '.gmv', len_trim('.gmv'))
   open(9, file=name_out)
   if (this_proc <2) then
-    write(*,*) 'Now reading the file: ', name_out
+    print *, 'Now reading the file: ', name_out
   end if
 !---------------!
 !     start     !
@@ -80,7 +80,7 @@
   read(line % tokens(2),*) NCsub_new
 
   if (NCsub_new.ne.NCsub) then 
-     write(*,*) 'number of cells read and processed is different, exiting!'
+     print *, 'number of cells read and processed is different, exiting!'
      stop
   end if
   

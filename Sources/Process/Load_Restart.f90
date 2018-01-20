@@ -25,7 +25,7 @@
 !==============================================================================!
 
   if(this_proc  < 2) &              
-    write(*,*) '# Input restart file name [skip cancels]:'
+    print *, '# Input restart file name [skip cancels]:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1), '(A80)')  name_in
   answer=name_in

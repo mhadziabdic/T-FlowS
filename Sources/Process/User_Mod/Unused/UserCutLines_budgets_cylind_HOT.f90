@@ -594,7 +594,7 @@
 
 
       Tfric = 0.005/Ufric
-      if(this < 2)write(*,*) 'mean Utau = ', Ufric, 'mean Ttau = ', Tfric,        &
+      if(this < 2)print *, 'mean Utau = ', Ufric, 'mean Ttau = ', Tfric,        &
        'Twall_mean = ', Twall , 'ukupno nasao celija: ', count
 
     open(3,file='pipe_mean_plus.dat')

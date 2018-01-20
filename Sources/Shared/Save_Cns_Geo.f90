@@ -173,8 +173,8 @@
         if(proces(CopyC(c)) /= sub) then
           do b=1,n_buf_cells_sub
             if(BuReIn(b) == CopyC(c)) then
-              write(*,*) BufPos(b) 
-              write(*,*) grid % xc(CopyC(c)),  &
+              print *, BufPos(b) 
+              print *, grid % xc(CopyC(c)),  &
                          grid % yc(CopyC(c)),  &
                          grid % zc(CopyC(c))  
               iwork(count,2)=-BufPos(b) ! - sign, copy buffer

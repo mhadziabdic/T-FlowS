@@ -64,9 +64,9 @@
         grid % faces_n(1,s), grid % faces_n(2,s),  &
         grid % faces_n(3,s)
     else
-      write(*,*) '# Unsupported cell type ',       &
+      print *, '# Unsupported cell type ',       &
                  grid % faces_n_nodes(s), ' nodes.'
-      write(*,*) '# Exiting'
+      print *, '# Exiting'
       stop 
     end if
   end do  

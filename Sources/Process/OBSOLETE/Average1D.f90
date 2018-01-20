@@ -37,7 +37,7 @@
 !======================================================================!
 
   if(this  < 2)  & 
-    write(*,*) '# Input probe file name [skip cancels]:'
+    print *, '# Input probe file name [skip cancels]:'
   call ReadC(7,inp,tn,ts,te)  
   read(inp(ts(1):te(1)),'(A80)') namPro
   answer=namPro

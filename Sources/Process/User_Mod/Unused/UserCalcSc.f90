@@ -487,11 +487,11 @@
 
 !->>> take a look at the system of equations
 !->>> do c=1,NC
-!->>>   write(*,*) 'Width: ', Acol(c+1)-Acol(c)
+!->>>   print *, 'Width: ', Acol(c+1)-Acol(c)
 !->>>   write(*,'(3I7)') Acol(c), Adia(c), Acol(c+1)-1
-!->>>   write(*,*) 'Diag: ', Aval(Adia(c))
+!->>>   print *, 'Diag: ', Aval(Adia(c))
 !->>>   write(*,'(F5.2)') ( Aval(j),  j=Acol(c),Acol(c+1)-1 )
-!->>>   write(*,*) '- - - - - - - - - - - - - - - - - - - - - - -'
+!->>>   print *, '- - - - - - - - - - - - - - - - - - - - - - -'
 !->>> end do  
 
 !===================================!
@@ -512,7 +512,7 @@
   call bicg(NC, Nbc, NONZERO, Aval,Acol,Arow,Adia,Abou,  &
             PHI % n, b, PREC,                            &
             niter,PHI % STol, res(var), error)
-  write(*,*) 'niter =', niter
+  print *, 'niter =', niter
  
   call Exchng(PHI)
 

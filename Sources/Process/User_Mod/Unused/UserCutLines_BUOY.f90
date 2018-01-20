@@ -83,7 +83,7 @@
     call GraPhi(T % n,3,PHIz,.TRUE.)
 
     call SSORT (z_p, ind, Nprob, 0)
-    write(*,*) Nprob
+    print *, Nprob
     
     call CalcShear(U % n, V % n, W % n, Shear)
 
@@ -288,7 +288,7 @@
 10  continue
 
     if(Ufric == 0.0) then
-      if(this < 2) write(*,*) 'Friction velocity is zero in UserCutLines_BUOY.f90 !'
+      if(this < 2) print *, 'Friction velocity is zero in UserCutLines_BUOY.f90 !'
       return
     end if
 

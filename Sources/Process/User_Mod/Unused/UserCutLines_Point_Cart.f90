@@ -290,6 +290,6 @@
   end if
 
 
-  if(this_proc < 2) write(*,*) 'Finished with UserCutLines_Horiz_Cart'
+  if(this_proc < 2) print *, 'Finished with UserCutLines_Horiz_Cart'
 
   end subroutine UserCutLines_Point_Cart 

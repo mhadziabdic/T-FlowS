@@ -41,7 +41,7 @@
   end do
 
   ! Sort the cells
-  write(*,*) '# Sorting the cells'
+  print *, '# Sorting the cells'
   do i = 1, grid % n_cells
     ix(i) = i
     criter(i) = grid % xc(i) + 0.01 * grid % yc(i) + 0.0001 * grid % zc(i)
@@ -57,21 +57,21 @@
     criter(i) = grid % zc(i) + 0.01 * grid % xc(i) + 0.0001 * grid % yc(i)
   end do
   call Sort_Real_By_Index(criter(1),iz(1),grid % n_cells,2)
-  write(*,*) '# Finished sorting'
+  print *, '# Finished sorting'
 
   call Load_Geo(grid, 0)
 
-  write(*,*) '# Number of subdomains:'
+  print *, '# Number of subdomains:'
   read(*,*)  n_sub_tot
   n_sub = n_sub_tot      ! Needed for EpsPar
 
   allocate (subNC(n_sub))
 
-  write(*,*) '#==============================='
-  write(*,*) '# Algorythm for decomposition:'
-  write(*,*) '# COO -> Coordinate multisection' 
-  write(*,*) '# INE -> Inertial multisection' 
-  write(*,*) '#-------------------------------'
+  print *, '#==============================='
+  print *, '# Algorythm for decomposition:'
+  print *, '# COO -> Coordinate multisection' 
+  print *, '# INE -> Inertial multisection' 
+  print *, '#-------------------------------'
   read(*,*) answer
   call To_Upper_Case(answer)
   if(answer == 'COO') then
@@ -79,7 +79,7 @@
   else if(answer == 'INE') then
     division_algorithm = INERTIAL
   else
-    write(*,*) '# Error in input. Exiting!' 
+    print *, '# Error in input. Exiting!' 
     stop
   end if
 
@@ -90,7 +90,7 @@
   !   Find the number of divisions   !
   !----------------------------------!
   call Factorize_Number(n_div, n_sub_tot, chunks)
-  write(*,*) '# Number of divisions:', n_div
+  print *, '# Number of divisions:', n_div
 
   !-------------------------------! 
   !   Through all the divisions   !
@@ -98,14 +98,14 @@
   do i = 1, n_div
 
     do j = 1, n_sub
-      write(*,*) '# Dividing', j, ' into', chunks(i), ' chunks'
+      print *, '# Dividing', j, ' into', chunks(i), ' chunks'
       call Split_Subdomain(grid, j, chunks(i))
     end do
 
   end do     
 
   do j = 1, n_sub
-    write(*,*) '# Processor:', j, ' cells:', subNC(j)
+    print *, '# Processor:', j, ' cells:', subNC(j)
   end do
 
   call Create_Buffers_And_Save(grid)

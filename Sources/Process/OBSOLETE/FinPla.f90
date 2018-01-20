@@ -24,13 +24,13 @@
   namTem = name
 
 1 if(THIS  < 2) then 
-    write(*,*) '#-----------------------------------#'
-    write(*,*) '#----- Find planes for Tecplot -----#'
-    write(*,*) '#-----------------------------------#'
+    print *, '#-----------------------------------#'
+    print *, '#----- Find planes for Tecplot -----#'
+    print *, '#-----------------------------------#'
   end if
 
   if(THIS  < 2) &
-    write(*,*) '# Direction (x,y or z) and coordinate, or skip'
+    print *, '# Direction (x,y or z) and coordinate, or skip'
   call ReadC(7,inp,tn,ts,te)
   call ToUppr(inp(ts(1):te(1)))
   if( inp(ts(1):te(1))  ==  'SKIP' ) then
@@ -45,12 +45,12 @@
     if(dir  ==  'Z') read(inp(ts(2):te(2)),*) z0
 
     if(THIS  < 2) &
-      write(*,*) '# Input the plane file name:'
+      print *, '# Input the plane file name:'
     call ReadC(7,inp,tn,ts,te)
     read(inp(ts(1):te(1)), '(A80)')  namOut
     call Name_File(THIS, namOut, '.plt', len_trim('.plt'))
     open(9, file=namOut)
-    write(*,*) '# Now creating the file:', namOut
+    print *, '# Now creating the file:', namOut
 
 !----- Count the values on the plane
     Ncp=0

@@ -25,7 +25,7 @@
   ! Memory allocation
   allocate(stencw(grid % n_cells)); stencw=1
 
-  if(this_proc < 2) write(*,*) '# Determining matrix topology.'
+  if(this_proc < 2) print *, '# Determining matrix topology.'
 
   ! Initialize number of nonzeros
   matrix % nonzeros = 0
@@ -120,7 +120,7 @@
     end if
   end do
 
-  if(this_proc < 2) write(*,*) '# Finished !'
+  if(this_proc < 2) print *, '# Finished !'
  
   deallocate(stencw)
 

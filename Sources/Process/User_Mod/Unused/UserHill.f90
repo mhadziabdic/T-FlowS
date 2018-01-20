@@ -278,6 +278,6 @@
     end if
   end do   !end number of radius
 
-  if(this < 2) write(*,*) 'Finished with UserHill '
+  if(this < 2) print *, 'Finished with UserHill '
 
   end subroutine UserHill

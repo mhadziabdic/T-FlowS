@@ -36,7 +36,7 @@
 !----------------------!
 !-- Coordinates Loop --!
 !----------------------!
-  if(this < 2) write(*,*) '# NOW READING file: ', FLUfile
+  if(this < 2) print *, '# NOW READING file: ', FLUfile
   open (5, file=FLUfile)
 
   do i=1,6                             !header
@@ -85,7 +85,7 @@
 !-- Variables Loop --!
 !--------------------!
   FLUfile(len_trim(FLUfile)-3 : len_trim(FLUfile)) = ".dat"
-  if(this < 2) write(*,*) '# NOW READING file: ', FLUfile
+  if(this < 2) print *, '# NOW READING file: ', FLUfile
   open (5, file=FLUfile)
 
   do i=1,4                             !header
@@ -217,7 +217,7 @@
 
   else       !else if err/=0
 
-    write(*,*) '# Finished reading file: ', FLUfile
+    print *, '# Finished reading file: ', FLUfile
 
     GOTO 4   !go to close variables loop
 
@@ -254,7 +254,7 @@
     if(ALLOCATED(Pcent)) then
       P % n(c) = Pcent(j)
     else
-      if(c==2) write(*,*) '@ReadGMV: P not found in ', FLUfile,  &
+      if(c==2) print *, '@ReadGMV: P not found in ', FLUfile,  &
                           ' Initialization with constant (0.0)!'
       P % n(c) = 0.0
     end if
@@ -263,7 +263,7 @@
       if(ALLOCATED(Tcent)) then
         T % n(c) = Tcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: T not found in ', FLUfile, &
+        if(c==2) print *, '@ReadGMV: T not found in ', FLUfile, &
                             ' Initialization with constant (20.0)!'
         T % n(c) = 20.0  !or 20.0
       end if
@@ -275,7 +275,7 @@
       if(ALLOCATED(Kcent)) then
         Kin % n(c) = Kcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Kin not found in ', FLUfile, &
+        if(c==2) print *, '@ReadGMV: Kin not found in ', FLUfile, &
                             ' Initialization with constant (1.0E-3)!'
         Kin % n(c) = 1.0E-3
       end if
@@ -285,7 +285,7 @@
       if(ALLOCATED(Ecent)) then
         Eps % n(c) = Ecent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Eps not found in ', FLUfile, &
+        if(c==2) print *, '@ReadGMV: Eps not found in ', FLUfile, &
                             ' Initialization with constant (1.0E-4)!'
         Eps % n(c)  = 1.0E-4
       end if
@@ -295,7 +295,7 @@
       if(ALLOCATED(Pkcent)) then
         Pk(c) = Pkcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Pk not found in ', FLUfile,  &
+        if(c==2) print *, '@ReadGMV: Pk not found in ', FLUfile,  &
                             ' Initialization with constant (1.0E-4)!'
         Pk(c)  = 1.0E-4
       end if
@@ -307,7 +307,7 @@
       if(ALLOCATED(Kcent)) then
         Kin % n(c) = Kcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Kin not found in ', FLUfile, &
+        if(c==2) print *, '@ReadGMV: Kin not found in ', FLUfile, &
                             ' Initialization with constant (1.0E-3)!'
         Kin % n(c) = 1.0E-3
       end if
@@ -317,7 +317,7 @@
       if(ALLOCATED(Ecent)) then
         Eps % n(c) = Ecent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Eps not found in ', FLUfile, &
+        if(c==2) print *, '@ReadGMV: Eps not found in ', FLUfile, &
                             ' Initialization with constant (1.0E-4)!'
         Eps % n(c) = 1.0E-4
       end if
@@ -327,7 +327,7 @@
       if(ALLOCATED(Pkcent)) then
         Pk(c) = Pkcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Pk not found in ', FLUfile,  &
+        if(c==2) print *, '@ReadGMV: Pk not found in ', FLUfile,  &
                             ' Initialization with constant (1.0E-4)!'
         Pk(c)  = 1.0E-4
       end if
@@ -335,7 +335,7 @@
       if(ALLOCATED(VVcent)) then
         v_2 % n(c) = VVcent(j) 
       else
-        if(c==2) write(*,*) '@ReadGMV: zeta not found in ', FLUfile,  &
+        if(c==2) print *, '@ReadGMV: zeta not found in ', FLUfile,  &
                             ' Initialization with constant (1.0E-2)!'
         v_2 % n(c) = 1.0E-2
       end if
@@ -345,7 +345,7 @@
       if(ALLOCATED(F22cent)) then
         f22 % n(c) = F22cent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: f22 not found in ', FLUfile, &
+        if(c==2) print *, '@ReadGMV: f22 not found in ', FLUfile, &
                             ' Initialization with constant (1.0E-2)!'
         f22 % n(c) = 1.0E-2
       end if
@@ -376,8 +376,8 @@
         VIS % o(c)  = VIScent(j)
         VIS % oo(c) = VIScent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: viscosity not found in ', FLUfile
-        if(c==2) write(*,*) '#         Viscosity initialized with constant!!'
+        if(c==2) print *, '@ReadGMV: viscosity not found in ', FLUfile
+        if(c==2) print *, '#         Viscosity initialized with constant!!'
         VIS % n(c)  = 1.0
         VIS % o(c)  = 1.0
         VIS % oo(c) = 1.0
@@ -385,7 +385,7 @@
     end if
 
 !-----Status printout
-    if(mod(c,5000) == 0) write(*,*) 100.0 * c / (1.0 * NC), '% complete...'
+    if(mod(c,5000) == 0) print *, 100.0 * c / (1.0 * NC), '% complete...'
 
   end do   !end do=1,NC
 !-----Fluxes, convective and diffusive terms

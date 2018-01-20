@@ -30,17 +30,17 @@
 
   ! The number of time steps
   if(this_proc  < 2) then 
-    write(*,*) '#==============================================='
-    write(*,*) '# Enter the number of time steps: (',Ndt,') '
-    write(*,*) '# (type 0 if you just want to analyse results)'
-    write(*,*) '#-----------------------------------------------'
+    print *, '#==============================================='
+    print *, '# Enter the number of time steps: (',Ndt,') '
+    print *, '# (type 0 if you just want to analyse results)'
+    print *, '#-----------------------------------------------'
   end if
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1), *)  Ndt
 
   ! Starting time step for statistics 
   if(this_proc  < 2)  &
-    write(*,*) '# Starting time step for statistics (',Nstat,') '
+    print *, '# Starting time step for statistics (',Nstat,') '
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1), *)  Nstat
   if(BUDG == YES) then
@@ -48,7 +48,7 @@
   end if
 
   if(this_proc  < 2)  & 
-    write(*,*) '# Number of monitoring points:'
+    print *, '# Number of monitoring points:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1), *) Nmon 
 
@@ -58,7 +58,7 @@
   allocate (zm(Nmon))
 
   if(this_proc  < 2)  &
-    write(*,*) '# Enter the coordinates of monitoring point(s)'
+    print *, '# Enter the coordinates of monitoring point(s)'
   do i=1,Nmon
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *)  xm(i)
@@ -109,7 +109,7 @@
   ! Plane for calcution of overall mass fluxes
   do m = 1, grid % n_materials
     if(this_proc  < 2)  then
-      write(*,*) '# Enter the coordinates of monitoring plane: (', &
+      print *, '# Enter the coordinates of monitoring plane: (', &
                   bulk(m) % xp, bulk(m) % yp, bulk(m) % zp, ' )'
     end if
     call Tokenizer_Mod_Read_Line(CMN_FILE)
@@ -120,13 +120,13 @@
 
   ! Kind of simulation
   if(this_proc  < 2) then
-    write(*,*) '# Type of simulation: '
-    write(*,*) '# DNS      -> Direct Numerical Simulation'
-    write(*,*) '# LES      -> Large Eddy Simulation'
-    write(*,*) '# K_EPS    -> High Reynolds k-eps model.' 
-    write(*,*) '# K_EPS_VV -> Durbin`s model.' 
-    write(*,*) '# SPA_ALL  -> Spalart-Allmaras model.' 
-    write(*,*) '# ZETA  -> k-eps-zeta-f model.' 
+    print *, '# Type of simulation: '
+    print *, '# DNS      -> Direct Numerical Simulation'
+    print *, '# LES      -> Large Eddy Simulation'
+    print *, '# K_EPS    -> High Reynolds k-eps model.' 
+    print *, '# K_EPS_VV -> Durbin`s model.' 
+    print *, '# SPA_ALL  -> Spalart-Allmaras model.' 
+    print *, '# ZETA  -> k-eps-zeta-f model.' 
   endif
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1),'(A)')  answer
@@ -207,7 +207,7 @@
 
   if(SIMULA  ==  LES.and.MODE == SMAG) then
     if(this_proc  < 2)  &
-      write(*,*) '# C Smagorinsky = ', Cs0, ' enter the new value: '
+      print *, '# C Smagorinsky = ', Cs0, ' enter the new value: '
     read(line % tokens(3),*) Cs0
   endif 
 
@@ -216,9 +216,9 @@
     if(SIMULA  ==  LES .or. SIMULA == DNS .or. SIMULA == DES_SPA &
       .or.SIMULA  ==  HYB_PITM .or. SIMULA == HYB_ZETA) then
       if(this_proc  < 2) then
-        write(*,*) '# Do you want to shake the velocity field ?'
-        write(*,*) '# YES -> shake'
-        write(*,*) '# NO  -> don''t shake'
+        print *, '# Do you want to shake the velocity field ?'
+        print *, '# YES -> shake'
+        print *, '# NO  -> don''t shake'
       end if
       call Tokenizer_Mod_Read_Line(CMN_FILE)
       read(line % tokens(1),'(A)')  answer
@@ -236,11 +236,11 @@
       endif
       if(SHAKE(m) == YES) then
         if(this_proc < 2) &
-          write(*,*) '# For how many time steps you want to shake ?'
+          print *, '# For how many time steps you want to shake ?'
         call Tokenizer_Mod_Read_Line(CMN_FILE)
         read(line % tokens(1), *) SHAKE_PER(m) 
         if(this_proc < 2) &
-          write(*,*) '# Interval for shaking:', SHAKE_PER(m)
+          print *, '# Interval for shaking:', SHAKE_PER(m)
         call Tokenizer_Mod_Read_Line(CMN_FILE)
         read(line % tokens(1), *) SHAKE_INT(m)
       end if
@@ -380,9 +380,9 @@
 
   ! Time stepping scheme
   if(this_proc  < 2) then
-    write(*,*) '# Algorythm for time-integration: '
-    write(*,*) '# SIMPLE [Nini] -> S. I. M. P. L. E.'
-    write(*,*) '# FRACTION      -> Fractional step method'
+    print *, '# Algorythm for time-integration: '
+    print *, '# SIMPLE [Nini] -> S. I. M. P. L. E.'
+    print *, '# FRACTION      -> Fractional step method'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1),'(A)')  answer
@@ -403,19 +403,19 @@
   endif
 
   if(ALGOR == SIMPLE) then
-    if(this_proc < 2) write(*,*) '# Under Relaxation Factor for velocity (',U % URF,')'
+    if(this_proc < 2) print *, '# Under Relaxation Factor for velocity (',U % URF,')'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *)  U % URF
-    if(this_proc < 2) write(*,*) '# Under Relaxation Factor for pressure (',P % URF,')'
+    if(this_proc < 2) print *, '# Under Relaxation Factor for pressure (',P % URF,')'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *)  P % URF
     if(HOT == YES) then
-      if(this_proc < 2) write(*,*) '# Under Relaxation Factor for temperature (',T % URF,')'
+      if(this_proc < 2) print *, '# Under Relaxation Factor for temperature (',T % URF,')'
       call Tokenizer_Mod_Read_Line(CMN_FILE)
       read(line % tokens(1), *)  T % URF
     end if
     if(SIMULA /= LES .and. SIMULA /= DNS) then
-      if(this_proc < 2) write(*,*) '# Under Relaxation Factor for turbulent variables (',T % URF,')'
+      if(this_proc < 2) print *, '# Under Relaxation Factor for turbulent variables (',T % URF,')'
       call Tokenizer_Mod_Read_Line(CMN_FILE)
       read(line % tokens(1), *)  URFT
     end if
@@ -434,9 +434,9 @@
 
 
   if(this_proc  < 2) then
-    write(*,*) '# Integration of inertial terms: '
-    write(*,*) '# LIN -> Linear'
-    write(*,*) '# PAR -> Parabolic'
+    print *, '# Integration of inertial terms: '
+    print *, '# LIN -> Linear'
+    print *, '# PAR -> Parabolic'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1),'(A)')  answer
@@ -454,10 +454,10 @@
   endif
 
   if(this_proc  < 2) then
-    write(*,*) '# Integration of advection terms: '
-    write(*,*) '# AB -> Adams-Bashforth'
-    write(*,*) '# CN -> Crank-Nicholson'
-    write(*,*) '# FI -> Fully Implicit'
+    print *, '# Integration of advection terms: '
+    print *, '# AB -> Adams-Bashforth'
+    print *, '# CN -> Crank-Nicholson'
+    print *, '# FI -> Fully Implicit'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1),'(A)')  answer
@@ -477,10 +477,10 @@
   endif
 
   if(this_proc  < 2) then
-    write(*,*) '# Integration of diffusion terms: '
-    write(*,*) '# AB -> Adams-Bashforth'
-    write(*,*) '# CN -> Crank-Nicholson'
-    write(*,*) '# FI -> Fully Implicit'
+    print *, '# Integration of diffusion terms: '
+    print *, '# AB -> Adams-Bashforth'
+    print *, '# CN -> Crank-Nicholson'
+    print *, '# FI -> Fully Implicit'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1),'(A)')  answer
@@ -500,10 +500,10 @@
   endif
 
   if(this_proc  < 2) then
-    write(*,*) '# Integration of cross-diffusion terms: '
-    write(*,*) '# AB -> Adams-Bashforth'
-    write(*,*) '# CN -> Crank-Nicholson'
-    write(*,*) '# FI -> Fully Implicit'
+    print *, '# Integration of cross-diffusion terms: '
+    print *, '# AB -> Adams-Bashforth'
+    print *, '# CN -> Crank-Nicholson'
+    print *, '# FI -> Fully Implicit'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1),'(A)')  answer
@@ -526,16 +526,16 @@
   do m=1,grid % n_materials
     URFC(m) = 1.0
     if(this_proc  < 2) then
-      write(*,*) '# Convetive schemes for momentum equation:'
-      write(*,*) '# Do you want to use upwind blending: '
-      write(*,*) '# YES       -> use blening'
-      write(*,*) '# NO        -> don''t use blending'
-      write(*,*) '# CDS       -> central differencing'
-      write(*,*) '# LUDS      -> linear upwind'
-      write(*,*) '# QUICK     -> self descriptive'
-      write(*,*) '# MINMOD    -> self descriptive'
-      write(*,*) '# SMART     -> self descriptive'
-      write(*,*) '# AVL_SMART -> self descriptive'
+      print *, '# Convetive schemes for momentum equation:'
+      print *, '# Do you want to use upwind blending: '
+      print *, '# YES       -> use blening'
+      print *, '# NO        -> don''t use blending'
+      print *, '# CDS       -> central differencing'
+      print *, '# LUDS      -> linear upwind'
+      print *, '# QUICK     -> self descriptive'
+      print *, '# MINMOD    -> self descriptive'
+      print *, '# SMART     -> self descriptive'
+      print *, '# AVL_SMART -> self descriptive'
     endif 
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1),'(A)')  answer
@@ -577,7 +577,7 @@
     do m=1,grid % n_materials
       URFC_Tem(m) = 1.0
       if(this_proc  < 2) then
-        write(*,*) '# Convetive schemes for energy equation:'
+        print *, '# Convetive schemes for energy equation:'
       endif 
       call Tokenizer_Mod_Read_Line(CMN_FILE)
       read(line % tokens(1),'(A)')  answer
@@ -620,7 +620,7 @@
     do m=1,grid % n_materials
       URFC_Tur(m) = 1.0
       if(this_proc  < 2) then
-        write(*,*) '# Convetive schemes for transport equation:'
+        print *, '# Convetive schemes for transport equation:'
       endif 
       call Tokenizer_Mod_Read_Line(CMN_FILE)
       read(line % tokens(1),'(A)')  answer
@@ -662,10 +662,10 @@
 
   ! Solver parameters
   if(this_proc  < 2) then
-    write(*,*) '# Preconditioning of the system matrix: '
-    write(*,*) '# NO -> No preconditioning'
-    write(*,*) '# DI -> Diagonal preconditioning'
-    write(*,*) '# IC -> Incomplete Cholesky'
+    print *, '# Preconditioning of the system matrix: '
+    print *, '# NO -> No preconditioning'
+    print *, '# DI -> Diagonal preconditioning'
+    print *, '# IC -> Incomplete Cholesky'
   endif 
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1),'(A)')  answer
@@ -685,13 +685,13 @@
   endif
 
   if(this_proc  < 2)  &
-    write(*,*) '# Tolerance for velocity solver: (',U % STol,' )'
+    print *, '# Tolerance for velocity solver: (',U % STol,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *)    U % STol
     V % Stol     = U % Stol
     W % Stol     = U % Stol
   if(this_proc  < 2)  &
-    write(*,*) '# Tolerance for pressure solver: (',PP % STol,' )'
+    print *, '# Tolerance for pressure solver: (',PP % STol,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *)   PP % STol
     P % Stol = PP % Stol
@@ -711,28 +711,28 @@
   end if
   if(HOT == YES) then
     if(this_proc  < 2)  &
-      write(*,*) '# Tolerance for temperature solver: (',T % STol,' )'
+      print *, '# Tolerance for temperature solver: (',T % STol,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *)  T % STol
   end if
  
   if(ALGOR == SIMPLE) then
     if(this_proc  < 2)  &
-      write(*,*) '# Tolerance for SIMPLE: (',SIMTol,' )'
+      print *, '# Tolerance for SIMPLE: (',SIMTol,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     read(line % tokens(1), *)  SIMTol
   endif     
 
   ! Time step
   if(this_proc  < 2)  &
-    write(*,*) '# Time step: (',dt,' )'
+    print *, '# Time step: (',dt,' )'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1), *)  dt
 
   ! Wall velocity 
   do m=1,grid % n_materials
     if(this_proc  < 2)  &
-      write(*,*) '# Enter Pdrop (x, y, z) for domain ', m
+      print *, '# Enter Pdrop (x, y, z) for domain ', m
     call Tokenizer_Mod_Read_Line(CMN_FILE) 
     if(.not. restar) then 
       read(line % tokens(1), *)  bulk(m) % p_drop_x
@@ -751,8 +751,8 @@
   ! Mass fluxes
   do m=1,grid % n_materials
     if(this_proc  < 2) then
-      write(*,*) '# Enter the wanted mass flux through domain ', m
-      write(*,*) '# (type 0.0 to keep the pressure drop constant)'
+      print *, '# Enter the wanted mass flux through domain ', m
+      print *, '# (type 0.0 to keep the pressure drop constant)'
     endif 
 
     call Tokenizer_Mod_Read_Line(CMN_FILE) 

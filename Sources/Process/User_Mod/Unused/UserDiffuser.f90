@@ -414,6 +414,6 @@
   end do   !end number of radius
 
 
-  if(this < 2) write(*,*) 'Finished with UserDiffuser '
+  if(this < 2) print *, 'Finished with UserDiffuser '
 
   end subroutine UserDiffuser

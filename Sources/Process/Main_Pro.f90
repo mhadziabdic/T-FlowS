@@ -64,7 +64,7 @@
   open(CMN_FILE, file='T-FlowS.cmn')    
   cmn_line_count = 0
 
-  if(this_proc < 2) write(*,*) '# Input problem name:'
+  if(this_proc < 2) print *, '# Input problem name:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)  
   read(line % tokens(1), '(A80)')  name
 
@@ -122,7 +122,7 @@
   end do
 
   ! Loading data from previous computation   
-  !  if(this_proc<2) write(*,*)'Reading data from previous computation on the same mesh'
+  !  if(this_proc<2) print *,'Reading data from previous computation on the same mesh'
   call Load_Restart_Ini(grid)
 
   ! Prepare ...
@@ -455,7 +455,7 @@
     close(9)
   end if
 
-  if(this_proc  < 2) write(*,*) '# Exiting !'
+  if(this_proc  < 2) print *, '# Exiting !'
 
   !----------------------------!
   !   Close the command file   !

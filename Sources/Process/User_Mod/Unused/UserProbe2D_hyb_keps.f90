@@ -39,7 +39,7 @@
   character, optional :: name_out*(*)            
 !======================================================================!
   if(PRESENT(name_out)) then
-    write(*,*) name_out
+    print *, name_out
 !---- save the name
     namCut = name_out
   else
@@ -106,7 +106,7 @@
   end do 
    
   if(K == 0) then
-    write(*,*) 'Did not find any point in define cut line position'
+    print *, 'Did not find any point in define cut line position'
     return
   else
     call RISort(z_p, order, Npoints, 2)
@@ -163,7 +163,7 @@
       end if
     end do
     end do
-    write(*,*)'finished sorting'
+    print *,'finished sorting'
 !+++++++++++++++++++++++++++++++++++!
 !   Calculating a friction velocity !
 !+++++++++++++++++++++++++++++++++++!

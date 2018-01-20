@@ -132,6 +132,6 @@
       deallocate(Tmp)
     end if
 
-  if(this < 2) write(*,*) 'Finished with UserHill_Nu '
+  if(this < 2) print *, 'Finished with UserHill_Nu '
 
   end subroutine UserHill_Nu

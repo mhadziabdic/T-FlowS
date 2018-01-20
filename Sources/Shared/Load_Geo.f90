@@ -21,7 +21,7 @@
   !----------------------------!
   call Name_File(this_proc, name_in, '.geo', len_trim('.geo')) 
   open(9, file=name_in, FORM='unformatted')
-  if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
+  if(this_proc < 2) print *, '# Now reading the file:', name_in
 
   read(9) (grid % xn(n), n = 1, grid % n_nodes)
   read(9) (grid % yn(n), n = 1, grid % n_nodes) 

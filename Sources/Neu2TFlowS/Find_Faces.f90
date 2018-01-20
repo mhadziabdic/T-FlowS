@@ -146,6 +146,6 @@
     end if
   end do    ! do n3
 
-  write(*,*) '# Find_Faces: Number of faces: ', grid % n_faces, grid % n_faces
+  print *, '# Find_Faces: Number of faces: ', grid % n_faces, grid % n_faces
 
   end subroutine

@@ -30,14 +30,14 @@
   write(*,'(A10,A1,A28)') ' # Making ', dir, '.eps cut through the domain'
   write(*,'(A39)')        ' #-----------------------------------------------'
 
-  write(*,*) '# Enter the ',dir,' coordinate for cutting or type skip to exit: '
+  print *, '# Enter the ',dir,' coordinate for cutting or type skip to exit: '
   call Tokenizer_Mod_Read_Line(5)
   read(line % whole, *) answer
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return  
   read(answer, *) z0
   if(z0 == 0) return
-  write(*,*) '# Z0 = ', z0
+  print *, '# Z0 = ', z0
 
   !----------------------!
   !                      !

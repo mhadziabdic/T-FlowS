@@ -243,7 +243,7 @@
               uTp(i) = uTp(i) + ut % n(c) 
               vTp(i) = vTp(i) + vt % n(c) 
               wTp(i) = wTp(i) + wt % n(c) 
-!              write(*,*) wt % n(c)
+!              print *, wt % n(c)
             end if 
             if(MODE == HRe) then
               if(IsNearWall(c)) then
@@ -450,7 +450,7 @@
     end do
 
     if(Ufric == 0.0) then
-      if(this_proc < 2) write(*,*) 'Friction velocity is zero in UserCutLines_channel.f90 !'
+      if(this_proc < 2) print *, 'Friction velocity is zero in UserCutLines_channel.f90 !'
       return
     end if
 

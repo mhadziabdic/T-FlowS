@@ -23,7 +23,7 @@
   call Name_File(this_proc, name_in, '.cns', len_trim('.cns'))  
 
   open(9, file=name_in,form='unformatted')
-  if(this_proc < 2) write(*,*) '# Now reading the file:', name_in
+  if(this_proc < 2) print *, '# Now reading the file:', name_in
 
   ! Number of cells, boundary cells and sides
   read(9) grid % n_nodes
@@ -76,7 +76,7 @@
   read(9) (CopyC(c), c = -1,-grid % n_bnd_cells, -1)
  
   read(9) grid % n_copy
-  write(*,*) '# Number of copy cells/faces: ', grid % n_copy
+  print *, '# Number of copy cells/faces: ', grid % n_copy
   allocate (CopyS(2,grid % n_copy))
   read(9) (CopyS(1,s), s = 1,grid % n_copy)
   read(9) (CopyS(2,s), s = 1,grid % n_copy)

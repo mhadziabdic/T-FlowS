@@ -23,11 +23,11 @@
     character*39        :: path
 !======================================================================!
 !  open(9, file='Slice2.dat')
-!  if(this < 2) write(*,*) '# Now reading the file: Slice.dat '
+!  if(this < 2) print *, '# Now reading the file: Slice.dat '
 !  read(9,*) x1_dis, x0_dis
 !  read(9,*) y1_dis, y0_dis
 !  read(9,*) z1_dis, z0_dis
-!  if(this < 2) write(*,*) '# X:[ ', x0_dis, " ;", x1_dis, "]", &
+!  if(this < 2) print *, '# X:[ ', x0_dis, " ;", x1_dis, "]", &
 !  ' Y:[ ', y0_dis, " ;", y1_dis, "]", ' Z:[ ', z0_dis, " ;", z1_dis, "]"
 
     inflowfile = 'Cylind-xxxxxx-xxx.dat'
@@ -37,7 +37,7 @@
     open(500+this, file=inflowfile)
 
     if( this < 2 ) then
-      write(*,*) 'Capturing field..'
+      print *, 'Capturing field..'
     end if
 
 

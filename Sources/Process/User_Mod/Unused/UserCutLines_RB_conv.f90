@@ -212,6 +212,6 @@
   end if
 
 
-  if(this_proc < 2) write(*,*) 'Finished with UserCutLines_RB_conv'
+  if(this_proc < 2) print *, 'Finished with UserCutLines_RB_conv'
 
   end subroutine UserCutLines_RB_conv

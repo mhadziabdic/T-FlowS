@@ -35,9 +35,9 @@
 
   BCcount = 0
 
-  write(*,*) '#============================================='
-  write(*,*) '# Making a 3D shaded .eps figure of the domain'
-  write(*,*) '#---------------------------------------------'
+  print *, '#============================================='
+  print *, '# Making a 3D shaded .eps figure of the domain'
+  print *, '#---------------------------------------------'
 
   !---------------------------------------!
   !   Set the boundary condition colors   !
@@ -58,8 +58,8 @@
   !------------------------------!
   !   Input camera coordinates   !
   !------------------------------!
-1 write(*,*) '# Enter the camera coordinates (skip to exit): '
-  write(*,*) '#---------------------------------------------'
+1 print *, '# Enter the camera coordinates (skip to exit): '
+  print *, '#---------------------------------------------'
   call Tokenizer_Mod_Read_Line(5)
   if(line % n_tokens == 1) then 
     read(line % whole, *) answer
@@ -81,11 +81,11 @@
   !   Create .eps file   !
   !                      !
   !----------------------!
-  write(*,*) '# G-> Gray or C-> Coloured (by boundary conditions): '
+  print *, '# G-> Gray or C-> Coloured (by boundary conditions): '
   call Tokenizer_Mod_Read_Line(5)
   read(line % whole, *) colour 
   call To_Upper_Case(colour);
-  write(*,*) '# Enter the file name (without extension): '
+  print *, '# Enter the file name (without extension): '
   call Tokenizer_Mod_Read_Line(5)
   read(line % whole, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
@@ -136,7 +136,7 @@
 
   open(9, file=name_eps)
 
-  write(*,*) '# File opened'
+  print *, '# File opened'
 
   write(9, '(A24)') '%!PS-Adobe-2.0 EPSF-1.2 '
   write(9, '(A24)') '%% Created by:  TFlowS %%'

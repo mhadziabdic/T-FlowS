@@ -229,6 +229,6 @@
   end if
 
 
-  if(this_proc < 2) write(*,*) 'Finished with UserCutLines_Horiz_LES'
+  if(this_proc < 2) print *, 'Finished with UserCutLines_Horiz_LES'
 
   end subroutine UserCutLines_Horiz_RANS

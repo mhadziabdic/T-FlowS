@@ -45,17 +45,17 @@
 
     INQUIRE( file=namCoo, EXIST=THERE )
     if(.NOT.THERE) then
-      if(this_proc < 2) write(*,*) "==================================================================="
-      if(this_proc < 2) write(*,*) "In order to extract results at certain locations in the wall jet"
-      if(this_proc < 2) write(*,*) "You have to create an ascii file with cell-faces coordinates "
-      if(this_proc < 2) write(*,*) "in axial direction named case_name.1D."
-      if(this_proc < 2) write(*,*) "The file format should be as follows:"
-      if(this_proc < 2) write(*,*) "10  ! number of cells + 1"
-      if(this_proc < 2) write(*,*) "1  0.0"
-      if(this_proc < 2) write(*,*) "2  0.1"
-      if(this_proc < 2) write(*,*) "3  0.2"
-      if(this_proc < 2) write(*,*) "4  ... "
-      if(this_proc < 2) write(*,*) "==================================================================="
+      if(this_proc < 2) print *, "==================================================================="
+      if(this_proc < 2) print *, "In order to extract results at certain locations in the wall jet"
+      if(this_proc < 2) print *, "You have to create an ascii file with cell-faces coordinates "
+      if(this_proc < 2) print *, "in axial direction named case_name.1D."
+      if(this_proc < 2) print *, "The file format should be as follows:"
+      if(this_proc < 2) print *, "10  ! number of cells + 1"
+      if(this_proc < 2) print *, "1  0.0"
+      if(this_proc < 2) print *, "2  0.1"
+      if(this_proc < 2) print *, "3  0.2"
+      if(this_proc < 2) print *, "4  ... "
+      if(this_proc < 2) print *, "==================================================================="
       return
     end if
 
@@ -262,7 +262,7 @@
       Tmp(i)    = 0.0 
       Rad_mp(i) =  0.0
     end do
-    if(this_proc < 2) write(*,*) 'Finished with cut line  ', k
+    if(this_proc < 2) print *, 'Finished with cut line  ', k
   end do   !end number of radius
 
     deallocate(Np)
@@ -281,6 +281,6 @@
     end if
 
 
-  if(this_proc < 2) write(*,*) 'Finished with UserProbe1D_jet '
+  if(this_proc < 2) print *, 'Finished with UserProbe1D_jet '
 
   end subroutine UserCutLines_jet

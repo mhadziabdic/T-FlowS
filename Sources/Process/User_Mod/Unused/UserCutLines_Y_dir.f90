@@ -361,6 +361,6 @@
   end if
 
 
-  if(this < 2) write(*,*) 'Finished with UserCutLines_Y_dir'
+  if(this < 2) print *, 'Finished with UserCutLines_Y_dir'
 
   end subroutine UserCutLines_Y_dir

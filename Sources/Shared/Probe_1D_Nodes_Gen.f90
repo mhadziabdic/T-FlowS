@@ -21,13 +21,13 @@
   logical           :: isit
 !==============================================================================!
 
-  write(*,*) '#==========================================='
-  write(*,*) '# Creating 1D file with the node '
-  write(*,*) '# coordinates in non-homogeneous directions '
-  write(*,*) '#-------------------------------------------'
-  write(*,*) '# Insert non-homogeneous direction '
-  write(*,*) '# (x, y, z, rx, ry, rz or skip)'
-  write(*,*) '# -------------------------------------------'
+  print *, '#==========================================='
+  print *, '# Creating 1D file with the node '
+  print *, '# coordinates in non-homogeneous directions '
+  print *, '#-------------------------------------------'
+  print *, '# Insert non-homogeneous direction '
+  print *, '# (x, y, z, rx, ry, rz or skip)'
+  print *, '# -------------------------------------------'
   read(*,*) answer
   call To_Upper_Case(answer)
   if(answer=='SKIP') return
@@ -74,7 +74,7 @@
                                    grid % yn(n)**2)**0.5
 
     if(n_prob == 10000) then
-      write(*,*) '# Probe 1D: Not a 1D (channel flow) problem.'
+      print *, '# Probe 1D: Not a 1D (channel flow) problem.'
       isit = .false.
       return
     end if

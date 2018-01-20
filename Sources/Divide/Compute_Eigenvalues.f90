@@ -110,7 +110,7 @@
     end do 
   end do 
 
-  write(*,*) '# Too many Jacobi iterations in Compute_Eigenvalues' 
+  print *, '# Too many Jacobi iterations in Compute_Eigenvalues' 
 
   return 
 

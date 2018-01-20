@@ -60,7 +60,7 @@
 
 !--from T-Rex.cmn file
   else
-    if(This < 2) write(*,*) '# Writing T-REX cutline file name [skip cancels]:'
+    if(This < 2) print *, '# Writing T-REX cutline file name [skip cancels]:'
 
 !--name
     call ReadC(7,inp,tn,ts,te)
@@ -68,7 +68,7 @@
     answer = namCut
     call ToUppr(answer)
     if(answer == 'SKIP') then
-      if(This < 2) write(*,*) '# Writing T-REX cutline skiped!!'
+      if(This < 2) print *, '# Writing T-REX cutline skiped!!'
       RETURN
     end if
 
@@ -95,7 +95,7 @@
     else if(answer == 'Z') then
       dir = Zdir
     else
-      write(*,*) '@CutLine: Unknown direction! No CL created!!'
+      print *, '@CutLine: Unknown direction! No CL created!!'
       RETURN
     end if
 
@@ -131,14 +131,14 @@
         Hscale = .TRUE.
       end if
     else
-      write(*,*) '@CutLine: Wrong normalization mode! No CL created!!'
+      print *, '@CutLine: Wrong normalization mode! No CL created!!'
       RETURN
     end if
 
 !--real normalization for DNS
     if(SIMULA==DNS) then
       CLnorm = RealM
-      write(*,*) '@CutLine: DNS - Normalization mode set to real!'
+      print *, '@CutLine: DNS - Normalization mode set to real!'
     end if
 
 !--opening file
@@ -150,7 +150,7 @@
     else
       write(namcut(l-2:l),'(I3)') Cln
     end if
-    if(This < 2) write(*,*) '# NOW CREATING file: ', namCut
+    if(This < 2) print *, '# NOW CREATING file: ', namCut
     open (100+Cln, file=namCut)
 
 !--write file header
@@ -352,7 +352,7 @@
 
     if(CLnorm==UtauM) then       !U_tau normalization
       if(u_tau==0.0) then
-        if(This < 2) write(*,*) '@CutLine: Problem with U_tau!!'
+        if(This < 2) print *, '@CutLine: Problem with U_tau!!'
       else
         viscos= VISc
         Unorm = u_tau

@@ -13,9 +13,9 @@
 
   call Logo_Neu
 
-  write(*,*) '#======================================================'
-  write(*,*) '# Enter the Fluent''s (*.NEU) file name (without ext.):'
-  write(*,*) '#------------------------------------------------------'
+  print *, '#======================================================'
+  print *, '# Enter the Fluent''s (*.NEU) file name (without ext.):'
+  print *, '#------------------------------------------------------'
   read(*,*) name
 
   call Load_Neu        (grid)
@@ -81,12 +81,12 @@
   call Probe_1D_Nodes(grid)
 
   ! Make .eps figures
-  write(*,*) '# Making three .eps cuts through the domain.'
+  print *, '# Making three .eps cuts through the domain.'
   call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x')
   call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y')
   call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z')
  
-  write(*,*) '# Making a 3D shaded .eps figure of the domain.'
+  print *, '# Making a 3D shaded .eps figure of the domain.'
   call Save_Eps_Whole(grid, grid % n_sh)   ! draw the domain with shadows
 
   end program

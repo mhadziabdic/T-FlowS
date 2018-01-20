@@ -135,7 +135,7 @@
     end do
   end do
 
-  write(*,*) '# Cell centers calculated !'
+  print *, '# Cell centers calculated !'
 
   !-----------------------------------------------------!
   !   Calculate:                                        ! 
@@ -176,7 +176,7 @@
                            +(xt(3)-xt(2))*(yt(2)+yt(3))   & 
                            +(xt(1)-xt(3))*(yt(3)+yt(1)) )
     else
-      write(*,*) 'calc4: something horrible has happened !'
+      print *, 'calc4: something horrible has happened !'
       stop
     end if
 
@@ -193,7 +193,7 @@
 
   end do ! through sides
 
-  write(*,*) '# Cell face components calculated !'
+  print *, '# Cell face components calculated !'
 
   !--------------------------------------!
   !   Calculate boundary cell centers    !
@@ -201,12 +201,12 @@
   !   => depends on: xc,yc,zc,Sx,Sy,Sz   !
   !   <= gives:      xc,yc,zc for c<0    !   
   !--------------------------------------!
-  write(*,*) '#===================================='
-  write(*,*) '# Position the boundary cell centres:'
-  write(*,*) '#------------------------------------'
-  write(*,*) '# Type 1 for barycentric placement'
-  write(*,*) '# Type 2 for orthogonal placement'
-  write(*,*) '#------------------------------------'
+  print *, '#===================================='
+  print *, '# Position the boundary cell centres:'
+  print *, '#------------------------------------'
+  print *, '# Type 1 for barycentric placement'
+  print *, '# Type 2 for orthogonal placement'
+  print *, '#------------------------------------'
   read(*,*) bou_cen 
 
   do s = 1, grid % n_faces
@@ -290,18 +290,18 @@
 
   allocate(face_copy(grid % n_faces)); face_copy=0
 
-  write(*,*) 'Number of boundary conditions: ', grid % n_boundary_conditions
+  print *, 'Number of boundary conditions: ', grid % n_boundary_conditions
 
 2 n_per = 0 
-  write(*,*) '#======================================================'
-  write(*,*) '# Enter the periodic-boundary-condition name.'
-  write(*,*) '# Type skip if there is none !'
-  write(*,*) '#------------------------------------------------------'
-  write(*,*) '# (Please note that the periodic boundaries have to be' 
-  write(*,*) '#  the last on the list of the boundary conditions.'
-  write(*,*) '#  Their BC markers have to be larger than the markers'
-  write(*,*) '#  of all the other boundary conditions.)'
-  write(*,*) '#------------------------------------------------------'
+  print *, '#======================================================'
+  print *, '# Enter the periodic-boundary-condition name.'
+  print *, '# Type skip if there is none !'
+  print *, '#------------------------------------------------------'
+  print *, '# (Please note that the periodic boundaries have to be' 
+  print *, '#  the last on the list of the boundary conditions.'
+  print *, '#  Their BC markers have to be larger than the markers'
+  print *, '#  of all the other boundary conditions.)'
+  print *, '#------------------------------------------------------'
   call Tokenizer_Mod_Read_Line(5)
   name_per = line % tokens(1)
   call To_Upper_Case(name_per)
@@ -316,27 +316,27 @@
     end if
   end do
   if( type_per == -1 ) then
-    write(*,*) '# Critical error: boundary condition ', trim(name_per),  &
+    print *, '# Critical error: boundary condition ', trim(name_per),  &
                ' can''t be found!'
-    write(*,*) '# Exiting! '
+    print *, '# Exiting! '
     stop
   end if
 
   if(option == 2) then
 
-    write(*,*) '#========================================================'
-    write(*,*) '# Insert the periodic direction (1 -> x, 2 -> y, 3 -> z)'
-    write(*,*) '#--------------------------------------------------------'
+    print *, '#========================================================'
+    print *, '# Insert the periodic direction (1 -> x, 2 -> y, 3 -> z)'
+    print *, '#--------------------------------------------------------'
     read(*,*) dir 
-    write(*,*) 
-    write(*,*) '#=============================================================='
-    write(*,*) '# Enter the angle for the rotation of the coordiante system (in'
-    write(*,*) '# degrees) and the axes of rotation (1 -> x, 2 -> y, 3 -> z)'
-    write(*,*) '#--------------------------------------------------------------'
-    write(*,*) '# (If the periodic direction is not parallel to the Caresian '
-    write(*,*) '#  axis (x, y and z), the coordinate system has to be rotated'
-    write(*,*) '#  in 2D'                                                     
-    write(*,*) '#--------------------------------------------------------------'
+    print *, 
+    print *, '#=============================================================='
+    print *, '# Enter the angle for the rotation of the coordiante system (in'
+    print *, '# degrees) and the axes of rotation (1 -> x, 2 -> y, 3 -> z)'
+    print *, '#--------------------------------------------------------------'
+    print *, '# (If the periodic direction is not parallel to the Caresian '
+    print *, '#  axis (x, y and z), the coordinate system has to be rotated'
+    print *, '#  in 2D'                                                     
+    print *, '#--------------------------------------------------------------'
     read(*,*) angle, rot_dir 
 
     angle = angle * PI / 180.0
@@ -570,10 +570,10 @@
                            + p_k*(grid % zf(ss)))  &
                         / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
                     if((Det) > (per_max)) then
-!                     write(*,*) '# Warning!  Potentially a bug in ...'
-!                     write(*,*) '# ... Compute_Geometry, line 557'
-!                     write(*,*) '# Contact developers, and if you ... '
-!                     write(*,*) '# ... are one of them, fix it!'   
+!                     print *, '# Warning!  Potentially a bug in ...'
+!                     print *, '# ... Compute_Geometry, line 557'
+!                     print *, '# Contact developers, and if you ... '
+!                     print *, '# ... are one of them, fix it!'   
                       if(abs((grid % xf(ss) - grid % xf(s))) < Tol .and.  &
                          abs((grid % yf(ss) - grid % yf(s))) < Tol) then
                         mm = hh + c_max/2 
@@ -592,7 +592,7 @@
       end if 
     end do
 
-    write(*,*)'Iterating search for periodic cells: ',  &
+    print *,'Iterating search for periodic cells: ',  &
     'Target: ', c_max/2, 'Result: ',nnn, 'Tolerance: ',Tol
 
     if(nnn == c_max/2) then
@@ -624,7 +624,7 @@
   end do
 
   n_per = c/2
-  write(*,*) '# Phase I: periodic cells: ', n_per
+  print *, '# Phase I: periodic cells: ', n_per
   go to 2
 
   !----------------------------------------------------!
@@ -732,7 +732,7 @@
       endif !  S*(c2-c1) < 0.0
     end if  !  c2 > 0
   end do    !  sides
-  write(*,*) '# Phase II: number of shadow faces: ', grid % n_sh
+  print *, '# Phase II: number of shadow faces: ', grid % n_sh
 
   deallocate(face_copy)
 
@@ -793,7 +793,7 @@
                             + grid % dy(s)*grid % dy(s)  &
                             + grid % dz(s)*grid % dz(s) ) )
   end do
-  write(*,*) '# Maximal distance of periodic boundary is:', sqrt(max_dis)
+  print *, '# Maximal distance of periodic boundary is:', sqrt(max_dis)
 
   !----------------------------------!
   !   Calculate the cell volumes     !
@@ -829,14 +829,14 @@
     min_vol = min(min_vol, grid % vol(c))
     max_vol = max(max_vol, grid % vol(c))
   end do
-  write(*,*) '# Minimal cell volume is: ', min_vol
-  write(*,*) '# Maximal cell volume is: ', max_vol
-  write(*,*) '# Total domain volume is: ', tot_vol
-  write(*,*) '# Cell volumes calculated !'
+  print *, '# Minimal cell volume is: ', min_vol
+  print *, '# Maximal cell volume is: ', max_vol
+  print *, '# Total domain volume is: ', tot_vol
+  print *, '# Cell volumes calculated !'
 
   if(min_vol < 0.0) then
-    write(*,*) '# Negative volume occured! Slower, algoritham should be run !'
-    write(*,*) '# Execution will halt now! '
+    print *, '# Negative volume occured! Slower, algoritham should be run !'
+    print *, '# Execution will halt now! '
     stop
   end if 
  
@@ -880,18 +880,18 @@
   !------------------------------------------------------------------!
   allocate(WallDs(-grid % n_bnd_cells:grid % n_cells)); WallDs = HUGE
 
-  write(*,*) '#================================================================'
-  write(*,*) '# Type the total number of wall boundary conditions:'
-  write(*,*) '#----------------------------------------------------------------'
-  write(*,*) '# (Please note that the walls have to be the first on the list)'
-  write(*,*) '# of the boundary conditions. Their BC markers have to be smaller'
-  write(*,*) '# than the markers of the other boundary conditions.)'
-  write(*,*) '#----------------------------------------------------------------'
+  print *, '#================================================================'
+  print *, '# Type the total number of wall boundary conditions:'
+  print *, '#----------------------------------------------------------------'
+  print *, '# (Please note that the walls have to be the first on the list)'
+  print *, '# of the boundary conditions. Their BC markers have to be smaller'
+  print *, '# than the markers of the other boundary conditions.)'
+  print *, '#----------------------------------------------------------------'
   read(*,*) wall_mark
  
   if(wall_mark == 0) then
     WallDs = 1.0
-    write(*,*) '# Distance to the wall set to 1.0 everywhere !'
+    print *, '# Distance to the wall set to 1.0 everywhere !'
   else
     do c1 = 1, grid % n_cells
       if(mod(c1,10000) == 0) then
@@ -909,7 +909,7 @@
 
     WallDs = sqrt(WallDs)
 
-    write(*,*) '# Distance to the wall calculated !'
+    print *, '# Distance to the wall calculated !'
   end if
 
   !------------------------------------------------------------!
@@ -937,11 +937,11 @@
     grid % f(s) = dsc2 / (dsc1 + dsc2)
   end do 
 
-  write(*,*) '# Interpolation factors calculated !'
+  print *, '# Interpolation factors calculated !'
 
   return
 
-  write(*,*) '# Horror ! Negative volume between cells ', c1, ' and ', c2
+  print *, '# Horror ! Negative volume between cells ', c1, ' and ', c2
   stop
 
   end subroutine

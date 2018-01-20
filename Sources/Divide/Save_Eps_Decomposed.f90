@@ -65,7 +65,7 @@
   !------------------------------!
   !   Input camera coordinates   !
   !------------------------------!
-1 write(*,*) '# Enter the camera coordinates (skip to exit): '
+1 print *, '# Enter the camera coordinates (skip to exit): '
   call Tokenizer_Mod_Read_Line(5)
   if(line % n_tokens == 1) then
     read(line % whole, *) answer

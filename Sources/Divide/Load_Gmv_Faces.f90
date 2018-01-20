@@ -19,7 +19,7 @@
 
   name_in = name
   name_in(len_trim(name)+1:len_trim(name)+10) = '.faces.gmv'
-  write(*,*) '# Now reading the file:', name_in
+  print *, '# Now reading the file:', name_in
   open(9, file=name_in)
 
   !-----------!    
@@ -55,8 +55,8 @@
                 grid % faces_n(3,s),  &
                 grid % faces_n(4,s)  
     else
-      write(*,*) 'Unsupported cell-face type:', dum_s
-      write(*,*) 'Exiting'
+      print *, 'Unsupported cell-face type:', dum_s
+      print *, 'Exiting'
       stop
     end if
   end do  

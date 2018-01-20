@@ -24,7 +24,7 @@
   name_in(len_trim(name)+1:len_trim(name)+4) = '.neu'
 
   open(9,file=name_in)
-  write(*,*) '# Now reading the file: ', name_in
+  print *, '# Now reading the file: ', name_in
 
   ! Skip first 6 lines
   do i = 1, 6
@@ -39,10 +39,10 @@
   read(line % tokens(3),*) n_blocks
   read(line % tokens(4),*) n_bnd_sect
 
-  write(*,*) '# Total number of nodes:  ',            grid % n_nodes
-  write(*,*) '# Total number of cells:  ',            grid % n_cells
-  write(*,*) '# Total number of blocks: ',            n_blocks
-  write(*,*) '# Total number of boundary sections: ', n_bnd_sect
+  print *, '# Total number of nodes:  ',            grid % n_nodes
+  print *, '# Total number of cells:  ',            grid % n_cells
+  print *, '# Total number of blocks: ',            n_blocks
+  print *, '# Total number of boundary sections: ', n_bnd_sect
 
   ! Count the boundary cells
   grid % n_bnd_cells = 0
@@ -59,7 +59,7 @@
         end do
         call Tokenizer_Mod_Read_Line(9)         ! ENDOFSECTION
       end do
-      write(*,*) '# Total number of boundary cells: ', grid % n_bnd_cells
+      print *, '# Total number of boundary cells: ', grid % n_bnd_cells
       go to 1
     end if
   end do 
@@ -121,8 +121,8 @@
   !---------------------------------!
   allocate(grid % materials(n_blocks))
   if(n_blocks .gt. 1) then
-    write(*,*) '# Multiple materials from .neu file not been implemented yet!'
-    write(*,*) '# Exiting!'
+    print *, '# Multiple materials from .neu file not been implemented yet!'
+    print *, '# Exiting!'
   end if
 
   grid % n_materials = 1
@@ -160,13 +160,13 @@
     call Tokenizer_Mod_Read_Line(9)        ! ENDOFSECTION
   end do
 
-  write(*,*) '#==================================================='
-  write(*,*) '# Found the following boundary conditions:'
-  write(*,*) '#---------------------------------------------------'
+  print *, '#==================================================='
+  print *, '# Found the following boundary conditions:'
+  print *, '#---------------------------------------------------'
   do j = 1, n_bnd_sect
-    write(*,*) '# ', grid % boundary_conditions(j) % name
+    print *, '# ', grid % boundary_conditions(j) % name
   end do
-  write(*,*) '#---------------------------------------------------'
+  print *, '#---------------------------------------------------'
 
   close(9)
 

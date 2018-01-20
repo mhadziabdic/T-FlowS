@@ -79,9 +79,9 @@
           NewN(grid % cells_n(2,c))-1, NewN(grid % cells_n(4,c))-1,   &
           NewN(grid % cells_n(3,c))-1
       else
-        write(*,*) '# Unsupported cell type with ',  &
+        print *, '# Unsupported cell type with ',  &
                     grid % cells_n_nodes(c), ' nodes.'
-        write(*,*) '# Exiting'
+        print *, '# Exiting'
         stop 
       end if
     end if
@@ -112,9 +112,9 @@
       else if(grid % cells_n_nodes(c) == 5) then  ! pyramid cells
         write(9,'(i9)') 14
       else
-        write(*,*) '# Unsupported cell type with ',  &
+        print *, '# Unsupported cell type with ',  &
                     grid % cells_n_nodes(c), ' nodes.'
-        write(*,*) '# Exiting'
+        print *, '# Exiting'
         stop 
       end if
     end if

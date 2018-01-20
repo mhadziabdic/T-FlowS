@@ -124,11 +124,11 @@
       end if
     end do
 
-    write(*,*) 'Now saving subdomain ', sub, ' with:'
-    write(*,*) n_cells_sub, ' cells'
-    write(*,*) n_nodes_sub, ' nodes' 
-    write(*,*) n_faces_sub, ' sides' 
-    write(*,*) n_bnd_cells_sub, ' physical boundary cells' 
+    print *, 'Now saving subdomain ', sub, ' with:'
+    print *, n_cells_sub, ' cells'
+    print *, n_nodes_sub, ' nodes' 
+    print *, n_faces_sub, ' sides' 
+    print *, n_bnd_cells_sub, ' physical boundary cells' 
 
     !--------------------!
     !   Create buffers   !
@@ -231,24 +231,24 @@
                         n_bnd_cells_sub,  &
                         n_buff_sub)
 
-    write(*,*) '# Test:'
-    write(*,*) '# n_nodes_sub   =', n_nodes_sub
-    write(*,*) '# n_cells_sub   =', n_cells_sub
-    write(*,*) '# n_faces_sub   =', n_faces_sub
-    write(*,*) '# n_bnd_cells_sub =', n_bnd_cells_sub
+    print *, '# Test:'
+    print *, '# n_nodes_sub   =', n_nodes_sub
+    print *, '# n_cells_sub   =', n_cells_sub
+    print *, '# n_faces_sub   =', n_faces_sub
+    print *, '# n_bnd_cells_sub =', n_bnd_cells_sub
 
-    write(*,*) '# ====================================' 
-    write(*,*) '# Subdomain   ', sub
-    write(*,*) '# Buffer size ', n_buff_sub
+    print *, '# ====================================' 
+    print *, '# Subdomain   ', sub
+    print *, '# Buffer size ', n_buff_sub
     do subo=1,n_sub
       if(subo /= sub) then
-        write(*,*) '# Connections with ', subo ,' : ',  &
+        print *, '# Connections with ', subo ,' : ',  &
           NBBe(subo)-NBBs(subo)+1,                      &
           n_bnd_cells_sub+NBBs(subo),                   &
           n_bnd_cells_sub+NBBe(subo) 
       end if 
     end do ! for subo
-    write(*,*) '------------------------------------' 
+    print *, '------------------------------------' 
 
   end do   ! through subdomains
 
@@ -290,7 +290,7 @@
       end if
     end do
   end do
-  write(*,*) 'Number of sides: ', grid % n_faces, n_faces_sub
+  print *, 'Number of sides: ', grid % n_faces, n_faces_sub
 
   ! It is not sorting nodes ... is it good?  I doubt
   call Grid_Mod_Sort_Cells_By_Index(grid, NewC(1), grid % n_cells)

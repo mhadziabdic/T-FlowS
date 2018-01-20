@@ -148,7 +148,7 @@
       do c=1, NC
         Lscale = max(Lscale,WallDs(c))
         R = sqrt(grid % xc(c)**2+grid % yc(c)**2)
-           write(*,*) R, z_p(i+1), z_p(i)
+           print *, R, z_p(i+1), z_p(i)
         if(R > abs(z_p(i+1)) .and. R < abs(z_p(i))) then
           Wall_p(i) = Wall_p(i) + R 
           if(SIMULA==LES) then

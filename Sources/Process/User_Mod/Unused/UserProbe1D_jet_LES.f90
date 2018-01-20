@@ -274,6 +274,6 @@
 !    end do
 !    close(3) 
 
-  if(this < 2) write(*,*) 'Finished with UserProbe1D_jet '
+  if(this < 2) print *, 'Finished with UserProbe1D_jet '
 
   end subroutine UserProbe1D_jet

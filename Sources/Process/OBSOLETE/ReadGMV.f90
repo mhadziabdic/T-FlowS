@@ -58,7 +58,7 @@
 
 
 !-----Input file-------------------------------------------------------!
-  if(this < 2) write(*,*) '# NOW READING file: ', GMVfile
+  if(this < 2) print *, '# NOW READING file: ', GMVfile
   open (5, file=GMVfile)
 
 !-----Header
@@ -224,7 +224,7 @@
 
 
 !-----Initialization
-  if(this < 2) write(*,*) '# Initialization of flow field from file:'
+  if(this < 2) print *, '# Initialization of flow field from file:'
 
   do c=1,NC
     Mres = HUGE
@@ -252,7 +252,7 @@
     if(ALLOCATED(Pcent)) then
       P % n(c) = Pcent(j)
     else
-      if(c==2) write(*,*) '@ReadGMV: P not found in ', GMVfile,  &
+      if(c==2) print *, '@ReadGMV: P not found in ', GMVfile,  &
                           ' Initialization with constant (0.0)!'
       P % n(c) = 0.0
     end if
@@ -261,7 +261,7 @@
       if(ALLOCATED(Tcent)) then
         T % n(c) = Tcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: T not found in ', GMVfile, &
+        if(c==2) print *, '@ReadGMV: T not found in ', GMVfile, &
                             ' Initialization with constant (20.0)!'
         T % n(c) = 20.0  !or 20.0
       end if
@@ -273,7 +273,7 @@
       if(ALLOCATED(Kcent)) then
         Kin % n(c) = Kcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Kin not found in ', GMVfile, &
+        if(c==2) print *, '@ReadGMV: Kin not found in ', GMVfile, &
                             ' Initialization with constant (1.0E-3)!'
         Kin % n(c) = 1.0E-3
       end if
@@ -283,7 +283,7 @@
       if(ALLOCATED(Ecent)) then
         Eps % n(c) = Ecent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Eps not found in ', GMVfile, &
+        if(c==2) print *, '@ReadGMV: Eps not found in ', GMVfile, &
                             ' Initialization with constant (1.0E-4)!'
         Eps % n(c)  = 1.0E-4
       end if
@@ -293,7 +293,7 @@
       if(ALLOCATED(Pkcent)) then
         Pk(c) = Pkcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Pk not found in ', GMVfile,  &
+        if(c==2) print *, '@ReadGMV: Pk not found in ', GMVfile,  &
                             ' Initialization with constant (1.0E-4)!'
         Pk(c)  = 1.0E-4
       end if
@@ -305,7 +305,7 @@
       if(ALLOCATED(Kcent)) then
         Kin % n(c) = Kcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Kin not found in ', GMVfile, &
+        if(c==2) print *, '@ReadGMV: Kin not found in ', GMVfile, &
                             ' Initialization with constant (1.0E-3)!'
         Kin % n(c) = 1.0E-3
       end if
@@ -315,7 +315,7 @@
       if(ALLOCATED(Ecent)) then
         Eps % n(c) = Ecent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Eps not found in ', GMVfile, &
+        if(c==2) print *, '@ReadGMV: Eps not found in ', GMVfile, &
                             ' Initialization with constant (1.0E-4)!'
         Eps % n(c) = 1.0E-4
       end if
@@ -325,7 +325,7 @@
       if(ALLOCATED(Pkcent)) then
         Pk(c) = Pkcent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: Pk not found in ', GMVfile,  &
+        if(c==2) print *, '@ReadGMV: Pk not found in ', GMVfile,  &
                             ' Initialization with constant (1.0E-3)!'
         Pk(c)  = 1.0E-3
       end if
@@ -343,7 +343,7 @@
           v_2 % n(c) = ZETAcent(j) * Kcent(j)       !Zeta!--inverted reading
         end if
       else
-        if(c==2) write(*,*) '@ReadGMV: zeta not found in ', GMVfile,  &
+        if(c==2) print *, '@ReadGMV: zeta not found in ', GMVfile,  &
                             ' Initialization with constant (1.0E-3)!'
         v_2 % n(c) = 1.0E-3  !1.0E-2
       end if
@@ -353,7 +353,7 @@
       if(ALLOCATED(F22cent)) then
         f22 % n(c) = F22cent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: f22 not found in ', GMVfile, &
+        if(c==2) print *, '@ReadGMV: f22 not found in ', GMVfile, &
                             ' Initialization with constant (1.0E-3)!'
         f22 % n(c) = 1.0E-4  !1.0E-3
       end if
@@ -382,8 +382,8 @@
         VIS % o(c)  = VIScent(j)
         VIS % oo(c) = VIScent(j)
       else
-        if(c==2) write(*,*) '@ReadGMV: viscosity not found in ', GMVfile
-        if(c==2) write(*,*) '#         Viscosity initialized with constant!!'
+        if(c==2) print *, '@ReadGMV: viscosity not found in ', GMVfile
+        if(c==2) print *, '#         Viscosity initialized with constant!!'
         VIS % n(c)  = 1.0
         VIS % o(c)  = 1.0
         VIS % oo(c) = 1.0
@@ -391,7 +391,7 @@
     end if
 
 !-----Status printout
-    if(mod(c,5000) == 0) write(*,*) 100.0 * c / (1.0 * NC), '% complete...'
+    if(mod(c,5000) == 0) print *, 100.0 * c / (1.0 * NC), '% complete...'
     else 
       U % mean(c) = 0.0
       V % mean(c) = 0.0

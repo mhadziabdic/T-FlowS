@@ -105,7 +105,7 @@
 
    call Wait
  
-!   if(this<2) write(*,*) 'in CalcForce; Fpy = ', Fpy
+!   if(this<2) print *, 'in CalcForce; Fpy = ', Fpy
 
 !   if(this < 2 .and. mod(k,10)==0) then
    if(this < 2) then

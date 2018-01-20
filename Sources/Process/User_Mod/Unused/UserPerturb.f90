@@ -64,7 +64,7 @@
     W % oo(c) = W % oo(c) + 2.0*(0.5-randn) *                   &
              fac * Uta * UserWRms(1.0-abs(zc(c)))
 
-!->>> write(*,*) U(c), V(c), W(c)
+!->>> print *, U(c), V(c), W(c)
 
     write(LinMon0(127:138),'(A6)') ' <<-- '           
 

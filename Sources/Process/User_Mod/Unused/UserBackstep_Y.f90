@@ -255,6 +255,6 @@
   end if
 
 
-  if(this_proc < 2) write(*,*) 'Finished with UserCutLines_X_dir'
+  if(this_proc < 2) print *, 'Finished with UserCutLines_X_dir'
 
   end subroutine UserBackstep_Y 

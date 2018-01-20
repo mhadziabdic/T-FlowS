@@ -1,7 +1,8 @@
 !==============================================================================!
-  subroutine Save_Dat_Results(grid, name_aut)
+  subroutine Save_Dat_Results(grid, name_save)
 !------------------------------------------------------------------------------!
 !   Writes: name.dat                                                           !
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
@@ -12,35 +13,21 @@
   use Constants_Pro_Mod
 !------------------------------------------------------------------------------!
   implicit none
-  type(Grid_Type) :: grid
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type)  :: grid
+  character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
-  integer             :: c,  c2,  n, s, Nadd
-  integer             :: Nfac(10), NtotFac
-  character(len=80)   :: answer, name_out, store_name
-  character, optional :: name_aut*(*)
-  real                :: R, RR
+  integer           :: c,  c2,  n, s, Nadd
+  integer           :: Nfac(10), NtotFac
+  character(len=80) :: name_out, store_name
 !==============================================================================!
 
   ! Store the name
   store_name = name     
 
-  if(PRESENT(name_aut)) then
-    if(this_proc  < 2) write(*,*) name_aut
-    name = name_aut  
-  else
-    if(this_proc  < 2)  &
-      write(*,*) '# Input result file name [skip cancels]:'
-    call Tokenizer_Mod_Read_Line(CMN_FILE)  
-    read(line % tokens(1),'(A80)')  name
-    answer=name
-    call To_Upper_Case(answer) 
-    if(answer == 'SKIP') then
-      name = store_name  
-      return
-    end if 
-  end if
+  name = name_save  
 
-  call wait 
+  call Wait 
 
   !----------------------!
   !                      !
@@ -89,29 +76,16 @@
   !--------------!
   !   Pressure   !
   !--------------!
-  call Save_Dat_Scalar('pressure', 1, P % n)
+  call Save_Dat_Scalar(grid, 'pressure', 1, P % n)
 
   !-----------------------!
   !   Aditional scalars   !
   !-----------------------!
   Nadd = 0 
-  R    = 0.0  
-  RR   = 0.0  
 
   !-------------------!
   !   Other scalars   !
   !-------------------!
-  if(TGV == YES) then
-    do c = 1, grid % n_cells
-      R   = R + (U % n(c) - (-sin(grid % xc(c))*cos(grid % yc(c))*exp(-2.0*VISc*Time)))**2
-      RR  = RR + U % n(c)*U % n(c)
-      PP % n(c) = sqrt(R/RR) 
-    end do
-    Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A,E18.9)') '# Scalar ', Nadd, ' is L2 error', sqrt(R/RR) 
-    call Save_Dat_Scalar('temperature', 699+Nadd, PP % n)
-  end if
-
   if(HOT == YES) then
     Nadd = Nadd + 1
     if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is temperature' 
@@ -128,7 +102,6 @@
     if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Eps' 
     call Save_Dat_Scalar('Eps', 699+Nadd, Eps % n)
   end if
-
 
   if(SIMULA == K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
     ! VIS  

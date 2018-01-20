@@ -1,7 +1,8 @@
 !==============================================================================!
   subroutine Save_Gmv_Results(grid, name_save)
 !------------------------------------------------------------------------------!
-!   Writes: NAME.r.gmv                                                         !
+!   Writes results in GMV file format.                                         !
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use pro_mod
@@ -14,40 +15,26 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type) :: grid
+  type(Grid_Type)  :: grid
+  character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
-  integer             :: c, n
-  character(len=80)   :: name_out, answer, store_name
-  character, optional :: name_save*(*)
+  integer           :: c, n
+  character(len=80) :: name_out, store_name
 !==============================================================================!
 
   ! Store the name
   store_name = name     
 
-  if(PRESENT(name_save)) then
-    write(*,*) name_save
-    name = name_save  
-  else
-    if(this_proc  < 2)  &
-      write(*,*) '# Input result file name [skip cancels]:'
-    call Tokenizer_Mod_Read_Line(CMN_FILE)  
-    read(line % tokens(1),'(A80)')  name
-    answer=name
-    call To_Upper_Case(answer) 
-    if(answer == 'SKIP') then
-      name = store_name  
-      return
-    end if 
-  end if
+  name = name_save  
 
-  call wait 
+  call Wait 
 
   !------------------------------!
   !                              !
   !   Create .gmv results file   !
   !                              !
   !------------------------------!
-  call Name_File(this_proc, name_out, '.r.gmv', len_trim('.r.gmv'))
+  call Name_File(this_proc, name_out, '.gmv', len_trim('.gmv'))
   open(9, file=name_out)
   write(*,*) '# Now creating the file:', trim(name_out)
 

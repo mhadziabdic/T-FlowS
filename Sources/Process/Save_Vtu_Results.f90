@@ -1,30 +1,39 @@
 !==============================================================================!
-  subroutine Save_Vtu_Cells(grid, sub, n_nodes_sub, n_cells_sub)
+  subroutine Save_Vtu_Results(grid, name_save)
 !------------------------------------------------------------------------------!
-! Writes: name.vtu, name.faces.vtu, name.shadow.vtu                            !
+!   Writes results in VTU file format (for VisIt and Paraview)                 !
 !----------------------------------[Modules]-----------------------------------!
   use allp_mod
-  use all_mod, only: material
+  use all_mod
   use pro_mod
   use rans_mod
+  use par_mod, only: this_proc
+  use Tokenizer_Mod
   use Grid_Mod
   use Constants_Pro_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type) :: grid
-  integer         :: sub, n_nodes_sub, n_cells_sub
+  type(Grid_Type)  :: grid
+  character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, n, offset
-  character(len=80) :: name_out
+  character(len=80) :: name_out, store_name
 !==============================================================================!
+
+  ! Store the name
+  store_name = name     
+
+  name = name_save  
+
+  call Wait 
 
   !----------------------!
   !                      !
   !   Create .vtu file   !
   !                      !
   !----------------------!
-  call Name_File(sub, name_out, '.vtu', len_trim('.vtu'))
+  call Name_File(this_proc, name_out, '.vtu', len_trim('.vtu'))
   open(9, file=name_out)
   write(6, *) '# Now creating the file:', trim(name_out)
 
@@ -35,8 +44,8 @@
   write(9,'(a)') '<VTKFile type="UnstructuredGrid" version="0.1" ' //  &
                  'byte_order="LittleEndian">'
   write(9,'(a)') '<UnstructuredGrid>'
-  write(9,'(a,i9)',advance='no') '<Piece NumberOfPoints="', n_nodes_sub
-  write(9,'(a,i9,a)')            '" NumberOfCells ="', n_cells_sub, '">'
+  write(9,'(a,i9)',advance='no') '<Piece NumberOfPoints="', grid % n_nodes
+  write(9,'(a,i9,a)')            '" NumberOfCells ="', grid % n_cells, '">'
 
   !----------!
   !          !
@@ -199,5 +208,8 @@
   end if
 
   close(9)
+
+  ! Restore the name
+  name = store_name
 
   end subroutine

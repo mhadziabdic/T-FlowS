@@ -128,7 +128,7 @@
 
   open(9, file=namXML)
   if (this <2) then
-  write(6, *) 'Now writing the file:', namXML
+  print *, 'Now writing the file:', namXML
   end if
 
 

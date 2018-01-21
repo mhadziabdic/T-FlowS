@@ -59,7 +59,7 @@
       return
     end if
 
-    if(this_proc < 2) write(6, *) '# Now reading the file:', namCoo
+    if(this_proc < 2) print *, '# Now reading the file:', namCoo
     open(9, file=namCoo)
 
 !---- write the number of searching intervals

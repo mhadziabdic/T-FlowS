@@ -274,7 +274,7 @@
       JetIn  = 'c13.2_z0975_x215_IUS_ZETA-F.dat'
     end if
 
-    if(this < 2) write(6, *) '# Now opening file: ', JetIn 
+    if(this < 2) print *, '# Now opening file: ', JetIn 
 !---- write the number of probes 
     read(9,*) Nprob
     allocate(z_p(Nprob))

@@ -33,7 +33,7 @@
 !======================================================================!
 
   open(9, file='Horiz_positions.dat')
-  if(this < 2) write(6, *) '# Now reading the file: Horiz_positions.dat ' 
+  if(this < 2) print *, '# Now reading the file: Horiz_positions.dat ' 
   read(9,*) N_hor
   allocate(r1_p(N_hor))
   allocate(r2_p(N_hor))
@@ -45,7 +45,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
-    if(this < 2) write(6, *) '# Now reading the file: rad_coordinate.dat ' 
+    if(this < 2) print *, '# Now reading the file: rad_coordinate.dat ' 
     open(9, file='Z_coordinate.dat')
 
 !---- write the number of probes 

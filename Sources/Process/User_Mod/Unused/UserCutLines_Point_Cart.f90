@@ -35,7 +35,7 @@
 !======================================================================!
 
   open(9, file='Point_positions.dat')
-  if(this_proc < 2) write(6, *) '# Now reading the file: Point_positions.dat ' 
+  if(this_proc < 2) print *, '# Now reading the file: Point_positions.dat ' 
   read(9,*) N_hor
   allocate(x_p(N_hor))
   allocate(y_p(N_hor))
@@ -48,7 +48,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
-!    if(this_proc < 2) write(6, *) '# Now reading the file: Z_coordinate.dat ' 
+!    if(this_proc < 2) print *, '# Now reading the file: Z_coordinate.dat ' 
     if(dir == 1) then
       open(9, file='X_coordinate.dat')
     else if(dir == 2) then

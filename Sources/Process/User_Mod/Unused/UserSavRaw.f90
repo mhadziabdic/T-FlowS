@@ -21,7 +21,7 @@
   name_out = name
   call Name_File(this, name_out, '.rawdata', len_trim('.rawdata') )
   open(9, file=name_out)
-  write(6, *) 'Now creating the file:', name_out
+  print *, 'Now creating the file:', name_out
 
 !---- Total number of cells
   NCtot = NC

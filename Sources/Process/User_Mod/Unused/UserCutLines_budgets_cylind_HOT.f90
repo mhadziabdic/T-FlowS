@@ -65,7 +65,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
-    if(this < 2) write(6, *) '# Now reading the file:', namCoo
+    if(this < 2) print *, '# Now reading the file:', namCoo
     open(9, file=namCoo)
 
 

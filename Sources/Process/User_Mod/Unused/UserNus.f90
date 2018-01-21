@@ -54,7 +54,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
     namCoo = name
     namCoo(len_trim(name)+1:len_trim(name)+3) = '.1D'
-    write(6, *) '# Now reading the file:', namCoo
+    print *, '# Now reading the file:', namCoo
     open(9, file=namCoo)
 
 !---- write the number of searching intervals 

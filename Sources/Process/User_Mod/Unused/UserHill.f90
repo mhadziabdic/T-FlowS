@@ -44,7 +44,7 @@
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
   if(k == 0) then  
-    if(this < 2) write(6, *) '# Now reading the file: Hill_y_0.2.1D ' 
+    if(this < 2) print *, '# Now reading the file: Hill_y_0.2.1D ' 
     open(9, file='Hill_y_0.2.1D')
 
 !---- write the number of probes 
@@ -57,7 +57,7 @@
     end do
     close(9)
   else if(k == 1) then
-    if(this < 2) write(6, *) '# Now reading the file: Hill_y_0.6.1D ' 
+    if(this < 2) print *, '# Now reading the file: Hill_y_0.6.1D ' 
     open(9, file='Hill_y_0.6.1D')
 
 !---- write the number of probes 
@@ -70,7 +70,7 @@
     end do
     close(9)
   else if(k == 2) then
-    if(this < 2) write(6, *) '# Now reading the file: Hill_y_1.0.1D ' 
+    if(this < 2) print *, '# Now reading the file: Hill_y_1.0.1D ' 
     open(9, file='Hill_y_1.0.1D')
 
 !---- write the number of probes 
@@ -83,7 +83,7 @@
     end do
     close(9)
   else if(k == 3) then
-    if(this < 2) write(6, *) '# Now reading the file: Hill_y_1.4.1D ' 
+    if(this < 2) print *, '# Now reading the file: Hill_y_1.4.1D ' 
     open(9, file='Hill_y_1.4.1D')
 
 !---- write the number of probes 
@@ -96,7 +96,7 @@
     end do
     close(9)
   else if(k == 4) then
-    if(this < 2) write(6, *) '# Now reading the file: Hill_y_1.8.1D ' 
+    if(this < 2) print *, '# Now reading the file: Hill_y_1.8.1D ' 
     open(9, file='Hill_y_1.8.1D')
 
 !---- write the number of probes 
@@ -109,7 +109,7 @@
     end do
     close(9)
   else if(k == 5) then
-    if(this < 2) write(6, *) '# Now reading the file: Hill_y_2.0.1D ' 
+    if(this < 2) print *, '# Now reading the file: Hill_y_2.0.1D ' 
     open(9, file='Hill_y_2.0.1D')
 
 !---- write the number of probes 

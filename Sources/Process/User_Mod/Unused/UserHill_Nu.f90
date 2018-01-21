@@ -37,7 +37,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
-    if(this < 2) write(6, *) '# Now reading the file: x_dist.1D ' 
+    if(this < 2) print *, '# Now reading the file: x_dist.1D ' 
     open(9, file='x_dist.1D')
 
 !---- write the number of probes 

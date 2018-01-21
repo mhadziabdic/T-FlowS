@@ -35,7 +35,7 @@
 !======================================================================!
 
   open(9, file='Hor_positions.dat')
-  if(this < 2) write(6, *) '# Now reading the file: Hor_positions.dat ' 
+  if(this < 2) print *, '# Now reading the file: Hor_positions.dat ' 
   read(9,*) N_hor
   allocate(r1_p(N_hor))
   allocate(r2_p(N_hor))
@@ -47,7 +47,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
-    if(this < 2) write(6, *) '# Now reading the file: Y_coordinate.dat ' 
+    if(this < 2) print *, '# Now reading the file: Y_coordinate.dat ' 
     open(9, file='Y_coordinate.dat')
 
 !---- write the number of probes 

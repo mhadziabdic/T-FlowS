@@ -59,7 +59,7 @@
 !>>>>>>>>>>>>>>>>>>>>>>!
 !     read 1D file     !
 !>>>>>>>>>>>>>>>>>>>>>>!
-  write(6, *) '# Now reading the file: pipe_rad_coordinate.1D ' 
+  print *, '# Now reading the file: pipe_rad_coordinate.1D ' 
   open(9, file='pipe_rad_coordinate.1D')
 
 !---- write the number of probes 

@@ -90,7 +90,7 @@
   !-----------------------!
   call Name_File(this_proc, name_in, '.restart')
   open(9, file=name_in, form='unformatted')
-  write(6, *) '# Reading the file:', name_in
+  print *, '# Reading the file:', name_in
 
   ! Version
   read(9) version ! version

@@ -34,6 +34,7 @@
   !---------------------!
   NtotFac = 0
   do n=1,10   ! browse through boundary condition types
+
     Nfac(n) = 0
     do s = 1, grid % n_faces   ! count the faces with boundary condition "n"
       c2 = grid % faces_c(2,s)

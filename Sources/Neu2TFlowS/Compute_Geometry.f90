@@ -849,10 +849,8 @@
   !     => depends on: x_node,y_node,z_node  !
   !     <= gives:      delta                 !
   !------------------------------------------!
-  allocate(delta(-grid % n_bnd_cells:grid % n_cells));  delta=0.0
-
   do c = 1, grid % n_cells
-    delta(c)=0.0
+    grid % delta(c)=0.0
     xmin = +HUGE
     ymin = +HUGE
     zmin = +HUGE
@@ -867,9 +865,9 @@
       ymax = max(ymax, grid % yn(grid % cells_n(n,c)))
       zmax = max(zmax, grid % zn(grid % cells_n(n,c)))
     end do
-    delta(c) = xmax-xmin
-    delta(c) = max(delta(c), (ymax-ymin))
-    delta(c) = max(delta(c), (zmax-zmin))
+    grid % delta(c) = xmax-xmin
+    grid % delta(c) = max(grid % delta(c), (ymax-ymin))
+    grid % delta(c) = max(grid % delta(c), (zmax-zmin))
   end do
 
   !------------------------------------------------------------------!

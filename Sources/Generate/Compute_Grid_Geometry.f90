@@ -151,7 +151,7 @@
     !   <= gives:      delta                  !
     !-----------------------------------------!
     do c = 1, grid % n_cells
-      delta(c)=0.0
+      grid % delta(c)=0.0
       x_min = +HUGE   
       y_min = +HUGE  
       z_min = +HUGE  
@@ -166,9 +166,9 @@
         y_max = max(y_max, grid % yn(grid % cells_n(n,c)))
         z_max = max(z_max, grid % zn(grid % cells_n(n,c)))
       end do
-      delta(c) = x_max-x_min
-      delta(c) = max(delta(c), (y_max-y_min))
-      delta(c) = max(delta(c), (z_max-z_min))
+      grid % delta(c) = x_max-x_min
+      grid % delta(c) = max(grid % delta(c), (y_max-y_min))
+      grid % delta(c) = max(grid % delta(c), (z_max-z_min))
     end do
 
     !-----------------------------------------------------!

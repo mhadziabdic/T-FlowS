@@ -37,6 +37,9 @@
 
     ! Cell volumes
     real, allocatable :: vol(:)
+  
+    ! General cell size (max(dx,dy,dz) or maybe volume/area?)
+    real, allocatable :: delta(:)
     
     ! Cells' nodes and neigboring cells
     integer, allocatable :: cells_n(:,:)      

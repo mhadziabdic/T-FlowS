@@ -188,7 +188,7 @@
     write(9, *) 'WallDs 0'
     write(9,'(1F16.6)') (WallDs(c),c=1,grid % n_cells)
     write(9, *) 'delta 0'
-    write(9,'(1F16.6)') (delta(c),c=1,grid % n_cells)
+    write(9,'(1F16.6)') (grid % delta(c),c=1,grid % n_cells)
   end if
 
   !-------------!
@@ -231,7 +231,7 @@
     write(9, *) 'WallDs 0'
     write(9,'(1F16.6)') (WallDs(c),c=1,grid % n_cells)
     write(9, *) 'delta 0'
-    write(9,'(1F16.6)') (delta(c),c=1,grid % n_cells)
+    write(9,'(1F16.6)') (grid % delta(c),c=1,grid % n_cells)
   end if
 
   !---------!

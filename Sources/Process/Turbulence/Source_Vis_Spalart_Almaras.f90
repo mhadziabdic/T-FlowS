@@ -58,7 +58,8 @@
   else if(SIMULA == DES_SPA) then
     do c = 1, grid % n_cells
 
-      dist = min(WallDs(c),0.65*delta(c))
+      ! What is 0.65 here?  A ghost number
+      dist = min(WallDs(c),0.65 * grid % delta(c))
 
       !---------------------------------!
       !   Compute the production term   !

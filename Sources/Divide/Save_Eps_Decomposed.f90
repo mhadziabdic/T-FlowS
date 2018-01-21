@@ -87,11 +87,11 @@
   !   Create .eps file   !
   !                      !
   !----------------------!
-  write(6,*) '# Enter the file name (without extension): '
+  print *, '# Enter the file name (without extension): '
   call Tokenizer_Mod_Read_Line(5)
   read(line % whole, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
-  write(6, *) '# Now creating the file:', trim(name_eps)
+  print *, '# Now creating the file:', trim(name_eps)
 
   xmax=maxval(grid % xn(1:grid % n_nodes))
   ymax=maxval(grid % yn(1:grid % n_nodes))

@@ -24,7 +24,7 @@
 
   call Name_File(sub, name_out, '.shadow')
   open(9, file=name_out)
-  write(6, *) '# Creating the file:', trim(name_out)
+  print *, '# Creating the file:', trim(name_out)
 
   do s = grid % n_faces + 1, grid % n_faces + grid % n_sh
     write(9,*) grid % faces_n_nodes(s) 

@@ -33,7 +33,7 @@
 
   call Name_File(sub, name_out, '.links.gmv')
   open(9, file=name_out)
-  write(6, *) '# Creating the file:', trim(name_out)
+  print *, '# Creating the file:', trim(name_out)
 
   !-----------!
   !   Nodes   !

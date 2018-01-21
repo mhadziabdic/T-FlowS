@@ -23,7 +23,7 @@
   real    :: x_cell_tmp, y_cell_tmp, z_cell_tmp    
   real    :: xs2, ys2, zs2
   real    :: dsc1, dsc2          !  for the interpolation factors
-  real    :: t, tot_surf , maxdis
+  real    :: t, tot_surf 
   real    :: xc1, yc1, zc1, xc2, yc2, zc2 
   real    :: x_min, x_max, y_min, y_max, z_min, z_max
   integer :: f4n(6,4)
@@ -558,35 +558,6 @@
     print *, '# Minimal distance to the wall: ',  &
                   minval(WallDs(1:grid % n_cells))
   end if
-
-  do n = 1, grid % n_nodes
-    walln(n)=HUGE
-  end do
-
-  do c = 1, grid % n_cells
-    do n = 1, grid % cells_n_nodes(c)
-      walln(grid % cells_n(n,c))=min(WallDs(c),walln(grid % cells_n(n,c)))
-    end do
-  end do
-
-  do s = 1, grid % n_faces
-    c1 = grid % faces_c(1,s)
-    c2 = grid % faces_c(2,s)
-    if(c2 < 0 .or. material(c1) /= material(c2)) then 
-      do n = 1, grid % faces_n_nodes(s)  ! for quadrilateral an triangular faces
-        walln(grid % faces_n(n,s)) = 0.0
-      end do
-    end if
-  end do 
-
-  maxdis=0.0 
-  do n = 1, grid % n_nodes
-    maxdis=max(walln(n),maxdis)
-  end do
-
-  do n = 1, grid % n_nodes
-    walln(n)=walln(n)/maxdis
-  end do
 
   !------------------------------------------------------------!
   !   Calculate the interpolation factors for the cell sides   !

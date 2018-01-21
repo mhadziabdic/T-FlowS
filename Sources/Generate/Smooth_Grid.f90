@@ -12,23 +12,56 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: c, n, i, j, k, m
+  integer              :: c, n, s, c1, c2, i, j, k, m
   real                 :: x_new_tmp, y_new_tmp, z_new_tmp    
   real                 :: x_max, y_max, z_max, x_min, y_min, z_min 
-  real                 :: x1, y1, z1, x8, y8, z8 
+  real                 :: x1, y1, z1, x8, y8, z8, maxdis
   integer              :: reg
   real, allocatable    :: x_node_new(:), y_node_new(:), z_node_new(:) 
+  real, allocatable    :: walln(:)           ! node distance from the wall 
   integer, allocatable :: node_to_nodes(:,:)
 !==============================================================================!
 
   ! Allocate memory for additional arrays
-  allocate(x_node_new(grid % max_n_nodes)); x_node_new=0
-  allocate(y_node_new(grid % max_n_nodes)); y_node_new=0
-  allocate(z_node_new(grid % max_n_nodes)); z_node_new=0
-  allocate(node_to_nodes(grid % max_n_nodes,0:40)); node_to_nodes=0
+  allocate(x_node_new(grid % max_n_nodes));         x_node_new    = 0
+  allocate(y_node_new(grid % max_n_nodes));         y_node_new    = 0
+  allocate(z_node_new(grid % max_n_nodes));         z_node_new    = 0
+  allocate(node_to_nodes(grid % max_n_nodes,0:40)); node_to_nodes = 0
+  allocate (walln(grid % max_n_nodes));             walln         = 0
 
   print *, '# Now smoothing the cells. This may take a while !' 
 
+  ! First compute distance to the wall for nodes
+  do n = 1, grid % n_nodes
+    walln(n)=HUGE
+  end do
+
+  do c = 1, grid % n_cells
+    do n = 1, grid % cells_n_nodes(c)
+      walln(grid % cells_n(n,c)) = min(WallDs(c), walln(grid % cells_n(n,c)))
+    end do
+  end do
+
+  do s = 1, grid % n_faces
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
+    if(c2 < 0 .or. material(c1) /= material(c2)) then 
+      do n = 1, grid % faces_n_nodes(s)  ! for quadrilateral an triangular faces
+        walln(grid % faces_n(n,s)) = 0.0
+      end do
+    end if
+  end do 
+
+  maxdis=0.0 
+  do n = 1, grid % n_nodes
+    maxdis = max(walln(n), maxdis)
+  end do
+
+  do n = 1, grid % n_nodes
+    walln(n) = walln(n) / maxdis
+  end do
+
+  ! Node connectivity
   do n = 1, grid % n_nodes
     node_to_nodes(n,0) = 0
   end do 

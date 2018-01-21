@@ -54,9 +54,9 @@
   !   Allocate memory   !
   !---------------------!
   print *, '# Allocating memory for: ' 
-  print *, '#', grid % max_n_nodes, ' nodes and cells' 
+  print *, '#', grid % max_n_nodes,     ' nodes and cells' 
   print *, '#', grid % max_n_bnd_cells, ' boundary cells'         
-  print *, '#', grid % max_n_faces, ' cell faces' 
+  print *, '#', grid % max_n_faces,     ' cell faces' 
 
   ! Variables declared in all_mod.h90:
   allocate (WallDs(grid % max_n_nodes))
@@ -86,9 +86,6 @@
                                0)                      ! no shadow faces
 
   ! Variables declared in gen_mod.h90:
-  allocate (walln(grid % max_n_nodes))
-  walln=0
-
   allocate (SideCc(grid % max_n_faces,2))
   SideCc=0 
 

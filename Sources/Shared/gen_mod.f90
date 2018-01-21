@@ -9,7 +9,6 @@ module gen_mod
   implicit none
 
 
-  real,    allocatable :: walln(:)           ! node distance from the wall 
   integer, allocatable :: SideCc(:,:)
                                                 
   integer, allocatable :: TwinN(:,:)

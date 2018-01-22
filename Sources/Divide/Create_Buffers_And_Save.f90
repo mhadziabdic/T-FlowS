@@ -315,15 +315,4 @@
   end do
   deallocate(side_cell)
 
-  call Save_Gmv_Cells(grid, 0, grid % n_nodes, grid % n_cells)
-  call Save_Gmv_Faces(grid, 0, grid % n_nodes)
-  call Save_Shadows  (grid, 0, grid % n_cells)
-
-  call Save_Cas(grid, 0,                        &
-                grid % n_nodes,                 &
-                grid % n_cells,                 &
-                grid % n_faces + grid % n_sh)
-
-  call Save_Eps_Decomposed(grid)
-
   end subroutine

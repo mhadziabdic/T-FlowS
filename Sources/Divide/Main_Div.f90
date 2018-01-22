@@ -110,6 +110,16 @@
 
   call Create_Buffers_And_Save(grid)
 
+  ! Save single grid in various formats
+  call Save_Gmv_Cells(grid, 0, grid % n_nodes, grid % n_cells)
+  call Save_Gmv_Faces(grid, 0, grid % n_nodes)
+  call Save_Vtu_Cells(grid, 0, grid % n_nodes, grid % n_cells)
+  call Save_Cas(grid, 0,                        &
+                grid % n_nodes,                 &
+                grid % n_cells,                 &
+                grid % n_faces + grid % n_sh)
+  call Save_Eps_Decomposed(grid)
+
   call Save_Com
   call Save_Scripts
   

@@ -21,12 +21,8 @@ module all_mod
   !-------------------------------------------!
   !   Logical quantities desribing the grid   !
   !-------------------------------------------!
-  integer,allocatable :: material(:)     ! material markers
+  integer, allocatable :: material(:)     ! material markers
 
-  integer,allocatable :: TypeBC(:)       ! type of boundary condition
-  integer,allocatable :: bcmark(:)
-
-  integer,allocatable :: CopyC(:)        !  might be shorter
-  integer,allocatable :: CopyS(:,:)      !  similar to SideC 
+  integer, allocatable :: TypeBC(:)       ! type of boundary condition
 
 end module 

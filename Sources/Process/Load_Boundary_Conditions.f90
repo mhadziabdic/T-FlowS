@@ -73,10 +73,10 @@
   !   Boundary conditions 1 - read them from the file   !
   !-----------------------------------------------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(line % tokens(1), *) grid % n_boundary_conditions
-  print *, '# Found ', grid % n_boundary_conditions, ' boundary conditions'
+  read(line % tokens(1), *) grid % n_bnd_cond
+  print *, '# Found ', grid % n_bnd_cond, ' boundary conditions'
 
-  do bc = 1, grid % n_boundary_conditions  ! number of boundary conditions
+  do bc = 1, grid % n_bnd_cond  ! number of boundary conditions
 
     call Tokenizer_Mod_Read_Line(9)
     call To_Upper_Case(  line % tokens(1)  )
@@ -86,8 +86,8 @@
 
     ! Find b.c. index
     n = -1
-    do i=1, grid % n_boundary_conditions 
-      if(bc_name .eq. grid % boundary_conditions(i) % name) n=i      
+    do i=1, grid % n_bnd_cond 
+      if(bc_name .eq. grid % bnd_cond % name(i)) n = i      
     end do
     if( n == -1 ) then
       print *, '# Critical, failed to find boundary condition ', bc_name
@@ -335,7 +335,7 @@
   !----------------------------------------------------------------------!
   !   Boundary conditions 2 - distribute them over computational cells   !
   !----------------------------------------------------------------------!
-  do n=1,grid % n_boundary_conditions
+  do n=1,grid % n_bnd_cond
 
     print *, 'Boundary condition: ', n
     print *, 'file: ', name_prof(n)
@@ -343,7 +343,7 @@
     ! Boundary condition is given by a single constant
     if(name_prof(n) == '') then 
       do c = -1,-grid % n_bnd_cells,-1
-        if(bcmark(c) == n) then
+        if(grid % bnd_cond % mark(c) == n) then
           TypeBC(c) = typBou(n)
 
           ! If in_out is set to true, set boundary values,
@@ -423,7 +423,7 @@
 
         ! Set the closest point
         do c = -1,-grid % n_bnd_cells,-1
-          if(bcmark(c) == n) then
+          if(grid % bnd_cond % mark(c) == n) then
             TypeBC(c) = typBou(n)
             if(in_out) then    !if .true. set boundary values, otherwise, just set TypeBC
               Mres = HUGE
@@ -473,7 +473,7 @@
                 Eps%n(c) = Eps % pro(c1)
               end if        
             end if    !end if(in_out)
-          end if      !end if(bcmark(c) == n)
+          end if      !end if(grid % bnd_cond % mark(c) == n)
         end do        !end do c = -1,-grid % n_bnd_cells,-1
       else  ! dir == "XPL" ...
         do m=1,n_points
@@ -531,7 +531,7 @@
         end do
            
         do c = -1,-grid % n_bnd_cells,-1
-          if(bcmark(c) == n) then
+          if(grid % bnd_cond % mark(c) == n) then
             TypeBC(c) = typBou(n)
           
             ! If in_out is set to true, set boundary values,
@@ -610,7 +610,7 @@
   !   Finally handle the buffer cells   !
   !-------------------------------------!
   do c = -1,-grid % n_bnd_cells,-1
-    if(bcmark(c) == BUFFER) TypeBC(c)=BUFFER 
+    if(grid % bnd_cond % mark(c) == BUFFER) TypeBC(c)=BUFFER 
   end do
 
   end subroutine

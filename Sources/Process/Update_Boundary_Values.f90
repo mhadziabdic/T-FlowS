@@ -196,33 +196,33 @@
       !---------------------!
       !   Copy boundaries   !
       !---------------------!
-      if(CopyC(c2) /= 0) then
-        U % n(c2) = U % n(CopyC(c2))
-        V % n(c2) = V % n(CopyC(c2))
-        W % n(c2) = W % n(CopyC(c2))
-        if(HOT==YES)        T % n(c2) = T % n(CopyC(c2))
+      if(grid % bnd_cond % copy_c(c2) /= 0) then
+        U % n(c2) = U % n(grid % bnd_cond % copy_c(c2))
+        V % n(c2) = V % n(grid % bnd_cond % copy_c(c2))
+        W % n(c2) = W % n(grid % bnd_cond % copy_c(c2))
+        if(HOT==YES)        T % n(c2) = T % n(grid % bnd_cond % copy_c(c2))
         if(SIMULA==SPA_ALL .or. SIMULA == DES_SPA) &
-        VIS % n(c2) = VIS % n(CopyC(c2)) 
+        VIS % n(c2) = VIS % n(grid % bnd_cond % copy_c(c2)) 
         if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-          Kin % n(c2) = Kin % n(CopyC(c2))
-          Eps % n(c2) = Eps % n(CopyC(c2))
-          v_2 % n(c2) = v_2 % n(CopyC(c2))
-          f22 % n(c2) = f22 % n(CopyC(c2))
+          Kin % n(c2) = Kin % n(grid % bnd_cond % copy_c(c2))
+          Eps % n(c2) = Eps % n(grid % bnd_cond % copy_c(c2))
+          v_2 % n(c2) = v_2 % n(grid % bnd_cond % copy_c(c2))
+          f22 % n(c2) = f22 % n(grid % bnd_cond % copy_c(c2))
         end if ! K_EPS_VV
         if(SIMULA==K_EPS) then
-          Kin % n(c2) = Kin % n(CopyC(c2))
-          Eps % n(c2) = Eps % n(CopyC(c2))
+          Kin % n(c2) = Kin % n(grid % bnd_cond % copy_c(c2))
+          Eps % n(c2) = Eps % n(grid % bnd_cond % copy_c(c2))
         end if ! K_EPS
         if(SIMULA==EBM.or.SIMULA==HJ) then
-          Kin % n(c2) = Kin % n(CopyC(c2))
-          Eps % n(c2) = Eps % n(CopyC(c2))
-          uu % n(c2) = uu % n(CopyC(c2))
-          vv % n(c2) = vv % n(CopyC(c2))
-          ww % n(c2) = ww % n(CopyC(c2))
-          uv % n(c2) = uv % n(CopyC(c2))
-          uw % n(c2) = uw % n(CopyC(c2))
-          vw % n(c2) = vw % n(CopyC(c2))
-          f22 % n(c2) = f22 % n(CopyC(c2))
+          Kin % n(c2) = Kin % n(grid % bnd_cond % copy_c(c2))
+          Eps % n(c2) = Eps % n(grid % bnd_cond % copy_c(c2))
+          uu % n(c2)  = uu % n(grid % bnd_cond % copy_c(c2))
+          vv % n(c2)  = vv % n(grid % bnd_cond % copy_c(c2))
+          ww % n(c2)  = ww % n(grid % bnd_cond % copy_c(c2))
+          uv % n(c2)  = uv % n(grid % bnd_cond % copy_c(c2))
+          uw % n(c2)  = uw % n(grid % bnd_cond % copy_c(c2))
+          vw % n(c2)  = vw % n(grid % bnd_cond % copy_c(c2))
+          f22 % n(c2) = f22 % n(grid % bnd_cond % copy_c(c2))
         end if ! EBM 
       end if
     end if

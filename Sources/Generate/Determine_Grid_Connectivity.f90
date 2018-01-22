@@ -37,7 +37,7 @@
         grid % n_bnd_cells   = grid % n_bnd_cells + 1
 
         ! Remember the boundary marker, take positive value for marker
-        BCmark(-grid % n_bnd_cells) =  -grid % cells_c(m,c)  
+        grid % bnd_cond % mark(-grid % n_bnd_cells) =  -grid % cells_c(m,c)  
 
         ! Put new boundary cell into place  
         grid % cells_c(m,c)  = -grid % n_bnd_cells
@@ -122,7 +122,7 @@
         grid % n_bnd_cells   = grid % n_bnd_cells + 1
 
         ! Restore the boundary marker, take positive value for marker
-        grid % cells_c(m,c)  = -BCmark(-grid % n_bnd_cells)
+        grid % cells_c(m,c)  = -grid % bnd_cond % mark(-grid % n_bnd_cells)
       end if 
     end do
   end do 
@@ -156,9 +156,9 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if(c2 < 0 .and. CopyC(c1) /= 0) then
-      if(BCmark(c2) == copy_cond(1,0)) then
-        CopyC(c2) = CopyC(c1)
+    if(c2 < 0 .and. grid % bnd_cond % copy_c(c1) /= 0) then
+      if(grid % bnd_cond % mark(c2) == copy_cond(1,0)) then
+        grid % bnd_cond % copy_c(c2) = grid % bnd_cond % copy_c(c1)
       end if
     end if
   end do

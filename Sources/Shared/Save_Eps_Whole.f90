@@ -188,7 +188,7 @@
 
     if(c2 < 0 .or. material(c1) /= material(c2) ) then 
 
-      BCcount(BCmark(c2)) = BCcount(BCmark(c2)) + 1
+      BCcount(grid % bnd_cond % mark(c2)) = BCcount(grid % bnd_cond % mark(c2)) + 1
 
       x1 = grid % xn( grid % faces_n(1,s) )
       x2 = grid % xn( grid % faces_n(2,s) )
@@ -258,9 +258,9 @@
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     int(sclf*xp4),int(sclf*yp4), ' l ',             &
                     ' cp gs ',                                      &
-                    red(BCmark(c2)),                                &
-                    green(BCmark(c2)),                              &
-                    blue(BCmark(c2)),                               &
+                    red(grid % bnd_cond % mark(c2)),                                &
+                    green(grid % bnd_cond % mark(c2)),                              &
+                    blue(grid % bnd_cond % mark(c2)),                               &
                     ' srgb f gr s gr'
 
           if(grid % faces_n_nodes(s) == 3)                          &
@@ -270,9 +270,9 @@
                     int(sclf*xp2),int(sclf*yp2), ' l ',             &
                     int(sclf*xp3),int(sclf*yp3), ' l ',             &
                     ' cp gs ',                                      &
-                    red(BCmark(c2)),                                &
-                    green(BCmark(c2)),                              &
-                    blue(BCmark(c2)),                               &
+                    red(grid % bnd_cond % mark(c2)),                                &
+                    green(grid % bnd_cond % mark(c2)),                              &
+                    blue(grid % bnd_cond % mark(c2)),                               &
                     ' srgb f gr s gr'
         end if ! colour
       else if(s > grid % n_faces) then

@@ -3,7 +3,6 @@
 !------------------------------------------------------------------------------!
 ! Writes .faces.gmv file.                                                      !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod, only: bcmark
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -71,9 +70,9 @@
   !---------------!
   !   Materials   !
   !---------------!
-  write(9,*) 'materials', grid % n_boundary_conditions + 1, 0
-  do n = 1, grid % n_boundary_conditions
-    write(9,*) grid % boundary_conditions(n) % name
+  write(9,*) 'materials', grid % n_bnd_cond + 1, 0
+  do n = 1, grid % n_bnd_cond
+    write(9,*) grid % bnd_cond % name(n)
   end do        
   write(9,*) 'DEFAULT_INSIDE'
 
@@ -83,11 +82,11 @@
    
     ! If boundary 
     if( c2 < 0 ) then 
-      write(9,*) bcmark(c2) 
+      write(9,*) grid % bnd_cond % mark(c2) 
 
     ! If inside 
     else 
-      write(9,*) grid % n_boundary_conditions + 1 
+      write(9,*) grid % n_bnd_cond + 1 
 
     end if
   end do

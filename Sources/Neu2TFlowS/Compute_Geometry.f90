@@ -17,14 +17,13 @@
 !----------------------------------[Calling]-----------------------------------!
   real :: Distance
   real :: Distance_Squared    
-  real :: Tol
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: c, c1, c2, n, s, ss, cc2, c_max, nnn, hh, mm, b
   integer              :: c11, c12, c21, c22, s1, s2, bou_cen
   integer              :: new_face_1, new_face_2
-  integer              :: type_per, n_per, number_sides, dir, option
+  integer              :: mark_per, n_per, number_sides, dir, option
   integer              :: wall_mark, rot_dir
-  real                 :: xt(4), yt(4), zt(4), angle_face
+  real                 :: xt(4), yt(4), zt(4), angle_face, tol
   real                 :: xs2, ys2, zs2, x_a, y_a, z_a, x_b, y_b, z_b
   real                 :: x_c, y_c, z_c, Det
   real                 :: ab_i, ab_j, ab_k, ac_i, ac_j, ac_k, p_i, p_j, p_k
@@ -290,7 +289,7 @@
 
   allocate(face_copy(grid % n_faces)); face_copy=0
 
-  print *, '# Number of boundary conditions: ', grid % n_boundary_conditions
+  print *, '# Number of boundary conditions: ', grid % n_bnd_cond
 
 2 n_per = 0 
   print *, '#======================================================'
@@ -306,16 +305,16 @@
   name_per = line % tokens(1)
   call To_Upper_Case(name_per)
   if( name_per == 'SKIP' ) then
-    type_per = 0
+    mark_per = 0
     goto 1  
   end if
-  type_per = -1
-  do b=1, grid % n_boundary_conditions
-    if( name_per == grid % boundary_conditions(b) % name ) then
-      type_per = b
+  mark_per = -1
+  do b=1, grid % n_bnd_cond
+    if( name_per == grid % bnd_cond % name(b) ) then
+      mark_per = b
     end if
   end do
-  if( type_per == -1 ) then
+  if( mark_per == -1 ) then
     print *, '# Critical error: boundary condition ', trim(name_per),  &
                ' can''t be found!'
     print *, '# Exiting! '
@@ -395,7 +394,7 @@
     do s = 1, grid % n_faces
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == type_per) then
+        if(grid % bnd_cond % mark(c2) == mark_per) then
           if( Approx(angle, 0.0, 1.e-6) ) then
             xspr(s) = grid % xf(s)  
             yspr(s) = grid % yf(s)  
@@ -433,7 +432,7 @@
     do s=1,grid % n_faces
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == type_per) then
+        if(grid % bnd_cond % mark(c2) == mark_per) then
           c = c + 1
           if(dir==1) b_coor(c) = grid % xf(s)*1000000.0   &
                                + grid % yf(s)*10000.0     &
@@ -454,12 +453,12 @@
     do s=1,grid % n_faces
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == type_per) then
+        if(grid % bnd_cond % mark(c2) == mark_per) then
           c_max = c_max + 1
         end if 
       end if 
     end do
-    Tol = 0.0001 
+    tol = 0.0001 
     
 10 continue
 
@@ -474,7 +473,7 @@
     do s=1,grid % n_faces
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == type_per) then
+        if(grid % bnd_cond % mark(c2) == mark_per) then
           Det = (  p_i*(grid % xf(s))  &
                  + p_j*(grid % yf(s))  &
                  + p_k*(grid % zf(s)))  &
@@ -490,7 +489,7 @@
     do s=1,grid % n_faces
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == type_per) then
+        if(grid % bnd_cond % mark(c2) == mark_per) then
           c = c + 1
           Det = (  p_i*(grid % xf(s))   &
                  + p_j*(grid % yf(s))   &
@@ -505,14 +504,14 @@
               do ss=1,grid % n_faces
                 cc2 = grid % faces_c(2,ss)
                 if(cc2 < 0) then
-                  if(BCmark(cc2) == type_per) then 
+                  if(grid % bnd_cond % mark(cc2) == mark_per) then 
                     Det = (  p_i * (grid % xf(ss))   &
                            + p_j * (grid % yf(ss))   &
                            + p_k * (grid % zf(ss)))  &
                         / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
                     if((Det) > (per_max)) then
-                      if((abs(grid % zf(ss)  - grid % zf(s))) < Tol .and.   &
-                         (abs(yspr(ss) - yspr(s))) < Tol) then
+                      if((abs(grid % zf(ss)  - grid % zf(s))) < tol .and.   &
+                         (abs(yspr(ss) - yspr(s))) < tol) then
                          mm = hh + c_max/2 
                          b_coor(mm) = mm
                          b_face(mm) = ss
@@ -533,7 +532,7 @@
               do ss=1,grid % n_faces
                 cc2 = grid % faces_c(2,ss)
                 if(cc2 < 0) then
-                  if(BCmark(cc2) == type_per) then 
+                  if(grid % bnd_cond % mark(cc2) == mark_per) then 
 
                     Det = (  p_i * (grid % xf(ss))  &
                            + p_j * (grid % yf(ss))  &
@@ -541,8 +540,8 @@
                         / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
 
                     if((Det) > (per_max)) then
-                      if(abs((grid % zf(ss)  - grid % zf(s))) < Tol .and.  &
-                         abs((xspr(ss) - xspr(s))) < Tol) then
+                      if(abs((grid % zf(ss)  - grid % zf(s))) < tol .and.  &
+                         abs((xspr(ss) - xspr(s))) < tol) then
                         mm = hh + c_max/2 
                         b_coor(mm) = mm
                         b_face(mm) = ss
@@ -564,7 +563,7 @@
               do ss=1,grid % n_faces
                 cc2 = grid % faces_c(2,ss)
                 if(cc2 < 0) then
-                  if(BCmark(cc2) == type_per) then
+                  if(grid % bnd_cond % mark(cc2) == mark_per) then
                     Det = (  p_i*(grid % xf(ss))  &
                            + p_j*(grid % yf(ss))  &
                            + p_k*(grid % zf(ss)))  &
@@ -574,8 +573,8 @@
 !                     print *, '# ... Compute_Geometry, line 557'
 !                     print *, '# Contact developers, and if you ... '
 !                     print *, '# ... are one of them, fix it!'   
-                      if(abs((grid % xf(ss) - grid % xf(s))) < Tol .and.  &
-                         abs((grid % yf(ss) - grid % yf(s))) < Tol) then
+                      if(abs((grid % xf(ss) - grid % xf(s))) < tol .and.  &
+                         abs((grid % yf(ss) - grid % yf(s))) < tol) then
                         mm = hh + c_max/2 
                         b_coor(mm) = mm
                         b_face(mm) = ss
@@ -593,12 +592,12 @@
     end do
 
     print *,'Iterating search for periodic cells: ',  &
-    'Target: ', c_max/2, 'Result: ',nnn, 'Tolerance: ',Tol
+    'Target: ', c_max/2, 'Result: ',nnn, 'Tolerance: ',tol
 
     if(nnn == c_max/2) then
       continue
     else
-      Tol = Tol*0.5 
+      tol = tol*0.5 
       go to 10
     end if
 
@@ -897,7 +896,7 @@
                                    ' % complete...'
       endif
       do c2=-1,-grid % n_bnd_cells,-1
-        if(BCmark(c2) <= wall_mark) then
+        if(grid % bnd_cond % mark(c2) <= wall_mark) then
           WallDs(c1)=min(WallDs(c1),                                      &
           Distance_Squared(grid % xc(c1), grid % yc(c1), grid % zc(c1),   &
                            grid % xc(c2), grid % yc(c2), grid % zc(c2)))

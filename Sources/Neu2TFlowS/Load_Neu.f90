@@ -78,11 +78,14 @@
 
   allocate(material(-grid % n_bnd_cells:grid % n_cells));  material=0 
   allocate(BCtype( grid % n_cells,6));                     BCtype=0
-  allocate(BCmark(-grid % n_bnd_cells-1:-1));              BCmark=0
+  allocate(grid % bnd_cond % mark(-grid % n_bnd_cells-1:-1))
+  grid % bnd_cond % mark=0
 
   grid % n_copy = grid % n_faces  ! I believe it is n_cells * 5 at this point
-  allocate(CopyC( -grid % n_bnd_cells:-1));             CopyC=0
-  allocate(CopyS(2,grid % n_copy));                     CopyS=0
+  allocate(grid % bnd_cond % copy_c( -grid % n_bnd_cells:-1))
+  grid % bnd_cond % copy_c = 0
+  allocate(grid % bnd_cond % copy_s(2,grid % n_copy))
+  grid % bnd_cond % copy_s=0
 
   allocate(NewN( grid % n_nodes));                      NewN=0  
   allocate(NewC(-grid % n_bnd_cells-1:grid % n_cells)); NewC=0  
@@ -144,14 +147,14 @@
   !-------------------------!
   !   Boundary conditions   !
   !-------------------------!
-  grid % n_boundary_conditions = n_bnd_sect
-  allocate(grid % boundary_conditions(n_bnd_sect))
+  grid % n_bnd_cond = n_bnd_sect
+  allocate(grid % bnd_cond % name(n_bnd_sect))
 
   do j = 1, n_bnd_sect
     call Tokenizer_Mod_Read_Line(9)        ! BOUNDARY CONDITIONS
     call Tokenizer_Mod_Read_Line(9)
     call To_Upper_Case(  line % tokens(1)  )
-    grid % boundary_conditions(j) % name = line % tokens(1)
+    grid % bnd_cond % name(j) = line % tokens(1)
     read(line % tokens(3),'(I8)') dum1  
     do i = 1, dum1
       read(9,*) c, dum2, dir
@@ -164,7 +167,7 @@
   print *, '# Found the following boundary conditions:'
   print *, '#---------------------------------------------------'
   do j = 1, n_bnd_sect
-    print *, '# ', grid % boundary_conditions(j) % name
+    print *, '# ', grid % bnd_cond % name(j)
   end do
   print *, '#---------------------------------------------------'
 

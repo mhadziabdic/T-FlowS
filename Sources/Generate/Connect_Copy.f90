@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Connect_Copy(dom)
+  subroutine Connect_Copy(dom, grid)
 !------------------------------------------------------------------------------!
 !   Solve the cell connectivity for copy boundary conditions.                  !
 !------------------------------------------------------------------------------!
@@ -7,10 +7,12 @@
   use all_mod
   use gen_mod
   use Domain_Mod
+  use Grid_Mod
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Domain_Type) :: dom
+  type(Grid_Type)   :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, n, p, n_cop                ! counters
   integer :: b1, b2                           ! block 1 and 2
@@ -219,9 +221,9 @@
                      + (k1-1)*ci1*cj1 + (j1-1)*ci1 + i1
                   c2 = dom % blocks(b2) % n_cells  &
                      + (k2-1)*ci2*cj2 + (j2-1)*ci2 + i2
-                  CopyC(c2) = c1 ! allway copy from c1 to c2 !
-                  CopyS(1, n_cop) = c1
-                  CopyS(2, n_cop) = c2
+                  grid % bnd_cond % copy_c(c2) = c1 ! allway copy from c1 to c2 !
+                  grid % bnd_cond % copy_s(1, n_cop) = c1
+                  grid % bnd_cond % copy_s(2, n_cop) = c2
                 end do
               end do        
 

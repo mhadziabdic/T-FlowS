@@ -536,7 +536,7 @@
         c_1 = grid % faces_c(1,s)
         c_2 = grid % faces_c(2,s)
         if(c_2 < 0) then
-          if(BCmark(c_2) <= wall_mark) then
+          if(grid % bnd_cond % mark(c_2) <= wall_mark) then
             WallDs(c1)=min(WallDs(c1), &
             Distance_Squared(grid % xc(c1),  &
                              grid % yc(c1),  &

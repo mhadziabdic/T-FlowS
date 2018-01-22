@@ -84,7 +84,7 @@
   !   Faces on the boundary   !
   !---------------------------!
   NtotFac = 0
-  BCmark(-grid % n_bnd_cells-1) = 20  ! set the type for periodic.
+  grid % bnd_cond % mark(-grid % n_bnd_cells-1) = 20  ! set the type for periodic.
   ! It has to be 19+1, where 19 is max number of boundary. 
   ! See ReadFluentNeu.f90
 
@@ -93,7 +93,7 @@
     do s=1,NSsub   ! count the faces with boundary condition "n" 
         c2 = grid % faces_c(2,s)
         if(c2 < 0) then
-          if(BCmark(c2) == n) Nfac=Nfac+1
+          if(grid % bnd_cond % mark(c2) == n) Nfac=Nfac+1
         end if 
     end do    ! faces 
 
@@ -105,7 +105,7 @@
           c1 = grid % faces_c(1,s)
           c2 = grid % faces_c(2,s)
           if(c2 < 0) then  
-            if(BCmark(c2) == n) then 
+            if(grid % bnd_cond % mark(c2) == n) then 
               if(grid % faces_n_nodes(s) == 3) then
                 write(9,'(6Z9)')                 &
                   3, NewN(grid % faces_n(1,s)),  &
@@ -143,7 +143,7 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
     if(c2 < 0) then
-      if(BCmark(c2) == n) then
+      if(grid % bnd_cond % mark(c2) == n) then
         if(grid % faces_n_nodes(s) == 3) then
           write(9,'(6Z9)')                 &
             3, NewN(grid % faces_n(1,s)),  &
@@ -171,7 +171,7 @@
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(BCmark(c2) == n) then
+        if(grid % bnd_cond % mark(c2) == n) then
           if(grid % faces_n_nodes(s) == 3) then
             write(9,'(6Z9)')                 &
               3, NewN(grid % faces_n(1,s)),  &

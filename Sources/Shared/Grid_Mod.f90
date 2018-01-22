@@ -18,15 +18,15 @@
   type Grid_Type
 
     ! Number of ...
-    integer :: n_nodes                ! ... nodes
-    integer :: n_cells                ! ... cells
-    integer :: n_faces                ! ... faces
-    integer :: n_bnd_cells            ! ... boundary cells
-    integer :: n_per_faces            ! ... periodic faces (shadows)
-    integer :: n_materials            ! ... materials
-    integer :: n_boundary_conditions  ! ... boundary conditions
-    integer :: n_copy                 ! ... copy cells and faces
-    integer :: n_sh                   ! ... shadow faces           
+    integer :: n_nodes      ! ... nodes
+    integer :: n_cells      ! ... cells
+    integer :: n_faces      ! ... faces
+    integer :: n_bnd_cells  ! ... boundary cells
+    integer :: n_per_faces  ! ... periodic faces (shadows)
+    integer :: n_materials  ! ... materials
+    integer :: n_bnd_cond   ! ... boundary conditions
+    integer :: n_copy       ! ... copy cells and faces
+    integer :: n_sh         ! ... shadow faces           
 
     !-------------------------!
     !  Cell-based variables   !
@@ -76,8 +76,8 @@
     ! Node coordinates
     real, allocatable :: xn(:), yn(:), zn(:)
     
-    type(Material_Type),           allocatable :: materials(:)
-    type(Boundary_Condition_Type), allocatable :: boundary_conditions(:)
+    type(Material_Type), allocatable :: materials(:)
+    type(Boundary_Condition_Type)    :: bnd_cond
 
     !  Maximum number of cells, boundary cells and faces
     ! (Used for tentative memory allocation in Generator)

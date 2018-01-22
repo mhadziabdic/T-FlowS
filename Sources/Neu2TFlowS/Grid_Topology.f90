@@ -69,8 +69,8 @@
       if(BCtype(i,j) /= 0) then
         grid % n_bnd_cells = grid % n_bnd_cells + 1 
 
-        ! BCmark
-        BCmark(-grid % n_bnd_cells) = BCtype(i,j)
+        ! grid % bnd_cond % mark
+        grid % bnd_cond % mark(-grid % n_bnd_cells) = BCtype(i,j)
 
         ! Material:
         material(-grid % n_bnd_cells) = material(i)

@@ -37,7 +37,7 @@
   ! This is too much memory but that's OK 
   !  (+1 is to store the default values)
   allocate(grid % materials          (dom % n_regions + 1))
-  allocate(grid % boundary_conditions(dom % n_regions + 1))
+  allocate(grid % bnd_cond % name(dom % n_regions + 1))
 
   ! Set the bare bones - one material minimum, and call it "AIR"
   n_bnd = 0
@@ -104,12 +104,12 @@
 
       found = .false. 
       do r=1,n_bnd
-        if( grid % boundary_conditions(r) % name ==   &
+        if( grid % bnd_cond % name(r) ==   &
             dom % regions(n) % name ) found = .TRUE.
       end do
       if( .not. found) then
         n_bnd = n_bnd + 1
-        grid % boundary_conditions(n_bnd) % name = dom % regions(n) % name
+        grid % bnd_cond % name(n_bnd) = dom % regions(n) % name
       end if
 
       do i=is,ie
@@ -149,13 +149,13 @@
 
   ! Store the number of materials and boundary conditions
   grid % n_materials           = n_mat
-  grid % n_boundary_conditions = n_bnd
+  grid % n_bnd_cond = n_bnd
 
   print *, '#==================================================='
   print *, '# Found following boundary conditions:'
   print *, '#---------------------------------------------------'
-  do n = 1, grid % n_boundary_conditions
-    print *, '# ', trim(grid % boundary_conditions(n) % name)
+  do n = 1, grid % n_bnd_cond
+    print *, '# ', trim(grid % bnd_cond % name(n))
   end do
   print *, '#---------------------------------------------------'
 

@@ -34,7 +34,7 @@
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: i, c1, c11, c12, c21, c22, s1, s2
-  integer           :: copy_marker,  x_copy, y_copy, z_copy
+  integer           :: marker_copy,  x_copy, y_copy, z_copy
   real              :: xc_12, xc_22
   real              :: yc_12, yc_22
   real              :: zc_12, zc_22
@@ -55,7 +55,7 @@
   if(answer == 'SKIP') then
     return
   else 
-    read(line % tokens(1), *) copy_marker 
+    read(line % tokens(1), *) marker_copy 
   end if    
 
   !-------!
@@ -72,7 +72,7 @@
         c21 = grid % faces_c(1,s2)
         c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
-          if(BCmark(c22) == copy_marker) then
+          if(grid % bnd_cond % mark(c22) == marker_copy) then
 
             yc_12 = 0.0
             zc_12 = 0.0
@@ -100,9 +100,9 @@
                   abs(grid % xc(c12)-grid % xc(c22))) c1 = c11
               if( abs(grid % xc(c11)-grid % xc(c22)) >  &
                   abs(grid % xc(c12)-grid % xc(c22))) c1 = c12
-              CopyS(1, grid % n_copy) = c1
-              CopyS(2, grid % n_copy) = c21           !   inside the domain
-              CopyC(c22) = c1
+              grid % bnd_cond % copy_s(1, grid % n_copy) = c1
+              grid % bnd_cond % copy_s(2, grid % n_copy) = c21           !   inside the domain
+              grid % bnd_cond % copy_c(c22) = c1
             end if
           end if
         end if
@@ -115,7 +115,8 @@
   !-------! 
   do s1 = 1, grid % n_faces
     if(mod(s1,100000)==0) then
-      print *, (ONE_THIRD + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
+      print *, (ONE_THIRD + (ONE_THIRD*s1)  &
+               / (1.0 * grid % n_faces)) * 100.0, 'Complete'
     end if
     c11 = grid % faces_c(1,s1)
     c12 = grid % faces_c(2,s1)
@@ -124,7 +125,7 @@
         c21 = grid % faces_c(1,s2)
         c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
-          if(BCmark(c22) == copy_marker) then
+          if(grid % bnd_cond % mark(c22) == marker_copy) then
 
             xc_12 = 0.0
             zc_12 = 0.0
@@ -152,9 +153,9 @@
                   abs(grid % yc(c12)-grid % yc(c22))) c1 = c11
               if( abs(grid % yc(c11)-grid % yc(c22)) >  &
                   abs(grid % yc(c12)-grid % yc(c22))) c1 = c12
-              CopyS(1, grid % n_copy) = c1
-              CopyS(2, grid % n_copy) = c21           !   inside the domain
-              CopyC(c22) = c1
+              grid % bnd_cond % copy_s(1, grid % n_copy) = c1
+              grid % bnd_cond % copy_s(2, grid % n_copy) = c21           !   inside the domain
+              grid % bnd_cond % copy_c(c22) = c1
             end if
           end if
         end if
@@ -167,7 +168,8 @@
   !-------! 
   do s1 = 1, grid % n_faces
     if(mod(s1,100000)==0) then
-      print *, (TWO_THIRDS + (ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100.0, 'Complete'
+      print *, (TWO_THIRDS + (ONE_THIRD*s1)  &
+               / (1.0*grid % n_faces)) * 100.0, 'Complete'
     end if
     c11 = grid % faces_c(1,s1)
     c12 = grid % faces_c(2,s1)
@@ -176,7 +178,7 @@
         c21 = grid % faces_c(1,s2)
         c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
-          if(BCmark(c22) == copy_marker) then
+          if(grid % bnd_cond % mark(c22) == marker_copy) then
 
             yc_12 = 0.0
             xc_12 = 0.0
@@ -204,9 +206,9 @@
                   abs(grid % zc(c12)-grid % zc(c22))) c1 = c11
               if( abs(grid % zc(c11)-grid % zc(c22)) >  &
                   abs(grid % zc(c12)-grid % zc(c22))) c1 = c12
-              CopyS(1, grid % n_copy) = c1
-              CopyS(2, grid % n_copy) = c21           !   inside the domain
-              CopyC(c22) = c1
+              grid % bnd_cond % copy_s(1, grid % n_copy) = c1
+              grid % bnd_cond % copy_s(2, grid % n_copy) = c21  
+              grid % bnd_cond % copy_c(c22) = c1
             end if
           end if
         end if

@@ -24,7 +24,7 @@
   call Distribute_Regions      (dom, grid)
   call Connect_Blocks          (dom, grid)
   call Connect_Periodicity     (dom, grid)
-  call Connect_Copy            (dom)
+  call Connect_Copy            (dom, grid)
 
   ! From this point on, domain is not used anymore
   call Determine_Grid_Connectivity(grid, .false.)  ! trial run 

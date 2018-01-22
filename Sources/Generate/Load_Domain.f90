@@ -65,13 +65,13 @@
   allocate (material(-grid % max_n_bnd_cells:grid % max_n_nodes)) 
   material=0
 
-  allocate (CopyC(-grid % max_n_bnd_cells:grid % max_n_nodes))
-  CopyC=0
-  allocate (CopyS(2,grid % max_n_bnd_cells))
-  CopyS=0    
+  allocate (grid % bnd_cond % copy_c(-grid % max_n_bnd_cells:grid % max_n_nodes))
+  grid % bnd_cond % copy_c = 0
+  allocate (grid % bnd_cond % copy_s(2,grid % max_n_bnd_cells))
+  grid % bnd_cond % copy_s = 0    
 
-  allocate (BCmark(-grid % max_n_bnd_cells-1:-1))
-  BCmark=0;
+  allocate (grid % bnd_cond % mark(-grid % max_n_bnd_cells-1:-1))
+  grid % bnd_cond % mark = 0
 
   ! Variables in Grid_Mod
   call Grid_Mod_Allocate_Nodes(grid,  &

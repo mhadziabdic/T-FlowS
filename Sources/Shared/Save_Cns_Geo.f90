@@ -60,7 +60,7 @@
   write(9) n_faces_sub+n_buf_cells_sub-NCFsub
   write(9) grid % n_sh  ! not sure how meaningful this is
   write(9) grid % n_materials
-  write(9) grid % n_boundary_conditions
+  write(9) grid % n_bnd_cond
 
   !---------------! 
   !   Materials   !
@@ -72,8 +72,8 @@
   !-------------------------! 
   !   Boundary conditions   !
   !-------------------------! 
-  do n = 1, grid % n_boundary_conditions
-    write(9) grid % boundary_conditions(n) % name
+  do n = 1, grid % n_bnd_cond
+    write(9) grid % bnd_cond % name(n)
   end do
 
   !-----------! 
@@ -167,16 +167,16 @@
     if(NewC(c) /= 0) then
       count=count-1 
       ! nekad bio i: NewC(c)
-      iwork(count,1) = BCmark(c)   
-      iwork(count,2) = NewC(CopyC(c)) 
-      if(CopyC(c) /= 0) then
-        if(proces(CopyC(c)) /= sub) then
+      iwork(count,1) = grid % bnd_cond % mark(c)   
+      iwork(count,2) = NewC(grid % bnd_cond % copy_c(c)) 
+      if(grid % bnd_cond % copy_c(c) /= 0) then
+        if(proces(grid % bnd_cond % copy_c(c)) /= sub) then
           do b=1,n_buf_cells_sub
-            if(BuReIn(b) == CopyC(c)) then
+            if(BuReIn(b) == grid % bnd_cond % copy_c(c)) then
               print *, BufPos(b) 
-              print *, grid % xc(CopyC(c)),  &
-                         grid % yc(CopyC(c)),  &
-                         grid % zc(CopyC(c))  
+              print *, grid % xc(grid % bnd_cond % copy_c(c)),  &
+                       grid % yc(grid % bnd_cond % copy_c(c)),  &
+                       grid % zc(grid % bnd_cond % copy_c(c))  
               iwork(count,2)=-BufPos(b) ! - sign, copy buffer
             end if
           end do
@@ -202,8 +202,8 @@
   count = 0
   do s = 1, grid % n_copy
     count = count + 1
-    iwork(count,1) = CopyS(1,s) 
-    iwork(count,2) = CopyS(2,s) 
+    iwork(count,1) = grid % bnd_cond % copy_s(1,s) 
+    iwork(count,2) = grid % bnd_cond % copy_s(2,s) 
   end do
 
   write(9) count 

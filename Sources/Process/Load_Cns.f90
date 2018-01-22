@@ -39,17 +39,17 @@
 
   ! Number of materials and boundary conditions
   read(9) grid % n_materials
-  read(9) grid % n_boundary_conditions
+  read(9) grid % n_bnd_cond
 
   allocate(grid % materials          (grid % n_materials))
-  allocate(grid % boundary_conditions(grid % n_boundary_conditions))
+  allocate(grid % bnd_cond % name(grid % n_bnd_cond))
 
   ! Materials' and boundary conditions' keys
   do n = 1, grid % n_materials
     read(9) grid % materials(n) % name
   end do
-  do n = 1, grid % n_boundary_conditions
-    read(9) grid % boundary_conditions(n) % name
+  do n = 1, grid % n_bnd_cond
+    read(9) grid % bnd_cond % name(n)
   end do
 
   ! Cells 
@@ -68,12 +68,12 @@
   read(9) (grid % faces_c(2,s), s = 1, grid % n_faces)
 
   ! Boundary cells
-  allocate (bcmark(-grid % n_bnd_cells:-1))
-  read(9) (bcmark(c), c = -1,-grid % n_bnd_cells, -1) 
+  allocate (grid % bnd_cond % mark(-grid % n_bnd_cells:-1))
+  read(9) (grid % bnd_cond % mark(c), c = -1,-grid % n_bnd_cells, -1) 
 
   ! Boundary copy cells
-  allocate (CopyC(-grid % n_bnd_cells:-1))
-  read(9) (CopyC(c), c = -1,-grid % n_bnd_cells, -1)
+  allocate (grid % bnd_cond % copy_c(-grid % n_bnd_cells:-1))
+  read(9) (grid % bnd_cond % copy_c(c), c = -1,-grid % n_bnd_cells, -1)
 
   close(9)
 

@@ -53,8 +53,8 @@
   call Save_Gmv_Faces(grid, 0,         &
                       grid % n_nodes)     ! save grid for checking b.c. 
 
-  call Save_Shadows  (grid, 0,         &
-                      grid % n_cells)     ! save shadows 
+  call Save_Shadows(grid, 0,         &
+                    grid % n_cells)     ! save shadows 
 
   ! Save data for processing
   call Save_Cns_Geo(grid, 0,                  &
@@ -63,6 +63,11 @@
                     grid % n_faces,           &
                     grid % n_bnd_cells,  &
                     0, 0)  ! saved data for processing
+
+  ! Create output in vtu format
+  call Save_Vtu_Cells(grid, 0,         &
+                      grid % n_nodes,  &
+                      grid % n_cells)     ! save grid for postprocessing
 
   ! Save links for checking
   call Save_Gmv_Links(grid, 0,                  &
@@ -85,10 +90,6 @@
                 grid % n_cells,       &
                 grid % n_faces + grid % n_sh)  ! save grid for Fluent
 
-  ! Create output in vtu format
-  call Save_Vtu_Cells(grid, 0,         &
-                      grid % n_nodes,  &
-                      grid % n_cells)     ! save grid for postprocessing
 
   ! Make eps figures
   call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x') 

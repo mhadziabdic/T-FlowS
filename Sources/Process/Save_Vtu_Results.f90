@@ -162,10 +162,6 @@
   end do  
   write(9,'(a)') '</DataArray>'
 
-  write(9,'(a)') '</Cells>'
-  write(9,'(a)') '</Piece>'
-  write(9,'(a)') '</UnstructuredGrid>'
-  write(9,'(a)') '</VTKFile>'
 
   !--------------!
   !   Pressure   !
@@ -206,6 +202,11 @@
     end do  
     write(9,'(a)') '</DataArray>'
   end if
+
+  write(9,'(a)') '</Cells>'
+  write(9,'(a)') '</Piece>'
+  write(9,'(a)') '</UnstructuredGrid>'
+  write(9,'(a)') '</VTKFile>'
 
   close(9)
 

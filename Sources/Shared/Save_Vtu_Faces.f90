@@ -90,32 +90,36 @@
     if(grid % faces_n_nodes(s) == 3) write(9,'(i9)') VTK_TRIANGLE
   end do
   write(9,'(a)') '</DataArray>'
- 
-!  !---------------!
-!  !   Materials   !
-!  !---------------!
-!  write(9,*) 'materials', grid % n_boundary_conditions + 1, 0
-!  do n = 1, grid % n_boundary_conditions
-!    write(9,*) grid % boundary_conditions(n) % name
-!  end do        
-!  write(9,*) 'DEFAULT_INSIDE'
-!
-!  do s = 1, grid % n_faces
-!    c1 = grid % faces_c(1,s)
-!    c2 = grid % faces_c(2,s)
-!   
-!    ! If boundary 
-!    if( c2 < 0 ) then 
-!      write(9,*) bcmark(c2) 
-!
-!    ! If inside 
-!    else 
-!      write(9,*) grid % n_boundary_conditions + 1 
-!
-!    end if
-!  end do
-
   write(9,'(a)') '</Cells>'
+ 
+  !---------------!
+  !   Cell data   !
+  !---------------!
+  write(9,'(a)') '<CellData Scalars="scalars" vectors="velocity">'
+
+  ! Boundary conditions
+  write(9,'(a)') '<DataArray type="UInt8" Name="boundary conditions" ' //  & 
+                 'format="ascii">'
+  do s = 1, grid % n_faces
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
+   
+    ! If boundary 
+    if( c2 < 0 ) then 
+      write(9,'(i9)') bcmark(c2)
+
+    ! If inside 
+    else 
+      write(9,'(i9)') 0
+    end if
+  end do
+
+  write(9,'(a)') '</DataArray>'
+
+  !------------!
+  !   Footer   !
+  !------------!
+  write(9,'(a)') '</CellData>'
   write(9,'(a)') '</Piece>'
   write(9,'(a)') '</UnstructuredGrid>'
   write(9,'(a)') '</VTKFile>'

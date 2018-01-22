@@ -206,10 +206,6 @@
                         n_nodes_sub,  &
                         n_cells_sub)
 
-    call Save_Gmv_Faces(grid,         &
-                        sub,          &
-                        n_nodes_sub)
-
     call Save_Shadows(grid,         &
                       sub,          &
                       n_cells_sub)
@@ -314,5 +310,17 @@
     grid % faces_c(2,s) = side_cell(s,2)
   end do
   deallocate(side_cell)
+
+  call Save_Gmv_Cells(grid, 0, grid % n_nodes, grid % n_cells)
+  call Save_Gmv_Faces(grid)
+
+  call Save_Vtu_Cells(grid, 0, grid % n_nodes, grid % n_cells)
+  call Save_Vtu_Faces(grid)
+
+  call Save_Cas(grid, 0,                        &
+                grid % n_nodes,                 &
+                grid % n_cells,                 &
+                grid % n_faces + grid % n_sh)
+  call Save_Eps_Decomposed(grid)
 
   end subroutine

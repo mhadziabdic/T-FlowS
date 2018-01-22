@@ -45,35 +45,41 @@
     NewS(s)=s
   end do
 
+  !------------------------------!
+  !   Save data for processing   !
+  !------------------------------!
+  call Save_Cns_Geo(grid, 0,             &
+                    grid % n_nodes,      &
+                    grid % n_cells,      &
+                    grid % n_faces,      &
+                    grid % n_bnd_cells,  &
+                    0, 0)  ! saved data for processing
+
+  !-----------------------------------------------------!
+  !   Save grid for visualisation and post-processing   !
+  !-----------------------------------------------------!
+
   ! Save the grid
   call Save_Gmv_Cells(grid, 0,         &
                       grid % n_nodes,  &
-                      grid % n_cells)     ! save grid for postprocessing
+                      grid % n_cells)
+  call Save_Gmv_Faces(grid)
 
-  call Save_Gmv_Faces(grid, 0,         &
-                      grid % n_nodes)     ! save grid for checking b.c. 
-
+  ! I believe shadows are needed (only) for Fluent (TM) output
   call Save_Shadows(grid, 0,         &
-                    grid % n_cells)     ! save shadows 
-
-  ! Save data for processing
-  call Save_Cns_Geo(grid, 0,                  &
-                    grid % n_nodes,           &
-                    grid % n_cells,           &
-                    grid % n_faces,           &
-                    grid % n_bnd_cells,  &
-                    0, 0)  ! saved data for processing
+                    grid % n_cells)
 
   ! Create output in vtu format
   call Save_Vtu_Cells(grid, 0,         &
                       grid % n_nodes,  &
-                      grid % n_cells)     ! save grid for postprocessing
+                      grid % n_cells)
+  call Save_Vtu_Faces(grid)
 
   ! Save links for checking
-  call Save_Gmv_Links(grid, 0,                  &
-                      grid % n_nodes,           &
-                      grid % n_cells,           &
-                      grid % n_faces,           &
+  call Save_Gmv_Links(grid, 0,             &
+                      grid % n_nodes,      &
+                      grid % n_cells,      &
+                      grid % n_faces,      &
                       grid % n_bnd_cells,  &
                       0)
 
@@ -90,13 +96,11 @@
                 grid % n_cells,       &
                 grid % n_faces + grid % n_sh)  ! save grid for Fluent
 
-
   ! Make eps figures
   call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x') 
   call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y') 
   call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z') 
-
-  call Save_Eps_Whole(grid, grid % n_sh)  ! draw the domain with shadows
+  call Save_Eps_Whole(grid, grid % n_sh)
 
   ! Write something on the screen
   call Print_Grid_Statistics(grid)

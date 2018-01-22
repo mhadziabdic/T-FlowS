@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Gmv_Faces(grid, sub, NNsub)
+  subroutine Save_Gmv_Faces(grid)
 !------------------------------------------------------------------------------!
 ! Writes .faces.gmv file.                                                      !
 !----------------------------------[Modules]-----------------------------------!
@@ -9,7 +9,6 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: sub, NNsub
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c1, c2, n, s
   character(len=80) :: name_out
@@ -20,9 +19,7 @@
   !   Create boundary condition .gmv file   !
   !                                         !
   !-----------------------------------------!
-  if(sub /= 0) return
-
-  call Name_File(sub, name_out, '.faces.gmv')
+  call Name_File(0, name_out, '.faces.gmv')
   open(9, file=name_out)
   print *, '# Creating the file:', trim(name_out)
 
@@ -34,7 +31,7 @@
   !-----------!
   !   Nodes   !
   !-----------!
-  write(9,*) 'nodes', NNsub
+  write(9,*) 'nodes', grid % n_nodes
 
   do n = 1, grid % n_nodes
     write(9, '(1PE14.7)') grid % xn(n)
@@ -95,7 +92,7 @@
     end if
   end do
 
-  write(9,'(A6)') 'endgmv'            !  end the GMV file
+  write(9,'(A6)') 'endgmv'
   close(9)
 
   end subroutine

@@ -12,8 +12,12 @@
   type(Grid_Type) :: grid
   integer         :: sub, n_nodes_sub, n_cells_sub
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, n, offset
-  character(len=80) :: name_out
+  integer            :: c, n, offset
+  character(len=80)  :: name_out
+  integer, parameter :: VTK_TETRA      = 10
+  integer, parameter :: VTK_HEXAHEDRON = 12
+  integer, parameter :: VTK_WEDGE      = 13
+  integer, parameter :: VTK_PYRAMID    = 14
 !==============================================================================!
 
   !----------------------!
@@ -51,7 +55,6 @@
   !-----------!
   !   Cells   !
   !-----------!
-
   write(9,'(a)') '<Cells>'
 
   ! First write all cells' nodes
@@ -103,38 +106,34 @@
   write(9,'(a)') '<DataArray type="UInt8" Name="types" format="ascii">'
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
-      if(grid % cells_n_nodes(c) == 8) then  ! hexahedral cells
-        write(9,'(i9)') 12
-      else if(grid % cells_n_nodes(c) == 6) then  ! prismatic cells
-        write(9,'(i9)') 13
-      else if(grid % cells_n_nodes(c) == 4) then  ! tetrahedral cells
-        write(9,'(i9)') 10
-      else if(grid % cells_n_nodes(c) == 5) then  ! pyramid cells
-        write(9,'(i9)') 14
-      else
-        print *, '# Unsupported cell type with ',  &
-                    grid % cells_n_nodes(c), ' nodes.'
-        print *, '# Exiting'
-        stop 
-      end if
+      if(grid % cells_n_nodes(c) == 4) write(9,'(i9)') VTK_TETRA
+      if(grid % cells_n_nodes(c) == 8) write(9,'(i9)') VTK_HEXAHEDRON
+      if(grid % cells_n_nodes(c) == 6) write(9,'(i9)') VTK_WEDGE
+      if(grid % cells_n_nodes(c) == 5) write(9,'(i9)') VTK_PYRAMID
     end if
   end do
   write(9,'(a)') '</DataArray>'
- 
-!  !---------------!
-!  !   Materials   !
-!  !---------------!
-!  write(9,'(A10,2I5)') 'materials', grid % n_materials, 0
-!  do n = 1, grid % n_materials
-!    write(9,'(a)') grid % materials(n) % name
-!  end do
-!  do c = 1, grid % n_cells
-!    if(NewC(c) /= 0) then
-!      write(9,'(a)') material(c)
-!    end if
-!  end do        
-
   write(9,'(a)') '</Cells>'
+ 
+  !---------------!
+  !   Cell data   !
+  !---------------!
+  write(9,'(a)') '<CellData Scalars="scalars" vectors="velocity">'
+
+  ! Materials
+  write(9,'(a)') '<DataArray type="UInt8" Name="materials" format="ascii">'
+  do c = 1, grid % n_cells
+    if(NewC(c) /= 0) then
+      write(9,'(i9)') material(c)
+    end if
+  end do
+
+  write(9,'(a)') '</DataArray>'
+
+  !------------!
+  !   Footer   !
+  !------------!
+  write(9,'(a)') '</CellData>'
   write(9,'(a)') '</Piece>'
   write(9,'(a)') '</UnstructuredGrid>'
   write(9,'(a)') '</VTKFile>'

@@ -14,7 +14,7 @@
   call Logo_Neu
 
   print *, '#======================================================'
-  print *, '# Enter the Fluent''s (*.NEU) file name (without ext.):'
+  print *, '# Enter the Fluent''s (*.neu) file name (without ext.):'
   print *, '#------------------------------------------------------'
   read(*,*) problem_name
 
@@ -34,26 +34,37 @@
     NewS(s) = s
   end do  
 
-  call Save_Gmv_Cells(grid, 0,            &
-                      grid % n_nodes,     &
-                      grid % n_cells,     &
-                      grid % n_faces,     &
-                      grid % n_bnd_cells)
-
-  ! Saves a file for checking b.c.
-  call Save_Gmv_Faces(grid, 0,            &
-                      grid % n_nodes)
-
-  call Save_Shadows  (grid, 0,            &
-                      grid % n_cells)
-
-  ! Save files for processing
+  !-------------------------------!
+  !   Save files for processing   !
+  !-------------------------------!
   call Save_Cns_Geo  (grid, 0,             &
                       grid % n_nodes,      &
                       grid % n_cells,      &
                       grid % n_faces,      &
                       grid % n_bnd_cells,  &
                       0, 0) 
+
+  !-----------------------------------------------------!
+  !   Save grid for visualisation and post-processing   !
+  !-----------------------------------------------------!
+
+  ! Output in gmv file format
+  call Save_Gmv_Cells(grid, 0,            &
+                      grid % n_nodes,     &
+                      grid % n_cells,     &
+                      grid % n_faces,     &
+                      grid % n_bnd_cells)
+  call Save_Gmv_Faces(grid)
+
+ ! Create output in vtu format
+  call Save_Vtu_Cells(grid, 0,         &
+                      grid % n_nodes,  &
+                      grid % n_cells)
+  call Save_Vtu_Faces(grid)
+
+  ! I believe these are needed for Fluent only
+  call Save_Shadows(grid, 0,            &
+                    grid % n_cells)
 
   ! Save links for checking
   call Save_Gmv_Links(grid, 0,             &
@@ -70,11 +81,6 @@
                 grid % n_cells,                 &
                 grid % n_faces + grid % n_sh,   &
                 grid % n_bnd_cells)
-
- ! Create output in vtu format
-  call Save_Vtu_Cells(grid, 0,         &
-                      grid % n_nodes,  &
-                      grid % n_cells)     ! save grid for postprocessing
 
   ! Create 1D file (used for channel or pipe flow) 
   call Probe_1D_Nodes(grid)

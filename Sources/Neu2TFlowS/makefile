@@ -84,13 +84,13 @@ $(info #----------------------------------------------------)
 SRC_MOD =  neu_mod.f90
 
 # Sources for modules in other directories
-SRC_MOD += allp_mod.f90			\
-           all_mod.f90			\
-           gen_mod.f90			\
-           div_mod.f90			\
-           Tokenizer_Mod.f90		\
-           Material_Mod.f90		\
-           Boundary_Condition_Mod.f90	\
+SRC_MOD += allp_mod.f90		\
+           all_mod.f90		\
+           gen_mod.f90		\
+           div_mod.f90		\
+           Tokenizer_Mod.f90	\
+           Material_Mod.f90	\
+           Bnd_Cond_Mod.f90	\
            Grid_Mod.f90
 
 # Sources for all functions are obtained by a shell command
@@ -143,7 +143,7 @@ $(PROGRAM_FILE): $(OBJ)
 #   hand for tuning of dependencies.
 #---------------------------------------
 $(DIR_OBJECT)/all_mod.o:	$(DIR_OBJECT)/allp_mod.o
-$(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Boundary_Condition_Mod.o	\
+$(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Bnd_Cond_Mod.o	\
 				$(DIR_OBJECT)/Material_Mod.o
 
 #---------------------

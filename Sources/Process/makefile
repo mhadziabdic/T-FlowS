@@ -19,9 +19,9 @@ MPI = no
 
 # Directories for objects and modules. (No need to change.)
 DIR_BINARY = ../../Binaries
-DIR_MODULE = ../.Modules
-DIR_OBJECT = ../.Objects
 DIR_SHARED = ../Shared
+DIR_MODULE = ../.Modules
+DIR_OBJECT = .Objects
 DIR_MODELS = Turbulence
 DIR_COMMUN = Communication/Sequential
 ifeq ($(MPI), yes)

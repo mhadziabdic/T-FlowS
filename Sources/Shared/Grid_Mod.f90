@@ -5,7 +5,7 @@
 !   (that means in "Generate", "Divide", "Neu2TflowS", "Process".              !
 !------------------------------------------------------------------------------!
   use Material_Mod
-  use Boundary_Condition_Mod
+  use Bnd_Cond_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !==============================================================================!
@@ -77,7 +77,7 @@
     real, allocatable :: xn(:), yn(:), zn(:)
     
     type(Material_Type), allocatable :: materials(:)
-    type(Boundary_Condition_Type)    :: bnd_cond
+    type(Bnd_Cond_Type)              :: bnd_cond
 
     !  Maximum number of cells, boundary cells and faces
     ! (Used for tentative memory allocation in Generator)

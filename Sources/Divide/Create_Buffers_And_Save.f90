@@ -227,6 +227,11 @@
                         n_bnd_cells_sub,  &
                         n_buff_sub)
 
+    call Save_Vtu_Cells(grid,         &
+                        sub,          &
+                        n_nodes_sub,  &
+                        n_cells_sub)
+
     print *, '# Test:'
     print *, '# n_nodes_sub   =', n_nodes_sub
     print *, '# n_cells_sub   =', n_cells_sub

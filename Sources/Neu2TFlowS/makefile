@@ -14,12 +14,19 @@ FORTRAN = gnu
 # Debugging ("yes" or "no")
 DEBUG = no
 
+# Link with CGNS ("yes" or "no")
+CGNS  = no
+
 # Directories for objects and modules. (No need to change.)
 DIR_BINARY = ../../Binaries
 DIR_SHARED = ../Shared
 DIR_MODULE = ../.Modules
 DIR_OBJECT = .Objects
 VPATH = $(DIR_SHARED):.
+
+# Third party header files and libraries
+DIR_CGNS_H = ../Libraries/Cgnslib_3.2.1/src
+CGNS_LIB   = ../Libraries/Cgnslib_3.2.1/src/lib/libcgns.a
 
 # Program name (This should hardly change)
 PROGRAM_NAME = Neu2TflowS
@@ -34,7 +41,7 @@ PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
 # Fortran = gnu
 ifeq ($(FORTRAN), gnu)
   FC = gfortran
-  ifeq ($(DEBUG),yes)
+  ifeq ($(DEBUG), yes)
     OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -O0 -g -Wall -fcheck=all
   else
     OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -O3
@@ -45,7 +52,7 @@ endif
 # Fortran == intel
 ifeq ($(FORTRAN), intel)
   FC = ifort
-  ifeq ($(DEBUG),yes)
+  ifeq ($(DEBUG), yes)
     OPT_COMP = -module $(DIR_MODULE) -r8 -O0 -warn all -check all -debug all
   else
     OPT_COMP = -module $(DIR_MODULE) -r8 -O3
@@ -56,13 +63,18 @@ endif
 # Fortran == portland
 ifeq ($(FORTRAN), portland)
   FC = pgfortran
-  ifeq ($(DEBUG),yes)
+  ifeq ($(DEBUG), yes)
     OPT_COMP = -module $(DIR_MODULE) -r8 -O0
   else
     OPT_COMP = -module $(DIR_MODULE) -r8 -O3
   endif
   OPT_LINK = $(OPT_COMP)
 endif 
+
+# If compiling with CGNS, add path to include directory
+ifeq ($(CGNS), yes)
+  OPT_COMP += -I $(DIR_CGNS_H)
+endif
 
 $(info #====================================================)
 $(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN) )
@@ -134,7 +146,7 @@ $(DIR_OBJECT)/%.o: %.f90
 #   Note: Should not be modified.
 #-----------------------------------
 $(PROGRAM_FILE): $(OBJ) 
-	$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ)
+	$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ) $(CGNS_LIB)
 
 #---------------------------------------
 #   Explicit dependencies for modules

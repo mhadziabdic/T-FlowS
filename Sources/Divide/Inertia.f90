@@ -85,6 +85,6 @@
                 grid % yc(i) * d_max(2) +  &
                 grid % zc(i) * d_max(3)
   end do
-  call Sort_Real_By_Index(criter(1), iin(1), grid % n_cells, 2)
+  call Sort_Real_Carry_Int(criter(1), iin(1), grid % n_cells, 2)
 
   end subroutine

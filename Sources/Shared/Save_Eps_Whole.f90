@@ -171,7 +171,7 @@
     indx(s) = s
     work(s) = Distance(xk, yk, zk, grid % xf(s), grid % yf(s), grid % zf(s))
   end do
-  call Sort_Real_By_Index(work, indx, grid % n_faces+NSsh0, -2)
+  call Sort_Real_Carry_Int(work, indx, grid % n_faces+NSsh0, -2)
 
   do s0=1,grid % n_faces+NSsh0
     s=indx(s0)

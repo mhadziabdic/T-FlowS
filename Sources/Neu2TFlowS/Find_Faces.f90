@@ -19,7 +19,7 @@
   integer             :: i1, i2, k, Nuber
   integer             :: fn(6,4)
   real   ,allocatable :: face_coor(:) 
-  integer,allocatable :: face_cell(:), Starts(:), Ends(:) 
+  integer,allocatable :: face_cell(:), starts(:), ends(:) 
   real                :: very_big
 !==============================================================================!
 
@@ -27,8 +27,8 @@
 
   allocate(face_coor(grid % n_cells*6)); face_coor = grid % n_nodes*HUGE
   allocate(face_cell(grid % n_cells*6)); face_cell = 0    
-  allocate(Starts(grid % n_cells*6)); Starts = 0    
-  allocate(Ends(grid % n_cells*6));   Ends = 0    
+  allocate(starts(grid % n_cells*6)); starts = 0    
+  allocate(ends(grid % n_cells*6));   ends = 0    
 ! allocate(CellC(grid % n_cells,6));  CellC = 0
 
   !---------------------------------------------------!
@@ -53,11 +53,13 @@
 
         if( n_f_nod >  0 ) then
           if(f_nod(4) > 0) then
-            face_coor((c-1)*6+j) =  very_big*(max(f_nod(1), f_nod(2), f_nod(3), f_nod(4)))   &
-                                 +            min(f_nod(1), f_nod(2), f_nod(3), f_nod(4))
+            face_coor((c-1)*6+j) =   &
+               very_big*(max(f_nod(1), f_nod(2), f_nod(3), f_nod(4)))   &
+            +            min(f_nod(1), f_nod(2), f_nod(3), f_nod(4))
           else
-            face_coor((c-1)*6+j) =  very_big*(max(f_nod(1), f_nod(2), f_nod(3)))   &
-                                 +            min(f_nod(1), f_nod(2), f_nod(3))
+            face_coor((c-1)*6+j) =   &
+              very_big*(max(f_nod(1), f_nod(2), f_nod(3)))   &
+           +            min(f_nod(1), f_nod(2), f_nod(3))
            end if
           face_cell((c-1)*6+j) = c 
         end if 
@@ -68,7 +70,7 @@
   !--------------------------------------------------!
   !   Sort the cell faces according to coordinares   !
   !--------------------------------------------------!
-  call Sort_Real_By_Index(face_coor,face_cell,grid % n_cells*6,2)
+  call Sort_Real_Carry_Int(face_coor, face_cell, grid % n_cells*6, 2)
 
   !------------------------------------------------!
   !   Anotate cell faces with same coordinates     !
@@ -76,12 +78,12 @@
   !      by the numerical round-off errors)        !
   !------------------------------------------------!
   Nuber = 1
-  Starts(1) = 1
+  starts(1) = 1
   do c=2,grid % n_cells*6
     if( face_coor(c) /= face_coor(c-1) ) then
       Nuber = Nuber + 1
-      Starts(Nuber) = c
-      Ends(Nuber-1) = c-1
+      starts(Nuber) = c
+      ends(Nuber-1) = c-1
     end if
   end do
 
@@ -91,9 +93,9 @@
   !                                           !
   !-------------------------------------------!
   do n3 = 1, Nuber
-    if(Starts(n3) /= Ends(n3)) then
-      do i1=Starts(n3),Ends(n3)
-        do i2=i1+1,Ends(n3)
+    if(starts(n3) /= ends(n3)) then
+      do i1=starts(n3),ends(n3)
+        do i2=i1+1,ends(n3)
           c1 = min(face_cell(i1),face_cell(i2))
           c2 = max(face_cell(i1),face_cell(i2))
           if(c1 /= c2) then

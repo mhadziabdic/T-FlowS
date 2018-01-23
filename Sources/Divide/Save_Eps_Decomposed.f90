@@ -23,11 +23,16 @@
   real                :: x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,        &
                          xk,yk,zk,alfa,beta,gama,nx,ny,nz,shade,fs,  &
                          xp1,yp1,xp2,yp2,xp3,yp3,xp4,yp4 
-  real                :: red(MAXPRO), green(MAXPRO), blue(MAXPRO)
+  real                :: red(18), green(18), blue(18)
   integer,allocatable :: indx(:)
   real,allocatable    :: work(:) 
   integer             :: ix1, ix2, iy1, iy2, boxsize
 !==============================================================================!
+
+  if(n_sub > 18) then
+    print *, '# Error message from Save_Eps_Decomposed: the subroutine '
+    print *, '# can''t plot more than 18 partitions.  Skipping it!'
+  end if
 
   ! Allocate the memory
   allocate(indx(grid % n_faces)); indx=0
@@ -173,7 +178,7 @@
                 fs*grid % yc(c1)+(1.-fs)*(grid % yc(c2)+grid % dy(s)),  &
                 fs*grid % zc(c1)+(1.-fs)*(grid % zc(c2)+grid % dz(s)) )
   end do
-  call Sort_Real_By_Index(work,indx,grid % n_faces,-2)
+  call Sort_Real_Carry_Int(work,indx,grid % n_faces,-2)
 
   do s0 = 1, grid % n_faces
     s=indx(s0)

@@ -46,17 +46,17 @@
     ix(i) = i
     criter(i) = grid % xc(i) + 0.01 * grid % yc(i) + 0.0001 * grid % zc(i)
   end do
-  call Sort_Real_By_Index(criter(1),ix(1),grid % n_cells,2)
+  call Sort_Real_Carry_Int(criter(1),ix(1),grid % n_cells,2)
   do i = 1, grid % n_cells
     iy(i) = i
     criter(i) = grid % yc(i) + 0.01 * grid % zc(i) + 0.0001 * grid % xc(i)
   end do
-  call Sort_Real_By_Index(criter(1),iy(1),grid % n_cells,2)
+  call Sort_Real_Carry_Int(criter(1),iy(1),grid % n_cells,2)
   do i = 1, grid % n_cells
     iz(i) = i
     criter(i) = grid % zc(i) + 0.01 * grid % xc(i) + 0.0001 * grid % yc(i)
   end do
-  call Sort_Real_By_Index(criter(1),iz(1),grid % n_cells,2)
+  call Sort_Real_Carry_Int(criter(1),iz(1),grid % n_cells,2)
   print *, '# Finished sorting'
 
   call Load_Geo(grid, 0)

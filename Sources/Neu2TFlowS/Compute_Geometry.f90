@@ -447,7 +447,7 @@
         end if
       end if
     end do
-    call Sort_Double_Carry_Int(b_coor,b_face,c,2)
+    call Sort_Real_Carry_Int(b_coor, b_face, c, 2)
   else if(option == 2) then 
     c_max = 0
     do s=1,grid % n_faces
@@ -606,7 +606,7 @@
     deallocate(yspr)
     deallocate(zspr)
 
-    call Sort_Double_Carry_Int(b_coor,b_face,c,2)
+    call Sort_Real_Carry_Int(b_coor, b_face, c, 2)
   end if  ! end option
 
   do s = 1, c/2

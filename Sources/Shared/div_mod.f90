@@ -12,8 +12,9 @@ module div_mod
 
   ! Division algorithm
   integer            :: division_algorithm
-  integer, parameter :: COORDINATE = 1
-  integer, parameter :: INERTIAL   = 2
+  integer, parameter :: COORDINATE = 20011
+  integer, parameter :: INERTIAL   = 20021
+  integer, parameter :: METIS      = 20023
 
   ! Number of sub-divisions
   integer              :: n_sub

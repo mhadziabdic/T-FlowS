@@ -117,8 +117,8 @@
     end do
 
     do s = 1, grid % n_copy
-      c1=CopyS(1,s)
-      c2=CopyS(2,s)
+      c1=grid % bnd_cond % copy_s(1,s)
+      c2=grid % bnd_cond % copy_s(2,s)
       if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
         NCSsub=NCSsub+1
       end if
@@ -167,8 +167,8 @@
 
         ! Faces on the "copy" boundary
         do s = 1, grid % n_copy
-          c1=CopyS(1,s)  
-          c2=CopyS(2,s) 
+          c1=grid % bnd_cond % copy_s(1,s)  
+          c2=grid % bnd_cond % copy_s(2,s) 
           if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
             n_buff_sub = n_buff_sub+1
             NCFsub = NCFsub+1
@@ -292,19 +292,21 @@
   call Grid_Mod_Sort_Cells_By_Index(grid, NewC(1), grid % n_cells)
   call Grid_Mod_Sort_Faces_By_Index(grid, NewS(1), grid % n_faces)
 
-  call Sort_Int_By_Index(proces(1),  NewC(1),grid % n_cells)
-  call Sort_Int_By_Index(material(1),NewC(1),grid % n_cells)
+  call Sort_Int_By_Index(proces(1),  NewC(1), grid % n_cells)
+  call Sort_Int_By_Index(material(1),NewC(1), grid % n_cells)
 
-  call RNSort(grid % dx(1), NewS(1), grid % n_faces)  ! this is important
-  call RNSort(grid % dy(1), NewS(1), grid % n_faces)  ! for plotting the
-  call RNSort(grid % dz(1), NewS(1), grid % n_faces)  ! grid with EpsPar()
-  allocate(side_cell(grid % n_faces,2))
+  ! This is important for plotting the grid with EpsPar()
+  call Sort_Real_By_Index(grid % dx(1), NewS(1), grid % n_faces)
+  call Sort_Real_By_Index(grid % dy(1), NewS(1), grid % n_faces)
+  call Sort_Real_By_Index(grid % dz(1), NewS(1), grid % n_faces)
+
+  allocate(side_cell(grid % n_faces, 2))
   do s = 1, grid % n_faces
     side_cell(s,1) = grid % faces_c(1,s)
     side_cell(s,2) = grid % faces_c(2,s)
   end do
-  call Sort_Int_By_Index(side_cell(1,1), NewS(1),grid % n_faces)
-  call Sort_Int_By_Index(side_cell(1,2), NewS(1),grid % n_faces)
+  call Sort_Int_By_Index(side_cell(1,1), NewS(1), grid % n_faces)
+  call Sort_Int_By_Index(side_cell(1,2), NewS(1), grid % n_faces)
   do s = 1, grid % n_faces
     grid % faces_c(1,s) = side_cell(s,1)
     grid % faces_c(2,s) = side_cell(s,2)

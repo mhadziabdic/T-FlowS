@@ -72,14 +72,14 @@
   read(9) (grid % bnd_cond % mark(c), c = -1,-grid % n_bnd_cells, -1)
 
   ! Boundary copy cells
-  allocate (CopyC(-grid % n_bnd_cells:-1))
-  read(9) (CopyC(c), c = -1,-grid % n_bnd_cells, -1)
+  allocate (grid % bnd_cond % copy_c(-grid % n_bnd_cells:-1))
+  read(9) (grid % bnd_cond % copy_c(c), c = -1,-grid % n_bnd_cells, -1)
  
   read(9) grid % n_copy
   print *, '# Number of copy cells/faces: ', grid % n_copy
-  allocate (CopyS(2,grid % n_copy))
-  read(9) (CopyS(1,s), s = 1,grid % n_copy)
-  read(9) (CopyS(2,s), s = 1,grid % n_copy)
+  allocate (grid % bnd_cond % copy_s(2,grid % n_copy))
+  read(9) (grid % bnd_cond % copy_s(1,s), s = 1,grid % n_copy)
+  read(9) (grid % bnd_cond % copy_s(2,s), s = 1,grid % n_copy)
 
   close(9)
 

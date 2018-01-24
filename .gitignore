@@ -1,4 +1,3 @@
-*.a
 *.o
 *.mod
 **/Process/Communication/*.f90

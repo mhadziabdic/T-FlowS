@@ -180,11 +180,11 @@ $(PROGRAM_FILE): $(OBJ)
 #   hand for tuning of dependencies.
 #---------------------------------------
 $(DIR_OBJECT)/all_mod.o:	$(DIR_OBJECT)/allp_mod.o
-$(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Boundary_Condition_Mod.o	\
+$(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Bnd_Cond_Mod.o	\
 				$(DIR_OBJECT)/Material_Mod.o
-$(DIR_OBJECT)/Domain_Mod.o:	$(DIR_OBJECT)/Point_Mod.o		\
-  				$(DIR_OBJECT)/Line_Mod.o		\
-  				$(DIR_OBJECT)/Block_Mod.o		\
+$(DIR_OBJECT)/Domain_Mod.o:	$(DIR_OBJECT)/Point_Mod.o	\
+  				$(DIR_OBJECT)/Line_Mod.o	\
+  				$(DIR_OBJECT)/Block_Mod.o	\
   				$(DIR_OBJECT)/Region_Mod.o
 
 #---------------------

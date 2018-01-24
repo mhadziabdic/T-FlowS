@@ -2,12 +2,13 @@
   subroutine Save_Vtu_Results(grid, name_save)
 !------------------------------------------------------------------------------!
 !   Writes results in VTU file format (for VisIt and Paraview)                 !
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use allp_mod
   use all_mod
   use pro_mod
   use rans_mod
-  use par_mod, only: this_proc
+  use par_mod, only: this_proc, n_proc
   use Tokenizer_Mod
   use Grid_Mod
   use Constants_Pro_Mod
@@ -19,6 +20,20 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, n, offset
   character(len=80) :: name_out, store_name
+!------------------------------[Local parameters]------------------------------!
+  integer, parameter :: VTK_TETRA      = 10  ! cell shapes in VTK format
+  integer, parameter :: VTK_HEXAHEDRON = 12  
+  integer, parameter :: VTK_WEDGE      = 13
+  integer, parameter :: VTK_PYRAMID    = 14
+  character(len= 0)  :: IN_0 = ''           ! indentation levels 
+  character(len= 2)  :: IN_1 = '  '
+  character(len= 4)  :: IN_2 = '    '
+  character(len= 6)  :: IN_3 = '      '
+  character(len= 8)  :: IN_4 = '        '
+  character(len=10)  :: IN_5 = '          '
+  character(len=12)  :: IN_6 = '            '
+  character(len=14)  :: IN_7 = '              '
+  character(len=16)  :: IN_8 = '                '
 !==============================================================================!
 
   ! Store the name
@@ -40,12 +55,13 @@
   !-----------!
   !   Start   !
   !-----------!
-  write(9,'(a)') '<?xml version="1.0"?>'
-  write(9,'(a)') '<VTKFile type="UnstructuredGrid" version="0.1" ' //  &
-                 'byte_order="LittleEndian">'
-  write(9,'(a)') '<UnstructuredGrid>'
-  write(9,'(a,i9)',advance='no') '<Piece NumberOfPoints="', grid % n_nodes
-  write(9,'(a,i9,a)')            '" NumberOfCells ="', grid % n_cells, '">'
+  write(9,'(a,a)') IN_0, '<?xml version="1.0"?>'
+  write(9,'(a,a)') IN_0, '<VTKFile type="UnstructuredGrid" version="0.1" ' //  &
+                         'byte_order="LittleEndian">'
+  write(9,'(a,a)') IN_1, '<UnstructuredGrid>'
+  write(9,'(a,a,i0.0,a,i0.0,a)')   &
+                   IN_2, '<Piece NumberOfPoints="', grid % n_nodes,      &
+                              '" NumberOfCells ="', grid % n_cells, '">'
 
   !----------!
   !          !
@@ -56,42 +72,47 @@
   !-----------!
   !   Nodes   !
   !-----------!
-  write(9,'(a)') '<Points>'
-  write(9,'(a)') '<DataArray type="Float32" NumberOfComponents="3" ' //  &
-                 'format="ascii">'
+  write(9,'(a,a)') IN_3, '<Points>'
+  write(9,'(a,a)') IN_4, '<DataArray type="Float32" NumberOfComponents' //  &
+                         '="3" format="ascii">'
   do n = 1, grid % n_nodes
-    write(9, '(1PE15.7, 1PE15.7, 1PE15.7)')  &
-             grid % xn(n), grid % yn(n), grid % zn(n)
+    write(9, '(a,1pe15.7,1pe15.7,1pe15.7)')                &
+               IN_5, grid % xn(n), grid % yn(n), grid % zn(n)
   end do
-  write(9,'(a)') '</DataArray>'
-  write(9,'(a)') '</Points>'
+  write(9,'(a,a)') IN_4, '</DataArray>'
+  write(9,'(a,a)') IN_3, '</Points>'
 
   !-----------!
   !   Cells   !
   !-----------!
-
-  write(9,'(a)') '<Cells>'
+  write(9,'(a,a)') IN_3, '<Cells>'
 
   ! First write all cells' nodes
-  write(9,'(a)') '<DataArray type="Int32" Name="connectivity" format="ascii">'
+  write(9,'(a,a)') IN_4, '<DataArray type="Int32" Name="connectivity"' //  &
+                         ' format="ascii">'
+
   do c = 1, grid % n_cells
     if(grid % cells_n_nodes(c) == 8) then
-      write(9,'(8I9)')                                  &
+      write(9,'(a,8i9)')                                &
+        IN_5,                                           &
         grid % cells_n(1,c)-1, grid % cells_n(2,c)-1,   &
         grid % cells_n(4,c)-1, grid % cells_n(3,c)-1,   &
         grid % cells_n(5,c)-1, grid % cells_n(6,c)-1,   &
         grid % cells_n(8,c)-1, grid % cells_n(7,c)-1
     else if(grid % cells_n_nodes(c) == 6) then
-      write(9,'(6I9)')                                  &
+      write(9,'(a,6i9)')                                &
+        IN_5,                                           &
         grid % cells_n(1,c)-1, grid % cells_n(2,c)-1,   &
         grid % cells_n(3,c)-1, grid % cells_n(4,c)-1,   &
         grid % cells_n(5,c)-1, grid % cells_n(6,c)-1
     else if(grid % cells_n_nodes(c) == 4) then
-      write(9,'(4I9)')                                  &
+      write(9,'(a,4i9)')                                &
+        IN_5,                                           &
         grid % cells_n(1,c)-1, grid % cells_n(2,c)-1,   &
         grid % cells_n(3,c)-1, grid % cells_n(4,c)-1
     else if(grid % cells_n_nodes(c) == 5) then
-      write(9,'(5I9)')                                  &
+      write(9,'(a,5i9)')                                &
+        IN_5,                                           &
         grid % cells_n(5,c)-1, grid % cells_n(1,c)-1,   &
         grid % cells_n(2,c)-1, grid % cells_n(4,c)-1,   &
         grid % cells_n(3,c)-1
@@ -102,28 +123,28 @@
       stop 
     end if
   end do  
-  write(9,'(a)') '</DataArray>'
+  write(9,'(a,a)') IN_4, '</DataArray>'
 
   ! Now write all cells' offsets
-  write(9,'(a)') '<DataArray type="Int32" Name="offsets" format="ascii">'
+  write(9,'(a,a)') IN_4, '<DataArray type="Int32" Name="offsets" format="ascii">'
   offset = 0
   do c = 1, grid % n_cells
     offset = offset + grid % cells_n_nodes(c)
-    write(9,'(i9)') offset
+    write(9,'(a,i9)') IN_5, offset
   end do
-  write(9,'(a)') '</DataArray>'
+  write(9,'(a,a)') IN_4, '</DataArray>'
  
   ! Now write all cells' types
-  write(9,'(a)') '<DataArray type="UInt8" Name="types" format="ascii">'
+  write(9,'(a,a)') IN_4, '<DataArray type="UInt8" Name="types" format="ascii">'
   do c = 1, grid % n_cells
-    if(grid % cells_n_nodes(c) == 8) then  ! hexahedral cells
-      write(9,'(i9)') 12
-    else if(grid % cells_n_nodes(c) == 6) then  ! prismatic cells
-      write(9,'(i9)') 13
-    else if(grid % cells_n_nodes(c) == 4) then  ! tetrahedral cells
-      write(9,'(i9)') 10
-    else if(grid % cells_n_nodes(c) == 5) then  ! pyramid cells
-      write(9,'(i9)') 14
+    if(grid % cells_n_nodes(c) == 8) then
+      write(9,'(a,i9)') IN_5, VTK_HEXAHEDRON
+    else if(grid % cells_n_nodes(c) == 6) then
+      write(9,'(a,i9)') IN_5, VTK_WEDGE
+    else if(grid % cells_n_nodes(c) == 4) then
+      write(9,'(a,i9)') IN_5, VTK_TETRA
+    else if(grid % cells_n_nodes(c) == 5) then
+      write(9,'(a,i9)') IN_5, VTK_PYRAMID
     else
       print *, '# Unsupported cell type with ',  &
                   grid % cells_n_nodes(c), ' nodes.'
@@ -131,84 +152,132 @@
       stop 
     end if
   end do
-  write(9,'(a)') '</DataArray>'
- 
-!  !---------------!
-!  !   Materials   !
-!  !---------------!
-!  write(9,'(A10,2I5)') 'materials', grid % n_materials, 0
-!  do n = 1, grid % n_materials
-!    write(9,'(a)') grid % materials(n) % name
-!  end do
-!  do c = 1, grid % n_cells
-!    if(NewC(c) /= 0) then
-!      write(9,'(a)') material(c)
-!    end if
-!  end do        
+  write(9,'(a,a)') IN_4, '</DataArray>'
+  write(9,'(a,a)') IN_3, '</Cells>'
 
-  !-------------!
-  !             !
-  !   Results   !
-  !             !
-  !-------------!
+  !---------------------------------!
+  !                                 !
+  !   Results and other cell data   !
+  !                                 !
+  !---------------------------------!
+  write(9,'(a,a)') IN_3, '<CellData Scalars="scalars" vectors="velocity">'
+
+  !---------------!
+  !   Materials   !
+  !---------------!
+  write(9,'(a,a)') IN_4, '<DataArray type="UInt8" Name="materials"' //  &
+                         ' format="ascii">'
+  do c = 1, grid % n_cells
+    write(9,'(a,i9)') IN_5, material(c)
+  end do
+  write(9,'(a,a)') IN_4, '</DataArray>'
 
   !--------------!
   !   Velocity   !
   !--------------!
-  write(9,'(a)') '<DataArray type="Float32" Name="velocity" ' // &
-                 'NumberOfComponents="3" format="ascii">'
+  write(9,'(a,a)') IN_4, '<DataArray type="Float32" Name="velocity" ' // &
+                         'NumberOfComponents="3" format="ascii">'
   do c = 1, grid % n_cells
-    write(9, '(1PE15.7, 1PE15.7, 1PE15.7)') u % n(c), v % n(c), w % n(c)
+    write(9,'(a,1pe15.7,1pe15.7,1pe15.7)') IN_5, u % n(c), v % n(c), w % n(c)
   end do  
-  write(9,'(a)') '</DataArray>'
+  write(9,'(a,a)') IN_4, '</DataArray>'
 
 
   !--------------!
   !   Pressure   !
   !--------------!
-  write(9,'(a)') '<DataArray type="Float32" Name="pressure" format="ascii">'
+  write(9,'(a,a)') IN_4, '<DataArray type="Float32" Name="pressure"' //  &
+                         ' format="ascii">'
   do c = 1, grid % n_cells
-    write(9,*) P % n(c)
+    write(9,'(a,1pe15.7)') IN_5, P % n(c)
   end do  
-  write(9,'(a)') '</DataArray>'
+  write(9,'(a,a)') IN_4, '</DataArray>'
 
   !-----------------!
   !   Temperature   !
   !-----------------!
   if(HOT == YES) then
-    write(9,'(a)') '<DataArray type="Float32" Name="temperature" ' //  &
-                   'format="ascii">'
+    write(9,'(a,a)') IN_4, '<DataArray type="Float32" Name="temperature"' //  &
+                           ' format="ascii">'
     do c = 1, grid % n_cells
-      write(9,*) t % n(c)
+      write(9,'(a,1pe15.7)') IN_5, t % n(c)
     end do  
-    write(9,'(a)') '</DataArray>'
+    write(9,'(a,a)') IN_4, '</DataArray>'
   end if 
 
   !----------------------------------------------------------!
   !   Turbulent quantities for single point closure models   !
   !----------------------------------------------------------!
   if(SIMULA == K_EPS.or.SIMULA==ZETA) then
-    write(9,'(a)') '<DataArray type="Float32" Name="kinetic energy" ' //  &
-                   'format="ascii">'
+    write(9,'(a,a)') '<DataArray type="Float32" Name="kinetic energy"' //  &
+                   ' format="ascii">'
     do c = 1, grid % n_cells
-      write(9,*) kin % n(c)
+      write(9,'(a,1pe15.7)') IN_5, kin % n(c)
     end do  
-    write(9,'(a)') '</DataArray>'
+    write(9,'(a,a)') IN_4, '</DataArray>'
 
-    write(9,'(a)') '<DataArray type="Float32" Name="dissipation" ' //  &
-                   'format="ascii">'
+    write(9,'(a,a)') IN_5, '<DataArray type="Float32" Name="dissipation"' //  &
+                   ' format="ascii">'
     do c = 1, grid % n_cells
-      write(9,*) eps % n(c)
+      write(9,'(a,1pe15.7)') IN_5, eps % n(c)
     end do  
-    write(9,'(a)') '</DataArray>'
+    write(9,'(a,a)') IN_4, '</DataArray>'
   end if
 
-  write(9,'(a)') '</Cells>'
-  write(9,'(a)') '</Piece>'
-  write(9,'(a)') '</UnstructuredGrid>'
-  write(9,'(a)') '</VTKFile>'
+  write(9,'(a,a)') IN_3, '</CellData>'
+  write(9,'(a,a)') IN_2, '</Piece>'
+  write(9,'(a,a)') IN_1, '</UnstructuredGrid>'
+  write(9,'(a,a)') IN_0, '</VTKFile>'
 
   close(9)
+
+  !-----------------------!
+  !                       !
+  !   Create .pvtu file   !
+  !                       !
+  !-----------------------!
+
+  ! Create it only from processor 1, when running in parallel
+  if(n_proc > 1 .and. this_proc == 1) then
+
+    call Name_File(0, name_out, '.pvtu')
+    print *, '# Creating the file: ', trim(name_out)
+    open(9, file = name_out)
+  
+    ! Header
+    write(9,'(a,a)') IN_0, '<?xml version="1.0"?>'
+    write(9,'(a,a)') IN_0, '<VTKFile type="PUnstructuredGrid">'
+    write(9,'(a,a)') IN_1, '<PUnstructuredGrid GhostLevel="0">'
+
+    ! This section must be present
+    write(9,'(a,a)') IN_2, '<PPoints>'
+    write(9,'(a,a)') IN_3, '<PDataArray type="Float32" NumberOfComponents=' // &
+                           '"3" format="ascii"/>'
+    write(9,'(a,a)') IN_2, '</PPoints>'
+
+    ! Data section is not mandatory, but very useful
+    write(9,'(a,a)') IN_2, '<PCellData Scalars="scalars" vectors="velocity">'
+    write(9,'(a,a)') IN_3, '<PDataArray type="UInt8" Name="materials"' //  & 
+                           ' format="ascii"/>'
+    write(9,'(a,a)') IN_3, '<PDataArray type="Float32" Name="velocity"' //  &
+                           ' NumberOfComponents="3" format="ascii"/>'
+    write(9,'(a,a)') IN_3, '<PDataArray type="Float32" Name="pressure"' //  &
+                           ' format="ascii"/>'
+    write(9,'(a,a)') IN_2, '</PCellData>'
+
+    ! Write out the names of all the pieces
+    do n = 1, n_proc
+      call Name_File(n, name_out, '.vtu')
+      write(9, '(a,a,a,a)') IN_2, '<Piece Source="', trim(name_out), '"/>'
+    end do
+
+    ! Footer
+    write(9, '(a,a)'), IN_1, '</PUnstructuredGrid>'
+    write(9, '(a,a)'), IN_0, '</VTKFile>'
+
+    close(9)
+
+  end if
 
   ! Restore the name
   problem_name = store_name

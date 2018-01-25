@@ -1,4 +1,4 @@
-subroutine Append_Real_Ar_To_Array_Rank_1(data_ar_r1, data_ar_to_append_r1)
+subroutine Append_Int_Ar_To_Array_Rank_1(data_ar_r1, data_ar_to_append_r1)
 !------------------------------------------------------------------------------!
 !   Appends one real*8 array to another                                        !
 !------------------------------------------------------------------------------!
@@ -6,11 +6,11 @@ subroutine Append_Real_Ar_To_Array_Rank_1(data_ar_r1, data_ar_to_append_r1)
 !------------------------------------------------------------------------------!
   implicit none  
 !---------------------------------[Arguments]----------------------------------!
-  real*8, allocatable  :: data_ar_r1(:)
-  real*8, allocatable  :: data_ar_to_append_r1(:)
-  real*8, allocatable  :: tmp_buffer_real(:)
+  integer, allocatable  :: data_ar_r1(:)
+  integer, allocatable  :: data_ar_to_append_r1(:)
+  integer, allocatable  :: tmp_buffer_real(:)
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: x1, x2, y1, y2
+  integer               :: x1, x2, y1, y2
 !------------------------------------------------------------------------------!
 
   y1 = lbound(data_ar_to_append_r1, dim=1) ! data_ar_to_append_r1
@@ -39,4 +39,4 @@ subroutine Append_Real_Ar_To_Array_Rank_1(data_ar_r1, data_ar_to_append_r1)
 
   deallocate(data_ar_to_append_r1)
 
-end subroutine Append_Real_Ar_To_Array_Rank_1
+end subroutine Append_Int_Ar_To_Array_Rank_1

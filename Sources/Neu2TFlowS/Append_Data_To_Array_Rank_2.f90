@@ -1,4 +1,4 @@
-subroutine Append_Data_To_Array_Rank_2(data_ar_r2, data_ar_to_append_r2)
+subroutine Append_Int_Ar_To_Array_Rank_2(data_ar_r2, data_ar_to_append_r2)
 !------------------------------------------------------------------------------!
 !   Appends one real*8 array to another                                        !
 !------------------------------------------------------------------------------!
@@ -40,4 +40,4 @@ subroutine Append_Data_To_Array_Rank_2(data_ar_r2, data_ar_to_append_r2)
 
   deallocate(data_ar_to_append_r2)
 
-end subroutine Append_Data_To_Array_Rank_2
+end subroutine Append_Int_Ar_To_Array_Rank_2

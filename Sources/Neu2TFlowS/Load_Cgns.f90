@@ -23,8 +23,11 @@
   integer                 :: i, j, n_blocks, n_bnd_sect, dum1, dum2
   integer,allocatable     :: temp(:)
   integer                 :: c, n, dir
-  integer                 :: file_idx, base_idx, zone_idx, sect_idx, ier
-  integer                 :: n_sect, n_bnd
+  integer                 :: file_idx, base_idx, zone_idx
+  integer                 :: sect_idx
+  integer                 :: ier
+  integer                 :: n_sect
+  integer                 :: n_bnd
   integer                 :: cell_type, iparent_data, iparent_flag
 
   character(len=80)       :: zone_name, name_sect
@@ -37,8 +40,10 @@
   integer                 :: n_bases
   integer                 :: zone_type
   integer                 :: n_nodes
+  integer                 :: total_nodes
   integer                 :: n_cells
-  integer                 :: n_bound
+  integer                 :: n_b_cells
+  integer                 :: n_bc
   integer                 :: n_coords
   integer                 :: data_type
   integer                 :: coord_idx
@@ -50,13 +55,17 @@
   integer               :: last_cell
   integer               :: mesh_info(3)
 
-  real*4,  allocatable    :: data_single(:)
-  real*8,  allocatable    :: data_double(:)
-  integer, allocatable    :: data_integer(:)
+  real*4,  allocatable :: buffer_single(:)
+  real*8,  allocatable :: buffer_double(:)
+  integer, allocatable :: tmp_buffer(:,:)
+  real*8,  allocatable :: x_array(:), y_array(:), z_array(:)
+
   integer, allocatable :: hex_connections(:, :)
   integer, allocatable :: pyramid_connections(:, :)
   integer, allocatable :: prism_connections(:, :)
   integer, allocatable :: tetra_connections(:, :)
+  integer, allocatable :: tri_2d_connections(:, :)
+  integer, allocatable :: box_2d_connections(:, :)
   integer, allocatable :: cell_connections(:, :)
   
   character*32 boconame
@@ -67,6 +76,26 @@
   integer  npnts
   integer NormalIndex(3)
 !==============================================================================!
+!---------------------------------[Interface]----------------------------------!
+  interface
+    subroutine Append_Data_To_Array_Rank_1(data_ar_r1, data_ar_to_append_r1)
+      implicit none  
+      real*8, allocatable :: data_ar_r1(:)
+      real*8, allocatable :: data_ar_to_append_r1(:)
+      real*8, allocatable :: tmp_buffer_real(:)
+      integer             :: x1, x2, y1, y2
+    end subroutine Append_Data_To_Array_Rank_1
+
+    subroutine Append_Data_To_Array_Rank_2(data_ar_r2, data_ar_to_append_r2)
+      implicit none  
+      integer, allocatable :: data_ar_r2(:,:)
+      integer, allocatable :: data_ar_to_append_r2(:,:)
+      integer, allocatable :: tmp_buffer_int(:,:)
+      integer              :: x1, x2, y1, y2, d1, d2
+    end subroutine Append_Data_To_Array_Rank_2
+
+  end interface
+!==============================================================================!
 
   name_in = problem_name
 
@@ -76,42 +105,40 @@
   write(*,"(A,A)") "# Reading the file:", trim(name_in)
   call Cg_Open_F(name_in,      &  ! file name
                  CG_MODE_READ, &  ! open for read
-                 file_idx,     &  ! CGNS file index number
-                 ier)             ! Error status
+                 file_idx,     &  ! cgns file index number
+                 ier)             ! error status
     if (ier .ne. 0) then
       write(*,"(A,A)") "# FAILED to read the file: ", trim(name_in)
       call Cg_Error_Exit_f()
     endif
   
-  !call cg_version_f(fn, version, ier)    
-
   ! Get number of CGNS base nodes in file 
-  call Cg_Nbases_F(file_idx, & ! CGNS file index number
-                   n_bases,  & ! Number of bases present in the CGNS file
-                   ier)        ! Error status
+  call Cg_Nbases_F(file_idx, & ! cgns file index number
+                   n_bases,  & ! number of bases present in the CGNS file
+                   ier)        ! error status
     if (ier .ne. 0) then
-      write(*,"(A)") "# Failed to get bases number"
+      print *, "# Failed to get bases number"
       call Cg_Error_Exit_f()
     endif
   write(*,"(A,I5)") "# Number of bases: ", n_bases
 
   n_nodes = 0 
   n_cells = 0 
-  n_bound = 0 
+  n_b_cells = 0 
 
   ! Browse through all bases
   bases: do base_idx = 1, n_bases
-    write(*,"(A)") "# ---------------------------"
+    print *, "# ---------------------------"
 
     ! Read CGNS base information 
-    call Cg_Base_Read_F(file_idx, & ! CGNS file index number
-                        base_idx, & ! Base index number
-                        base_name, & ! Name of the base
-                        cell_dim, & ! Cell dimensions (3->volume cell)
-                        phys_dim, & ! Number of coordinates to create vector
-                        ier)        ! Error status
+    call Cg_Base_Read_F(file_idx,  & ! cgns file index number
+                        base_idx,  & ! base index number
+                        base_name, & ! name of the base
+                        cell_dim,  & ! cell dimensions (3->volume cell)
+                        phys_dim,  & ! number of coordinates to create vector
+                        ier)         ! error status
       if (ier .ne. 0) then
-        write(*,"(A)") "#   FAILED to get base info"
+        print *, "#   FAILED to get base info"
         call Cg_Error_Exit_f()
       endif
     write(*,"(A,A)")  "#   Base Name: ",      base_name
@@ -119,29 +146,29 @@
     write(*,"(A,I1)") "#   Phys dimension: ", phys_dim 
 
     ! Get number of zones in base
-    call Cg_Nzones_F(file_idx, & ! CGNS file index number
-                     base_idx, & ! Base index number
-                     n_zones,  & ! Number of zones present in base
-                     ier)        ! Error status
+    call Cg_Nzones_F(file_idx, & ! cgns file index number
+                     base_idx, & ! base index number
+                     n_zones,  & ! number of zones present in base
+                     ier)        ! error status
     if (ier .ne. 0) then
-      write(*,"(A)") "#   FAILED to get zones number"
+      print *, "#   FAILED to get zones number"
       call Cg_Error_Exit_f()
     endif
     write(*,"(A,I3)")"#   Total zones:", n_zones
 
     ! Browse through all zones
     zones: do zone_idx = 1, n_zones
-      write(*,"(A)") "# ---------------------------"
+      print *, "# ---------------------------"
 
       ! Read zone information
-      call Cg_Zone_Read_F(file_idx,  & ! CGNS file index number
-                          base_idx,  & ! Base index number
-                          zone_idx,  & ! Zone index number
-                          zone_name, & ! Name of the zone
+      call Cg_Zone_Read_F(file_idx,  & ! cgns file index number
+                          base_idx,  & ! base index number
+                          zone_idx,  & ! zone index number
+                          zone_name, & ! name of the zone
                           mesh_info, & ! n_noded, n_cells, n_b_nodes(if sorted)
-                          ier)         ! Error status
+                          ier)         ! error status
         if (ier .ne. 0) then
-          write(*,"(A)") "#     Failed read zone info"
+          print *, "#     Failed read zone info"
           call Cg_Error_Exit_f()
         endif
       write(*,"(A,I3)")  "#     Zone index: ",                zone_idx
@@ -150,25 +177,24 @@
       write(*,"(A,I16)") "#     Cells: ",                     mesh_info(2)
       write(*,"(A,I16)") "#     Boundary nodes(if sorted): ", mesh_info(3)
 
-      n_nodes = n_nodes + mesh_info(1)
-      n_cells = n_cells + mesh_info(2)
-      n_bound = n_bound + mesh_info(3)
+      n_nodes = mesh_info(1)
+      n_cells = mesh_info(2)
 
       ! Get type of zone (structured or unstructured) 
-      call Cg_Zone_Type_F(file_idx,  & ! CGNS file index number
-                          base_idx,  & ! Base index number
-                          zone_idx,  & ! Zone index number
-                          zone_type, & ! Structured or Unstructured
-                          ier)         ! Error status
+      call Cg_Zone_Type_F(file_idx,  & ! cgns file index number
+                          base_idx,  & ! base index number
+                          zone_idx,  & ! zone index number
+                          zone_type, & ! structured or unstructured
+                          ier)         ! error status
         if (ier .ne. 0) then
-          write(*,"(A)") "#     Failed to get zone type"
+          print *, "#     Failed to get zone type"
           call Cg_Error_Exit_f()
         endif
 
       write(*,"(A,A)") "#     Zone type is ", ZoneTypeName(zone_type)
 
       if (zone_type .eq. Structured) then
-        write(*,"(A)") "#     Structured cgns meshed are unsupported"
+        print *, "#     Structured cgns meshed are unsupported"
         stop
       endif
       index_dim = 1
@@ -180,78 +206,94 @@
       write(*,"(A,I9)") "#     Index dimension = ", index_dim
 
       ! Get number of coordinate arrays
-      call Cg_Ncoords_F(file_idx, & ! CGNS file index number
-                        base_idx, & ! Base index number
-                        zone_idx, & ! Zone index number
-                        n_coords, & ! Number of coordinate arrays for zone
-                        ier)        ! Error status
+      call Cg_Ncoords_F(file_idx, & ! cgns file index number
+                        base_idx, & ! base index number
+                        zone_idx, & ! zone index number
+                        n_coords, & ! number of coordinate arrays for zone
+                        ier)        ! error status
         if (ier .ne. 0) then
-          write(*,"(A)") "#       FAILED to get number of coordinate arrays"
+          print *, "#       FAILED to get number of coordinate arrays"
           call Cg_Error_Exit_f()
         endif
       write(*,"(A,I9)")"#       Number of coordinate arrays for zone:", n_coords
 
       ! Read x, y and z coordinates
       coordinates: do coord_idx = 1, n_coords
-        write(*,"(A)") "# ---------------------------"
+        print *, "# ---------------------------"
 
         ! Get info about a coordinate array 
-        call Cg_Coord_Info_F(file_idx,   & ! CGNS file index number
-                             base_idx,   & ! Base index number
-                             zone_idx,   & ! Zone index number
+        call Cg_Coord_Info_F(file_idx,   & ! cgns file index number
+                             base_idx,   & ! base index number
+                             zone_idx,   & ! zone index number
                              coord_idx,  & ! Coordinate array index number
-                             data_type,  & ! RealSingle or RealDouble
-                             coord_name, & ! Name of the coordinate array
-                             ier)          ! Error status
+                             data_type,  & ! realsingle or realdouble
+                             coord_name, & ! name of the coordinate array
+                             ier)          ! error status
 
         write(*,"(A,I3)") "#       Coord. idx:", coord_idx
         write(*,"(A,A)")  "#       Data_type: ", DataTypeName(data_type)
         write(*,"(A,A)")  "#       Name: ",      coord_name
 
-        ! data length to be read [multizone compatible?]
-        first_node = 1
-        last_node  = n_nodes
+        ! Data length to be read
+        first_node  = 1
+        last_node   = n_nodes
+        total_nodes = total_nodes + n_nodes
 
         if (data_type .eq. RealSingle) then
 
-          if(.not. allocated(data_single)) &
-            allocate(data_single(first_node:last_node))
+          ! Allocate buffer_single array
+          if(.not. allocated(buffer_single)) &
+            allocate(buffer_single(1:n_nodes))
+
           ! Read grid coordinates (RealSingle)
-          call Cg_Coord_Read_F(file_idx,    & ! CGNS file index number
-                               base_idx,    & ! Base index number
-                               zone_idx,    & ! Zone index number
-                               coord_name,  & ! Name of the coordinate array
-                               RealSingle,  & ! RealSingle or RealDouble
-                               first_node,  & ! Lower range index
-                               last_node,   & ! Upper range index
-                               data_single, & ! Array of coordinate values
-                               ier)           ! Error status
+          call Cg_Coord_Read_F(file_idx,      & ! cgns file index number
+                               base_idx,      & ! base index number
+                               zone_idx,      & ! zone index number
+                               coord_name,    & ! name of the coordinate array
+                               RealSingle,    & ! realsingle or realdouble
+                               first_node,    & ! lower range index
+                               last_node,     & ! upper range index
+                               buffer_single, & ! array of coordinate values
+                               ier)             ! error status
           if (ier.ne.0) then
-            write(*,"(A)")"#       FAILED to read SingleReal Coord"
+            print *,"#       FAILED to read SingleReal Coord"
             call Cg_Error_Exit_f()
           endif
 
         elseif (data_type .eq. RealDouble) then
-          if(.not. allocated(data_double)) &
-            allocate(data_double(first_node:last_node))
+          ! Allocate buffer_double array
+          if(.not. allocated(buffer_double)) &
+            allocate(buffer_double(1:n_nodes))
+
           ! Read grid coordinates (RealDouble)
-          call Cg_Coord_Read_F(file_idx,    & ! CGNS file index number
-                               base_idx,    & ! Base index number
-                               zone_idx,    & ! Zone index number
-                               coord_name,  & ! Name of the coordinate array
-                               RealDouble,  & ! RealSingle or RealDouble
-                               first_node,  & ! Lower range index
-                               last_node,   & ! Upper range index
-                               data_double, & ! Array of coordinate values
-                               ier)           ! Error status
+          call Cg_Coord_Read_F(file_idx,      & ! cgns file index number
+                               base_idx,      & ! base index number
+                               zone_idx,      & ! zone index number
+                               coord_name,    & ! name of the coordinate array
+                               RealDouble,    & ! realsingle or realdouble
+                               first_node,    & ! lower range index
+                               last_node,     & ! upper range index
+                               buffer_double, & ! array of coordinate values
+                               ier)             ! error status
           if (ier.ne.0) then
-            write(*,"(A)")"#       FAILED to read DoubleReal Coord"
+            print *,"#       FAILED to read DoubleReal Coord"
             call Cg_Error_Exit_f()
           endif
 
         end if
 
-        ! append data_double to buffer array
+        ! Append this data to coordinates arrays through buffer
+        if (data_type.eq.RealSingle) then
+          allocate(buffer_double(1:n_nodes))
+          buffer_double(:) = real(buffer_single(:), 8)
+        end if
+
+        if ( coord_idx == 1) call Append_Data_To_Array_Rank_1 &
+          (data_ar_r1 = x_array, data_ar_to_append_r1 = buffer_double)
+        if ( coord_idx == 2) call Append_Data_To_Array_Rank_1 &
+          (data_ar_r1 = y_array, data_ar_to_append_r1 = buffer_double)
+        if ( coord_idx == 3) call Append_Data_To_Array_Rank_1 &
+          (data_ar_r1 = z_array, data_ar_to_append_r1 = buffer_double)
 
       end do coordinates
 
@@ -260,190 +302,179 @@
       !---------------------!
 
       ! Get number of element sections 
-      call Cg_Nsections_F(file_idx, & ! CGNS file index number
-                          base_idx, & ! Base index number
-                          zone_idx, & ! Zone index number
-                          n_sect,   & ! Number of element sections
-                          ier)        ! Error status
-      write(*,"(A)") "# ---------------------------"
+      call Cg_Nsections_F(file_idx, & ! cgns file index number
+                          base_idx, & ! base index number
+                          zone_idx, & ! zone index number
+                          n_sect,   & ! number of element sections
+                          ier)        ! error status
+      print *, "# ---------------------------"
       write(*,"(A,I9)") "#       Number of sections: ", n_sect
 
       ! Browse through all sections to read elements
       elements_connection: do sect_idx = 1, n_sect
 
         ! Get info for an element section
-        ! recieves name_sect, first_cell: last_cell, n_bnd and cell_type
-        call Cg_Section_Read_F(file_idx,     & ! CGNS file index number
-                               base_idx,     & ! Base index number
-                               zone_idx,     & ! Zone index number
-                               sect_idx,     & ! Element section index
-                               name_sect,    & ! Name of the Elements_t node
-                               cell_type,    & ! Type of element
-                               first_cell,   & ! Index of first element
-                               last_cell,    & ! Index of last element
-                               n_bnd,        & ! Index of last boundary element
+        ! Recieves name_sect, first_cell: last_cell, n_bnd and cell_type
+        call Cg_Section_Read_F(file_idx,     & ! cgns file index number
+                               base_idx,     & ! base index number
+                               zone_idx,     & ! zone index number
+                               sect_idx,     & ! element section index
+                               name_sect,    & ! name of the Elements_t node
+                               cell_type,    & ! type of element
+                               first_cell,   & ! index of first element
+                               last_cell,    & ! index of last element
+                               n_bnd,        & ! index of last boundary element
                                iparent_flag, & ! if the parent data are defined
-                               ier)            ! Error status
+                               ier)            ! error status
 
+        write(*,"(A,I9)") "#         Number of sections: ", n_sect
+        write(*,"(A,I9)") "#         section idx:  ", n_sect
         write(*,"(A,A)")  "#         section name: ", name_sect
         write(*,"(A,A)")  "#         section type: ", ElementTypeName(cell_type)
         write(*,"(A,I9)") "#         first idx:",     first_cell
-        write(*,"(A,I9)") "#         last idx:",      last_cell             
+        write(*,"(A,I9)") "#         last idx:",      last_cell
 
-        ! read cell_connections
-        if     (ElementTypeName(cell_type) .eq. 'HEXA_8') then
-          allocate(hex_connections(1:8, first_cell:last_cell))
-          hex_connections = 0
-
-          ! Read element data(HEXA_8)
-          call Cg_Elements_Read_F(file_idx,         & ! CGNS file index number
-                                  base_idx,         & ! Base index number
-                                  zone_idx,         & ! Zone index number
-                                  sect_idx,         & ! Element section index
-                                  hex_connections,  & ! Element connectivity data
-                                  iparent_data,     & ! For boundary or interface 
-                                  ier)                ! Error status
-
-          do i = first_cell, last_cell
-            write(*,"(8I9)") hex_connections(1:8,i)
-          end do
-        elseif (ElementTypeName(cell_type) .eq. 'PYRA_5') then
-          allocate(pyramid_connections(1:5, first_cell:last_cell))
-          pyramid_connections = 0
-
-          ! Read element data(PYRA_5)
-          call Cg_Elements_Read_F(file_idx,            & ! CGNS file index number
-                                  base_idx,            & ! Base index number
-                                  zone_idx,            & ! Zone index number
-                                  sect_idx,            & ! Element section index
-                                  pyramid_connections, & ! Element connectivity data
-                                  iparent_data,        & ! For boundary or interface 
-                                  ier)                   ! Error status
-          do i = first_cell, last_cell
-            write(*,"(5I9)") pyramid_connections(1:5,i)
-          end do
+        ! allocated correct size buffer for reading
+        if     (ElementTypeName(cell_type) .eq. 'HEXA_8')  then
+          if(.not.allocated(tmp_buffer)) &
+            allocate(tmp_buffer(1:8, first_cell:last_cell))
+        elseif (ElementTypeName(cell_type) .eq. 'PYRA_5')  then
+          if(.not.allocated(tmp_buffer)) &
+            allocate(tmp_buffer(1:5, first_cell:last_cell))
         elseif (ElementTypeName(cell_type) .eq. 'PENTA_6') then
-          allocate(prism_connections(1:6, first_cell:last_cell))
-          prism_connections = 0
-
-          ! Read element data(PENTA_6)
-          call Cg_Elements_Read_F(file_idx,          & ! CGNS file index number
-                                  base_idx,          & ! Base index number
-                                  zone_idx,          & ! Zone index number
-                                  sect_idx,          & ! Element section index
-                                  prism_connections, & ! Element connectivity data
-                                  iparent_data,      & ! For boundary or interface 
-                                  ier)                   ! Error status
-
-          do i = first_cell, last_cell
-            write(*,"(6I9)") prism_connections(1:6,i)
-          end do
+          if(.not.allocated(tmp_buffer)) &
+            allocate(tmp_buffer(1:6, first_cell:last_cell))
         elseif (ElementTypeName(cell_type) .eq. 'TETRA_4') then
-          allocate(tetra_connections(1:8, first_cell:last_cell))
-          tetra_connections = 0
-
-          ! Read element data(TETRA_4)
-          call Cg_Elements_Read_F(file_idx,           & ! CGNS file index number
-                                  base_idx,           & ! Base index number
-                                  zone_idx,           & ! Zone index number
-                                  sect_idx,           & ! Element section index
-                                  tetra_connections,  & ! Element connectivity data
-                                  iparent_data,       & ! For boundary or interface 
-                                  ier)                  ! Error status
-          do i = first_cell, last_cell
-            write(*,"(4I9)") tetra_connections(1:4,i)
-          end do
+          if(.not.allocated(tmp_buffer)) &
+            allocate(tmp_buffer(1:4, first_cell:last_cell))
+        elseif (ElementTypeName(cell_type) .eq. 'QUAD_4')  then
+          if(.not.allocated(tmp_buffer)) &
+            allocate(tmp_buffer(1:4, first_cell:last_cell))
+        elseif (ElementTypeName(cell_type) .eq. 'TRI_3')   then
+          if(.not.allocated(tmp_buffer)) &
+            allocate(tmp_buffer(1:3, first_cell:last_cell))
         end if
-        ! I can read BC here also !!
-        ! tell Bojan about this:
-        ! mesh info cell count accounts ONLY for internal cells
-        ! and for boundary cell cngs produces new cell idx (show in cgnsview)
 
-        write(*,"(A)") "# ---------------------------"
+        ! Read element data (HEXA_8/PYRA_5/PENTA_6/TETRA_4/QUAD_4/TRI_3)
+        call Cg_Elements_Read_F(file_idx,     & ! cgns file index number
+                                base_idx,     & ! base index number
+                                zone_idx,     & ! zone index number
+                                sect_idx,     & ! element section index
+                                tmp_buffer,   & ! element connectivity data
+                                iparent_data, & ! for boundary or interface 
+                                ier)            ! error status
 
+        ! Append cell connections from buffer to hex array
+        if     (ElementTypeName(cell_type) .eq. 'HEXA_8')  then
+          call Append_Data_To_Array_Rank_2(hex_connections,tmp_buffer)
+        elseif (ElementTypeName(cell_type) .eq. 'PYRA_5')  then
+          call Append_Data_To_Array_Rank_2(pyramid_connections,tmp_buffer)
+        elseif (ElementTypeName(cell_type) .eq. 'PENTA_6') then
+          call Append_Data_To_Array_Rank_2(prism_connections,tmp_buffer)
+        elseif (ElementTypeName(cell_type) .eq. 'TETRA_4') then
+          call Append_Data_To_Array_Rank_2(tetra_connections,tmp_buffer)
+        elseif (ElementTypeName(cell_type) .eq. 'QUAD_4')  then
+          call Append_Data_To_Array_Rank_2(box_2d_connections,tmp_buffer)
+        elseif (ElementTypeName(cell_type) .eq. 'TRI_3')   then
+          call Append_Data_To_Array_Rank_2(tri_2d_connections,tmp_buffer)
+        end if
+
+        ! something is wrong here with yf17.cgns example:
+        ! Number of sections:        15
+        ! section idx:         15
+        ! section name: intake                                                                          
+        ! section type: TRI_3                           
+        ! first idx:   528916
+        ! last idx:   528942
+        ! Number of sections:     10372
+        ! section idx:      10372
+        ! section name: exhaust                                                                         
+        ! section type: TRI_3                           
+        ! first idx:   528943
+        ! last idx:   528978
+        print *, "# ---------------------------"
 
       end do elements_connection
     
-
-      !---------------!
-      !   B.C. block  !
-      !---------------!
-
-      ! Access a node via label/name, index pairs 
-      call cg_goto_f(file_idx,   & ! CGNS file index number
-                     base_idx,   & ! Base index number
-                     ier,        & ! Error status
-                     'Zone_t',   & ! node of zone type
-                     zone_idx,   & ! Zone index number
-                     'ZoneBC_t', & ! search for node "ZoneBC_t"
-                     1,          & ! ???
-                     'end')        ! indicates end of call
-      if (ier.ne.0) then
-        write(*,"(A)")"#     FAILED to navigate ro ZoneBC node"
-        call Cg_Error_Exit_f()
-      endif
-      
-      ! Get number of boundary condition in zone
-      call cg_nbocos_f(file_idx,  & ! CGNS file index number
-                       base_idx,  & ! Base index number
-                       zone_idx,  & ! Zone index number
-                       n_bound,   & ! Number of boundary conditions in zone
-                       ier)         ! Error status
-      if (ier.ne.0) then
-        write(*,"(A)")"#     FAILED to obtain number of b.c."
-        call Cg_Error_Exit_f()
-      endif
-
-      write(*,"(A,I3)") "#     Zone index: ",          zone_idx
-      write(*,"(A,I3)") "#     Boundary conditions: ", n_bound
-
-
-      boundary_conditions: do bc_idx = 1, n_bound
-        ! Get boundary condition info 
-        call cg_boco_info_f(file_idx,       & ! CGNS file index number
-                            base_idx,       & ! Base index number
-                            zone_idx,       & ! Zone index number
-                            bc_idx,         & ! Boundary condition index number
-                            boconame,       & ! Name of the boundary condition
-                            bocotype,       & ! Type of boundary condition
-                            ptset_type,     & ! The extent of the boundary condition
-                            npnts,          & ! Number of points/cells to make BC
-                            NormalIndex,    & ! Index vector normal direction of BC
-                            NormalListFlag, & ! Flag indicating if the normals are defined in NormalList 
-                            data_type,      & ! Data type used in the definition of the normals
-                            ndataset,       & ! Number of boundary condition datasets
-                            ier)              ! Error status
-        if (ier.ne.0) then
-          write(*,"(A)")"#     FAILED to obtain number of b.c."
-          call Cg_Error_Exit_f()
-        endif
-        write(*,"(A,I3)") "#       B.C. index: ",  bc_idx
-        write(*,"(A,A)")  "#       B.C. name: ",   boconame
-        write(*,"(A,A)")  "#       B.C. Extent: ", PointSetTypeName(ptset_type)
-        write(*,"(A,9I9)")"#       B.C. normal: ", NormalIndex(1), NormalIndex(2), NormalIndex(3)
-        write(*,"(A,5I5)")"#       B.C. normal list flag: ", NormalListFlag
-        write(*,"(A,A)")  "#       B.C. normal data_type: ", DataTypeName(data_type)
-
-        write(*,"(A)") "# ---------------------------"
-      end do boundary_conditions
+!      !---------------------------------------!
+!      !   B.C. block(do not need it for now)  !
+!      !---------------------------------------!
+!
+!      ! Access a node via label/name, index pairs 
+!      call cg_goto_f(file_idx,   & ! cgns file index number
+!                     base_idx,   & ! base index number
+!                     ier,        & ! error status
+!                     'Zone_t',   & ! node of zone type
+!                     zone_idx,   & ! zone index number
+!                     'ZoneBC_t', & ! search for node "ZoneBC_t"
+!                     1,          & ! ???
+!                     'end')        ! indicates end of call
+!      if (ier.ne.0) then
+!        print *,"#     FAILED to navigate ro ZoneBC node"
+!        call Cg_Error_Exit_f()
+!      endif
+!      
+!      ! Get number of boundary condition in zone
+!      call cg_nbocos_f(file_idx,  & ! cgns file index number
+!                       base_idx,  & ! base index number
+!                       zone_idx,  & ! zone index number
+!                       n_bc,      & ! number of boundary conditions in zone
+!                       ier)         ! error status
+!      if (ier.ne.0) then
+!        print *,"#     FAILED to obtain number of b.c."
+!        call Cg_Error_Exit_f()
+!      endif
+!
+!      write(*,"(A,I3)") "#     Zone index: ",          zone_idx
+!      write(*,"(A,I3)") "#     Boundary conditions: ", n_bc
+!
+!
+!      boundary_conditions: do bc_idx = 1, n_bc
+!        ! Get boundary condition info 
+!        call cg_boco_info_f(file_idx,       & ! cgns file index number
+!                            base_idx,       & ! base index number
+!                            zone_idx,       & ! zone index number
+!                            bc_idx,         & ! boundary condition index number
+!                            boconame,       & ! name of the boundary condition
+!                            bocotype,       & ! type of boundary condition
+!                            ptset_type,     & ! the extent of the boundary condition
+!                            npnts,          & ! number of points/cells to make BC
+!                            NormalIndex,    & ! Index vector normal direction of BC
+!                            NormalListFlag, & ! flag indicating if the normals are defined in NormalList 
+!                            data_type,      & ! data type used in the definition of the normals
+!                            ndataset,       & ! number of boundary condition datasets
+!                            ier)              ! error status
+!        if (ier.ne.0) then
+!          print *,"#     FAILED to obtain number of b.c."
+!          call Cg_Error_Exit_f()
+!        endif
+!        write(*,"(A,I3)") "#       B.C. index: ",  bc_idx
+!        write(*,"(A,A)")  "#       B.C. name: ",   boconame
+!        write(*,"(A,A)")  "#       B.C. Extent: ", PointSetTypeName(ptset_type)
+!        write(*,"(A,9I9)")"#       B.C. normal: ", NormalIndex(1), NormalIndex(2), NormalIndex(3)
+!        write(*,"(A,5I5)")"#       B.C. normal list flag: ", NormalListFlag
+!        write(*,"(A,A)")  "#       B.C. normal data_type: ", DataTypeName(data_type)
+!
+!        print *, "# ---------------------------"
+!      end do boundary_conditions
 
     end do zones
 
   end do bases
 
   grid % n_nodes     = n_nodes
-  grid % n_cells     = n_cells
-  grid % n_bnd_cells = n_bound ! ???
+  !grid % n_cells     = n_cells
+  !grid % n_bnd_cells = n_b_cells ! ???
 
   ! Allocate memory =--> carefull, there is no checking!
     ! Allocate memory =--> carefull, there is no checking!
-  call Grid_Mod_Allocate_Nodes(grid, grid % n_nodes)
-  call Grid_Mod_Allocate_Cells(grid, grid % n_cells, grid % n_bnd_cells)
+  !call Grid_Mod_Allocate_Nodes(grid, grid % n_nodes)
+ ! call Grid_Mod_Allocate_Cells(grid, grid % n_cells, grid % n_bnd_cells)
 
 
   !do c = 1, grid % n_cells
-  !  write(*,"(A)") "# Cell: ", c
-  !  write(*,"(A)") "# Nodes: ", (grid % cells_n(n,c), n=1,8)
+  !  print *, "# Cell: ", c
+  !  print *, "# Nodes: ", (grid % cells_n(n,c), n=1,8)
   !end do
 
 stop

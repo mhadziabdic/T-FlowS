@@ -93,7 +93,8 @@ $(info #----------------------------------------------------)
 #------------------------------------------------------
 
 # Sources for modules in the local directory
-SRC_MOD =  neu_mod.f90
+SRC_MOD =  neu_mod.f90          \
+           cgns_mod.f90
 
 # Sources for modules in other directories
 SRC_MOD += allp_mod.f90		\

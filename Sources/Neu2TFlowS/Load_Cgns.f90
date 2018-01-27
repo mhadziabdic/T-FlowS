@@ -23,8 +23,7 @@
   integer                 :: c, n
 
   integer                 :: index_dim
-  integer                 :: n_nodes
-  integer                 :: n_cells
+
 
   integer, allocatable :: cell_connections(:, :)
 
@@ -39,13 +38,16 @@
 
   name_in(len_trim(problem_name)+1:len_trim(problem_name)+5) = ".cgns"
 
-
   file_name = name_in
 
-  ! Open a CGNS file 
+  !--------------------------------------!
+  !   First run: just read info from DB  !
+  !--------------------------------------!
+
+  ! Open a CGNS file (->file_id)
   call Cgns_Mod_Open_File
   
-  ! Get number of CGNS bases in file 
+  ! Read number of CGNS bases in file_id (->n_bases)
   call Cgns_Mod_Read_Number_Of_Bases_In_File
 
   n_nodes = 0 
@@ -55,86 +57,132 @@
   !------------------------------!
   !   Browse through all bases   !
   !------------------------------!
-  bases: &
   do base_id = 1, n_bases
 
-    ! Read CGNS base information 
-    call Cgns_Mod_Read_Base_Info
+    ! Print CGNS base information in base_id
+    call Cgns_Mod_Print_Base_Info
 
-    ! Get number of zones in base
+    ! Read number of zones in base_id(->n_zones)
     call Cgns_Mod_Read_Number_Of_Zones_In_Base
 
     !------------------------------!
     !   Browse through all zones   !
     !------------------------------!
-    zones: &
     do zone_id = 1, n_zones
 
+     ! Read zone_id information (-> n_nodes, n_cells)
       call Cgns_Mod_Read_Zone_Info
-
-      ! Total nodes and cells
-      n_nodes = n_nodes + mesh_info(1)
-      n_cells = n_cells + mesh_info(2)
 
       ! First and last nodes in this zone
       first_node = 1
       last_node  = mesh_info(1)
 
-      ! Read type of zone (structured or unstructured) 
+      ! Read type of zone_id (->structured or unstructured) 
+      call Cgns_Mod_Read_Zone_Type
+
+      ! Get number of element sections (->n_sects)
+      call Cgns_Mod_Read_Number_Of_Element_Sections
+
+      !-----------------------------------------!
+      !   Browse through all element sections   !
+      !-----------------------------------------!
+      do sect_id = 1, n_sects
+
+        ! Get info for an element section (-> cell_type, first_cell, last_cell)
+        call Cgns_Mod_Read_Section_Info
+
+      end do ! elements sections
+    
+    end do ! zones
+
+  end do ! bases
+
+  !-------------------------------!
+  !   Allocate memory for arrays  !
+  !-------------------------------!
+
+  allocate( x_coord(n_nodes) )
+  allocate( y_coord(n_nodes) )
+  allocate( z_coord(n_nodes) )
+
+  allocate( hexa_connections(1:8, n_hexa) )
+  allocate( pyra_connections(1:5, n_pyra) )
+  allocate( pris_connections(1:6, n_pris) )
+  allocate( tetr_connections(1:4, n_tetr) )
+  allocate( tria_connections(1:3, n_tria) )
+  allocate( para_connections(1:4, n_para) )
+
+  !---------------------------------------!
+  !   Second run: just read info from DB  !
+  !---------------------------------------!
+
+  !------------------------------!
+  !   Browse through all bases   !
+  !------------------------------!
+  do base_id = 1, n_bases
+
+    ! Print CGNS base information in base_id
+    call Cgns_Mod_Print_Base_Info
+
+    ! Read number of zones in base_id(->n_zones)
+    call Cgns_Mod_Read_Number_Of_Zones_In_Base
+
+    !------------------------------!
+    !   Browse through all zones   !
+    !------------------------------!
+    do zone_id = 1, n_zones
+
+     ! Read zone_id information (-> n_nodes, n_cells)
+      call Cgns_Mod_Read_Zone_Info
+
+      ! First and last nodes in this zone
+      first_node = 1
+      last_node  = mesh_info(1)
+
+      ! Read type of zone_id (->structured or unstructured) 
       call Cgns_Mod_Read_Zone_Type
 
       !---------------------------!
       !   Read coordinates block  !
       !---------------------------!
 
-      ! Get number of coordinate arrays (1 for unstructured, 3 for structured)
+      ! Read number of coordinate arrays in zone_id (->n_coords)
       call Cgns_Mod_Read_Number_Of_Coordinates
 
       ! Read x, y and z coordinates
-      coordinates: &
       do coord_id = 1, n_coords
 
         !Get info about coordinate coord_id
-        call Cgns_Mod_Read_Coordinate_Info
+        call Cgns_Mod_Print_Coordinate_Info
 
-        ! Read grid coordinates (fill: x_, y_, z_array)
+        ! Read grid coordinates (-> x_, y_, z_array)
         call Cgns_Mod_Read_Coordinate_Array
 
-      end do coordinates
+      end do ! coordinates
 
       !---------------------!
       !   Read cells block  !
       !---------------------!
 
-      ! Get number of element sections 
+      ! Get number of element sections (->n_sects)
       call Cgns_Mod_Read_Number_Of_Element_Sections
 
       ! Browse through all sections to read elements
-      elements_connection: &
       do sect_id = 1, n_sects
 
-        ! Get info for an element section
+        ! Get info for an element section (-> cell_type, first_cell, last_cell)
         call Cgns_Mod_Read_Section_Info
 
-        ! Read element data (HEXA_8/PYRA_5/PENTA_6/TETRA_4/QUAD_4/TRI_3)
+        ! Read element data (count HEXA_8/PYRA_5/PENTA_6/TETRA_4/QUAD_4/TRI_3)
         call Cgns_Mod_Read_Section_Connections
 
         ! something is wrong here with yf17.cgns example:
         ! during sect_id = 1, n_sect it changes sect_id (debug this)
-        ! Number of sections:        15
         ! section idx:         15
         ! section name: intake                                                                          
-        ! section type: TRI_3                           
-        ! first idx:   528916
-        ! last idx:   528942
-        ! Number of sections:     10372
         ! section idx:      10372
-        ! section name: exhaust                                                                         
-        ! section type: TRI_3                           
-        ! first idx:   528943
-        ! last idx:   528978
 
-      end do elements_connection
+      end do ! elements sections
     
       !---------------!
       !   B.C. block  !
@@ -162,7 +210,6 @@
       ! Get number of boundary condition in zone
       call Cgns_Mod_Read_BC_Number_In_Zone
 
-      boundary_conditions: &
       do bc_idx = 1, n_bc
 
         ! Get boundary condition info 
@@ -170,7 +217,7 @@
 
         call Cgns_Mod_Read_BC
 
-      end do boundary_conditions
+      end do ! boundary conditions
 
         ! print b.c. nodes
         !do j = first_node, last_node
@@ -178,39 +225,51 @@
         !  "x=", x_coord(j), "y=", y_coord(j), "z=", z_coord(j)
         !end do
 
+    end do ! zones
 
-        !--------------------------------------!
-        !  Conversion to T-FlowS B.C. format   !
-        !--------------------------------------!
+  end do ! bases
 
-        ! Reorder elements connectivity according to neu_mod
+  print "(A,I9)", "#       Total    nodes read: ",            n_nodes 
+  print "(A,I9)", "#       Total    cells read: ",            n_cells
+  print "(A,I9)", "#       Total b. nodes read(method 1): ",  n_b_nodes_meth_1
+  print "(A,I9)", "#       Total b. nodes read(method 2): ",  n_b_nodes_meth_2
+  grid % n_nodes     = n_nodes
+  grid % n_cells     = n_cells
+  grid % n_bnd_cells = n_b_nodes_meth_2
 
-        ! HEXA_8 (-> f8n)
-        do c = lbound(hex_connections,dim=2), &
-          ubound(hex_connections,dim=2) - lbound(hex_connections,dim=2) + 1
 
-          i = hex_connections(4, c)
-          hex_connections(4, c) = hex_connections(3, c)
-          hex_connections(3, c) = i
-          i = hex_connections(8, c)
-          hex_connections(8, c) = hex_connections(7, c)
-          hex_connections(7, c) = i
-        end do
+  !--------------------------------------!
+  !  Conversion to T-FlowS B.C. format   !
+  !--------------------------------------!
 
-        ! PYRA_5 (-> f5n)
-        do c =  lbound(pyramid_connections,dim=2), &
-          ubound(pyramid_connections,dim=2) - lbound(pyramid_connections,dim=2) + 1
+  ! Reorder elements connectivity according to neu_mod
 
-          i = pyramid_connections(4, c)
-          pyramid_connections(4, c) = pyramid_connections(3, c)
-          pyramid_connections(3, c) = i
-        end do
+  ! HEXA_8 (-> f8n)
+  do c = lbound(hex_connections,dim=2), &
+    ubound(hex_connections,dim=2) - lbound(hex_connections,dim=2) + 1
 
-        ! PENTA_6 (-> f6n)
-        ! no changes
+    i = hex_connections(4, c)
+    hex_connections(4, c) = hex_connections(3, c)
+    hex_connections(3, c) = i
+    i = hex_connections(8, c)
+    hex_connections(8, c) = hex_connections(7, c)
+    hex_connections(7, c) = i
+  end do
 
-        ! TETRA_4 (-> f4n)
-        ! no changes
+  ! PYRA_5 (-> f5n)
+  do c =  lbound(pyramid_connections,dim=2), &
+    ubound(pyramid_connections,dim=2) - lbound(pyramid_connections,dim=2) + 1
+
+    i = pyramid_connections(4, c)
+    pyramid_connections(4, c) = pyramid_connections(3, c)
+    pyramid_connections(3, c) = i
+  end do
+
+  ! PENTA_6 (-> f6n)
+  ! no changes
+
+  ! TETRA_4 (-> f4n)
+  ! no changes
 
 
 
@@ -237,19 +296,6 @@
 !            end if   
 !          end do
 !        end do
-
-
-    end do zones
-
-  end do bases
-
-  print "(A,I9)", "#       Total    nodes read: ",            n_nodes 
-  print "(A,I9)", "#       Total    cells read: ",            n_cells
-  print "(A,I9)", "#       Total b. nodes read(method 1): ",  n_b_nodes_meth_1
-  print "(A,I9)", "#       Total b. nodes read(method 2): ",  n_b_nodes_meth_2
-  grid % n_nodes     = n_nodes
-  grid % n_cells     = n_cells
-  grid % n_bnd_cells = n_b_nodes_meth_2
 
   ! Allocate memory =--> carefull, there is no checking!
   ! Allocate memory =--> carefull, there is no checking!

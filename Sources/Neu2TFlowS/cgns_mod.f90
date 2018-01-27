@@ -6,108 +6,109 @@ module cgns_mod
   include "cgnslib_f.h"
 !------------------------------------------------------------------------------!
 
-    ! private
-    !integer, private  :: 
+  ! private
+  !integer, private  :: 
 
-      ! file
-      integer           :: file_id
-      character(len=50) :: file_name
+  ! file
+  integer           :: file_id
+  character(len=50) :: file_name
 
-      ! base
-      integer           :: base_id
-      integer           :: n_bases
-      character(len=50) :: base_name
-      
-      ! zone
-      integer           :: zone_id
-      integer           :: n_zones
-      character(len=50) :: zone_name
-      integer           :: zone_type
-      integer           :: mesh_info(3)
+  ! base
+  integer           :: base_id
+  integer           :: n_bases
+  character(len=50) :: base_name
+  
+  ! zone
+  integer           :: zone_id
+  integer           :: n_zones
+  character(len=50) :: zone_name
+  integer           :: zone_type
+  integer           :: mesh_info(3)
 
-      ! coordinates
-      integer           :: n_coords
-      integer           :: coord_id
-      integer           :: coord_data_type
-      character(len=11) :: coord_name
-      integer           :: first_node
-      integer           :: last_node
-      real, allocatable :: x_coord(:)
-      real, allocatable :: y_coord(:)
-      real, allocatable :: z_coord(:)
+  ! coordinates
+  integer           :: n_coords
+  integer           :: n_nodes
+  integer           :: coord_id
+  integer           :: coord_data_type
+  character(len=11) :: coord_name
+  integer           :: first_node
+  integer           :: last_node
+  real, allocatable :: x_coord(:)
+  real, allocatable :: y_coord(:)
+  real, allocatable :: z_coord(:)
 
-      ! elements
-      integer           :: sect_id
-      integer           :: n_sects
-      integer           :: first_cell
-      integer           :: last_cell
-      integer           :: cell_type
-      integer           :: n_bnd
-      character(len=11) :: sect_name
-      integer           :: iparent_flag
-      integer           :: iparent_data
-      integer, allocatable :: hex_connections(:, :)
-      integer, allocatable :: pyramid_connections(:, :)
-      integer, allocatable :: prism_connections(:, :)
-      integer, allocatable :: tetra_connections(:, :)
-      integer, allocatable :: tri_2d_connections(:, :)
-      integer, allocatable :: box_2d_connections(:, :)
+  ! elements
+  integer              :: sect_id
+  integer              :: n_sects
+  integer              :: n_cells
+  integer              :: first_cell
+  integer              :: last_cell
+  integer              :: cell_type
+  integer              :: n_bnd
+  character(len=11)    :: sect_name
+  integer              :: iparent_flag
+  integer              :: iparent_data
+  integer, allocatable :: hexa_connections(:, :)
+  integer, allocatable :: pyra_connections(:, :)
+  integer, allocatable :: pris_connections(:, :)
+  integer, allocatable :: tetr_connections(:, :)
+  integer, allocatable :: tria_connections(:, :)
+  integer, allocatable :: para_connections(:, :)
 
-      ! bc
-      integer              :: bc_idx
-      integer              :: bc_type
-      integer              :: ndataset
-      integer              :: NormalListFlag
-      integer              :: bt_set_type
-      integer              :: n_nodes_in_bc
-      integer              :: NormalIndex(3)
-      integer, allocatable :: bc_points(:)
-      integer              :: n_b_nodes_meth_1
-      integer              :: n_b_nodes_meth_2
-      integer              :: data_type
-      integer              :: n_bc
-      integer              :: bc_loc
-      integer, allocatable :: bc_mark(:)
-      character(len=11)    :: bc_name
+  ! bc
+  integer              :: bc_idx
+  integer              :: bc_type
+  integer              :: ndataset
+  integer              :: NormalListFlag
+  integer              :: bt_set_type
+  integer              :: n_nodes_in_bc
+  integer              :: NormalIndex(3)
+  integer, allocatable :: bc_points(:)
+  integer              :: n_b_nodes_meth_1
+  integer              :: n_b_nodes_meth_2
+  integer              :: data_type
+  integer              :: n_bc
+  integer              :: bc_loc
+  integer, allocatable :: bc_mark(:)
+  character(len=11)    :: bc_name
 
-      ! buffers
-      real*4,  allocatable :: buffer_single(:)
-      real*8,  allocatable :: buffer_double(:)
-      integer, allocatable :: buffer_r2(:,:)
-      integer, allocatable :: buffer_r1(:)
-      
+  ! buffers
+  real*4,  allocatable :: buffer_single(:)
+  real*8,  allocatable :: buffer_double(:)
+  integer, allocatable :: buffer_r2(:,:)
+  integer, allocatable :: buffer_r1(:)
+  
+  integer              :: ier
+  integer              :: i
+  integer              :: j
 
-      integer           :: ier
-      integer           :: i
-      integer           :: j
+  ! private
 
-    ! private
+  ! functions
+  public :: Cgns_Mod_Open_File
+  public :: Cgns_Mod_Read_Number_Of_Bases_In_File
+  public :: Cgns_Mod_Print_Base_Info
+  public :: Cgns_Mod_Read_Number_Of_Zones_In_Base
+  public :: Cgns_Mod_Read_Zone_Info
+  public :: Cgns_Mod_Read_Zone_Type
+  public :: Cgns_Mod_Read_Number_Of_Coordinates
+  public :: Cgns_Mod_Print_Coordinate_Info
+  public :: Cgns_Mod_Read_Coordinate_Array
+  public :: Cgns_Mod_Read_Number_Of_Element_Sections
 
-    ! functions
-    public :: Cgns_Mod_Open_File
-    public :: Cgns_Mod_Read_Number_Of_Bases_In_File
-    public :: Cgns_Mod_Read_Base_Info
-    public :: Cgns_Mod_Read_Number_Of_Zones_In_Base
-    public :: Cgns_Mod_Read_Zone_Info
-    public :: Cgns_Mod_Read_Zone_Type
-    public :: Cgns_Mod_Read_Number_Of_Coordinates
-    public :: Cgns_Mod_Read_Coordinate_Info
-    public :: Cgns_Mod_Read_Coordinate_Array
-    public :: Cgns_Mod_Read_Number_Of_Element_Sections
+  public :: Cgns_Mod_Read_Section_Info
+  public :: Cgns_Mod_Read_Section_Connections
 
-    public :: Cgns_Mod_Read_Section_Info
-    public :: Cgns_Mod_Read_Section_Connections
+  public ::Cgns_Mod_Read_BC_Number_In_Zone
+  public ::Cgns_Mod_Read_BC_Info
+  public ::Cgns_Mod_Read_BC
 
-    public ::Cgns_Mod_Read_BC_Number_In_Zone
-    public ::Cgns_Mod_Read_BC_Info
-    public ::Cgns_Mod_Read_BC
+  !public :: 
+  !public :: 
 
-    !public :: 
-    !public :: 
-
-    public :: Cgns_Mod_Append_Real_Buf_To_Ar_R1
-    public :: Cgns_Mod_Append_Int_Buf_To_Ar_R1
-    public :: Cgns_Mod_Append_Int_Buf_To_Ar_R2
+  public :: Cgns_Mod_Append_Real_Buf_To_Ar_R1
+  public :: Cgns_Mod_Append_Int_Buf_To_Ar_R1
+  public :: Cgns_Mod_Append_Int_Buf_To_Ar_R2
 !------------------------------------------------------------------------------!
 contains
 !------------------------------------------------------------------------------!
@@ -163,15 +164,15 @@ end
 
 
 !------------------------------------------------------------------------------!
-subroutine Cgns_Mod_Read_Base_Info
+subroutine Cgns_Mod_Print_Base_Info
 !------------------------------------------------------------------------------!
 !   Reads main info from base node base_id
 !------------------------------------------------------------------------------!
   implicit none  
 !-----------------------------------[Locals]-----------------------------------!
-  character(len=40)    :: base_name
-  integer              :: phys_dim
-  integer              :: cell_dim
+  character(len=40) :: base_name
+  integer           :: phys_dim
+  integer           :: cell_dim
 !------------------------------------------------------------------------------!
 
   ! Read CGNS base information 
@@ -201,7 +202,6 @@ subroutine Cgns_Mod_Read_Number_Of_Zones_In_Base
 !   Gets n_zones from base node base_id
 !------------------------------------------------------------------------------!
   implicit none  
-!-----------------------------------[Locals]-----------------------------------!
 !------------------------------------------------------------------------------!
 
  ! Get number of zones in base
@@ -241,16 +241,20 @@ subroutine Cgns_Mod_Read_Zone_Info
     call Cg_Error_Exit_F()
   endif
 
+  n_nodes = mesh_info(1)
+  n_cells = mesh_info(2)
+
   print "(A,I3)",  "#     Zone index: ",                zone_id
   print "(A,A)",   "#     Zone name: ",                 zone_name
-  print "(A,I16)", "#     Nodes: ",                     mesh_info(1)
-  print "(A,I16)", "#     Cells: ",                     mesh_info(2)
+  print "(A,I16)", "#     Nodes: ",                     n_nodes
+  print "(A,I16)", "#     Cells: ",                     n_cells
   print "(A,I16)", "#     Boundary nodes(if sorted): ", mesh_info(3)
 
   if (mesh_info(3) .ne. 0) then
     print "(A)", "#     B.C. nodes != 0 -> Unsupported"
     stop
   endif
+
 
 end
 !------------------------------------------------------------------------------!
@@ -315,7 +319,7 @@ end
 
 
 !------------------------------------------------------------------------------!
-subroutine Cgns_Mod_Read_Coordinate_Info
+subroutine Cgns_Mod_Print_Coordinate_Info
 !------------------------------------------------------------------------------!
 !   Gets n_zones from base node base_id
 !------------------------------------------------------------------------------!
@@ -330,6 +334,11 @@ subroutine Cgns_Mod_Read_Coordinate_Info
                        coord_data_type,  & ! realsingle or realdouble
                        coord_name,       & ! name of the coordinate array
                        ier)                ! error status
+
+  if (ier .ne. 0) then
+    print "(A)", "#       FAILED to get info in for coord_id"
+    call Cg_Error_Exit_F()
+  endif
 
   print "(A,I3)", "#       Coord. id:",         coord_id
   print "(A,A)",  "#       Coord. Data Type: ", DataTypeName(coord_data_type)
@@ -426,6 +435,7 @@ subroutine Cgns_Mod_Read_Number_Of_Element_Sections
                       zone_id,  & ! zone index number
                       n_sects,  & ! number of element sections
                       ier)        ! error status
+
   print "(A)", "# ---------------------------"
   print "(A,I9)", "#       Number of sections: ", n_sects
 
@@ -507,17 +517,17 @@ subroutine Cgns_Mod_Read_Section_Connections
 
   ! Append cell connections from buffer to hex array
   if      (ElementTypeName(cell_type) .eq. 'HEXA_8')  then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (hex_connections ,buffer_r2)
+    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (hexa_connections ,buffer_r2)
   else if (ElementTypeName(cell_type) .eq. 'PYRA_5')  then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (pyramid_connections ,buffer_r2)
+    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (pyra_connections ,buffer_r2)
   else if (ElementTypeName(cell_type) .eq. 'PENTA_6') then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (prism_connections ,buffer_r2)
+    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (pris_connections ,buffer_r2)
   else if (ElementTypeName(cell_type) .eq. 'TETRA_4') then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (tetra_connections ,buffer_r2)
+    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (tetr_connections ,buffer_r2)
   else if (ElementTypeName(cell_type) .eq. 'QUAD_4')  then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (box_2d_connections ,buffer_r2)
+    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (para_connections ,buffer_r2)
   else if (ElementTypeName(cell_type) .eq. 'TRI_3')   then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (tri_2d_connections ,buffer_r2)
+    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (tria_connections ,buffer_r2)
   end if
 
 end

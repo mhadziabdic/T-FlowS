@@ -6,9 +6,6 @@ module cgns_mod
   include "cgnslib_f.h"
 !------------------------------------------------------------------------------!
 
-  ! private
-  !integer, private  :: 
-
   ! file
   integer           :: file_id
   character(len=50) :: file_name
@@ -17,7 +14,7 @@ module cgns_mod
   integer           :: base_id
   integer           :: n_bases
   character(len=50) :: base_name
-  
+
   ! zone
   integer           :: zone_id
   integer           :: n_zones
@@ -45,70 +42,39 @@ module cgns_mod
   integer              :: last_cell
   integer              :: cell_type
   integer              :: n_bnd
-  character(len=11)    :: sect_name
+  character(len=40)    :: sect_name
   integer              :: iparent_flag
   integer              :: iparent_data
+  integer              :: n_hexa
+  integer              :: last_hexa
   integer, allocatable :: hexa_connections(:, :)
+  integer              :: n_pyra
+  integer              :: last_pyra
   integer, allocatable :: pyra_connections(:, :)
+  integer              :: n_pris
+  integer              :: last_pris
   integer, allocatable :: pris_connections(:, :)
+  integer              :: n_tetr
+  integer              :: last_tetr
   integer, allocatable :: tetr_connections(:, :)
+  integer              :: n_tria
+  integer              :: last_tria
   integer, allocatable :: tria_connections(:, :)
-  integer, allocatable :: para_connections(:, :)
+  integer              :: n_quad
+  integer              :: last_quad
+  integer, allocatable :: quad_connections(:, :)
 
   ! bc
-  integer              :: bc_idx
-  integer              :: bc_type
-  integer              :: ndataset
-  integer              :: NormalListFlag
-  integer              :: bt_set_type
-  integer              :: n_nodes_in_bc
-  integer              :: NormalIndex(3)
-  integer, allocatable :: bc_points(:)
-  integer              :: n_b_nodes_meth_1
-  integer              :: n_b_nodes_meth_2
-  integer              :: data_type
-  integer              :: n_bc
-  integer              :: bc_loc
+  integer              :: bc_id(50)
   integer, allocatable :: bc_mark(:)
   character(len=11)    :: bc_name
 
   ! buffers
-  real*4,  allocatable :: buffer_single(:)
-  real*8,  allocatable :: buffer_double(:)
+  real   , allocatable :: buffer_double(:)
   integer, allocatable :: buffer_r2(:,:)
-  integer, allocatable :: buffer_r1(:)
-  
-  integer              :: ier
-  integer              :: i
-  integer              :: j
 
-  ! private
+  integer              :: ier, c, i, j, k
 
-  ! functions
-  public :: Cgns_Mod_Open_File
-  public :: Cgns_Mod_Read_Number_Of_Bases_In_File
-  public :: Cgns_Mod_Print_Base_Info
-  public :: Cgns_Mod_Read_Number_Of_Zones_In_Base
-  public :: Cgns_Mod_Read_Zone_Info
-  public :: Cgns_Mod_Read_Zone_Type
-  public :: Cgns_Mod_Read_Number_Of_Coordinates
-  public :: Cgns_Mod_Print_Coordinate_Info
-  public :: Cgns_Mod_Read_Coordinate_Array
-  public :: Cgns_Mod_Read_Number_Of_Element_Sections
-
-  public :: Cgns_Mod_Read_Section_Info
-  public :: Cgns_Mod_Read_Section_Connections
-
-  public ::Cgns_Mod_Read_BC_Number_In_Zone
-  public ::Cgns_Mod_Read_BC_Info
-  public ::Cgns_Mod_Read_BC
-
-  !public :: 
-  !public :: 
-
-  public :: Cgns_Mod_Append_Real_Buf_To_Ar_R1
-  public :: Cgns_Mod_Append_Int_Buf_To_Ar_R1
-  public :: Cgns_Mod_Append_Int_Buf_To_Ar_R2
 !------------------------------------------------------------------------------!
 contains
 !------------------------------------------------------------------------------!
@@ -122,18 +88,37 @@ subroutine Cgns_Mod_Open_File
   implicit none
 !------------------------------------------------------------------------------!
 
-  print "(A,A)", "# Reading the file:", trim(file_name)
+  print *, "# Reading the file:", trim(file_name)
 
-  ! Open a CGNS file 
+  ! Open a CGNS file
   call Cg_Open_F(file_name,    &  ! file name
                  CG_MODE_READ, &  ! open for read
                  file_id,      &  ! cgns file index number
                  ier)             ! error status
 
   if (ier .ne. 0) then
-    print "(A,A)", "# FAILED to read the file: ", trim(file_name)
+    print *, "# FAILED to read the file: ", trim(file_name)
     call Cg_Error_Exit_F()
   endif
+
+  !  set initial viules
+  n_nodes = 0
+  n_cells = 0
+  n_hexa = 0
+  n_pyra = 0
+  n_pris = 0
+  n_tetr = 0
+  n_tria = 0
+  n_quad = 0
+
+  last_hexa = 0
+  last_pyra = 0
+  last_pris = 0
+  last_tetr = 0
+  last_tria = 0
+  last_quad = 0
+
+  bc_id = 0
 
 end
 !------------------------------------------------------------------------------!
@@ -144,20 +129,20 @@ subroutine Cgns_Mod_Read_Number_Of_Bases_In_File
 !------------------------------------------------------------------------------!
 !   Gets n_bases from base node                                                !
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
-  ! Get number of CGNS bases in file 
+  ! Get number of CGNS bases in file
   call Cg_Nbases_F(file_id, & ! cgns file index number
                    n_bases, & ! number of bases present in the CGNS file
                    ier)       ! error status
 
     if (ier .ne. 0) then
-      print "(A)", "# Failed to get bases number"
+      print *, "# Failed to get bases number"
       call Cg_Error_Exit_F()
     endif
 
-  print "(A,I5)", "# Number of bases: ", n_bases
+  print *, "# Number of bases: ", n_bases
 
 end
 !------------------------------------------------------------------------------!
@@ -168,14 +153,14 @@ subroutine Cgns_Mod_Print_Base_Info
 !------------------------------------------------------------------------------!
 !   Reads main info from base node base_id
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !-----------------------------------[Locals]-----------------------------------!
   character(len=40) :: base_name
   integer           :: phys_dim
   integer           :: cell_dim
 !------------------------------------------------------------------------------!
 
-  ! Read CGNS base information 
+  ! Read CGNS base information
   call Cg_Base_Read_F(file_id,   & ! cgns file index number
                       base_id,   & ! base index number
                       base_name, & ! name of the base
@@ -184,13 +169,13 @@ subroutine Cgns_Mod_Print_Base_Info
                       ier)                ! error status
 
     if (ier .ne. 0) then
-      print "(A)", "#   FAILED to get base info"
+      print *, "#   FAILED to get base info"
       call Cg_Error_Exit_F()
     endif
 
-  print "(A,A)",   "#   Base Name: ",      base_name
-  print "(A,I1)",  "#   Cell dimension: ", cell_dim
-  print "(A,I1)",  "#   Phys dimension: ", phys_dim 
+  print *, "#   Base Name: ",      base_name
+  print *, "#   Cell dimension: ", cell_dim
+  print *, "#   Phys dimension: ", phys_dim
 
 end
 !------------------------------------------------------------------------------!
@@ -201,7 +186,7 @@ subroutine Cgns_Mod_Read_Number_Of_Zones_In_Base
 !------------------------------------------------------------------------------!
 !   Gets n_zones from base node base_id
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
  ! Get number of zones in base
@@ -210,11 +195,11 @@ subroutine Cgns_Mod_Read_Number_Of_Zones_In_Base
                    n_zones, & ! number of zones present in base
                    ier)       ! error status
   if (ier .ne. 0) then
-    print "(A)", "#   FAILED to get zones number"
+    print *, "#   FAILED to get zones number"
     call Cg_Error_Exit_F()
   endif
 
-  print "(A,I3)","#   Total zones:", n_zones
+  print *, "#   Total zones:", n_zones
 
 end
 !------------------------------------------------------------------------------!
@@ -225,7 +210,7 @@ subroutine Cgns_Mod_Read_Zone_Info
 !------------------------------------------------------------------------------!
 !   Gets n_bases from base node                                                !
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
   ! Read zone information
@@ -237,24 +222,24 @@ subroutine Cgns_Mod_Read_Zone_Info
                       ier)         ! error status
 
   if (ier .ne. 0) then
-    print "(A)", "#     Failed read zone info"
+    print *, "#     Failed read zone info"
     call Cg_Error_Exit_F()
   endif
 
-  n_nodes = mesh_info(1)
-  n_cells = mesh_info(2)
+  ! total nodes and cells
+  n_nodes = n_nodes + mesh_info(1)
+  n_cells = n_cells + mesh_info(2)
 
-  print "(A,I3)",  "#     Zone index: ",                zone_id
-  print "(A,A)",   "#     Zone name: ",                 zone_name
-  print "(A,I16)", "#     Nodes: ",                     n_nodes
-  print "(A,I16)", "#     Cells: ",                     n_cells
-  print "(A,I16)", "#     Boundary nodes(if sorted): ", mesh_info(3)
+  print *, "#     Zone index: ",                zone_id
+  print *, "#     Zone name: ",                 zone_name
+  print *, "#     Nodes: ",                     mesh_info(1)
+  print *, "#     Cells: ",                     mesh_info(2)
+  print *, "#     Boundary nodes(if sorted): ", mesh_info(3)
 
   if (mesh_info(3) .ne. 0) then
-    print "(A)", "#     B.C. nodes != 0 -> Unsupported"
+    print *, "#     B.C. nodes != 0 -> Unsupported"
     stop
   endif
-
 
 end
 !------------------------------------------------------------------------------!
@@ -265,7 +250,7 @@ subroutine Cgns_Mod_Read_Zone_Type
 !------------------------------------------------------------------------------!
 !   Prints zone type                                                             !
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
   ! Read type of zone
@@ -275,18 +260,18 @@ subroutine Cgns_Mod_Read_Zone_Type
                       zone_type, & ! structured or unstructured
                       ier)         ! error status
   if (ier .ne. 0) then
-    print "(A)", "#     Failed to get zone type"
+    print *, "#     Failed to get zone type"
     call Cg_Error_Exit_F()
   endif
 
-  print "(A,A)", "#     Zone type is ", ZoneTypeName(zone_type)
+  print *, "#     Zone type is ", ZoneTypeName(zone_type)
 
   if (zone_type .eq. Structured) then
-    print "(A)", "#     Structured cgns meshed are unsupported"
+    print *, "#     Structured cgns meshed are unsupported"
     stop
   endif
 
-  print "(A,I9)", "#     Index dimension = ", 1
+  print *, "#     Index dimension = ", 1
 
 end
 !------------------------------------------------------------------------------!
@@ -295,9 +280,9 @@ end
 !------------------------------------------------------------------------------!
 subroutine Cgns_Mod_Read_Number_Of_Coordinates
 !------------------------------------------------------------------------------!
-!   Gets n_zones from base node base_id
+!   Reads number of coordinates arrays from zone_id
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
   ! Get number of coordinate arrays (1 for unstructure, 3 for structured)
@@ -308,11 +293,11 @@ subroutine Cgns_Mod_Read_Number_Of_Coordinates
                     ier)        ! error status
 
   if (ier .ne. 0) then
-    print "(A)", "#       FAILED to get number of coordinate arrays"
+    print *, "#       FAILED to get number of coordinate arrays"
     call Cg_Error_Exit_F()
   endif
 
-  print "(A,I9)","#       Number of coordinate arrays for zone:", n_coords
+  print *, "#       Number of coordinate arrays for zone:", n_coords
 
 end
 !------------------------------------------------------------------------------!
@@ -321,28 +306,28 @@ end
 !------------------------------------------------------------------------------!
 subroutine Cgns_Mod_Print_Coordinate_Info
 !------------------------------------------------------------------------------!
-!   Gets n_zones from base node base_id
+!   Reads coord_name of coord_id
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
   !Get info about coordinate coord_id
-  call Cg_Coord_Info_F(file_id,          & ! cgns file index number
-                       base_id,          & ! base index number
-                       zone_id,          & ! zone index number
-                       coord_id,         & ! Coordinate array index number
-                       coord_data_type,  & ! realsingle or realdouble
-                       coord_name,       & ! name of the coordinate array
-                       ier)                ! error status
+  call Cg_Coord_Info_F(file_id,         & ! cgns file index number
+                       base_id,         & ! base index number
+                       zone_id,         & ! zone index number
+                       coord_id,        & ! Coordinate array index number
+                       coord_data_type, & ! realsingle or realdouble
+                       coord_name,      & ! name of the coordinate array
+                       ier)               ! error status
 
   if (ier .ne. 0) then
-    print "(A)", "#       FAILED to get info in for coord_id"
+    print *, "#       FAILED to get info in for coord_id"
     call Cg_Error_Exit_F()
   endif
 
-  print "(A,I3)", "#       Coord. id:",         coord_id
-  print "(A,A)",  "#       Coord. Data Type: ", DataTypeName(coord_data_type)
-  print "(A,A)",  "#       Name: ",             coord_name
+  print *, "#       Coord. id:",         coord_id
+  print *, "#       Coord. Data Type: ", DataTypeName(coord_data_type)
+  print *, "#       Name: ",             coord_name
 
 end
 !------------------------------------------------------------------------------!
@@ -351,72 +336,42 @@ end
 !------------------------------------------------------------------------------!
 subroutine Cgns_Mod_Read_Coordinate_Array
 !------------------------------------------------------------------------------!
-!   Read grid coordinates (RealSingle)                                         !
+!   Read grid coordinates (RealDouble)                                         !
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
-  if (coord_data_type .eq. RealSingle) then
+  i = 1
+  j = mesh_info(1)
 
-    ! Allocate buffer_single array
-    if(.not. allocated(buffer_single)) then
-      allocate(buffer_single(first_node:last_node))
-    end if
+  allocate(buffer_double(i:j))
 
-    ! Read grid coordinates (RealSingle)
-    call Cg_Coord_Read_F(file_id,       & ! cgns file index number
-                         base_id,       & ! base index number
-                         zone_id,       & ! zone index number
-                         coord_name,    & ! name of the coordinate array
-                         RealSingle,    & ! realsingle or realdouble
-                         first_node,    & ! lower range index
-                         last_node,     & ! upper range index
-                         buffer_single, & ! array of coordinate values
-                         ier)             ! error status
-
-  else if (coord_data_type .eq. RealDouble) then
-
-    ! Allocate buffer_double array
-    if(.not. allocated(buffer_double)) &
-      allocate(buffer_double(first_node:last_node))
-
-    ! Read grid coordinates (RealDouble)
-    call Cg_Coord_Read_F(file_id,       & ! cgns file index number
-                         base_id,       & ! base index number
-                         zone_id,       & ! zone index number
-                         coord_name,    & ! name of the coordinate array
-                         RealDouble,    & ! realsingle or realdouble
-                         first_node,    & ! lower range index
-                         last_node,     & ! upper range index
-                         buffer_double, & ! array of coordinate values
-                         ier)             ! error status
-
-  end if
+  ! Read grid x coordinates
+  call Cg_Coord_Read_F(file_id,       & ! cgns file index number
+                       base_id,       & ! base index number
+                       zone_id,       & ! zone index number
+                       coord_name,    & ! name of the coordinate array
+                       RealDouble,    & ! realsingle or realdouble
+                       i,             & ! lower range index
+                       j,             & ! upper range index
+                       buffer_double, & ! array of coordinate values
+                       ier)           ! error status
 
   if (ier.ne.0) then
-    print *,"#       FAILED to read DoubleReal Coord"
+    print *, "#       FAILED to read DoubleReal Coord", coord_name
     call Cg_Error_Exit_F()
   endif
 
-  ! Append this data to coordinates arrays through buffer
-  if (coord_data_type .eq. RealSingle) then
-    allocate(buffer_double(first_node:last_node))
-
-    buffer_double(first_node:last_node) &
-      = real(buffer_single(first_node:last_node), 8)
-
-    deallocate(buffer_single)
-  end if
-
-  select case ( coord_id )
-   case (1)
-      call Cgns_Mod_Append_Real_Buf_To_Ar_R1 (x_coord, buffer_double)
+  select case (coord_id)
+    case (1)
+      x_coord(:) = buffer_double(:)
     case (2)
-      call Cgns_Mod_Append_Real_Buf_To_Ar_R1 (y_coord, buffer_double)
+      y_coord(:) = buffer_double(:)
     case (3)
-      call Cgns_Mod_Append_Real_Buf_To_Ar_R1 (z_coord, buffer_double)
+      y_coord(:) = buffer_double(:)
   end select
 
+  deallocate(buffer_double)
 end
 !------------------------------------------------------------------------------!
 
@@ -426,18 +381,23 @@ subroutine Cgns_Mod_Read_Number_Of_Element_Sections
 !------------------------------------------------------------------------------!
 !   Gets n_sects from zone
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
-  ! Get number of element sections 
+  ! Get number of element sections
   call Cg_Nsections_F(file_id,  & ! cgns file index number
                       base_id,  & ! base index number
                       zone_id,  & ! zone index number
                       n_sects,  & ! number of element sections
                       ier)        ! error status
 
-  print "(A)", "# ---------------------------"
-  print "(A,I9)", "#       Number of sections: ", n_sects
+  if (ier.ne.0) then
+    print *, "#     FAILED to read number of elements"
+    call Cg_Error_Exit_F()
+  endif
+
+  print *, "# ---------------------------"
+  print *, "#       Number of sections: ", n_sects
 
 end
 !------------------------------------------------------------------------------!
@@ -448,7 +408,7 @@ subroutine Cgns_Mod_Read_Section_Info
 !------------------------------------------------------------------------------!
 !   Read elements connection info for current sect_id
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
   ! Get info for an element section
@@ -465,11 +425,34 @@ subroutine Cgns_Mod_Read_Section_Info
                          iparent_flag, & ! if the parent data are defined
                          ier)            ! error status
 
-  print "(A,I9)", "#         section idx:  ", n_sects
-  print "(A,A)",  "#         section name: ", sect_name
-  print "(A,A)",  "#         section type: ", ElementTypeName(cell_type)
-  print "(A,I9)", "#         first idx:",     first_cell
-  print "(A,I9)", "#         last idx:",      last_cell
+  if (ier.ne.0) then
+    print *, "#     FAILED to read section ", sect_id, " info"
+    call Cg_Error_Exit_F()
+  endif
+
+  print *, "#         section idx:  ", sect_id
+  print *, "#         section name: ", sect_name
+  print *, "#         section type: ", ElementTypeName(cell_type)
+  print *, "#         first cell:",    first_cell
+  print *, "#         last cell:",     last_cell
+
+  i = last_cell - first_cell + 1 ! cells in this sections
+
+  ! count cells in sect_id
+  if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) n_hexa = n_hexa + i
+  if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) n_pyra = n_pyra + i
+  if ( ElementTypeName(cell_type) .eq. 'PENTA_6') n_pris = n_pris + i
+  if ( ElementTypeName(cell_type) .eq. 'TETRA_4') n_tetr = n_tetr + i
+  if ( ElementTypeName(cell_type) .eq. 'QUAD_4' ) then
+    n_quad = n_quad + i
+    print *, "#         This section was identified as b.c."
+    bc_id(sect_id) = 1
+  end if
+  if ( ElementTypeName(cell_type) .eq. 'TRI_3'  ) then
+    n_tria = n_tria + i
+    print *, "#         This section was identified as b.c."
+    bc_id(sect_id) = 1
+  end if
 
 end
 !------------------------------------------------------------------------------!
@@ -480,355 +463,123 @@ subroutine Cgns_Mod_Read_Section_Connections
 !------------------------------------------------------------------------------!
 !   Read elements connection for current sect_id
 !------------------------------------------------------------------------------!
-  implicit none  
-!------------------------------------------------------------------------------!
-
-  ! Allocate correct size buffer for reading
-  if      (ElementTypeName(cell_type) .eq. 'HEXA_8')  then
-    if(.not.allocated(buffer_r2)) &
-      allocate(buffer_r2(1:8, first_cell:last_cell))
-  else if (ElementTypeName(cell_type) .eq. 'PYRA_5')  then
-    if(.not.allocated(buffer_r2)) &
-      allocate(buffer_r2(1:5, first_cell:last_cell))
-  else if (ElementTypeName(cell_type) .eq. 'PENTA_6') then
-    if(.not.allocated(buffer_r2)) &
-      allocate(buffer_r2(1:6, first_cell:last_cell))
-  else if (ElementTypeName(cell_type) .eq. 'TETRA_4') then
-    if(.not.allocated(buffer_r2)) &
-      allocate(buffer_r2(1:4, first_cell:last_cell))
-  else if (ElementTypeName(cell_type) .eq. 'QUAD_4')  then
-    if(.not.allocated(buffer_r2)) &
-      allocate(buffer_r2(1:4, first_cell:last_cell))
-      n_b_nodes_meth_1 = n_b_nodes_meth_1 + last_cell - first_cell + 1
-  else if (ElementTypeName(cell_type) .eq. 'TRI_3')   then
-    if(.not.allocated(buffer_r2)) &
-      allocate(buffer_r2(1:3, first_cell:last_cell))
-      n_b_nodes_meth_1 = n_b_nodes_meth_1 + last_cell - first_cell + 1
-  end if
-
-  ! Read element data (HEXA_8/PYRA_5/PENTA_6/TETRA_4/QUAD_4/TRI_3)
-  call Cg_Elements_Read_F(file_id,      & ! cgns file index number
-                          base_id,      & ! base index number
-                          zone_id,      & ! zone index number
-                          sect_id,      & ! element section index
-                          buffer_r2,    & ! element connectivity data
-                          iparent_data, & ! for boundary or interface 
-                          ier)            ! error status
-
-  ! Append cell connections from buffer to hex array
-  if      (ElementTypeName(cell_type) .eq. 'HEXA_8')  then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (hexa_connections ,buffer_r2)
-  else if (ElementTypeName(cell_type) .eq. 'PYRA_5')  then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (pyra_connections ,buffer_r2)
-  else if (ElementTypeName(cell_type) .eq. 'PENTA_6') then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (pris_connections ,buffer_r2)
-  else if (ElementTypeName(cell_type) .eq. 'TETRA_4') then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (tetr_connections ,buffer_r2)
-  else if (ElementTypeName(cell_type) .eq. 'QUAD_4')  then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (para_connections ,buffer_r2)
-  else if (ElementTypeName(cell_type) .eq. 'TRI_3')   then
-    call Cgns_Mod_Append_Int_Buf_To_Ar_R2 (tria_connections ,buffer_r2)
-  end if
-
-end
-!------------------------------------------------------------------------------!
-
-
-!------------------------------------------------------------------------------!
-subroutine Cgns_Mod_Read_BC_Number_In_Zone
-!------------------------------------------------------------------------------!
-!   Read B.C. info for zone_id
-!------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
   ! Get info for an element section
   ! Recieves sect_name, first_cell: last_cell, n_bnd and cell_type
-  ! Get number of boundary condition in zone
-    call Cg_Nbocos_F(file_id, & ! cgns file index number
-                     base_id, & ! base index number
-                     zone_id, & ! zone index number
-                     n_bc,    & ! number of boundary conditions in zone
-                     ier)       ! error status
-    if (ier.ne.0) then
-      print *,"#     FAILED to obtain number of b.c."
-      call Cg_Error_Exit_F()
-    endif
+  call Cg_Section_Read_F(file_id,      & ! cgns file index number
+                         base_id,      & ! base index number
+                         zone_id,      & ! zone index number
+                         sect_id,      & ! element section index
+                         sect_name,    & ! name of the Elements_t node
+                         cell_type,    & ! type of element
+                         first_cell,   & ! index of first element
+                         last_cell,    & ! index of last element
+                         n_bnd,        & ! index of last boundary element
+                         iparent_flag, & ! if the parent data are defined
+                         ier)            ! error status
 
+  i = first_cell
+  j = last_cell
 
-  ! Read grid location (where b.c. is placed)
-  call Cg_Gridlocation_Read_F(bc_loc, & ! Location in the grid
-                              ier)      ! error status
+  ! Read cells
+  if (ElementTypeName(cell_type) .eq. 'HEXA_8')  allocate(buffer_r2(1:8, i:j))
+  if (ElementTypeName(cell_type) .eq. 'PYRA_5')  allocate(buffer_r2(1:5, i:j))
+  if (ElementTypeName(cell_type) .eq. 'PENTA_6') allocate(buffer_r2(1:6, i:j))
+  if (ElementTypeName(cell_type) .eq. 'TETRA_4') allocate(buffer_r2(1:4, i:j))
+  if (ElementTypeName(cell_type) .eq. 'QUAD_4')  allocate(buffer_r2(1:4, i:j))
+  if (ElementTypeName(cell_type) .eq. 'TRI_3')   allocate(buffer_r2(1:3, i:j))
 
-  ! I do not know why, but order of rows below matters
-  print "(A,A)",  "#     B.C. locationn: ", GridLocationName(bc_loc)
+  ! Read HEXA_8/PYRA_5/PENTA_6/TETRA_4/QUAD_4/TRI_3 elements
+  call Cg_Elements_Read_F( file_id,         & ! cgns file index number
+                           base_id,         & ! base index number
+                           zone_id,         & ! zone index number
+                           sect_id,         & ! element section index
+                           buffer_r2(:, :), & ! element connectivity data
+                           iparent_data,    & ! for boundary or interface
+                           ier)               ! error status
 
-  print "(A,I3)", "#     B.C. types: ", n_bc
-  print "(A,I3)", "#     Zone index: ", zone_id
-
-end
-!------------------------------------------------------------------------------!
-
-
-!------------------------------------------------------------------------------!
-subroutine Cgns_Mod_Read_BC_Info
-!------------------------------------------------------------------------------!
-!   Read boundary condition info for zone_id
-!------------------------------------------------------------------------------!
-  implicit none  
-!------------------------------------------------------------------------------!
-
-  ! Get boundary condition info 
-  call Cg_Boco_Info_F(file_id,        & ! cgns file index number
-                      base_id,        & ! base index number
-                      zone_id,        & ! zone index number
-                      bc_idx,         & ! boundary condition index number
-                      bc_name,        & ! name of the boundary condition
-                      bc_type,        & ! type of boundary condition
-                      bt_set_type,    & ! the extent of the boundary condition
-                      n_nodes_in_bc,  & ! number of points/cells to make BC
-                      NormalIndex,    & ! Index vector normal direction of BC
-                      NormalListFlag, & ! flag indicating if the normals are defined in NormalList 
-                      data_type,      & ! data type used in the definition of the normals
-                      ndataset,       & ! number of boundary condition datasets
-                      ier)              ! error status
   if (ier.ne.0) then
-    print *,"#     FAILED to obtain number of b.c."
+    print *, "#     FAILED to read elemets in section ", sect_id
     call Cg_Error_Exit_F()
   endif
 
+  if      (ElementTypeName(cell_type) .eq. 'HEXA_8') then
+    j = last_hexa + j - i + 1
+    i = last_hexa + 1
+    hexa_connections(1:8, i:j) = buffer_r2
+    last_hexa = j
+  else if (ElementTypeName(cell_type) .eq. 'PYRA_5') then
+    j = last_pyra + j - i + 1
+    i = last_pyra + 1
+    pyra_connections(1:5, i:j) = buffer_r2
+    last_pyra = j
+  else if (ElementTypeName(cell_type) .eq. 'PENTA_6') then
+    j = last_pris + j - i + 1
+    i = last_pris + 1
+    pris_connections(1:6, i:j) = buffer_r2
+    last_pris = j
+  else if (ElementTypeName(cell_type) .eq. 'TETRA_4') then
+    j = last_tetr + j - i + 1
+    i = last_tetr + 1
+    tetr_connections(1:4, i:j) = buffer_r2
+    last_tetr = j
+  else if (ElementTypeName(cell_type) .eq. 'QUAD_4') then
+    j = last_quad + j - i + 1
+    i = last_quad + 1
+    quad_connections(1:4, i:j) = buffer_r2
+    last_quad = j
+  else if (ElementTypeName(cell_type) .eq. 'TRI_3') then
+    j = last_tria + j - i + 1
+    i = last_tria + 1
+    tria_connections(1:3, i:j) = buffer_r2
+    last_tria = j
+  end if
 
-  print "(A,I3)", "#       B.C. index: ",            bc_idx
-  print "(A,A)",  "#       B.C. name: ",             bc_name
-  !print "(A,A)",  "#       B.C. type: ",             BCTypeName(bc_type)
-  !print "(A,I3)", "#       B.C. nodes: ",            n_nodes_in_bc
-  print "(A,A)",  "#       B.C. Extent: ",           PointSetTypeName(bt_set_type)
-  !print "(A,9I9)","#       B.C. normal: ",           NormalIndex(1:3)
-  !print "(A,5I5)","#       B.C. normal list flag: ", NormalListFlag
-  !print "(A,A)",  "#       B.C. normal data_type: ", DataTypeName(data_type)
-  !print "(A,I3)", "#       B.C. datasets: ",         ndataset
+  deallocate(buffer_r2)
 
 end
 !------------------------------------------------------------------------------!
 
 
 !------------------------------------------------------------------------------!
-subroutine Cgns_Mod_Read_BC
+subroutine Cgns_Mod_Mark_Bound_Cond
 !------------------------------------------------------------------------------!
-!   Read b.c. for bc_id
+!   Mark nodes in x,y,z arrays from tria_connections & quad_connections        !
+!   with sect_id                                                                !
 !------------------------------------------------------------------------------!
-  implicit none  
+  implicit none
 !------------------------------------------------------------------------------!
 
-  ! B.C. list can be given by two type of array
-  ! 1) Based on "PointRange" 
-  ! ("PointRange constitutes rectangular region")
-  ! 2) Based on "PointList"
-  ! ("In all other cases, PointList")
-  if     (bt_set_type .eq. PointRange) then
-    ! For a bt_set_type of PointRange, n_nodes_in_bc is always 2
-    if (.not. allocated(buffer_r2)) allocate(buffer_r2(2,1))
+  bc_mark = 0
 
-    ! Read boundary condition data and normals 
-    call Cg_Boco_Read_F(file_id,        & ! cgns file index number
-                        base_id,        & ! base index number
-                        zone_id,        & ! zone index number
-                        bc_idx,         & ! boundary condition index number
-                        buffer_r2,      & ! array of point or element indices defining the boundary condition region
-                        NormalListFlag, & ! list of vectors normal to the boundary condition patch pointing into the interior of the zone
-                        ier)              ! error status
-
-    first_node = buffer_r2(1,1)
-    last_node  = buffer_r2(2,1)
-
-    n_b_nodes_meth_2 = n_b_nodes_meth_2 + last_node - first_node + 1
-
-    print "(A,I6,A,I6)", "#       Point Range: ", first_node, " -", last_node
-
-    ! Buffer for bc_points(to do)
- 
-
-    ! Buffer for bc_mark
-    if (.not. allocated(buffer_r1)) & 
-      allocate(buffer_r1(first_node:last_node))
-
-    first_cell = lbound(x_coord, dim=1)
-    last_cell  = ubound(x_coord, dim=1)
-
-    ! Color nodes with b.c.
-    do i = first_node,  last_node - first_node + 1
-      do j = first_cell, last_cell
-        if ( j .eq. i) buffer_r1(j) = bc_idx
+  ! Color quad nodes with b.c.
+  if ( bc_id(sect_id) .ne. 0) then
+    do c = 1, n_nodes
+      do i = 1, last_quad
+        do j = 1, 4
+          if (c .eq. quad_connections(j,i)) then
+            bc_mark(c) = sect_id
+          end if
+        end do
       end do
     end do
-  
-  else if (bt_set_type .eq. PointList) then
-    ! For bt_set_type of PointList, n_nodes_in_bc is the number of points/ elements in the list
-    if (.not. allocated(buffer_r1)) &
-      allocate(buffer_r1(1:n_nodes_in_bc))
-
-    ! Read boundary condition data and normals 
-    call Cg_Boco_Read_F(file_id,       & ! cgns file index number
-                        base_id,       & ! base index number
-                        zone_id,       & ! zone index number
-                        bc_idx,         & ! boundary condition index number
-                        buffer_r1,      & ! array of point or element indices defining the boundary condition region
-                        NormalListFlag, & ! list of vectors normal to the boundary condition patch pointing into the interior of the zone
-                        ier)              ! error status
-
-    n_b_nodes_meth_2 = n_b_nodes_meth_2 + n_nodes_in_bc
-    print "(A,I6,A,I6)", "#       Point List s/f: ", 1, " -", n_nodes_in_bc
-
-    ! Color nodes with b.c. (to do)
-
-
   end if
 
-  !call Cgns_Mod_Append_Int_Buf_To_Ar_R1(bc_points, buffer_r1)
-  call Cgns_Mod_Append_Int_Buf_To_Ar_R1(bc_mark,   buffer_r1)
-
-  print "(A)", "# ---------------------------"
+  ! Color tria nodes with b.c.
+  if ( bc_id(sect_id) .ne. 0) then
+    do c = 1, n_nodes
+      do i = 1, last_tria
+        do j = 1, 3
+          if (c .eq. quad_connections(j,i)) then
+            bc_mark(c) = sect_id
+          end if
+        end do
+      end do
+    end do
+  end if
 
 end
 !------------------------------------------------------------------------------!
-
-
-
-
-
-
-
-
-
-!------------------------------------------------------------------------------!
-subroutine Cgns_Mod_Append_Real_Buf_To_Ar_R1(ar_r1, buffer_r1)
-!------------------------------------------------------------------------------!
-!   Appends one real*8 array to another                                        !
-!------------------------------------------------------------------------------!
-  implicit none  
-!---------------------------------[Arguments]----------------------------------!
-  real*8, allocatable  :: ar_r1(:)
-  real*8, allocatable  :: buffer_r1(:)
-  real*8, allocatable  :: tmp_buffer_real(:)
-!-----------------------------------[Locals]-----------------------------------!
-  integer              :: x1, x2, y1, y2
-!------------------------------------------------------------------------------!
-
-  y1 = lbound(buffer_r1, dim=1) ! buffer_r1
-  y2 = ubound(buffer_r1, dim=1) ! buffer_r1
-
-  if (.not.allocated(ar_r1)) then
-    allocate(ar_r1(y1:y2))
-
-    ar_r1(y1:y2) = buffer_r1(y1:y2)
-  else
-    x1 = lbound(ar_r1, dim=1) ! ar_r1
-    x2 = ubound(ar_r1, dim=1) ! ar_r1
-
-    allocate(tmp_buffer_real(x1:x2))
-    tmp_buffer_real(x1:x2) = ar_r1(x1:x2)
-
-    deallocate(ar_r1)
-    allocate(ar_r1(x1:x2 + y2 - y1 + 1))
-    
-    ar_r1(x1:x2) = tmp_buffer_real(x1:x2)
-    deallocate(tmp_buffer_real)
-
-    ar_r1(x2+1:x2 + y2 - y1 + 1) = buffer_r1(y1:y2)
-  end if
-
-  deallocate(buffer_r1)
-
-end
-!------------------------------------------------------------------------------!
-
-
-!------------------------------------------------------------------------------!
-subroutine Cgns_Mod_Append_Int_Buf_To_Ar_R1(ar_r1, buffer_r1)
-!------------------------------------------------------------------------------!
-!   Appends one int array to another                                        !
-!------------------------------------------------------------------------------!
-  implicit none  
-!---------------------------------[Arguments]----------------------------------!
-  integer, allocatable  :: ar_r1(:)
-  integer, allocatable  :: buffer_r1(:)
-  integer, allocatable  :: tmp_buffer_real(:)
-!-----------------------------------[Locals]-----------------------------------!
-  integer               :: x1, x2, y1, y2
-!------------------------------------------------------------------------------!
-
-  y1 = lbound(buffer_r1, dim=1) ! buffer_r1
-  y2 = ubound(buffer_r1, dim=1) ! buffer_r1
-
-
-  if (.not.allocated(ar_r1)) then
-    allocate(ar_r1(y1:y2))
-
-    ar_r1(y1:y2) = buffer_r1(y1:y2)
-  else
-    x1 = lbound(ar_r1, dim=1) ! ar_r1
-    x2 = ubound(ar_r1, dim=1) ! ar_r1
-
-    allocate(tmp_buffer_real(x1:x2))
-    tmp_buffer_real(x1:x2) = ar_r1(x1:x2)
-
-    deallocate(ar_r1)
-    allocate(ar_r1(x1:x2 + y2 - y1 + 1))
-    
-    ar_r1(x1:x2) = tmp_buffer_real(x1:x2)
-    deallocate(tmp_buffer_real)
-
-    ar_r1(x2+1:x2 + y2 - y1 + 1) = buffer_r1(y1:y2)
-  end if
-
-  deallocate(buffer_r1)
-
-end
-!------------------------------------------------------------------------------!
-
-
-!------------------------------------------------------------------------------!
-subroutine Cgns_Mod_Append_Int_Buf_To_Ar_R2(ar_r2, buffer_ar_r2)
-!------------------------------------------------------------------------------!
-!   Appends one real*8 array to another                                        !
-!------------------------------------------------------------------------------!
-  implicit none  
-!---------------------------------[Arguments]----------------------------------!
-  integer, allocatable :: ar_r2(:,:)
-  integer, allocatable :: buffer_ar_r2(:,:)
-  integer, allocatable :: tmp_buffer_int(:,:)
-!-----------------------------------[Locals]-----------------------------------!
-  integer              :: x1, x2, y1, y2, d1, d2
-!------------------------------------------------------------------------------!
-
-  y1 = lbound(buffer_ar_r2, dim=2) ! buffer_ar_r2
-  y2 = ubound(buffer_ar_r2, dim=2) ! buffer_ar_r2
-  d1 = lbound(buffer_ar_r2, dim=1) ! ar_r2
-  d2 = lbound(buffer_ar_r2, dim=1) ! ar_r2
-
-  if (.not.allocated(ar_r2)) then
-    allocate(ar_r2(d1:d2, y1:y2))
-
-    ar_r2(d1:d2, y1:y2) = buffer_ar_r2(d1:d2, y1:y2)
-  else
-    x1 = lbound(ar_r2, dim=2) ! ar_r2
-    x2 = ubound(ar_r2, dim=2) ! ar_r2
-
-    allocate(tmp_buffer_int(d1:d2, x1:x2))
-    tmp_buffer_int(d1:d2, x1:x2) = ar_r2(d1:d2, x1:x2)
-
-    deallocate(ar_r2)
-    allocate(ar_r2(d1:d2, x1:x2 + y2 - y1 + 1))
-    
-    ar_r2(d1:d2, x1:x2) = tmp_buffer_int(d1:d2, x1:x2)
-    deallocate(tmp_buffer_int)
-
-    ar_r2(d1:d2, x2+1:x2 + y2 - y1 + 1) = buffer_ar_r2(d1:d2, y1:y2)
-  end if
-
-  deallocate(buffer_ar_r2)
-
-end
-!------------------------------------------------------------------------------!
-
 end module

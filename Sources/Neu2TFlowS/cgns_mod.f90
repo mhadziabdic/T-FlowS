@@ -28,11 +28,12 @@ module cgns_mod
   integer           :: coord_id
   integer           :: coord_data_type
   character(len=11) :: coord_name
-  integer           :: first_node
-  integer           :: last_node
   real, allocatable :: x_coord(:)
+  integer           :: last_x
   real, allocatable :: y_coord(:)
+  integer           :: last_y
   real, allocatable :: z_coord(:)
+  integer           :: last_z
 
   ! elements
   integer              :: sect_id
@@ -101,7 +102,7 @@ subroutine Cgns_Mod_Open_File
     call Cg_Error_Exit_F()
   endif
 
-  !  set initial viules
+  !  set initial values
   n_nodes = 0
   n_cells = 0
   n_hexa = 0
@@ -110,6 +111,10 @@ subroutine Cgns_Mod_Open_File
   n_tetr = 0
   n_tria = 0
   n_quad = 0
+
+  last_x = 0
+  last_y = 0
+  last_z = 0
 
   last_hexa = 0
   last_pyra = 0
@@ -364,11 +369,17 @@ subroutine Cgns_Mod_Read_Coordinate_Array
 
   select case (coord_id)
     case (1)
-      x_coord(:) = buffer_double(:)
+      i = last_x + 1
+      j = last_x + j
+      x_coord(i:j) = buffer_double(:)
     case (2)
-      y_coord(:) = buffer_double(:)
+      i = last_y + 1
+      j = last_y + j
+      y_coord(i:j) = buffer_double(:)
     case (3)
-      y_coord(:) = buffer_double(:)
+      i = last_y + 1
+      j = last_y + j
+      y_coord(i:j) = buffer_double(:)
   end select
 
   deallocate(buffer_double)
@@ -508,35 +519,36 @@ subroutine Cgns_Mod_Read_Section_Connections
   if      (ElementTypeName(cell_type) .eq. 'HEXA_8') then
     j = last_hexa + j - i + 1
     i = last_hexa + 1
-    hexa_connections(1:8, i:j) = buffer_r2
+    hexa_connections(1:8, i:j) = buffer_r2(1:8, first_cell:last_cell) + last_hexa
     last_hexa = j
   else if (ElementTypeName(cell_type) .eq. 'PYRA_5') then
     j = last_pyra + j - i + 1
     i = last_pyra + 1
-    pyra_connections(1:5, i:j) = buffer_r2
+    pyra_connections(1:5, i:j) = buffer_r2(1:5, first_cell:last_cell) + last_pyra
     last_pyra = j
   else if (ElementTypeName(cell_type) .eq. 'PENTA_6') then
     j = last_pris + j - i + 1
     i = last_pris + 1
-    pris_connections(1:6, i:j) = buffer_r2
+    pris_connections(1:6, i:j) = buffer_r2(1:6, first_cell:last_cell) + last_pris
     last_pris = j
   else if (ElementTypeName(cell_type) .eq. 'TETRA_4') then
     j = last_tetr + j - i + 1
     i = last_tetr + 1
-    tetr_connections(1:4, i:j) = buffer_r2
+    tetr_connections(1:4, i:j) = buffer_r2(1:4, first_cell:last_cell) + last_tetr
     last_tetr = j
   else if (ElementTypeName(cell_type) .eq. 'QUAD_4') then
     j = last_quad + j - i + 1
     i = last_quad + 1
-    quad_connections(1:4, i:j) = buffer_r2
+    quad_connections(1:4, i:j) = buffer_r2(1:4, first_cell:last_cell) + last_quad
     last_quad = j
   else if (ElementTypeName(cell_type) .eq. 'TRI_3') then
     j = last_tria + j - i + 1
     i = last_tria + 1
-    tria_connections(1:3, i:j) = buffer_r2
+    tria_connections(1:3, i:j) = buffer_r2(1:3, first_cell:last_cell) + last_tria
     last_tria = j
   end if
 
+print *, "i1=", i, "j1=", j, "i2=", first_cell, "j2=", last_cell,"type=",ElementTypeName(cell_type)
   deallocate(buffer_r2)
 
 end

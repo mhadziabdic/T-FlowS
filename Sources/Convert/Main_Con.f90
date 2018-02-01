@@ -11,7 +11,7 @@
   integer         :: c, n, s
 !==============================================================================!
 
-  call Logo_Neu
+  call Logo_Con
 
   print *, '#======================================================'
   print *, '# Enter the Fluent''s (*.neu) file name (without ext.):'

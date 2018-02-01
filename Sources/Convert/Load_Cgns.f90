@@ -11,14 +11,13 @@
   use neu_mod
   use Grid_Mod
   use Tokenizer_Mod
-  use cgns_mod
+  use Cgns_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80)       :: name_in
-
 !==============================================================================!
 
   name_in = problem_name
@@ -167,11 +166,6 @@
 
   end do ! bases
 
-  ! use this to check bc_mark.
-  !do c = 1, n_nodes
-  !  if (bc_mark(c) .ne. 0) print *, "# b.c. mark =", bc_mark(c), " x=", x_coord(c), " y=", y_coord(c), " z=", z_coord(c)
-  !end do
-
   grid % n_nodes     = n_nodes
   grid % n_cells     = n_cells
   grid % n_bnd_cells = n_tria + n_quad
@@ -179,7 +173,6 @@
   ! Allocate memory =--> carefull, there is no checking!
   call Grid_Mod_Allocate_Nodes(grid, grid % n_nodes)
   call Grid_Mod_Allocate_Cells(grid, grid % n_cells, grid % n_bnd_cells)
-
 
   !--------------------------------------!
   !  Conversion to T-FlowS B.C. format   !

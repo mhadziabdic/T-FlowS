@@ -24,9 +24,17 @@ DIR_MODULE = ../.Modules
 DIR_OBJECT = .Objects
 VPATH = $(DIR_SHARED):.
 
-# Third party header files and libraries
-DIR_CGNS_H = ../Libraries/Cgns_3.2.1/src
-CGNS_LIB   = ../Libraries/Cgns_3.2.1/src/lib/libcgns.a
+# Third party header files and libraries\
+# parallel
+DIR_CGNS_H  = install_dir/CGNS_HDF5/include/
+CGNS_LIB    = install_dir/CGNS_HDF5/lib/libcgns.a
+DIR_CGNS_H += install_dir/HDF5/include/
+CGNS_LIB   += install_dir/HDF5/lib/libhdf5.a
+CGNS_LIB   += -Wl,--no-as-needed -ldl -lz
+
+# sequential
+#DIR_CGNS_H  = install_dir/CGNS_ADF5/include/
+#CGNS_LIB    = install_dir/CGNS_ADF5/lib/libcgns.a
 
 # Program name (This should hardly change)
 PROGRAM_NAME = Convert
@@ -40,7 +48,7 @@ PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
 
 # Fortran = gnu
 ifeq ($(FORTRAN), gnu)
-  FC = gfortran
+  FC = mpif90
   ifeq ($(DEBUG), yes)
     OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -O0 -g -Wall -fcheck=all
   else
@@ -73,7 +81,7 @@ endif
 
 # If compiling with CGNS, add path to include directory
 ifeq ($(CGNS), yes)
-  OPT_COMP += -I $(DIR_CGNS_H)
+  OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
 endif
 
 $(info #==================================================================)

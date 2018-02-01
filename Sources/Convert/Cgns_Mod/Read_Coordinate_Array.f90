@@ -23,7 +23,7 @@
                        ier)           ! error status
 
   if (ier.ne.0) then
-    print *, "#       FAILED to read DoubleReal Coord", coord_name
+    print *, "# Failed to read DoubleReal Coord", coord_name
     call Cg_Error_Exit_F()
   endif
 

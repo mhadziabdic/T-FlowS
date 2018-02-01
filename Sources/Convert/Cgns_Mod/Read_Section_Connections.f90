@@ -21,7 +21,7 @@
                          ier)            ! error status
 
   if (ier.ne.0) then
-    print *, "#     FAILED to read info for section ", sect_id
+    print *, "# Failed to read info for section ", sect_id
     call Cg_Error_Exit_F()
   endif
 
@@ -46,7 +46,7 @@
                            ier)            ! error status
 
   if (ier.ne.0) then
-    print *, "#     FAILED to read elemets in section ", sect_id
+    print *, "# Failed to read elemets in section ", sect_id
     call Cg_Error_Exit_F()
   endif
 

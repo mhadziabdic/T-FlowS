@@ -13,17 +13,17 @@
                       zone_type, & ! structured or unstructured
                       ier)         ! error status
   if (ier .ne. 0) then
-    print *, "#     Failed to get zone type"
+    print *, "# Failed to get zone type"
     call Cg_Error_Exit_F()
   endif
 
-  print *, "#     Zone type is ", ZoneTypeName(zone_type)
+  print *, "# Zone type is ", ZoneTypeName(zone_type)
 
   if (zone_type .eq. Structured) then
-    print *, "#     Structured cgns meshed are unsupported"
+    print *, "# Structured cgns meshed are unsupported"
     stop
   endif
 
-  print *, "#     Index dimension = ", 1
+  print *, "# Index dimension = ", 1
 
   end subroutine

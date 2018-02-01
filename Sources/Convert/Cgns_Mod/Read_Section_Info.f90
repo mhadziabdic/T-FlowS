@@ -21,15 +21,15 @@
                          ier)            ! error status
 
   if (ier.ne.0) then
-    print *, "#     FAILED to read section ", sect_id, " info"
+    print *, "# Failed to read section ", sect_id, " info"
     call Cg_Error_Exit_F()
   endif
 
-  print *, "#         section idx:  ", sect_id
-  print *, "#         section name: ", sect_name
-  print *, "#         section type: ", ElementTypeName(cell_type)
-  print *, "#         first cell:",    first_cell
-  print *, "#         last cell:",     last_cell
+  print *, "# section idx:  ", sect_id
+  print *, "# section name: ", sect_name
+  print *, "# section type: ", ElementTypeName(cell_type)
+  print *, "# first cell:",    first_cell
+  print *, "# last cell:",     last_cell
 
   i = last_cell - first_cell + 1 ! cells in this sections
 
@@ -40,12 +40,12 @@
   if ( ElementTypeName(cell_type) .eq. 'TETRA_4') n_tetr = n_tetr + i
   if ( ElementTypeName(cell_type) .eq. 'QUAD_4' ) then
     n_quad = n_quad + i
-    print *, "#         This section was identified as b.c."
+    print *, "# This section was identified as b.c."
     bc_id(sect_id) = 1
   end if
   if ( ElementTypeName(cell_type) .eq. 'TRI_3'  ) then
     n_tria = n_tria + i
-    print *, "#         This section was identified as b.c."
+    print *, "# This section was identified as b.c."
     bc_id(sect_id) = 1
   end if
 

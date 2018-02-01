@@ -12,10 +12,10 @@
                    n_zones, & ! number of zones present in base
                    ier)       ! error status
   if (ier .ne. 0) then
-    print *, "#   FAILED to get zones number"
+    print *, "# Failed to get zones number"
     call Cg_Error_Exit_F()
   endif
 
-  print *, "#   Total zones:", n_zones
+  print *, "# Total zones:", n_zones
 
   end subroutine

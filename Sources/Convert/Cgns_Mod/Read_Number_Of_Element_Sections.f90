@@ -14,11 +14,11 @@
                       ier)        ! error status
 
   if (ier.ne.0) then
-    print *, "#     FAILED to read number of elements"
+    print *, "# Failed to read number of elements"
     call Cg_Error_Exit_F()
   endif
 
   print *, "# ---------------------------"
-  print *, "#       Number of sections: ", n_sects
+  print *, "# Number of sections: ", n_sects
 
   end subroutine

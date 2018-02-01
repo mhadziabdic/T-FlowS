@@ -14,10 +14,10 @@
                     ier)        ! error status
 
   if (ier .ne. 0) then
-    print *, "#       FAILED to get number of coordinate arrays"
+    print *, "# Failed to get number of coordinate arrays"
     call Cg_Error_Exit_F()
   endif
 
-  print *, "#       Number of coordinate arrays for zone:", n_coords
+  print *, "# Number of coordinate arrays for zone:", n_coords
 
   end subroutine

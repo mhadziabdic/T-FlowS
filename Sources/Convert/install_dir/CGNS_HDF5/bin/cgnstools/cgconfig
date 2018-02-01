@@ -4,7 +4,7 @@
 #---------------------------------------------------------------------
 
 CG_BIN_DIR=/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/CGNS_HDF5/bin; export CG_BIN_DIR
-CG_LIB_DIR=/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/CGNS/tcl_scripts; export CG_LIB_DIR
+CG_LIB_DIR=/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/CGNS_HDF5/tcl_scripts; export CG_LIB_DIR
 
 #---------------------------------------------------------------------
 # you may need to set the paths to the Tcl/Tk scripts

@@ -179,7 +179,7 @@ if [ $CGNS_TOOLS == true ]; then
 	--enable-cgnstools \
 	--with-tcl=$INSTALL_DIR/TCL \
 	--with-tk=$INSTALL_DIR/TK \
-	--datarootdir=$INSTALL_DIR/CGNS/tcl_scripts
+	--datarootdir=$INSTALL_DIR/CGNS_HDF5/tcl_scripts
 
 else # no cgns GUI tools
 	

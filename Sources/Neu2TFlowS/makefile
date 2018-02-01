@@ -25,8 +25,8 @@ DIR_OBJECT = .Objects
 VPATH = $(DIR_SHARED):.
 
 # Third party header files and libraries
-DIR_CGNS_H = ../Libraries/Cgnslib_3.2.1/src
-CGNS_LIB   = ../Libraries/Cgnslib_3.2.1/src/lib/libcgns.a
+DIR_CGNS_H = ../Libraries/CGNS_3.2.1/include
+CGNS_LIB   = ../Libraries/CGNS_3.2.1/lib/libcgns.a
 
 # Program name (This should hardly change)
 PROGRAM_NAME = Neu2TflowS
@@ -93,7 +93,8 @@ $(info #----------------------------------------------------)
 #------------------------------------------------------
 
 # Sources for modules in the local directory
-SRC_MOD =  neu_mod.f90
+SRC_MOD =  neu_mod.f90          \
+           cgns_mod.f90
 
 # Sources for modules in other directories
 SRC_MOD += allp_mod.f90		\

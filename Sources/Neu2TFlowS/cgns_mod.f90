@@ -372,14 +372,17 @@ subroutine Cgns_Mod_Read_Coordinate_Array
       i = last_x + 1
       j = last_x + j
       x_coord(i:j) = buffer_double(:)
+      last_x = j
     case (2)
       i = last_y + 1
       j = last_y + j
       y_coord(i:j) = buffer_double(:)
+      last_y = j
     case (3)
-      i = last_y + 1
-      j = last_y + j
-      y_coord(i:j) = buffer_double(:)
+      i = last_z + 1
+      j = last_z + j
+      z_coord(i:j) = buffer_double(:)
+      last_z = j
   end select
 
   deallocate(buffer_double)
@@ -491,8 +494,15 @@ subroutine Cgns_Mod_Read_Section_Connections
                          iparent_flag, & ! if the parent data are defined
                          ier)            ! error status
 
+  if (ier.ne.0) then
+    print *, "#     FAILED to read info for section ", sect_id
+    call Cg_Error_Exit_F()
+  endif
+
   i = first_cell
   j = last_cell
+
+  !print *, "#     ", file_id, base_id, zone_id, sect_id, sect_name,first_cell, last_cell, n_bnd, iparent_flag, ier
 
   ! Read cells
   if (ElementTypeName(cell_type) .eq. 'HEXA_8')  allocate(buffer_r2(1:8, i:j))
@@ -503,13 +513,13 @@ subroutine Cgns_Mod_Read_Section_Connections
   if (ElementTypeName(cell_type) .eq. 'TRI_3')   allocate(buffer_r2(1:3, i:j))
 
   ! Read HEXA_8/PYRA_5/PENTA_6/TETRA_4/QUAD_4/TRI_3 elements
-  call Cg_Elements_Read_F( file_id,         & ! cgns file index number
-                           base_id,         & ! base index number
-                           zone_id,         & ! zone index number
-                           sect_id,         & ! element section index
-                           buffer_r2(:, :), & ! element connectivity data
-                           iparent_data,    & ! for boundary or interface
-                           ier)               ! error status
+  call Cg_Elements_Read_F( file_id,      & ! cgns file index number
+                           base_id,      & ! base index number
+                           zone_id,      & ! zone index number
+                           sect_id,      & ! element section index
+                           buffer_r2,    & ! element connectivity data
+                           iparent_data, & ! for boundary or interface
+                           ier)            ! error status
 
   if (ier.ne.0) then
     print *, "#     FAILED to read elemets in section ", sect_id
@@ -548,7 +558,14 @@ subroutine Cgns_Mod_Read_Section_Connections
     last_tria = j
   end if
 
-print *, "i1=", i, "j1=", j, "i2=", first_cell, "j2=", last_cell,"type=",ElementTypeName(cell_type)
+  !do c = first_cell, last_cell
+  !  print "(A,8I9)", "buffer=", buffer_r2(:,c)
+  !end do
+
+  print *, i, ":", j, " copyed from", first_cell, ":", last_cell," type = ",ElementTypeName(cell_type)
+
+
+
   deallocate(buffer_r2)
 
 end

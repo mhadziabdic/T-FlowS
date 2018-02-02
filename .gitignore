@@ -1,5 +1,4 @@
 *.o
-*.mod
 **/Process/Communication/*.f90
 **/Makefile
 **/Makefile.in

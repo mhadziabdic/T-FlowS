@@ -1,7 +1,11 @@
 This is directory for third party libraries.
 
-Cgnslib_3.2.1 is unpacked archive cgns_3.2.1.tar.gz from 
+At the moment, it contains CGNS libraries, version 3.2.1,
+with ADF5 and HDF5 support:
 
-http://cgns.sourceforge.net/download.html 
+Cgnslib_3.2.1_Linux_64_Adf5_Seq
+Cgnslib_3.2.1_Linux_64_Hdf5_Seq
 
+In addition, there is HDF5 library, if needed:
 
+Hdf5_Seq

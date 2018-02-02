@@ -1,10 +1,10 @@
 !==============================================================================!
   module Cgns_Mod
 !------------------------------------------------------------------------------!
+  use cgns
+!------------------------------------------------------------------------------!
   implicit none
 !----------------------------------[Modules]-----------------------------------!
-  include "cgns_io_f.h"
-  include "cgnslib_f.h"
 !==============================================================================!
 
   ! file
@@ -21,7 +21,7 @@
   integer           :: n_zones
   character(len=80) :: zone_name
   integer           :: zone_type
-  integer           :: mesh_info(3)
+  integer(cgsize_t) :: mesh_info(3)
 
   ! coordinates
   integer           :: n_coords
@@ -40,13 +40,13 @@
   integer              :: sect_id
   integer              :: n_sects
   integer              :: n_cells
-  integer              :: first_cell
-  integer              :: last_cell
+  integer(cgsize_t)    :: first_cell
+  integer(cgsize_t)    :: last_cell
   integer              :: cell_type
   integer              :: n_bnd
   character(len=80)    :: sect_name
   integer              :: iparent_flag
-  integer              :: iparent_data
+  integer(cgsize_t)    :: iparent_data
   integer              :: n_hexa
   integer              :: last_hexa
   integer, allocatable :: hexa_connections(:, :)
@@ -72,10 +72,11 @@
   character(len=80)    :: bc_name
 
   ! buffers
-  real   , allocatable :: buffer_double(:)
-  integer, allocatable :: buffer_r2(:,:)
+  real             , allocatable :: buffer_double(:)
+  integer(cgsize_t), allocatable :: buffer_r2(:,:)
 
-  integer              :: ier, c, i, j, k
+  integer              :: ier, c, k
+  integer(cgsize_t)    :: i, j
 
   contains
 

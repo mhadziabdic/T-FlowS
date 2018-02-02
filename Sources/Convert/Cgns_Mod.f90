@@ -1,82 +1,82 @@
 !==============================================================================!
   module Cgns_Mod
 !------------------------------------------------------------------------------!
-  use cgns
-!------------------------------------------------------------------------------!
   implicit none
-!----------------------------------[Modules]-----------------------------------!
+!------------------------------------------------------------------------------!
+  include "cgns_io_f.h"
+  include "cgnslib_f.h"
 !==============================================================================!
 
   ! file
-  integer           :: file_id
+  integer*8         :: file_id
   character(len=80) :: file_name
 
   ! base
-  integer           :: base_id
-  integer           :: n_bases
+  integer*8         :: base_id
+  integer*8         :: n_bases
   character(len=80) :: base_name
 
   ! zone
-  integer           :: zone_id
-  integer           :: n_zones
+  integer*8         :: zone_id
+  integer*8         :: n_zones
   character(len=80) :: zone_name
-  integer           :: zone_type
-  integer(cgsize_t) :: mesh_info(3)
+  integer*8         :: zone_type
+  integer*8         :: mesh_info(3)
 
   ! coordinates
-  integer           :: n_coords
-  integer           :: n_nodes
-  integer           :: coord_id
-  integer           :: coord_data_type
+  integer*8         :: n_coords
+  integer*8         :: n_nodes
+  integer*8         :: coord_id
+  integer*8         :: coord_data_type
   character(len=80) :: coord_name
   real, allocatable :: x_coord(:)
-  integer           :: last_x
+  integer*8         :: last_x
   real, allocatable :: y_coord(:)
-  integer           :: last_y
+  integer*8         :: last_y
   real, allocatable :: z_coord(:)
-  integer           :: last_z
+  integer*8         :: last_z
 
   ! elements
-  integer              :: sect_id
-  integer              :: n_sects
-  integer              :: n_cells
-  integer(cgsize_t)    :: first_cell
-  integer(cgsize_t)    :: last_cell
-  integer              :: cell_type
-  integer              :: n_bnd
-  character(len=80)    :: sect_name
-  integer              :: iparent_flag
-  integer(cgsize_t)    :: iparent_data
-  integer              :: n_hexa
-  integer              :: last_hexa
-  integer, allocatable :: hexa_connections(:, :)
-  integer              :: n_pyra
-  integer              :: last_pyra
-  integer, allocatable :: pyra_connections(:, :)
-  integer              :: n_pris
-  integer              :: last_pris
-  integer, allocatable :: pris_connections(:, :)
-  integer              :: n_tetr
-  integer              :: last_tetr
-  integer, allocatable :: tetr_connections(:, :)
-  integer              :: n_tria
-  integer              :: last_tria
-  integer, allocatable :: tria_connections(:, :)
-  integer              :: n_quad
-  integer              :: last_quad
-  integer, allocatable :: quad_connections(:, :)
+  integer*8              :: sect_id
+  integer*8              :: n_sects
+  integer*8              :: n_cells
+  integer*8              :: first_cell
+  integer*8              :: last_cell
+  integer*8              :: cell_type
+  integer*8              :: n_bnd
+  character(len=80)      :: sect_name
+  integer*8              :: iparent_flag
+  integer*8              :: iparent_data
+  integer*8              :: n_hexa
+  integer*8              :: last_hexa
+  integer*8, allocatable :: hexa_connections(:, :)
+  integer*8              :: n_pyra
+  integer*8              :: last_pyra
+  integer*8, allocatable :: pyra_connections(:, :)
+  integer*8              :: n_pris
+  integer*8              :: last_pris
+  integer*8, allocatable :: pris_connections(:, :)
+  integer*8              :: n_tetr
+  integer*8              :: last_tetr
+  integer*8, allocatable :: tetr_connections(:, :)
+  integer*8              :: n_tria
+  integer*8              :: last_tria
+  integer*8, allocatable :: tria_connections(:, :)
+  integer*8              :: n_quad
+  integer*8              :: last_quad
+  integer*8, allocatable :: quad_connections(:, :)
 
   ! bc
-  integer              :: bc_id(50)
-  integer, allocatable :: bc_mark(:)
-  character(len=80)    :: bc_name
+  integer*8              :: bc_id(50)
+  integer*8, allocatable :: bc_mark(:)
+  character(len=80)      :: bc_name
 
   ! buffers
   real             , allocatable :: buffer_double(:)
-  integer(cgsize_t), allocatable :: buffer_r2(:,:)
+  integer*8        , allocatable :: buffer_r2(:,:)
 
-  integer              :: ier, c, k
-  integer(cgsize_t)    :: i, j
+  integer*8            :: ier, c, k
+  integer*8            :: i, j
 
   contains
 

@@ -1,6 +1,6 @@
 #===============================================================================
 # 
-#   Neu2TflowS Makefile   
+#   Convert Makefile   
 #   
 #-------------------------------------------------------------------------------
 
@@ -15,7 +15,8 @@ FORTRAN = gnu
 DEBUG = no
 
 # Link with CGNS ("yes" or "no")
-CGNS  = no
+CGNS_ADF5 = no
+CGNS_HDF5 = no
 
 # Directories for objects and modules. (No need to change.)
 DIR_BINARY = ../../Binaries
@@ -23,18 +24,6 @@ DIR_SHARED = ../Shared
 DIR_MODULE = ../.Modules
 DIR_OBJECT = .Objects
 VPATH = $(DIR_SHARED):.
-
-# Third party header files and libraries\
-#-------- parallel
-#DIR_CGNS_H  = install_dir/CGNS_HDF5/include/
-#CGNS_LIB    = install_dir/CGNS_HDF5/lib/libcgns.a
-#DIR_CGNS_H += install_dir/HDF5/include/
-#CGNS_LIB   += install_dir/HDF5/lib/libhdf5.a
-#CGNS_LIB   += -Wl,--no-as-needed -ldl -lz
-
-#-------- sequential
-DIR_CGNS_H  = install_dir/CGNS_ADF5/include/
-CGNS_LIB    = install_dir/CGNS_ADF5/lib/libcgns.a
 
 # Program name (This should hardly change)
 PROGRAM_NAME = Convert
@@ -80,16 +69,30 @@ ifeq ($(FORTRAN), portland)
 endif 
 
 # If compiling with CGNS, add path to include directory
-ifeq ($(CGNS), yes)
-  OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
+# (One day, when you want to work with compressed 
+#  files, the following line might still be needed:
+#  CGNS_LIB   += -Wl,--no-as-needed -ldl -lz
+ifeq ($(CGNS_ADF5), yes)
+  DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Adf5_Seq/Include
+  CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Adf5_Seq/Lib/libcgns.a
+  OPT_COMP   += $(addprefix -I, $(DIR_CGNS_H))
 endif
 
-$(info #==================================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)               )  
-$(info #------------------------------------------------------------------)
-$(info # Usage:                                                           )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <CGNS=yes/no> )
-$(info #------------------------------------------------------------------)
+ifeq ($(CGNS_HDF5), yes)
+  DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Include
+  CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a \
+                ../Libraries/Hdf5_Seq/Lib/libhdf5.a                        \
+                -Wl,--no-as-needed -ldl -lz
+  OPT_COMP   += $(addprefix -I, $(DIR_CGNS_H))
+endif
+
+$(info #====================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN) )  
+$(info #----------------------------------------------------)
+$(info # Usage:                                             )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> )
+$(info #        <CGNS_ADF=yes/no> <CGNS_HDF5=yes/no>        )
+$(info #----------------------------------------------------)
 
 #------------------------------------------------------
 #   List of sources for modules and functions
@@ -104,10 +107,10 @@ $(info #------------------------------------------------------------------)
 SRC_MOD =  neu_mod.f90
 
 # If CGNS is supported, add the right module
-ifeq ($(CGNS), yes)
-  SRC_MOD += Cgns_Mod.f90
-else
+ifeq ($(CGNS_ADF5), $(CGNS_HDF5))
   SRC_MOD += Cgns_Mod_Void.f90
+else
+  SRC_MOD += Cgns_Mod.f90
 endif
 
 # Sources for modules in other directories
@@ -135,10 +138,10 @@ SRC_FUN += Compute_Geometry.f90  \
            Read_Line.f90
 
 # ... to allow conditional inclusion of CGNS support
-ifeq ($(CGNS), yes)
-  SRC_FUN += Load_Cgns.f90
+ifeq ($(CGNS_ADF5), $(CGNS_HDF5))
+  SRC_MOD += Load_Cgns_Void.f90
 else
-  SRC_FUN += Load_Cgns_Void.f90
+  SRC_MOD += Load_Cgns.f90
 endif
 
 #----------------------------------------------------------------------

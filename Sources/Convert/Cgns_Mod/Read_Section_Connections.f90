@@ -1,27 +1,44 @@
 !==============================================================================!
-  subroutine Cgns_Mod_Read_Section_Connections
+  subroutine Cgns_Mod_Read_Section_Connections(base, block, sect)
 !------------------------------------------------------------------------------!
-!   Read elements connection for current sect_id
+!   Read elements connection for current sect
 !------------------------------------------------------------------------------!
   implicit none
+  integer*8 :: base, block, sect
+!-----------------------------------[Locals]-----------------------------------!
+  integer*8 :: i, j, ier, n_bnd
 !==============================================================================!
+!
+!
+!   Cg_Section_Read_F(file_id,       &  ! cgns file index number
+!                     base,          &  ! base index number
+!                     block,         &  ! block index number
+!                     sect,          &  ! element section index
+!                     sect_name,     &  ! name of the Elements_t node
+!                     cell_type,     &  ! type of element
+!                     first_cell,    &  ! index of first element
+!                     last_cell,     &  ! index of last element
+!                     n_bnd,         &  ! index of last boundary element
+!                     iparent_flag,  &  ! if the parent data are defined
+!                     ier)              ! error status
+!------------------------------------------------------------------------------!
 
   ! Get info for an element section
   ! Recieves sect_name, first_cell: last_cell, n_bnd and cell_type
-  call Cg_Section_Read_F(file_id,      & ! cgns file index number
-                         base_id,      & ! base index number
-                         zone_id,      & ! zone index number
-                         sect_id,      & ! element section index
-                         sect_name,    & ! name of the Elements_t node
-                         cell_type,    & ! type of element
-                         first_cell,   & ! index of first element
-                         last_cell,    & ! index of last element
-                         n_bnd,        & ! index of last boundary element
-                         iparent_flag, & ! if the parent data are defined
-                         ier)            ! error status
+  call Cg_Section_Read_F(file_id,       &  
+                         base,          &  
+                         block,         &  
+                         sect,          &  
+                         sect_name,     &  
+                         cell_type,     &  
+                         first_cell,    &  
+                         last_cell,     &  
+                         n_bnd,         &  
+                         iparent_flag,  &  
+                         ier)              
 
   if (ier.ne.0) then
-    print *, "# Failed to read info for section ", sect_id
+    print *, "# Failed to read info for section ", sect
     call Cg_Error_Exit_F()
   endif
 
@@ -38,15 +55,15 @@
 
   ! Read HEXA_8/PYRA_5/PENTA_6/TETRA_4/QUAD_4/TRI_3 elements
   call Cg_Elements_Read_F( file_id,      & ! cgns file index number
-                           base_id,      & ! base index number
-                           zone_id,      & ! zone index number
-                           sect_id,      & ! element section index
+                           base,         & ! base index number
+                           block,         & ! block index number
+                           sect,         & ! element section index
                            buffer_r2,    & ! element connectivity data
                            iparent_data, & ! for boundary or interface
                            ier)            ! error status
 
   if (ier.ne.0) then
-    print *, "# Failed to read elemets in section ", sect_id
+    print *, "# Failed to read elemets in section ", sect
     call Cg_Error_Exit_F()
   endif
 
@@ -82,11 +99,8 @@
     last_tria = j
   end if
 
-  !do c = first_cell, last_cell
-  !  print "(A,8I9)", "buffer=", buffer_r2(:,c)
-  !end do
-
-  print *, i, ":", j, " copyed from", first_cell, ":", last_cell," type = ",ElementTypeName(cell_type)
+  print *, i, ":", j, " copyed from", first_cell, ":", last_cell, &
+           " type = ",ElementTypeName(cell_type)
 
   deallocate(buffer_r2)
 

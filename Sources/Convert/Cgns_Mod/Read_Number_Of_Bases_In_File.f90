@@ -4,18 +4,22 @@
 !   Gets n_bases from base node                                                !
 !------------------------------------------------------------------------------!
   implicit none
+!-----------------------------------[Locals]-----------------------------------!
+  integer*8 :: ierror
 !==============================================================================!
 
   ! Get number of CGNS bases in file
-  call Cg_Nbases_F(file_id, & ! cgns file index number
-                   n_bases, & ! number of bases present in the CGNS file
-                   ier)       ! error status
+  call Cg_Nbases_F(file_id,  &
+                   n_bases,  &
+                   ierror)   
 
-    if (ier .ne. 0) then
-      print *, "# Failed to get bases number"
-      call Cg_Error_Exit_F()
-    endif
+  if (ierror .ne. 0) then
+    print *, "# Failed to get bases number"
+    call Cg_Error_Exit_F()
+  endif
 
   print *, "# Number of bases: ", n_bases
+
+  allocate(cgns_base(n_bases))
 
   end subroutine

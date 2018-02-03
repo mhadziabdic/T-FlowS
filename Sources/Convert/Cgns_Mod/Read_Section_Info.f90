@@ -1,52 +1,85 @@
 !==============================================================================!
-  subroutine Cgns_Mod_Read_Section_Info
+  subroutine Cgns_Mod_Read_Section_Info(base, block, sect)
 !------------------------------------------------------------------------------!
-!   Read elements connection info for current sect_id
+!   Read elements connection info for current sect
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  integer*8 :: base, block, sect
+!-----------------------------------[Locals]-----------------------------------!
+  integer*8         :: base_id     ! base index number
+  integer*8         :: block_id    ! block index number
+  integer*8         :: sect_id     ! element section index
+  character(len=80) :: sect_name   ! name of the Elements_t node
+  integer*8         :: first_cell  ! index of first element
+  integer*8         :: last_cell   ! index of last element
+  integer*8         :: n_bnd       ! index of last boundary element
+  integer*8         :: error
+  integer*8         :: cnt, bc
 !==============================================================================!
+
+  ! Set input parameters
+  base_id  = base
+  block_id = block
+  sect_id  = sect
 
   ! Get info for an element section
   ! Recieves sect_name, first_cell: last_cell, n_bnd and cell_type
-  call Cg_Section_Read_F(file_id,      & ! cgns file index number
-                         base_id,      & ! base index number
-                         zone_id,      & ! zone index number
-                         sect_id,      & ! element section index
-                         sect_name,    & ! name of the Elements_t node
-                         cell_type,    & ! type of element
-                         first_cell,   & ! index of first element
-                         last_cell,    & ! index of last element
-                         n_bnd,        & ! index of last boundary element
-                         iparent_flag, & ! if the parent data are defined
-                         ier)            ! error status
-
-  if (ier.ne.0) then
-    print *, "# Failed to read section ", sect_id, " info"
+  call Cg_Section_Read_F(file_id,       &
+                         base_id,       &
+                         block_id,      &
+                         sect_id,       &
+                         sect_name,     &
+                         cell_type,     &
+                         first_cell,    &
+                         last_cell,     &
+                         n_bnd,         &
+                         iparent_flag,  &
+                         error)
+  if (error.ne.0) then
+    print *, '# Failed to read section ', sect, ' info'
     call Cg_Error_Exit_F()
   endif
 
-  print *, "# section idx:  ", sect_id
-  print *, "# section name: ", sect_name
-  print *, "# section type: ", ElementTypeName(cell_type)
-  print *, "# first cell:",    first_cell
-  print *, "# last cell:",     last_cell
+  ! Number of cells in this section
+  cnt = last_cell - first_cell + 1 ! cells in this sections
 
-  i = last_cell - first_cell + 1 ! cells in this sections
+  ! Consider boundary conditions defined in this block
+  do bc = 1, cgns_base(base) % block(block) % n_bnd_conds
+    if(sect_name .eq. cgns_base(base) % block(block) % bnd_cond(bc) % name) then
+      print *, '# ........---------------------------------'
+      print *, '# ........Bnd section name:  ', sect_name
+      print *, '# ........---------------------------------'
+      print *, '# ........Bnd section index: ', sect
+      print *, '# ........Bnd section type:  ', ElementTypeName(cell_type)
+      print *, '# ........First cell:        ', first_cell
+      print *, '# ........Last cell:         ', last_cell
 
-  ! count cells in sect_id
-  if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) n_hexa = n_hexa + i
-  if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) n_pyra = n_pyra + i
-  if ( ElementTypeName(cell_type) .eq. 'PENTA_6') n_pris = n_pris + i
-  if ( ElementTypeName(cell_type) .eq. 'TETRA_4') n_tetr = n_tetr + i
-  if ( ElementTypeName(cell_type) .eq. 'QUAD_4' ) then
-    n_quad = n_quad + i
-    print *, "# This section was identified as b.c."
-    bc_id(sect_id) = 1
-  end if
-  if ( ElementTypeName(cell_type) .eq. 'TRI_3'  ) then
-    n_tria = n_tria + i
-    print *, "# This section was identified as b.c."
-    bc_id(sect_id) = 1
+      ! Count boundary cells
+      if ( ElementTypeName(cell_type) .eq. 'QUAD_4') n_qua = n_qua + cnt
+      if ( ElementTypeName(cell_type) .eq. 'TRI_3' ) n_tri = n_tri + cnt
+    end if
+  end do
+
+  ! Consider only three-dimensional cells / sections
+  if ( ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) .or.  &
+       ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) .or.  &
+       ( ElementTypeName(cell_type) .eq. 'PENTA_6') .or.  &
+       ( ElementTypeName(cell_type) .eq. 'TETRA_4') ) then
+
+    print *, '# ........---------------------------------'
+    print *, '# ........Cell section name: ', sect_name
+    print *, '# ........---------------------------------'
+    print *, '# ........Cell section idx:  ', sect
+    print *, '# ........Cell section type: ', ElementTypeName(cell_type)
+    print *, '# ........First cell:        ', first_cell
+    print *, '# ........Last cell:         ', last_cell
+
+    ! Count cells in sect
+    if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) n_hex = n_hex + cnt
+    if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) n_pyr = n_pyr + cnt
+    if ( ElementTypeName(cell_type) .eq. 'PENTA_6') n_wed = n_wed + cnt
+    if ( ElementTypeName(cell_type) .eq. 'TETRA_4') n_tet = n_tet + cnt
   end if
 
   end subroutine

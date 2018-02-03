@@ -1,26 +1,42 @@
 !==============================================================================!
-  subroutine Cgns_Mod_Read_Coordinate_Array
+  subroutine Cgns_Mod_Read_Coordinate_Array(base, block)
 !------------------------------------------------------------------------------!
 !   Read grid coordinates (RealDouble)                                         !
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
+  integer*8 :: base, block
+!-----------------------------------[Locals]-----------------------------------!
+  integer*8 :: i, j, ier
 !==============================================================================!
+!   Description of arguments for the called CGNS function:
+!
+!   Cg_Coord_Read_F(file_id,        &  ! cgns file index number
+!                   base,           &  ! base index number
+!                   block,          &  ! block index number
+!                   coord_name,     &  ! name of the coordinate array
+!                   RealDouble,     &  ! realsingle or realdouble
+!                   i,              &  ! lower range index
+!                   j,              &  ! upper range index
+!                   buffer_double,  &  ! array of coordinate values
+!                   ier)               ! error status
+!------------------------------------------------------------------------------!
 
   i = 1
-  j = mesh_info(1)
+  j = cgns_block(block) % mesh_info(1)
 
   allocate(buffer_double(i:j))
 
   ! Read grid x coordinates
-  call Cg_Coord_Read_F(file_id,       & ! cgns file index number
-                       base_id,       & ! base index number
-                       zone_id,       & ! zone index number
-                       coord_name,    & ! name of the coordinate array
-                       RealDouble,    & ! realsingle or realdouble
-                       i,             & ! lower range index
-                       j,             & ! upper range index
-                       buffer_double, & ! array of coordinate values
-                       ier)           ! error status
+  call Cg_Coord_Read_F(file_id,        &
+                       base,           &
+                       block,          &
+                       coord_name,     &
+                       RealDouble,     &
+                       i,              &
+                       j,              &
+                       buffer_double,  &
+                       ier)
 
   if (ier.ne.0) then
     print *, "# Failed to read DoubleReal Coord", coord_name

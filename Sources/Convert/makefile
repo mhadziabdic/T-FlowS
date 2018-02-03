@@ -192,6 +192,7 @@ $(PROGRAM_FILE): $(OBJ)
 $(DIR_OBJECT)/all_mod.o:	$(DIR_OBJECT)/allp_mod.o
 $(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Bnd_Cond_Mod.o	\
 				$(DIR_OBJECT)/Material_Mod.o
+$(DIR_OBJECT)/Cgns_Mod.o:	$(DIR_OBJECT)/Grid_Mod.o
 
 #---------------------
 #   Explicit target.

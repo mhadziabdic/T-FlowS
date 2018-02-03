@@ -7,13 +7,15 @@
 !---------------------------------[Arguments]----------------------------------!
   integer*8 :: base, block, sect
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8         :: base_id     ! base index number
-  integer*8         :: block_id    ! block index number
-  integer*8         :: sect_id     ! element section index
-  character(len=80) :: sect_name   ! name of the Elements_t node
-  integer*8         :: first_cell  ! index of first element
-  integer*8         :: last_cell   ! index of last element
-  integer*8         :: n_bnd       ! index of last boundary element
+  integer*8         :: base_id       ! base index number
+  integer*8         :: block_id      ! block index number
+  integer*8         :: sect_id       ! element section index
+  character(len=80) :: sect_name     ! name of the Elements_t node
+  integer*8         :: cell_type
+  integer*8         :: first_cell    ! index of first element
+  integer*8         :: last_cell     ! index of last element
+  integer*8         :: n_bnd         ! index of last boundary element
+  integer*8         :: iparent_flag
   integer*8         :: error
   integer*8         :: cnt, bc
 !==============================================================================!
@@ -47,17 +49,17 @@
   ! Consider boundary conditions defined in this block
   do bc = 1, cgns_base(base) % block(block) % n_bnd_conds
     if(sect_name .eq. cgns_base(base) % block(block) % bnd_cond(bc) % name) then
-      print *, '# ........---------------------------------'
-      print *, '# ........Bnd section name:  ', sect_name
-      print *, '# ........---------------------------------'
-      print *, '# ........Bnd section index: ', sect
-      print *, '# ........Bnd section type:  ', ElementTypeName(cell_type)
-      print *, '# ........First cell:        ', first_cell
-      print *, '# ........Last cell:         ', last_cell
+      print *, '#         ---------------------------------'
+      print *, '#         Bnd section name:  ', sect_name
+      print *, '#         ---------------------------------'
+      print *, '#         Bnd section index: ', sect
+      print *, '#         Bnd section type:  ', ElementTypeName(cell_type)
+      print *, '#         First cell:        ', first_cell
+      print *, '#         Last cell:         ', last_cell
 
       ! Count boundary cells
-      if ( ElementTypeName(cell_type) .eq. 'QUAD_4') n_qua = n_qua + cnt
-      if ( ElementTypeName(cell_type) .eq. 'TRI_3' ) n_tri = n_tri + cnt
+      if ( ElementTypeName(cell_type) .eq. 'QUAD_4') cnt_qua = cnt_qua + cnt
+      if ( ElementTypeName(cell_type) .eq. 'TRI_3' ) cnt_tri = cnt_tri + cnt
     end if
   end do
 
@@ -67,19 +69,19 @@
        ( ElementTypeName(cell_type) .eq. 'PENTA_6') .or.  &
        ( ElementTypeName(cell_type) .eq. 'TETRA_4') ) then
 
-    print *, '# ........---------------------------------'
-    print *, '# ........Cell section name: ', sect_name
-    print *, '# ........---------------------------------'
-    print *, '# ........Cell section idx:  ', sect
-    print *, '# ........Cell section type: ', ElementTypeName(cell_type)
-    print *, '# ........First cell:        ', first_cell
-    print *, '# ........Last cell:         ', last_cell
+    print *, '#         ---------------------------------'
+    print *, '#         Cell section name: ', sect_name
+    print *, '#         ---------------------------------'
+    print *, '#         Cell section idx:  ', sect
+    print *, '#         Cell section type: ', ElementTypeName(cell_type)
+    print *, '#         First cell:        ', first_cell
+    print *, '#         Last cell:         ', last_cell
 
     ! Count cells in sect
-    if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) n_hex = n_hex + cnt
-    if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) n_pyr = n_pyr + cnt
-    if ( ElementTypeName(cell_type) .eq. 'PENTA_6') n_wed = n_wed + cnt
-    if ( ElementTypeName(cell_type) .eq. 'TETRA_4') n_tet = n_tet + cnt
+    if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) cnt_hex = cnt_hex + cnt
+    if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) cnt_pyr = cnt_pyr + cnt
+    if ( ElementTypeName(cell_type) .eq. 'PENTA_6') cnt_wed = cnt_wed + cnt
+    if ( ElementTypeName(cell_type) .eq. 'TETRA_4') cnt_tet = cnt_tet + cnt
   end if
 
   end subroutine

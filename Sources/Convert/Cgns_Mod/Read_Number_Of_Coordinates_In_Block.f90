@@ -4,23 +4,36 @@
 !   Reads number of coordinates arrays from block_id
 !------------------------------------------------------------------------------!
   implicit none
+!---------------------------------[Arguments]----------------------------------!
   integer*8 :: base, block
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8 :: ier
+  integer*8 :: base_id         ! base index number
+  integer*8 :: block_id        ! block index number
+  integer*8 :: block_n_coords  ! number of coordinates in the block
+  integer*8 :: error           ! error status
 !==============================================================================!
 
-  ! Get number of coordinate arrays (1 for unstructure, 3 for structured)
-  call Cg_Ncoords_F(file_id,   &  !  cgns file index number
-                    base,      &  !  base index number
-                    block,     &  !  block index number
-                    n_coords,  &  !  number of coordinate arrays for block
-                    ier)          !  error status
+  ! Set input parameters
+  base_id  = base
+  block_id = block
 
-  if (ier .ne. 0) then
+  ! Get number of coordinate arrays (1 for unstructure, 3 for structured)
+  call Cg_Ncoords_F(file_id,         & 
+                    base_id,         & 
+                    block_id,        &
+                    block_n_coords,  &
+                    error)
+
+  if (error .ne. 0) then
     print *, "# Failed to get number of coordinate arrays"
     call Cg_Error_Exit_F()
   endif
 
-  print *, "# Number of coordinate arrays for block:", n_coords
+  ! Fetch received parameters
+  cgns_base(base) % block(block) % n_coords = block_n_coords
+
+  print *, "# Number of coordinate arrays for block:",  &
+           cgns_base(base) % block(block) % n_coords
+
 
   end subroutine

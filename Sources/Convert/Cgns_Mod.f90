@@ -11,87 +11,95 @@
   integer*8         :: file_id
   character(len=80) :: file_name
 
-  ! base
-  integer*8         :: base_id
-  integer*8         :: n_bases
-  character(len=80) :: base_name
+  !-------------------------!
+  !   Boundary conditions   ! -> it is similar to Bnd_Cond in ../Share :-(
+  !-------------------------!
+  type Cgns_Bnd_Cond_Type
+    character(len=80)      :: name
+    integer*8, allocatable :: mark
+    integer*8, allocatable :: type
+    integer*8, allocatable :: n_nodes
+  end type
 
-  ! zone
-  integer*8         :: zone_id
-  integer*8         :: n_zones
-  character(len=80) :: zone_name
-  integer*8         :: zone_type
-  integer*8         :: mesh_info(3)
+  !------------!
+  !   Blocks   ! -> contains sections and bnd_conds
+  !------------!
+  type Cgns_Block_Type
+    character(len=80)                     :: name
+    integer*8                             :: type
+    integer*8                             :: mesh_info(3)
+    integer*8                             :: n_sects      
+    integer*8                             :: n_bnd_conds
+    type(Cgns_Bnd_Cond_Type), allocatable :: bnd_cond(:)
+    integer*8                             :: n_coords
+  end type
 
-  ! coordinates
-  integer*8         :: n_coords
-  integer*8         :: n_nodes
-  integer*8         :: coord_id
-  integer*8         :: coord_data_type
-  character(len=80) :: coord_name
-  real, allocatable :: x_coord(:)
-  integer*8         :: last_x
-  real, allocatable :: y_coord(:)
-  integer*8         :: last_y
-  real, allocatable :: z_coord(:)
-  integer*8         :: last_z
+  !----------!
+  !   Base   ! -> contains blocks
+  !----------!
+  integer*8 :: n_bases
+  type Cgns_Base_Type
+    character(len=80)                  :: name
+    integer*8                          :: cell_dim
+    integer*8                          :: phys_dim
+    integer*8                          :: n_blocks
+    type(Cgns_Block_Type), allocatable :: block(:)
+  end type
+  type(Cgns_Base_Type), allocatable :: cgns_base(:)
+
+  ! Some global counters
+  integer*8 :: cnt_nodes
+  integer*8 :: cnt_cells
+  integer*8 :: cnt_bnd_conds
+  integer*8 :: cnt_hex
+  integer*8 :: cnt_pyr
+  integer*8 :: cnt_wed
+  integer*8 :: cnt_tet
+  integer*8 :: cnt_qua
+  integer*8 :: cnt_tri
+  integer*8 :: cnt_x
+  integer*8 :: cnt_y
+  integer*8 :: cnt_z
 
   ! elements
-  integer*8              :: sect_id
-  integer*8              :: n_sects
-  integer*8              :: n_cells
-  integer*8              :: first_cell
-  integer*8              :: last_cell
-  integer*8              :: cell_type
-  integer*8              :: n_bnd
-  character(len=80)      :: sect_name
-  integer*8              :: iparent_flag
-  integer*8              :: iparent_data
-  integer*8              :: n_hexa
-  integer*8              :: last_hexa
-  integer*8, allocatable :: hexa_connections(:, :)
-  integer*8              :: n_pyra
-  integer*8              :: last_pyra
-  integer*8, allocatable :: pyra_connections(:, :)
-  integer*8              :: n_pris
-  integer*8              :: last_pris
-  integer*8, allocatable :: pris_connections(:, :)
-  integer*8              :: n_tetr
-  integer*8              :: last_tetr
-  integer*8, allocatable :: tetr_connections(:, :)
-  integer*8              :: n_tria
-  integer*8              :: last_tria
-  integer*8, allocatable :: tria_connections(:, :)
-  integer*8              :: n_quad
-  integer*8              :: last_quad
-  integer*8, allocatable :: quad_connections(:, :)
-
-  ! bc
-  integer*8              :: bc_id(50)
-  integer*8, allocatable :: bc_mark(:)
-  character(len=80)      :: bc_name
+  integer*8              :: last_hex
+  integer*8, allocatable :: cgns_hex_cell_n(:, :)
+  integer*8              :: last_pyr
+  integer*8, allocatable :: cgns_pyr_cell_n(:, :)
+  integer*8              :: last_wed
+  integer*8, allocatable :: cgns_wed_cell_n(:, :)
+  integer*8              :: last_tet
+  integer*8, allocatable :: cgns_tet_cell_n(:, :)
+  integer*8              :: last_tri
+  integer*8, allocatable :: cgns_tri_cell_n(:, :)
+  integer*8              :: last_qua
+  integer*8, allocatable :: cgns_qua_cell_n(:, :)
 
   ! buffers
-  real             , allocatable :: buffer_double(:)
-  integer*8        , allocatable :: buffer_r2(:,:)
-
-  integer*8            :: ier, c, k
-  integer*8            :: i, j
+  real,      allocatable :: buffer_double(:)
+  integer*8, allocatable :: buffer_r1(:,:)
+  integer*8, allocatable :: buffer_r2(:,:)
 
   contains
 
-  include 'Cgns_Mod/Mark_Bound_Cond.f90'
   include 'Cgns_Mod/Open_File.f90'
-  include 'Cgns_Mod/Print_Base_Info.f90'
-  include 'Cgns_Mod/Print_Coordinate_Info.f90'
-  include 'Cgns_Mod/Read_Coordinate_Array.f90'
+  include 'Cgns_Mod/Initialize_Counters.f90'
+  include 'Cgns_Mod/Read_Base_Info.f90'
   include 'Cgns_Mod/Read_Number_Of_Bases_In_File.f90'
-  include 'Cgns_Mod/Read_Number_Of_Coordinates.f90'
+  include 'Cgns_Mod/Read_Number_Of_Blocks_In_Base.f90'
+  include 'Cgns_Mod/Read_Block_Info.f90'
+  include 'Cgns_Mod/Read_Block_Type.f90'
   include 'Cgns_Mod/Read_Number_Of_Element_Sections.f90'
-  include 'Cgns_Mod/Read_Number_Of_Zones_In_Base.f90'
-  include 'Cgns_Mod/Read_Section_Connections.f90'
   include 'Cgns_Mod/Read_Section_Info.f90'
-  include 'Cgns_Mod/Read_Zone_Info.f90'
-  include 'Cgns_Mod/Read_Zone_Type.f90'
+  include 'Cgns_Mod/Read_Number_Of_Bnd_Conds_In_Block.f90'
+  include 'Cgns_Mod/Read_Bnd_Conds_Info.f90'
+  include 'Cgns_Mod/Read_Number_Of_Coordinates_In_Block.f90'
+  include 'Cgns_Mod/Read_Coordinate_Info.f90'
+  include 'Cgns_Mod/Read_Coordinate_Array.f90'
+! include 'Cgns_Mod/Read_Bnd_Conds_Data.f90'
+! include 'Cgns_Mod/Read_Number_Of_Coordinates_In_Block.f90'
+! include 'Cgns_Mod/Read_Section_Connections.f90'
+! include 'Cgns_Mod/Read_Block_Type.f90'
+! include 'Cgns_Mod/Mark_Bound_Cond.f90'
 
   end module

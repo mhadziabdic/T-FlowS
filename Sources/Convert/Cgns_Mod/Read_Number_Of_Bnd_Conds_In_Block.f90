@@ -31,7 +31,7 @@
   ! Fetch received parameters
   cgns_base(base) % block(block) % n_bnd_conds = n_bnd_conds
 
-  print *, "# ....Number of boundary conditions in the block:  ",  &
+  print *, "#     Number of boundary conditions in the block:  ",  &
            cgns_base(base) % block(block) % n_bnd_conds
  
   allocate( cgns_base(base) % block(block) % bnd_cond(n_bnd_conds) )

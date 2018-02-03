@@ -32,7 +32,7 @@
   ! Fetch received parameters
   cgns_base(base) % block(block) % n_sects = n_sects
 
-  print *, "# ......Number of sections: ",  &
+  print *, "#       Number of sections: ",  &
            cgns_base(base) % block(block) % n_sects
 
   end subroutine

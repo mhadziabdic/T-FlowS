@@ -66,20 +66,20 @@
   cgns_base(base) % block(block) % bnd_cond(bc) % n_nodes = bc_n_nodes
 
   ! Count total number of boundary conditions
-  if(bc > n_bnd_conds) then
-    n_bnd_conds = bc
+  if(bc > cnt_bnd_conds) then
+    cnt_bnd_conds = bc
   end if 
 
 ! n_b_cells_meth_2 = n_b_cells_meth_2 + cgns_base(base) % block(block) % bnd_cond(bc)(bc) % n_nodes
 
-  print *, '# ......----------------------------------------'
-  print *, "# ......Boundary condition name:   ",   &
+  print *, '#       ----------------------------------------'
+  print *, "#       Boundary condition name:   ",   &
            cgns_base(base) % block(block) % bnd_cond(bc) % name
-  print *, '# ......----------------------------------------'
-  print *, "# ......Boundary condition index:  ", bc
-  print *, "# ......Boundary condition nodes:  ",   &
+  print *, '#       ----------------------------------------'
+  print *, "#       Boundary condition index:  ", bc
+  print *, "#       Boundary condition nodes:  ",   &
            cgns_base(base) % block(block) % bnd_cond(bc) % n_nodes
-  print *, "# ......Boundary condition Extent: ",   &
+  print *, "#       Boundary condition Extent: ",   &
            PointSetTypeName(bc_ptset_type)
 
   end subroutine

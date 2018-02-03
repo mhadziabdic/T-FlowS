@@ -21,25 +21,4 @@
     call Cg_Error_Exit_F()
   endif
 
-  !  set initial values
-  n_nodes = 0
-  n_cells = 0
-  n_hex   = 0
-  n_pyr   = 0
-  n_wed   = 0
-  n_tet   = 0
-  n_tri   = 0
-  n_qua   = 0
-
-  last_x = 0
-  last_y = 0
-  last_z = 0
-
-  last_hex = 0
-  last_pyr = 0
-  last_wed = 0
-  last_tet = 0
-  last_tri  = 0
-  last_qua = 0
-
   end subroutine

@@ -37,19 +37,19 @@
   cgns_base(base) % block(block) % mesh_info = block_mesh_info
 
   ! Total nodes and cells
-  n_nodes = n_nodes + cgns_base(base) % block(block) % mesh_info(1)
-  n_cells = n_cells + cgns_base(base) % block(block) % mesh_info(2)
+  cnt_nodes = cnt_nodes + cgns_base(base) % block(block) % mesh_info(1)
+  cnt_cells = cnt_cells + cgns_base(base) % block(block) % mesh_info(2)
 
-  print *, '# ....=========================================='
-  print *, "# ....Block name:                ",  &
+  print *, '#     =========================================='
+  print *, "#     Block name:                ",  &
            cgns_base(base) % block(block) % name
-  print *, '# ....=========================================='
-  print *, "# ....Block index:               ", block    
-  print *, "# ....Nodes:                     ",  &
+  print *, '#     =========================================='
+  print *, "#     Block index:               ", block    
+  print *, "#     Nodes:                     ",  &
            cgns_base(base) % block(block) % mesh_info(1)
-  print *, "# ....Cells:                     ",  &
+  print *, "#     Cells:                     ",  &
            cgns_base(base) % block(block) % mesh_info(2)
-  print *, "# ....Boundary nodes(if sorted): ",  &
+  print *, "#     Boundary nodes(if sorted): ",  &
            cgns_base(base) % block(block) % mesh_info(3)
 
   if (cgns_base(base) % block(block) % mesh_info(3) .ne. 0) then

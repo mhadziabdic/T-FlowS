@@ -1,13 +1,21 @@
 !==============================================================================!
-  subroutine Cgns_Mod_Read_Coordinate_Array(base, block)
+  subroutine Cgns_Mod_Read_Coordinate_Array(base, block, coord, grid)
 !------------------------------------------------------------------------------!
 !   Read grid coordinates (RealDouble)                                         !
 !------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8 :: base, block
+  integer*8       :: base, block, coord
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8 :: i, j, ier
+  integer*8         :: base_id
+  integer*8         :: block_id
+  character(len=80) :: coord_name
+  integer*8         :: error
+  integer*8         :: i, j
 !==============================================================================!
 !   Description of arguments for the called CGNS function:
 !
@@ -19,11 +27,15 @@
 !                   i,              &  ! lower range index
 !                   j,              &  ! upper range index
 !                   buffer_double,  &  ! array of coordinate values
-!                   ier)               ! error status
+!                   error)               ! error status
 !------------------------------------------------------------------------------!
 
+  ! Set input parameters
+  base_id  = base
+  block_id = block
+
   i = 1
-  j = cgns_block(block) % mesh_info(1)
+  j = cgns_base(base) % block(block) % mesh_info(1)
 
   allocate(buffer_double(i:j))
 
@@ -36,29 +48,29 @@
                        i,              &
                        j,              &
                        buffer_double,  &
-                       ier)
+                       error)
 
-  if (ier.ne.0) then
+  if (error.ne.0) then
     print *, "# Failed to read DoubleReal Coord", coord_name
     call Cg_Error_Exit_F()
   endif
 
-  select case (coord_id)
+  select case (coord)
     case (1)
-      i = last_x + 1
-      j = last_x + j
-      x_coord(i:j) = buffer_double(:)
-      last_x = j
+      i = cnt_x + 1
+      j = cnt_x + j
+      grid % xn(i:j) = buffer_double(:)
+      cnt_x = j
     case (2)
-      i = last_y + 1
-      j = last_y + j
-      y_coord(i:j) = buffer_double(:)
-      last_y = j
+      i = cnt_y + 1
+      j = cnt_y + j
+      grid % yn(i:j) = buffer_double(:)
+      cnt_y = j
     case (3)
-      i = last_z + 1
-      j = last_z + j
-      z_coord(i:j) = buffer_double(:)
-      last_z = j
+      i = cnt_z + 1
+      j = cnt_z + j
+      grid % zn(i:j) = buffer_double(:)
+      cnt_z = j
   end select
 
   deallocate(buffer_double)

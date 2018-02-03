@@ -31,7 +31,7 @@
   ! Fetch received parameters
   cgns_base(base) % block(block) % type = block_type
 
-  print *, "# ....Block type is ",  &
+  print *, "#     Block type is ",  &
            ZoneTypeName(cgns_base(base) % block(block) % type)
 
   if (cgns_base(base) % block(block) % type .eq. STRUCTURED) then

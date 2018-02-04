@@ -56,6 +56,7 @@
   ! Consider boundary conditions defined in this block
   do bc = 1, cgns_base(base) % block(block) % n_bnd_conds
     if(sect_name .eq. cgns_base(base) % block(block) % bnd_cond(bc) % name) then
+
       print *, '#         ---------------------------------'
       print *, '#         Bnd section name:  ', trim(sect_name)
       print *, '#         ---------------------------------'
@@ -69,9 +70,6 @@
       ! Count boundary cells
       if ( ElementTypeName(cell_type) .eq. 'QUAD_4') cnt_qua = cnt_qua + cnt
       if ( ElementTypeName(cell_type) .eq. 'TRI_3' ) cnt_tri = cnt_tri + cnt
-
-      print *, 'parent_flag:', parent_flag
-      stop
 
     end if
   end do
@@ -97,6 +95,7 @@
     if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) cnt_pyr = cnt_pyr + cnt
     if ( ElementTypeName(cell_type) .eq. 'PENTA_6') cnt_wed = cnt_wed + cnt
     if ( ElementTypeName(cell_type) .eq. 'TETRA_4') cnt_tet = cnt_tet + cnt
+
   end if
 
   end subroutine

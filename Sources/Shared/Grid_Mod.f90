@@ -48,6 +48,9 @@
     ! Number of nodes at each cell (determines cell's shape really)
     integer, allocatable :: cells_n_nodes(:)
 
+    ! For each cell; type of the boundary condition in a given direction
+    integer, allocatable :: cells_bnd_type(:,:)
+
     !-------------------------!
     !  Face-based variables   !
     !-------------------------!

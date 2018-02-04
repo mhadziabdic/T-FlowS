@@ -18,10 +18,10 @@
   integer*8         :: parent_flag
   integer*8         :: error
   integer*8         :: cnt, bc
-  integer*8         :: parent_data = 0
   integer*8              :: n_nodes, c, n
   integer*8, allocatable :: cell_n(:,:)
   integer*8, allocatable :: face_n(:,:)
+  integer*8, allocatable :: parent_data(:,:)
 !==============================================================================!
 
   ! Set input parameters
@@ -30,13 +30,18 @@
   sect_id  = sect
 
   ! Introduce some abbraviations 
-  sect_name  = cgns_base(base) % block(block) % section(sect) % name
-  cell_type  = cgns_base(base) % block(block) % section(sect) % cell_type
-  first_cell = cgns_base(base) % block(block) % section(sect) % first_cell
-  last_cell  = cgns_base(base) % block(block) % section(sect) % last_cell
+  sect_name   = cgns_base(base) % block(block) % section(sect) % name
+  cell_type   = cgns_base(base) % block(block) % section(sect) % cell_type
+  first_cell  = cgns_base(base) % block(block) % section(sect) % first_cell
+  last_cell   = cgns_base(base) % block(block) % section(sect) % last_cell
+  parent_flag = cgns_base(base) % block(block) % section(sect) % parent_flag
 
   ! Number of cells in this section
   cnt = last_cell - first_cell + 1 ! cells in this sections
+
+  if(parent_flag .eq. 1) then
+    allocate(parent_data(2*cnt,2))
+  end if
 
   ! Consider boundary conditions defined in this block
   do bc = 1, cgns_base(base) % block(block) % n_bnd_conds
@@ -67,6 +72,9 @@
                               error)          
       do c=1,10
         print '(4i7)', (face_n(n,c), n = 1, n_nodes)
+      end do
+      do c=1,cnt*2
+        print '(a2,3i7)', 'c=', c, parent_data(c,1), parent_data(c,2)
       end do
       deallocate(face_n)
 

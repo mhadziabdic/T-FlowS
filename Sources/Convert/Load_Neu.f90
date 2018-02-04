@@ -6,7 +6,6 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod 
   use gen_mod 
-  use neu_mod 
   use Grid_Mod
   use Tokenizer_Mod
 !------------------------------------------------------------------------------!
@@ -77,7 +76,6 @@
   call Grid_Mod_Allocate_Faces(grid, grid % n_cells*5, 0) 
 
   allocate(material(-grid % n_bnd_cells:grid % n_cells));  material=0 
-  allocate(BCtype( grid % n_cells,6));                     BCtype=0
   allocate(grid % bnd_cond % mark(-grid % n_bnd_cells-1:-1))
   grid % bnd_cond % mark=0
 
@@ -158,7 +156,7 @@
     read(line % tokens(3),'(I8)') dum1  
     do i = 1, dum1
       read(9,*) c, dum2, dir
-      BCtype(c,dir) = j 
+      grid % cells_bnd_type(dir,c) = j
     end do
     call Tokenizer_Mod_Read_Line(9)        ! ENDOFSECTION
   end do

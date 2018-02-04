@@ -19,6 +19,7 @@
     integer*8, allocatable :: cell_type
     integer*8              :: first_cell
     integer*8              :: last_cell
+    integer*8              :: parent_flag
   end type
 
   !-------------------------!

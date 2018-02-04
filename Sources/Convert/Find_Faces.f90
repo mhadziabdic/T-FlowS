@@ -4,7 +4,6 @@
 !  Creates the "SideC structure"                                               !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod 
-  use neu_mod 
   use gen_mod 
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -13,6 +12,7 @@
   type(Grid_Type) :: grid
 !------------------------------------------------------------------------------!
   include "../Shared/Approx.int"
+  include "Cell_Numbering_Neu.f90"
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: c, c1, c2, n1, n2, n3, f_nod(4), n_f_nod
   integer             :: Nmatch, j, MatchNodes(-1:8) 
@@ -35,12 +35,12 @@
   !   Fill the generic coordinates with some values   !
   !---------------------------------------------------!
   do c = 1, grid % n_cells
-    if(grid % cells_n_nodes(c) == 4) fn = f4n
-    if(grid % cells_n_nodes(c) == 5) fn = f5n
-    if(grid % cells_n_nodes(c) == 6) fn = f6n
-    if(grid % cells_n_nodes(c) == 8) fn = f8n 
+    if(grid % cells_n_nodes(c) == 4) fn = neu_tet
+    if(grid % cells_n_nodes(c) == 5) fn = neu_pyr
+    if(grid % cells_n_nodes(c) == 6) fn = neu_wed
+    if(grid % cells_n_nodes(c) == 8) fn = neu_hex 
     do j = 1, 6
-      if(BCtype(c,j) == 0) then 
+      if(grid % cells_bnd_type(j,c) == 0) then
 
         n_f_nod = 0
         f_nod = -1
@@ -119,10 +119,10 @@
             !     c1        c2      !
             !-----------------------!
             if(Nmatch > 2) then 
-              if(grid % cells_n_nodes(c1) == 4) fn = f4n
-              if(grid % cells_n_nodes(c1) == 5) fn = f5n
-              if(grid % cells_n_nodes(c1) == 6) fn = f6n
-              if(grid % cells_n_nodes(c1) == 8) fn = f8n
+              if(grid % cells_n_nodes(c1) == 4) fn = neu_tet
+              if(grid % cells_n_nodes(c1) == 5) fn = neu_pyr
+              if(grid % cells_n_nodes(c1) == 6) fn = neu_wed
+              if(grid % cells_n_nodes(c1) == 8) fn = neu_hex
               do j = 1, 6
                 if(grid % cells_c(j, c1) == 0  .and.   & ! not set yet
                     ( max( MatchNodes(fn(j,1)),0 ) + &

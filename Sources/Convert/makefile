@@ -104,13 +104,11 @@ $(info #----------------------------------------------------)
 #------------------------------------------------------
 
 # Sources for modules in the local directory
-SRC_MOD =  neu_mod.f90
+SRC_MOD = Cgns_Mod.f90
 
 # If CGNS is supported, add the right module
-ifeq ($(CGNS_ADF5), $(CGNS_HDF5))
-  SRC_MOD += Cgns_Mod_Void.f90
-else
-  SRC_MOD += Cgns_Mod.f90
+ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
+  SRC_MOD = Cgns_Mod_Void.f90
 endif
 
 # Sources for modules in other directories
@@ -139,9 +137,9 @@ SRC_FUN += Compute_Geometry.f90  \
 
 # ... to allow conditional inclusion of CGNS support
 ifeq ($(CGNS_ADF5), $(CGNS_HDF5))
-  SRC_MOD += Load_Cgns_Void.f90
+  SRC_FUN += Load_Cgns_Void.f90
 else
-  SRC_MOD += Load_Cgns.f90
+  SRC_FUN += Load_Cgns.f90
 endif
 
 #----------------------------------------------------------------------

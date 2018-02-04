@@ -15,7 +15,7 @@
   integer*8         :: first_cell    ! index of first element
   integer*8         :: last_cell     ! index of last element
   integer*8         :: n_bnd         ! index of last boundary element
-  integer*8         :: iparent_flag = 0
+  integer*8         :: parent_flag   ! are the parent cells stored (I guess)
   integer*8         :: error
   integer*8         :: cnt, bc
 !==============================================================================!
@@ -36,7 +36,7 @@
                          first_cell,    &
                          last_cell,     &
                          n_bnd,         &
-                         iparent_flag,  &
+                         parent_flag,   &
                          error)
   if (error.ne.0) then
     print *, '# Failed to read section ', sect, ' info'
@@ -44,10 +44,11 @@
   endif
 
   ! Fetch received parameters
-  cgns_base(base) % block(block) % section(sect) % name       = trim(sect_name)
-  cgns_base(base) % block(block) % section(sect) % cell_type  = cell_type
-  cgns_base(base) % block(block) % section(sect) % first_cell = first_cell
-  cgns_base(base) % block(block) % section(sect) % last_cell  = last_cell
+  cgns_base(base) % block(block) % section(sect) % name        = trim(sect_name)
+  cgns_base(base) % block(block) % section(sect) % cell_type   = cell_type
+  cgns_base(base) % block(block) % section(sect) % first_cell  = first_cell
+  cgns_base(base) % block(block) % section(sect) % last_cell   = last_cell
+  cgns_base(base) % block(block) % section(sect) % parent_flag = parent_flag
 
   ! Number of cells in this section
   cnt = last_cell - first_cell + 1 ! cells in this sections
@@ -68,6 +69,10 @@
       ! Count boundary cells
       if ( ElementTypeName(cell_type) .eq. 'QUAD_4') cnt_qua = cnt_qua + cnt
       if ( ElementTypeName(cell_type) .eq. 'TRI_3' ) cnt_tri = cnt_tri + cnt
+
+      print *, 'parent_flag:', parent_flag
+      stop
+
     end if
   end do
 

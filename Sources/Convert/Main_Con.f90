@@ -18,7 +18,8 @@
   print *, '#------------------------------------------------------'
   read(*,*) problem_name
 
-  call Load_Cgns       (grid)
+! call Load_Cgns       (grid)
+  call Load_Neu        (grid)
   call Grid_Topology   (grid)
   call Find_Faces      (grid)
   call Compute_Geometry(grid)

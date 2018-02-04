@@ -13,17 +13,17 @@
   integer             :: c1, c2, n, s, offset
   character(len=80)  :: name_out
 !------------------------------[Local parameters]------------------------------!
-  integer, parameter :: VTK_TRIANGLE = 5     ! cell shapes in VTK format
-  integer, parameter :: VTK_QUAD     = 9
-  character(len= 0)  :: IN_0 = ''           ! indentation levels 
-  character(len= 2)  :: IN_1 = '  '
-  character(len= 4)  :: IN_2 = '    '
-  character(len= 6)  :: IN_3 = '      '
-  character(len= 8)  :: IN_4 = '        '
-  character(len=10)  :: IN_5 = '          '
-  character(len=12)  :: IN_6 = '            '
-  character(len=14)  :: IN_7 = '              '
-  character(len=16)  :: IN_8 = '                '
+  integer,           parameter :: VTK_TRIANGLE = 5  ! cell shapes in VTK format
+  integer,           parameter :: VTK_QUAD     = 9
+  character(len= 0), parameter :: IN_0 = ''         ! indentation levels 
+  character(len= 2), parameter :: IN_1 = '  '
+  character(len= 4), parameter :: IN_2 = '    '
+  character(len= 6), parameter :: IN_3 = '      '
+  character(len= 8), parameter :: IN_4 = '        '
+  character(len=10), parameter :: IN_5 = '          '
+  character(len=12), parameter :: IN_6 = '            '
+  character(len=14), parameter :: IN_7 = '              '
+  character(len=16), parameter :: IN_8 = '                '
 !==============================================================================!
 
   !-----------------------------------------!

@@ -33,4 +33,4 @@
   ix1 = (ix1-ix0)/2048
   go to 1
 
-  end function Rnd
+  end function

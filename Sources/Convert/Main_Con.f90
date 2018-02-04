@@ -18,13 +18,14 @@
   print *, '#------------------------------------------------------'
   read(*,*) problem_name
 
-  call Load_Cgns       (grid)
-! call Load_Neu        (grid)
+  ! Still a beta feature: call Load_Cgns       (grid)
+  call Load_Neu        (grid)
   call Grid_Topology   (grid)
   call Find_Faces      (grid)
   call Compute_Geometry(grid)
   call Connect_Domains (grid)
 
+  ! Prepare for saving
   do n=1,grid % n_nodes
     NewN(n) = n 
   end do  

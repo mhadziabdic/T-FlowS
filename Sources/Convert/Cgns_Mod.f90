@@ -10,7 +10,7 @@
   ! file
   integer*8         :: file_id
   character(len=80) :: file_name
-  logical           :: verbose = .true.
+  logical           :: verbose = .false.
 
   !---------------------!
   !   Element section   !
@@ -104,5 +104,6 @@
   include 'Cgns_Mod/Read_Coordinate_Info.f90'
   include 'Cgns_Mod/Read_Coordinate_Array.f90'
   include 'Cgns_Mod/Read_Section_Connections.f90'
+  include 'Cgns_Mod/Merge_Nodes.f90'
 
   end module

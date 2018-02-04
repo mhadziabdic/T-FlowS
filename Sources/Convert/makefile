@@ -39,9 +39,9 @@ PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
 ifeq ($(FORTRAN), gnu)
   FC = gfortran
   ifeq ($(DEBUG), yes)
-    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -O0 -g -Wall -fcheck=all
+    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g -Wall -fcheck=all
   else
-    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -O3
+    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O3
   endif 
   OPT_LINK = $(OPT_COMP)
 endif 

@@ -25,6 +25,7 @@
   integer*8, allocatable :: cell_n(:,:)
   integer*8, allocatable :: face_n(:,:)
   integer*8, allocatable :: parent_data(:,:)
+  integer*8              :: parent_datum = 0  ! for cells there are no parents
 !==============================================================================!
 
   ! Set input parameters
@@ -139,14 +140,31 @@
                             block_id,      &
                             sect_id,       &
                             cell_n(1,1),   &
-                            parent_data,   &
+                            parent_datum,  &
                             error)          
     
     ! Fetch received parameters
     do c = 1, cnt
+
+      ! Set the number of nodes for this cell
+      grid % cells_n_nodes(c + cnt_cells) = n_nodes
+
+      ! Copy individual nodes beloning to this cell
       do n = 1, n_nodes
         grid % cells_n(n, c + cnt_cells) = cell_n(n,c) + cnt_nodes
       end do
+
+      ! Convert from CGNS to Gambit's Neutral file format
+      if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) then
+        call Swap_Int(grid % cells_n(3, c+cnt_cells),  &
+                      grid % cells_n(4, c+cnt_cells))
+        call Swap_Int(grid % cells_n(7, c+cnt_cells),  &
+                      grid % cells_n(8, c+cnt_cells))
+      end if
+      if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) then
+        call Swap_Int(grid % cells_n(3, c+cnt_cells),  &
+                      grid % cells_n(4, c+cnt_cells))
+      end if
     end do
 
     if(verbose) then

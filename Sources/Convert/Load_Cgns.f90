@@ -186,41 +186,39 @@
   print *, '# - number of cells:         ', cnt_cells   
   print *, '# - number of boundary cells:', cnt_bnd_cells
 
-stop
+  call Merge_Nodes(grid)
 
-  !--------------------------------------!
-  !  Conversion to T-FlowS B.C. format   !
-  !--------------------------------------!
+! !--------------------------------------!
+! !  Conversion to T-FlowS B.C. format   !
+! !--------------------------------------!
+!
+! ! Reorder elements connectivity according to neu_mod
+!
+! ! HEXA_8 (-> f8n)
+! do c = lbound(cgns_hex_cell_n,dim=2), &
+!   ubound(cgns_hex_cell_n,dim=2) - lbound(cgns_hex_cell_n,dim=2) + 1
+!
+!   i = cgns_hex_cell_n(4, c)
+!   cgns_hex_cell_n(4, c) = cgns_hex_cell_n(3, c)
+!   cgns_hex_cell_n(3, c) = i
+!   i = cgns_hex_cell_n(8, c)
+!   cgns_hex_cell_n(8, c) = cgns_hex_cell_n(7, c)
+!   cgns_hex_cell_n(7, c) = i
+! end do
+!
+! ! PYRA_5 (-> f5n)
+! do c =  lbound(cgns_pyr_cell_n,dim=2), &
+!   ubound(cgns_pyr_cell_n,dim=2) - lbound(cgns_pyr_cell_n,dim=2) + 1
+!
+!   i = cgns_pyr_cell_n(4, c)
+!   cgns_pyr_cell_n(4, c) = cgns_pyr_cell_n(3, c)
+!   cgns_pyr_cell_n(3, c) = i
+! end do
+!
+! ! PENTA_6 (-> f6n)
+! ! no changes
+!
+! ! TETRA_4 (-> f4n)
+! ! no changes
 
-  ! Reorder elements connectivity according to neu_mod
-
-  ! HEXA_8 (-> f8n)
-  do c = lbound(cgns_hex_cell_n,dim=2), &
-    ubound(cgns_hex_cell_n,dim=2) - lbound(cgns_hex_cell_n,dim=2) + 1
-
-    i = cgns_hex_cell_n(4, c)
-    cgns_hex_cell_n(4, c) = cgns_hex_cell_n(3, c)
-    cgns_hex_cell_n(3, c) = i
-    i = cgns_hex_cell_n(8, c)
-    cgns_hex_cell_n(8, c) = cgns_hex_cell_n(7, c)
-    cgns_hex_cell_n(7, c) = i
-  end do
-
-  ! PYRA_5 (-> f5n)
-  do c =  lbound(cgns_pyr_cell_n,dim=2), &
-    ubound(cgns_pyr_cell_n,dim=2) - lbound(cgns_pyr_cell_n,dim=2) + 1
-
-    i = cgns_pyr_cell_n(4, c)
-    cgns_pyr_cell_n(4, c) = cgns_pyr_cell_n(3, c)
-    cgns_pyr_cell_n(3, c) = i
-  end do
-
-  ! PENTA_6 (-> f6n)
-  ! no changes
-
-  ! TETRA_4 (-> f4n)
-  ! no changes
-
-stop
-
-end subroutine
+  end subroutine

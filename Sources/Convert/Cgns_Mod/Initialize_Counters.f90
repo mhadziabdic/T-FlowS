@@ -6,14 +6,16 @@
   implicit none
 !==============================================================================!
 
-  cnt_nodes = 0
-  cnt_cells = 0
-  cnt_hex   = 0
-  cnt_pyr   = 0
-  cnt_wed   = 0
-  cnt_tet   = 0
-  cnt_tri   = 0
-  cnt_qua   = 0
+  cnt_nodes     = 0
+  cnt_cells     = 0
+  cnt_bnd_cells = 0
+
+  cnt_hex = 0
+  cnt_pyr = 0
+  cnt_wed = 0
+  cnt_tet = 0
+  cnt_tri = 0
+  cnt_qua = 0
 
   cnt_x = 0
   cnt_y = 0

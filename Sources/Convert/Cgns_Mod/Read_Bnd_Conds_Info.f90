@@ -62,22 +62,19 @@
  
   ! Fetch received parameters
   cgns_base(base) % block(block) % bnd_cond(bc) % name    = trim(bc_name)
-  cgns_base(base) % block(block) % bnd_cond(bc) % type    = bc_type
   cgns_base(base) % block(block) % bnd_cond(bc) % n_nodes = bc_n_nodes
+  cgns_base(base) % block(block) % bnd_cond(bc) % mark    = bc     
 
-  ! Count total number of boundary conditions
-  if(bc > cnt_bnd_conds) then
-    cnt_bnd_conds = bc
-  end if 
-
-  print *, '#       ----------------------------------------'
-  print *, "#       Boundary condition name:   ",   &
-           trim(cgns_base(base) % block(block) % bnd_cond(bc) % name)
-  print *, '#       ----------------------------------------'
-  print *, "#       Boundary condition index:  ", bc
-  print *, "#       Boundary condition nodes:  ",   &
-           cgns_base(base) % block(block) % bnd_cond(bc) % n_nodes
-  print *, "#       Boundary condition Extent: ",   &
-           PointSetTypeName(bc_ptset_type)
+  if(verbose) then
+    print *, '#       ----------------------------------------'
+    print *, "#       Boundary condition name:   ",   &
+             trim(cgns_base(base) % block(block) % bnd_cond(bc) % name)
+    print *, '#       ----------------------------------------'
+    print *, "#       Boundary condition index:  ", bc
+    print *, "#       Boundary condition nodes:  ",   &
+             cgns_base(base) % block(block) % bnd_cond(bc) % n_nodes
+    print *, "#       Boundary condition Extent: ",   &
+             PointSetTypeName(bc_ptset_type)
+  end if
 
   end subroutine

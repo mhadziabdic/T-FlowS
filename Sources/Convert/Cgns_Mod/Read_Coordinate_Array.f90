@@ -49,20 +49,17 @@
   ! Fetch received parameters
   select case (coord)
     case (1)
-      i = cnt_x + 1
-      j = cnt_x + j
+      i = cnt_nodes + 1
+      j = cnt_nodes + j
       grid % xn(i:j) = coordinates(:)
-      cnt_x = j
     case (2)
-      i = cnt_y + 1
-      j = cnt_y + j
+      i = cnt_nodes + 1
+      j = cnt_nodes + j
       grid % yn(i:j) = coordinates(:)
-      cnt_y = j
     case (3)
-      i = cnt_z + 1
-      j = cnt_z + j
+      i = cnt_nodes + 1
+      j = cnt_nodes + j
       grid % zn(i:j) = coordinates(:)
-      cnt_z = j
   end select
 
   deallocate(coordinates)

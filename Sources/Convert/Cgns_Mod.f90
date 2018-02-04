@@ -10,6 +10,7 @@
   ! file
   integer*8         :: file_id
   character(len=80) :: file_name
+  logical           :: verbose = .true.
 
   !---------------------!
   !   Element section   !
@@ -28,7 +29,6 @@
   type Cgns_Bnd_Cond_Type
     character(len=80)      :: name
     integer*8, allocatable :: mark
-    integer*8, allocatable :: type
     integer*8, allocatable :: n_nodes
   end type
 
@@ -60,21 +60,26 @@
   end type
   type(Cgns_Base_Type), allocatable :: cgns_base(:)
 
-  ! Some global counters
+  ! Some global counters (this is a bit ugly)
   integer*8 :: cnt_nodes
   integer*8 :: cnt_cells
-  integer*8 :: cnt_bnd_conds
+  integer*8 :: cnt_bnd_cells
+
   integer*8 :: cnt_hex
   integer*8 :: cnt_pyr
   integer*8 :: cnt_wed
   integer*8 :: cnt_tet
   integer*8 :: cnt_qua
   integer*8 :: cnt_tri
+
   integer*8 :: cnt_x
   integer*8 :: cnt_y
   integer*8 :: cnt_z
 
-  ! elements
+  ! Block-wise counter of boundary cells
+  integer*8 :: cnt_block_bnd_cells
+
+  ! Elements
   integer*8, allocatable :: cgns_hex_cell_n(:,:)
   integer*8, allocatable :: cgns_pyr_cell_n(:,:)
   integer*8, allocatable :: cgns_wed_cell_n(:,:)

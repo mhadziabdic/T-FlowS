@@ -31,8 +31,10 @@
   ! Fetch received parameters
   cgns_base(base) % block(block) % type = block_type
 
-  print *, "#     Block type is ",  &
-           ZoneTypeName(cgns_base(base) % block(block) % type)
+  if(verbose) then
+    print *, "#     Block type is ",  &
+             ZoneTypeName(cgns_base(base) % block(block) % type)
+  end if
 
   if (cgns_base(base) % block(block) % type .eq. STRUCTURED) then
     print *, "# Structured CGNS meshed are unsupported"

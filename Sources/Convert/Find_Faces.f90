@@ -40,7 +40,7 @@
     if(grid % cells_n_nodes(c) == 6) fn = neu_wed
     if(grid % cells_n_nodes(c) == 8) fn = neu_hex 
     do j = 1, 6
-      if(grid % cells_bnd_type(j,c) == 0) then
+      if(grid % cells_bnd_mark(j,c) == 0) then
 
         n_f_nod = 0
         f_nod = -1

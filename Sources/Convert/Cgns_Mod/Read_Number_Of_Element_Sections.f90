@@ -32,8 +32,10 @@
   ! Fetch received parameters
   cgns_base(base) % block(block) % n_sects = n_sects
 
-  print *, "#       Number of sections: ",  &
-           cgns_base(base) % block(block) % n_sects
+  if(verbose) then
+    print *, "#       Number of sections: ",  &
+             cgns_base(base) % block(block) % n_sects
+  end if
 
   allocate( cgns_base(base) % block(block) % section(n_sects) )
 

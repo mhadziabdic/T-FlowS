@@ -32,8 +32,4 @@
   ! Fetch received parameters
   cgns_base(base) % block(block) % n_coords = block_n_coords
 
-  print *, "# Number of coordinate arrays for block:",  &
-           cgns_base(base) % block(block) % n_coords
-
-
   end subroutine

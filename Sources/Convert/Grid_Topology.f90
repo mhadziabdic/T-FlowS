@@ -24,12 +24,12 @@
   grid % n_faces  = 0
   do i = 1, grid % n_cells
     do j = 1, 6
-      if(grid % cells_bnd_type(j,i) /= 0) then
+      if(grid % cells_bnd_mark(j,i) /= 0) then
 
         grid % n_bnd_cells = grid % n_bnd_cells + 1 
 
         ! grid % bnd_cond % mark
-        grid % bnd_cond % mark(-grid % n_bnd_cells) = grid % cells_bnd_type(j,i)
+        grid % bnd_cond % mark(-grid % n_bnd_cells) = grid % cells_bnd_mark(j,i)
 
         ! Material:
         material(-grid % n_bnd_cells) = material(i)

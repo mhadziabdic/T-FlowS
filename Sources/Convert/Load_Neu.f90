@@ -156,7 +156,7 @@
     read(line % tokens(3),'(I8)') dum1  
     do i = 1, dum1
       read(9,*) c, dum2, dir
-      grid % cells_bnd_type(dir,c) = j
+      grid % cells_bnd_mark(dir,c) = j
     end do
     call Tokenizer_Mod_Read_Line(9)        ! ENDOFSECTION
   end do

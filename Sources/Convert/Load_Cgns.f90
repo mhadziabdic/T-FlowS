@@ -22,7 +22,7 @@
 
   name_in = problem_name
 
-  name_in(len_trim(problem_name)+1:len_trim(problem_name)+5) = ".cgns"
+  name_in(len_trim(problem_name)+1:len_trim(problem_name)+5) = '.cgns'
 
   file_name = name_in
 
@@ -85,20 +85,20 @@
   !   First run: results   !
   !------------------------!
 
-  print *, "# First run finished!"
-  print *, "# Found nodes: ",           cnt_nodes
-  print *, "# Found cells: ",           cnt_cells
-  print *, "# Found hex cells: ",       cnt_hex
-  print *, "# Found pyramids cells: ",  cnt_pyr
-  print *, "# Found prism cells: ",     cnt_wed
-  print *, "# Found tetra cells: ",     cnt_tet
-  print *, "# Found triangles faces: ", cnt_tri 
-  print *, "# Found quads faces: ",     cnt_qua
+  print *, '# First run finished!'
+  print *, '# - number of nodes: ',           cnt_nodes
+  print *, '# - number of cells: ',           cnt_cells
+  print *, '# - number of hex cells: ',       cnt_hex
+  print *, '# - number of pyramids cells: ',  cnt_pyr
+  print *, '# - number of prism cells: ',     cnt_wed
+  print *, '# - number of tetra cells: ',     cnt_tet
+  print *, '# - number of triangles faces: ', cnt_tri 
+  print *, '# - number of quads faces: ',     cnt_qua
   if (cnt_qua + cnt_tri .eq. 0) then
-    print *, "# No boundary faces were found !"
+    print *, '# No boundary faces were found !'
     stop
   end if
-  print *, "# Found bounary conditions faces: ", cnt_qua + cnt_tri
+  print *, '# - number of bounary conditions faces: ', cnt_qua + cnt_tri
 
   !--------------------------------------------!
   !                                            !
@@ -131,7 +131,7 @@
   !-------------------------------------!
   call Initialize_Counters
 
-  print *, "# Filling arrays.."
+  print *, '# Filling arrays..'
 
   !------------------------------!
   !   Browse through all bases   !
@@ -164,18 +164,27 @@
       !---------------------!
       !   Read cells block  !
       !---------------------!
+      cnt_block_bnd_cells = 0
 
       ! Browse through all sections to read elements
       do sect = 1, cgns_base(base) % block(block) % n_sects
 
         ! Read element data (count HEXA_8/PYRA_5/PENTA_6/TETRA_4/QUAD_4/TRI_3)
-        call Cgns_Mod_Read_Section_Connections(base, block, sect)
+        call Cgns_Mod_Read_Section_Connections(base, block, sect, grid)
 
       end do ! elements sections
 
-    end do ! blocks
+      cnt_nodes = cnt_nodes + cgns_base(base) % block(block) % mesh_info(1)
+      cnt_cells = cnt_cells + cgns_base(base) % block(block) % mesh_info(2)
+      cnt_bnd_cells = cnt_bnd_cells + cnt_block_bnd_cells
 
+    end do ! blocks
   end do ! bases
+
+  print *, '# Grid metrix after reading:'
+  print *, '# - number of nodes:         ', cnt_nodes
+  print *, '# - number of cells:         ', cnt_cells   
+  print *, '# - number of boundary cells:', cnt_bnd_cells
 
 stop
 

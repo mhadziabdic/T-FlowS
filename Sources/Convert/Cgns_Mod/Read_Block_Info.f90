@@ -40,17 +40,19 @@
   cnt_nodes = cnt_nodes + cgns_base(base) % block(block) % mesh_info(1)
   cnt_cells = cnt_cells + cgns_base(base) % block(block) % mesh_info(2)
 
-  print *, '#     =========================================='
-  print *, "#     Block name:                ",  &
-           cgns_base(base) % block(block) % name
-  print *, '#     =========================================='
-  print *, "#     Block index:               ", block    
-  print *, "#     Nodes:                     ",  &
-           cgns_base(base) % block(block) % mesh_info(1)
-  print *, "#     Cells:                     ",  &
-           cgns_base(base) % block(block) % mesh_info(2)
-  print *, "#     Boundary nodes(if sorted): ",  &
-           cgns_base(base) % block(block) % mesh_info(3)
+  if(verbose) then
+    print *, '#     =========================================='
+    print *, "#     Block name:                ",  &
+             cgns_base(base) % block(block) % name
+    print *, '#     =========================================='
+    print *, "#     Block index:               ", block    
+    print *, "#     Nodes:                     ",  &
+             cgns_base(base) % block(block) % mesh_info(1)
+    print *, "#     Cells:                     ",  &
+             cgns_base(base) % block(block) % mesh_info(2)
+    print *, "#     Boundary nodes(if sorted): ",  &
+             cgns_base(base) % block(block) % mesh_info(3)
+  end if
 
   if (cgns_base(base) % block(block) % mesh_info(3) .ne. 0) then
     print *, "# Boundary condition nodes != 0 -> Unsupported"

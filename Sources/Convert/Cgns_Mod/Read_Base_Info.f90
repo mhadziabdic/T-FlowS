@@ -36,13 +36,15 @@
   cgns_base(base) % phys_dim = phys_dim
 
   ! Print some info
-  print *, '#   ============================'
-  print *, '#   '
-  print *, '#   Base name: ',      base_name
-  print *, '#   '
-  print *, '#   ============================'
-  print *, '#   Base name: ',      base_name
-  print *, '#   Cell dimension: ', cell_dim
-  print *, '#   Phys dimension: ', phys_dim
+  if(verbose) then
+    print *, '#   ============================'
+    print *, '#   '
+    print *, '#   Base name: ',      base_name
+    print *, '#   '
+    print *, '#   ============================'
+    print *, '#   Base name: ',      base_name
+    print *, '#   Cell dimension: ', cell_dim
+    print *, '#   Phys dimension: ', phys_dim
+  end if
 
   end subroutine

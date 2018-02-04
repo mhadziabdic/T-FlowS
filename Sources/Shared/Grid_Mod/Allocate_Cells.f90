@@ -28,7 +28,7 @@
   ! Number of nodes at each cell (determines cell's shape really)
   allocate(grid % cells_n_nodes(-nb:nc));  grid % cells_n_nodes = 0
 
-  ! Type of the boundary condition in a given direction
-  allocate(grid % cells_bnd_type(6, -nb:nc))
+  ! Boundary condition mark in a given direction
+  allocate(grid % cells_bnd_mark(6, -nb:nc))
 
   end subroutine

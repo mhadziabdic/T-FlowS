@@ -49,7 +49,7 @@
     integer, allocatable :: cells_n_nodes(:)
 
     ! For each cell; type of the boundary condition in a given direction
-    integer, allocatable :: cells_bnd_type(:,:)
+    integer, allocatable :: cells_bnd_mark(:,:)
 
     !-------------------------!
     !  Face-based variables   !

@@ -11,11 +11,11 @@
   integer*8         :: block_id      ! block index number
   integer*8         :: sect_id       ! element section index
   character(len=80) :: sect_name     ! name of the Elements_t node
-  integer*8         :: cell_type
+  integer*8         :: cell_type     ! types of elements in the section
   integer*8         :: first_cell    ! index of first element
   integer*8         :: last_cell     ! index of last element
   integer*8         :: n_bnd         ! index of last boundary element
-  integer*8         :: iparent_flag
+  integer*8         :: iparent_flag = 0
   integer*8         :: error
   integer*8         :: cnt, bc
 !==============================================================================!
@@ -43,6 +43,12 @@
     call Cg_Error_Exit_F()
   endif
 
+  ! Fetch received parameters
+  cgns_base(base) % block(block) % section(sect) % name       = trim(sect_name)
+  cgns_base(base) % block(block) % section(sect) % cell_type  = cell_type
+  cgns_base(base) % block(block) % section(sect) % first_cell = first_cell
+  cgns_base(base) % block(block) % section(sect) % last_cell  = last_cell
+
   ! Number of cells in this section
   cnt = last_cell - first_cell + 1 ! cells in this sections
 
@@ -50,12 +56,14 @@
   do bc = 1, cgns_base(base) % block(block) % n_bnd_conds
     if(sect_name .eq. cgns_base(base) % block(block) % bnd_cond(bc) % name) then
       print *, '#         ---------------------------------'
-      print *, '#         Bnd section name:  ', sect_name
+      print *, '#         Bnd section name:  ', trim(sect_name)
       print *, '#         ---------------------------------'
       print *, '#         Bnd section index: ', sect
       print *, '#         Bnd section type:  ', ElementTypeName(cell_type)
-      print *, '#         First cell:        ', first_cell
-      print *, '#         Last cell:         ', last_cell
+      print *, '#         First cell:        ',  &
+               cgns_base(base) % block(block) % section(sect) % first_cell
+      print *, '#         Last cell:         ',  &
+               cgns_base(base) % block(block) % section(sect) % last_cell
 
       ! Count boundary cells
       if ( ElementTypeName(cell_type) .eq. 'QUAD_4') cnt_qua = cnt_qua + cnt
@@ -74,8 +82,10 @@
     print *, '#         ---------------------------------'
     print *, '#         Cell section idx:  ', sect
     print *, '#         Cell section type: ', ElementTypeName(cell_type)
-    print *, '#         First cell:        ', first_cell
-    print *, '#         Last cell:         ', last_cell
+    print *, '#         First cell:        ',  &
+             cgns_base(base) % block(block) % section(sect) % first_cell
+    print *, '#         Last cell:         ',  &
+             cgns_base(base) % block(block) % section(sect) % last_cell
 
     ! Count cells in sect
     if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) cnt_hex = cnt_hex + cnt

@@ -33,7 +33,7 @@
   endif
 
   ! Fetch received parameters
-  cgns_base(base) % block(block) % name      = block_name
+  cgns_base(base) % block(block) % name      = trim(block_name)
   cgns_base(base) % block(block) % mesh_info = block_mesh_info
 
   ! Total nodes and cells

@@ -35,4 +35,6 @@
   print *, "#       Number of sections: ",  &
            cgns_base(base) % block(block) % n_sects
 
+  allocate( cgns_base(base) % block(block) % section(n_sects) )
+
   end subroutine

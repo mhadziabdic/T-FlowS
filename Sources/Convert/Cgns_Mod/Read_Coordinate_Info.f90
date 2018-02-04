@@ -33,6 +33,9 @@
     call Cg_Error_Exit_F()
   endif
 
+  ! Fetch received parameters
+  cgns_base(base) % block(block) % coord_name(coord) = coord_name
+
   print *, "# Coord. id:",         coord_id
   print *, "# Coord. Data Type: ", DataTypeName(coord_data_type)
   print *, "# Name: ",             coord_name

@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Initialize_Counters
 !------------------------------------------------------------------------------!
-!   Opens name_in file and return file index                                   !
+!   Initiallizes counters used while CGNS file is being read.                  !
 !------------------------------------------------------------------------------!
   implicit none
 !==============================================================================!
@@ -18,12 +18,5 @@
   cnt_x = 0
   cnt_y = 0
   cnt_z = 0
-
-  last_hex = 0
-  last_pyr = 0
-  last_wed = 0
-  last_tet = 0
-  last_tri = 0
-  last_qua = 0
 
   end subroutine

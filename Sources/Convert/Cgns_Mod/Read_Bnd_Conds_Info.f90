@@ -30,7 +30,7 @@
   ! Position yourself at ZoneBC
   call Cg_Goto_F(file_id,     &  ! cgns file index number
                  base,        &  ! base index number
-                 error,         &  ! error status
+                 error,       &  ! error status
                  'Zone_t',    &  ! node of block type
                  block,       &  ! block index number
                  'ZoneBC_t',  &  ! search for node "ZoneBC_t"
@@ -61,7 +61,7 @@
   endif
  
   ! Fetch received parameters
-  cgns_base(base) % block(block) % bnd_cond(bc) % name    = bc_name
+  cgns_base(base) % block(block) % bnd_cond(bc) % name    = trim(bc_name)
   cgns_base(base) % block(block) % bnd_cond(bc) % type    = bc_type
   cgns_base(base) % block(block) % bnd_cond(bc) % n_nodes = bc_n_nodes
 
@@ -70,11 +70,9 @@
     cnt_bnd_conds = bc
   end if 
 
-! n_b_cells_meth_2 = n_b_cells_meth_2 + cgns_base(base) % block(block) % bnd_cond(bc)(bc) % n_nodes
-
   print *, '#       ----------------------------------------'
   print *, "#       Boundary condition name:   ",   &
-           cgns_base(base) % block(block) % bnd_cond(bc) % name
+           trim(cgns_base(base) % block(block) % bnd_cond(bc) % name)
   print *, '#       ----------------------------------------'
   print *, "#       Boundary condition index:  ", bc
   print *, "#       Boundary condition nodes:  ",   &

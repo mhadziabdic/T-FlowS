@@ -122,8 +122,8 @@
   allocate( cgns_pyr_cell_n(1:5, 1:cnt_pyr) )
   allocate( cgns_wed_cell_n(1:6, 1:cnt_wed) )
   allocate( cgns_tet_cell_n(1:4, 1:cnt_tet) )
-  allocate( cgns_qua_cell_n(1:4, 1:cnt_qua) )
-  allocate( cgns_tri_cell_n(1:3, 1:cnt_tri) )
+  allocate( cgns_qua_face_n(1:4, 1:cnt_qua) )
+  allocate( cgns_tri_face_n(1:3, 1:cnt_tri) )
 
   !-------------------------------------!
   !                                     !
@@ -161,7 +161,6 @@
         call Cgns_Mod_Read_Coordinate_Array(base, block, coord, grid)
 
       end do ! coordinates
-stop
 
       !---------------------!
       !   Read cells block  !
@@ -171,16 +170,15 @@ stop
       do sect = 1, cgns_base(base) % block(block) % n_sects
 
         ! Read element data (count HEXA_8/PYRA_5/PENTA_6/TETRA_4/QUAD_4/TRI_3)
-        !-> call Cgns_Mod_Read_Section_Connections(base, block, sect)
-
-        ! Mark nodes with sect_id, if b.c.
-        !-> call Cgns_Mod_Mark_Bound_Cond
+        call Cgns_Mod_Read_Section_Connections(base, block, sect)
 
       end do ! elements sections
 
     end do ! blocks
 
   end do ! bases
+
+stop
 
   !--------------------------------------!
   !  Conversion to T-FlowS B.C. format   !

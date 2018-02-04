@@ -11,6 +11,16 @@
   integer*8         :: file_id
   character(len=80) :: file_name
 
+  !---------------------!
+  !   Element section   !
+  !---------------------!
+  type Cgns_Section_Type
+    character(len=80)      :: name
+    integer*8, allocatable :: cell_type
+    integer*8              :: first_cell
+    integer*8              :: last_cell
+  end type
+
   !-------------------------!
   !   Boundary conditions   ! -> it is similar to Bnd_Cond in ../Share :-(
   !-------------------------!
@@ -29,9 +39,11 @@
     integer*8                             :: type
     integer*8                             :: mesh_info(3)
     integer*8                             :: n_sects      
+    type(Cgns_Section_Type), allocatable  :: section(:)
     integer*8                             :: n_bnd_conds
     type(Cgns_Bnd_Cond_Type), allocatable :: bnd_cond(:)
     integer*8                             :: n_coords
+    character(len=80)                     :: coord_name(3)
   end type
 
   !----------!
@@ -62,23 +74,12 @@
   integer*8 :: cnt_z
 
   ! elements
-  integer*8              :: last_hex
-  integer*8, allocatable :: cgns_hex_cell_n(:, :)
-  integer*8              :: last_pyr
-  integer*8, allocatable :: cgns_pyr_cell_n(:, :)
-  integer*8              :: last_wed
-  integer*8, allocatable :: cgns_wed_cell_n(:, :)
-  integer*8              :: last_tet
-  integer*8, allocatable :: cgns_tet_cell_n(:, :)
-  integer*8              :: last_tri
-  integer*8, allocatable :: cgns_tri_cell_n(:, :)
-  integer*8              :: last_qua
-  integer*8, allocatable :: cgns_qua_cell_n(:, :)
-
-  ! buffers
-  real,      allocatable :: buffer_double(:)
-  integer*8, allocatable :: buffer_r1(:,:)
-  integer*8, allocatable :: buffer_r2(:,:)
+  integer*8, allocatable :: cgns_hex_cell_n(:,:)
+  integer*8, allocatable :: cgns_pyr_cell_n(:,:)
+  integer*8, allocatable :: cgns_wed_cell_n(:,:)
+  integer*8, allocatable :: cgns_tet_cell_n(:,:)
+  integer*8, allocatable :: cgns_tri_face_n(:,:)
+  integer*8, allocatable :: cgns_qua_face_n(:,:)
 
   contains
 
@@ -96,10 +97,6 @@
   include 'Cgns_Mod/Read_Number_Of_Coordinates_In_Block.f90'
   include 'Cgns_Mod/Read_Coordinate_Info.f90'
   include 'Cgns_Mod/Read_Coordinate_Array.f90'
-! include 'Cgns_Mod/Read_Bnd_Conds_Data.f90'
-! include 'Cgns_Mod/Read_Number_Of_Coordinates_In_Block.f90'
-! include 'Cgns_Mod/Read_Section_Connections.f90'
-! include 'Cgns_Mod/Read_Block_Type.f90'
-! include 'Cgns_Mod/Mark_Bound_Cond.f90'
+  include 'Cgns_Mod/Read_Section_Connections.f90'
 
   end module

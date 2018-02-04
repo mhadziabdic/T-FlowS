@@ -11,43 +11,34 @@
   integer*8       :: base, block, coord
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8         :: base_id
-  integer*8         :: block_id
-  character(len=80) :: coord_name
-  integer*8         :: error
-  integer*8         :: i, j
+  integer*8         :: base_id         ! base index number
+  integer*8         :: block_id        ! block index number
+  character(len=80) :: coord_name      
+  integer*8         :: i               ! lower range index
+  integer*8         :: j               ! upper range index
+  real, allocatable :: coordinates(:)  ! array of coordinate values
+  integer*8         :: error           ! error status
 !==============================================================================!
-!   Description of arguments for the called CGNS function:
-!
-!   Cg_Coord_Read_F(file_id,        &  ! cgns file index number
-!                   base,           &  ! base index number
-!                   block,          &  ! block index number
-!                   coord_name,     &  ! name of the coordinate array
-!                   RealDouble,     &  ! realsingle or realdouble
-!                   i,              &  ! lower range index
-!                   j,              &  ! upper range index
-!                   buffer_double,  &  ! array of coordinate values
-!                   error)               ! error status
-!------------------------------------------------------------------------------!
 
   ! Set input parameters
-  base_id  = base
-  block_id = block
+  base_id    = base
+  block_id   = block
+  coord_name = cgns_base(base) % block(block) % coord_name(coord)
 
   i = 1
   j = cgns_base(base) % block(block) % mesh_info(1)
 
-  allocate(buffer_double(i:j))
+  allocate(coordinates(i:j))
 
   ! Read grid x coordinates
-  call Cg_Coord_Read_F(file_id,        &
-                       base,           &
-                       block,          &
-                       coord_name,     &
-                       RealDouble,     &
-                       i,              &
-                       j,              &
-                       buffer_double,  &
+  call Cg_Coord_Read_F(file_id,      &
+                       base,         &
+                       block,        &
+                       coord_name,   &
+                       RealDouble,   &
+                       i,            &
+                       j,            &
+                       coordinates,  &
                        error)
 
   if (error.ne.0) then
@@ -55,24 +46,25 @@
     call Cg_Error_Exit_F()
   endif
 
+  ! Fetch received parameters
   select case (coord)
     case (1)
       i = cnt_x + 1
       j = cnt_x + j
-      grid % xn(i:j) = buffer_double(:)
+      grid % xn(i:j) = coordinates(:)
       cnt_x = j
     case (2)
       i = cnt_y + 1
       j = cnt_y + j
-      grid % yn(i:j) = buffer_double(:)
+      grid % yn(i:j) = coordinates(:)
       cnt_y = j
     case (3)
       i = cnt_z + 1
       j = cnt_z + j
-      grid % zn(i:j) = buffer_double(:)
+      grid % zn(i:j) = coordinates(:)
       cnt_z = j
   end select
 
-  deallocate(buffer_double)
+  deallocate(coordinates)
 
   end subroutine

@@ -70,24 +70,12 @@
     call Tokenizer_Mod_Read_Line(9)
   end do 
 
-  ! Allocate memory =--> carefull, there is no checking!
-  call Grid_Mod_Allocate_Nodes(grid, grid % n_nodes) 
-  call Grid_Mod_Allocate_Cells(grid, grid % n_cells,   grid % n_bnd_cells) 
-  call Grid_Mod_Allocate_Faces(grid, grid % n_cells*5, 0) 
-
-  allocate(material(-grid % n_bnd_cells:grid % n_cells));  material=0 
-  allocate(grid % bnd_cond % mark(-grid % n_bnd_cells-1:-1))
-  grid % bnd_cond % mark=0
-
-  grid % n_copy = grid % n_faces  ! I believe it is n_cells * 5 at this point
-  allocate(grid % bnd_cond % copy_c( -grid % n_bnd_cells:-1))
-  grid % bnd_cond % copy_c = 0
-  allocate(grid % bnd_cond % copy_s(2,grid % n_copy))
-  grid % bnd_cond % copy_s=0
-
-  allocate(NewN( grid % n_nodes));                      NewN=0  
-  allocate(NewC(-grid % n_bnd_cells-1:grid % n_cells)); NewC=0  
-  allocate(NewS( grid % n_cells*5));                    NewS=0  
+  !--------------------------------------------!
+  !                                            !
+  !   Allocate memory for Grid_Mod variables   !
+  !                                            !
+  !--------------------------------------------!
+  call Allocate_Memory(grid)
 
   allocate(temp(grid % n_cells)); temp=0
 
@@ -156,7 +144,7 @@
     read(line % tokens(3),'(I8)') dum1  
     do i = 1, dum1
       read(9,*) c, dum2, dir
-      grid % cells_bnd_mark(dir,c) = j
+      grid % cells_bnd_color(dir,c) = j
     end do
     call Tokenizer_Mod_Read_Line(9)        ! ENDOFSECTION
   end do

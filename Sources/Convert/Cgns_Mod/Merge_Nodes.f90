@@ -17,7 +17,8 @@
   integer, allocatable :: old_number(:)
   integer, allocatable :: new_number(:)
   integer, allocatable :: compressed(:)
-  real,    parameter   :: BIG = 1.0e+5  ! 1.0e+4, 1.0e+5, 1.0e+6 was OK
+  real,    parameter   :: BIG   = 1.0e+4  ! 1.0e+4, 1.0e+5, 1.0e+6 was OK
+  real,    parameter   :: SMALL = 1.0e-6
 !==============================================================================!
 
   print *, '# Old number of nodes: ', grid % n_nodes
@@ -87,7 +88,7 @@
   cnt_node = 1
   compressed(1) = cnt_node
   do n = 2, grid % n_nodes
-    if( .not. Approx(criter(n), criter(n-1)) ) cnt_node = cnt_node + 1
+    if( .not. Approx(criter(n), criter(n-1), SMALL) ) cnt_node = cnt_node + 1
     compressed(n) = cnt_node
   end do
   print *, '# New number of nodes: ', cnt_node

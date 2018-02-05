@@ -343,7 +343,7 @@
     ! Boundary condition is given by a single constant
     if(name_prof(n) == '') then 
       do c = -1,-grid % n_bnd_cells,-1
-        if(grid % bnd_cond % mark(c) == n) then
+        if(grid % bnd_cond % color(c) == n) then
           TypeBC(c) = typBou(n)
 
           ! If in_out is set to true, set boundary values,
@@ -423,7 +423,7 @@
 
         ! Set the closest point
         do c = -1,-grid % n_bnd_cells,-1
-          if(grid % bnd_cond % mark(c) == n) then
+          if(grid % bnd_cond % color(c) == n) then
             TypeBC(c) = typBou(n)
             if(in_out) then    !if .true. set boundary values, otherwise, just set TypeBC
               Mres = HUGE
@@ -473,7 +473,7 @@
                 Eps%n(c) = Eps % pro(c1)
               end if        
             end if    !end if(in_out)
-          end if      !end if(grid % bnd_cond % mark(c) == n)
+          end if      !end if(grid % bnd_cond % color(c) == n)
         end do        !end do c = -1,-grid % n_bnd_cells,-1
       else  ! dir == "XPL" ...
         do m=1,n_points
@@ -531,7 +531,7 @@
         end do
            
         do c = -1,-grid % n_bnd_cells,-1
-          if(grid % bnd_cond % mark(c) == n) then
+          if(grid % bnd_cond % color(c) == n) then
             TypeBC(c) = typBou(n)
           
             ! If in_out is set to true, set boundary values,
@@ -610,7 +610,7 @@
   !   Finally handle the buffer cells   !
   !-------------------------------------!
   do c = -1,-grid % n_bnd_cells,-1
-    if(grid % bnd_cond % mark(c) == BUFFER) TypeBC(c)=BUFFER 
+    if(grid % bnd_cond % color(c) == BUFFER) TypeBC(c)=BUFFER 
   end do
 
   end subroutine

@@ -15,7 +15,7 @@
   character :: namSc*(*)
   real      :: phi(-grid % n_bnd_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
-  integer   :: N, s, c, c1, c2, Nfac(10), NtotFac
+  integer   :: N, s, c, c1, c2, n_fac(10), n_tot_fac
 !==============================================================================!
 
   !------------!
@@ -32,26 +32,26 @@
   !---------------------!
   !   On the boundary   !
   !---------------------!
-  NtotFac = 0
+  n_tot_fac = 0
   do n=1,10   ! browse through boundary condition types
 
-    Nfac(n) = 0
+    n_fac(n) = 0
     do s = 1, grid % n_faces   ! count the faces with boundary condition "n"
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(grid % bnd_cond % mark(c2) == n) Nfac(n)=Nfac(n)+1
+        if(grid % bnd_cond % color(c2) == n) n_fac(n)=n_fac(n)+1
       end if
     end do    ! sides
 
-    if(Nfac(n) > 0) then
+    if(n_fac(n) > 0) then
       write(9,'(A4,A,A17,I3,A3)') '(0 "', namSc, ' on the boundary ', n, ' ")'
       write(9,'(A6,I3,I4,A7,I7,I7,A4)') '(300 (', idSc, 100+n, ' 1 0 0 ', &
-                                        NtotFac+1, NtotFac+Nfac(n), ')('
+                                        n_tot_fac+1, n_tot_fac+n_fac(n), ')('
       do s = 1, grid % n_faces !@@@ +NSsh
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
         if(c2 < 0) then
-          if(grid % bnd_cond % mark(c2) == n) then
+          if(grid % bnd_cond % color(c2) == n) then
             if(TypeBC(c2) == SYMMETRY) then
               write(9,'(F14.6)') phi(c1)
             else
@@ -64,7 +64,7 @@
     end if
 
     ! Prepare for next boundary
-    NtotFac = NtotFac+Nfac(n)
+    n_tot_fac = n_tot_fac+n_fac(n)
 
   end do   ! n -> boundary condition types
 

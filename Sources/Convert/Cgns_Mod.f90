@@ -28,7 +28,7 @@
   !-------------------------!
   type Cgns_Bnd_Cond_Type
     character(len=80)      :: name
-    integer*8, allocatable :: mark
+    integer*8, allocatable :: color
     integer*8, allocatable :: n_nodes
   end type
 
@@ -78,14 +78,8 @@
 
   ! Block-wise counter of boundary cells
   integer*8 :: cnt_block_bnd_cells
-
-  ! Elements
-  integer*8, allocatable :: cgns_hex_cell_n(:,:)
-  integer*8, allocatable :: cgns_pyr_cell_n(:,:)
-  integer*8, allocatable :: cgns_wed_cell_n(:,:)
-  integer*8, allocatable :: cgns_tet_cell_n(:,:)
-  integer*8, allocatable :: cgns_tri_face_n(:,:)
-  integer*8, allocatable :: cgns_qua_face_n(:,:)
+  integer*8 :: cnt_bnd_conds
+  character(len=80) :: bnd_cond_names(1024)
 
   contains
 

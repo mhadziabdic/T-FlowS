@@ -82,7 +82,7 @@
    
     ! If boundary 
     if( c2 < 0 ) then 
-      write(9,*) grid % bnd_cond % mark(c2) 
+      write(9,*) grid % bnd_cond % color(c2) 
 
     ! If inside 
     else 

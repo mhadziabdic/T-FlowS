@@ -167,7 +167,7 @@
     if(NewC(c) /= 0) then
       count=count-1 
       ! nekad bio i: NewC(c)
-      iwork(count,1) = grid % bnd_cond % mark(c)   
+      iwork(count,1) = grid % bnd_cond % color(c)   
       iwork(count,2) = NewC(grid % bnd_cond % copy_c(c)) 
       if(grid % bnd_cond % copy_c(c) /= 0) then
         if(proces(grid % bnd_cond % copy_c(c)) /= sub) then

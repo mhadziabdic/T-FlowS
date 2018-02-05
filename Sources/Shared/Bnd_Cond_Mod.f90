@@ -28,9 +28,9 @@
     ! It ranges through number of boundary conditions.
     character(len=80), allocatable :: name(:)
 
-    ! Boundary condition marker ranging through boundary cells.
+    ! Boundary condition color ranging through boundary cells.
     ! Values start from one, zero is internal cell
-    integer, allocatable :: mark(:)
+    integer, allocatable :: color(:)
 
     ! Copy boundary conditions; useful when one domain generates boundary
     ! conditions for another.  

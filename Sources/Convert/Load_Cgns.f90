@@ -17,7 +17,8 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: name_in
-  integer*8         :: c, i, bc, base, block, sect, coord
+  integer*8         :: c, cs, ce, i, j, bc, base, block, sect, coord
+  integer*8         :: cgns_1, cgns_2, cgns_3, cgns_4, cgns_5, cell_type
 !==============================================================================!
 
   name_in = problem_name
@@ -99,6 +100,10 @@
     stop
   end if
   print *, '# - number of bounary conditions faces: ', cnt_qua + cnt_tri
+  print *, '# - number of bounary conditions: ', cnt_bnd_conds
+  do i = 1, cnt_bnd_conds
+    print *, bnd_cond_names(i)
+  end do 
 
   !--------------------------------------------!
   !                                            !
@@ -109,20 +114,7 @@
   grid % n_cells     = cnt_cells
   grid % n_bnd_cells = cnt_tri + cnt_qua
 
-  ! Allocate memory =--> carefull, there is no checking!
-  call Grid_Mod_Allocate_Nodes(grid, grid % n_nodes)
-  call Grid_Mod_Allocate_Cells(grid, grid % n_cells, grid % n_bnd_cells)
-
-  !-------------------------------!
-  !   Allocate memory for arrays  !
-  !-------------------------------!
-
-  allocate( cgns_hex_cell_n(1:8, 1:cnt_hex) )
-  allocate( cgns_pyr_cell_n(1:5, 1:cnt_pyr) )
-  allocate( cgns_wed_cell_n(1:6, 1:cnt_wed) )
-  allocate( cgns_tet_cell_n(1:4, 1:cnt_tet) )
-  allocate( cgns_qua_face_n(1:4, 1:cnt_qua) )
-  allocate( cgns_tri_face_n(1:3, 1:cnt_tri) )
+  call Allocate_Memory(grid)
 
   !-------------------------------------!
   !                                     !
@@ -188,37 +180,44 @@
 
   call Merge_Nodes(grid)
 
-! !--------------------------------------!
-! !  Conversion to T-FlowS B.C. format   !
-! !--------------------------------------!
-!
-! ! Reorder elements connectivity according to neu_mod
-!
-! ! HEXA_8 (-> f8n)
-! do c = lbound(cgns_hex_cell_n,dim=2), &
-!   ubound(cgns_hex_cell_n,dim=2) - lbound(cgns_hex_cell_n,dim=2) + 1
-!
-!   i = cgns_hex_cell_n(4, c)
-!   cgns_hex_cell_n(4, c) = cgns_hex_cell_n(3, c)
-!   cgns_hex_cell_n(3, c) = i
-!   i = cgns_hex_cell_n(8, c)
-!   cgns_hex_cell_n(8, c) = cgns_hex_cell_n(7, c)
-!   cgns_hex_cell_n(7, c) = i
-! end do
-!
-! ! PYRA_5 (-> f5n)
-! do c =  lbound(cgns_pyr_cell_n,dim=2), &
-!   ubound(cgns_pyr_cell_n,dim=2) - lbound(cgns_pyr_cell_n,dim=2) + 1
-!
-!   i = cgns_pyr_cell_n(4, c)
-!   cgns_pyr_cell_n(4, c) = cgns_pyr_cell_n(3, c)
-!   cgns_pyr_cell_n(3, c) = i
-! end do
-!
-! ! PENTA_6 (-> f6n)
-! ! no changes
-!
-! ! TETRA_4 (-> f4n)
-! ! no changes
+  !-----------------------------------------------------------------!
+  !   Correct boundary conditions directions for hexahedral cells   !
+  !   (They are not the same in CGNS and Gambit's neutral format.)  !
+  !-----------------------------------------------------------------!
+  cnt_bnd_cells = 0
+  do base = 1, n_bases
+    do block = 1, cgns_base(base) % n_blocks
+      do sect = 1, cgns_base(base) % block(block) % n_sects
+        cell_type   = cgns_base(base) % block(block) % section(sect) % cell_type
+
+        if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) then
+          cs = cgns_base(base) % block(block) % section(sect) % first_cell
+          ce = cgns_base(base) % block(block) % section(sect) % last_cell
+
+          do c = cs, ce
+            cgns_1 = grid % cells_bnd_color(1,c)
+            cgns_2 = grid % cells_bnd_color(2,c)
+            cgns_3 = grid % cells_bnd_color(3,c)
+            cgns_4 = grid % cells_bnd_color(4,c)
+            cgns_5 = grid % cells_bnd_color(5,c)
+            grid % cells_bnd_color(4,c) = cgns_5
+            grid % cells_bnd_color(3,c) = cgns_4
+            grid % cells_bnd_color(2,c) = cgns_3
+            grid % cells_bnd_color(1,c) = cgns_2
+            grid % cells_bnd_color(5,c) = cgns_1
+
+            do j = 1, 6
+              if( grid % cells_bnd_color(j,c) .ne. 0 ) then 
+                cnt_bnd_cells = cnt_bnd_cells + 1
+              end if
+            end do 
+          end do 
+
+        end if
+
+      end do ! elements sections
+    end do ! blocks
+  end do ! bases
+  print *, '# - number of boundary cells:', cnt_bnd_cells
 
   end subroutine

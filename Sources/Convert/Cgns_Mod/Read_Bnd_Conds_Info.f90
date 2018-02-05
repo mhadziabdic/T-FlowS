@@ -19,7 +19,8 @@
   integer*8            :: bc_data_type     
   integer*8            :: bc_n_datasets
   integer*8            :: error
-  integer*8, parameter :: one = 1         ! go figure :-(
+  integer*8            :: one = 1         ! go figure :-(
+  integer*8            :: i, color
 !==============================================================================!
 
   ! Set input parameters
@@ -63,7 +64,20 @@
   ! Fetch received parameters
   cgns_base(base) % block(block) % bnd_cond(bc) % name    = trim(bc_name)
   cgns_base(base) % block(block) % bnd_cond(bc) % n_nodes = bc_n_nodes
-  cgns_base(base) % block(block) % bnd_cond(bc) % mark    = bc     
+
+  ! Fill up the boundary condition names
+  color = 0
+  do i = 1, cnt_bnd_conds
+    if(bnd_cond_names(i) == trim(bc_name)) then 
+      color = i
+      goto 1
+    end if
+  end do
+  cnt_bnd_conds = cnt_bnd_conds + 1
+  bnd_cond_names(cnt_bnd_conds) = trim(bc_name)
+  color = cnt_bnd_conds
+1 continue
+  cgns_base(base) % block(block) % bnd_cond(bc) % color = color
 
   if(verbose) then
     print *, '#       ----------------------------------------'
@@ -71,10 +85,12 @@
              trim(cgns_base(base) % block(block) % bnd_cond(bc) % name)
     print *, '#       ----------------------------------------'
     print *, "#       Boundary condition index:  ", bc
+    print *, "#       Boundary condition color:  ", color
     print *, "#       Boundary condition nodes:  ",   &
              cgns_base(base) % block(block) % bnd_cond(bc) % n_nodes
     print *, "#       Boundary condition Extent: ",   &
              PointSetTypeName(bc_ptset_type)
+
   end if
 
   end subroutine

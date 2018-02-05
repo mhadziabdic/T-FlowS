@@ -68,8 +68,8 @@
   read(9) (grid % faces_c(2,s), s = 1, grid % n_faces)
 
   ! Boundary cells
-  allocate (grid % bnd_cond % mark(-grid % n_bnd_cells-1:-1))
-  read(9) (grid % bnd_cond % mark(c), c = -1,-grid % n_bnd_cells, -1)
+  allocate (grid % bnd_cond % color(-grid % n_bnd_cells-1:-1))
+  read(9) (grid % bnd_cond % color(c), c = -1,-grid % n_bnd_cells, -1)
 
   ! Boundary copy cells
   allocate (grid % bnd_cond % copy_c(-grid % n_bnd_cells:-1))

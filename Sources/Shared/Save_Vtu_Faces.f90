@@ -8,7 +8,6 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: sub, NNsub
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: c1, c2, n, s, offset
   character(len=80)  :: name_out
@@ -31,7 +30,7 @@
   !   Create boundary condition .vtu file   !
   !                                         !
   !-----------------------------------------!
-  call Name_File(sub, name_out, '.faces.vtu')
+  call Name_File(0, name_out, '.faces.vtu')
   open(9, file=name_out)
   print *, '# Creating the file:', trim(name_out)
 
@@ -118,7 +117,7 @@
    
     ! If boundary 
     if( c2 < 0 ) then 
-      write(9,'(a,i9)') IN_5, grid % bnd_cond % mark(c2)
+      write(9,'(a,i9)') IN_5, grid % bnd_cond % color(c2)
 
     ! If inside 
     else 

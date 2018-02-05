@@ -34,7 +34,7 @@
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: i, c1, c11, c12, c21, c22, s1, s2
-  integer           :: marker_copy,  x_copy, y_copy, z_copy
+  integer           :: color_copy,  x_copy, y_copy, z_copy
   real              :: xc_12, xc_22
   real              :: yc_12, yc_22
   real              :: zc_12, zc_22
@@ -47,7 +47,7 @@
   z_copy = 0
 
 1 print *, '#======================================'
-  print *, '# Enter the copy marker (skip to exit):'
+  print *, '# Enter the copy color (skip to exit):'
   print *, '#--------------------------------------'
   call Tokenizer_Mod_Read_Line(5)
   read(line % tokens(1), *) answer
@@ -55,7 +55,7 @@
   if(answer == 'SKIP') then
     return
   else 
-    read(line % tokens(1), *) marker_copy 
+    read(line % tokens(1), *) color_copy 
   end if    
 
   !-------!
@@ -72,7 +72,7 @@
         c21 = grid % faces_c(1,s2)
         c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
-          if(grid % bnd_cond % mark(c22) == marker_copy) then
+          if(grid % bnd_cond % color(c22) == color_copy) then
 
             yc_12 = 0.0
             zc_12 = 0.0
@@ -125,7 +125,7 @@
         c21 = grid % faces_c(1,s2)
         c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
-          if(grid % bnd_cond % mark(c22) == marker_copy) then
+          if(grid % bnd_cond % color(c22) == color_copy) then
 
             xc_12 = 0.0
             zc_12 = 0.0
@@ -178,7 +178,7 @@
         c21 = grid % faces_c(1,s2)
         c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
-          if(grid % bnd_cond % mark(c22) == marker_copy) then
+          if(grid % bnd_cond % color(c22) == color_copy) then
 
             yc_12 = 0.0
             xc_12 = 0.0

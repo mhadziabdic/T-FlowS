@@ -18,7 +18,7 @@
   real :: Distance_Squared       
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, m, n, s, c_1, c_2, new_face_1, new_face_2
-  integer :: wall_mark
+  integer :: wall_color
   real    :: local_x_node(4), local_y_node(4), local_z_node(4)
   real    :: x_cell_tmp, y_cell_tmp, z_cell_tmp    
   real    :: xs2, ys2, zs2
@@ -521,13 +521,13 @@
     print *, '# Computing the distance to the walls (1/2)'           
   end if 
   print *,   '#-------------------------------------------------------'
-  print *,   '# Insert the highest BC marker which represents the wall'
+  print *,   '# Insert the highest BC color which represents the wall'
   print *,   '# for computing the distance to the wall (0 to skip)'
   print *,   '# If you skip this, smoothing will not work properly'
   print *,   '#-------------------------------------------------------'
-  read(*,*) wall_mark   
+  read(*,*) wall_color   
 
-  if(wall_mark == 0) then
+  if(wall_color == 0) then
     WallDs = 1.0
     print *, '# Distance to the wall set to 1 everywhere !'            
   else 
@@ -536,7 +536,7 @@
         c_1 = grid % faces_c(1,s)
         c_2 = grid % faces_c(2,s)
         if(c_2 < 0) then
-          if(grid % bnd_cond % mark(c_2) <= wall_mark) then
+          if(grid % bnd_cond % color(c_2) <= wall_color) then
             WallDs(c1)=min(WallDs(c1), &
             Distance_Squared(grid % xc(c1),  &
                              grid % yc(c1),  &

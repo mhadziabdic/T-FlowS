@@ -36,13 +36,13 @@
       if(grid % cells_c(m,c)  < 0) then
         grid % n_bnd_cells   = grid % n_bnd_cells + 1
 
-        ! Remember the boundary marker, take positive value for marker
-        grid % bnd_cond % mark(-grid % n_bnd_cells) =  -grid % cells_c(m,c)  
+        ! Remember the boundary color, take positive value for color
+        grid % bnd_cond % color(-grid % n_bnd_cells) =  -grid % cells_c(m,c)  
 
         ! Put new boundary cell into place  
         grid % cells_c(m,c)  = -grid % n_bnd_cells
 
-        ! Material marker
+        ! Material color
         material(-grid % n_bnd_cells) = material(c)
 
       end if 
@@ -121,8 +121,8 @@
       if(grid % cells_c(m,c)  < 0) then
         grid % n_bnd_cells   = grid % n_bnd_cells + 1
 
-        ! Restore the boundary marker, take positive value for marker
-        grid % cells_c(m,c)  = -grid % bnd_cond % mark(-grid % n_bnd_cells)
+        ! Restore the boundary color, take positive value for color
+        grid % cells_c(m,c)  = -grid % bnd_cond % color(-grid % n_bnd_cells)
       end if 
     end do
   end do 
@@ -157,7 +157,7 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
     if(c2 < 0 .and. grid % bnd_cond % copy_c(c1) /= 0) then
-      if(grid % bnd_cond % mark(c2) == copy_cond(1,0)) then
+      if(grid % bnd_cond % color(c2) == copy_cond(1,0)) then
         grid % bnd_cond % copy_c(c2) = grid % bnd_cond % copy_c(c1)
       end if
     end if

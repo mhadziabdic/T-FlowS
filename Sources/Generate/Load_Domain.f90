@@ -70,8 +70,8 @@
   allocate (grid % bnd_cond % copy_s(2,grid % max_n_bnd_cells))
   grid % bnd_cond % copy_s = 0    
 
-  allocate (grid % bnd_cond % mark(-grid % max_n_bnd_cells-1:-1))
-  grid % bnd_cond % mark = 0
+  allocate (grid % bnd_cond % color(-grid % max_n_bnd_cells-1:-1))
+  grid % bnd_cond % color = 0
 
   ! Variables in Grid_Mod
   call Grid_Mod_Allocate_Nodes(grid,  &

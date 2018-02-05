@@ -126,13 +126,14 @@ SRC_FUN_WITH_DIR =  $(shell ls -1 $(DIR_SHARED)/*.f90 | grep -v -i _Mod)
 SRC_FUN = $(subst $(DIR_SHARED)/, ,$(SRC_FUN_WITH_DIR))
 
 # Local functions are added one by one ...
-SRC_FUN += Compute_Geometry.f90  \
-           Connect_Domains.f90   \
-           Find_Faces.f90        \
-           Grid_Topology.f90     \
-           Load_Neu.f90          \
-           Logo_Con.f90          \
-           Main_Con.f90          \
+SRC_FUN += Allocate_Memory.f90	\
+           Compute_Geometry.f90	\
+           Connect_Domains.f90	\
+           Find_Faces.f90	\
+           Grid_Topology.f90	\
+           Load_Neu.f90		\
+           Logo_Con.f90		\
+           Main_Con.f90		\
            Read_Line.f90
 
 # ... to allow conditional inclusion of CGNS support

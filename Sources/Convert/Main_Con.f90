@@ -7,19 +7,50 @@
 !------------------------------------------------------------------------------! 
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  type(Grid_Type) :: grid     ! grid to be converted
-  integer         :: c, n, s
+  type(Grid_Type)   :: grid     ! grid to be converted
+  integer           :: c, n, s, l
+  character(len=80) :: file_name, file_name_up, extension
 !==============================================================================!
 
   call Logo_Con
 
-  print *, '#======================================================'
-  print *, '# Enter the Fluent''s (*.neu) file name (without ext.):'
-  print *, '#------------------------------------------------------'
-  read(*,*) problem_name
+  print *, '#==============================================================='
+  print *, '# Enter the name of the mesh file you are importing (with ext.):'
+  print *, '#---------------------------------------------------------------'
+  read(*,*) file_name
 
-  ! Still a beta feature: call Load_Cgns       (grid)
-  call Load_Neu        (grid)
+  !-----------------------------------------------------!
+  !   Analyze the extension to figure the file format   !
+  !-----------------------------------------------------!
+  file_name_up = file_name
+  call To_Upper_Case(file_name_up)
+  print *, file_name_up
+ 
+  l = len_trim(file_name)
+  if( file_name_up(l-2:l) == 'NEU' ) then
+    print *, '# Based on the extension, you are' // &
+             ' reading Gambit''s neutral file format'
+    problem_name = file_name(1:l-4)
+    extension = file_name_up(l-2:l)
+  else if( file_name_up(l-3:l) == 'CGNS' ) then
+    print *, '# Based on the extension, you are' // &
+             ' reading CGNS file format'
+    problem_name = file_name(1:l-5)
+    extension = file_name_up(l-3:l)
+  else
+    print *, '# Unrecognized input file format; exiting!'
+    stop
+  end if
+
+  !----------------------------------------!
+  !   Read the file and start conversion   !
+  !----------------------------------------!
+  if (extension == 'NEU') then
+    call Load_Neu      (grid)
+  end if
+  if (extension == 'CGNS') then
+    call Load_Cgns     (grid)
+  end if
   call Grid_Topology   (grid)
   call Find_Faces      (grid)
   call Compute_Geometry(grid)

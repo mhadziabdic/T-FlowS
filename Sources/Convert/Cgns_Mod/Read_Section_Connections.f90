@@ -18,7 +18,6 @@
   integer*8         :: cell_type     ! types of elements in the section
   integer*8         :: first_cell    ! index of first element
   integer*8         :: last_cell     ! index of last element
-  integer*8         :: n_bnd         ! index of last boundary element
   integer*8         :: parent_flag
   integer*8         :: error
   integer*8              :: n_nodes, c, n, cell, dir, cnt, bc
@@ -57,11 +56,11 @@
         print *, '#         ---------------------------------'
         print *, '#         Bnd section name:  ', sect_name
         print *, '#         ---------------------------------'
-        print *, '#         Bnd section index: ', sect
-        print *, '#         Bnd section type:  ', ElementTypeName(cell_type)
-        print *, '#         Bnd condition mark:',   &
-                 cgns_base(base) % block(block) % bnd_cond(bc) % mark
-        print *, '#         Number of faces:   ', cnt
+        print *, '#         Bnd section index:  ', sect
+        print *, '#         Bnd section type:   ', ElementTypeName(cell_type)
+        print *, '#         Bnd condition color:',   &
+                 cgns_base(base) % block(block) % bnd_cond(bc) % color
+        print *, '#         Number of faces:    ', cnt
       end if
 
       ! Count boundary cells
@@ -87,8 +86,8 @@
       do c=1,cnt  ! I have no clue why the size has to be 2*cnt
         cell = parent_data(c,1) + cnt_cells
         dir  = parent_data(c,2)
-        grid % cells_bnd_mark(dir,cell) =  &
-             cgns_base(base) % block(block) % bnd_cond(bc) % mark
+        grid % cells_bnd_color(dir,cell) =  &
+             cgns_base(base) % block(block) % bnd_cond(bc) % color
       end do
      
       if(verbose) then
@@ -117,10 +116,18 @@
       print *, '#         ---------------------------------'
       print *, '#         Cell section name: ', sect_name
       print *, '#         ---------------------------------'
-      print *, '#         Cell section idx:  ', sect
-      print *, '#         Cell section type: ', ElementTypeName(cell_type)
-      print *, '#         Number of cells:   ', cnt
+      print *, '#         Cell section idx:    ', sect
+      print *, '#         Cell section type:   ', ElementTypeName(cell_type)
+      print *, '#         Number of cells:     ', cnt
+      print *, '#         Corrected first cell:', first_cell + cnt_cells
+      print *, '#         Corrected last cell: ', last_cell  + cnt_cells
     end if
+
+    ! Globalized first and last cell of the section
+    cgns_base(base) % block(block) % section(sect) % first_cell =  &
+    cgns_base(base) % block(block) % section(sect) % first_cell + cnt_cells
+    cgns_base(base) % block(block) % section(sect) % last_cell  =  &
+    cgns_base(base) % block(block) % section(sect) % last_cell  + cnt_cells
 
     ! Count cells in sect
     if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) cnt_hex = cnt_hex + cnt

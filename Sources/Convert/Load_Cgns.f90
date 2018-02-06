@@ -101,9 +101,6 @@
   end if
   print *, '# - number of bounary conditions faces: ', cnt_qua + cnt_tri
   print *, '# - number of bounary conditions: ', cnt_bnd_conds
-  do i = 1, cnt_bnd_conds
-    print *, bnd_cond_names(i)
-  end do 
 
   !--------------------------------------------!
   !                                            !
@@ -113,6 +110,16 @@
   grid % n_nodes     = cnt_nodes
   grid % n_cells     = cnt_cells
   grid % n_bnd_cells = cnt_tri + cnt_qua
+
+  !-------------------------!
+  !   Boundary conditions   !
+  !-------------------------!
+  grid % n_bnd_cond  = cnt_bnd_conds
+  allocate(grid % bnd_cond % name(cnt_bnd_conds))
+  do i = 1, cnt_bnd_conds
+    grid % bnd_cond % name(i) = bnd_cond_names(i)
+    print *, bnd_cond_names(i)
+  end do 
 
   call Allocate_Memory(grid)
 

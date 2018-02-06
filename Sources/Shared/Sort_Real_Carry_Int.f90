@@ -1,218 +1,220 @@
 !==============================================================================!
-      subroutine Sort_Real_Carry_Int(X,Y,N,KFLAG)
+      subroutine Sort_Real_Carry_Int(x, y, n, kflag)
 !------------------------------------------------------------------------------!
-!   Sorts real array X and make same interchanges in integer arr. Y.           !
-!   It was downladed from NIST.
+!   Sorts real array x and make same interchanges in integer arr. y.           !
+!   It was downladed from nist and then slightly modified.                     !
 !------------------------------------------------------------------------------!
-      dimension :: IL(21),IU(21)
-      real      :: X(N),T, TT
-      integer   :: Y(N),TY,TTY
+      dimension il(21), iu(21)
+      real      x(n), t,  tt
+      integer   y(n), ty, tty
 !==============================================================================!
 
-!***FIRST EXECUTABLE STATEMENT RISORT
-      NN = N
-      IF (NN.GE.1) GO TO 10
-      RETURN
-   10 KK = IABS(KFLAG)
-      IF ((KK.EQ.1).OR.(KK.EQ.2)) GO TO 15
-      RETURN
 !
-! ALTER ARRAY X TO GET DECREASING ORDER IF NEEDED
+! First executable statement 
 !
-   15 IF (KFLAG.GE.1) GO TO 30
-      DO 20 I=1,NN
-      X(I) = -X(I)
-   20 CONTINUE
-   30 if(KK==1) goto 100
-      if(KK==2) goto 200 
+      nn = n
+      if (nn.ge.1) go to 10
+      return
+   10 kk = iabs(kflag)
+      if ((kk.eq.1).or.(kk.eq.2)) go to 15
+      return
 !
-! SORT X ONLY
+! Alter array x to get decreasing order if needed
 !
-  100 CONTINUE
-      M=1
-      I=1
-      J=NN
-      R=.375
-  110 IF (I .EQ. J) GO TO 155
-      IF (R .GT. .5898437) GO TO 120
-      R=R+3.90625E-2
-      GO TO 125
-  120 R=R-.21875
-  125 K=I
-!                                  SELECT A CENTRAL ELEMENT OF THE
-!                                  ARRAY AND SAVE IT IN LOCATION T
-      IJ = I + IFIX (FLOAT (J-I) * R)
-      T=X(IJ)
-!                                  IF FIRST ELEMENT OF ARRAY IS GREATER
-!                                  THAN T, INTERCHANGE WITH T
-      IF (X(I) .LE. T) GO TO 130
-      X(IJ)=X(I)
-      X(I)=T
-      T=X(IJ)
-  130 L=J
-!                                  IF LAST ELEMENT OF ARRAY IS LESS THAN
-!                                  T, INTERCHANGE WITH T
-      IF (X(J) .GE. T) GO TO 140
-      X(IJ)=X(J)
-      X(J)=T
-      T=X(IJ)
-!                                  IF FIRST ELEMENT OF ARRAY IS GREATER
-!                                  THAN T, INTERCHANGE WITH T
-      IF (X(I) .LE. T) GO TO 140
-      X(IJ)=X(I)
-      X(I)=T
-      T=X(IJ)
-      GO TO 140
-  135 TT=X(L)
-      X(L)=X(K)
-      X(K)=TT
-!                                  FIND AN ELEMENT IN THE SECOND HALF OF
-!                                  THE ARRAY WHICH IS SMALLER THAN T
-  140 L=L-1
-      IF (X(L) .GT. T) GO TO 140
-!                                  FIND AN ELEMENT IN THE FIRST HALF OF
-!                                  THE ARRAY WHICH IS GREATER THAN T
-  145 K=K+1
-      IF (X(K) .LT. T) GO TO 145
-!                                  INTERCHANGE THESE ELEMENTS
-      IF (K .LE. L) GO TO 135
-!                                  SAVE UPPER AND LOWER SUBSCRIPTS OF
-!                                  THE ARRAY YET TO BE SORTED
-      IF (L-I .LE. J-K) GO TO 150
-      IL(M)=I
-      IU(M)=L
-      I=K
-      M=M+1
-      GO TO 160
-  150 IL(M)=K
-      IU(M)=J
-      J=L
-      M=M+1
-      GO TO 160
-!                                  BEGIN AGAIN ON ANOTHER PORTION OF
-!                                  THE UNSORTED ARRAY
-  155 M=M-1
-      IF (M .EQ. 0) GO TO 300
-      I=IL(M)
-      J=IU(M)
-  160 IF (J-I .GE. 1) GO TO 125
-      IF (I .EQ. 1) GO TO 110
-      I=I-1
-  165 I=I+1
-      IF (I .EQ. J) GO TO 155
-      T=X(I+1)
-      IF (X(I) .LE. T) GO TO 165
-      K=I
-  170 X(K+1)=X(K)
-      K=K-1
-      IF (T .LT. X(K)) GO TO 170
-      X(K+1)=T
-      GO TO 165
+   15 if (kflag.ge.1) go to 30
+      do 20 i=1,nn
+      x(i) = -x(i)
+   20 continue
+   30 if(kk==1) goto 100
+      if(kk==2) goto 200 
 !
-! SORT X AND CARRY Y ALONG
+! Sort x only
 !
-  200 CONTINUE
-      M=1
-      I=1
-      J=NN
-      R=.375
-  210 IF (I .EQ. J) GO TO 255
-      IF (R .GT. .5898437) GO TO 220
-      R=R+3.90625E-2
-      GO TO 225
-  220 R=R-.21875
-  225 K=I
-!                                  SELECT A CENTRAL ELEMENT OF THE
-!                                  ARRAY AND SAVE IT IN LOCATION T
-      IJ = I + IFIX (FLOAT (J-I) *R)
-      T=X(IJ)
-      TY= Y(IJ)
-!                                  IF FIRST ELEMENT OF ARRAY IS GREATER
-!                                  THAN T, INTERCHANGE WITH T
-      IF (X(I) .LE. T) GO TO 230
-      X(IJ)=X(I)
-      X(I)=T
-      T=X(IJ)
-       Y(IJ)= Y(I)
-       Y(I)=TY
-      TY= Y(IJ)
-  230 L=J
-!                                  IF LAST ELEMENT OF ARRAY IS LESS THAN
-!                                  T, INTERCHANGE WITH T
-      IF (X(J) .GE. T) GO TO 240
-      X(IJ)=X(J)
-      X(J)=T
-      T=X(IJ)
-       Y(IJ)= Y(J)
-       Y(J)=TY
-      TY= Y(IJ)
-!                                  IF FIRST ELEMENT OF ARRAY IS GREATER
-!                                  THAN T, INTERCHANGE WITH T
-      IF (X(I) .LE. T) GO TO 240
-      X(IJ)=X(I)
-      X(I)=T
-      T=X(IJ)
-       Y(IJ)= Y(I)
-       Y(I)=TY
-      TY= Y(IJ)
-      GO TO 240
-  235 TT=X(L)
-      X(L)=X(K)
-      X(K)=TT
-      TTY= Y(L)
-       Y(L)= Y(K)
-       Y(K)=TTY
-!                                  FIND AN ELEMENT IN THE SECOND HALF OF
-!                                  THE ARRAY WHICH IS SMALLER THAN T
-  240 L=L-1
-      IF (X(L) .GT. T) GO TO 240
-!                                  FIND AN ELEMENT IN THE FIRST HALF OF
-!                                  THE ARRAY WHICH IS GREATER THAN T
-  245 K=K+1
-      IF (X(K) .LT. T) GO TO 245
-!                                  INTERCHANGE THESE ELEMENTS
-      IF (K .LE. L) GO TO 235
-!                                  SAVE UPPER AND LOWER SUBSCRIPTS OF
-!                                  THE ARRAY YET TO BE SORTED
-      IF (L-I .LE. J-K) GO TO 250
-      IL(M)=I
-      IU(M)=L
-      I=K
-      M=M+1
-      GO TO 260
-  250 IL(M)=K
-      IU(M)=J
-      J=L
-      M=M+1
-      GO TO 260
-!                                  BEGIN AGAIN ON ANOTHER PORTION OF
-!                                  THE UNSORTED ARRAY
-  255 M=M-1
-      IF (M .EQ. 0) GO TO 300
-      I=IL(M)
-      J=IU(M)
-  260 IF (J-I .GE. 1) GO TO 225
-      IF (I .EQ. 1) GO TO 210
-      I=I-1
-  265 I=I+1
-      IF (I .EQ. J) GO TO 255
-      T=X(I+1)
-      TY= Y(I+1)
-      IF (X(I) .LE. T) GO TO 265
-      K=I
-  270 X(K+1)=X(K)
-       Y(K+1)= Y(K)
-      K=K-1
-      IF (T .LT. X(K)) GO TO 270
-      X(K+1)=T
-       Y(K+1)=TY
-      GO TO 265
+  100 continue
+      m=1
+      i=1
+      j=nn
+      r=.375
+  110 if (i .eq. j) go to 155
+      if (r .gt. .5898437) go to 120
+      r=r+3.90625e-2
+      go to 125
+  120 r=r-.21875
+  125 k=i
+!                                  select a central element of the
+!                                  array and save it in location t
+      ij = i + ifix (float (j-i) * r)
+      t=x(ij)
+!                                  if first element of array is greater
+!                                  than t, interchange with t
+      if (x(i) .le. t) go to 130
+      x(ij)=x(i)
+      x(i)=t
+      t=x(ij)
+  130 l=j
+!                                  if last element of array is less than
+!                                  t, interchange with t
+      if (x(j) .ge. t) go to 140
+      x(ij)=x(j)
+      x(j)=t
+      t=x(ij)
+!                                  if first element of array is greater
+!                                  than t, interchange with t
+      if (x(i) .le. t) go to 140
+      x(ij)=x(i)
+      x(i)=t
+      t=x(ij)
+      go to 140
+  135 tt=x(l)
+      x(l)=x(k)
+      x(k)=tt
+!                                  find an element in the second half of
+!                                  the array which is smaller than t
+  140 l=l-1
+      if (x(l) .gt. t) go to 140
+!                                  find an element in the first half of
+!                                  the array which is greater than t
+  145 k=k+1
+      if (x(k) .lt. t) go to 145
+!                                  interchange these elements
+      if (k .le. l) go to 135
+!                                  save upper and lower subscripts of
+!                                  the array yet to be sorted
+      if (l-i .le. j-k) go to 150
+      il(m)=i
+      iu(m)=l
+      i=k
+      m=m+1
+      go to 160
+  150 il(m)=k
+      iu(m)=j
+      j=l
+      m=m+1
+      go to 160
+!                                  begin again on another portion of
+!                                  the unsorted array
+  155 m=m-1
+      if (m .eq. 0) go to 300
+      i=il(m)
+      j=iu(m)
+  160 if (j-i .ge. 1) go to 125
+      if (i .eq. 1) go to 110
+      i=i-1
+  165 i=i+1
+      if (i .eq. j) go to 155
+      t=x(i+1)
+      if (x(i) .le. t) go to 165
+      k=i
+  170 x(k+1)=x(k)
+      k=k-1
+      if (t .lt. x(k)) go to 170
+      x(k+1)=t
+      go to 165
 !
-! CLEAN UP
+! Sort x and carry y along
 !
-  300 IF (KFLAG.GE.1) RETURN
-      DO 310 I=1,NN
-      X(I) = -X(I)
-  310 CONTINUE
+  200 continue
+      m=1
+      i=1
+      j=nn
+      r=.375
+  210 if (i .eq. j) go to 255
+      if (r .gt. .5898437) go to 220
+      r=r+3.90625e-2
+      go to 225
+  220 r=r-.21875
+  225 k=i
+!                                  select a central element of the
+!                                  array and save it in location t
+      ij = i + ifix (float (j-i) *r)
+      t=x(ij)
+      ty= y(ij)
+!                                  if first element of array is greater
+!                                  than t, interchange with t
+      if (x(i) .le. t) go to 230
+      x(ij)=x(i)
+      x(i)=t
+      t=x(ij)
+       y(ij)= y(i)
+       y(i)=ty
+      ty= y(ij)
+  230 l=j
+!                                  if last element of array is less than
+!                                  t, interchange with t
+      if (x(j) .ge. t) go to 240
+      x(ij)=x(j)
+      x(j)=t
+      t=x(ij)
+       y(ij)= y(j)
+       y(j)=ty
+      ty= y(ij)
+!                                  if first element of array is greater
+!                                  than t, interchange with t
+      if (x(i) .le. t) go to 240
+      x(ij)=x(i)
+      x(i)=t
+      t=x(ij)
+       y(ij)= y(i)
+       y(i)=ty
+      ty= y(ij)
+      go to 240
+  235 tt=x(l)
+      x(l)=x(k)
+      x(k)=tt
+      tty= y(l)
+       y(l)= y(k)
+       y(k)=tty
+!                                  find an element in the second half of
+!                                  the array which is smaller than t
+  240 l=l-1
+      if (x(l) .gt. t) go to 240
+!                                  find an element in the first half of
+!                                  the array which is greater than t
+  245 k=k+1
+      if (x(k) .lt. t) go to 245
+!                                  interchange these elements
+      if (k .le. l) go to 235
+!                                  save upper and lower subscripts of
+!                                  the array yet to be sorted
+      if (l-i .le. j-k) go to 250
+      il(m)=i
+      iu(m)=l
+      i=k
+      m=m+1
+      go to 260
+  250 il(m)=k
+      iu(m)=j
+      j=l
+      m=m+1
+      go to 260
+!                                  begin again on another portion of
+!                                  the unsorted array
+  255 m=m-1
+      if (m .eq. 0) go to 300
+      i=il(m)
+      j=iu(m)
+  260 if (j-i .ge. 1) go to 225
+      if (i .eq. 1) go to 210
+      i=i-1
+  265 i=i+1
+      if (i .eq. j) go to 255
+      t=x(i+1)
+      ty= y(i+1)
+      if (x(i) .le. t) go to 265
+      k=i
+  270 x(k+1)=x(k)
+       y(k+1)= y(k)
+      k=k-1
+      if (t .lt. x(k)) go to 270
+      x(k+1)=t
+       y(k+1)=ty
+      go to 265
+!
+! Clean up
+!
+  300 if (kflag.ge.1) return
+      do 310 i=1,nn
+      x(i) = -x(i)
+  310 continue
       
       end subroutine

@@ -121,7 +121,6 @@
   do i = 1, cnt_bnd_conds
     call To_Upper_Case( bnd_cond_names(i) )
     grid % bnd_cond % name(i) = bnd_cond_names(i)
-    print *, bnd_cond_names(i)
   end do 
 
   call Allocate_Memory(grid)

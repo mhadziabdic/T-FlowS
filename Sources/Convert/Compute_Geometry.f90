@@ -637,6 +637,15 @@
   !   Remove boundary condition with color_per and compress the rest   !
   !--------------------------------------------------------------------!
   if(color_per < grid % n_bnd_cond) then
+
+    ! Set the color of boundary selected to be periodic to zero
+    do c = -1,-grid % n_bnd_cells,-1
+      if(grid % bnd_cond % color(c) .eq. color_per) then
+        grid % bnd_cond % color(c) = 0
+      end if
+    end do
+
+    ! Shift the rest of the boundary cells
     do b = 1, grid % n_bnd_cond - 1
       if(b .ge. color_per) then 
 
@@ -936,9 +945,9 @@
         write(*,'(a2, f5.0, a14)') ' #', (100.*c1/(1.*grid % n_cells)),  &
                                    ' % complete...'
       endif
-      do c2=-1,-grid % n_bnd_cells,-1
-        do b = 1, n_wall_colors
-          if(grid % bnd_cond % color(c2) <= wall_colors(b)) then
+      do b = 1, n_wall_colors
+        do c2=-1,-grid % n_bnd_cells,-1
+          if(grid % bnd_cond % color(c2) .eq. wall_colors(b)) then
             WallDs(c1)=min(WallDs(c1),                                      &
             Distance_Squared(grid % xc(c1), grid % yc(c1), grid % zc(c1),   &
                              grid % xc(c2), grid % yc(c2), grid % zc(c2)))

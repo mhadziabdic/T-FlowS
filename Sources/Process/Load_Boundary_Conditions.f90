@@ -21,7 +21,7 @@
   integer           :: c, n, n_points, n_initial_cond, s
   integer           :: m, c1, bc, mt, i
   character(len=80) :: name_bou, name_prof(128), dir, bc_name, mt_name
-  integer           :: typBou(128)
+  integer           :: type_bnd_cond(128)
   real              :: xyz(10024)
   real              :: wi
   real              :: x1(55555), x2(55555), Mres
@@ -35,7 +35,7 @@
   name_bou = problem_name
   name_bou(len_trim(problem_name)+1:len_trim(problem_name)+4) = '.bnd'
   open(9, file=name_bou)
-  if(this_proc < 2) print *, '# Reading the file:', name_bou
+  if(this_proc < 2) print *, '# Reading the file: ', name_bou
 
   !-------------------------!
   !   Phisical properties   !
@@ -96,20 +96,20 @@
     end if 
 
     if( line % tokens(2) == 'INFLOW') then 
-      typBou(n)=INFLOW
+      type_bnd_cond(n)=INFLOW
       PER_BC = NO
     else if( line % tokens(2) == 'WALL') then 
-      typBou(n)=WALL
+      type_bnd_cond(n)=WALL
     else if( line % tokens(2) == 'OUTFLOW') then 
-      typBou(n)=OUTFLOW
+      type_bnd_cond(n)=OUTFLOW
     else if( line % tokens(2) == 'SYMMETRY') then 
-      typBou(n)=SYMMETRY
+      type_bnd_cond(n)=SYMMETRY
     else if( line % tokens(2) == 'WALLFLUX') then 
-      typBou(n)=WALLFL
+      type_bnd_cond(n)=WALLFL
     else if( line % tokens(2) == 'CONVECTIVE') then 
-      typBou(n)=CONVECT
+      type_bnd_cond(n)=CONVECT
     else if( line % tokens(2) == 'PRESSURE') then 
-      typBou(n)=PRESSURE
+      type_bnd_cond(n)=PRESSURE
     else
       if(this_proc < 2)  &
         print *, '# Load_Boundary_Conditions: '//        &
@@ -123,7 +123,7 @@
       read(line % tokens(3),*) U % bound(n)
       read(line % tokens(4),*) V % bound(n)
       read(line % tokens(5),*) W % bound(n)
-      if(typBou(n)==PRESSURE) then
+      if(type_bnd_cond(n)==PRESSURE) then
         read(line % tokens(6),*) P % bound(n)
         if(HOT==YES) then 
           read(line % tokens(7),*) T % bound(n)
@@ -182,7 +182,7 @@
           end if
         end if  ! HOT == YES
         name_prof(n)=''
-      else   ! typBou .ne. PRESSURE
+      else   ! type_bnd_cond .ne. PRESSURE
         if(HOT==YES) then 
           read(line % tokens(6),*) T % bound(n)
           if(SIMULA==EBM.or.SIMULA==HJ) then
@@ -240,7 +240,7 @@
           end if
         end if  ! HOT == YES
         name_prof(n)=''
-      end if  ! typBou == PRESSURE
+      end if  ! type_bnd_cond == PRESSURE
     end if    
   end do      
 
@@ -344,7 +344,7 @@
     if(name_prof(n) == '') then 
       do c = -1,-grid % n_bnd_cells,-1
         if(grid % bnd_cond % color(c) == n) then
-          TypeBC(c) = typBou(n)
+          TypeBC(c) = type_bnd_cond(n)
 
           ! If in_out is set to true, set boundary values,
           ! otherwise, just the TypeBC remains set.
@@ -395,7 +395,7 @@
     ! Boundary condition is prescribed in a file 
     else
       open(9, file=name_prof(n))
-      if(this_proc < 2) print *, '# Reading the file:', name_prof(n)
+      if(this_proc < 2) print *, '# Reading the file: ', name_prof(n)
       call Tokenizer_Mod_Read_Line(9)
       read(line % tokens(1),*) n_points                  ! number of points
       call Tokenizer_Mod_Read_Line(9)
@@ -424,7 +424,7 @@
         ! Set the closest point
         do c = -1,-grid % n_bnd_cells,-1
           if(grid % bnd_cond % color(c) == n) then
-            TypeBC(c) = typBou(n)
+            TypeBC(c) = type_bnd_cond(n)
             if(in_out) then    !if .true. set boundary values, otherwise, just set TypeBC
               Mres = HUGE
               do s=1,n_points
@@ -532,7 +532,7 @@
            
         do c = -1,-grid % n_bnd_cells,-1
           if(grid % bnd_cond % color(c) == n) then
-            TypeBC(c) = typBou(n)
+            TypeBC(c) = type_bnd_cond(n)
           
             ! If in_out is set to true, set boundary values,
             ! otherwise, just the TypeBC remains set.
@@ -554,7 +554,7 @@
                   wi = ( xyz(m+1)-grid % zc(c) ) / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 else if( (dir == 'RX' .or. dir == 'rx') .and.           &
-                       sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) >= xyz(m) .and.      &
+                     sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) >= xyz(m) .and.      &
                      sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) <= xyz(m+1) ) then
                   wi = ( xyz(m+1) - sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) )     &
                      / ( xyz(m+1) - xyz(m) )
@@ -568,7 +568,7 @@
                 else if( (dir == 'RZ' .or. dir == 'rz') .and.           &
                      sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) <= xyz(m) .and.      &
                      sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) >= xyz(m+1) ) then
-                    wi = ( xyz(m+1) - sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) )     &
+                    wi = ( xyz(m+1) - sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) )   &
                      / ( xyz(m+1) - xyz(m) )
                   here = .TRUE.
                 end if

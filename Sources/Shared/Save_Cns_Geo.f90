@@ -49,7 +49,7 @@
   !----------------------!
   call Name_File( sub, name_out, '.cns' )
   open(9, file=name_out,form='unformatted')
-  write(*, *) '# Creating the file:', trim(name_out)
+  write(*, *) '# Creating the file: ', trim(name_out)
 
   !-----------------------------------------------!
   !   Number of cells, boundary cells ans sides   !
@@ -219,7 +219,7 @@
   !----------------------!
   call Name_File( sub, name_out, '.geo' )
   open(9, file=name_out, form='unformatted')
-  write(*, *) '# Creating the file:', trim(name_out)
+  write(*, *) '# Creating the file: ', trim(name_out)
 
   !----------------------!
   !   Node coordinates   !

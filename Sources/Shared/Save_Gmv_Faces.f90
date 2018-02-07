@@ -20,7 +20,7 @@
   !-----------------------------------------!
   call Name_File(0, name_out, '.faces.gmv')
   open(9, file=name_out)
-  print *, '# Creating the file:', trim(name_out)
+  print *, '# Creating the file: ', trim(name_out)
 
   !-----------!
   !   Start   !

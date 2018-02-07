@@ -92,7 +92,7 @@
   !--------------------!
   name_prob = problem_name
   name_prob(len_trim(problem_name)+1:len_trim(problem_name)+3) = '.1D'
-  print *, '# Creating the file:', trim(name_prob)
+  print *, '# Creating the file: ', trim(name_prob)
   open(9, file=name_prob)
 
   ! Write the number of probes 

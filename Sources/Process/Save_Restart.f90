@@ -45,7 +45,7 @@
   !-------------------------!
   call Name_File(this_proc, name_out, '.restart')
   open(9, file=name_out, FORM='unformatted')
-  if(this_proc  < 2) print *, '# Creating the file:', trim(name_out)
+  if(this_proc  < 2) print *, '# Creating the file: ', trim(name_out)
 
   ! Version
   write(9) 0.0  ! version

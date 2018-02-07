@@ -96,7 +96,7 @@
   call Tokenizer_Mod_Read_Line(5)
   read(line % whole, *) name_eps 
   name_eps(len_trim(name_eps)+1:len_trim(name_eps)+4) = '.eps'
-  print *, '# Now creating the file:', trim(name_eps)
+  print *, '# Now creating the file: ', trim(name_eps)
 
   xmax=maxval(grid % xn(1:grid % n_nodes))
   ymax=maxval(grid % yn(1:grid % n_nodes))

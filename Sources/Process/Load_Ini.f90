@@ -51,7 +51,7 @@
 
   call Name_File(this_proc, name_in, '.ini')
 
-  if(this_proc < 2) print *,'now reading file:', name_in 
+  if(this_proc < 2) print *,'now reading file: ', name_in 
 
   open(5, file=name_in) 
   read(5,*) NCold

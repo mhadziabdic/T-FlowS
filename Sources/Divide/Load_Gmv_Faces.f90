@@ -19,7 +19,7 @@
 
   name_in = problem_name
   name_in(len_trim(problem_name)+1:len_trim(problem_name)+10) = '.faces.gmv'
-  print *, '# Reading the file:', name_in
+  print *, '# Reading the file: ', name_in
   open(9, file=name_in)
 
   !-----------!    
@@ -68,7 +68,7 @@
   !----------------------!    
   call Name_File(0, name_in, '.shadow')
   open(9, file=name_in)
-  print *, '# Reading the file:', name_in
+  print *, '# Reading the file: ', name_in
 
   do s = grid % n_faces+1,grid % n_faces + grid % n_sh
     read(9,*) grid % faces_n_nodes(s)

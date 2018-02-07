@@ -195,7 +195,7 @@
     nameIn=name
     nameIn(len_trim(name)+1:len_trim(name)+4)='.cns'
     open(9, file=nameIn,FORM='unformatted')
-    print *, '# Now reading the binary .cns file:', nameIn
+    print *, '# Now reading the binary .cns file: ', nameIn
 
 !///// number of cells, boundary cells and sides
     read(9) NC
@@ -219,7 +219,7 @@
     nameIn = name
     nameIn(len_trim(name)+1:len_trim(name)+4)='.geo'
     open(9, file=nameIn, FORM='unformatted')
-    print *, '# Now reading the binary .geo file:', nameIn
+    print *, '# Now reading the binary .geo file: ', nameIn
 
     allocate (xc(-NbC:NC))
     allocate (yc(-NbC:NC))

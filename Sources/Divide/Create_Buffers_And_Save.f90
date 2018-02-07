@@ -49,7 +49,7 @@
 
     call Name_File(sub, name_out, '.buf')
     open(9, file=name_out)
-    print *, '# Creating the file:', trim(name_out)
+    print *, '# Creating the file: ', trim(name_out)
 
     write(9,'(A20)') '#------------------#'
     write(9,'(A20)') '#                  #'

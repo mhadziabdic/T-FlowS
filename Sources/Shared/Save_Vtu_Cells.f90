@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 ! Writes: name.vtu, name.faces.vtu, name.shadow.vtu                            !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod, only: material
+  use all_mod, only: material, WallDs
   use gen_mod, only: NewN, NewC
   use div_mod, only: n_sub
   use Grid_Mod
@@ -16,19 +16,19 @@
   integer            :: c, n, offset
   character(len=80)  :: name_out
 !------------------------------[Local parameters]------------------------------!
-  integer, parameter :: VTK_TETRA      = 10  ! cell shapes in VTK format
-  integer, parameter :: VTK_HEXAHEDRON = 12  
-  integer, parameter :: VTK_WEDGE      = 13
-  integer, parameter :: VTK_PYRAMID    = 14
-  character(len= 0)  :: IN_0 = ''           ! indentation levels 
-  character(len= 2)  :: IN_1 = '  '
-  character(len= 4)  :: IN_2 = '    '
-  character(len= 6)  :: IN_3 = '      '
-  character(len= 8)  :: IN_4 = '        '
-  character(len=10)  :: IN_5 = '          '
-  character(len=12)  :: IN_6 = '            '
-  character(len=14)  :: IN_7 = '              '
-  character(len=16)  :: IN_8 = '                '
+  integer,           parameter :: VTK_TETRA      = 10  ! cells in VTK format
+  integer,           parameter :: VTK_HEXAHEDRON = 12  
+  integer,           parameter :: VTK_WEDGE      = 13
+  integer,           parameter :: VTK_PYRAMID    = 14
+  character(len= 0), parameter :: IN_0 = ''            ! indentation levels 
+  character(len= 2), parameter :: IN_1 = '  '
+  character(len= 4), parameter :: IN_2 = '    '
+  character(len= 6), parameter :: IN_3 = '      '
+  character(len= 8), parameter :: IN_4 = '        '
+  character(len=10), parameter :: IN_5 = '          '
+! character(len=12), parameter :: IN_6 = '            '
+! character(len=14), parameter :: IN_7 = '              '
+! character(len=16), parameter :: IN_8 = '                '
 !==============================================================================!
 
   !----------------------!
@@ -58,7 +58,7 @@
   write(9,'(a,a)') IN_4, '<DataArray type="Float32" NumberOfComponents' //  &
                          '="3" format="ascii">'
   do n = 1, grid % n_nodes
-    if(NewN(n) /= 0) write(9, '(a,1PE15.7,1PE15.7,1PE15.7)')                &
+    if(NewN(n) /= 0) write(9, '(a,1pe15.7,1pe15.7,1pe15.7)')                &
                                 IN_5, grid % xn(n), grid % yn(n), grid % zn(n)
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'
@@ -76,25 +76,25 @@
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
       if(grid % cells_n_nodes(c) == 8) then
-        write(9,'(a,8I9)')                                           &
+        write(9,'(a,8i9)')                                           &
           IN_5,                                                      &
           NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
           NewN(grid % cells_n(4,c))-1, NewN(grid % cells_n(3,c))-1,  &
           NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(6,c))-1,  &
           NewN(grid % cells_n(8,c))-1, NewN(grid % cells_n(7,c))-1
       else if(grid % cells_n_nodes(c) == 6) then
-        write(9,'(a,6I9)')                                           &
+        write(9,'(a,6i9)')                                           &
           IN_5,                                                      &
           NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
           NewN(grid % cells_n(3,c))-1, NewN(grid % cells_n(4,c))-1,  &
           NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(6,c))-1
       else if(grid % cells_n_nodes(c) == 4) then
-        write(9,'(a,4I9)')                                           &
+        write(9,'(a,4i9)')                                           &
           IN_5,                                                      &
           NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
           NewN(grid % cells_n(3,c))-1, NewN(grid % cells_n(4,c))-1
       else if(grid % cells_n_nodes(c) == 5) then
-        write(9,'(a,5I9)')                                           &
+        write(9,'(a,5i9)')                                           &
           IN_5,                                                      &
           NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(1,c))-1,  &
           NewN(grid % cells_n(2,c))-1, NewN(grid % cells_n(4,c))-1,  &
@@ -143,6 +143,15 @@
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
       write(9,'(a,i9)') IN_5, material(c)
+    end if
+  end do
+  write(9,'(a,a)') IN_4, '</DataArray>'
+
+  ! Wall distance
+  write(9,'(a,a)') IN_4, '<DataArray type="Float32" Name="wall distance" format="ascii">'
+  do c = 1, grid % n_cells
+    if(NewC(c) /= 0) then
+      write(9,'(a,1pe15.7)') IN_5, WallDs(c)
     end if
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'

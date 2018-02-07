@@ -195,6 +195,14 @@
   !---------------------!
   call Merge_Nodes(grid)
 
+  !---------------------------------!
+  !   Read block (material?) data   !
+  !---------------------------------!
+  grid % n_materials = 1
+  allocate(grid % materials(grid % n_materials))
+  grid % materials(1) % name = "AIR"
+  material = 1
+
   !-----------------------------------------------------------------!
   !   Correct boundary conditions directions for hexahedral cells   !
   !   (They are not the same in CGNS and Gambit's neutral format.)  !

@@ -86,21 +86,23 @@
   !   First run: results   !
   !------------------------!
 
-  print *, '# First run finished!'
-  print *, '# - number of nodes: ',           cnt_nodes
-  print *, '# - number of cells: ',           cnt_cells
-  print *, '# - number of hex cells: ',       cnt_hex
-  print *, '# - number of pyramids cells: ',  cnt_pyr
-  print *, '# - number of prism cells: ',     cnt_wed
-  print *, '# - number of tetra cells: ',     cnt_tet
-  print *, '# - number of triangles faces: ', cnt_tri 
-  print *, '# - number of quads faces: ',     cnt_qua
-  if (cnt_qua + cnt_tri .eq. 0) then
-    print *, '# No boundary faces were found !'
-    stop
+  if(verbose) then
+    print *, '# First run finished!'
+    print *, '# - number of nodes: ',           cnt_nodes
+    print *, '# - number of cells: ',           cnt_cells
+    print *, '# - number of hex cells: ',       cnt_hex
+    print *, '# - number of pyramids cells: ',  cnt_pyr
+    print *, '# - number of prism cells: ',     cnt_wed
+    print *, '# - number of tetra cells: ',     cnt_tet
+    print *, '# - number of triangles faces: ', cnt_tri 
+    print *, '# - number of quads faces: ',     cnt_qua
+    if (cnt_qua + cnt_tri .eq. 0) then
+      print *, '# No boundary faces were found !'
+      stop
+    end if
+    print *, '# - number of bounary conditions faces: ', cnt_qua + cnt_tri
+    print *, '# - number of bounary conditions: ', cnt_bnd_conds
   end if
-  print *, '# - number of bounary conditions faces: ', cnt_qua + cnt_tri
-  print *, '# - number of bounary conditions: ', cnt_bnd_conds
 
   !--------------------------------------------!
   !                                            !
@@ -117,6 +119,7 @@
   grid % n_bnd_cond  = cnt_bnd_conds
   allocate(grid % bnd_cond % name(cnt_bnd_conds))
   do i = 1, cnt_bnd_conds
+    call To_Upper_Case( bnd_cond_names(i) )
     grid % bnd_cond % name(i) = bnd_cond_names(i)
     print *, bnd_cond_names(i)
   end do 
@@ -141,6 +144,9 @@
     !   Browse through all blocks   !
     !-------------------------------!
     do block = 1, cgns_base(base) % n_blocks
+
+      ! Count block, just for information
+      cnt_blocks = cnt_blocks + 1
 
       !---------------------------!
       !   Read coordinates block  !
@@ -180,11 +186,14 @@
     end do ! blocks
   end do ! bases
 
-  print *, '# Grid metrix after reading:'
-  print *, '# - number of nodes:         ', cnt_nodes
-  print *, '# - number of cells:         ', cnt_cells   
-  print *, '# - number of boundary cells:', cnt_bnd_cells
+  print *, '# Total number of nodes:  ',            cnt_nodes
+  print *, '# Total number of cells:  ',            cnt_cells
+  print *, '# Total number of blocks: ',            cnt_blocks
+  print *, '# Total number of boundary sections: ', cnt_bnd_conds
 
+  !---------------------!
+  !   Merge the nodes   !
+  !---------------------!
   call Merge_Nodes(grid)
 
   !-----------------------------------------------------------------!
@@ -226,5 +235,7 @@
     end do ! blocks
   end do ! bases
   print *, '# - number of boundary cells:', cnt_bnd_cells
+
+  call Grid_Mod_Print_Bnd_Cond_List(grid)
 
   end subroutine

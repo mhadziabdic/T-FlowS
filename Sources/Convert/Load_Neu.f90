@@ -149,13 +149,7 @@
     call Tokenizer_Mod_Read_Line(9)        ! ENDOFSECTION
   end do
 
-  print *, '#==================================================='
-  print *, '# Found the following boundary conditions:'
-  print *, '#---------------------------------------------------'
-  do j = 1, n_bnd_sect
-    print *, '# ', grid % bnd_cond % name(j)
-  end do
-  print *, '#---------------------------------------------------'
+  call Grid_Mod_Print_Bnd_Cond_List(grid)
 
   close(9)
 

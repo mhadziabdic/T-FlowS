@@ -8,7 +8,8 @@
 
   cnt_nodes     = 0
   cnt_cells     = 0
-  cnt_bnd_cells = 0
+  cnt_blocks    = 0
+  cnt_bnd_conds = 0
   cnt_bnd_conds = 0
 
   cnt_hex = 0

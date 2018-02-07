@@ -22,20 +22,21 @@
   integer              :: c11, c12, c21, c22, s1, s2, bou_cen
   integer              :: new_face_1, new_face_2
   integer              :: color_per, n_per, number_sides, dir, option
-  integer              :: wall_color, rot_dir
+  integer              :: rot_dir, n_wall_colors
   real                 :: xt(4), yt(4), zt(4), angle_face, tol
   real                 :: xs2, ys2, zs2, x_a, y_a, z_a, x_b, y_b, z_b
   real                 :: x_c, y_c, z_c, Det
   real                 :: ab_i, ab_j, ab_k, ac_i, ac_j, ac_k, p_i, p_j, p_k
   real                 :: dsc1, dsc2, per_min, per_max
-  real                 :: t, SurTot, angle 
+  real                 :: t, sur_tot, angle 
   real                 :: xc1, yc1, zc1, xc2, yc2, zc2 
   real                 :: max_dis, tot_vol, min_vol, max_vol
   real                 :: xmin, xmax, ymin, ymax, zmin, zmax 
   real, allocatable    :: xspr(:), yspr(:), zspr(:)
   real, allocatable    :: b_coor(:), phi_face(:)
   integer, allocatable :: b_face(:), face_copy(:)
-  character(len=80)    :: name_per
+  integer, allocatable :: wall_colors(:)
+  character(len=80)    :: answer  
 !==============================================================================!
 !
 !                                n3 
@@ -212,17 +213,17 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
 
-    SurTot = sqrt(  grid % sx(s)*grid % sx(s)  &
+    sur_tot = sqrt(  grid % sx(s)*grid % sx(s)  &
                   + grid % sy(s)*grid % sy(s)  &
                   + grid % sz(s)*grid % sz(s) )
 
     if(c2  < 0) then
       t = (   grid % sx(s)*(grid % xf(s) - grid % xc(c1))        &
             + grid % sy(s)*(grid % yf(s) - grid % yc(c1))        &
-            + grid % sz(s)*(grid % zf(s) - grid % zc(c1)) ) / SurTot
-      grid % xc(c2) = grid % xc(c1) + grid % sx(s)*t / SurTot
-      grid % yc(c2) = grid % yc(c1) + grid % sy(s)*t / SurTot
-      grid % zc(c2) = grid % zc(c1) + grid % sz(s)*t / SurTot
+            + grid % sz(s)*(grid % zf(s) - grid % zc(c1)) ) / sur_tot
+      grid % xc(c2) = grid % xc(c1) + grid % sx(s)*t / sur_tot
+      grid % yc(c2) = grid % yc(c1) + grid % sy(s)*t / sur_tot
+      grid % zc(c2) = grid % zc(c1) + grid % sz(s)*t / sur_tot
       if(bou_cen == 1) then
         grid % xc(c2) = grid % xf(s)
         grid % yc(c2) = grid % yf(s)
@@ -291,52 +292,59 @@
 
   print *, '# Number of boundary conditions: ', grid % n_bnd_cond
 
-2 n_per = 0 
-  print *, '#======================================================'
-  print *, '# Enter the periodic-boundary-condition name.'
+2 continue
+  call Grid_Mod_Print_Bnd_Cond_List(grid)
+  n_per = 0 
+  print *, '#============================================================='
+  print *, '# Enter the periodic-boundary-condition number (see it above)'
   print *, '# Type skip if there is none !'
-  print *, '#------------------------------------------------------'
-  print *, '# (Please note that the periodic boundaries have to be' 
-  print *, '#  the last on the list of the boundary conditions.'
-  print *, '#  Their BC colors have to be larger than the colors'
-  print *, '#  of all the other boundary conditions.)'
-  print *, '#------------------------------------------------------'
+  print *, '#-------------------------------------------------------------'
+! print *, '# (Please note that the periodic boundaries have to be' 
+! print *, '#  the last on the list of the boundary conditions.'
+! print *, '#  Their BC colors have to be larger than the colors'
+! print *, '#  of all the other boundary conditions.)'
+! print *, '#-------------------------------------------------------------'
   call Tokenizer_Mod_Read_Line(5)
-  name_per = line % tokens(1)
-  call To_Upper_Case(name_per)
-  if( name_per == 'SKIP' ) then
+  answer = line % tokens(1)
+  call To_Upper_Case(answer)
+  if( answer == 'SKIP' ) then
     color_per = 0
     goto 1  
   end if
-  color_per = -1
-  do b=1, grid % n_bnd_cond
-    if( name_per == grid % bnd_cond % name(b) ) then
-      color_per = b
-    end if
-  end do
-  if( color_per == -1 ) then
-    print *, '# Critical error: boundary condition ', trim(name_per),  &
-               ' can''t be found!'
+  read(line % tokens(1),*) color_per
+  if( color_per > grid % n_bnd_cond ) then
+    print *, '# Critical error: boundary condition ', color_per,  &
+               ' doesn''t exist!'
     print *, '# Exiting! '
     stop
   end if
+  print *, '#========================================================'
+  print *, '# Insert the periodic direction (1 -> x, 2 -> y, 3 -> z)'
+  print *, '#--------------------------------------------------------'
+  read(*,*) dir 
 
   if(option == 2) then
 
-    print *, '#========================================================'
-    print *, '# Insert the periodic direction (1 -> x, 2 -> y, 3 -> z)'
-    print *, '#--------------------------------------------------------'
-    read(*,*) dir 
-    print *, 
-    print *, '#=============================================================='
-    print *, '# Enter the angle for the rotation of the coordiante system (in'
-    print *, '# degrees) and the axes of rotation (1 -> x, 2 -> y, 3 -> z)'
-    print *, '#--------------------------------------------------------------'
-    print *, '# (If the periodic direction is not parallel to the Caresian '
-    print *, '#  axis (x, y and z), the coordinate system has to be rotated'
-    print *, '#  in 2D'                                                     
-    print *, '#--------------------------------------------------------------'
-    read(*,*) angle, rot_dir 
+    print *, '#==============================================================='
+    print *, '# For axisymmetric problems with periodic boundary conditions:  '
+    print *, '# enter angle (in degrees) for rotation of the periodic boundary' 
+    print *, '# followed by rotation axis (1 -> x, 2 -> y, 3 -> z)            '
+    print *, '#'
+    print *, '# Type skip if you don''t deal with such a problem'
+    print *, '#---------------------------------------------------------------'
+    print *, '# (If the periodic direction is not parallel to the Caresian    '
+    print *, '#  axis the coordinate system has to be rotated in 2D           '
+    print *, '#---------------------------------------------------------------'
+    call Tokenizer_Mod_Read_Line(5)
+    answer = line % tokens(1)
+    call To_Upper_Case(answer)
+    if( answer == 'SKIP' ) then
+      angle = 0.0
+      rot_dir = 1
+    else
+      read(line % tokens(1),*) angle
+      read(line % tokens(2),*) rot_dir
+    end if
 
     angle = angle * PI / 180.0
 
@@ -570,7 +578,7 @@
                         / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
                     if((Det) > (per_max)) then
 !                     print *, '# Warning!  Potentially a bug in ...'
-!                     print *, '# ... Compute_Geometry, line 557'
+!                     print *, '# ... Compute_Geometry, line 580'
 !                     print *, '# Contact developers, and if you ... '
 !                     print *, '# ... are one of them, fix it!'   
                       if(abs((grid % xf(ss) - grid % xf(s))) < tol .and.  &
@@ -624,7 +632,32 @@
 
   n_per = c/2
   print *, '# Phase I: periodic cells: ', n_per
-  go to 2
+
+  !--------------------------------------------------------------------!
+  !   Remove boundary condition with color_per and compress the rest   !
+  !--------------------------------------------------------------------!
+  if(color_per < grid % n_bnd_cond) then
+    do b = 1, grid % n_bnd_cond - 1
+      if(b .ge. color_per) then 
+
+        ! Correct the names
+        grid % bnd_cond % name(b) = grid % bnd_cond % name (b+1)
+
+        ! Correct all boundary colors too
+        do c = -1,-grid % n_bnd_cells,-1
+          if(grid % bnd_cond % color(c) .eq. (b+1)) then
+            grid % bnd_cond % color(c) = b
+          end if
+        end do
+
+      end if
+    end do
+  else
+   grid % bnd_cond % name(grid % n_bnd_cond) = ''
+  end if
+  grid % n_bnd_cond = grid % n_bnd_cond - 1
+
+  goto 2
 
   !----------------------------------------------------!
   !                                                    !
@@ -877,16 +910,24 @@
   !------------------------------------------------------------------!
   allocate(WallDs(-grid % n_bnd_cells:grid % n_cells)); WallDs = HUGE
 
+  call Grid_Mod_Print_Bnd_Cond_List(grid)
   print *, '#================================================================'
-  print *, '# Type the total number of wall boundary conditions:'
+  print *, '# Type the list of boundary colors which represent walls,        '
+  print *, '# separated by spaces.  These will be used for computation       '
+  print *, '# of distance to the wall needed by some turbulence models.      '
   print *, '#----------------------------------------------------------------'
-  print *, '# (Please note that the walls have to be the first on the list)'
-  print *, '# of the boundary conditions. Their BC colors have to be smaller'
-  print *, '# than the colors of the other boundary conditions.)'
-  print *, '#----------------------------------------------------------------'
-  read(*,*) wall_color
+! print *, '# (Please note that the walls have to be the first on the list)'
+! print *, '# of the boundary conditions. Their BC colors have to be smaller'
+! print *, '# than the colors of the other boundary conditions.)'
+! print *, '#----------------------------------------------------------------'
+  call Tokenizer_Mod_Read_Line(5)
+  n_wall_colors = line % n_tokens
+  allocate(wall_colors(n_wall_colors))
+  do b = 1, n_wall_colors
+    read(line % tokens(b), *) wall_colors(b)
+  end do
  
-  if(wall_color == 0) then
+  if( (n_wall_colors.eq.1) .and. (wall_colors(1)==0) ) then
     WallDs = 1.0
     print *, '# Distance to the wall set to 1.0 everywhere !'
   else
@@ -896,11 +937,13 @@
                                    ' % complete...'
       endif
       do c2=-1,-grid % n_bnd_cells,-1
-        if(grid % bnd_cond % color(c2) <= wall_color) then
-          WallDs(c1)=min(WallDs(c1),                                      &
-          Distance_Squared(grid % xc(c1), grid % yc(c1), grid % zc(c1),   &
-                           grid % xc(c2), grid % yc(c2), grid % zc(c2)))
-        end if
+        do b = 1, n_wall_colors
+          if(grid % bnd_cond % color(c2) <= wall_colors(b)) then
+            WallDs(c1)=min(WallDs(c1),                                      &
+            Distance_Squared(grid % xc(c1), grid % yc(c1), grid % zc(c1),   &
+                             grid % xc(c2), grid % yc(c2), grid % zc(c2)))
+          end if
+        end do
       end do
     end do
 
@@ -908,6 +951,7 @@
 
     print *, '# Distance to the wall calculated !'
   end if
+  deallocate(wall_colors)
 
   !------------------------------------------------------------!
   !   Calculate the interpolation factors for the cell sides   !

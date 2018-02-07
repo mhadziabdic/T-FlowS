@@ -29,7 +29,9 @@
   cgns_base(base) % n_blocks = n_blocks
 
   ! Print some info
-  print *, "#   Number of blocks:", cgns_base(base) % n_blocks
+  if(verbose) then
+    print *, "#   Number of blocks:", cgns_base(base) % n_blocks
+  end if
 
   ! Allocate memory for the blocks in current base
   allocate(cgns_base(base) % block(cgns_base(base) % n_blocks))

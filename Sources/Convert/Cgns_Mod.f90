@@ -63,6 +63,7 @@
   ! Some global counters (this is a bit ugly)
   integer*8 :: cnt_nodes
   integer*8 :: cnt_cells
+  integer*8 :: cnt_blocks     ! probably not needed
   integer*8 :: cnt_bnd_cells
 
   integer*8 :: cnt_hex
@@ -77,7 +78,7 @@
   integer*8 :: cnt_z
 
   ! Block-wise counter of boundary cells
-  integer*8 :: cnt_block_bnd_cells
+  integer*8 :: cnt_block_bnd_cells  ! probably not needed  
   integer*8 :: cnt_bnd_conds
   character(len=80) :: bnd_cond_names(1024)
 

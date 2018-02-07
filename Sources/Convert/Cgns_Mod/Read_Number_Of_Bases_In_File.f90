@@ -18,7 +18,9 @@
     call Cg_Error_Exit_F()
   endif
 
-  print *, "# Number of bases: ", n_bases
+  if(verbose) then 
+    print *, "# Number of bases: ", n_bases
+  end if
 
   allocate(cgns_base(n_bases))
 

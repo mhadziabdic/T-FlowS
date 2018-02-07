@@ -24,7 +24,6 @@
   !-----------------------------------------------------!
   file_name_up = file_name
   call To_Upper_Case(file_name_up)
-  print *, file_name_up
  
   l = len_trim(file_name)
   if( file_name_up(l-2:l) == 'NEU' ) then

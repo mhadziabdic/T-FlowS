@@ -20,7 +20,7 @@
   integer*8         :: last_cell     ! index of last element
   integer*8         :: parent_flag
   integer*8         :: error
-  integer*8              :: n_nodes, c, n, cell, dir, cnt, bc
+  integer*8              :: n_nodes, loc, c, n, cell, dir, cnt, bc
   integer*8, allocatable :: cell_n(:,:)
   integer*8, allocatable :: face_n(:,:)
   integer*8, allocatable :: parent_data(:,:)
@@ -83,19 +83,19 @@
                               parent_data,   &
                               error)          
       ! Fetch the data
-      do c=1,cnt  ! I have no clue why the size has to be 2*cnt
-        cell = parent_data(c,1) + cnt_cells
-        dir  = parent_data(c,2)
+      do loc=1,cnt  ! I have no clue why the size has to be 2*cnt
+        cell = parent_data(loc,1) + cnt_cells
+        dir  = parent_data(loc,2)
         grid % cells_bnd_color(dir,cell) =  &
              cgns_base(base) % block(block) % bnd_cond(bc) % color
       end do
      
       if(verbose) then
-        do c = 1,min(8,cnt)
-          print '(4i7)', (face_n(n,c), n = 1, n_nodes)
+        do loc = 1,min(8,cnt)
+          print '(4i7)', (face_n(n,loc), n = 1, n_nodes)
         end do
-        do c = 1,min(8,cnt)
-          print '(a2,3i7)', 'c=', c, parent_data(c,1), parent_data(c,2)
+        do loc = 1,min(8,cnt)
+          print '(a2,3i7)', 'loc=', loc, parent_data(loc,1), parent_data(loc,2)
         end do
       end if
 
@@ -151,32 +151,35 @@
                             error)          
     
     ! Fetch received parameters
-    do c = 1, cnt
+    do loc = 1, cnt
+
+      ! Calculate absolute cell number
+      c = first_cell + loc + cnt_cells - 1
 
       ! Set the number of nodes for this cell
-      grid % cells_n_nodes(c + cnt_cells) = n_nodes
+      grid % cells_n_nodes(c) = n_nodes
 
       ! Copy individual nodes beloning to this cell
       do n = 1, n_nodes
-        grid % cells_n(n, c + cnt_cells) = cell_n(n,c) + cnt_nodes
+        grid % cells_n(n, c) = cell_n(n, loc) + cnt_nodes
       end do
 
       ! Convert from CGNS to Gambit's Neutral file format
       if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) then
-        call Swap_Int(grid % cells_n(3, c+cnt_cells),  &
-                      grid % cells_n(4, c+cnt_cells))
-        call Swap_Int(grid % cells_n(7, c+cnt_cells),  &
-                      grid % cells_n(8, c+cnt_cells))
+        call Swap_Int(grid % cells_n(3, c),  &
+                      grid % cells_n(4, c))
+        call Swap_Int(grid % cells_n(7, c),  &
+                      grid % cells_n(8, c))
       end if
       if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) then
-        call Swap_Int(grid % cells_n(3, c+cnt_cells),  &
-                      grid % cells_n(4, c+cnt_cells))
+        call Swap_Int(grid % cells_n(3, c),  &
+                      grid % cells_n(4, c))
       end if
     end do
 
     if(verbose) then
-      do c = 1, min(8,cnt)
-        print '(8i7)', (cell_n(n,c), n = 1, n_nodes)
+      do loc = 1, min(8,cnt)
+        print '(8i7)', (cell_n(n,loc), n = 1, n_nodes)
       end do
     end if
  

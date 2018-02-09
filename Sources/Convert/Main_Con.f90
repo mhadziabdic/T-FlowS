@@ -106,6 +106,14 @@
                       grid % n_bnd_cells,  &
                       0)
 
+  ! Save links for checking
+  call Save_Vtu_Links(grid, 0,             &
+                      grid % n_nodes,      &
+                      grid % n_cells,      &
+                      grid % n_faces,      &
+                      grid % n_bnd_cells,  &
+                      0)
+
   ! Create output for Fluent
   NewC(-grid % n_bnd_cells-1) = -grid % n_bnd_cells-1
   call Save_Cas(grid, 0,                        &

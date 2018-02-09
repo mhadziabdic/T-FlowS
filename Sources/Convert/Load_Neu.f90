@@ -43,7 +43,9 @@
   print *, '# Total number of blocks: ',            n_blocks
   print *, '# Total number of boundary sections: ', n_bnd_sect
 
-  ! Count the boundary cells
+  !------------------------------!
+  !   Count the boundary cells   !
+  !------------------------------!
   grid % n_bnd_cells = 0
   do 
     call Tokenizer_Mod_Read_Line(9)
@@ -65,7 +67,9 @@
 
 1 rewind(9)
 
-  ! Skip first 7 lines
+  !------------------------!
+  !   Skip first 7 lines   !
+  !------------------------!
   do i = 1, 7
     call Tokenizer_Mod_Read_Line(9)
   end do 
@@ -149,6 +153,9 @@
     call Tokenizer_Mod_Read_Line(9)        ! ENDOFSECTION
   end do
 
+  !------------------------------------!
+  !   Pring boundary conditions info   !
+  !------------------------------------!
   call Grid_Mod_Print_Bnd_Cond_List(grid)
 
   close(9)

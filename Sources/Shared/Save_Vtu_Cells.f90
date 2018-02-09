@@ -26,9 +26,6 @@
   character(len= 6), parameter :: IN_3 = '      '
   character(len= 8), parameter :: IN_4 = '        '
   character(len=10), parameter :: IN_5 = '          '
-! character(len=12), parameter :: IN_6 = '            '
-! character(len=14), parameter :: IN_7 = '              '
-! character(len=16), parameter :: IN_8 = '                '
 !==============================================================================!
 
   !----------------------!
@@ -75,6 +72,8 @@
 
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
+
+      ! Hexahedral
       if(grid % cells_n_nodes(c) == 8) then
         write(9,'(a,8i9)')                                           &
           IN_5,                                                      &
@@ -82,23 +81,29 @@
           NewN(grid % cells_n(4,c))-1, NewN(grid % cells_n(3,c))-1,  &
           NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(6,c))-1,  &
           NewN(grid % cells_n(8,c))-1, NewN(grid % cells_n(7,c))-1
+
+      ! Wedge       
       else if(grid % cells_n_nodes(c) == 6) then
         write(9,'(a,6i9)')                                           &
           IN_5,                                                      &
           NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
           NewN(grid % cells_n(3,c))-1, NewN(grid % cells_n(4,c))-1,  &
           NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(6,c))-1
+
+      ! Tetrahedra  
       else if(grid % cells_n_nodes(c) == 4) then
         write(9,'(a,4i9)')                                           &
           IN_5,                                                      &
           NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
           NewN(grid % cells_n(3,c))-1, NewN(grid % cells_n(4,c))-1
+
+      ! Pyramid     
       else if(grid % cells_n_nodes(c) == 5) then
         write(9,'(a,5i9)')                                           &
           IN_5,                                                      &
-          NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(1,c))-1,  &
-          NewN(grid % cells_n(2,c))-1, NewN(grid % cells_n(4,c))-1,  &
-          NewN(grid % cells_n(3,c))-1
+          NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
+          NewN(grid % cells_n(4,c))-1, NewN(grid % cells_n(3,c))-1,  &
+          NewN(grid % cells_n(5,c))-1
       else
         print *, '# Unsupported cell type with ',  &
                     grid % cells_n_nodes(c), ' nodes.'

@@ -35,7 +35,7 @@
         ! Material:
         material(-grid % n_bnd_cells) = material(i)
 
-        ! Sides
+        ! Faces
         grid % n_faces  = grid % n_faces  + 1
         grid % faces_c(1,grid % n_faces) = i
         grid % faces_c(2,grid % n_faces) = -grid % n_bnd_cells
@@ -148,5 +148,8 @@
       end if
     end do 
   end do
+
+  print *, '# Grid_Topology; number of boundary cells: ', grid % n_bnd_cells    
+  print *, '# Grid_Topology; number of faces:          ', grid % n_faces        
 
   end subroutine

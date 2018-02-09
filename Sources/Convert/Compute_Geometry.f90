@@ -286,11 +286,8 @@
   !   Phase I  ->  find the sides on periodic boundaries   !
   !                                                        !
   !--------------------------------------------------------!
-  option = 2
 
   allocate(face_copy(grid % n_faces)); face_copy=0
-
-  print *, '# Number of boundary conditions: ', grid % n_bnd_cond
 
 2 continue
   call Grid_Mod_Print_Bnd_Cond_List(grid)
@@ -299,11 +296,6 @@
   print *, '# Enter the periodic-boundary-condition number (see it above)'
   print *, '# Type skip if there is none !'
   print *, '#-------------------------------------------------------------'
-! print *, '# (Please note that the periodic boundaries have to be' 
-! print *, '#  the last on the list of the boundary conditions.'
-! print *, '#  Their BC colors have to be larger than the colors'
-! print *, '#  of all the other boundary conditions.)'
-! print *, '#-------------------------------------------------------------'
   call Tokenizer_Mod_Read_Line(5)
   answer = line % tokens(1)
   call To_Upper_Case(answer)
@@ -323,28 +315,33 @@
   print *, '#--------------------------------------------------------'
   read(*,*) dir 
 
-  if(option == 2) then
+  print *, '#==============================================================='
+  print *, '# For axisymmetric problems with periodic boundary conditions:  '
+  print *, '# enter angle (in degrees) for rotation of the periodic boundary' 
+  print *, '# followed by rotation axis (1 -> x, 2 -> y, 3 -> z)            '
+  print *, '#'
+  print *, '# Type skip if you don''t deal with such a problem'
+  print *, '#---------------------------------------------------------------'
+  print *, '# (If the periodic direction is not parallel to the Caresian    '
+  print *, '#  axis the coordinate system has to be rotated in 2D           '
+  print *, '#---------------------------------------------------------------'
+  call Tokenizer_Mod_Read_Line(5)
+  answer = line % tokens(1)
+  call To_Upper_Case(answer)
+  if( answer == 'SKIP' ) then
+    angle = 0.0
+    rot_dir = 1
+    option = 1
+  else
+    read(line % tokens(1),*) angle
+    read(line % tokens(2),*) rot_dir
+    option = 2
+  end if
 
-    print *, '#==============================================================='
-    print *, '# For axisymmetric problems with periodic boundary conditions:  '
-    print *, '# enter angle (in degrees) for rotation of the periodic boundary' 
-    print *, '# followed by rotation axis (1 -> x, 2 -> y, 3 -> z)            '
-    print *, '#'
-    print *, '# Type skip if you don''t deal with such a problem'
-    print *, '#---------------------------------------------------------------'
-    print *, '# (If the periodic direction is not parallel to the Caresian    '
-    print *, '#  axis the coordinate system has to be rotated in 2D           '
-    print *, '#---------------------------------------------------------------'
-    call Tokenizer_Mod_Read_Line(5)
-    answer = line % tokens(1)
-    call To_Upper_Case(answer)
-    if( answer == 'SKIP' ) then
-      angle = 0.0
-      rot_dir = 1
-    else
-      read(line % tokens(1),*) angle
-      read(line % tokens(2),*) rot_dir
-    end if
+  !-------------------!
+  !   With rotation   !
+  !-------------------!
+  if(option == 2) then
 
     angle = angle * PI / 180.0
 
@@ -422,7 +419,7 @@
         end if
       end if
     end do
-  end if
+  end if  ! for option == 1
 
   xmin = +HUGE
   ymin = +HUGE
@@ -436,6 +433,9 @@
 
   c = 0
 
+  !-----------------!
+  !   No rotation   !
+  !-----------------!
   if(option == 1) then 
     do s=1,grid % n_faces
       c2 = grid % faces_c(2,s)
@@ -456,7 +456,12 @@
       end if
     end do
     call Sort_Real_Carry_Int(b_coor, b_face, c, 2)
-  else if(option == 2) then 
+  end if
+
+  !-------------------!
+  !   With rotation   !
+  !-------------------!
+  if(option == 2) then 
     c_max = 0
     do s=1,grid % n_faces
       c2 = grid % faces_c(2,s)
@@ -491,10 +496,10 @@
         end if
       end if
     end do
-    
     per_max = 0.5*(per_max + per_min)
 
     do s=1,grid % n_faces
+
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
         if(grid % bnd_cond % color(c2) == color_per) then
@@ -606,7 +611,7 @@
       continue
     else
       tol = tol*0.5 
-      go to 10
+      goto 10
     end if
 
     deallocate(phi_face)
@@ -615,7 +620,7 @@
     deallocate(zspr)
 
     call Sort_Real_Carry_Int(b_coor, b_face, c, 2)
-  end if  ! end option
+  end if  ! for option == 2
 
   do s = 1, c/2
     s1 = b_face(s)

@@ -29,7 +29,9 @@
 
   !---------------------------------------!
   !                                       !
+  !                                       !
   !   First run: just read info from DB   !
+  !                                       !
   !                                       !
   !---------------------------------------!
   call Initialize_Counters
@@ -41,7 +43,9 @@
   call Cgns_Mod_Read_Number_Of_Bases_In_File
 
   !------------------------------!
+  !                              !
   !   Browse through all bases   !
+  !                              !
   !------------------------------!
   do base = 1, n_bases
 
@@ -54,15 +58,16 @@
     call Cgns_Mod_Read_Number_Of_Blocks_In_Base(base)
     do block = 1, cgns_base(base) % n_blocks
 
-      ! Read block_id information (-> n_nodes, n_cells)
+      ! Read block information 
+      ! Gives: n_nodes, n_cells
       call Cgns_Mod_Read_Block_Info(base, block)
 
-      ! Read type of block_id (->structured or unstructured)
+      ! Read type of block 
+      ! Tells if structured or unstructured
       call Cgns_Mod_Read_Block_Type(base, block)
 
-      !--------------------------------------------!
-      !   Browse through all boundary conditions   !
-      !--------------------------------------------!
+      ! Browse through all boundary conditions
+      ! Gives b.c. names and colors
       call Cgns_Mod_Read_Number_Of_Bnd_Conds_In_Block(base, block)
       do bc = 1, cgns_base(base) % block(block) % n_bnd_conds
         call Cgns_Mod_Read_Bnd_Conds_Info(base, block, bc)
@@ -74,7 +79,8 @@
       call Cgns_Mod_Read_Number_Of_Element_Sections(base, block)
       do sect = 1, cgns_base(base) % block(block) % n_sects
 
-        ! Read info for an element section (-> cell_type, first_cell, last_cell)
+        ! Read info for an element section 
+        ! Gives: cell_type, first_cell, last_cell
         call Cgns_Mod_Read_Section_Info(base, block, sect)
 
       end do ! elements sections
@@ -83,9 +89,10 @@
   end do ! bases
 
   !------------------------!
+  !                        !
   !   First run: results   !
+  !                        !
   !------------------------!
-
   if(verbose) then
     print *, '# First run finished!'
     print *, '# - number of nodes: ',           cnt_nodes
@@ -127,7 +134,9 @@
 
   !-------------------------------------!
   !                                     !
+  !                                     !
   !   Second run: read arrays from DB   !
+  !                                     !
   !                                     !
   !-------------------------------------!
   call Initialize_Counters
@@ -135,7 +144,9 @@
   print *, '# Filling arrays..'
 
   !------------------------------!
+  !                              !
   !   Browse through all bases   !
+  !                              !
   !------------------------------!
   do base = 1, n_bases
 
@@ -151,7 +162,8 @@
       !   Read coordinates block  !
       !---------------------------!
 
-      ! Reads number of coordinates arrays from block_id (->n_coords)
+      ! Reads number of coordinates arrays from block
+      ! Essentially, reads number 3
       call Cgns_Mod_Read_Number_Of_Coordinates_In_Block(base, block)
 
       ! Read x, y and z coordinates
@@ -188,12 +200,15 @@
   print *, '# Total number of nodes:  ',            cnt_nodes
   print *, '# Total number of cells:  ',            cnt_cells
   print *, '# Total number of blocks: ',            cnt_blocks
-  print *, '# Total number of boundary sections: ', cnt_bnd_conds
+  print *, '# Total number of boundary sections: ', grid % n_bnd_cond
+  print *, '# Total number of boundary cells:    ', grid % n_bnd_cells
 
   !---------------------!
   !   Merge the nodes   !
   !---------------------!
-  call Merge_Nodes(grid)
+  if(cnt_blocks .gt. 1) then
+    call Merge_Nodes(grid)
+  end if
 
   !---------------------------------!
   !   Read block (material?) data   !

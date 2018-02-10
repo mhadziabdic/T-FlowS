@@ -337,9 +337,6 @@
   !----------------------------------------------------------------------!
   do n=1,grid % n_bnd_cond
 
-    print *, 'Boundary condition: ', n
-    print *, 'file: ', name_prof(n)
-
     ! Boundary condition is given by a single constant
     if(name_prof(n) == '') then 
       do c = -1,-grid % n_bnd_cells,-1

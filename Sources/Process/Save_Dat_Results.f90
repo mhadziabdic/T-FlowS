@@ -88,37 +88,30 @@
   !-------------------!
   if(HOT == YES) then
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is temperature' 
     call Save_Dat_Scalar(grid, 'temperature', 699+Nadd, T % n)
   end if
   
   if(SIMULA == K_EPS) then
     ! VIS  
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is K' 
     call Save_Dat_Scalar(grid, 'Kin', 699+Nadd, Kin % n)
     ! VISt  
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Eps' 
     call Save_Dat_Scalar(grid, 'Eps', 699+Nadd, Eps % n)
   end if
 
   if(SIMULA == K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
     ! VIS  
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is K' 
     call Save_Dat_Scalar(grid, 'Kin', 699+Nadd, Kin % n)
     ! VISt  
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Eps' 
     call Save_Dat_Scalar(grid, 'Eps', 699+Nadd, Eps % n)
     ! Vort  
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is v_2' 
     call Save_Dat_Scalar(grid, 'v_2', 699+Nadd, v_2 % n)
     ! WallDs
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is f22' 
     call Save_Dat_Scalar(grid, 'f22', 699+Nadd, f22 % n)
 
   end if ! SIMULA=K_EPS_VV
@@ -126,90 +119,72 @@
   if(SIMULA == SPA_ALL) then
     ! VIS  
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is VIS' 
     call Save_Dat_Scalar(grid, 'VIS', 699+Nadd, VIS % n)
     ! VISt  
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is VISt' 
     call Save_Dat_Scalar(grid, 'VISt', 699+Nadd, VISt)
     ! Vort  
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Vort' 
     call Save_Dat_Scalar(grid, 'Vort', 699+Nadd, Vort)
     ! WallDs
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is WallDs' 
     call Save_Dat_Scalar(grid, 'WallDs', 699+Nadd, WallDs)
   end if ! SIMULA=SPA_ALL
 
   if(SIMULA == LES .or. SIMULA == DES_SPA) then
     ! Umean
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Umean' 
     call Save_Dat_Scalar(grid, 'Umean', 699+Nadd, U % mean)
     ! Vmean
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Vmean' 
     call Save_Dat_Scalar(grid, 'Vmean', 699+Nadd, V % mean)
     ! Wmean
     Nadd = Nadd + 1
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Wmean' 
     call Save_Dat_Scalar(grid, 'Wmean', 699+Nadd, W % mean)
     ! uu
     Nadd = Nadd + 1
     PP % n = uu % mean - U % mean * U % mean
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uu' 
     call Save_Dat_Scalar(grid, 'uu', 699+Nadd, PP % n)
     ! vv
     Nadd = Nadd + 1
     PP % n = vv % mean - V % mean * V % mean
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is vv' 
     call Save_Dat_Scalar(grid, 'vv', 699+Nadd, PP % n) 
     ! ww
     Nadd = Nadd + 1
     PP % n = ww % mean - W % mean * W % mean
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is ww' 
     call Save_Dat_Scalar(grid, 'ww', 699+Nadd, PP % n)
     ! uv
     Nadd = Nadd + 1
     PP % n = uv % mean - U % mean * V % mean
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uv' 
     call Save_Dat_Scalar(grid, 'uv', 699+Nadd, PP % n)
     ! uw
     Nadd = Nadd + 1
     PP % n = uw % mean - U % mean * W % mean
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uw' 
     call Save_Dat_Scalar(grid, 'uw', 699+Nadd, PP % n) 
     ! vw
     Nadd = Nadd + 1
     PP % n = vw % mean - V % mean * W % mean
-    if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is ww' 
     call Save_Dat_Scalar(grid, 'vw', 699+Nadd, PP % n)
 
     if(HOT == YES) then
       ! Tmean
       Nadd = Nadd + 1
-      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is Tmean' 
       call Save_Dat_Scalar(grid, 'Tmean', 699+Nadd, T % mean)
       ! TT    
       Nadd = Nadd + 1
       PP % n = TT % mean - T % mean * T % mean
-      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is TT' 
       call Save_Dat_Scalar(grid, 'TT', 699+Nadd, PP % n)
       ! uT    
       Nadd = Nadd + 1
       PP % n = uT % mean - U % mean * T % mean
-      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is uT' 
       call Save_Dat_Scalar(grid, 'uT', 699+Nadd, PP % n)
       ! vT    
       Nadd = Nadd + 1
       PP % n = vT % mean - V % mean * T % mean
-      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is vT' 
       call Save_Dat_Scalar(grid, 'vT', 699+Nadd, PP % n)
       ! wT    
       Nadd = Nadd + 1
       PP % n = wT % mean - W % mean * T % mean
-      if(this_proc  < 2) write(*,'(A,I3,A)') '# Scalar ', Nadd, ' is wT' 
       call Save_Dat_Scalar(grid, 'wT', 699+Nadd, PP % n)
     end if
   end if ! SIMULA == LES .or. SIMULA == DES_SPA
@@ -228,7 +203,8 @@
     end do    ! sides
 
     ! Prepare for next boundary
-    if(this_proc  < 2) print *, 'Number of faces:', Nfac(n), NtotFac+1, NtotFac+Nfac(n)
+    ! if(this_proc  < 2) print *, 'Number of faces:',  & 
+    !!                               Nfac(n), NtotFac+1, NtotFac+Nfac(n)
     NtotFac = NtotFac+Nfac(n)
   end do   ! n -> boundary condition types
 

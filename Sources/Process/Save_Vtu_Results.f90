@@ -182,7 +182,6 @@
   end do  
   write(9,'(a,a)') IN_4, '</DataArray>'
 
-
   !--------------!
   !   Pressure   !
   !--------------!
@@ -208,21 +207,40 @@
   !----------------------------------------------------------!
   !   Turbulent quantities for single point closure models   !
   !----------------------------------------------------------!
-  if(SIMULA == K_EPS.or.SIMULA==ZETA) then
-    write(9,'(a,a)') '<DataArray type="Float32" Name="kinetic energy"' //  &
+  
+  ! k and epsilon
+  if(SIMULA == K_EPS .or. SIMULA == ZETA) then
+    write(9,'(a,a)') IN_4, '<DataArray type="Float32" Name="kin"' //  &
                    ' format="ascii">'
     do c = 1, grid % n_cells
       write(9,'(a,1pe15.7)') IN_5, kin % n(c)
     end do  
     write(9,'(a,a)') IN_4, '</DataArray>'
 
-    write(9,'(a,a)') IN_5, '<DataArray type="Float32" Name="dissipation"' //  &
+    write(9,'(a,a)') IN_5, '<DataArray type="Float32" Name="eps"' //  &
                    ' format="ascii">'
     do c = 1, grid % n_cells
       write(9,'(a,1pe15.7)') IN_5, eps % n(c)
     end do  
     write(9,'(a,a)') IN_4, '</DataArray>'
   end if
+
+  ! zeta
+  if(SIMULA == ZETA) then
+    write(9,'(a,a)') IN_4, '<DataArray type="Float32" Name="v^2"' //  &
+                   ' format="ascii">'
+    do c = 1, grid % n_cells
+      write(9,'(a,1pe15.7)') IN_5, v_2 % n(c)
+    end do  
+    write(9,'(a,a)') IN_4, '</DataArray>'
+
+    write(9,'(a,a)') IN_4, '<DataArray type="Float32" Name="f22"' //  &
+                   ' format="ascii">'
+    do c = 1, grid % n_cells
+      write(9,'(a,1pe15.7)') IN_5, f22 % n(c)
+    end do  
+  end if
+    write(9,'(a,a)') IN_4, '</DataArray>'
 
   write(9,'(a,a)') IN_3, '</CellData>'
   write(9,'(a,a)') IN_2, '</Piece>'
@@ -263,6 +281,28 @@
                            ' NumberOfComponents="3" format="ascii"/>'
     write(9,'(a,a)') IN_3, '<PDataArray type="Float32" Name="pressure"' //  &
                            ' format="ascii"/>'
+    if(HOT == YES) then
+      write(9,'(a,a)')                                               &
+        IN_3, '<PDataArray type="Float32" Name="temperature"' //  &
+              ' format="ascii"/>'
+    end if
+
+    if(SIMULA == K_EPS .or. SIMULA == ZETA) then
+      write(9,'(a,a)')                                               &
+        IN_3, '<PDataArray type="Float32" Name="kin"' //  &
+              ' format="ascii"/>'
+      write(9,'(a,a)')                                               &
+        IN_3, '<PDataArray type="Float32" Name="eps"' //  &
+              ' format="ascii"/>'
+    end if
+    if(SIMULA == ZETA) then
+      write(9,'(a,a)')                                               &
+        IN_3, '<PDataArray type="Float32" Name="v^2"' //  &
+              ' format="ascii"/>'
+      write(9,'(a,a)')                                               &
+        IN_3, '<PDataArray type="Float32" Name="f22"' //  &
+              ' format="ascii"/>'
+    end if
     write(9,'(a,a)') IN_2, '</PCellData>'
 
     ! Write out the names of all the pieces

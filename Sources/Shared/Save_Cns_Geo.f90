@@ -80,7 +80,7 @@
   !   Cells   ! 
   !-----------! 
 
-  ! Cells' nodes
+  ! Number of nodes for each cell
   count=0
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
@@ -131,6 +131,29 @@
   !-----------! 
   !   Faces   ! 
   !-----------!
+
+  ! Number of nodes for each face
+  count=0
+  do s = 1, grid % n_faces
+    if(NewS(s) /= 0) then
+      count=count+1
+      iwork(count,1) = grid % faces_n_nodes(s)
+    end if
+  end do 
+  write(9) (iwork(s,1), s=1,count)
+
+  ! Faces' nodes
+  count=0
+  do s = 1, grid % n_faces
+    if(NewS(s) /= 0) then
+      do n = 1, grid % faces_n_nodes(s)
+        count=count+1
+        iwork(count,1) = NewN(grid % faces_n(n,s))
+      end do
+    end if
+  end do 
+  write(9) (iwork(s,1), s=1,count)
+
   count=0
 
   ! n_faces_sub physical faces

@@ -64,6 +64,10 @@
   read(9) (material(c), c = -1,-grid % n_bnd_cells,-1)
 
   ! Faces
+  read(9) (grid % faces_n_nodes(s), s = 1, grid % n_faces)
+  read(9) ((grid % faces_n(n,s),              &
+            n = 1, grid % faces_n_nodes(s)),  &
+            s = 1, grid % n_faces)
   read(9) (grid % faces_c(1,s), s = 1, grid % n_faces)
   read(9) (grid % faces_c(2,s), s = 1, grid % n_faces)
 

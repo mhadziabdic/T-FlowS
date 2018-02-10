@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine Load_Gmv_Faces(grid)
+  subroutine Load_Shadow_Faces(grid)
 !------------------------------------------------------------------------------!
-! Reads:  name.faces.gmv  name.shadow                                          !
+! Reads:  name.shadow                                                          !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -17,55 +17,10 @@
   character(len=80) :: dum_s, name_in
 !==============================================================================!
 
-  name_in = problem_name
-  name_in(len_trim(problem_name)+1:len_trim(problem_name)+10) = '.faces.gmv'
-  print *, '# Reading the file: ', name_in
-  open(9, file=name_in)
-
-  !-----------!    
-  !   Start   !
-  !-----------!    
-  read(9,'(A80)') dum_s 
-
-  !------------------!    
-  !   Node section   !
-  !------------------!    
-  read(9,'(A80)') dum_s 
-  do n = 1, 3*grid % n_nodes
-    read(9,'(A80)') dum_s 
-  end do  
-
-  !------------------!    
-  !   Cell section   !
-  !------------------!    
-  read(9,'(A80)') dum_s 
-  do s = 1, grid % n_faces
-    c1 = grid % faces_c(1,s)
-    c2 = grid % faces_c(2,s)
-    read(9,*) dum_s, dum_i
-    if(dum_s == 'tri') then 
-      grid % faces_n_nodes(s) = 3
-      read(9,*) grid % faces_n(1,s),  &
-                grid % faces_n(2,s),  &
-                grid % faces_n(3,s)
-    else if(dum_s == 'quad') then
-      grid % faces_n_nodes(s) = 4
-      read(9,*) grid % faces_n(1,s),  &
-                grid % faces_n(2,s),  &
-                grid % faces_n(3,s),  &
-                grid % faces_n(4,s)  
-    else
-      print *, 'Unsupported cell-face type:', dum_s
-      print *, 'Exiting'
-      stop
-    end if
-  end do  
-
-  close(9)
-
   !----------------------!    
   !   Read shadow file   !
   !----------------------!    
+  name_in = problem_name
   call Name_File(0, name_in, '.shadow')
   open(9, file=name_in)
   print *, '# Reading the file: ', name_in

@@ -62,10 +62,7 @@ print *, 'subo = ', subo
 
 !----- number of local connections with subdomain sub 
       call Tokenizer_Mod_Read_Line(9)
-print *, 'whole_line = ', line % whole
       read(line % whole,*) NBBe(sub)
-
-print *, 'whole_line = ', line % whole
 
       NBBs(sub) = NBBe(sub-1) - 1  
       NBBe(sub) = NBBs(sub) - NBBe(sub) + 1

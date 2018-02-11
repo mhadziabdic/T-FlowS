@@ -32,17 +32,17 @@
       Xrat  = VIS % n(c)/VISc
       Fv1   = Xrat**3/(Xrat**3 + Cvis1**3)
       Fv2   = 1.0 - Xrat/(1.0 + Xrat*Fv1)
-      SS    = Vort(c) + VIS % n(c)*Fv2/(kappa**2*WallDs(c)**2)
+      SS    = vort(c) + VIS % n(c)*Fv2/(kappa**2*grid % wall_dist(c)**2)
       ProdV = Cb1 * DENc(material(c)) * SS * VIS % n(c)
       b(c)  = b(c) + ProdV * grid % vol(c)
 
       !----------------------------------!
       !   Compute the destruction term   !
       !----------------------------------!
-      R     = VIS % n(c)/(SS * kappa**2 * WallDs(c)**2)
+      R     = VIS % n(c)/(SS * kappa**2 * grid % wall_dist(c)**2)
       GG    = R + Cw2*(R**6 - R)
       Fw    = GG*((1.0 + Cw3**6)/(GG**6 + Cw3**6))**(1.0/6.0)
-      DistV = Cw1* DENc(material(c)) * Fw * (VIS % n(c)/WallDs(c)**2)
+      DistV = Cw1* DENc(material(c)) * Fw * (VIS % n(c)/grid % wall_dist(c)**2)
       A % val(A % dia(c)) = A % val(A % dia(c)) + DistV * grid % vol(c)
  
       !--------------------------------------------!
@@ -59,7 +59,7 @@
     do c = 1, grid % n_cells
 
       ! What is 0.65 here?  A ghost number
-      dist = min(WallDs(c),0.65 * grid % delta(c))
+      dist = min(grid % wall_dist(c),0.65 * grid % delta(c))
 
       !---------------------------------!
       !   Compute the production term   !
@@ -67,7 +67,7 @@
       Xrat  = VIS % n(c)/VISc
       Fv1   = Xrat**3/(Xrat**3 + Cvis1**3)
       Fv2   = 1.0 - Xrat/(1.0 + Xrat*Fv1)
-      SS    = Vort(c) + VIS % n(c)*Fv2/(kappa**2*dist**2)
+      SS    = vort(c) + VIS % n(c)*Fv2/(kappa**2*dist**2)
       ProdV = Cb1 * DENc(material(c)) * SS * VIS % n(c)
       b(c)  = b(c) + ProdV * grid % vol(c)
       

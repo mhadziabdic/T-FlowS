@@ -5,11 +5,11 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8 :: base
+  integer :: base
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8 :: base_id   ! base index number     
-  integer*8 :: n_blocks  ! number of blocks present in base
-  integer*8 :: error     ! error status
+  integer :: base_id   ! base index number     
+  integer :: n_blocks  ! number of blocks present in base
+  integer :: error     ! error status
 !==============================================================================!
 
   ! Set input parameters

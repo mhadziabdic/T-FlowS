@@ -38,7 +38,7 @@
   real    :: error
   real    :: VISeff
   real    :: phix_f, phiy_f, phiz_f
-  real    :: VIStS
+  real    :: vis_tS
 !==============================================================================!
 !                                                                              ! 
 !   The form of equations which are being solved:                              !   
@@ -223,12 +223,12 @@
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)   
 
-    ! VIStur is used to make diaginal element more dominant.
+    ! vis_tur is used to make diaginal element more dominant.
     ! This contribution is later substracted.
-    VIStS = fF(s)*VISt(c1) + (1.0-fF(s))*VISt(c2)
+    vis_tS = fF(s)*vis_t(c1) + (1.0-fF(s))*vis_t(c2)
 
     if(SIMULA==EBM) then
-      VISeff = VISc + VIStS 
+      VISeff = VISc + vis_tS 
     else if(SIMULA==HJ.and.MODE/=HYB) then
       VISeff = 1.5*VISc 
     else if(SIMULA==HJ.and.MODE==HYB) then
@@ -237,7 +237,7 @@
 
     if(SIMULA==HJ) then
       if(MODE==HYB) then
-        VISeff = VISeff + VIStS
+        VISeff = VISeff + vis_tS
       end if
     end if
 
@@ -399,7 +399,7 @@
         c1=grid % faces_c(1,s)
         c2=grid % faces_c(2,s)
 
-        VISeff = (fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2)) 
+        VISeff = (fF(s)*vis_t(c1)+(1.0-fF(s))*vis_t(c2)) 
 
         phix_f = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
         phiy_f = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)

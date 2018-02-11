@@ -17,9 +17,6 @@
   character(len=80) :: dum_s, name_in
 !==============================================================================!
 
-  ! Variables defined in all_mod.h90:
-  allocate (WallDs(grid % n_faces));                     WallDs=0.0
-
   ! Variables declared in gen_mod.h90:
   allocate (NewC(-grid % n_bnd_cells-1:grid % n_cells)); NewC = 0 
   allocate (NewS( grid % n_faces));                      NewS = 0

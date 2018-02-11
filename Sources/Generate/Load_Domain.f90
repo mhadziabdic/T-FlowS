@@ -59,9 +59,6 @@
   print *, '#', grid % max_n_faces,     ' cell faces' 
 
   ! Variables declared in all_mod.h90:
-  allocate (WallDs(grid % max_n_nodes))
-  WallDs=0.0
-
   allocate (material(-grid % max_n_bnd_cells:grid % max_n_nodes)) 
   material=0
 

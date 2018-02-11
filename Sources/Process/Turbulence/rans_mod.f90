@@ -36,10 +36,11 @@
   real,allocatable :: eps_tot(:)
 
   ! Vorticity
-  real,allocatable :: Vort(:), VortMean(:)
+  real,allocatable :: vort(:), vort_mean(:)
 
   ! Turbulent viscosity
-  real,allocatable :: VISt(:), CmuS(:)
+  real,allocatable :: vis_t(:), CmuS(:)
+  real,allocatable :: vis_t_eff(:)
  
   ! Turbulent conductivity
   real,allocatable :: CONt(:)
@@ -49,7 +50,7 @@
   real,allocatable :: Tsc(:)   
 
   ! Production of turbulent kinetic energy
-  real,allocatable :: Pk(:)
+  real,allocatable :: p_kin(:)
   ! Buoyancy production
   real,allocatable :: Gbuoy(:)
   real,allocatable :: buoyBeta(:)

@@ -8,11 +8,6 @@ module all_mod
 
   implicit none
 
-  !----------------------------------------------------!
-  !   Geometrical quantities for describing the grid   !
-  !----------------------------------------------------!
-  real,allocatable :: WallDs(:)
-
   !----------------------------------------!
   !   Variables for ease of input/output   !
   !----------------------------------------!

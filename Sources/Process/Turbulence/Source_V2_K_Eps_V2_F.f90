@@ -24,7 +24,7 @@
 !                                                                              !
 !     /                     /                                                  !
 !    |                     |                                                   !
-!    | f22 * Kin * dV  -   | (vi2 * Eps / Kin) * dV                            !
+!    | f22 * kin * dV  -   | (vi2 * eps / kin) * dV                            !
 !    |                     |                                                   !
 !   /                      /                                                   !
 !                                                                              !
@@ -51,19 +51,19 @@
                             / (v_2 % n(c) + TINY))    
       end if      
       A % val(A % dia(c)) =  A % val(A % dia(c))  &
-                          + grid % vol(c) * Pk(c)     &
-                          / (Kin % n(c)+TINY) 
+                          + grid % vol(c) * p_kin(c)     &
+                          / (kin % n(c)+TINY) 
     end do
   else if(SIMULA == K_EPS_VV) then
     do c = 1, grid % n_cells
-      b(c) = b(c) + max(0.0, f22 % n(c) * Kin % n(c) * grid % vol(c))
+      b(c) = b(c) + max(0.0, f22 % n(c) * kin % n(c) * grid % vol(c))
       A % val(A % dia(c)) = A % val(A % dia(c))                            &
-                          + max(0.0, -f22 % n(c) * Kin % n(c) * grid % vol(c)  &
+                          + max(0.0, -f22 % n(c) * kin % n(c) * grid % vol(c)  &
                           / (v_2 % n(c) + TINY))
     end do
     do c = 1, grid % n_cells  
       A % val(A % dia(c)) = A % val(A % dia(c))  &
-                          + grid % vol(c) * Eps % n(c) / (Kin%n(c)+TINY) 
+                          + grid % vol(c) * eps % n(c) / (kin%n(c)+TINY) 
     end do
   end if
 

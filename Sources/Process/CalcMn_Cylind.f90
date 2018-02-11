@@ -52,7 +52,7 @@
                    / (1.*(n+1))
 
 
-      VISt_mean(c) = ( VISt_mean(c)*(1.*n) + VISt(c) ) & 
+      vis_t_mean(c) = ( vis_t_mean(c)*(1.*n) + vis_t(c) ) & 
                    / (1.*(n+1))
 
       if(HOT==YES) then

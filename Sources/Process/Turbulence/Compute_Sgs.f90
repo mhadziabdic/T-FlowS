@@ -38,9 +38,9 @@
   !               !
   !---------------!
   if(BUOY==YES) then
-    call GraPhi(grid, t % n, 1, t_x, .TRUE.)  ! dT/dx
-    call GraPhi(grid, t % n, 2, t_y, .TRUE.)  ! dT/dy
-    call GraPhi(grid, t % n, 3, t_z, .TRUE.)  ! dT/dz
+    call GraPhi(grid, t % n, 1, t_x, .true.)  ! dT/dx
+    call GraPhi(grid, t % n, 2, t_y, .true.)  ! dT/dy
+    call GraPhi(grid, t % n, 3, t_z, .true.)  ! dT/dz
   end if 
  
   if(MODE == SMAG) then
@@ -55,13 +55,13 @@
                     * sqrt(  U % n(near(c)) * U % n(near(c))    & 
                            + V % n(near(c)) * V % n(near(c))    &
                            + W % n(near(c)) * W % n(near(c)))   &
-                   / (WallDs(near(c))+TINY) )
-        yPlus = WallDs(c) * Uff / VISc
+                   / (grid % wall_dist(near(c))+TINY) )
+        yPlus = grid % wall_dist(c) * Uff / VISc
         Cs = Cs0 * (1.0-exp(-yPlus/25.0))
       else  
         Cs = Cs0
       end if
-      VISt(c) = DENc(material(c)) &
+      vis_t(c) = DENc(material(c)) &
               * (lf*lf)           &          ! delta^2 
               * (Cs*Cs)           &          ! Cs^2   
               * Shear(c) 
@@ -70,14 +70,14 @@
     if(BUOY==YES) then  
       do c = 1, grid % n_cells
         lf = grid % vol(c)**ONE_THIRD  
-        VISt(c) = DENc(material(c))  &
+        vis_t(c) = DENc(material(c))  &
                 * (lf*lf)            &          ! delta^2 
                 * Cdyn(c)            &          ! Cdynamic   
                 * Shear(c) 
       end do
     else
       do c = 1, grid % n_cells 
-        VISt(c) = DENc(material(c))       &
+        vis_t(c) = DENc(material(c))       &
                 * (lf*lf)                 &          ! delta^2 
                 * Cdyn(c)                 &          ! Cdynamic   
                 * sqrt(Shear(c)*Shear(c)  &
@@ -87,7 +87,7 @@
   else if(MODE == WALE) then
     do c = 1, grid % n_cells
       lf = grid % vol(c)**ONE_THIRD    
-      VISt(c) = DENc(material(c))  &
+      vis_t(c) = DENc(material(c))  &
               * (lf*lf)            &          ! delta^2 
               * (0.5*0.5)          &          ! Cs^2   
               * WALEv(c) 
@@ -101,7 +101,7 @@
               + grav_z * t_z(c))  &
           / Tref
       Nc2 = max(0.0, Nc2) 
-      VISt(c) = VISt(c) * sqrt(1.0 - min(2.5*Nc2/(Shear(c)**2), 1.0))
+      vis_t(c) = vis_t(c) * sqrt(1.0 - min(2.5*Nc2/(Shear(c)**2), 1.0))
     end do
   end if
 
@@ -155,7 +155,7 @@
         Apow = 8.3
         Bpow = 1.0/7.0
         nu = VISc/DENc(material(c1))
-        dely = WallDs(c1)
+        dely = grid % wall_dist(c1)
 
         ! Calculate UtauL
         UtauL = ( Utan/Apow * (nu/dely)**Bpow )                     &
@@ -170,13 +170,13 @@
           ! This one is effective viscosity
           VISwall(c1) = DENc(material(c1))*UtauL*UtauL*dely/abs(Utan) 
         else 
-          VISwall(c1) = VISc + fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2)
+          VISwall(c1) = VISc + fF(s)*vis_t(c1)+(1.0-fF(s))*vis_t(c2)
         endif
       end if  ! TypeBC(c2)==WALL or WALLFL
     end if    ! c2 < 0
   end do
 
-  call Exchange(grid, VISt)
+  call Exchange(grid, vis_t)
   call Exchange(grid, VISwall)
 
   end subroutine

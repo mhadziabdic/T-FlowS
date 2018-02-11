@@ -36,8 +36,6 @@ module pro_mod
   type(Var_Type) :: pp
 
   ! Turbulent viscosity
-  real,allocatable :: VISt_sgs(:)
-  real,allocatable :: VISt_eff(:)
   real,allocatable :: Ptt(:)
 
   ! Mass fluxes throught cell faces

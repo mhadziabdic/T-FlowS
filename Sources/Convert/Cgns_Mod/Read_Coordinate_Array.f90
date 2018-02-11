@@ -8,16 +8,16 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8       :: base, block, coord
+  integer         :: base, block, coord
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8         :: base_id         ! base index number
-  integer*8         :: block_id        ! block index number
+  integer           :: base_id         ! base index number
+  integer           :: block_id        ! block index number
   character(len=80) :: coord_name      
-  integer*8         :: i               ! lower range index
-  integer*8         :: j               ! upper range index
+  integer           :: i               ! lower range index
+  integer           :: j               ! upper range index
   real, allocatable :: coordinates(:)  ! array of coordinate values
-  integer*8         :: error           ! error status
+  integer           :: error           ! error status
 !==============================================================================!
 
   ! Set input parameters

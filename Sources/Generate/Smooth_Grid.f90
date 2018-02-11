@@ -38,7 +38,8 @@
 
   do c = 1, grid % n_cells
     do n = 1, grid % cells_n_nodes(c)
-      walln(grid % cells_n(n,c)) = min(WallDs(c), walln(grid % cells_n(n,c)))
+      walln(grid % cells_n(n,c)) = min(grid % wall_dist(c),  &
+                                       walln(grid % cells_n(n,c)))
     end do
   end do
 

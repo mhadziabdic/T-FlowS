@@ -17,8 +17,8 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: name_in
-  integer*8         :: c, cs, ce, i, j, bc, base, block, sect, coord
-  integer*8         :: cgns_1, cgns_2, cgns_3, cgns_4, cgns_5, cell_type
+  integer           :: c, cs, ce, i, j, bc, base, block, sect, coord
+  integer           :: cgns_1, cgns_2, cgns_3, cgns_4, cgns_5, cell_type
 !==============================================================================!
 
   name_in = problem_name

@@ -45,7 +45,7 @@
   real    :: uis
   real    :: A0, A12, A21
   real    :: error
-  real    :: VISeff, VIStS, Fstress 
+  real    :: VISeff, vis_tS, Fstress 
   real    :: ui_iS,ui_jS,ui_kS,uj_iS,uk_iS
 !------------------------------------------------------------------------------!
 !
@@ -247,10 +247,10 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)   
 
-    VISeff = fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2) + VISc
+    VISeff = fF(s)*vis_t(c1)+(1.0-fF(s))*vis_t(c2) + VISc
 
     if(SIMULA==HYB_ZETA) then
-      VISeff = fF(s)*VISt_eff(c1)+(1.0-fF(s))*VISt_eff(c2) + VISc
+      VISeff = fF(s)*vis_t_eff(c1)+(1.0-fF(s))*vis_t_eff(c2) + VISc
     end if
 
     if(c2 < 0 .and. SIMULA == LES) then
@@ -427,9 +427,9 @@
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
 
-        VIStS = (fF(s)*VISt(c1)+(1.0-fF(s))*VISt(c2))
-        A0 = Scoef(s)*VIStS 
-        VISeff = VIStS
+        vis_tS = (fF(s)*vis_t(c1)+(1.0-fF(s))*vis_t(c2))
+        A0 = Scoef(s)*vis_tS 
+        VISeff = vis_tS
 
         ui_iS = fF(s)*ui_i(c1) + (1.0-fF(s))*ui_i(c2)
         ui_jS = fF(s)*ui_j(c1) + (1.0-fF(s))*ui_j(c2)

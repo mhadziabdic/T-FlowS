@@ -41,6 +41,9 @@
     ! General cell size (max(dx,dy,dz) or maybe volume/area?)
     real, allocatable :: delta(:)
     
+    ! Wall distance - distance from the nearest wall
+    real, allocatable :: wall_dist(:)
+    
     ! Cells' nodes and neigboring cells
     integer, allocatable :: cells_n(:,:)      
     integer, allocatable :: cells_c(:,:)

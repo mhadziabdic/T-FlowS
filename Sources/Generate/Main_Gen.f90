@@ -59,16 +59,6 @@
   !   Save grid for visualisation and post-processing   !
   !-----------------------------------------------------!
 
-  ! Save the grid
-  call Save_Gmv_Cells(grid, 0,         &
-                      grid % n_nodes,  &
-                      grid % n_cells)
-  call Save_Gmv_Faces(grid)
-
-  ! I believe shadows are needed (only) for Fluent (TM) output
-  call Save_Shadows(grid, 0,         &
-                    grid % n_cells)
-
   ! Create output in vtu format
   call Save_Vtu_Cells(grid, 0,         &
                       grid % n_nodes,  &
@@ -76,31 +66,22 @@
   call Save_Vtu_Faces(grid)
 
   ! Save links for checking
-  call Save_Gmv_Links(grid, 0,             &
+  call Save_Vtu_Links(grid, 0,             &
                       grid % n_nodes,      &
                       grid % n_cells,      &
                       grid % n_faces,      &
                       grid % n_bnd_cells,  &
                       0)
 
+  ! I believe shadows are needed (only) for Fluent (TM) output
+  call Save_Shadows(grid, 0,         &
+                    grid % n_cells)
+
   ! Save the 1D probe (good for the channel flow)
   call Probe_1D_Nodes_Gen(grid)
 
   ! Save the 2D probe (good for the channel flow)
   call Probe_2D(grid)
-
-  ! Create output for Fluent
-  NewC(-grid % n_bnd_cells-1) = -grid % n_bnd_cells-1
-  call Save_Cas(grid, 0,              &
-                grid % n_nodes,       &
-                grid % n_cells,       &
-                grid % n_faces + grid % n_sh)  ! save grid for Fluent
-
-  ! Make eps figures
-  call Save_Eps_Cut(grid, grid % dy, grid % dz, 'x') 
-  call Save_Eps_Cut(grid, grid % dz, grid % dx, 'y') 
-  call Save_Eps_Cut(grid, grid % dx, grid % dy, 'z') 
-  call Save_Eps_Whole(grid, grid % n_sh)
 
   ! Write something on the screen
   call Print_Grid_Statistics(grid)

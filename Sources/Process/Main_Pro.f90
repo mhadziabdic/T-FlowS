@@ -142,9 +142,9 @@
   ! Print the areas of monitoring planes
   if(this_proc < 2) then
     do m=1,grid % n_materials
-      write(*,'(A5,I2,A2,1PE12.3)') '# Ax(',m,')=', bulk(m) % area_x
-      write(*,'(A5,I2,A2,1PE12.3)') '# Ay(',m,')=', bulk(m) % area_y
-      write(*,'(A5,I2,A2,1PE12.3)') '# Az(',m,')=', bulk(m) % area_z
+      write(*,'(a5,i2,a2,1pe12.3)') '# Ax(',m,')=', bulk(m) % area_x
+      write(*,'(a5,i2,a2,1pe12.3)') '# Ay(',m,')=', bulk(m) % area_y
+      write(*,'(a5,i2,a2,1pe12.3)') '# Az(',m,')=', bulk(m) % area_z
     end do
   end if
 
@@ -169,7 +169,7 @@
 
     if(SIMULA==DES_SPA) then
       call Compute_Shear_And_Vorticity(grid)
-      call CalcVort (grid, U % n, V % n, W % n, Vort)
+      call CalcVort (grid, U % n, V % n, W % n, vort)
     end if
 
     if(SIMULA == LES) then
@@ -324,7 +324,7 @@
 
       if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA) then
         call Compute_Shear_And_Vorticity(grid)
-        call CalcVort(grid, U % n, V % n, W % n, Vort)
+        call CalcVort(grid, U % n, V % n, W % n, vort)
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
@@ -420,7 +420,7 @@
                     len_trim(problem_name)+9), '(i6.6)'), n
 
     ! Is it time to save the restart file?
-    if(save_now .or. exit_now .or. mod(n,10) == 0) then
+    if(save_now .or. exit_now .or. mod(n,1000) == 0) then
       call Wait
       Ndtt_temp = Ndtt
       Ndtt      = n
@@ -429,13 +429,11 @@
     end if
 
     ! Is it time to save results for post-processing
-    if(save_now .or. exit_now .or. mod(n, 50) == 0) then
+    if(save_now .or. exit_now .or. mod(n, 10) == 0) then
       call Wait
       Ndtt_temp = Ndtt
       Ndtt      = n
       call Save_Vtu_Results(grid, name_save)
-      call Save_Gmv_Results(grid, name_save)
-      call Save_Dat_Results(grid, name_save)
       call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
       Ndtt = Ndtt_temp
     end if

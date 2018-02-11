@@ -5,14 +5,14 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8 :: base, block
+  integer   :: base, block
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8         :: base_id             ! base index number    
-  integer*8         :: block_id            ! block index number
+  integer           :: base_id             ! base index number    
+  integer           :: block_id            ! block index number
   character(len=80) :: block_name          ! name of the block
-  integer*8         :: block_mesh_info(3)  ! n_nodes, n_cells, and ...
+  integer           :: block_mesh_info(3)  ! n_nodes, n_cells, and ...
                                            ! ... n_b_nodes(if sorted)
-  integer*8         :: error
+  integer           :: error
 !==============================================================================!
 
   ! Set input parameters

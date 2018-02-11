@@ -5,22 +5,22 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8 :: base, block, bc
+  integer :: base, block, bc
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8            :: base_id         ! base index number
-  integer*8            :: block_id        ! block index number
-  integer*8            :: bc_id           ! block index number
-  character(len=80)    :: bc_name         ! name of the boundary condition
-  integer*8            :: bc_type         ! boundary condition type
-  integer*8            :: bc_ptset_type   ! boundary node/cell placement
-  integer*8            :: bc_n_nodes      ! boundary nodes or cells
-  integer*8            :: NormalIndex(3)  
-  integer*8            :: NormalListFlag
-  integer*8            :: bc_data_type     
-  integer*8            :: bc_n_datasets
-  integer*8            :: error
-  integer*8            :: one = 1         ! go figure :-(
-  integer*8            :: i, color
+  integer           :: base_id         ! base index number
+  integer           :: block_id        ! block index number
+  integer           :: bc_id           ! block index number
+  character(len=80) :: bc_name         ! name of the boundary condition
+  integer           :: bc_type         ! boundary condition type
+  integer           :: bc_ptset_type   ! boundary node/cell placement
+  integer           :: bc_n_nodes      ! boundary nodes or cells
+  integer           :: NormalIndex(3)  
+  integer           :: NormalListFlag
+  integer           :: bc_data_type     
+  integer           :: bc_n_datasets
+  integer           :: error
+  integer           :: one = 1         ! go figure :-(
+  integer           :: i, color
 !==============================================================================!
 
   ! Set input parameters

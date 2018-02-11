@@ -5,12 +5,12 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8 :: base, block
+  integer :: base, block
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8 :: base_id         ! base index number
-  integer*8 :: block_id        ! block index number
-  integer*8 :: block_n_coords  ! number of coordinates in the block
-  integer*8 :: error           ! error status
+  integer :: base_id         ! base index number
+  integer :: block_id        ! block index number
+  integer :: block_n_coords  ! number of coordinates in the block
+  integer :: error           ! error status
 !==============================================================================!
 
   ! Set input parameters

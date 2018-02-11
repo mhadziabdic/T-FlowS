@@ -115,10 +115,10 @@
         Prt = 0.9
         if(SIMULA/=LES.or.SIMULA/=DNS) then
           Prt = 1.0                           &
-              / ( 0.5882 + 0.228*(VISt(c1)    &
+              / ( 0.5882 + 0.228*(vis_t(c1)    &
               / (VISc+1.0e-12)) - 0.0441      &
-              * (VISt(c1)/(VISc+1.0e-12))**2  &
-              * (1.0 - exp(-5.165*( VISc/(VISt(c1)+1.0e-12) ))))
+              * (vis_t(c1)/(VISc+1.0e-12))**2  &
+              * (1.0 - exp(-5.165*( VISc/(vis_t(c1)+1.0e-12) ))))
         end if
         Stot = sqrt(  grid % sx(s)*grid % sx(s)  &
                     + grid % sy(s)*grid % sy(s)  &
@@ -130,9 +130,9 @@
         qy = T % q(c2) * Ny
         qz = T % q(c2) * Nz
         CONeff = CONc(material(c1))                 &
-                + CAPc(material(c1))*VISt(c1)/Prt
+               + CAPc(material(c1))*vis_t(c1)/Prt
         if(SIMULA==ZETA.or.SIMULA==K_EPS) then
-          Yplus = max(Cmu25 * sqrt(Kin%n(c1)) * WallDs(c1)/VISc,0.12)
+          Yplus = max(Cmu25 * sqrt(Kin%n(c1)) * grid % wall_dist(c1)/VISc,0.12)
           Uplus = log(Yplus*Elog) / (kappa + TINY) + TINY
           Prmol = VISc / CONc(material(c1))
           beta = 9.24 * ((Prmol/Prt)**0.75 - 1.0)  &
@@ -172,26 +172,6 @@
           end if
         end if
       end if
-
-      ! Below part is coded for pipe flow with constant wall temperature    
-      !
-      !      if( (HOT==YES) .and. (TypeBC(c2) == WALL .or.  &
-      !           TypeBC(c2) == WALLFL) ) then
-      !        WallDs(c1) = (  grid % dx(s)**2  &
-      !                      + grid % dy(s)**2  &
-      !                      + grid % dz(s)**2)**0.5
-      !        Stot = sqrt(  grid % sx(s)*grid % sx(s)  &
-      !                    + grid % sy(s)*grid % sy(s)  &
-      !                    + grid % sz(s)*grid % sz(s))
-      !        if(Ynd(c1) < 3) then
-      !          Tflux = Tflux + CONc(material(c1))*abs(PHIz(c1)) * Stot
-      !        else 
-      !          Tflux = Tflux + CONeff*(T % n(c1))  &
-      !                / WallDs(c1) * Stot
-      !        end if
-      !        print *, (T % n(c2) - T % n(c1))/WallDs(c1), PHIz(c1)
-      !        Area  = Area  + Stot
-      !      end if
 
       !---------------------!
       !   Copy boundaries   !

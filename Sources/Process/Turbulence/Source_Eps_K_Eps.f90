@@ -1,11 +1,11 @@
 !==============================================================================!
   subroutine Source_Eps_K_Eps(grid)
 !------------------------------------------------------------------------------!
-!   Computes the source terms in the Eps transport equation,                   !
+!   Computes the source terms in the eps transport equation,                   !
 !   wall shear stress (wall function approuch)                                 !
 !------------------------------------------------------------------------------! 
 !                           2                                                  !
-!       Eps              Eps                                                   !
+!       eps              eps                                                   !
 !   Ce1 --- Gk - Ce2 rho ---                                                   !
 !        K                K                                                    !
 !                                                                              !
@@ -38,11 +38,11 @@
 
       ! Positive contribution:
       b(c) = b(c) & 
-           + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * grid % vol(c)
+           + Ce1 * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)
     
       ! Negative contribution:
       A % val(A % dia(c)) = A % val(A % dia(c)) &
-           + Ce2 * DENc(material(c)) * Eps % n(c) / Kin % n(c) * grid % vol(c)
+           + Ce2 * DENc(material(c)) * eps % n(c) / kin % n(c) * grid % vol(c)
     end do 
 
     !--------------------------------------------!
@@ -56,17 +56,19 @@
       if(c2 < 0.and.TypeBC(c2) /= BUFFER ) then  
         if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
 
-          ! This will fix the value of Eps in the first cell
+          ! This will fix the value of eps in the first cell
           if(ROUGH==NO) then
-            Eps % n(c1) = Cmu75 * (Kin % n(c1))**1.5 / (kappa*WallDs(c1))
+            eps % n(c1) = Cmu75 * (kin % n(c1))**1.5   &
+                        / (kappa*grid % wall_dist(c1))
           else if(ROUGH==YES) then
-            Eps % n(c1) = Cmu75*(Kin%n(c1))**1.5/(kappa*(WallDs(c1)+Zo))
+            eps % n(c1) = Cmu75*(kin%n(c1))**1.5  &
+                        / (kappa*(grid % wall_dist(c1)+Zo))
           end if
           do j=A % row(c1), A % row(c1+1) -1
             A % val(j) = 0.0
           end do   
           A % val(A % dia(c1)) = 1.0
-          b(c1) = Eps % n(c1)
+          b(c1) = eps % n(c1)
         end if  ! TypeBC(c2)==WALL or WALLFL
       end if    ! c2 < 0
     end do
@@ -86,20 +88,20 @@
 
       ! Positive contribution:
       b(c) = b(c) & 
-           + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * grid % vol(c)        & 
-           + 2.0 * VISc * VISt(c) * &
+           + Ce1 * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)        & 
+           + 2.0 * VISc * vis_t(c) * &
            (shear_x(c)**2 + shear_y(c)**2 + shear_z(c)**2) * grid % vol(c)
     
       ! Negative contribution:
-      Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
+      Ret = kin % n(c)*kin % n(c)/(VISc*eps % n(c))
       Fmu = 1.0 - 0.3*exp(-(Ret*Ret))
       A % val(A % dia(c)) = A % val(A % dia(c))  &
-      + Fmu * Ce2 * DENc(material(c)) * Eps % n(c) / Kin % n(c) * grid % vol(c)        
+      + Fmu * Ce2 * DENc(material(c)) * eps % n(c) / kin % n(c) * grid % vol(c)        
 
        ! Yap correction
-       L1 = Kin % n(c)**1.5/Eps % n(c)
-       L2 = 2.55 * WallDs(c)
-       YAP = 0.83 * Eps % n(c) * Eps % n(c)/Kin % n(c)  &
+       L1 = kin % n(c)**1.5/eps % n(c)
+       L2 = 2.55 * grid % wall_dist(c)
+       YAP = 0.83 * eps % n(c) * eps % n(c)/kin % n(c)  &
                   * max((L1/L2 - 1.0) * (L1/L2)**2, 0.0)
        b(c) = b(c) + YAP * grid % vol(c) 
     end do 
@@ -114,7 +116,7 @@
       if(c2 < 0.and.TypeBC(c2) /= BUFFER ) then
         if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
 
-          Eps % n(c2) = 0.0
+          eps % n(c2) = 0.0
 
         end if  ! TypeBC(c2)==WALL or WALLFL
       end if    ! c2 < 0
@@ -126,22 +128,22 @@
 
       ! Positive contribution:
       b(c) = b(c) &
-           + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * grid % vol(c)
+           + Ce1 * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)
 
       Lf = grid % vol(c)**ONE_THIRD
 
       ! Negative contribution:
-      Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
-      yStar = (VISc * Eps % n(c))**0.25 * WallDs(c) / VISc
+      Ret = kin % n(c)*kin % n(c)/(VISc*eps % n(c))
+      yStar = (VISc * eps % n(c))**0.25 * grid % wall_dist(c) / VISc
       Fmu = (1.0 - exp(-yStar/3.1))**2*(1.0 - 0.25*exp(-(Ret/6.)*(Ret/6.)))
       Fmu = min(Fmu,1.0)
 
-      Ce2 =  1.5 + 0.4/(1.0 + 2.4*(0.41*WallDs(c)/Lf)**TWO_THIRDS)
+      Ce2 =  1.5 + 0.4/(1.0 + 2.4*(0.41*grid % wall_dist(c)/Lf)**TWO_THIRDS)
 
       A % val(A % dia(c)) = A % val(A % dia(c))            &
                          + (Ce1 + (Ce2 - Ce1) * Fmu )      &
-                         * DENc(material(c)) * Eps % n(c)  &
-                         / Kin % n(c) * grid % vol(c)
+                         * DENc(material(c)) * eps % n(c)  &
+                         / kin % n(c) * grid % vol(c)
 
     end do
 
@@ -155,7 +157,8 @@
       if(c2 < 0.and.TypeBC(c2) /= BUFFER ) then
         if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
 
-          Eps % n(c2) = 2.0 * VISc * Kin % n(c1)/(WallDs(c1)*WallDs(c1))
+          eps % n(c2) = 2.0 * VISc * kin % n(c1)  &
+                      / (grid % wall_dist(c1)*grid % wall_dist(c1))
 
         end if  ! TypeBC(c2)==WALL or WALLFL
       end if    ! c2 < 0

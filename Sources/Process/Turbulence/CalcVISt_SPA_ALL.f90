@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine CalcVISt_SPA_ALL(grid, n) 
+  subroutine Calcvist_SPA_ALL(grid, n) 
 !------------------------------------------------------------------------------!
 !   Computes the turbulent viscosity for RANS models.                          !
 !------------------------------------------------------------------------------!
@@ -23,7 +23,7 @@
     do c = 1, grid % n_cells
       Xrat     = VIS % n(c)/VISc
       Fv1      = Xrat**3/(Xrat**3 + Cvis1**3)
-      VISt(c)  = DENc(material(c)) * Fv1 * VIS % n(c)
+      vis_t(c) = DENc(material(c)) * Fv1 * VIS % n(c)
     end do
   end if
 
@@ -31,10 +31,10 @@
     do c = 1, grid % n_cells
       Xrat     = VIS % n(c)/VISc
       Fv1      = Xrat**3/(Xrat**3 + Cvis1**3)
-      VISt(c)  = DENc(material(c)) * Fv1 * VIS % n(c)
+      vis_t(c) = DENc(material(c)) * Fv1 * VIS % n(c)
     end do
   end if
 
-  call Exchange(grid, VISt)  
+  call Exchange(grid, vis_t)  
 
   end subroutine

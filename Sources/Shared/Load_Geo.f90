@@ -3,7 +3,6 @@
 !------------------------------------------------------------------------------!
 !   Reads:  name.geo                                                           !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod, only: WallDs
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -35,9 +34,9 @@
   read(9) (grid % yc(c), c=-1,-grid % n_bnd_cells,-1)
   read(9) (grid % zc(c), c=-1,-grid % n_bnd_cells,-1) 
 
-  read(9) (grid % vol  (c), c = 1, grid % n_cells)
-  read(9) (grid % delta(c), c = 1, grid % n_cells)
-  read(9) (WallDs(c),     c = 1, grid % n_cells)
+  read(9) (grid % vol  (c),     c = 1, grid % n_cells)
+  read(9) (grid % delta(c),     c = 1, grid % n_cells)
+  read(9) (grid % wall_dist(c), c = 1, grid % n_cells)
 
   read(9) (grid % sx(s), s = 1, grid % n_faces)
   read(9) (grid % sy(s), s = 1, grid % n_faces)

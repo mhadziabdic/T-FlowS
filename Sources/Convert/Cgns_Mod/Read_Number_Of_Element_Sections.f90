@@ -5,12 +5,12 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8 :: base, block
+  integer :: base, block
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8 :: base_id   ! base index number    
-  integer*8 :: block_id  ! block index number
-  integer*8 :: n_sects   ! number of element sections in a block
-  integer*8 :: error
+  integer :: base_id   ! base index number    
+  integer :: block_id  ! block index number
+  integer :: n_sects   ! number of element sections in a block
+  integer :: error
 !==============================================================================!
 
   ! Set input parameters

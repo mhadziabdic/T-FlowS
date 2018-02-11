@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 ! Writes: name.vtu, name.faces.vtu, name.shadow.vtu                            !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod, only: material, WallDs
+  use all_mod, only: material
   use gen_mod, only: NewN, NewC
   use div_mod, only: n_sub
   use Grid_Mod
@@ -156,7 +156,7 @@
   write(9,'(a,a)') IN_4, '<DataArray type="Float32" Name="wall distance" format="ascii">'
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
-      write(9,'(a,1pe15.7)') IN_5, WallDs(c)
+      write(9,'(a,1pe15.7)') IN_5, grid % wall_dist(c)
     end if
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'

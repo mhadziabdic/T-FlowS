@@ -27,8 +27,8 @@
 !    | f22hg*dV ; f22hg - f22hg homogenious is placed in a source              !
 !    |                     coefficients b(c)                                   !
 !   /                                                                          !
-!      f22hg = (1.0 - Cv_1)*(vi2(c)/Kin(c) - 2.0/3.0)/Tsc(c)     &             !
-!              + 2.0*Cv_2*Pk(c)/(3.0*Kin(c))                                   !
+!      f22hg = (1.0 - Cv_1)*(vi2(c)/kin(c) - 2.0/3.0)/Tsc(c)     &             !
+!              + 2.0*Cv_2*p_kin(c)/(3.0*kin(c))                                   !
 !                                                                              !
 !     /                                                                        !
 !    |                                                                         !
@@ -40,8 +40,8 @@
 !  Dimensions of certain variables                                             !
 !                                                                              !
 !     Tsc            [s]                                                       !
-!     Kin            [m^2/s^2]                                                 !
-!     Eps            [m^3/s^2]                                                 !
+!     kin            [m^2/s^2]                                                 !
+!     eps            [m^3/s^2]                                                 !
 !     vi2            [m^2/s^2]                                                 !
 !     f22            [-]                                                       !
 !     Lsc            [m]                                                       !
@@ -53,11 +53,11 @@
  ! Source term f22hg
  if(SIMULA == ZETA.or.SIMULA==HYB_ZETA) then 
    do c = 1, grid % n_cells
-     f22hg = (1.0 - Cf_1 - 0.65*Pk(c)   &
-           / (Eps % n(c) + TINY))       &
+     f22hg = (1.0 - Cf_1 - 0.65*p_kin(c)   &
+           / (eps % n(c) + TINY))       &
            * (v_2 % n(c) - 2.0 / 3.0)   &
            / (Tsc(c) + TINY)            &
-           + 0.0085 * Pk(c) / (Kin % n(c) + TINY)
+           + 0.0085 * p_kin(c) / (kin % n(c) + TINY)
      b(c) = b(c) + f22hg * grid % vol(c) / (Lsc(c)**2 + TINY) 
    end do
 
@@ -76,7 +76,7 @@
 
 
          f22 % n(c2) = -2.0 * VISc * v_2 % n(c1)     &
-                     / WallDs(c1)**2
+                     / grid % wall_dist(c1)**2
 
         ! Fill in a source coefficients
 
@@ -89,8 +89,8 @@
    end do
  else if(SIMULA == K_EPS_VV) then
    do c = 1, grid % n_cells
-     f22hg = (1.0 - Cf_1)*(v_2 % n(c)/(Kin % n(c)+TINY) - TWO_THIRDS)/(Tsc(c)+TINY)   &
-                + Cf_2*Pk(c)/(Kin % n(c)+TINY)
+     f22hg = (1.0 - Cf_1)*(v_2 % n(c)/(kin % n(c)+TINY) - TWO_THIRDS)/(Tsc(c)+TINY)   &
+                + Cf_2*p_kin(c)/(kin % n(c)+TINY)
      b(c) = b(c) + f22hg*grid % vol(c)/(Lsc(c)+TINY)**2
      Sor11 = grid % vol(c)/Lsc(c)**2
      A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11
@@ -103,7 +103,7 @@
      if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
          f22 % n(c2) = -20.0*VISc**2*v_2 % n(c1)/                     &
-                       (WallDs(c1)**4*Eps % n(c2))
+                       (grid % wall_dist(c1)**4*eps % n(c2))
 
         ! Fill in a source coefficients
 

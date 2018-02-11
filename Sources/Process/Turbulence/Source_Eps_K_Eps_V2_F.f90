@@ -19,21 +19,21 @@
   integer :: c, s, c1, c2,j 
   real    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret, Ck, EBF
   real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, EpsWall, EpsHom
-  real    :: BL_EPS, Pro, Pk_turb, Pk_vis, Yplus
+  real    :: BL_EPS, Pro, p_kin_turb, p_kin_vis, Yplus
 !==============================================================================!
 !   In dissipation of turbulent kinetic energy equation exist two              !
 !   source terms which have form:                                              !
 !                                                                              !
 !     /                                                                        !
 !    |                                                                         !
-!    | ((Cv_e1 * PkE - Cv_11 DENc * Eps) / Tsc) * dV                           !
+!    | ((Cv_e1 * p_kinE - Cv_11 DENc * eps) / Tsc) * dV                           !
 !    |                                                                         !
 !   /                                                                          !
 !                                                                              !
 !   First, positive , source term is solved and added to source  coefficient   !
 !   b(c) on right hand side.  Second, negative, source term is added to main   !
 !   diagonal left hand side coefficient matrix in order to increase stability  !
-!   of solver.  It is nessesary to calculate coefficient Cv_11 using Kin,      !
+!   of solver.  It is nessesary to calculate coefficient Cv_11 using kin,      !
 !   Cv_e2, vi2 and coefficient A1                                              !
 !------------------------------------------------------------------------------!
 
@@ -43,14 +43,14 @@
     do c = 1, grid % n_cells 
       Esor = grid % vol(c)/(Tsc(c)+tiny)
       Ce_11 = Ce1*(1.0 + alpha*(1.0/(v_2%n(c)+tiny) ))    
-      b(c) = b(c) + Ce_11*Pk(c)*Esor
+      b(c) = b(c) + Ce_11*p_kin(c)*Esor
  
       ! Fill in a diagonal of coefficient matrix
       A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
     end do                   
   end if
 
-  ! Imposing a boundary condition on wall for Eps 
+  ! Imposing a boundary condition on wall for eps 
 
   do s = 1, grid % n_faces
     c1=grid % faces_c(1,s)
@@ -74,31 +74,31 @@
           Utan = TINY
         end if
 
-        EpsWall = 2.0 * VISc * Kin%n(c1) / WallDs(c1)**2.0
-        EpsHom = Cmu75 * Kin%n(c1)**1.5 / (WallDs(c1) * kappa)
-        Uf(c1) = Cmu25 * Kin%n(c1)**0.5
+        EpsWall = 2.0 * VISc * kin%n(c1) / grid % wall_dist(c1)**2.0
+        EpsHom = Cmu75 * kin%n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
+        Uf(c1) = Cmu25 * kin%n(c1)**0.5
 
-        Pk_turb = Cmu75 * Kin%n(c1)**1.5 / (WallDs(c1) * kappa)
-        Pk_vis = VISt(c1)*Shear(c1)*Shear(c1)  ! standard
+        p_kin_turb = Cmu75 * kin%n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
+        p_kin_vis = vis_t(c1)*Shear(c1)*Shear(c1)  ! standard
 
         ! Kader
         ! EBF = 0.01 * Yplus**4.0 / (1.0 + 5.0*Yplus) + TINY           !original
-        ! Pro = Pk_vis * exp(-1.0 * EBF) + Pk_turb * exp(-1.0 / EBF) 
-        ! BL_EPS = min((Pk_turb * exp(-1.0 / EBF))/Pro,1.0)
+        ! Pro = p_kin_vis * exp(-1.0 * EBF) + p_kin_turb * exp(-1.0 / EBF) 
+        ! BL_EPS = min((p_kin_turb * exp(-1.0 / EBF))/Pro,1.0)
 
-        Yplus = Cmu25 * sqrt(Kin%n(c1)) * WallDs(c1) / VISc + TINY     !standard
+        Yplus = Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1) / VISc + TINY     !standard
         EBF  = 0.001*Yplus**4.0/(1.0+Yplus)
-        Eps%n (c1) = EpsWall * exp(-1.0 * EBF) + EpsHom * exp(-1.0 / EBF) 
+        eps%n (c1) = EpsWall * exp(-1.0 * EBF) + EpsHom * exp(-1.0 / EBF) 
         
         if(ROUGH == YES) then
-          Eps%n(c1) = Cmu75 * Kin%n(c1)**1.5 / ((WallDs(c1)) * kappa)
+          eps%n(c1) = Cmu75 * kin%n(c1)**1.5 / ((grid % wall_dist(c1)) * kappa)
         end if
 
-        !-Adjusting coefficient to fix Eps value in near wall calls
+        ! Adjusting coefficient to fix eps value in near wall calls
         do j=A % row(c1), A % row(c1+1)-1
           A % val(j) = 0.0
         end do
-        b(c1) = Eps % n(c1)
+        b(c1) = eps % n(c1)
         A % val(A % dia(c1)) = 1.0
      end if
     end if
@@ -107,8 +107,8 @@
   if(SIMULA == K_EPS_VV) then
     do c = 1, grid % n_cells
       Esor = grid % vol(c)/Tsc(c)
-      Ce_11 = Ce1*(1.0 + alpha*(Kin%n(c)/(v_2%n(c)) + tiny)**0.5)
-      b(c) = b(c) + Ce_11*Pk(c)*Esor
+      Ce_11 = Ce1*(1.0 + alpha*(kin%n(c)/(v_2%n(c)) + tiny)**0.5)
+      b(c) = b(c) + Ce_11*p_kin(c)*Esor
 
       ! Fill in a diagonal of coefficient matrix
       A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))

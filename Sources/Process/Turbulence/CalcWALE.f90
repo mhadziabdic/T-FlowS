@@ -52,8 +52,8 @@
     V31 = -V13
     V32 = -V23
 
-    She(c) = 0.5 * Shear(c) * Shear(c)
-    Vor(c) = 0.5 * Vort(c) * Vort(c)
+    She(c) = 0.5 * shear(c) * shear(c)
+    Vor(c) = 0.5 * vort(c) * vort(c)
 
     S11d =  S11*S11 + S12*S12 + S13*S13   &
          - (V11*V11 + V12*V12 + V13*V13)  &

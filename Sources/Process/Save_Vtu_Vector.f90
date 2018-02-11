@@ -32,7 +32,8 @@
                   '" NumberOfComponents="3" format="ascii">'
   ! Data
   do c = 1, grid % n_cells
-    write(9,'(a,1pe15.7,1pe15.7,1pe15.7)'), in_2, val_1(c), val_2(c), val_3(c)
+    write(9,'(a,1pe16.6e4,1pe16.6e4,1pe16.6e4)'),  &
+            in_2, val_1(c), val_2(c), val_3(c)
   end do  
 
   ! Footer

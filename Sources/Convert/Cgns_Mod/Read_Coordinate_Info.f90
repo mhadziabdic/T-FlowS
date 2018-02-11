@@ -5,14 +5,14 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8 :: base, block, coord
+  integer   :: base, block, coord
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8         :: base_id          ! base index number
-  integer*8         :: block_id         ! block index number
-  integer*8         :: coord_id            
-  integer*8         :: coord_data_type     
+  integer           :: base_id          ! base index number
+  integer           :: block_id         ! block index number
+  integer           :: coord_id            
+  integer           :: coord_data_type     
   character(len=80) :: coord_name
-  integer*8         :: error            ! error status
+  integer           :: error            ! error status
 !==============================================================================!
 
   ! Set input parameters

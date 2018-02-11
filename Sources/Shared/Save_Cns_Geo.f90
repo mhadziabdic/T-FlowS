@@ -333,7 +333,7 @@
   do c = 1, grid % n_cells
     if(NewC(c)  > 0) then
       count=count+1
-      work(count) = WallDs(c)
+      work(count) = grid % wall_dist(c)
     end if
   end do
   write(9) (work(c), c=1,count) 

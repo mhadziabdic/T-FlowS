@@ -26,8 +26,8 @@
 !    | f22hg*dV ; f22hg - f22hg homogenious is placed in a source              !
 !    |                     coefficients b(c)                                   !
 !   /                                                                          !
-!      f22hg = (1.0 - Cv_1)*(vi2(c)/Kin(c) - 2.0/3.0)/Tsc(c)     &             !
-!              + 2.0*Cv_2*Pk(c)/(3.0*Kin(c))                                   !
+!      f22hg = (1.0 - Cv_1)*(vi2(c)/kin(c) - 2.0/3.0)/Tsc(c)     &             !
+!              + 2.0*Cv_2*p_kin(c)/(3.0*kin(c))                                !
 !                                                                              !
 !     /                                                                        !
 !    |                                                                         !
@@ -39,8 +39,8 @@
 !  Dimensions of certain variables                                             !
 !                                                                              !
 !     Tsc            [s]                                                       !
-!     Kin            [m^2/s^2]                                                 !
-!     Eps            [m^3/s^2]                                                 !
+!     kin            [m^2/s^2]                                                 !
+!     eps            [m^3/s^2]                                                 !
 !     vi2            [m^2/s^2]                                                 !
 !     f22            [-]                                                       !
 !     Lsc            [m]                                                       !

@@ -133,23 +133,23 @@
 
   if(SIMULA==K_EPS.or.SIMULA==ZETA.or.&
      SIMULA==K_EPS_VV.or.SIMULA==HYB_ZETA.or.SIMULA == HYB_PITM) then 
-    read(9) (Kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (Kin % o(c),    c = 1, grid % n_cells)
-    read(9) (Kin % a(c),    c = 1, grid % n_cells)
-    read(9) (Kin % a_o(c),  c = 1, grid % n_cells)
-    read(9) (Kin % d_o(c),  c = 1, grid % n_cells)
-    read(9) (Kin % c(c),    c = 1, grid % n_cells)
-    read(9) (Kin % c_o(c),  c = 1, grid % n_cells)
+    read(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (kin % o(c),    c = 1, grid % n_cells)
+    read(9) (kin % a(c),    c = 1, grid % n_cells)
+    read(9) (kin % a_o(c),  c = 1, grid % n_cells)
+    read(9) (kin % d_o(c),  c = 1, grid % n_cells)
+    read(9) (kin % c(c),    c = 1, grid % n_cells)
+    read(9) (kin % c_o(c),  c = 1, grid % n_cells)
 
-    read(9) (Eps % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (Eps % o(c),    c = 1, grid % n_cells)
-    read(9) (Eps % a(c),    c = 1, grid % n_cells)
-    read(9) (Eps % a_o(c),  c = 1, grid % n_cells)
-    read(9) (Eps % d_o(c),  c = 1, grid % n_cells)
-    read(9) (Eps % c(c),    c = 1, grid % n_cells)
-    read(9) (Eps % c_o(c),  c = 1, grid % n_cells)
+    read(9) (eps % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (eps % o(c),    c = 1, grid % n_cells)
+    read(9) (eps % a(c),    c = 1, grid % n_cells)
+    read(9) (eps % a_o(c),  c = 1, grid % n_cells)
+    read(9) (eps % d_o(c),  c = 1, grid % n_cells)
+    read(9) (eps % c(c),    c = 1, grid % n_cells)
+    read(9) (eps % c_o(c),  c = 1, grid % n_cells)
 
-    read(9) (Pk(c),       c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (p_kin(c),       c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (Uf(c),       c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (Ynd(c),      c = -grid % n_bnd_cells,grid % n_cells) 
     read(9) (VISwall(c),  c = -grid % n_bnd_cells,grid % n_cells)
@@ -224,17 +224,17 @@
     read(9) (vw % c(c),    c = 1, grid % n_cells)
     read(9) (vw % c_o(c),  c = 1, grid % n_cells)
 
-    read(9) (Eps % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (Eps % o(c),    c = 1, grid % n_cells)
-    read(9) (Eps % a(c),    c = 1, grid % n_cells)
-    read(9) (Eps % a_o(c),  c = 1, grid % n_cells)
-    read(9) (Eps % d_o(c),  c = 1, grid % n_cells)
-    read(9) (Eps % c(c),    c = 1, grid % n_cells)
-    read(9) (Eps % c_o(c),   c = 1, grid % n_cells)
+    read(9) (eps % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (eps % o(c),    c = 1, grid % n_cells)
+    read(9) (eps % a(c),    c = 1, grid % n_cells)
+    read(9) (eps % a_o(c),  c = 1, grid % n_cells)
+    read(9) (eps % d_o(c),  c = 1, grid % n_cells)
+    read(9) (eps % c(c),    c = 1, grid % n_cells)
+    read(9) (eps % c_o(c),  c = 1, grid % n_cells)
 
-    read(9) (Pk(c),       c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (Kin % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (VISt(c),     c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (p_kin(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (kin % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (vis_t(c),     c = -grid % n_bnd_cells,grid % n_cells)
 
     if(SIMULA==EBM) then
       read(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
@@ -255,18 +255,18 @@
   end if
 
   if(SIMULA == SPA_ALL.or.SIMULA==DES_SPA) then
-    read(9) (VIS % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (VIS % o(c),    c = 1, grid % n_cells)
-    read(9) (VIS % a(c),    c = 1, grid % n_cells)
-    read(9) (VIS % a_o(c),  c = 1, grid % n_cells)
-    read(9) (VIS % d_o(c),  c = 1, grid % n_cells)
-    read(9) (VIS % c(c),    c = 1, grid % n_cells)
-    read(9) (VIS % c_o(c),  c = 1, grid % n_cells)
+    read(9) (vis % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (vis % o(c),    c = 1, grid % n_cells)
+    read(9) (vis % a(c),    c = 1, grid % n_cells)
+    read(9) (vis % a_o(c),  c = 1, grid % n_cells)
+    read(9) (vis % d_o(c),  c = 1, grid % n_cells)
+    read(9) (vis % c(c),    c = 1, grid % n_cells)
+    read(9) (vis % c_o(c),  c = 1, grid % n_cells)
 
-    read(9) (Vort(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (vort(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(SIMULA/=DNS) read(9) (VISt(c), c = -grid % n_bnd_cells,grid % n_cells)
+  if(SIMULA/=DNS) read(9) (vis_t(c), c = -grid % n_bnd_cells,grid % n_cells)
 
   if(SIMULA==DNS.or.SIMULA==LES.or.SIMULA==URANS.or.&
      SIMULA==HYB_ZETA.or.SIMULA==HYB_PITM.or.SIMULA==DES_SPA) then
@@ -291,24 +291,24 @@
   end if
 
   if(SIMULA == LES) then
-    read(9) (VISt_mean(c),  c = 1, grid % n_cells)
+    read(9) (vis_t_mean(c),  c = 1, grid % n_cells)
     read(9) (near(c),       c = -grid % n_bnd_cells,grid % n_cells)
     if(MODE == DYN) read(9) (Cdyn_mean(c), c = 1, grid % n_cells)
   end if
  
   if(SIMULA == HYB_PITM.or.SIMULA==DES_SPA) then
-    read(9) (VISt_mean(c), c = 1, grid % n_cells)
+    read(9) (vis_t_mean(c), c = 1, grid % n_cells)
   end if
 
   if(SIMULA == HYB_ZETA) then
-    read(9) (VISt_mean(c), c = 1, grid % n_cells)
-    read(9) (VISt_sgs(c),  c = 1, grid % n_cells)
-    read(9) (VISt_eff(c),  c = 1, grid % n_cells)
+    read(9) (vis_t_mean(c), c = 1, grid % n_cells)
+    read(9) (vis_t_sgs(c),  c = 1, grid % n_cells)
+    read(9) (vis_t_eff(c),  c = 1, grid % n_cells)
   end if
 
   close(9)
 
-  restart = .TRUE.
+  restart = .true.
 
   ! Restore the name
   problem_name = answer 

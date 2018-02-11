@@ -30,12 +30,12 @@
 
   do c = 1, grid % n_cells
     lf = grid % vol(c)**ONE_THIRD    
-    VISt_sgs(c) = DENc(material(c))      &
-                  * (lf*lf)              &          ! delta^2 
-                  * Cdyn(c)              &          ! Cdynamic   
-                  * Shear(c)      
+    vis_t_sgs(c) = DENc(material(c))      &
+                 * (lf*lf)                &          ! delta^2 
+                 * Cdyn(c)                &          ! Cdynamic   
+                 * Shear(c)      
   end do
 
-  call Exchange(grid, VISt_sgs)
+  call Exchange(grid, vis_t_sgs)
 
   end subroutine

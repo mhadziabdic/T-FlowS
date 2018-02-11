@@ -920,9 +920,9 @@
   !   Calculate distance from the cell center to the nearest wall.   !
   !------------------------------------------------------------------!
   !     => depends on: xc,yc,zc inside and on the boundary.          !
-  !     <= gives:      WallDs i                                      !
+  !     <= gives:      wall_dist                                     !
   !------------------------------------------------------------------!
-  allocate(WallDs(-grid % n_bnd_cells:grid % n_cells)); WallDs = HUGE
+  grid % wall_dist = HUGE
 
   call Grid_Mod_Print_Bnd_Cond_List(grid)
   print *, '#================================================================'
@@ -930,10 +930,6 @@
   print *, '# separated by spaces.  These will be used for computation       '
   print *, '# of distance to the wall needed by some turbulence models.      '
   print *, '#----------------------------------------------------------------'
-! print *, '# (Please note that the walls have to be the first on the list)'
-! print *, '# of the boundary conditions. Their BC colors have to be smaller'
-! print *, '# than the colors of the other boundary conditions.)'
-! print *, '#----------------------------------------------------------------'
   call Tokenizer_Mod_Read_Line(5)
   n_wall_colors = line % n_tokens
   allocate(wall_colors(n_wall_colors))
@@ -942,7 +938,7 @@
   end do
  
   if( (n_wall_colors.eq.1) .and. (wall_colors(1)==0) ) then
-    WallDs = 1.0
+    grid % wall_dist = 1.0
     print *, '# Distance to the wall set to 1.0 everywhere !'
   else
     do c1 = 1, grid % n_cells
@@ -953,7 +949,7 @@
       do b = 1, n_wall_colors
         do c2=-1,-grid % n_bnd_cells,-1
           if(grid % bnd_cond % color(c2) .eq. wall_colors(b)) then
-            WallDs(c1)=min(WallDs(c1),                                      &
+            grid % wall_dist(c1)=min(grid % wall_dist(c1),                                      &
             Distance_Squared(grid % xc(c1), grid % yc(c1), grid % zc(c1),   &
                              grid % xc(c2), grid % yc(c2), grid % zc(c2)))
           end if
@@ -961,7 +957,7 @@
       end do
     end do
 
-    WallDs = sqrt(WallDs)
+    grid % wall_dist = sqrt(grid % wall_dist)
 
     print *, '# Distance to the wall calculated !'
   end if
@@ -995,8 +991,5 @@
   print *, '# Interpolation factors calculated !'
 
   return
-
-  print *, '# Horror ! Negative volume between cells ', c1, ' and ', c2
-  stop
 
   end subroutine

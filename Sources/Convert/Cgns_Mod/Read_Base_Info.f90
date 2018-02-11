@@ -5,13 +5,13 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8 :: base
+  integer   :: base
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8         :: base_id    ! base index number
+  integer           :: base_id    ! base index number
   character(len=80) :: base_name  ! name of the base
-  integer*8         :: cell_dim   ! cell dimensions (3->volume cell)
-  integer*8         :: phys_dim   ! number of coordinates to create vector
-  integer*8         :: error
+  integer           :: cell_dim   ! cell dimensions (3->volume cell)
+  integer           :: phys_dim   ! number of coordinates to create vector
+  integer           :: error
 !==============================================================================!
 
   ! Set input parameters

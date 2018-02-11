@@ -510,9 +510,9 @@
   !      distance from the cell center to the nearest wall   !
   !----------------------------------------------------------!
   !   => depends on: xc,yc,zc inside and on the boundary     !
-  !   <= gives:      WallDs i                                !
+  !   <= gives:      wall_dist                               !
   !----------------------------------------------------------!
-  WallDs = HUGE 
+  grid % wall_dist = HUGE 
 
   print *,   '#======================================================='
   if(rrun) then
@@ -528,7 +528,7 @@
   read(*,*) wall_color   
 
   if(wall_color == 0) then
-    WallDs = 1.0
+    grid % wall_dist = 1.0
     print *, '# Distance to the wall set to 1 everywhere !'            
   else 
     do c1=1, grid % n_cells 
@@ -537,7 +537,7 @@
         c_2 = grid % faces_c(2,s)
         if(c_2 < 0) then
           if(grid % bnd_cond % color(c_2) <= wall_color) then
-            WallDs(c1)=min(WallDs(c1), &
+            grid % wall_dist(c1)=min(grid % wall_dist(c1), &
             Distance_Squared(grid % xc(c1),  &
                              grid % yc(c1),  &
                              grid % zc(c1),  &
@@ -550,13 +550,13 @@
     end do
 
     do c = 1, grid % n_cells
-      WallDs(c)=sqrt(WallDs(c))
+      grid % wall_dist(c)=sqrt(grid % wall_dist(c))
     end do
 
     print *, '# Maximal distance to the wall: ',  &
-                  maxval(WallDs(1:grid % n_cells))
+                  maxval(grid % wall_dist(1:grid % n_cells))
     print *, '# Minimal distance to the wall: ',  &
-                  minval(WallDs(1:grid % n_cells))
+                  minval(grid % wall_dist(1:grid % n_cells))
   end if
 
   !------------------------------------------------------------!

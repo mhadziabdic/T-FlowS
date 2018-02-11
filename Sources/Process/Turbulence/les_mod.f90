@@ -21,7 +21,9 @@ module les_mod
   ! Used in Dynamic Smgaorinsky model 
   real,allocatable :: Aval_dif(:)
 
-  real,allocatable :: Shear(:), ShearMean(:), Ksgs(:), TauWall(:), VISt_mean(:)
+  real,allocatable :: Shear(:), ShearMean(:), Ksgs(:), TauWall(:)
+  real,allocatable :: vis_t_sgs(:), vis_t_mean(:)
+
   real,allocatable :: Shear_r(:), ShearMean_r(:), WALEv(:)
   real,allocatable ::                             &
                        UUf(:), VVf(:), WWf(:),    &

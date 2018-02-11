@@ -215,13 +215,13 @@
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)   
 
-    VISeff = VISc + (fF(s)*VISt(c1) + (1.0-fF(s))*VISt(c2))/phi % Sigma 
+    VISeff = VISc + (fF(s)*vis_t(c1) + (1.0-fF(s))*vis_t(c2))/phi % Sigma 
 
     if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA)          &
     VISeff = VISc+(fF(s)*VIS % n(c1)+(1.0-fF(s))*VIS % n(c2))/phi % Sigma
 
     if(SIMULA==HYB_ZETA)          &
-    VISeff = VISc + (fF(s)*VISt_eff(c1) + (1.0-fF(s))*VISt_eff(c2))/phi % Sigma
+    VISeff = VISc + (fF(s)*vis_t_eff(c1) + (1.0-fF(s))*vis_t_eff(c2))/phi % Sigma
 
     phi_x_f = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
     phi_y_f = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
@@ -242,7 +242,7 @@
     if(SIMULA==ZETA.or.SIMULA==K_EPS_VV.or.SIMULA==HYB_ZETA) then
       if(c2 < 0 .and. phi % name == 'KIN') then
         if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
-          if(sqrt(TauWall(c1))*WallDs(c1)/VISc>2.0) then      
+          if(sqrt(TauWall(c1))*grid % wall_dist(c1)/VISc>2.0) then      
             phi_x_f = 0.0
             phi_y_f = 0.0
             phi_z_f = 0.0

@@ -8,23 +8,23 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer*8       :: base, block, sect
+  integer         :: base, block, sect
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer*8         :: base_id       ! base index number
-  integer*8         :: block_id      ! block index number
-  integer*8         :: sect_id       ! element section index
-  character(len=80) :: sect_name     ! name of the Elements_t node
-  integer*8         :: cell_type     ! types of elements in the section
-  integer*8         :: first_cell    ! index of first element
-  integer*8         :: last_cell     ! index of last element
-  integer*8         :: parent_flag
-  integer*8         :: error
-  integer*8              :: n_nodes, loc, c, n, cell, dir, cnt, bc
-  integer*8, allocatable :: cell_n(:,:)
-  integer*8, allocatable :: face_n(:,:)
-  integer*8, allocatable :: parent_data(:,:)
-  integer*8              :: parent_datum = 0  ! for cells there are no parents
+  integer              :: base_id       ! base index number
+  integer              :: block_id      ! block index number
+  integer              :: sect_id       ! element section index
+  character(len=80)    :: sect_name     ! name of the Elements_t node
+  integer              :: cell_type     ! types of elements in the section
+  integer              :: first_cell    ! index of first element
+  integer              :: last_cell     ! index of last element
+  integer              :: parent_flag
+  integer              :: error
+  integer              :: n_nodes, loc, c, n, cell, dir, cnt, bc
+  integer, allocatable :: cell_n(:,:)
+  integer, allocatable :: face_n(:,:)
+  integer, allocatable :: parent_data(:,:)
+  integer              :: parent_datum = 0  ! for cells there are no parents
 !==============================================================================!
 
   ! Set input parameters

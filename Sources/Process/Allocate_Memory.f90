@@ -17,7 +17,6 @@
 !==============================================================================!
 
   ! Variables defined in all.h90:
-  allocate (WallDs(-grid % n_bnd_cells:grid % n_cells));  WallDs = 0.0       
   allocate (fF(grid % n_faces));  fF = 0.0  
 
   ! Variables defined in Solvers_Mod

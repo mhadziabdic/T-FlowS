@@ -53,30 +53,30 @@
 
           ! Compute nondimensional wall distance and wall-shear stress
           if(ROUGH == NO) then
-            Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * WallDs(c1)  &
+            Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * grid % wall_dist(c1)  &
                     / VISc
             TauWall(c1) = abs(DENc(material(c1))                   &
                         * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan &
                         / (log(Elog*Ynd(c1))))  
 
             ! Compute production in the first wall cell 
-            Pk(c1) = TauWall(c1) * Cmu25 * sqrt(kin % n(c1)) &
-                   / (kappa*WallDs(c1))
+            p_kin(c1) = TauWall(c1) * Cmu25 * sqrt(kin % n(c1)) &
+                   / (kappa*grid % wall_dist(c1))
 
           else if(ROUGH==YES) then
-            Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * (WallDs(c1)+Zo)  &
+            Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * (grid % wall_dist(c1)+Zo)  &
                     / VISc
             TauWall(c1) = abs(DENc(material(c1))                     &
                         * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan   &
-                        / (log((WallDs(c1)+Zo)/Zo)))  
+                        / (log((grid % wall_dist(c1)+Zo)/Zo)))  
 
-            Pk(c1) = TauWall(c1) * Cmu25 * sqrt(kin % n(c1)) &
-                   / (kappa*(WallDs(c1)+Zo))
+            p_kin(c1) = TauWall(c1) * Cmu25 * sqrt(kin % n(c1)) &
+                   / (kappa*(grid % wall_dist(c1)+Zo))
             kin % n(c2) = TauWall(c1)/0.09**0.5
           end if  
 
           ! Filling up the source term
-          b(c1) = b(c1) + Pk(c1) * grid % vol(c1) 
+          b(c1) = b(c1) + p_kin(c1) * grid % vol(c1) 
         end if  ! TypeBC(c2)==WALL or WALLFL
       end if    ! c2 < 0
     end do
@@ -86,12 +86,12 @@
     !-----------------------------------------!
     do c=1,grid % n_cells
 
-      ! IsNearWall ensures not to put Pk twice into the near wall cells
+      ! IsNearWall ensures not to put p_kin twice into the near wall cells
       if(.NOT. IsNearWall(c)) then
 
         ! Production:
-        Pk(c)= VISt(c) * Shear(c)*Shear(c)
-        b(c) = b(c) + Pk(c) * grid % vol(c)
+        p_kin(c)= vis_t(c) * Shear(c)*Shear(c)
+        b(c) = b(c) + p_kin(c) * grid % vol(c)
       end if
 
       ! Dissipation:
@@ -108,8 +108,8 @@
     do c = 1, grid % n_cells
 
       ! Production:
-      Pk(c)= VISt(c) * Shear(c) * Shear(c)
-      b(c) = b(c) + Pk(c) * grid % vol(c)
+      p_kin(c)= vis_t(c) * Shear(c) * Shear(c)
+      b(c) = b(c) + p_kin(c) * grid % vol(c)
 
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c)) + DENc(material(c))*eps%n(c)/(kin%n(c)+TINY)*grid % vol(c)
@@ -138,8 +138,8 @@
     do c = 1, grid % n_cells
 
       ! Production:
-      Pk(c)= VISt(c) * Shear(c) * Shear(c)
-      b(c) = b(c) + Pk(c) * grid % vol(c)
+      p_kin(c)= vis_t(c) * Shear(c) * Shear(c)
+      b(c) = b(c) + p_kin(c) * grid % vol(c)
 
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c))      &

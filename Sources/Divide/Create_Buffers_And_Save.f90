@@ -201,15 +201,6 @@
 
     end do ! for subo
 
-    call Save_Gmv_Cells(grid,         &
-                        sub,          &
-                        n_nodes_sub,  &
-                        n_cells_sub)
-
-    call Save_Shadows(grid,         &
-                      sub,          &
-                      n_cells_sub)
-
     call Save_Cns_Geo(grid,              &
                       sub,               &
                       n_nodes_sub,       &
@@ -218,14 +209,6 @@
                       n_bnd_cells_sub,   &
                       n_buff_sub,        &
                       NCFsub)
-
-    call Save_Gmv_Links(grid,             &
-                        sub,              &
-                        n_nodes_sub,      &
-                        n_cells_sub,      &
-                        n_faces_sub,      &
-                        n_bnd_cells_sub,  &
-                        n_buff_sub)
 
     call Save_Vtu_Cells(grid,         &
                         sub,          &
@@ -239,6 +222,10 @@
                         n_faces_sub,      &
                         n_bnd_cells_sub,  &
                         n_buff_sub)
+
+    call Save_Shadows(grid,         &
+                      sub,          &
+                      n_cells_sub)
 
     print *, '# Test:'
     print *, '# n_nodes_sub   =', n_nodes_sub
@@ -326,16 +313,7 @@
   end do
   deallocate(side_cell)
 
-  call Save_Gmv_Cells(grid, 0, grid % n_nodes, grid % n_cells)
-  call Save_Gmv_Faces(grid)
-
   call Save_Vtu_Cells(grid, 0, grid % n_nodes, grid % n_cells)
   call Save_Vtu_Faces(grid)
-
-  call Save_Cas(grid, 0,                        &
-                grid % n_nodes,                 &
-                grid % n_cells,                 &
-                grid % n_faces + grid % n_sh)
-  call Save_Eps_Decomposed(grid)
 
   end subroutine

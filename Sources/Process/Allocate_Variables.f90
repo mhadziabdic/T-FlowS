@@ -93,7 +93,7 @@
     ! Time scale, length scale and production
     allocate (Tsc(-grid % n_bnd_cells:grid % n_cells));     Tsc = 0.0
     allocate (Lsc(-grid % n_bnd_cells:grid % n_cells));     Lsc = 0.0
-    allocate (Pk(-grid % n_bnd_cells:grid % n_cells));      Pk  = 0.0
+    allocate (p_kin(-grid % n_bnd_cells:grid % n_cells));   p_kin  = 0.0
 
     if(SIMULA==EBM) then
       call Var_Mod_Allocate_Solution("F22", f22, grid)
@@ -120,7 +120,7 @@
 
     allocate (Uf(-grid % n_bnd_cells:grid % n_cells));      Uf    =0.0
     allocate (Ufmean(-grid % n_bnd_cells:grid % n_cells));  Ufmean=0.0
-    allocate (Pk(-grid % n_bnd_cells:grid % n_cells));      Pk    =0.0
+    allocate (p_kin(-grid % n_bnd_cells:grid % n_cells));   p_kin    =0.0
     allocate (Ynd(-grid % n_bnd_cells:grid % n_cells));     Ynd   =0.0
 
     if(URANS == YES) then
@@ -135,35 +135,35 @@
     call Var_Mod_Allocate_Solution("V^2", v_2, grid)
     call Var_Mod_Allocate_Solution("F22", f22, grid)
 
-    allocate (Tsc(-grid % n_bnd_cells:grid % n_cells));     Tsc   =0.0
-    allocate (Lsc(-grid % n_bnd_cells:grid % n_cells));     Lsc   =0.0
-    allocate (Uf(-grid % n_bnd_cells:grid % n_cells));      Uf    =0.0
-    allocate (Ufmean(-grid % n_bnd_cells:grid % n_cells));  Ufmean=0.0  
-    allocate (Pk(-grid % n_bnd_cells:grid % n_cells));      Pk    =0.0  
-    allocate (Ynd(-grid % n_bnd_cells:grid % n_cells));     Ynd   =0.0
+    allocate (Tsc(-grid % n_bnd_cells:grid % n_cells));     Tsc    = 0.0
+    allocate (Lsc(-grid % n_bnd_cells:grid % n_cells));     Lsc    = 0.0
+    allocate (Uf(-grid % n_bnd_cells:grid % n_cells));      Uf     = 0.0
+    allocate (Ufmean(-grid % n_bnd_cells:grid % n_cells));  Ufmean = 0.0  
+    allocate (p_kin(-grid % n_bnd_cells:grid % n_cells));   p_kin  = 0.0  
+    allocate (Ynd(-grid % n_bnd_cells:grid % n_cells));     Ynd    = 0.0
 
     if(URANS == YES) then
-      allocate (Kin % mean(grid % n_cells));   Kin % mean=0.
-      allocate (Eps % mean(grid % n_cells));   Eps % mean=0.
-      allocate (f22 % mean(grid % n_cells));   f22 % mean=0.
-      allocate (v_2 % mean(grid % n_cells));   v_2 % mean=0.
+      allocate (Kin % mean(grid % n_cells));   Kin % mean = 0.
+      allocate (Eps % mean(grid % n_cells));   Eps % mean = 0.
+      allocate (f22 % mean(grid % n_cells));   f22 % mean = 0.
+      allocate (v_2 % mean(grid % n_cells));   v_2 % mean = 0.
     end if
 
     if(BUOY==YES) then
       call Var_Mod_Allocate_Solution("TT", tt, grid)
       call Var_Mod_Allocate_Statistics(tt)
-      allocate (Gbuoy(-grid % n_bnd_cells:grid % n_cells));  Gbuoy=0. ! XXXXX 6 Jun 2014
+      allocate (Gbuoy(-grid % n_bnd_cells:grid % n_cells));     Gbuoy   =0.  ! XXXXX 6 Jun 2014
       allocate (buoyBeta(-grid % n_bnd_cells:grid % n_cells));  buoyBeta=0.  ! XXXXX 5 Jul 2014
-      allocate (Pbuoy(-grid % n_bnd_cells:grid % n_cells));  Pbuoy=0.  ! XXXXX 5 Jul 2014
+      allocate (Pbuoy(-grid % n_bnd_cells:grid % n_cells));     Pbuoy   =0.  ! XXXXX 5 Jul 2014
       allocate (Kin%mean(-grid % n_bnd_cells:grid % n_cells));  Kin%mean=0.  ! XXXXX 5 Jul 2014
       allocate (Eps%mean(-grid % n_bnd_cells:grid % n_cells));  Eps%mean=0.  ! XXXXX 5 Jul 2014
-      allocate (Ptt(-grid % n_bnd_cells:grid % n_cells));    Ptt=0.
+      allocate (Ptt(-grid % n_bnd_cells:grid % n_cells));       Ptt     =0.
     end if
   end if                    
 
   if(SIMULA == HYB_ZETA) then
-    allocate (VISt_sgs(-grid % n_bnd_cells:grid % n_cells));  VISt_sgs=0.
-    allocate (VISt_eff(-grid % n_bnd_cells:grid % n_cells));  VISt_eff=0.
+    allocate (vis_t_sgs(-grid % n_bnd_cells:grid % n_cells));  vis_t_sgs=0.
+    allocate (vis_t_eff(-grid % n_bnd_cells:grid % n_cells));  vis_t_eff=0.
   end if
 
   if(SIMULA == DES_SPA) then
@@ -330,7 +330,7 @@
       allocate (PR_vw_mean(-grid % n_bnd_cells:grid % n_cells));   PR_vw_mean=0.
     end if
 
-    allocate(VISt_mean(grid % n_cells)); VISt_mean = 0.0
+    allocate(vis_t_mean(grid % n_cells)); vis_t_mean = 0.0
     allocate (ShearMean(grid % n_cells));  ShearMean=0.
 
     if(HOT==YES) then
@@ -350,7 +350,7 @@
     allocate (uw % mean(-grid % n_bnd_cells:grid % n_cells)); uw % mean=0.
     allocate (vw % mean(-grid % n_bnd_cells:grid % n_cells)); vw % mean=0.
 
-    allocate(VISt_mean(grid % n_cells)); VISt_mean = 0.0
+    allocate(vis_t_mean(grid % n_cells)); vis_t_mean = 0.0
     allocate (ShearMean(grid % n_cells));  ShearMean=0.
     if(HOT==YES) then
       allocate (T % mean(-grid % n_bnd_cells:grid % n_cells));  T % mean=0.
@@ -361,7 +361,7 @@
     end if
   end if
  
-  allocate (VISt(-grid % n_bnd_cells:grid % n_cells)); VISt=0
+  allocate (vis_t(-grid % n_bnd_cells:grid % n_cells)); vis_t=0
   allocate (IsNearWall(grid % n_cells)); IsNearWall = .FALSE.
 
   allocate (Vort(-grid % n_bnd_cells:grid % n_cells));  Vort=0.

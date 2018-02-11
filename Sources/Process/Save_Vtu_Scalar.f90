@@ -31,7 +31,7 @@
  
   ! Data
   do c = 1, grid % n_cells
-    write(9,'(a,1pe15.7)') in_2, val(c)
+    write(9,'(a,1pe16.6e4)') in_2, val(c)
   end do  
 
   ! Footer

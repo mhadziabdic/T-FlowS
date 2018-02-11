@@ -240,10 +240,10 @@
     c2 = grid % faces_c(2,s)
      
     if(SIMULA/=LES.or.SIMULA/=DNS) then
-      Prt1 = 1.0/( 0.5882 + 0.228*(VISt(c1)/(VISc+1.0e-12)) - 0.0441*                  &
-            (VISt(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c1)+1.0e-12) ))) )
-      Prt2 = 1.0/( 0.5882 + 0.228*(VISt(c2)/(VISc+1.0e-12)) - 0.0441*                  &
-           (VISt(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c2)+1.0e-12) ))) )
+      Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(VISc+1.0e-12)) - 0.0441*                  &
+            (vis_t(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(vis_t(c1)+1.0e-12) ))) )
+      Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(VISc+1.0e-12)) - 0.0441*                  &
+           (vis_t(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(vis_t(c2)+1.0e-12) ))) )
       Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
     end if
 
@@ -257,9 +257,9 @@
         phiyS2 = phiyS1 
         phizS2 = phizS1 
         CONeff1 =      grid % f(s) * ( CONc(material(c1))                 &
-                                     + CAPc(material(c1))*VISt(c1)/Prt )  &
+                                     + CAPc(material(c1))*vis_t(c1)/Prt )  &
                 + (1.-grid % f(s)) * ( CONc(material(c2))                 &
-                                     + CAPc(material(c2))*VISt(c2)/Prt )
+                                     + CAPc(material(c2))*vis_t(c2)/Prt )
         CONeff2 = CONeff1 
       else 
         phixS1 = phi_x(c1) 
@@ -269,9 +269,9 @@
         phiyS2 = phi_y(c2) 
         phizS2 = phi_z(c2) 
         CONeff1 =   CONc(material(c1))                 &
-                  + CAPc(material(c1))*VISt(c1)/Prt   
+                  + CAPc(material(c1))*vis_t(c1)/Prt   
         CONeff2 =   CONc(material(c2))                 &
-                  + CAPc(material(c2))*VISt(c2)/Prt   
+                  + CAPc(material(c2))*vis_t(c2)/Prt   
       end if
     else
       phixS1 = phi_x(c1) 
@@ -281,7 +281,7 @@
       phiyS2 = phiyS1 
       phizS2 = phizS1 
       CONeff1 =   CONc(material(c1))                 &
-                + CAPc(material(c1))*VISt(c1)/Prt   
+                + CAPc(material(c1))*vis_t(c1)/Prt   
       CONeff2 = CONeff1 
     endif
 
@@ -528,10 +528,10 @@
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
 
-        Prt1 = 1.0/( 0.5882 + 0.228*(VISt(c1)/(VISc+1.0e-12)) - 0.0441*                  &
-              (VISt(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c1)+1.0e-12) ))) )
-        Prt2 = 1.0/( 0.5882 + 0.228*(VISt(c2)/(VISc+1.0e-12)) - 0.0441*                  &
-              (VISt(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c2)+1.0e-12) ))) )
+        Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(VISc+1.0e-12)) - 0.0441*                  &
+              (vis_t(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(vis_t(c1)+1.0e-12) ))) )
+        Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(VISc+1.0e-12)) - 0.0441*                  &
+              (vis_t(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(vis_t(c2)+1.0e-12) ))) )
 
         Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
         if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
@@ -541,8 +541,8 @@
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 
-          CONeff1 =       grid % f(s)  * (CAPc(material(c1))*VISt(c1)/Prt )  &
-                  + (1. - grid % f(s)) * (CAPc(material(c2))*VISt(c2)/Prt )
+          CONeff1 =       grid % f(s)  * (CAPc(material(c1))*vis_t(c1)/Prt )  &
+                  + (1. - grid % f(s)) * (CAPc(material(c2))*vis_t(c2)/Prt )
           CONeff2 = CONeff1 
         else
           phixS1 = phi_x(c1) 
@@ -551,7 +551,7 @@
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 
-          CONeff1 = CAPc(material(c1))*VISt(c1)/Prt   
+          CONeff1 = CAPc(material(c1))*vis_t(c1)/Prt   
           CONeff2 = CONeff1 
         endif
 

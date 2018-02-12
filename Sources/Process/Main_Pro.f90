@@ -17,6 +17,7 @@
   use Constants_Pro_Mod
   use Info_Mod
   use User_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !----------------------------------[Calling]-----------------------------------!
@@ -26,6 +27,7 @@
   real              :: mres, wall_time_start, wall_time_current
   character(len=80) :: name_save
   logical           :: restar, multiple, save_now, exit_now
+  type(Grid_Type)   :: grid  ! grid used in computations
 !---------------------------------[Interfaces]---------------------------------!
   interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
@@ -39,8 +41,16 @@
   end interface
 !==============================================================================!
 
-  ! Grid used in computations
-  type(Grid_Type) :: grid  
+! call Control_Mod_Open_File()
+! call Control_Mod_Problem_Name(problem_name)
+! call Control_Mod_Turbulence_Model(name_save)
+! call Control_Mod_Number_Of_Time_Steps(ndt, verbose=.true.)
+! call Control_Mod_Time_Step           (dt,  verbose=.true.)
+! print *, 'Number of time steps: ', ndt
+! print *, 'Time step:            ', dt 
+! print *, 'Problem name:         ', problem_name
+! print *, 'Turbulence model:     ', name_save    
+! stop
 
   ! Get starting time
   call cpu_time(wall_time_start)

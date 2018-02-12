@@ -110,6 +110,7 @@ SRC_MOD += Constants_Pro_Mod.f90	\
            Matrix_Mod.f90		\
            Solvers_Mod.f90		\
            pro_mod.f90			\
+           Control_Mod.f90		\
            User_Mod.f90
 
 # Sources for modules in sub-directories

@@ -134,7 +134,7 @@
         phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
         phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*A0    
       else
-        if(TypeBC(c2) /= SYMMETRY) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) /= SYMMETRY) then
           phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
         end if 
       end if 
@@ -167,14 +167,14 @@
         A % val(A % dia(c2))  = A % val(A % dia(c2))  + A21
       else if(c2  < 0) then
         ! Outflow is not included because it was causing problems  
-        if( (TypeBC(c2) == INFLOW)) then                    
+        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW)) then                    
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * phi % n(c2)
 
         else
 
-        if( (TypeBC(c2) == WALL).or.                          &
-            (TypeBC(c2) == WALLFL) ) then
+        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL).or.                          &
+            (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) ) then
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           !---------------------------------------------------------------!
           !   Source coefficient is filled in SourceF22.f90 in order to   !
@@ -182,7 +182,7 @@
           !   equation does not converge very well                        !
           !   b(c1) = b(c1) + A12 * phi % n(c2)                           !
           !---------------------------------------------------------------!
-        else if( TypeBC(c2) == BUFFER ) then  
+        else if( Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER ) then  
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           A % bou(c2) = - A12  ! cool parallel stuff
         endif
@@ -190,7 +190,7 @@
      end if
     end if
 
-  end do  ! through sides
+  end do  ! through faces
 
   !-----------------------------!
   !   Temporal discretization   !

@@ -20,7 +20,7 @@
   call Grid_Mod_Allocate_Faces(grid, grid % n_cells*5, 0) 
 
   allocate(material(-grid % n_bnd_cells:grid % n_cells));  material=0 
-  allocate(grid % bnd_cond % color(-grid % n_bnd_cells-1:-1))
+  allocate(grid % bnd_cond % color(-grid % n_bnd_cells:-1))
   grid % bnd_cond % color=0
 
   grid % n_copy = grid % n_faces  ! I believe it is n_cells * 5 at this point

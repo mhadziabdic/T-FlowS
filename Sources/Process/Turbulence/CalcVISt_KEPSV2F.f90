@@ -42,8 +42,9 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
     
-    if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
-      if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+    if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
         Uf(c1)  = Cmu**0.25*kin%n(c1)**0.5
 
@@ -82,7 +83,7 @@
           CONwall(c1) = Yplus*VISc*CAPc(material(c1))/(Yplus*Prmol*exp(-1.0 * EBF) &
                       + (Uplus + beta)*Prturb*exp(-1.0/EBF) + TINY)
         end if
-      end if  ! TypeBC(c2)==WALL or WALLFL
+      end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
     end if    ! c2 < 0
   end do
  

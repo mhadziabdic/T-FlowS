@@ -47,14 +47,14 @@
              / (  grid % dx(s)*grid % sx(s)  &
                 + grid % dy(s)*grid % sy(s)  &
                 + grid % dz(s)*grid % sz(s)) 
-  end do  ! sides 
+  end do  ! faces 
 
   !----------------------------------------------------------!
   !   Calculate interpolation coefficients for fluid phase   !
   !----------------------------------------------------------!
   do s = 1, grid % n_faces                        ! 2mat
-    c1 = grid % faces_c(1,s)                                 ! 2mat
-    c2 = grid % faces_c(2,s)                                 ! 2mat
+    c1 = grid % faces_c(1,s)                      ! 2mat
+    c2 = grid % faces_c(2,s)                      ! 2mat
                                                   ! 2mat
     fF(s) = grid % f(s)                           ! 2mat
                                                   ! 2mat 
@@ -68,7 +68,7 @@
       fF(s) = 0.0                                 ! 2mat
     end if                                        ! 2mat
                                                   ! 2mat
-    if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then    ! 2mat
+    if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
       fF(s) = 1.0                                 ! 2mat
     end if                                        ! 2mat
   end do                                          ! 2mat
@@ -83,7 +83,8 @@
     c2 = grid % faces_c(2,s)
 
     if(c2 < 0) then
-      if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
         IsNearWall(c1) = .TRUE.  
       end if
     end if 

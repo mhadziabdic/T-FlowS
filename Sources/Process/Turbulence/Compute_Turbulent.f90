@@ -106,7 +106,8 @@
     c2=grid % faces_c(2,s) 
 
     ! Velocities on "orthogonal" cell centers 
-    if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
+    if(c2 > 0 .or.  &
+       c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       phis =        grid % f(s)  * phi % n(c1)   &
            + (1.0 - grid % f(s)) * phi % n(c2)
 
@@ -155,7 +156,7 @@
     !-------------------------------------------------
     !   CUi(c1) = CUi(c1)-Flux(s)*phi(c2) corrected !
     !---- Full upwind
-    !      if(TypeBC(c2) == OUTFLOW) then
+    !      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW) then
     !      if(BLEND_TUR == YES) then
     !        if(Flux(s)  < 0) then   ! from c2 to c1
     !          XUi(c1)=XUi(c1)-Flux(s)*phi(c2)
@@ -217,11 +218,13 @@
 
     VISeff = VISc + (fF(s)*vis_t(c1) + (1.0-fF(s))*vis_t(c2))/phi % Sigma 
 
-    if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA)          &
-    VISeff = VISc+(fF(s)*VIS % n(c1)+(1.0-fF(s))*VIS % n(c2))/phi % Sigma
+    if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA)                       &
+      VISeff = VISc+(fF(s)*VIS % n(c1)+(1.0-fF(s))*VIS % n(c2))  &
+             / phi % Sigma
 
-    if(SIMULA==HYB_ZETA)          &
-    VISeff = VISc + (fF(s)*vis_t_eff(c1) + (1.0-fF(s))*vis_t_eff(c2))/phi % Sigma
+    if(SIMULA==HYB_ZETA)                                                 &
+      VISeff = VISc + (fF(s)*vis_t_eff(c1) + (1.0-fF(s))*vis_t_eff(c2))  &
+             / phi % Sigma
 
     phi_x_f = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2)
     phi_y_f = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
@@ -230,7 +233,8 @@
     ! This implements zero gradient for k
     if(SIMULA==K_EPS.and.MODE==HIGH_RE) then
       if(c2 < 0 .and. phi % name == 'KIN') then
-        if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then  
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then  
           phi_x_f = 0.0 
           phi_y_f = 0.0
           phi_z_f = 0.0
@@ -241,7 +245,8 @@
 
     if(SIMULA==ZETA.or.SIMULA==K_EPS_VV.or.SIMULA==HYB_ZETA) then
       if(c2 < 0 .and. phi % name == 'KIN') then
-        if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
           if(sqrt(TauWall(c1))*grid % wall_dist(c1)/VISc>2.0) then      
             phi_x_f = 0.0
             phi_y_f = 0.0
@@ -282,7 +287,7 @@
         phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
         phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*A0    
       else
-        if(TypeBC(c2) /= SYMMETRY) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) /= SYMMETRY) then
           phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
         end if 
       end if 
@@ -320,14 +325,14 @@
       else if(c2  < 0) then
 
         ! Outflow is not included because it was causing problems     
-        if((TypeBC(c2) == INFLOW)  .or.                 &
-           (TypeBC(c2) == WALL)    .or.                 &
-           (TypeBC(c2) == PRESSURE).or.                 &
-           (TypeBC(c2) == CONVECT) .or.                 &
-           (TypeBC(c2) == WALLFL) ) then                               
+        if((Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW)  .or.                 &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL)    .or.                 &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE).or.                 &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT) .or.                 &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) ) then                               
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * phi % n(c2)
-        else if( TypeBC(c2) == BUFFER ) then  
+        else if( Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER ) then  
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           A % bou(c2) = - A12  ! cool parallel stuff
         endif

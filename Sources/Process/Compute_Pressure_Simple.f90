@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Compute_Pressure_Simple(grid)
 !------------------------------------------------------------------------------!
-!   Forms and solves pressure equation for the S.I.M.P.L.E. method.            !
+!   Forms and solves pressure equation for the S.I.M.p.L.E. method.            !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -18,7 +18,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c, c1, c2, niter
   real    :: Us, Vs, Ws, DENs, A12, fs
-  real    :: Pmax, Pmin
+  real    :: p_max, p_min
   real    :: error
   real    :: SMDPN
   real    :: dPxi, dPyi, dPzi
@@ -39,7 +39,7 @@
 !   Dimensions of certain variables
 !
 !     APP            [ms]
-!     PP             [kg/ms^2]
+!     pp             [kg/ms^2]
 !     b              [kg/s]
 !     Flux           [kg/s]
 !   
@@ -52,7 +52,7 @@
   !-----------------------------------------!
   !   Initialize the pressure corrections   !
   !-----------------------------------------!
-  PP % n = 0.0 
+  pp % n = 0.0 
 
   !-------------------------------------------------!
   !   Calculate the mass fluxes on the cell faces   !
@@ -82,7 +82,7 @@
     ! end if  
 
     ! Face is inside the domain
-    if(c2  > 0 .or. c2  < 0 .and. TypeBC(c2) == BUFFER) then
+    if(c2  > 0 .or. c2  < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
 
       SMDPN = (  grid % sx(s)*grid % sx(s)   &
                + grid % sy(s)*grid % sy(s)   &
@@ -122,7 +122,7 @@
       Flux(s) = DENs * (  Us*grid % sx(s)       &
                         + Vs*grid % sy(s)       &
                         + Ws*grid % sz(s) )     &
-              + A12 * (P % n(c1) - P % n(c2))   &
+              + A12 * (p % n(c1) - p % n(c2))   &
               + A12 * (dPxi + dPyi + dPzi)                            
 
       b(c1)=b(c1)-Flux(s)
@@ -131,7 +131,7 @@
     ! Side is on the boundary
     else ! (c2 < 0)
 
-      if(TypeBC(c2) == INFLOW) then 
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW) then 
         Us = U % n(c2)
         Vs = V % n(c2)
         Ws = W % n(c2)
@@ -139,8 +139,8 @@
                           + Vs * grid % sy(s)  &
                           + Ws * grid % sz(s) )
         b(c1) = b(c1)-Flux(s)
-      else if(TypeBC(c2) == OUTFLOW .or.   &
-              TypeBC(c2) == CONVECT) then 
+      else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.   &
+              Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT) then 
         Us = U % n(c2)
         Vs = V % n(c2)
         Ws = W % n(c2)
@@ -156,7 +156,7 @@
                  + grid % sz(s) * grid % dz(s) )  
         A12 = DENs * SMDPN * grid % vol(c1) / A % sav(c1)
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
-      else if(TypeBC(c2) == PRESSURE) then
+      else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) then
         Us = U % n(c1)
         Vs = V % n(c1)
         Ws = W % n(c1)
@@ -188,8 +188,8 @@
   ! Value 1.e-18 blows the solution.
   ! Value 1.e-12 keeps the solution stable
   niter=40
-  call bicg(A, PP % n, b,            &
-            PREC, niter, PP % STol,  &
+  call bicg(A, pp % n, b,            &
+            PREC, niter, pp % STol,  &
             res(4), error) 
   call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, res(4))
 
@@ -197,20 +197,20 @@
   !   Update the pressure field   !
   !-------------------------------!
   do c = 1, grid % n_cells
-    P % n(c)  =  P % n(c)  +  P % URF  *  PP % n(c)
+    p % n(c)  =  p % n(c)  +  p % URF  *  pp % n(c)
   end do
 
   !------------------------------------!
   !   Normalize the pressure field     !
   !------------------------------------!
-  ! Pmax  = maxval(P % n(1:grid % n_cells))
-  ! Pmin  = minval(P % n(1:grid % n_cells))
+  ! p_max  = maxval(p % n(1:grid % n_cells))
+  ! p_min  = minval(p % n(1:grid % n_cells))
  
-  ! call glomax(Pmax)
-  ! call glomin(Pmin)
+  ! call glomax(p_max)
+  ! call glomin(p_min)
  
-  ! P % n = P % n - 0.5*(Pmax+Pmin)
+  ! p % n = p % n - 0.5*(p_max+p_min)
  
-  call Exchange(grid, PP % n)
+  call Exchange(grid, pp % n)
 
   end subroutine

@@ -90,8 +90,9 @@
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)
     
-    if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
-      if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+    if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
         ! Compute tangential velocity component
         UtotSq = U % n(c1) * U % n(c1) &
@@ -125,7 +126,7 @@
           b(c1) = b(c1) + p_kin(c1) * grid % vol(c1)
           b(c1) = b(c1) - vis_t(c1) * Shear(c1) * Shear(c1) * grid % vol(c1)
         end if  
-      end if  ! TypeBC(c2)==WALL or WALLFL
+      end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
     end if    ! c2 < 0 
   end do
 

@@ -6,18 +6,18 @@
 !   In the domain:                                                             !
 !   ~~~~~~~~~~~~~~                                                             !
 !   For k-eps model :                                                          !
-!                       2                                                      !
-!   vis_t = Cmu * rho * K  * eps                                                ! 
+!                        2                                                     !
+!   vis_t = Cmu * rho * K  * eps                                               ! 
 !                                                                              !
 !   On the boundary (wall viscosity):                                          !
 !   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                           !
 !            +          kappa                                                  !
-!   vis_tw = y  * vis_t ----------                                               ! 
+!   vis_tw = y  * vis_t ----------                                             ! 
 !                     E * ln(y+)                                               !
 !                                                                              !
 !    For k-eps-v2f model :                                                     !
 !                                                                              !
-!    vis_t = CmuD * rho * Tsc  * vv                                             !
+!    vis_t = CmuD * rho * Tsc  * vv                                            !
 !                                                                              !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -51,8 +51,9 @@
       do s = 1, grid % n_faces
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
-        if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then  
-          if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+        if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then  
+          if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+             Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
             Ck = sqrt(TauWall(c1))
             yPlus = DENc(material(c1))*Ck*grid % wall_dist(c1)/VISc 
             VISwall(c1) = yPlus*VISc*kappa/LOG(Elog*yPlus)
@@ -63,8 +64,9 @@
       do s = 1, grid % n_faces
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
-        if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
-          if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+        if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
+          if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+             Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
             Ck = sqrt(TauWall(c1))
             yPlus = DENc(material(c1))*Ck*(grid % wall_dist(c1)+Zo)/VISc
             VISwall(c1) = min(yPlus*VISc*kappa/LOG((grid % wall_dist(c1)+Zo)/Zo),1.0e+6*VISc)
@@ -85,8 +87,9 @@
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
-      if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then  
-        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then  
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
           Prmol = VISc * CAPc(material(c1)) / CONc(material(c1))
           CONwall(c1) = VISc*CAPc(material(c1))/Prmol   
         end if

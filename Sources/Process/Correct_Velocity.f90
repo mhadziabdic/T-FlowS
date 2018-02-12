@@ -50,7 +50,7 @@
     c2 = grid % faces_c(2,s)
 
     if(c2  < 0) then
-      if( (TypeBC(c2) == PRESSURE) ) then
+      if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) ) then
         U % n(c2) = U % n(c1) 
         V % n(c2) = V % n(c1) 
         W % n(c2) = W % n(c1) 
@@ -72,7 +72,8 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
+    if(c2 > 0 .or.  &
+       c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       if(c2  > 0) then
         Flux(s)=Flux(s)+(PP % n(c2) - PP % n(c1))*A % val(A % pos(1,s))
       else 
@@ -92,7 +93,8 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if(c2  > 0 .or. c2  < 0 .and. TypeBC(c2) == BUFFER) then
+    if(c2 > 0 .or.  &
+       c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       b(c1)=b(c1)-Flux(s)
       if(c2  > 0) b(c2)=b(c2)+Flux(s)
     else
@@ -121,7 +123,8 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
     if( (material(c1) .eq. m) .or. (material(c2) .eq. m) ) then
-      if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
+      if(c2 > 0 .or.   &
+         c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
         cfl_t = abs( dt * Flux(s) /                &
                      ( Scoef(s) *                  &
                      (  grid % dx(s)*grid % dx(s)  &

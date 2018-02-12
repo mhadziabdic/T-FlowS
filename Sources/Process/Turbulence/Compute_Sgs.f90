@@ -136,7 +136,8 @@
       ny = grid % sy(s) / Stot 
       nz = grid % sz(s) / Stot 
 
-      if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
         Utot = sqrt(  U % n(c1) * U % n(c1)     &
                     + V % n(c1) * V % n(c1)     & 
@@ -172,7 +173,7 @@
         else 
           VISwall(c1) = VISc + fF(s)*vis_t(c1)+(1.0-fF(s))*vis_t(c2)
         endif
-      end if  ! TypeBC(c2)==WALL or WALLFL
+      end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
     end if    ! c2 < 0
   end do
 

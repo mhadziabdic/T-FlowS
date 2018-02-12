@@ -29,17 +29,17 @@
         Flux(s) = DENc(material(c1))*( U % n(c2)*grid % sx(s) + &
                                        V % n(c2)*grid % sy(s) + &
                                        W % n(c2)*grid % sz(s) )
-        if(TypeBC(c2)  ==  INFLOW) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW) then
           if(material(c1) == m) then 
             bulk(m) % mass_in = bulk(m) % mass_in - Flux(s)
           end if
         endif
-        if(TypeBC(c2)  ==  PRESSURE.and.Flux(s) < 0.0) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE .and. Flux(s) < 0.0) then
           if(material(c1) == m) then
             bulk(m) % mass_in = bulk(m) % mass_in - Flux(s)
           end if
         end if
-        if(TypeBC(c2)  ==  CONVECT.and.Flux(s) < 0.0) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .and. Flux(s) < 0.0) then
           if(material(c1) == m) then
             bulk(m) % mass_in = bulk(m) % mass_in - Flux(s)
           end if
@@ -60,7 +60,7 @@
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
       if(c2  < 0) then
-        if(TypeBC(c2) == OUTFLOW) then
+        if(Grid_Mod_Bnd_Cond_Type(grid, c2) == OUTFLOW) then
           U % n(c2) = U % n(c1)
           V % n(c2) = V % n(c1)
           W % n(c2) = W % n(c1)
@@ -71,7 +71,7 @@
             bulk(m) % mass_out = bulk(m) % mass_out + Flux(s)
           end if
         end if
-        if(TypeBC(c2) == CONVECT.and.Flux(s) > 0.0) then
+        if(Grid_Mod_Bnd_Cond_Type(grid, c2) == CONVECT .and. Flux(s) > 0.0) then
           Flux(s) = DENc(material(c1)) * ( U % n(c2)*grid % sx(s) +  & 
                                            V % n(c2)*grid % sy(s) +  &
                                            W % n(c2)*grid % sz(s) )
@@ -83,7 +83,7 @@
         Flux(s) = DENc(material(c1)) * ( U % n(c2)*grid % sx(s) +  & 
                                          V % n(c2)*grid % sy(s) +  &
                                          W % n(c2)*grid % sz(s) )
-        if(TypeBC(c2) == PRESSURE.and.Flux(s) > 0.0) then
+        if(Grid_Mod_Bnd_Cond_Type(grid, c2) == PRESSURE .and. Flux(s) > 0.0) then
           if(material(c1) == m) then
             bulk(m) % mass_out = bulk(m) % mass_out + Flux(s)
           end if
@@ -103,9 +103,9 @@
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
       if(c2  < 0) then
-        if(TypeBC(c2) == OUTFLOW  .or.  &
-           TypeBC(c2) == CONVECT  .or.  &
-           TypeBC(c2) == PRESSURE) then
+        if(Grid_Mod_Bnd_Cond_Type(grid, c2) == OUTFLOW  .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid, c2) == CONVECT  .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid, c2) == PRESSURE) then
           if(material(c1) == m) then
             U % n(c2) = U % n(c2) * fac(m)
             V % n(c2) = V % n(c2) * fac(m)

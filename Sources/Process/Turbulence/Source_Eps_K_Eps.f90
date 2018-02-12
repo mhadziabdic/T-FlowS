@@ -53,8 +53,9 @@
       c1=grid % faces_c(1,s)
       c2=grid % faces_c(2,s)
 
-      if(c2 < 0.and.TypeBC(c2) /= BUFFER ) then  
-        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+      if(c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then  
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
           ! This will fix the value of eps in the first cell
           if(ROUGH==NO) then
@@ -69,7 +70,7 @@
           end do   
           A % val(A % dia(c1)) = 1.0
           b(c1) = eps % n(c1)
-        end if  ! TypeBC(c2)==WALL or WALLFL
+        end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
       end if    ! c2 < 0
     end do
   end if        ! end if mode = wf   
@@ -113,12 +114,13 @@
       c1=grid % faces_c(1,s)
       c2=grid % faces_c(2,s)
 
-      if(c2 < 0.and.TypeBC(c2) /= BUFFER ) then
-        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
           eps % n(c2) = 0.0
 
-        end if  ! TypeBC(c2)==WALL or WALLFL
+        end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
       end if    ! c2 < 0
     end do
   end if
@@ -154,13 +156,14 @@
       c1=grid % faces_c(1,s)
       c2=grid % faces_c(2,s)
 
-      if(c2 < 0.and.TypeBC(c2) /= BUFFER ) then
-        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+      if(c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
           eps % n(c2) = 2.0 * VISc * kin % n(c1)  &
                       / (grid % wall_dist(c1)*grid % wall_dist(c1))
 
-        end if  ! TypeBC(c2)==WALL or WALLFL
+        end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
       end if    ! c2 < 0
     end do
   end if        ! end if mode = stan

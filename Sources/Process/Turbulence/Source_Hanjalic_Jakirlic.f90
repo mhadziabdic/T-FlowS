@@ -600,8 +600,9 @@
       c2 = grid % faces_c(2,s)
 
       ! Calculate a values of dissipation  on wall
-      if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
-        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
           eps%n(c2) = VISc*(kin_x(c)**2 + kin_y(c)**2 + kin_z(c)**2)
         end if   ! end if of BC=wall
       end if    ! end if of c2<0

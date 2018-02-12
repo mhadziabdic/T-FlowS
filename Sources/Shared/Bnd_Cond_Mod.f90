@@ -32,6 +32,9 @@
     ! Values start from one, zero is internal cell
     integer, allocatable :: color(:)
 
+    ! Boundary types, ranging through all colors                  
+    integer, allocatable :: type(:)
+
     ! Copy boundary conditions; useful when one domain generates boundary
     ! conditions for another.  
     integer, allocatable :: copy_c(:)   

@@ -37,7 +37,7 @@
 !   Dimensions of certain variables
 !
 !     APP            [ms]
-!     PP,            [kg/ms^2]
+!     pp,            [kg/ms^2]
 !     b              [kg/s]
 !     Flux           [kg/s]
 !   
@@ -72,7 +72,7 @@
     end if  
 
     ! Face is inside the domain
-    if( c2  > 0 .or. c2  < 0 .and. TypeBC(c2) == BUFFER) then 
+    if( c2  > 0 .or. c2  < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then 
 
       ! Extract the "centred" pressure terms from cell velocities
       Us = fs*      (U % n(c1) + p % x(c1)*grid % vol(c1)/A % sav(c1))       &
@@ -85,11 +85,11 @@
          + (1.0-fs)*(W % n(c2) + p % z(c2)*grid % vol(c2)/A % sav(c2))
 
       ! Add the "staggered" pressure terms to face velocities
-      Us= Us + (P % n(c1)-P % n(c2))*grid % sx(s)*                         &
+      Us= Us + (p % n(c1)-p % n(c2))*grid % sx(s)*                         &
          ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
-      Vs=Vs+(P % n(c1)-P % n(c2))*grid % sy(s)*                            &
+      Vs=Vs+(p % n(c1)-p % n(c2))*grid % sy(s)*                            &
          ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
-      Ws=Ws+(P % n(c1)-P % n(c2))*grid % sz(s)*                            &
+      Ws=Ws+(p % n(c1)-p % n(c2))*grid % sz(s)*                            &
          ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
 
       ! Now calculate the flux through cell face
@@ -131,7 +131,7 @@
   !----------------------------------------!
   !   Initialize the pressure correction   !
   !----------------------------------------!
-  PP % n = 0.0 
+  pp % n = 0.0 
 
   errmax=0.0
   do c = 1, grid % n_cells
@@ -145,9 +145,10 @@
 
   ! Give the "false" flux back and set it to zero   ! 2mat
   do s = 1, grid % n_faces                          ! 2mat
-    c1 = grid % faces_c(1,s)                                   ! 2mat
-    c2 = grid % faces_c(2,s)                                   ! 2mat
-    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
+    c1 = grid % faces_c(1,s)                        ! 2mat
+    c2 = grid % faces_c(2,s)                        ! 2mat
+    if( c2 > 0 .or.  &
+        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       if(StateMat(material(c1))==SOLID .or. &       ! 2mat
          StateMat(material(c2))==SOLID) then        ! 2mat
         b(c1) = b(c1) + Flux(s)                     ! 2mat
@@ -159,9 +160,10 @@
 
   ! Disconnect the SOLID cells from FLUID system    ! 2mat
   do s = 1, grid % n_faces                          ! 2mat
-    c1 = grid % faces_c(1,s)                                   ! 2mat
-    c2 = grid % faces_c(2,s)                                   ! 2mat
-    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat 
+    c1 = grid % faces_c(1,s)                        ! 2mat
+    c2 = grid % faces_c(2,s)                        ! 2mat
+    if( c2 > 0 .or.  &
+        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       if(c2 > 0) then ! => not BUFFER               ! 2mat
         if(StateMat(material(c1)) == SOLID) then    ! 2mat
           A12 = -A % val(A % pos(2,s))              ! 2mat
@@ -200,27 +202,27 @@
   ! Value 1.e-12 keeps the solution stable
   if(ALGOR == FRACT)  niter = 200
   if(ALGOR == SIMPLE) niter =  15
-  call Cg(A, PP % n, b,            &
-          PREC, niter, PP % STol,  &
+  call Cg(A, pp % n, b,            &
+          PREC, niter, pp % STol,  &
           res(4), error) 
   call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, res(4))
 
   !-------------------------------!
   !   Update the pressure field   !
   !-------------------------------!
-  P % n  =  P % n  +  P % URF  *  PP % n
+  p % n  =  p % n  +  p % URF  *  pp % n
 
   !----------------------------------!
   !   Normalize the pressure field   !
   !----------------------------------!
-  Pmax  = maxval(P % n(1:grid % n_cells))
-  Pmin  = minval(P % n(1:grid % n_cells))
+  Pmax  = maxval(p % n(1:grid % n_cells))
+  Pmin  = minval(p % n(1:grid % n_cells))
 
   call glomax(Pmax) 
   call glomin(Pmin) 
 
-  P % n  =  P % n  -  0.5 * (Pmax+Pmin)
+  p % n  =  p % n  -  0.5 * (Pmax+Pmin)
 
-  call Exchange(grid, PP % n) 
+  call Exchange(grid, pp % n) 
 
   end subroutine

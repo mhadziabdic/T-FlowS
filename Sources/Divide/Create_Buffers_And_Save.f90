@@ -124,11 +124,11 @@
       end if
     end do
 
-    print *, '# Saving subdomain ', sub, ' with:'
-    print *, '# ', n_cells_sub, ' cells'
-    print *, '# ', n_nodes_sub, ' nodes' 
-    print *, '# ', n_faces_sub, ' sides' 
-    print *, '# ', n_bnd_cells_sub, ' physical boundary cells' 
+    print '(a,i5,a)', ' # Saving subdomain ', sub, ' with:'
+    print '(a,i9,a)', ' # ', n_cells_sub, ' cells'
+    print '(a,i9,a)', ' # ', n_nodes_sub, ' nodes' 
+    print '(a,i9,a)', ' # ', n_faces_sub, ' sides' 
+    print '(a,i9,a)', ' # ', n_bnd_cells_sub, ' physical boundary cells' 
 
     !--------------------!
     !   Create buffers   !
@@ -238,7 +238,7 @@
     print *, '# Buffer size ', n_buff_sub
     do subo=1,n_sub
       if(subo /= sub) then
-        print *, '# Connections with ', subo ,' : ',  &
+        print '(a,i9,a,3i9)', ' # Connections with ', subo ,' : ',  &
           NBBe(subo)-NBBs(subo)+1,                      &
           n_bnd_cells_sub+NBBs(subo),                   &
           n_bnd_cells_sub+NBBe(subo) 

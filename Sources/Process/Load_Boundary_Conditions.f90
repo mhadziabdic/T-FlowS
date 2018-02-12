@@ -134,16 +134,16 @@
             read(line % tokens(11),*) uv % bound(n)
             read(line % tokens(12),*) uw % bound(n)
             read(line % tokens(13),*) vw % bound(n)
-            read(line % tokens(14),*) Eps% bound(n)
+            read(line % tokens(14),*) eps% bound(n)
             if(SIMULA==EBM) read(line % tokens(15),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(line % tokens(8),*) Kin % bound(n)
-            read(line % tokens(9),*) Eps % bound(n)
+            read(line % tokens(8),*) kin % bound(n)
+            read(line % tokens(9),*) eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(line % tokens(8),*) Kin % bound(n)
-            read(line % tokens(9),*) Eps % bound(n)
+            read(line % tokens(8),*) kin % bound(n)
+            read(line % tokens(9),*) eps % bound(n)
             read(line % tokens(10),*) v_2 % bound(n)
             read(line % tokens(11),*) f22 % bound(n)
           end if
@@ -161,16 +161,16 @@
             read(line % tokens(10),*) uv % bound(n)
             read(line % tokens(11),*) uw % bound(n)
             read(line % tokens(12),*) vw % bound(n)
-            read(line % tokens(13),*) Eps% bound(n)
+            read(line % tokens(13),*) eps% bound(n)
             if(SIMULA==EBM) read(line % tokens(14),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(line % tokens(7),*) Kin % bound(n)
-            read(line % tokens(8),*) Eps % bound(n)
+            read(line % tokens(7),*) kin % bound(n)
+            read(line % tokens(8),*) eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(line % tokens(7),*) Kin % bound(n)
-            read(line % tokens(8),*) Eps % bound(n)
+            read(line % tokens(7),*) kin % bound(n)
+            read(line % tokens(8),*) eps % bound(n)
             read(line % tokens(9),*) v_2  % bound(n)
             read(line % tokens(10),*) f22 % bound(n)
           end if
@@ -192,16 +192,16 @@
             read(line % tokens(10),*) uv % bound(n)
             read(line % tokens(11),*) uw % bound(n)
             read(line % tokens(12),*) vw % bound(n)
-            read(line % tokens(13),*) Eps% bound(n)
+            read(line % tokens(13),*) eps% bound(n)
             if(SIMULA==EBM) read(line % tokens(14),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(line % tokens(7),*) Kin % bound(n)
-            read(line % tokens(8),*) Eps % bound(n)
+            read(line % tokens(7),*) kin % bound(n)
+            read(line % tokens(8),*) eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(line % tokens(7),*) Kin % bound(n)
-            read(line % tokens(8),*) Eps % bound(n)
+            read(line % tokens(7),*) kin % bound(n)
+            read(line % tokens(8),*) eps % bound(n)
             read(line % tokens(9),*) v_2 % bound(n)
             read(line % tokens(10),*) f22 % bound(n)
           end if
@@ -219,16 +219,16 @@
             read(line % tokens(9),*) uv % bound(n)
             read(line % tokens(10),*) uw % bound(n)
             read(line % tokens(11),*) vw % bound(n)
-            read(line % tokens(12),*) Eps% bound(n)
+            read(line % tokens(12),*) eps% bound(n)
             if(SIMULA==EBM) read(line % tokens(13),*) f22 % bound(n)
           end if
           if(SIMULA==K_EPS) then
-            read(line % tokens(6),*) Kin % bound(n)
-            read(line % tokens(7),*) Eps % bound(n)
+            read(line % tokens(6),*) kin % bound(n)
+            read(line % tokens(7),*) eps % bound(n)
           end if
           if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-            read(line % tokens(6),*) Kin % bound(n)
-            read(line % tokens(7),*) Eps % bound(n)
+            read(line % tokens(6),*) kin % bound(n)
+            read(line % tokens(7),*) eps % bound(n)
             read(line % tokens(8),*) v_2  % bound(n)
             read(line % tokens(9),*) f22 % bound(n)
           end if
@@ -280,16 +280,16 @@
           read(line % tokens(9),*) uv % init(n)
           read(line % tokens(10),*) uw % init(n)
           read(line % tokens(11),*) vw % init(n)
-          read(line % tokens(12),*) Eps% init(n)
+          read(line % tokens(12),*) eps% init(n)
           if(SIMULA==EBM) read(line % tokens(13),*) f22 % init(n)
         end if
         if(SIMULA==K_EPS) then
-          read(line % tokens(6),*) Kin % init(n)
-          read(line % tokens(7),*) Eps % init(n)
+          read(line % tokens(6),*) kin % init(n)
+          read(line % tokens(7),*) eps % init(n)
         end if
         if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-          read(line % tokens(6),*) Kin % init(n)
-          read(line % tokens(7),*) Eps % init(n)
+          read(line % tokens(6),*) kin % init(n)
+          read(line % tokens(7),*) eps % init(n)
           read(line % tokens(8),*) v_2  % init(n)
           read(line % tokens(9),*) f22 % init(n)
         end if
@@ -307,16 +307,16 @@
           read(line % tokens(8),*) uv % init(n)
           read(line % tokens(9),*) uw % init(n)
           read(line % tokens(10),*) vw % init(n)
-          read(line % tokens(11),*) Eps% init(n)
+          read(line % tokens(11),*) eps% init(n)
           if(SIMULA==EBM) read(line % tokens(12),*) f22 % init(n)
         end if
         if(SIMULA==K_EPS) then
-          read(line % tokens(5),*) Kin % init(n)
-          read(line % tokens(6),*) Eps % init(n)
+          read(line % tokens(5),*) kin % init(n)
+          read(line % tokens(6),*) eps % init(n)
         end if
         if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-          read(line % tokens(5),*) Kin % init(n)
-          read(line % tokens(6),*) Eps % init(n)
+          read(line % tokens(5),*) kin % init(n)
+          read(line % tokens(6),*) eps % init(n)
           read(line % tokens(7),*) v_2  % init(n)
           read(line % tokens(8),*) f22 % init(n)
         end if
@@ -332,26 +332,38 @@
 
   close(9)
 
+  !-------------------------------!
+  !   Take care of buffer cells   !
+  !-------------------------------!
+  n = grid % n_bnd_cond
+  grid % bnd_cond % type(n+1) = BUFFER
+  do c = -1,-grid % n_bnd_cells,-1
+    if(grid % bnd_cond % color(c) == BUFFER)  &
+      grid % bnd_cond % color(c) = n+1
+  end do
+
   !----------------------------------------------------------------------!
   !   Boundary conditions 2 - distribute them over computational cells   !
   !----------------------------------------------------------------------!
-  do n=1,grid % n_bnd_cond
+  do n = 1, grid % n_bnd_cond
+
+    grid % bnd_cond % type(n) = type_bnd_cond(n)
 
     ! Boundary condition is given by a single constant
     if(name_prof(n) == '') then 
       do c = -1,-grid % n_bnd_cells,-1
-        if(grid % bnd_cond % color(c) == n) then
-          TypeBC(c) = type_bnd_cond(n)
+!old:   if(grid % bnd_cond % color(c) == n) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c) == type_bnd_cond(n)) then
 
           ! If in_out is set to true, set boundary values,
-          ! otherwise, just the TypeBC remains set.
+          ! otherwise, just the ypTeBC remains set.
           if(in_out) then
             U % n(c) = U % bound(n) 
             V % n(c) = V % bound(n)
             W % n(c) = W % bound(n)
             P % n(c) = P % bound(n) 
             if(HOT == YES) then
-              if(TypeBC(c).eq.WALLFL) then
+              if(type_bnd_cond(n) .eq. WALLFL) then
                 T % q(c) =  T % bound(n)
               else
                 T % n(c) =  T % bound(n)
@@ -364,18 +376,18 @@
               uv % n(c) = uv % bound(n)
               uw % n(c) = uw % bound(n)
               vw % n(c) = vw % bound(n)
-              Eps % n(c) = Eps % bound(n)
+              eps % n(c) = eps % bound(n)
               if(SIMULA==EBM) f22 % n(c)   = f22 % bound(n)
             end if
             if(SIMULA==K_EPS) then
-              Kin % n(c) = Kin % bound(n)
-              Eps % n(c) = Eps % bound(n)
+              kin % n(c) = kin % bound(n)
+              eps % n(c) = eps % bound(n)
               Uf(c)        = 0.047
               Ynd(c)       = 30.0
             end if
             if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-              Kin % n(c)   = Kin % bound(n)
-              Eps % n(c)   = Eps % bound(n)
+              kin % n(c)   = kin % bound(n)
+              eps % n(c)   = eps % bound(n)
               f22 % n(c)   = f22 % bound(n)
               v_2 % n(c)   = v_2 % bound(n)
             end if
@@ -414,14 +426,15 @@
             read(line % tokens(10),*) uw % pro(m)
             read(line % tokens(11),*) vw % pro(m)
             read(line % tokens(12),*) f22 % pro(m)
-            read(line % tokens(13),*) Eps % pro(m)
+            read(line % tokens(13),*) eps % pro(m)
           end if
         end do  
 
         ! Set the closest point
         do c = -1,-grid % n_bnd_cells,-1
-          if(grid % bnd_cond % color(c) == n) then
-            TypeBC(c) = type_bnd_cond(n)
+!old:     if(grid % bnd_cond % color(c) == n) then
+!old:       TypeBC(c) = type_bnd_cond(n)
+          if(Grid_Mod_Bnd_Cond_Type(grid,c) == type_bnd_cond(n)) then
             if(in_out) then    !if .true. set boundary values, otherwise, just set TypeBC
               Mres = HUGE
               do s=1,n_points
@@ -447,12 +460,12 @@
               W%n(c) = W % pro(c1)
               if(HOT==YES) T%n(c) = T%pro(c1)
               if(SIMULA==K_EPS) then
-                Kin%n(c) = Kin%pro(c1)
-                Eps%n(c) = Eps%pro(c1)
+                kin%n(c) = kin%pro(c1)
+                eps%n(c) = eps%pro(c1)
               end if
               if(SIMULA==K_EPS_VV.or.SIMULA==ZETA) then
-                Kin%n(c) = Kin%pro(c1)
-                Eps%n(c) = Eps%pro(c1)
+                kin%n(c) = kin%pro(c1)
+                eps%n(c) = eps%pro(c1)
                 v_2%n(c) = v_2%pro(c1)
                 f22%n(c) = f22%pro(c1)
               end if
@@ -467,7 +480,7 @@
                 uw%n(c) = uw % pro(c1)
                 vw%n(c) = vw % pro(c1)
                 f22%n(c) = f22 % pro(c1)
-                Eps%n(c) = Eps % pro(c1)
+                eps%n(c) = eps % pro(c1)
               end if        
             end if    !end if(in_out)
           end if      !end if(grid % bnd_cond % color(c) == n)
@@ -482,12 +495,12 @@
           if(HOT==YES) then
             read(line % tokens(5),*) T % pro(m)
             if(SIMULA==K_EPS) then
-              read(line % tokens(6),*) Kin % pro(m)
-              read(line % tokens(7),*) Eps % pro(m)
+              read(line % tokens(6),*) kin % pro(m)
+              read(line % tokens(7),*) eps % pro(m)
             end if
             if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-              read(line % tokens(6),*) Kin % pro(m)
-              read(line % tokens(7),*) Eps % pro(m)
+              read(line % tokens(6),*) kin % pro(m)
+              read(line % tokens(7),*) eps % pro(m)
               read(line % tokens(8),*) v_2 % pro(m)
               read(line % tokens(9),*) f22 % pro(m)
             end if
@@ -499,12 +512,12 @@
             end if
           else
             if(SIMULA==K_EPS) then
-              read(line % tokens(5),*) Kin % pro(m)
-              read(line % tokens(6),*) Eps % pro(m)
+              read(line % tokens(5),*) kin % pro(m)
+              read(line % tokens(6),*) eps % pro(m)
             end if
             if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-              read(line % tokens(5),*) Kin % pro(m)
-              read(line % tokens(6),*) Eps % pro(m)
+              read(line % tokens(5),*) kin % pro(m)
+              read(line % tokens(6),*) eps % pro(m)
               read(line % tokens(7),*) v_2 % pro(m)
               read(line % tokens(8),*) f22 % pro(m)
             end if
@@ -522,14 +535,15 @@
               read(line % tokens(9),*) uw % pro(m)
               read(line % tokens(10),*) vw % pro(m)
               read(line % tokens(11),*) f22% pro(m)
-              read(line % tokens(12),*) Eps% pro(m)
+              read(line % tokens(12),*) eps% pro(m)
             end if
           end if  
         end do
            
         do c = -1,-grid % n_bnd_cells,-1
-          if(grid % bnd_cond % color(c) == n) then
-            TypeBC(c) = type_bnd_cond(n)
+!old:     if(grid % bnd_cond % color(c) == n) then
+!old:       TypeBC(c) = type_bnd_cond(n)
+          if(Grid_Mod_Bnd_Cond_Type(grid,c) == type_bnd_cond(n)) then
           
             ! If in_out is set to true, set boundary values,
             ! otherwise, just the TypeBC remains set.
@@ -578,12 +592,12 @@
                   if(HOT==YES) &
                     T % n(c) = wi*T % pro(m) + (1.-wi)*T % pro(m+1)
                   if(SIMULA==K_EPS) then
-                    Kin % n(c) = wi*Kin % pro(m) + (1.-wi)*Kin % pro(m+1)
-                    Eps % n(c) = wi*Eps % pro(m) + (1.-wi)*Eps % pro(m+1)
+                    kin % n(c) = wi*kin % pro(m) + (1.-wi)*kin % pro(m+1)
+                    eps % n(c) = wi*eps % pro(m) + (1.-wi)*eps % pro(m+1)
                   end if
                   if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-                    Kin % n(c) = wi*Kin % pro(m) + (1.-wi)*Kin % pro(m+1)
-                    Eps % n(c) = wi*Eps % pro(m) + (1.-wi)*Eps % pro(m+1)
+                    kin % n(c) = wi*kin % pro(m) + (1.-wi)*kin % pro(m+1)
+                    eps % n(c) = wi*eps % pro(m) + (1.-wi)*eps % pro(m+1)
                     f22 % n(c) = wi*f22 % pro(m) + (1.-wi)*f22 % pro(m+1)
                     v_2 % n(c) = wi*v_2 % pro(m)  + (1.-wi)*v_2% pro(m+1)
                   end if
@@ -602,12 +616,5 @@
       close(9)
     end if
   end do 
-
-  !-------------------------------------!
-  !   Finally handle the buffer cells   !
-  !-------------------------------------!
-  do c = -1,-grid % n_bnd_cells,-1
-    if(grid % bnd_cond % color(c) == BUFFER) TypeBC(c)=BUFFER 
-  end do
 
   end subroutine

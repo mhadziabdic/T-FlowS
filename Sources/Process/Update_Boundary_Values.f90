@@ -36,30 +36,32 @@
       ! Extrapolate velocities on the outflow boundary 
       ! SYMMETRY is intentionally not treated here because I wanted to
       ! be sure that is handled only via graPHI and NewUVW functions)
-      if( TypeBC(c2) == OUTFLOW.or.TypeBC(c2) == PRESSURE ) then
+      if( Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  &
+          Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE ) then
         U % n(c2) = U % n(c1)
         V % n(c2) = V % n(c1)
         W % n(c2) = W % n(c1)
-        if(HOT==YES) T % n(c2) = T % n(c1)
+        if(HOT==YES) t % n(c2) = t % n(c1)
       end if
 
-      if( TypeBC(c2) == SYMMETRY ) then
+      if( Grid_Mod_Bnd_Cond_Type(grid,c2) == SYMMETRY ) then
         U % n(c2) = U % n(c1)
         V % n(c2) = V % n(c1)
         W % n(c2) = W % n(c1)
-        if(HOT==YES) T % n(c2) = T % n(c1)
+        if(HOT==YES) t % n(c2) = t % n(c1)
       end if
 
       ! Spalart Allmaras
       if(SIMULA == SPA_ALL .or. SIMULA == DES_SPA) then
-        if ( TypeBC(c2) == OUTFLOW.or. TypeBC(c2) == CONVECT.or.&
-        TypeBC(c2) == PRESSURE ) then
+        if ( Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  & 
+             Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .or.  &
+             Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE ) then
           VIS % n(c2) = VIS % n(c1) 
         end if
       end if
 
       if(SIMULA==EBM.or.SIMULA==HJ) then
-        if(TypeBC(c2) == WALL.or.SIMULA==WALLFL) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or. SIMULA==WALLFL) then
           uu % n(c2) = 0.0 
           vv % n(c2) = 0.0 
           ww % n(c2) = 0.0 
@@ -73,33 +75,37 @@
 
       ! k-epsilon-v^2
       if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-        if(TypeBC(c2) == OUTFLOW.or.TypeBC(c2) == CONVECT.or.&
-        TypeBC(c2) == PRESSURE) then
-          Kin % n(c2) = Kin % n(c1)
-          Eps % n(c2) = Eps % n(c1)
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) then
+          kin % n(c2) = kin % n(c1)
+          eps % n(c2) = eps % n(c1)
           v_2 % n(c2) = v_2 % n(c1)
           f22 % n(c2) = f22 % n(c1)
         end if
 
-        !  if (TypeBC(c2) == INFLOW) then
+        !  if (Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW) then
         !    f22 % n(c2) = f22 % n(c1)
         !  end if
       end if 
 
       ! k-epsilon
       if(SIMULA == K_EPS) then
-        if(TypeBC(c2) == OUTFLOW.or.TypeBC(c2) == CONVECT.or.&
-        TypeBC(c2) == PRESSURE.or.TypeBC(c2) == SYMMETRY) then
-          Kin % n(c2) = Kin % n(c1)
-          Eps % n(c2) = Eps % n(c1)
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW  .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT  .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == SYMMETRY) then
+          kin % n(c2) = kin % n(c1)
+          eps % n(c2) = eps % n(c1)
         end if
       end if 
 
       if(SIMULA==EBM.or.SIMULA==HJ) then
-        if(TypeBC(c2) == OUTFLOW.or.TypeBC(c2) == CONVECT.or.&
-           TypeBC(c2) == PRESSURE) then
-          Kin % n(c2) = Kin % n(c1)
-          Eps % n(c2) = Eps % n(c1)
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) then
+          kin % n(c2) = kin % n(c1)
+          eps % n(c2) = eps % n(c1)
           uu % n(c2) = uu % n(c1)
           vv % n(c2) = vv % n(c1)
           ww % n(c2) = ww % n(c1)
@@ -126,13 +132,13 @@
         Nx = grid % sx(s)/Stot
         Ny = grid % sy(s)/Stot
         Nz = grid % sz(s)/Stot
-        qx = T % q(c2) * Nx 
-        qy = T % q(c2) * Ny
-        qz = T % q(c2) * Nz
+        qx = t % q(c2) * Nx 
+        qy = t % q(c2) * Ny
+        qz = t % q(c2) * Nz
         CONeff = CONc(material(c1))                 &
                + CAPc(material(c1))*vis_t(c1)/Prt
         if(SIMULA==ZETA.or.SIMULA==K_EPS) then
-          Yplus = max(Cmu25 * sqrt(Kin%n(c1)) * grid % wall_dist(c1)/VISc,0.12)
+          Yplus = max(Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1)/VISc,0.12)
           Uplus = log(Yplus*Elog) / (kappa + TINY) + TINY
           Prmol = VISc / CONc(material(c1))
           beta = 9.24 * ((Prmol/Prt)**0.75 - 1.0)  &
@@ -142,33 +148,33 @@
           CONwall(c1) = Yplus * VISc * CAPc(material(c1))   &
                       / (Yplus * Prmol * exp(-1.0 * EBF)    &
                       + (Uplus + beta) * Prt * exp(-1.0 / EBF) + TINY)
-          if(TypeBC(c2) == WALLFL) then
-            T% n(c2) = T % n(c1) + Prt / CAPc(material(c1))    &
-                     * (  qx * grid % dx(s)   &
-                        + qy * grid % dy(s)   &
-                        + qz * grid % dz(s))  &
+          if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
+            t% n(c2) = t % n(c1) + Prt / CAPc(material(c1))  &
+                     * (  qx * grid % dx(s)                  &
+                        + qy * grid % dy(s)                  &
+                        + qz * grid % dz(s))                 &
                      / CONwall(c1)
-            Tflux = T % q(c2)
-          else if(TypeBC(c2) == WALL) then
-            T % q(c2) = ( T % n(c2) - T % n(c1) ) * CONeff     &
-                      / (  Nx * grid % dx(s)  &
-                         + Ny * grid % dy(s)  &
+            Tflux = t % q(c2)
+          else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL) then
+            t % q(c2) = ( t % n(c2) - t % n(c1) ) * CONeff  &
+                      / (  Nx * grid % dx(s)                &
+                         + Ny * grid % dy(s)                &
                          + Nz * grid % dz(s) )
-            Tflux = T % q(c2)
+            Tflux = t % q(c2)
           end if
         else
-          if(TypeBC(c2) == WALLFL) then
-            T% n(c2) = T % n(c1) + Prt / (CONeff + TINY)      &
-                    * (  qx * grid % dx(s)  &
-                       + qy * grid % dy(s)  &
+          if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
+            t% n(c2) = t % n(c1) + Prt / (CONeff + TINY)   &
+                    * (  qx * grid % dx(s)                 &
+                       + qy * grid % dy(s)                 &
                        + qz * grid % dz(s) ) 
-            Tflux = T % q(c2) 
-          else if(TypeBC(c2) == WALL) then
-            T % q(c2) = ( T % n(c2) - T % n(c1) ) * CONeff     &
-                      / (  Nx * grid % dx(s)  &
-                         + Ny * grid % dy(s)  &
+            Tflux = t % q(c2) 
+          else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL) then
+            t % q(c2) = ( t % n(c2) - t % n(c1) ) * CONeff  &
+                      / (  Nx * grid % dx(s)                &
+                         + Ny * grid % dy(s)                &
                          + Nz * grid % dz(s) )
-            Tflux = T % q(c2) 
+            Tflux = t % q(c2) 
           end if
         end if
       end if
@@ -180,22 +186,22 @@
         U % n(c2) = U % n(grid % bnd_cond % copy_c(c2))
         V % n(c2) = V % n(grid % bnd_cond % copy_c(c2))
         W % n(c2) = W % n(grid % bnd_cond % copy_c(c2))
-        if(HOT==YES)        T % n(c2) = T % n(grid % bnd_cond % copy_c(c2))
+        if(HOT==YES)        t % n(c2) = t % n(grid % bnd_cond % copy_c(c2))
         if(SIMULA==SPA_ALL .or. SIMULA == DES_SPA) &
         VIS % n(c2) = VIS % n(grid % bnd_cond % copy_c(c2)) 
         if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
-          Kin % n(c2) = Kin % n(grid % bnd_cond % copy_c(c2))
-          Eps % n(c2) = Eps % n(grid % bnd_cond % copy_c(c2))
+          kin % n(c2) = kin % n(grid % bnd_cond % copy_c(c2))
+          eps % n(c2) = eps % n(grid % bnd_cond % copy_c(c2))
           v_2 % n(c2) = v_2 % n(grid % bnd_cond % copy_c(c2))
           f22 % n(c2) = f22 % n(grid % bnd_cond % copy_c(c2))
         end if ! K_EPS_VV
         if(SIMULA==K_EPS) then
-          Kin % n(c2) = Kin % n(grid % bnd_cond % copy_c(c2))
-          Eps % n(c2) = Eps % n(grid % bnd_cond % copy_c(c2))
+          kin % n(c2) = kin % n(grid % bnd_cond % copy_c(c2))
+          eps % n(c2) = eps % n(grid % bnd_cond % copy_c(c2))
         end if ! K_EPS
         if(SIMULA==EBM.or.SIMULA==HJ) then
-          Kin % n(c2) = Kin % n(grid % bnd_cond % copy_c(c2))
-          Eps % n(c2) = Eps % n(grid % bnd_cond % copy_c(c2))
+          kin % n(c2) = kin % n(grid % bnd_cond % copy_c(c2))
+          eps % n(c2) = eps % n(grid % bnd_cond % copy_c(c2))
           uu % n(c2)  = uu % n(grid % bnd_cond % copy_c(c2))
           vv % n(c2)  = vv % n(grid % bnd_cond % copy_c(c2))
           ww % n(c2)  = ww % n(grid % bnd_cond % copy_c(c2))

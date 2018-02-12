@@ -5,9 +5,8 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-! use pro_mod
-! use les_mod
   use Grid_Mod
+  use Bnd_Cond_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -57,7 +56,7 @@
             bulk(m) % flux_z = bulk(m) % flux_z - Flux(s)
 
         end if ! material 1&2
-      else if(c2 < 0.and.TypeBC(c2) == BUFFER) then
+      else if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid, c2) == BUFFER) then
         if( (material(c1)==m) .and. (material(c1) == material(c2)) ) then
           xc1=grid % xc(c1) 
           yc1=grid % yc(c1) 

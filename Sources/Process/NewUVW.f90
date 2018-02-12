@@ -254,7 +254,8 @@
     end if
 
     if(c2 < 0 .and. SIMULA == LES) then
-      if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
         VISeff = VISwall(c1)
       end if
     end if 
@@ -263,8 +264,9 @@
         SIMULA == K_EPS_VV                   .or.  &
        (SIMULA == K_EPS .and. MODE==HIGH_RE) .or.  &
         SIMULA == HYB_ZETA) then
-      if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
-        if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
           VISeff = VISwall(c1)
         end if
       end if
@@ -334,7 +336,7 @@
         ui % d_o(c1) = ui % d_o(c1) + (ui % n(c2)-ui % n(c1))*A0   
         ui % d_o(c2) = ui % d_o(c2) - (ui % n(c2)-ui % n(c1))*A0    
       else
-        if(TypeBC(c2) /= SYMMETRY) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) /= SYMMETRY) then
           ui % d_o(c1) = ui % d_o(c1) + (ui % n(c2)-ui % n(c1))*A0   
         end if 
       end if 
@@ -372,20 +374,20 @@
       else if(c2  < 0) then
 
         ! Outflow is not included because it was causing problems     
-        if((TypeBC(c2) == INFLOW).or.                                &
-           (TypeBC(c2) == WALL).or.                                  &
-           (TypeBC(c2) == CONVECT).or.                               &
-           (TypeBC(c2) == WALLFL)) then                                
-           ! (TypeBC(c2) == OUTFLOW) ) then   
+        if((Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW)  .or.  &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL)    .or.  &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT) .or.  &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL)) then                                
+           ! (Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW) ) then   
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * ui % n(c2)
-        else if(TypeBC(c2) == BUFFER) then  
+        else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then  
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           A % bou(c2) = -A12  ! cool parallel stuff
         endif
       end if     
     end if
-  end do  ! through sides
+  end do  ! through faces
 
   !-----------------------------!
   !   Temporal discretization   !
@@ -560,7 +562,7 @@
 !  do s=1,grid % n_faces                             ! 2mat
 !    c1 = grid % faces_c(1,s)                                   ! 2mat
 !    c2 = grid % faces_c(2,s)                                   ! 2mat
-!    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
+!    if(c2>0 .or. c2<0.and.Grid_Mod_Bnd_Cond_Type(grid,c2)==BUFFER) then  ! 2mat
 !      if(c2 > 0) then ! => not buffer               ! 2mat
 !        if(StateMat(material(c1)) == SOLID) then    ! 2mat
 !          A % val(A % pos(1,s)) = 0.0               ! 2mat 

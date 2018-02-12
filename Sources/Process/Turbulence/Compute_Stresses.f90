@@ -80,9 +80,9 @@
   end if
 
   ! Gradients
-  call GraPhi(grid, phi % n, 1, phi_x, .TRUE.)
-  call GraPhi(grid, phi % n, 2, phi_y, .TRUE.)
-  call GraPhi(grid, phi % n, 3, phi_z, .TRUE.)
+  call GraPhi(grid, phi % n, 1, phi_x, .true.)
+  call GraPhi(grid, phi % n, 2, phi_y, .true.)
+  call GraPhi(grid, phi % n, 3, phi_z, .true.)
 
   !---------------!
   !               !
@@ -113,7 +113,8 @@
     c2=grid % faces_c(2,s) 
 
     ! Velocities on "orthogonal" cell centers 
-    if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
+    if(c2 > 0 .or.  &
+       c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       phis =        grid % f(s)  * phi % n(c1)   &
            + (1.0 - grid % f(s)) * phi % n(c2)
 
@@ -163,7 +164,7 @@
     !-------------------------------------------------
     !   CUi(c1) = CUi(c1)-Flux(s)*phi(c2) corrected !
     !      ! Full upwind
-    !      if(TypeBC(c2) == OUTFLOW) then
+    !      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW) then
     !        if(BLEND_TUR == YES) then
     !          if(Flux(s)  < 0) then   ! from c2 to c1
     !            XUi(c1)=XUi(c1)-Flux(s)*phi(c2)
@@ -276,7 +277,7 @@
         phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
         phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*A0    
       else
-        if(TypeBC(c2) /= SYMMETRY) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) /= SYMMETRY) then
           phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
         end if 
       end if 
@@ -317,13 +318,13 @@
         ! Outflow is not included because it was causing problems     
         ! Convect is commented because for turbulent scalars convect 
         ! outflow is treated as classic outflow.
-        if((TypeBC(c2) == INFLOW).or.                     &
-           (TypeBC(c2) == WALL).or.                       &
-!!!           (TypeBC(c2) == CONVECT).or.                    &
-           (TypeBC(c2) == WALLFL) ) then                                
+        if((Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW).or.                     &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL).or.                       &
+!!!        (Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT).or.                    &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) ) then                                
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * phi % n(c2)
-        else if( TypeBC(c2) == BUFFER ) then  
+        else if( Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER ) then  
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           A % bou(c2) = - A12  ! cool parallel stuff
         endif
@@ -380,9 +381,9 @@
                         + ww % n(c) * phi_z(c)) 
       end do
     end if
-    call GraPhi(grid, u1uj_phij, 1, u1uj_phij_x, .TRUE.)
-    call GraPhi(grid, u2uj_phij, 2, u2uj_phij_y, .TRUE.)
-    call GraPhi(grid, u3uj_phij, 3, u3uj_phij_z, .TRUE.)
+    call GraPhi(grid, u1uj_phij, 1, u1uj_phij_x, .true.)
+    call GraPhi(grid, u2uj_phij, 2, u2uj_phij_y, .true.)
+    call GraPhi(grid, u3uj_phij, 3, u3uj_phij_z, .true.)
 
     do c = 1, grid % n_cells
       b(c) = b(c) + (  u1uj_phij_x(c)  &
@@ -498,9 +499,9 @@
 
   !---- Disconnect the SOLID cells from FLUID system   ! 2mat
   !  do s=1,grid % n_faces                             ! 2mat
-  !    c1=grid % faces_c(1,s)                                   ! 2mat
-  !    c2=grid % faces_c(2,s)                                   ! 2mat
-  !    if(c2>0 .or. c2<0.and.TypeBC(c2)==BUFFER) then  ! 2mat
+  !    c1=grid % faces_c(1,s)                          ! 2mat
+  !    c2=grid % faces_c(2,s)                          ! 2mat
+  !    if(c2>0 .or. c2<0.and.Grid_Mod_Bnd_Cond_Type(grid,c2)==BUFFER) then
   !      if(c2 > 0) then ! => not buffer               ! 2mat
   !        if(StateMat(material(c1)) == SOLID) then    ! 2mat
   !          A % val(A % pos(1,s)) = 0.0               ! 2mat 

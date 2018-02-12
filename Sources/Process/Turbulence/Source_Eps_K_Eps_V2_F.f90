@@ -55,8 +55,9 @@
   do s = 1, grid % n_faces
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)
-    if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
-     if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+    if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+     if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+        Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
         UtotSq = U % n(c1) * U % n(c1) &
                + V % n(c1) * V % n(c1) &
                + W % n(c1) * W % n(c1) 
@@ -74,7 +75,7 @@
           Utan = TINY
         end if
 
-        EpsWall = 2.0 * VISc * kin%n(c1) / grid % wall_dist(c1)**2.0
+        EpsWall = 2.0 * VISc * kin%n(c1) / grid % wall_dist(c1)**2
         EpsHom = Cmu75 * kin%n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
         Uf(c1) = Cmu25 * kin%n(c1)**0.5
 

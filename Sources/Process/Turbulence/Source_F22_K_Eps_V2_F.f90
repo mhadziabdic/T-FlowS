@@ -71,9 +71,9 @@
    do s = 1, grid % n_faces
      c1=grid % faces_c(1,s)
      c2=grid % faces_c(2,s)
-     if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
-       if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
-
+     if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+       if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+          Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
          f22 % n(c2) = -2.0 * VISc * v_2 % n(c1)     &
                      / grid % wall_dist(c1)**2
@@ -100,8 +100,9 @@
    do s = 1, grid % n_faces
      c1=grid % faces_c(1,s)
      c2=grid % faces_c(2,s)
-     if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
-       if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+     if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+       if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+          Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
          f22 % n(c2) = -20.0*VISc**2*v_2 % n(c1)/                     &
                        (grid % wall_dist(c1)**4*eps % n(c2))
 

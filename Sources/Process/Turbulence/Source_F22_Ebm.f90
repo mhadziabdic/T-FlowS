@@ -61,8 +61,9 @@
   do s = 1, grid % n_faces
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)
-    if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
-      if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+    if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
           f22 % n(c2) = 0.0
 

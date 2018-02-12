@@ -39,7 +39,7 @@
                      phi_z(-grid % n_bnd_cells:grid % n_cells)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: s, c1, c2
-  real    :: Dxc1, Dyc1, Dzc1, Dxc2, Dyc2, Dzc2 
+  real    :: dx_c1, dy_c1, dz_c1, dx_c2, dy_c2, dz_c2 
   real    :: f1, f2, phi_f
 !==============================================================================!
 
@@ -54,24 +54,24 @@
         StateMat(material(c1))==SOLID .and. &  
         StateMat(material(c2))==FLUID ) then   
 
-      Dxc1 = grid % xf(s) - grid % xc(c1)                     
-      Dyc1 = grid % yf(s) - grid % yc(c1)                     
-      Dzc1 = grid % zf(s) - grid % zc(c1)                     
-      Dxc2 = grid % xf(s) - grid % xc(c2)                     
-      Dyc2 = grid % yf(s) - grid % yc(c2)                     
-      Dzc2 = grid % zf(s) - grid % zc(c2)                     
+      dx_c1 = grid % xf(s) - grid % xc(c1)                     
+      dy_c1 = grid % yf(s) - grid % yc(c1)                     
+      dz_c1 = grid % zf(s) - grid % zc(c1)                     
+      dx_c2 = grid % xf(s) - grid % xc(c2)                     
+      dy_c2 = grid % yf(s) - grid % yc(c2)                     
+      dz_c2 = grid % zf(s) - grid % zc(c2)                     
 
       ! Missing parts of the gradient vector
       p1(c1) = CONc(material(c1)) *  &
-           ( (G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1) * grid % sx(s) + &
-             (G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) * grid % sy(s) + & 
-             (G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1) * grid % sz(s) )
+           ( (g(1,c1)*dx_c1+g(4,c1)*dy_c1+g(5,c1)*dz_c1) * grid % sx(s) + &
+             (g(4,c1)*dx_c1+g(2,c1)*dy_c1+g(6,c1)*dz_c1) * grid % sy(s) + & 
+             (g(5,c1)*dx_c1+g(6,c1)*dy_c1+g(3,c1)*dz_c1) * grid % sz(s) )
       if(c2 > 0) then               
         p2(c2) = CONc(material(c2)) *  &
-              ( (G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2) * grid % sx(s) + &
-                (G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2) * grid % sy(s) + &
-                (G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2) * grid % sz(s) )
-      else if(TypeBC(c2) == BUFFER) then ! prepare to exchange
+              ( (g(1,c2)*dx_c2+g(4,c2)*dy_c2+g(5,c2)*dz_c2) * grid % sx(s) + &
+                (g(4,c2)*dx_c2+g(2,c2)*dy_c2+g(6,c2)*dz_c2) * grid % sy(s) + &
+                (g(5,c2)*dx_c2+g(6,c2)*dy_c2+g(3,c2)*dz_c2) * grid % sz(s) )
+      else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then ! prepare to exch.
         p2(c1) = -p1(c1)
       end if
     end if    
@@ -106,22 +106,22 @@
       phi_f = (f2 - f1) / (p1(c1) - p2(c2) + TINY)
       phi_face(s) = phi_f
 
-      Dxc1 = grid % xf(s) - grid % xc(c1)                     
-      Dyc1 = grid % yf(s) - grid % yc(c1)                     
-      Dzc1 = grid % zf(s) - grid % zc(c1)                     
-      Dxc2 = grid % xf(s) - grid % xc(c2)                     
-      Dyc2 = grid % yf(s) - grid % yc(c2)                     
-      Dzc2 = grid % zf(s) - grid % zc(c2)                     
+      dx_c1 = grid % xf(s) - grid % xc(c1)                     
+      dy_c1 = grid % yf(s) - grid % yc(c1)                     
+      dz_c1 = grid % zf(s) - grid % zc(c1)                     
+      dx_c2 = grid % xf(s) - grid % xc(c2)                     
+      dy_c2 = grid % yf(s) - grid % yc(c2)                     
+      dz_c2 = grid % zf(s) - grid % zc(c2)                     
 
       ! Now update the gradients
-      phi_x(c1)=phi_x(c1)+phi_f*(G(1,c1)*Dxc1+G(4,c1)*Dyc1+G(5,c1)*Dzc1)
-      phi_y(c1)=phi_y(c1)+phi_f*(G(4,c1)*Dxc1+G(2,c1)*Dyc1+G(6,c1)*Dzc1) 
-      phi_z(c1)=phi_z(c1)+phi_f*(G(5,c1)*Dxc1+G(6,c1)*Dyc1+G(3,c1)*Dzc1)
+      phi_x(c1)=phi_x(c1)+phi_f*(g(1,c1)*dx_c1+g(4,c1)*dy_c1+g(5,c1)*dz_c1)
+      phi_y(c1)=phi_y(c1)+phi_f*(g(4,c1)*dx_c1+g(2,c1)*dy_c1+g(6,c1)*dz_c1) 
+      phi_z(c1)=phi_z(c1)+phi_f*(g(5,c1)*dx_c1+g(6,c1)*dy_c1+g(3,c1)*dz_c1)
 
       if(c2 > 0) then
-       phi_x(c2)=phi_x(c2)+phi_f*(G(1,c2)*Dxc2+G(4,c2)*Dyc2+G(5,c2)*Dzc2)
-       phi_y(c2)=phi_y(c2)+phi_f*(G(4,c2)*Dxc2+G(2,c2)*Dyc2+G(6,c2)*Dzc2)
-       phi_z(c2)=phi_z(c2)+phi_f*(G(5,c2)*Dxc2+G(6,c2)*Dyc2+G(3,c2)*Dzc2)
+       phi_x(c2)=phi_x(c2)+phi_f*(g(1,c2)*dx_c2+g(4,c2)*dy_c2+g(5,c2)*dz_c2)
+       phi_y(c2)=phi_y(c2)+phi_f*(g(4,c2)*dx_c2+g(2,c2)*dy_c2+g(6,c2)*dz_c2)
+       phi_z(c2)=phi_z(c2)+phi_f*(g(5,c2)*dx_c2+g(6,c2)*dy_c2+g(3,c2)*dz_c2)
       end if
 
     end if    

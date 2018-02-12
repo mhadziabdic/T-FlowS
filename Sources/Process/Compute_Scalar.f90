@@ -248,7 +248,8 @@
     end if
 
     ! Gradients on the cell face 
-    if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
+    if(c2 > 0 .or.  &
+       c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       if(material(c1) == material(c2)) then
         phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
         phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
@@ -290,8 +291,9 @@
        SIMULA == K_EPS_VV  .or.  &
        SIMULA == K_EPS     .or.  &
        SIMULA == HYB_ZETA) then
-      if(c2 < 0 .and. TypeBC(c2) /= BUFFER) then
-        if(TypeBC(c2) == WALL .or. TypeBC(c2) == WALLFL) then
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
           CONeff1 = CONwall(c1)
           CONeff2 = CONeff1
         end if
@@ -333,7 +335,7 @@
                        * Scoef(s)*(phi % n(c2) - phi_face(s))   
         end if
       else
-        if(TypeBC(c2).ne.SYMMETRY) then 
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2).ne.SYMMETRY) then 
           if(material(c1) == material(c2)) then
             phi % d_o(c1) = phi % d_o(c1)  &
                 + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1))   
@@ -394,15 +396,15 @@
 
         ! Outflow is included because of the flux 
         ! corrections which also affects velocities
-        if( (TypeBC(c2).eq.INFLOW).or.    &
-            (TypeBC(c2).eq.WALL).or.      &
-            (TypeBC(c2).eq.CONVECT) ) then    
+        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. INFLOW) .or.  &
+            (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL)   .or.  &
+            (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. CONVECT) ) then    
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1)  = b(c1)  + A12 * phi % n(c2)
 
         ! Buffer: System matrix and parts belonging 
         ! to other subdomains are filled here.
-        else if(TypeBC(c2).eq.BUFFER) then
+        else if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. BUFFER) then
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           if(material(c1) == material(c2)) then
             A % bou(c2) = -A12  ! cool parallel stuff
@@ -411,7 +413,7 @@
           end if
 
         ! In case of wallflux 
-        else if(TypeBC(c2).eq.WALLFL) then
+        else if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
           Stot  = sqrt(  grid % sx(s)*grid % sx(s)  &
                        + grid % sy(s)*grid % sy(s)  &
                        + grid % sz(s)*grid % sz(s))
@@ -534,7 +536,8 @@
               (vis_t(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(vis_t(c2)+1.0e-12) ))) )
 
         Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
-        if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
+        if(c2 > 0 .or.  &
+           c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
           phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
           phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
           phizS1 = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)

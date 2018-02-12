@@ -28,7 +28,7 @@
 
     ! On the boundary perform the extrapolation
     if(c2  < 0) then
-      if( (TypeBC(c2) == CONVECT) ) then
+      if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT) ) then
         U % n(c2) = U % n(c2) - ( bulk(material(c1)) % u * u % x(c1)         & 
                                 + bulk(material(c1)) % v * u % y(c1)         &
                                 + bulk(material(c1)) % w * u % z(c1) ) * dt
@@ -53,7 +53,7 @@
 
       ! On the boundary perform the extrapolation
       if(c2  < 0) then
-        if( (TypeBC(c2) == CONVECT) ) then
+        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT) ) then
           T % n(c2) = T % n(c2) - ( bulk(material(c1)) % u * t_x(c1)        & 
                                   + bulk(material(c1)) % v * t_y(c1)        &
                                   + bulk(material(c1)) % w * t_z(c1) ) * dt

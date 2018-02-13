@@ -17,6 +17,7 @@
   include 'Control_Mod/Read_Char_Item.f90'
   include 'Control_Mod/Read_Int_Item.f90'
   include 'Control_Mod/Read_Real_Item.f90'
+  include 'Control_Mod/Read_Real_Array.f90'
   include 'Control_Mod/Write_File.f90'
 
   !--------------------!
@@ -34,8 +35,12 @@
   !   Physics   !
   !-------------!
 
+    ! Heat transfer
+    include 'Control_Mod/Reference_Temperature.f90'
+
     ! Turbulence
     include 'Control_Mod/Turbulence_Model.f90'
+    include 'Control_Mod/Roughness_Coefficient.f90'
 
     ! Multiphase 
     include 'Control_Mod/Number_Of_Phases.f90'

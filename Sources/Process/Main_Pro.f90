@@ -167,6 +167,10 @@
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
     call Info_Mod_Time_Print()
 
+    call Cgns_Mod_Save_Grid_Seq(grid,"test_par")
+    call Cgns_Mod_Save_Grid_Par(grid,"test_seq")
+    stop
+
     if(SIMULA==DES_SPA) then
       call Compute_Shear_And_Vorticity(grid)
       call CalcVort (grid, U % n, V % n, W % n, vort)

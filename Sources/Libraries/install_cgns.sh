@@ -211,6 +211,7 @@ if [ $CGNS_TOOLS == true ]; then
 	cd $INSTALL_DIR
 	rm -rf TCL/unix TCL/generic TK/unix TK/generic
 
+	# CORRECT THIS
 	ln -s -r -f TCL/lib     TCL/tmp; mv TCL/tmp TCL/unix
 	ln -s -r -f TCL/include TCL/tmp; mv TCL/tmp TCL/generic
 
@@ -341,6 +342,7 @@ if [ $CGNS_TOOLS == true ]; then
 	cd $INSTALL_DIR
 	rm -rf TCL/unix TCL/generic TK/unix TK/generic
 
+	# CORRECT THIS
 	ln -s -r -f TCL/lib     TCL/tmp; mv TCL/tmp TCL/unix
 	ln -s -r -f TCL/include TCL/tmp; mv TCL/tmp TCL/generic
 

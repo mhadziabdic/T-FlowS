@@ -17,7 +17,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: name_in
-  integer           :: c, cs, ce, i, j, bc, base, block, sect, coord
+  integer           :: c, cs, ce, i, j, bc, base, block, sect, coord, mode
   integer           :: cgns_1, cgns_2, cgns_3, cgns_4, cgns_5, cell_type
 !==============================================================================!
 
@@ -37,7 +37,8 @@
   call Initialize_Counters
 
   ! Open a CGNS file (->file_id)
-  call Cgns_Mod_Open_File
+  mode = CG_MODE_READ
+  call Cgns_Mod_Open_File(mode)
 
   ! Read number of CGNS bases in file_id (->n_bases)
   call Cgns_Mod_Read_Number_Of_Bases_In_File

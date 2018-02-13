@@ -101,4 +101,13 @@
   include 'Cgns_Mod/Read_Section_Connections.f90'
   include 'Cgns_Mod/Merge_Nodes.f90'
 
+  include 'Cgns_Mod/Close_File.f90'
+  include 'Cgns_Mod/Write_Base_Info.f90'
+  include 'Cgns_Mod/Write_Block_Info.f90'
+  include 'Cgns_Mod/Write_Coordinate_Array_Seq.f90'
+  include 'Cgns_Mod/Write_Section_Connections_Seq.f90'
+  !include 'Cgns_Mod/Save_Grid_Seq.f90'
+  !include 'Cgns_Mod/Save_Grid_Par.f90'
+
+  include 'Cgns_Mod/Open_File_Par.f90'
   end module

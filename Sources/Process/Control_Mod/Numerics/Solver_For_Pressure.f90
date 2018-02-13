@@ -1,13 +1,20 @@
 !==============================================================================!
-  subroutine Control_Mod_Tolerance_Energy_Solver(val, verbose)
+  subroutine Control_Mod_Solver_For_Pressure(val, verbose)
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  real              :: val
+  character(len=80) :: val
   logical, optional :: verbose
 !==============================================================================!
 
-  call Control_Mod_Read_Real_Item('TOLERANCE_ENERGY_SOLVER', 1.0e-3,  &
+  call Control_Mod_Read_Char_Item('SOLVER_FOR_PRESSURE', 'bicg',  &
                                    val, verbose)
+  call To_Upper_Case(val)
+
+  if( val.ne.'BICG' .and. val.ne.'CGS'  .and. val.ne.'CG') then
+    print *, '# Unknown linear solver for pressure: ', trim(val)
+    print *, '# Exiting!'
+    stop 
+  end if
 
   end subroutine

@@ -1,20 +1,13 @@
 !==============================================================================!
-  subroutine Control_Mod_Linear_Solver_For_Turbulence(val, verbose)
+  subroutine Control_Mod_Simple_Underrelaxation_For_Pressure(val, verbose)
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  character(len=80) :: val
+  real              :: val
   logical, optional :: verbose
 !==============================================================================!
 
-  call Control_Mod_Read_Char_Item('LINEAR_SOLVER_FOR_TURBULENCE', 'cg',  &
+  call Control_Mod_Read_Real_Item('SIMPLE_UNDERRELAXATION_FOR_PRESSURE', 0.3,  &
                                    val, verbose)
-  call To_Upper_Case(val)
-
-  if( val.ne.'BICG' .and. val.ne.'CGS'  .and. val.ne.'CG') then
-    print *, '# Unknown linear solver for turbulence: ', trim(val)
-    print *, '# Exiting!'
-    stop 
-  end if
 
   end subroutine

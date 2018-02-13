@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Control_Mod_Tolerance_Turbulence_Solver(val, verbose)
+  subroutine Control_Mod_Simple_Underrelaxation_For_Turbulence(val, verbose)
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -7,7 +7,7 @@
   logical, optional :: verbose
 !==============================================================================!
 
-  call Control_Mod_Read_Real_Item('TOLERANCE_TURBULENCE_SOLVER', 1.0e-3,  &
+  call Control_Mod_Read_Real_Item('SIMPLE_UNDERRELAXATION_FOR_TURBULENCE', 0.7,  &
                                    val, verbose)
 
   end subroutine

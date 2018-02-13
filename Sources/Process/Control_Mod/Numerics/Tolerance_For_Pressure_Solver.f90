@@ -1,20 +1,13 @@
 !==============================================================================!
-  subroutine Control_Mod_Linear_Solver_For_Momentum(val, verbose)
+  subroutine Control_Mod_Tolerance_For_Pressure_Solver(val, verbose)
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  character(len=80) :: val
+  real              :: val
   logical, optional :: verbose
 !==============================================================================!
 
-  call Control_Mod_Read_Char_Item('LINEAR_SOLVER_FOR_MOMENTUM', 'cg',  &
+  call Control_Mod_Read_Real_Item('TOLERANCE_FOR_PRESSURE_SOLVER', 1.0e-6,  &
                                    val, verbose)
-  call To_Upper_Case(val)
-
-  if( val.ne.'BICG' .and. val.ne.'CGS'  .and. val.ne.'CG') then
-    print *, '# Unknown linear solver for momentum: ', trim(val)
-    print *, '# Exiting!'
-    stop 
-  end if
 
   end subroutine

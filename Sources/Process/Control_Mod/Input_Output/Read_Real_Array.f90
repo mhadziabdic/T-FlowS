@@ -36,9 +36,11 @@
   end do
 
 1 if( .not. found) then
-    if(verbose) then
-      print '(a,a,a)', '# Couldn''t find keyword: ', keyword, '.'
-      print '(a,1pe12.5)', '# Using the default values ', def
+    if(present(verbose)) then
+      if(verbose) then
+        print '(a,a,a)', '# Couldn''t find keyword: ', keyword, '.'
+        print '(a,1pe12.5)', '# Using the default values ', def
+      end if
     end if
   end if 
 

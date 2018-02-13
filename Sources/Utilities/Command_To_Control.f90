@@ -61,7 +61,7 @@ include 'Tokenizer.f90'
     call To_Lower_Case(answer)
 
     ! Print entry for the control file
-    if(it == 1) print *, 'PROBLEM_TYPE    ', answer
+    if(it == 1) print *, 'PROBLEM_TYPE    ', trim(answer)
 
     if(answer == 'hot') then
 
@@ -186,7 +186,7 @@ include 'Tokenizer.f90'
 
   ! Print entry for the control file
   call To_Lower_Case(model)
-  print *, 'TURBULENCE_MODEL    ', model
+  print *, 'TURBULENCE_MODEL    ', trim(model)
 
   call To_Upper_Case(model)
 
@@ -259,31 +259,31 @@ include 'Tokenizer.f90'
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   call To_Upper_Case(line % tokens(1))
   if(line % tokens(1) == 'FRACTION') then
-    print *, 'PRESSURE_VELOCITY_COUPLING    projection'
+    print *, 'PRESSURE_MOMENTUM_COUPLING    projection'
   else if(line % tokens(1) == 'SIMPLE') then
  
     SIMPLE = .true. 
 
-    print *, 'PRESSURE_VELOCITY_COUPLING    simple'
+    print *, 'PRESSURE_MOMENTUM_COUPLING    simple'
     if(line % n_tokens == 2) then
       print *, 'MAX_NUMBER_OF_SIMPLE_ITERATIONS    ', trim(line % tokens(2))
     end if
 
     print *, '# Under Relaxation Factor for velocity'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    print *, 'UNDERRELAXATION_FOR_MOMENTUM    ', trim(line % tokens(1))
+    print *, 'SIMPLE_UNDERRELAXATION_FOR_MOMENTUM    ', trim(line % tokens(1))
     print *, '# Under Relaxation Factor for pressure'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    print *, 'UNDERRELAXATION_FOR_PRESSURE    ', trim(line % tokens(1))
+    print *, 'SIMPLE_UNDERRELAXATION_FOR_PRESSURE    ', trim(line % tokens(1))
     if(HOT) then
       print *, '# Under Relaxation Factor for temperature'
       call Tokenizer_Mod_Read_Line(CMN_FILE)
-      print *, 'UNDERRELAXATION_FOR_ENERGY    ', trim(line % tokens(1))
+      print *, 'SIMPLE_UNDERRELAXATION_FOR_ENERGY    ', trim(line % tokens(1))
     end if
     if(model .ne. 'LES' .and. model .ne. 'DNS') then
       print *, '# Under Relaxation Factor for turbulent variables'
       call Tokenizer_Mod_Read_Line(CMN_FILE)
-      print *, 'UNDERRELAXATION_FOR_TURBULENCE    ', trim(line % tokens(1))
+      print *, 'SIMPLE_UNDERRELAXATION_FOR_TURBULENCE    ', trim(line % tokens(1))
     end if
 
   end if
@@ -295,9 +295,9 @@ include 'Tokenizer.f90'
   read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'LIN') then
-    print *, 'TIME_INTEGRATION_OF_INNERTIAL_TERMS    linear'
+    print *, 'TIME_INTEGRATION_FOR_INNERTIA    linear'
   else if(answer == 'PAR') then
-    print *, 'TIME_INTEGRATION_OF_INNERTIAL_TERMS    parabolic'
+    print *, 'TIME_INTEGRATION_FOR_INNERTIA    parabolic'
   endif
   
   print *, '# Integration of advection terms: '
@@ -308,11 +308,11 @@ include 'Tokenizer.f90'
   read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'AB') then
-    print *, 'TIME_INTEGRATION_OF_ADVECTION_TERMS    adams_bashforth'
+    print *, 'TIME_INTEGRATION_FOR_ADVECTION    adams_bashforth'
   else if(answer == 'CN') then
-    print *, 'TIME_INTEGRATION_OF_ADVECTION_TERMS    crank_nicolson'
+    print *, 'TIME_INTEGRATION_FOR_ADVECTION    crank_nicolson'
   else if(answer == 'FI') then
-    print *, 'TIME_INTEGRATION_OF_ADVECTION_TERMS    fully_implicit'
+    print *, 'TIME_INTEGRATION_FOR_ADVECTION    fully_implicit'
   endif
   
   print *, '# Integration of diffusion terms: '
@@ -323,11 +323,11 @@ include 'Tokenizer.f90'
   read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'AB') then
-    print *, 'TIME_INTEGRATION_OF_DIFFUSION_TERMS    adams_bashforth'
+    print *, 'TIME_INTEGRATION_FOR_DIFFUSION    adams_bashforth'
   else if(answer == 'CN') then
-    print *, 'TIME_INTEGRATION_OF_DIFFUSION_TERMS    crank_nicolson'
+    print *, 'TIME_INTEGRATION_FOR_DIFFUSION    crank_nicolson'
   else if(answer == 'FI') then
-    print *, 'TIME_INTEGRATION_OF_DIFFUSION_TERMS    fully_implicit'
+    print *, 'TIME_INTEGRATION_FOR_DIFFUSION    fully_implicit'
   endif
 
   print *, '# Integration of cross-diffusion terms: '
@@ -338,11 +338,11 @@ include 'Tokenizer.f90'
   read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'AB') then
-    print *, 'TIME_INTEGRATION_OF_CROSS_DIFFUSION_TERMS    adams_bashforth'
+    print *, 'TIME_INTEGRATION_FOR_CROSS_DIFFUSION    adams_bashforth'
   else if(answer == 'CN') then
-    print *, 'TIME_INTEGRATION_OF_CROSS_DIFFUSION_TERMS    crank_nicolson'
+    print *, 'TIME_INTEGRATION_FOR_CROSS_DIFFUSION    crank_nicolson'
   else if(answer == 'FI') then
-    print *, 'TIME_INTEGRATION_OF_CROSS_DIFFUSION_TERMS    fully_implicit'
+    print *, 'TIME_INTEGRATION_FOR_CROSS_DIFFUSION    fully_implicit'
   endif
   
   ! Upwind blending for momentum
@@ -362,10 +362,10 @@ include 'Tokenizer.f90'
   if(answer == 'YES') then
     if(line % n_tokens==1) then
       print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    blended'
-      print *, 'BLENDING_COEFFICIENT_FOR_MOMENTUM    0.5'
+      print *, 'BLENDING_COEFFICIENT_MOMENTUM    0.5'
     else
       print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    blended'
-      print *, 'BLENDING_COEFFICIENT_FOR_MOMENTUM    ', trim(line % tokens(2))
+      print *, 'BLENDING_COEFFICIENT_MOMENTUM    ', trim(line % tokens(2))
     end if
   else if(answer == 'NO') then
     print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    no'  ! Whatever that means :-(
@@ -406,10 +406,10 @@ include 'Tokenizer.f90'
     if(answer == 'YES') then
       if(line % n_tokens==1) then
         print *, 'ADVECTION_SCHEME_FOR_ENERGY    blended'
-        print *, 'BLENDING_COEFFICIENT_FOR_ENERGY    0.5'
+        print *, 'BLENDING_COEFFICIENT_ENERGY    0.5'
       else
         print *, 'ADVECTION_SCHEME_FOR_ENERGY    blended'
-        print *, 'BLENDING_COEFFICIENT_FOR_ENERGY    ', trim(line % tokens(2))
+        print *, 'BLENDING_COEFFICIENT_ENERGY    ', trim(line % tokens(2))
       end if
     else if(answer == 'NO') then
       print *, 'ADVECTION_SCHEME_FOR_ENERGY    no'  ! Whatever that means :-(
@@ -451,10 +451,10 @@ include 'Tokenizer.f90'
     if(answer == 'YES') then
       if(line % n_tokens==1) then
         print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    blended'
-        print *, 'BLENDING_COEFFICIENT_FOR_TURBULENCE    0.5'
+        print *, 'BLENDING_COEFFICIENT_TURBULENCE    0.5'
       else
         print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    blended'
-        print *, 'BLENDING_COEFFICIENT_FOR_TURBULENCE    ', trim(line % tokens(2))
+        print *, 'BLENDING_COEFFICIENT_TURBULENCE    ', trim(line % tokens(2))
       end if
     else if(answer == 'NO') then
       print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    no'  ! Whatever that means :-(
@@ -488,11 +488,11 @@ include 'Tokenizer.f90'
   read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'NO') then
-    print *, 'PRECONDITIONING_OF_THE_SYSTEM_MATRIX    gamma'
+    print *, 'PRECONDITIONER_FOR_SYSTEM_MATRIX    none'
   else if(answer == 'DI') then
-    print *, 'PRECONDITIONING_OF_THE_SYSTEM_MATRIX    diagonal'
+    print *, 'PRECONDITIONER_FOR_SYSTEM_MATRIX    diagonal'
   else if(answer == 'IC') then
-    print *, 'PRECONDITIONING_OF_THE_SYSTEM_MATRIX    incomplete_cholesky'
+    print *, 'PRECONDITIONER_FOR_SYSTEM_MATRIX    incomplete_cholesky'
   endif
 
   print *, '# Tolerance for velocity solver: '
@@ -534,11 +534,11 @@ include 'Tokenizer.f90'
 
   ! Mass fluxes
 !@do m=1,grid % n_materials
-    print *, '# Enter mass fluxes (x, y, z) '
+    print *, '# Enter mass flow rates (x, y, z) '
     call Tokenizer_Mod_Read_Line(CMN_FILE) 
-    print *, 'MASS_FLUXES    ', trim(line % tokens(1)), '  ',  &
-                                trim(line % tokens(2)), '  ',  &
-                                trim(line % tokens(3))
+    print *, 'MASS_FLOW_RATES    ', trim(line % tokens(1)), '  ',  &
+                                    trim(line % tokens(2)), '  ',  &
+                                    trim(line % tokens(3))
 !@end do
 
   !--------------------------------------!

@@ -11,11 +11,15 @@ include 'Tokenizer.f90'
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  character(len=80) :: problem_name
+  character(len=80) :: answer_name
   character(len=80) :: name_in
-  character(len=80) :: answer
-  integer           :: it
+  character(len=80) :: answer, model
+  integer           :: it, i, n_mon
+  logical           :: HOT, SIMPLE
 !==============================================================================!
+
+  HOT    = .false. 
+  SIMPLE = .false.
 
   !---------------------------!
   !   Open the command file   !
@@ -24,27 +28,24 @@ include 'Tokenizer.f90'
   cmn_line_count = 0
 
   !-----------------------!
-  !   Read problem name   !
+  !   Read answer name   !
   !-----------------------!
-  print *, '# Input problem name:'
+  print *, '# Input answer name:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)  
-  read(line % tokens(1), '(A80)')  problem_name
 
   ! Print entry for the control file
-  if(answer .ne. 'SKIP') then
-    print *, 'PROBLEM_NAME ', problem_name
-  end if
+  print *, 'PROBLEM_NAME    ', trim(line % tokens(1))
 
   !-------------------------------!
-  !   Reads type of the problem   !
+  !   Reads type of the answer   !
   !-------------------------------!
   ! call Read_Problem           ! bad practice, should be avoided
-  print *, '# Type of problem: '
+  print *, '# Type of answer: '
   print *, '# CHANNEL          -> Channel flow'
   print *, '# PIPE             -> Pipe flow'
   print *, '# JET              -> Impinging jet flow'
   print *, '# TEST             -> Test Laplacian equation'
-  print *, '# OTHER            -> All the other problems'
+  print *, '# OTHER            -> All the other answers'
   print *, '# ROUGH            -> Problems with roughness'
   print *, '# HOT              -> Problems with temperature'
   print *, '# XHOM, YHOM, ZHOM -> Homogeneous directions'
@@ -53,42 +54,51 @@ include 'Tokenizer.f90'
   print *, '# RB_CONV          -> Rayleigh-Barnard convection'
   print *, '# URANS            -> Unsteady RANS'
   print *, '# BACKSTEP         -> Backstep flow'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)  
+
   do it = 1, line % n_tokens
     read(line % tokens(it),'(A8)')  answer
     call To_Lower_Case(answer)
 
     ! Print entry for the control file
-    print *, 'PROBLEM_TYPE ', answer
+    if(it == 1) print *, 'PROBLEM_TYPE    ', answer
 
-    if(answer == 'rot') then
+    if(answer == 'hot') then
+
+      ! Print entry for the control file
+      print *, 'HEAT_TRANSFER    yes'
+      HOT = .true.
+
+    else if(answer == 'rot') then
       print *, '# Angular velocity vector: '
       call Tokenizer_Mod_Read_Line(CMN_FILE)
 
       ! Print entry for the control file
-      print *, 'ANGULAR_VELOCITY_VECTOR ',  trim(line % tokens(1)),  &
-                                            trim(line % tokens(2)),  &
-                                            trim(line % tokens(3))
+      print *, 'ANGULAR_VELOCITY_VECTOR    ',  trim(line % tokens(1)), '  ',  &
+                                               trim(line % tokens(2)), '  ',  &
+                                               trim(line % tokens(3))
 
     else if(answer == 'BUOY') then
       print *, '# Gravitational constant in x, y and z directions: '
       call Tokenizer_Mod_Read_Line(CMN_FILE)
 
       ! Print entry for the control file
-      print *, 'GRAVITATIONAL_VECTOR ',  trim(line % tokens(1)),  &
-                                         trim(line % tokens(2)),  &
-                                         trim(line % tokens(3))
-      print *, 'REFERENCE_TEMPERATURE ', trim(line % tokens(4))
+      print *, 'GRAVITATIONAL_VECTOR    ',  trim(line % tokens(1)), '  ', &
+                                            trim(line % tokens(2)), '  ',  &
+                                            trim(line % tokens(3))
+      print *, 'REFERENCE_TEMPERATURE    ', trim(line % tokens(4))
 
     else if(answer == 'rough') then
       print *, '# Reading roughness coefficient Zo'
       call Tokenizer_Mod_Read_Line(CMN_FILE)
 
       ! Print entry for the control file
-      print *, 'ROUGHNESS_COEFFICIENT ', trim(line % tokens(1))
+      print *, 'ROUGHNESS_COEFFICIENT    ', trim(line % tokens(1))
 
-    else
-      print *, '# Error in input ! Exiting'
-      stop
+!   else
+!     print *, '# answer = ', answer
+!     print *, '# Error in input ! Exiting'
+!     stop
     endif
   end do
 
@@ -98,19 +108,438 @@ include 'Tokenizer.f90'
   ! call Load_Restart(grid, restar)
   print *, '# Input restart file name [skip cancels]:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(line % tokens(1), '(A80)')  name_in
-  answer=name_in
+  read(line % tokens(1), '(A80)') answer
   call To_Upper_Case(answer) 
 
   ! Print entry for the control file
   if(answer .ne. 'SKIP') then
-    print *, 'RESTART_FILE_NAME ', name_in
+    print *, 'RESTART_FILE_NAME    ', trim(line % tokens(1))
   end if
 
   !-----------------------!
   !   Reads T-Flows.cmn   !
   !-----------------------!
   ! call ReaCom(grid, restar)
+  ! The number of time steps
+  print *, '#==============================================='
+  print *, '# Enter the number of time steps: '
+  print *, '# (type 0 if you just want to analyse results)'
+  print *, '#-----------------------------------------------'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+
+  ! Print entry for the control file
+  print *, 'NUMBER_OF_TIME_STEPS    ', trim(line % tokens(1))
+
+  ! Starting time step for statistics 
+  print *, '# Starting time step for statistics '
+  call Tokenizer_Mod_Read_Line(CMN_FILE)  
+
+  ! Print entry for the control file
+  print *, 'STARTING_TIME_STEP_FOR_STATISTICS    ', trim(line % tokens(1))
+
+  ! We agreed that budgets won't be supported
+  ! if(BUDG == YES) then
+  !   read(line % tokens(2),*) Nbudg
+  ! end if
+
+  print *, '# Number of monitoring points:'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(line % tokens(1), *) n_mon
+
+  ! Print entry for the control file
+  print *, 'NUMBER_OF_MONITORING_POINTS    ', n_mon
+
+  print *, '# Enter the coordinates of monitoring point(s)'
+  do i = 1, n_mon
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+
+    ! Print entry for the control file
+    print '(a,i3.3,7a)', ' MONITORING_POINT_',          &
+                         i,                      '  ',  &
+                         trim(line % tokens(1)), '  ',  &
+                         trim(line % tokens(2)), '  ',  &
+                         trim(line % tokens(3))
+
+  end do
+
+  ! Plane for calcution of overall mass fluxes
+  ! do m = 1, grid % n_materials
+  print *, '# Enter the coordinates of monitoring plane: '
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+
+  ! Print entry for the control file
+  print *, 'POINT_FOR_MONITORING_PLANES    ', trim(line % tokens(1)), '  ',  &
+                                              trim(line % tokens(2)), '  ',  &
+                                              trim(line % tokens(3))
+  ! end do
+
+  ! Turbulence model
+  print *, '# Type of simulation: '
+  print *, '# DNS      -> Direct Numerical Simulation'
+  print *, '# LES      -> Large Eddy Simulation'
+  print *, '# K_EPS    -> High Reynolds k-eps model.' 
+  print *, '# K_EPS_VV -> Durbin`s model.' 
+  print *, '# SPA_ALL  -> Spalart-Allmaras model.' 
+  print *, '# ZETA  -> k-eps-zeta-f model.' 
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(line % tokens(1),'(A)')  model
+
+  ! Print entry for the control file
+  call To_Lower_Case(model)
+  print *, 'TURBULENCE_MODEL    ', model
+
+  call To_Upper_Case(model)
+
+  ! Prepare for checking variants of the model
+  call To_Upper_Case(line % tokens(2))
+
+  ! Variants of RSM
+  if(model == 'EBM' .or. model == 'HJ') then
+    if(line % tokens(2) == 'HYB') then
+      ! Print entry for the control file
+      print *, 'TURBULENCE_MODEL_VARIANT    hybrid'
+    else
+      ! Print entry for the control file
+      print *, 'TURBULENCE_MODEL_VARIANT    pure'
+    end if
+  end if
+
+  ! Variants of K_EPS
+  if(model == 'K_EPS') then
+    if(line % tokens(2) == 'LRE') then
+      ! Print entry for the control file
+      print *, 'TURBULENCE_MODEL_VARIANT    low_re'
+    else if(line % tokens(2) == 'HRE') then
+      ! Print entry for the control file
+      print *, 'TURBULENCE_MODEL_VARIANT    high_re'
+    end if
+  end if
+
+  if(model == 'LES' .or. model == 'HYB_ZETA') then
+    if(line % tokens(2) == 'SMAG') then
+      print *, 'TURBULENCE_MODEL_VARIANT    smagorinsky'
+      print *, 'TURBULENCE_MODEL_CONSTANT    ', trim(line % tokens(3))
+    else if(line % tokens(2) == 'DYN') then
+      print *, 'TURBULENCE_MODEL_VARIANT    dynamic'
+    else if(line % tokens(2) == 'WALE') then
+      print *, 'TURBULENCE_MODEL_VARIANT    wale'
+    end if
+  end if
+
+!@do m = 1, grid % n_materials
+  if(model == 'LES'       .or.  &
+     model == 'DNS'       .or.  &
+     model == 'DES_SPA'   .or.  &
+     model == 'HYB_PITM'  .or.  &
+     model == 'HYB_ZETA') then
+     print *, '# Do you want to shake the velocity field ?'
+     print *, '# YES -> shake'
+     print *, '# NO  -> don''t shake'
+     call Tokenizer_Mod_Read_Line(CMN_FILE)
+     call To_Upper_Case(line % tokens(1))
+
+     if(line % tokens(1) == 'YES') then
+       print *, 'PERTURB_MOMENTUM    yes'
+       print *, '# For how many time steps you want to shake ?'
+       call Tokenizer_Mod_Read_Line(CMN_FILE)
+       print *, 'MOMENTUM_PERTURBATION_UNTIL    ', trim(line % tokens(1))
+       print *, '# Interval for shaking:'
+       call Tokenizer_Mod_Read_Line(CMN_FILE)
+       print *, 'MOMENTUM_PERTURBATION_INTERVAL    ', trim(line % tokens(1))
+     else
+       print *, 'PERTURB_MOMENTUM    no'
+     end if
+  end if
+!@end do
+
+  ! Time stepping scheme
+  print *, '# Algorythm for time-integration: '
+  print *, '# SIMPLE [Nini] -> S. I. M. P. L. E.'
+  print *, '# FRACTION      -> Fractional step method'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  call To_Upper_Case(line % tokens(1))
+  if(line % tokens(1) == 'FRACTION') then
+    print *, 'PRESSURE_VELOCITY_COUPLING    projection'
+  else if(line % tokens(1) == 'SIMPLE') then
+ 
+    SIMPLE = .true. 
+
+    print *, 'PRESSURE_VELOCITY_COUPLING    simple'
+    if(line % n_tokens == 2) then
+      print *, 'MAX_NUMBER_OF_SIMPLE_ITERATIONS    ', trim(line % tokens(2))
+    end if
+
+    print *, '# Under Relaxation Factor for velocity'
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    print *, 'UNDERRELAXATION_FOR_MOMENTUM    ', trim(line % tokens(1))
+    print *, '# Under Relaxation Factor for pressure'
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    print *, 'UNDERRELAXATION_FOR_PRESSURE    ', trim(line % tokens(1))
+    if(HOT) then
+      print *, '# Under Relaxation Factor for temperature'
+      call Tokenizer_Mod_Read_Line(CMN_FILE)
+      print *, 'UNDERRELAXATION_FOR_ENERGY    ', trim(line % tokens(1))
+    end if
+    if(model .ne. 'LES' .and. model .ne. 'DNS') then
+      print *, '# Under Relaxation Factor for turbulent variables'
+      call Tokenizer_Mod_Read_Line(CMN_FILE)
+      print *, 'UNDERRELAXATION_FOR_TURBULENCE    ', trim(line % tokens(1))
+    end if
+
+  end if
+
+  print *, '# Integration of inertial terms: '
+  print *, '# LIN -> Linear'
+  print *, '# PAR -> Parabolic'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(line % tokens(1),'(A)')  answer
+  call To_Upper_Case(answer)
+  if(answer == 'LIN') then
+    print *, 'TIME_INTEGRATION_OF_INNERTIAL_TERMS    linear'
+  else if(answer == 'PAR') then
+    print *, 'TIME_INTEGRATION_OF_INNERTIAL_TERMS    parabolic'
+  endif
+  
+  print *, '# Integration of advection terms: '
+  print *, '# AB -> Adams-Bashforth'
+  print *, '# CN -> Crank-Nicholson'
+  print *, '# FI -> Fully Implicit'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(line % tokens(1),'(A)')  answer
+  call To_Upper_Case(answer)
+  if(answer == 'AB') then
+    print *, 'TIME_INTEGRATION_OF_ADVECTION_TERMS    adams_bashforth'
+  else if(answer == 'CN') then
+    print *, 'TIME_INTEGRATION_OF_ADVECTION_TERMS    crank_nicolson'
+  else if(answer == 'FI') then
+    print *, 'TIME_INTEGRATION_OF_ADVECTION_TERMS    fully_implicit'
+  endif
+  
+  print *, '# Integration of diffusion terms: '
+  print *, '# AB -> Adams-Bashforth'
+  print *, '# CN -> Crank-Nicholson'
+  print *, '# FI -> Fully Implicit'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(line % tokens(1),'(A)')  answer
+  call To_Upper_Case(answer)
+  if(answer == 'AB') then
+    print *, 'TIME_INTEGRATION_OF_DIFFUSION_TERMS    adams_bashforth'
+  else if(answer == 'CN') then
+    print *, 'TIME_INTEGRATION_OF_DIFFUSION_TERMS    crank_nicolson'
+  else if(answer == 'FI') then
+    print *, 'TIME_INTEGRATION_OF_DIFFUSION_TERMS    fully_implicit'
+  endif
+
+  print *, '# Integration of cross-diffusion terms: '
+  print *, '# AB -> Adams-Bashforth'
+  print *, '# CN -> Crank-Nicholson'
+  print *, '# FI -> Fully Implicit'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(line % tokens(1),'(A)')  answer
+  call To_Upper_Case(answer)
+  if(answer == 'AB') then
+    print *, 'TIME_INTEGRATION_OF_CROSS_DIFFUSION_TERMS    adams_bashforth'
+  else if(answer == 'CN') then
+    print *, 'TIME_INTEGRATION_OF_CROSS_DIFFUSION_TERMS    crank_nicolson'
+  else if(answer == 'FI') then
+    print *, 'TIME_INTEGRATION_OF_CROSS_DIFFUSION_TERMS    fully_implicit'
+  endif
+  
+  ! Upwind blending for momentum
+  print *, '# Convetive schemes for momentum equation:'
+  print *, '# Do you want to use upwind blending: '
+  print *, '# YES       -> use blening'
+  print *, '# NO        -> don''t use blending'
+  print *, '# CDS       -> central differencing'
+  print *, '# LUDS      -> linear upwind'
+  print *, '# QUICK     -> self descriptive'
+  print *, '# MINMOD    -> self descriptive'
+  print *, '# SMART     -> self descriptive'
+  print *, '# AVL_SMART -> self descriptive'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(line % tokens(1),'(A)')  answer
+  call To_Upper_Case(answer)
+  if(answer == 'YES') then
+    if(line % n_tokens==1) then
+      print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    blended'
+      print *, 'BLENDING_COEFFICIENT_FOR_MOMENTUM    0.5'
+    else
+      print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    blended'
+      print *, 'BLENDING_COEFFICIENT_FOR_MOMENTUM    ', trim(line % tokens(2))
+    end if
+  else if(answer == 'NO') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    no'  ! Whatever that means :-(
+  else if(answer == 'UDS') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    upwind'
+  else if(answer == 'CDS') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    central'
+    else if(answer == 'LUDS') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    luds'
+  else if(answer == 'QUICK') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    quick'
+  else if(answer == 'MINMOD') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    minmod'
+  else if(answer == 'SMART') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    smart'
+  else if(answer == 'AVL_SMART') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    avl_smart'
+  else if(answer == 'SUPERBEE') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    superbee'
+  else if(answer == 'GAMMA') then
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    gamma'
+  end if
+
+  if(HOT) then
+    print *, '# Convetive schemes for energy equation:'
+    print *, '# Do you want to use upwind blending: '
+    print *, '# YES       -> use blening'
+    print *, '# NO        -> don''t use blending'
+    print *, '# CDS       -> central differencing'
+    print *, '# LUDS      -> linear upwind'
+    print *, '# QUICK     -> self descriptive'
+    print *, '# MINMOD    -> self descriptive'
+    print *, '# SMART     -> self descriptive'
+    print *, '# AVL_SMART -> self descriptive'
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(line % tokens(1),'(A)')  answer
+    call To_Upper_Case(answer)
+    if(answer == 'YES') then
+      if(line % n_tokens==1) then
+        print *, 'ADVECTION_SCHEME_FOR_ENERGY    blended'
+        print *, 'BLENDING_COEFFICIENT_FOR_ENERGY    0.5'
+      else
+        print *, 'ADVECTION_SCHEME_FOR_ENERGY    blended'
+        print *, 'BLENDING_COEFFICIENT_FOR_ENERGY    ', trim(line % tokens(2))
+      end if
+    else if(answer == 'NO') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    no'  ! Whatever that means :-(
+    else if(answer == 'UDS') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    upwind'
+    else if(answer == 'CDS') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    central'
+    else if(answer == 'LUDS') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    luds'
+    else if(answer == 'QUICK') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    quick'
+    else if(answer == 'MINMOD') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    minmod'
+    else if(answer == 'SMART') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    smart'
+    else if(answer == 'AVL_SMART') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    avl_smart'
+    else if(answer == 'SUPERBEE') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    superbee'
+    else if(answer == 'GAMMA') then
+      print *, 'ADVECTION_SCHEME_FOR_ENERGY    gamma'
+    end if
+  end if 
+
+  if(model .ne. 'LES' .and. model .ne. 'DNS') then
+    print *, '# Convetive schemes for turbulence equation:'
+    print *, '# Do you want to use upwind blending: '
+    print *, '# YES       -> use blening'
+    print *, '# NO        -> don''t use blending'
+    print *, '# CDS       -> central differencing'
+    print *, '# LUDS      -> linear upwind'
+    print *, '# QUICK     -> self descriptive'
+    print *, '# MINMOD    -> self descriptive'
+    print *, '# SMART     -> self descriptive'
+    print *, '# AVL_SMART -> self descriptive'
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    read(line % tokens(1),'(A)')  answer
+    call To_Upper_Case(answer)
+    if(answer == 'YES') then
+      if(line % n_tokens==1) then
+        print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    blended'
+        print *, 'BLENDING_COEFFICIENT_FOR_TURBULENCE    0.5'
+      else
+        print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    blended'
+        print *, 'BLENDING_COEFFICIENT_FOR_TURBULENCE    ', trim(line % tokens(2))
+      end if
+    else if(answer == 'NO') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    no'  ! Whatever that means :-(
+    else if(answer == 'UDS') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    upwind'
+    else if(answer == 'CDS') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    central'
+    else if(answer == 'LUDS') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    luds'
+    else if(answer == 'QUICK') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    quick'
+    else if(answer == 'MINMOD') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    minmod'
+    else if(answer == 'SMART') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    smart'
+    else if(answer == 'AVL_SMART') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    avl_smart'
+    else if(answer == 'SUPERBEE') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    superbee'
+    else if(answer == 'GAMMA') then
+      print *, 'ADVECTION_SCHEME_FOR_TURBULENCE    gamma'
+    end if
+  end if
+
+  ! Solver parameters
+  print *, '# Preconditioning of the system matrix: '
+  print *, '# NO -> No preconditioning'
+  print *, '# DI -> Diagonal preconditioning'
+  print *, '# IC -> Incomplete Cholesky'
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  read(line % tokens(1),'(A)')  answer
+  call To_Upper_Case(answer)
+  if(answer == 'NO') then
+    print *, 'PRECONDITIONING_OF_THE_SYSTEM_MATRIX    gamma'
+  else if(answer == 'DI') then
+    print *, 'PRECONDITIONING_OF_THE_SYSTEM_MATRIX    diagonal'
+  else if(answer == 'IC') then
+    print *, 'PRECONDITIONING_OF_THE_SYSTEM_MATRIX    incomplete_cholesky'
+  endif
+
+  print *, '# Tolerance for velocity solver: '
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  print *, 'TOLERANCE_FOR_MOMENTUM_SOLVER    ', trim(line % tokens(1))
+  print *, '# Tolerance for pressure solver: '
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  print *, 'TOLERANCE_FOR_PRESSURE_SOLVER    ', trim(line % tokens(1))
+  if(model .ne. 'LES' .and. model .ne. 'DNS') then
+    print *, '# Tolerance for turbulence solver: '
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    print *, 'TOLERANCE_FOR_TURBULENCE_SOLVER    ', trim(line % tokens(1))
+  end if
+  if(HOT) then
+    print *, '# Tolerance for energy solver: '
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    print *, 'TOLERANCE_FOR_ENERGY_SOLVER    ', trim(line % tokens(1))
+  end if
+ 
+  if(SIMPLE) then
+    print *, '# Tolerance for SIMPLE: '
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
+    print *, 'TOLERANCE_FOR_SIMPLE_ALGORITHM    ', trim(line % tokens(1))
+  endif     
+
+  ! Time step
+  print *, '# Time step: '
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
+  print *, 'TIME_STEP    ', trim(line % tokens(1))
+
+  ! Wall velocity 
+!@do m=1,grid % n_materials
+    print *, '# Enter Pdrop (x, y, z) '
+    call Tokenizer_Mod_Read_Line(CMN_FILE) 
+    print *, 'PRESSURE_DROPS    ', trim(line % tokens(1)), '  ',  &
+                                   trim(line % tokens(2)), '  ',  &
+                                   trim(line % tokens(3))
+!@end do
+
+  ! Mass fluxes
+!@do m=1,grid % n_materials
+    print *, '# Enter mass fluxes (x, y, z) '
+    call Tokenizer_Mod_Read_Line(CMN_FILE) 
+    print *, 'MASS_FLUXES    ', trim(line % tokens(1)), '  ',  &
+                                trim(line % tokens(2)), '  ',  &
+                                trim(line % tokens(3))
+!@end do
 
   !--------------------------------------!
   !   Interpolate between diff. meshes   !

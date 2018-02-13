@@ -62,11 +62,10 @@ module pro_mod
   real    :: VISc, DENc(100), CONc(100), CAPc(100)
 
   ! angular velocity 
-  real    :: omegaX, omegaY, omegaZ, omega
+  real :: omega_x, omega_y, omega_z, omega
 
   ! turbulent prandtl number 
   real    :: Prt, Numax
-
 
   ! Time step and total time
   real :: dt, Time

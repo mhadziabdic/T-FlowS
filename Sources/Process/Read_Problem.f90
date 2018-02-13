@@ -90,9 +90,9 @@
     if(this_proc  < 2)  &
     print *, '# Angular velocity vector: '
     call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(line % tokens(1), *)  omegaX
-    read(line % tokens(2), *)  omegaY
-    read(line % tokens(3), *)  omegaZ
+    read(line % tokens(1), *)  omega_x
+    read(line % tokens(2), *)  omega_y
+    read(line % tokens(3), *)  omega_z
   end if
 
   ! Gravity

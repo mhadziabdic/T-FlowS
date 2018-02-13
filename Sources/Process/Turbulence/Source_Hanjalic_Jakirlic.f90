@@ -361,12 +361,12 @@
     V11 = 0.0
     V22 = 0.0
     V33 = 0.0
-    V12 = 0.5*(u % y(c)-v % x(c)) - omegaZ
-    V21 = -V12 + omegaZ
-    V13 = 0.5*(u % z(c)-w % x(c)) + omegaY
-    V31 = -V13 - omegaY
-    V23 = 0.5*(v % z(c)-w % y(c)) - omegaX
-    V32 = -V23 + omegaX
+    V12 = 0.5*(u % y(c)-v % x(c)) - omega_z
+    V21 = -V12 + omega_z
+    V13 = 0.5*(u % z(c)-w % x(c)) + omega_y
+    V31 = -V13 - omega_y
+    V23 = 0.5*(v % z(c)-w % y(c)) - omega_x
+    V32 = -V23 + omega_x
 
     AA2 = (a11**2)+(a22**2)+(a33**2)+2*((a12**2)+(a13**2)+(a23**2))
 
@@ -435,20 +435,20 @@
     P11 = - 2.0*(  uu % n(c) * u % x(c)     &
                  + uv % n(c) * u % y(c)     &
                  + uw % n(c) * u % z(c))    &
-          - 2.0 * omegaY * 2.0 * uw % n(c)  &
-          + 2.0 * omegaZ * 2.0 * uv % n(c) 
+          - 2.0 * omega_y * 2.0 * uw % n(c)  &
+          + 2.0 * omega_z * 2.0 * uv % n(c) 
 
     P22 = - 2.0*(  uv % n(c) * v % x(c)     &
                  + vv % n(c) * v % y(c)     &
                  + vw % n(c) * v % z(c))    &
-          + 2.0 * omegaX * 2.0 * vw % n(c)  &
-          - 2.0 * omegaZ * 2.0 * uw % n(c) 
+          + 2.0 * omega_x * 2.0 * vw % n(c)  &
+          - 2.0 * omega_z * 2.0 * uw % n(c) 
 
     P33 = - 2.0*(  uw % n(c) * w % x(c)     &
                  + vw % n(c) * w % y(c)     &
                  + ww % n(c) * w % z(c))    &
-          - 2.0 * omegaX * 2.0 * vw % n(c)  &
-          + 2.0 * omegaY * 2.0 * uw % n(c) 
+          - 2.0 * omega_x * 2.0 * vw % n(c)  &
+          + 2.0 * omega_y * 2.0 * uw % n(c) 
 
     P12 = -(  uu % n(c) * v % x(c)      &
             + uv % n(c) * v % y(c)      &
@@ -456,9 +456,9 @@
             + uv % n(c) * u % x(c)      &
             + vv % n(c) * u % y(c)      &
             + vw % n(c) * u % z(c))     &
-            + 2.0 * omegaX * uw % n(c)  &
-            - 2.0 * omegaY * vw % n(c)  &
-            + 2.0 * omegaZ * (vv % n(c) - uu % n(c)) 
+            + 2.0 * omega_x * uw % n(c)  &
+            - 2.0 * omega_y * vw % n(c)  &
+            + 2.0 * omega_z * (vv % n(c) - uu % n(c)) 
 
     P13 = -(  uw % n(c)*u % x(c)                      &
             + vw % n(c)*u % y(c)                      &
@@ -466,9 +466,9 @@
             + uu % n(c)*w % x(c)                      &
             + uv % n(c)*w % y(c)                      &
             + uw % n(c)*w % z(c))                     &
-            - 2.0 * omegaX * uv % n(c)                &
-            - 2.0 * omegaY * (ww % n(c) - uu % n(c))  &
-            + 2.0 * omegaZ * vw % n(c) 
+            - 2.0 * omega_x * uv % n(c)                &
+            - 2.0 * omega_y * (ww % n(c) - uu % n(c))  &
+            + 2.0 * omega_z * vw % n(c) 
 
     P23 = -(  uv % n(c) * w % x(c)                    &
             + vv % n(c) * w % y(c)                    &
@@ -476,9 +476,9 @@
             + uw % n(c) * v % x(c)                    &
             + vw % n(c) * v % y(c)                    &
             + ww % n(c) * v % z(c))                   &
-            - 2.0 * omegaX * (vw % n(c) - ww % n(c))  &
-            + 2.0 * omegaY * uv % n(c)                &
-            - 2.0 * omegaZ * uw % n(c) 
+            - 2.0 * omega_x * (vw % n(c) - ww % n(c))  &
+            + 2.0 * omega_y * uv % n(c)                &
+            - 2.0 * omega_z * uw % n(c) 
 
     VAR1_11 = -CC1*eps%n(c)*a11 
     VAR1_22 = -CC1*eps%n(c)*a22 

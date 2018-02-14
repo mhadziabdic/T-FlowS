@@ -167,8 +167,8 @@
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
     call Info_Mod_Time_Print()
 
-    call Cgns_Mod_Save_Grid_Seq(grid,"test_par")
-    call Cgns_Mod_Save_Grid_Par(grid,"test_seq")
+    call Cgns_Mod_Save_Grid_Seq(grid,"test_seq")
+    !call Cgns_Mod_Save_Grid_Par(grid,"test_par")
     stop
 
     if(SIMULA==DES_SPA) then

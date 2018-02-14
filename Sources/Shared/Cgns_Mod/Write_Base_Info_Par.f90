@@ -1,8 +1,9 @@
 !==============================================================================!
-  subroutine Cgns_Mod_Write_Base_Info(base)
+  subroutine Cgns_Mod_Write_Base_Info_Par(base)
 !------------------------------------------------------------------------------!
 !   Reads main info from base node base_id
 !------------------------------------------------------------------------------!
+  use par_mod, only: this_proc
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer   :: base
@@ -30,17 +31,16 @@
 
   if (error .ne. 0) then
     print *, "# Failed to get base info"
-    call Cg_Error_Exit_F()
+    call Cgp_Error_Exit_F()
   endif
 
   ! Print some info
-  if(verbose) then
+  if(verbose .and. this_proc.eq.1) then
     print *, '#   ============================'
     print *, '#   '
     print *, '#   Base name: ',      base_name
     print *, '#   '
     print *, '#   ============================'
-    print *, '#   Base name: ',      base_name
     print *, '#   Cell dimension: ', cell_dim
     print *, '#   Phys dimension: ', phys_dim
   end if

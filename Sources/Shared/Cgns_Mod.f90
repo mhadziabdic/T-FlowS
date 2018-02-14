@@ -10,7 +10,7 @@
   ! file
   integer           :: file_id
   character(len=80) :: file_name
-  logical           :: verbose = .false.
+  logical           :: verbose = .true.
 
   !---------------------!
   !   Element section   !
@@ -101,13 +101,22 @@
   include 'Cgns_Mod/Read_Section_Connections.f90'
   include 'Cgns_Mod/Merge_Nodes.f90'
 
+  ! new functions
   include 'Cgns_Mod/Close_File.f90'
-  include 'Cgns_Mod/Write_Base_Info.f90'
-  include 'Cgns_Mod/Write_Block_Info.f90'
+  include 'Cgns_Mod/Write_Base_Info_Seq.f90'
+  include 'Cgns_Mod/Write_Block_Info_Seq.f90'
   include 'Cgns_Mod/Write_Coordinate_Array_Seq.f90'
   include 'Cgns_Mod/Write_Section_Connections_Seq.f90'
-  !include 'Cgns_Mod/Save_Grid_Seq.f90'
-  !include 'Cgns_Mod/Save_Grid_Par.f90'
 
   include 'Cgns_Mod/Open_File_Par.f90'
+  include 'Cgns_Mod/Write_Base_Info_Par.f90'
+  include 'Cgns_Mod/Write_Block_Info_Par.f90'
+  include 'Cgns_Mod/Get_Arrays_Dimensions_Par.f90'
+  include 'Cgns_Mod/Write_Coordinate_Array_Par.f90'
+  include 'Cgns_Mod/Write_Section_Connections_Par.f90'
+  include 'Cgns_Mod/Close_File_Par.f90'
+
+  ! move this two from Processor to Shared?
+  !include 'Cgns_Mod/Save_Grid_Seq.f90'
+  !include 'Cgns_Mod/Save_Grid_Par.f90'
   end module

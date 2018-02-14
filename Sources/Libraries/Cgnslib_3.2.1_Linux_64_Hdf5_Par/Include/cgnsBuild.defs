@@ -19,15 +19,15 @@ CGNS_LEGACY   = 0
 CGNS_SCOPING  = 0
 CGNS_64BIT    = 1
 CGNS_FORTRAN  = 1
-CGNS_PARALLEL = 0
+CGNS_PARALLEL = 1
 
 #-----------------------------------------------------------------------
 # CGNS_LIBDIR     - installation directory for CGNS library
 # CGNS_INCLUDEDIR - installation directory for CGNS headers
 #-----------------------------------------------------------------------
 
-CGNS_LIBDIR     = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/cgnslib_3.2.1_linux_64_hdf5_par/lib
-CGNS_INCLUDEDIR = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/cgnslib_3.2.1_linux_64_hdf5_par/include
+CGNS_LIBDIR     = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir//cgnslib_3.2.1_linux_64_hdf5_par/lib
+CGNS_INCLUDEDIR = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir//cgnslib_3.2.1_linux_64_hdf5_par/include
 
 #-----------------------------------------------------------------------
 # CGNS_CC      - C compiler used to build library
@@ -35,7 +35,7 @@ CGNS_INCLUDEDIR = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir
 # CGNS_LDFLAGS - any additional linking flags
 #-----------------------------------------------------------------------
 
-CGNS_CC      = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/MPICH/bin/mpicc
+CGNS_CC      = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir//MPICH/bin/mpicc
 CGNS_CFLAGS  = -O2   
 CGNS_LDFLAGS = 
 
@@ -52,8 +52,8 @@ CGNS_LIB = $(CGNS_LIBDIR)/libcgns.a
 # CGNS_ZLIBLIB - zlib library (if needed)
 #-----------------------------------------------------------------------
 
-CGNS_HDF5INC = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/HDF5_par/include
-CGNS_HDF5LIB = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/HDF5_par/lib/libhdf5.a
+CGNS_HDF5INC = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir//HDF5_par/include
+CGNS_HDF5LIB = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir//HDF5_par/lib/libhdf5.a
 CGNS_SZIPLIB = 
 CGNS_ZLIBLIB = -lz
 
@@ -62,8 +62,8 @@ CGNS_ZLIBLIB = -lz
 # CGNS_MPILIBS - MPI libraries
 #-----------------------------------------------------------------------
 
-CGNS_MPIINC  = 
-CGNS_MPILIBS = 
+CGNS_MPIINC  = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/MPICH/include
+CGNS_MPILIBS = -L/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/MPICH/lib -l 
 
 #-----------------------------------------------------------------------
 # CGNS_LINKLIBS contains the list of libraries

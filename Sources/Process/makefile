@@ -95,13 +95,14 @@ endif
 ifeq ($(CGNS_HDF5), yes)
   DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Include
   CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Lib/libcgns.a \
-                ../Libraries/Hdf5_Par/Lib/libhdf5_fortran.a                        \
+                ../Libraries/Hdf5_Par/Lib/libhdf5.a                        \
                 -Wl,--no-as-needed -ldl -lz
 
   #DIR_CGNS_H  = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/cgnslib_3.2.1_linux_64_hdf5_par/include
-  #CGNS_LIB    = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/cgnslib_3.2.1_linux_64_hdf5_par/libcgns.a \
-  #              /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/HDF5_par/lib/libhdf5.a                    \
-  #              -Wl,--no-as-needed -ldl -lz
+  #CGNS_LIB    = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/cgnslib_3.2.1_linux_64_hdf5_par/lib/libcgns.a \
+                /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/HDF5_par/lib/libhdf5.a                    \
+                /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/HDF5_par/lib/libhdf5_fortran.a                    \
+                -Wl,--no-as-needed -ldl -lz
   OPT_COMP   += $(addprefix -I, $(DIR_CGNS_H))
 endif
 

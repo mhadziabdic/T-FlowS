@@ -10,7 +10,7 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
 !   Connections:  |   (8, 1 : NC_1)   |   (8, NC_1 + 1 : NC_1 + NC_2)   | ...  ! 
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use par_mod, only: this_proc, n_proc
+  use par_mod, only: this_proc
   use Grid_Mod
   use Cgns_Mod
 !------------------------------------------------------------------------------!
@@ -20,7 +20,6 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
   type(Grid_Type)  :: grid
   character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: n
   character(len=80) :: store_name
 !-----------------------------------[Temporary]-----------------------------------!
   integer           :: c, base, block, sect, coord, mode
@@ -48,9 +47,9 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
   ! Count number of 3d cell type elements
   do c = 1, grid % n_cells
     if(grid % cells_n_nodes(c) == 8) cnt_hex = cnt_hex + 1
-    if(grid % cells_n_nodes(c) == 6) cnt_pyr = cnt_pyr + 1
-    if(grid % cells_n_nodes(c) == 4) cnt_wed = cnt_wed + 1
-    if(grid % cells_n_nodes(c) == 5) cnt_tet = cnt_tet + 1
+    if(grid % cells_n_nodes(c) == 5) cnt_pyr = cnt_pyr + 1
+    if(grid % cells_n_nodes(c) == 6) cnt_wed = cnt_wed + 1
+    if(grid % cells_n_nodes(c) == 4) cnt_tet = cnt_tet + 1
   end do
 
   !-----------------!
@@ -66,7 +65,7 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
   cgns_base(base) % cell_dim = 3
   cgns_base(base) % phys_dim = 3
 
-  call Cgns_Mod_Write_Base_Info(base)
+  call Cgns_Mod_Write_Base_Info_Par(base) ! par=seq
 
   !-----------------!
   !                 !
@@ -79,11 +78,15 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
 
   block = 1
   cgns_base(base) % block(block) % name = "Zone 1"
-  cgns_base(base) % block(block) % mesh_info(1) = grid % n_nodes
-  cgns_base(base) % block(block) % mesh_info(2) = grid % n_cells
+  c = grid % n_nodes
+  call IglSum(c)
+  cgns_base(base) % block(block) % mesh_info(1) = c
+  c = grid % n_cells
+  call IglSum(c)
+  cgns_base(base) % block(block) % mesh_info(2) = c
   cgns_base(base) % block(block) % mesh_info(3) = 0
 
-  call Cgns_Mod_Write_Block_Info(base, block)
+  call Cgns_Mod_Write_Block_Info_Par(base, block) ! par=seq
 
   !-----------------------!
   !                       !
@@ -93,15 +96,15 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
 
   coord = 1
   cgns_base(base) % block(block) % coord_name(coord) = 'CoordinateX'
-  call Cgns_Mod_Write_Coordinate_Array_Seq(base, block, coord, grid)
+  call Cgns_Mod_Write_Coordinate_Array_Par(base, block, coord, grid)
 
   coord = 2
   cgns_base(base) % block(block) % coord_name(coord) = 'CoordinateY'
-  call Cgns_Mod_Write_Coordinate_Array_Seq(base, block, coord, grid)
+  call Cgns_Mod_Write_Coordinate_Array_Par(base, block, coord, grid)
 
   coord = 3
   cgns_base(base) % block(block) % coord_name(coord) = 'CoordinateZ'
-  call Cgns_Mod_Write_Coordinate_Array_Seq(base, block, coord, grid)
+  call Cgns_Mod_Write_Coordinate_Array_Par(base, block, coord, grid)
 
   !-----------------------------!
   !                             !
@@ -116,32 +119,32 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
   cgns_base(base) % block(block) % section(sect) % cell_type = HEXA_8
   cgns_base(base) % block(block) % section(sect) % first_cell = 1
   cgns_base(base) % block(block) % section(sect) % last_cell = cnt_hex
-  call Cgns_Mod_Write_Section_Connections_Seq(base, block, sect, grid)
+  call Cgns_Mod_Write_Section_Connections_Par(base, block, sect, grid)
 
   sect = 2
   cgns_base(base) % block(block) % section(sect) % name = 'Pyramids'
   cgns_base(base) % block(block) % section(sect) % cell_type = PYRA_5
   cgns_base(base) % block(block) % section(sect) % first_cell = 1
   cgns_base(base) % block(block) % section(sect) % last_cell = cnt_pyr
-  call Cgns_Mod_Write_Section_Connections_Seq(base, block, sect, grid)
+  call Cgns_Mod_Write_Section_Connections_Par(base, block, sect, grid)
 
   sect = 3
   cgns_base(base) % block(block) % section(sect) % name = 'Wedges'
   cgns_base(base) % block(block) % section(sect) % cell_type = PENTA_6
   cgns_base(base) % block(block) % section(sect) % first_cell = 1
-  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_pyr
-  call Cgns_Mod_Write_Section_Connections_Seq(base, block, sect, grid)
+  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_wed
+  call Cgns_Mod_Write_Section_Connections_Par(base, block, sect, grid)
 
   sect = 4
   cgns_base(base) % block(block) % section(sect) % name = 'Tetrahedrons'
   cgns_base(base) % block(block) % section(sect) % cell_type = TETRA_4
   cgns_base(base) % block(block) % section(sect) % first_cell = 1
-  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_pyr
-  call Cgns_Mod_Write_Section_Connections_Seq(base, block, sect, grid)
+  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_tet
+  call Cgns_Mod_Write_Section_Connections_Par(base, block, sect, grid)
 
   !---------- close DB
-  call Cgns_Mod_Close_File
-  print *, 'Successfully wrote unstructured grid to file', trim(problem_name)
+  call Cgns_Mod_Close_File_Par
+  print *, 'Successfully wrote unstructured grid to file ', trim(problem_name)
 
   deallocate(cgns_base)
  

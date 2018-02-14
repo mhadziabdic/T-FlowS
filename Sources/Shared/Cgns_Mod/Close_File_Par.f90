@@ -1,29 +1,20 @@
 !==============================================================================!
-  subroutine Cgns_Mod_Open_File_Par(mode)
+  subroutine Cgns_Mod_Close_File_Par
 !------------------------------------------------------------------------------!
 !   Opens name_in file and return file index                                   !
 !------------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Arguments]----------------------------------!
-  integer :: mode
 !-----------------------------------[Locals]-----------------------------------!
   integer :: error
 !==============================================================================!
 
-  print *, "# Reading the file:", trim(file_name)
-
-  ! Set the parallel IO mode for CGNS
-  call Cgp_Pio_Mode_F(CGP_INDEPENDENT, &
-                      error)
-
-  ! Open a CGNS file
-  call Cgp_Open_F(file_name, &
-                  mode,      &
-                  file_id,   &
-                  error)
+  ! Close a CGNS file
+  call Cgp_Close_F( &
+    file_id,       &
+    error)
 
   if (error .ne. 0) then
-    print *, "# Failed to open the file: ", trim(file_name)
+    print *, "# Failed to close the file: ", trim(file_name)
     call Cgp_Error_Exit_F()
   endif
 

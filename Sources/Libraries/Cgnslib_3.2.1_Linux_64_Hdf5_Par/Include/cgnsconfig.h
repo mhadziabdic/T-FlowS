@@ -40,21 +40,21 @@
 #define CG_BUILD_HDF5      1
 #define CG_BUILD_DEBUG     0
 #define CG_BUILD_FORTRAN   1
-#define CG_BUILD_PARALLEL  0
+#define CG_BUILD_PARALLEL  1
 
-#define HDF5_INCLUDE_PATH "/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/HDF5_par/include"
-#define HDF5_LIBRARY      "/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/HDF5_par/lib/libhdf5.a"
+#define HDF5_INCLUDE_PATH "/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir//HDF5_par/include"
+#define HDF5_LIBRARY      "/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir//HDF5_par/lib/libhdf5.a"
 
-#define HDF5_NEED_MPI     0
+#define HDF5_NEED_MPI     1
 #define HDF5_NEED_SZIP    0
 #define HDF5_NEED_ZLIB    1
 
-#define MPI_INCLUDE_PATH ""
-#define MPI_LIBRARY      ""
+#define MPI_INCLUDE_PATH "/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/MPICH/include"
+#define MPI_LIBRARY      "-L/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/MPICH/lib -l "
 #define SZIP_LIBRARY     ""
 #define ZLIB_LIBRARY     "-lz"
 
-#define MPI_INC          ""
-#define MPI_LIBS         ""
+#define MPI_INC          "/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/MPICH/include"
+#define MPI_LIBS         "-L/home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/MPICH/lib -l "
 
 #endif

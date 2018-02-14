@@ -31,6 +31,12 @@
         integer CG_BUILD_64BIT
         parameter (CG_BUILD_64BIT = 1)
 !* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
+!*      parallel IO                                                    *
+!* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
+        integer*8 CGP_INDEPENDENT, CGP_COLLECTIVE
+        parameter (CGP_INDEPENDENT = 0)
+        parameter (CGP_COLLECTIVE  = 1)
+!* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 !*      modes for cgns file                                            *
 !* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
         integer*8 CG_MODE_READ, CG_MODE_WRITE, CG_MODE_MODIFY

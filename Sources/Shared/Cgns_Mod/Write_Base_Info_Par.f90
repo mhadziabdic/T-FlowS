@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Cgns_Mod_Write_Base_Info_Par(base)
 !------------------------------------------------------------------------------!
-!   Reads main info from base node base_id
+!   Writes main info to base node and sets its base_id [parallel vesion]       !
 !------------------------------------------------------------------------------!
   use par_mod, only: this_proc
   implicit none
@@ -17,17 +17,17 @@
 
   ! Set input parameters
   base_id   = base
-  base_name = cgns_base(base) % name    
-  cell_dim  = cgns_base(base) % cell_dim
-  phys_dim  = cgns_base(base) % phys_dim
+  base_name = cgns_base(base_id) % name
+  cell_dim  = cgns_base(base_id) % cell_dim
+  phys_dim  = cgns_base(base_id) % phys_dim
 
   ! Read CGNS base information
-  call Cg_Base_Write_F(file_id,    &
-                       base_name,  &
-                       cell_dim,   &
-                       phys_dim,   &
-                       base_id,    &
-                       error)
+  call Cg_Base_Write_F(file_id,    & !(in )
+                       base_name,  & !(in )
+                       cell_dim,   & !(in )
+                       phys_dim,   & !(in )
+                       base_id,    & !(out)
+                       error)        !(out)
 
   if (error .ne. 0) then
     print *, "# Failed to get base info"
@@ -37,12 +37,11 @@
   ! Print some info
   if(verbose .and. this_proc.eq.1) then
     print *, '#   ============================'
-    print *, '#   '
     print *, '#   Base name: ',      base_name
-    print *, '#   '
-    print *, '#   ============================'
+    print *, '#   Base id: ',        base_id
     print *, '#   Cell dimension: ', cell_dim
     print *, '#   Phys dimension: ', phys_dim
+    print *, '#   ============================'
   end if
 
   end subroutine

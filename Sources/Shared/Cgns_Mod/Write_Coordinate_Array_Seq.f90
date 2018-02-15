@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Cgns_Mod_Write_Coordinate_Array_Seq(base, block, coord, grid)
 !------------------------------------------------------------------------------!
-!   Gets n_sects from block
+!   Writes grid coordinates (RealDouble) [sequential vesion]                   !
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -13,7 +13,7 @@
   integer           :: base_id         ! base index number
   integer           :: block_id        ! block index number
   integer           :: coord_id        ! coord index number
-  character(len=80) :: coord_name      
+  character(len=80) :: coord_name
   integer           :: i               ! lower range index
   integer           :: j               ! upper range index
   real, allocatable :: coordinates(:)  ! array of coordinate values
@@ -40,21 +40,22 @@
       coordinates(i:j) = grid % zn(i:j)
   end select
 
-  !---------- Write grid coordinates 
-  call Cg_Coord_Write_F( &
-    file_id,             &
-    base_id,             &
-    block_id,            &
-    RealDouble,          &
-    coord_name,          &
-    coordinates,         &
-    coord_id,            &
-    error)
+  ! Write grid coordinates
+  call Cg_Coord_Write_F( & !(in )
+    file_id,             & !(in )
+    base_id,             & !(in )
+    block_id,            & !(in )
+    RealDouble,          & !(in )
+    coord_name,          & !(in )
+    coordinates,         & !(in )
+    coord_id,            & !(out)
+    error)                 !(out)
 
-    if (error .ne. 0) then
-           print *, "# Failed to write: ", trim(coord_name)
-       call cg_error_exit_f()
-    endif
+  if (error .ne. 0) then
+         print *, "# Failed to write: ", trim(coord_name)
+     call cg_error_exit_f()
+  endif
+
   deallocate(coordinates)
 
   ! Print some info

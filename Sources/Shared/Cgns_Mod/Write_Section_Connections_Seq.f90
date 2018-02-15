@@ -1,7 +1,10 @@
 !==============================================================================!
   subroutine Cgns_Mod_Write_Section_Connections_Seq(base, block, sect, grid)
 !------------------------------------------------------------------------------!
-!   Gets n_sects from block
+!   Writes elements connection for sect_id [sequential version]                !
+!------------------------------------------------------------------------------!
+!   Each node in zone/block must have unique id                                !
+!   https://cgns.github.io/CGNS_docs_current/midlevel/grid.html                !
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -19,11 +22,9 @@
   integer              :: last_cell     ! index of last element
   integer              :: n_bnd         ! index of last boundary element
   integer              :: error
-  integer              :: n_nodes, c, i
+  integer              :: n_nodes, c, cnt, i
   integer, allocatable :: cell_n(:,:)
 !==============================================================================!
-
-
 
   ! Set input parameters
   base_id    = base
@@ -31,19 +32,24 @@
   sect_id    = sect
 
   sect_name  = trim(cgns_base(base_id)%block(block_id)%section(sect_id)%name)
-  cell_type  = cgns_base(base_id)%block(block_id)%section(sect_id)%cell_type 
+  cell_type  = cgns_base(base_id)%block(block_id)%section(sect_id)%cell_type
   first_cell = cgns_base(base_id)%block(block_id)%section(sect_id)%first_cell
-  last_cell  = cgns_base(base_id)%block(block_id)%section(sect_id)%last_cell 
+  last_cell  = cgns_base(base_id)%block(block_id)%section(sect_id)%last_cell
 
-  !---------- create and fill "Hexagons" node in DB
-  if ( last_cell .ne. 0 ) then
+  ! first and last cells have to be shifted according to previous sections
+  first_cell = first_cell + cnt_cells
+  last_cell  = last_cell  + cnt_cells
+
+  ! cells of cell_type
+  cnt = last_cell - first_cell + 1
+  if ( cnt .ne. 0 ) then
 
     n_bnd = 0 ! unsorted boundary elements
 
     ! Allocate memory
     if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) n_nodes = 8
-    if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) n_nodes = 5
     if ( ElementTypeName(cell_type) .eq. 'PENTA_6') n_nodes = 6
+    if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) n_nodes = 5
     if ( ElementTypeName(cell_type) .eq. 'TETRA_4') n_nodes = 4
     allocate(cell_n(1:n_nodes, first_cell:last_cell), stat = error)
 
@@ -52,8 +58,8 @@
        call cg_error_exit_f()
     endif
 
-    ! convert T-FlowS -> CGNS [same as VTK]
-    i = 1
+    ! Convert T-FlowS -> CGNS [same as VTK]
+    i = first_cell
     do c = 1, grid % n_cells
       if (grid % cells_n_nodes(c).eq.8 .and. n_nodes.eq.8 ) then ! hex
         cell_n (1, i) = grid % cells_n(1, c)
@@ -81,18 +87,18 @@
       end if
     end do
 
-    ! Write element data 
-    call Cg_Section_Write_F(file_id,    &
-                            base_id,    &
-                            block_id,   &
-                            sect_name,  &
-                            cell_type,  &
-                            first_cell, &
-                            last_cell,  &
-                            n_bnd,      &
-                            cell_n,     &
-                            sect_id,    &
-                            error)
+    ! Write element data
+    call Cg_Section_Write_F(file_id,    & !(in )
+                            base_id,    & !(in )
+                            block_id,   & !(in )
+                            sect_name,  & !(in )
+                            cell_type,  & !(in )
+                            first_cell, & !(in )
+                            last_cell,  & !(in )
+                            n_bnd,      & !(in )
+                            cell_n,     & !(in )
+                            sect_id,    & !(out)
+                            error)        !(out)
 
     if (error .ne. 0) then
        print*, '*FAILED* to write ', trim(sect_name), ' connections'
@@ -108,13 +114,12 @@
       print *, '#         ---------------------------------'
       print *, '#         Cell section idx:    ', sect_id
       print *, '#         Cell section type:   ', ElementTypeName(cell_type)
-    end if
-    if(verbose) then
-      print *, '#         Number of cells: ', last_cell - first_cell + 1
+      print *, '#         Number of cells: ', cnt
       print *, '#         First cell:', first_cell
       print *, '#         Last cell: ', last_cell
     end if
 
+    cnt_cells = cnt_cells + cnt
   end if
 
   end subroutine

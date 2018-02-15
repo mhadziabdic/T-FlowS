@@ -1,13 +1,8 @@
-subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                                        !
+subroutine Save_Grid_Par(grid, name_save)                                        !
 !   Writes in sequentialy 3-D unstructured grid to files '????????'            !
 !------------------------------------------------------------------------------!
 !   All conventions for this lib are here:                                     !
 !   https://cgns.github.io/CGNS_docs_current/sids/conv.html                    !
-!------------------------------------------------------------------------------!
-!   Array structures in current function are strictly followings:              !
-!   Processor:    |        P_1        |               P_2               | ...  !
-!   x,y,z:        |      (1 : NN_1)   |       NN_1 + 1 : NN_1 + NN_2    | ...  ! 
-!   Connections:  |   (8, 1 : NC_1)   |   (8, NC_1 + 1 : NC_1 + NC_2)   | ...  ! 
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use par_mod, only: this_proc
@@ -21,36 +16,36 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
   character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: store_name
-!-----------------------------------[Temporary]-----------------------------------!
-  integer           :: c, base, block, sect, coord, mode
+  integer           :: c, base, block, sect, coord
 !==============================================================================!
 
- ! Set the parallel IO mode for CGNS
-  if (this_proc == 1) print *, "# subroutine Save_Cgns_Results"
+  ! Set the parallel IO mode for CGNS
+  if (this_proc == 1) print *, "# subroutine Cgns_Mod_Save_Grid_Par"
 
   ! Store the name
-  store_name = problem_name     
-
-  problem_name = name_save  
+  store_name = problem_name
+  problem_name = name_save
 
   !-------------------------!
   !   Open file for write   !
   !-------------------------!
   call Name_File(0, file_name, '.cgns')
-  print *, '# Creating file: ', trim(problem_name)
 
-  mode = CG_MODE_WRITE
-  call Cgns_Mod_Open_File_Par(mode)
-  
+  file_mode = CG_MODE_WRITE
+  call Cgns_Mod_Open_File_Par(file_mode)
+
   call Initialize_Counters
 
   ! Count number of 3d cell type elements
   do c = 1, grid % n_cells
     if(grid % cells_n_nodes(c) == 8) cnt_hex = cnt_hex + 1
-    if(grid % cells_n_nodes(c) == 5) cnt_pyr = cnt_pyr + 1
     if(grid % cells_n_nodes(c) == 6) cnt_wed = cnt_wed + 1
+    if(grid % cells_n_nodes(c) == 5) cnt_pyr = cnt_pyr + 1
     if(grid % cells_n_nodes(c) == 4) cnt_tet = cnt_tet + 1
   end do
+
+  ! TEST
+  allocate(tflows_2_cgns_cells(1:grid % n_cells))
 
   !-----------------!
   !                 !
@@ -65,7 +60,7 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
   cgns_base(base) % cell_dim = 3
   cgns_base(base) % phys_dim = 3
 
-  call Cgns_Mod_Write_Base_Info_Par(base) ! par=seq
+  call Cgns_Mod_Write_Base_Info_Par(base)
 
   !-----------------!
   !                 !
@@ -79,14 +74,16 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
   block = 1
   cgns_base(base) % block(block) % name = "Zone 1"
   c = grid % n_nodes
+  call wait
   call IglSum(c)
   cgns_base(base) % block(block) % mesh_info(1) = c
   c = grid % n_cells
+  call wait
   call IglSum(c)
   cgns_base(base) % block(block) % mesh_info(2) = c
   cgns_base(base) % block(block) % mesh_info(3) = 0
 
-  call Cgns_Mod_Write_Block_Info_Par(base, block) ! par=seq
+  call Cgns_Mod_Write_Block_Info_Par(base, block)
 
   !-----------------------!
   !                       !
@@ -111,8 +108,10 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
   !   Cells connections block   !
   !                             !
   !-----------------------------!
+
   cgns_base(base) % block(block) % n_sects = 4
-  allocate(cgns_base(base) % block(block) % section(cgns_base(base) % block(block) % n_sects))
+  allocate(cgns_base(base) % block(block) % section( &
+    cgns_base(base) % block(block) % n_sects))
 
   sect = 1
   cgns_base(base) % block(block) % section(sect) % name = 'Hexagons'
@@ -142,12 +141,14 @@ subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                              
   cgns_base(base) % block(block) % section(sect) % last_cell = cnt_tet
   call Cgns_Mod_Write_Section_Connections_Par(base, block, sect, grid)
 
-  !---------- close DB
+  ! Close DB
   call Cgns_Mod_Close_File_Par
-  print *, 'Successfully wrote unstructured grid to file ', trim(problem_name)
+
+  if (this_proc.eq.1) &
+    print *, 'Successfully wrote unstructured grid to file ', trim(problem_name)
 
   deallocate(cgns_base)
- 
+
   ! Restore the name
   problem_name = store_name
 

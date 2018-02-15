@@ -3,8 +3,8 @@ subroutine Cgns_Mod_Get_Arrays_Dimensions_Par(idx, NN_or_NC)
 !------------------------------------------------------------------------------!
 !   Arrays structure in CGNS parallel functions are strictly followings:       !
 !   Processor:    |        P_1        |               P_2               | ...  !
-!   x,y,z:        |      (1 : NN_1)   |       NN_1 + 1 : NN_1 + NN_2    | ...  ! 
-!   Connections:  |   (8, 1 : NC_1)   |   (8, NC_1 + 1 : NC_1 + NC_2)   | ...  ! 
+!   x,y,z:        |      (1 : NN_1)   |       NN_1 + 1 : NN_1 + NN_2    | ...  !
+!   Connections:  |   (8, 1 : NC_1)   |   (8, NC_1 + 1 : NC_1 + NC_2)   | ...  !
 !----------------------------------[Modules]-----------------------------------!
   use par_mod
 !------------------------------------------------------------------------------!
@@ -13,6 +13,7 @@ subroutine Cgns_Mod_Get_Arrays_Dimensions_Par(idx, NN_or_NC)
 !-----------------------------------[Locals]-----------------------------------!
   integer :: idx, NN_or_NC
   integer :: Array_at_root(1:n_proc)
+  integer :: tmp(1:n_proc)
   integer :: i, ier
 !------------------------------------------------------------------------------!
 
@@ -32,8 +33,10 @@ subroutine Cgns_Mod_Get_Arrays_Dimensions_Par(idx, NN_or_NC)
 
   if (this_proc == 1) then
 
+    tmp(:) = Array_at_root
+
     do i = 2, n_proc
-      Array_at_root(i) = sum(Array_at_root(1: i-1))
+      Array_at_root(i) = sum(tmp(1: i-1))
     end do
     Array_at_root(1) = 0
     Array_at_root = 1 + Array_at_root

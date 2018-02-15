@@ -7,14 +7,61 @@
   include "cgnslib_f.h"
 !==============================================================================!
 
-  ! file
+  !----------!
+  !   File   ! -> contains base
+  !----------!
+    !
+    !----------!
+    !   Base   ! -> contains blocks
+    !----------!
+      !
+      !------------!
+      !   Blocks   ! -> contains coordinates, sections, bnd_conds, solution
+      !------------!
+        !
+        !-----------------!
+        !   Coordinates   !
+        !-----------------!
+        !
+        !----------------------!
+        !   Element sections   !
+        !----------------------!
+        !
+        !-------------------------!
+        !   Boundary conditions   !
+        !-------------------------!
+        !
+        !----------------------!
+        !   Solution section   !
+        !----------------------!
+          !
+          !------------------!
+          !   Field section  !
+          !------------------!
+
+! TO DO : Pack monitoring points in ConvergenceHistory_t
+
+  ! File
   integer           :: file_id
   character(len=80) :: file_name
+  integer           :: file_mode
   logical           :: verbose = .true.
 
-  !---------------------!
-  !   Element section   !
-  !---------------------!
+  ! Field section
+  type Cgns_Field_Type
+    character(len=80) :: name
+    integer           :: field_type ! RealDouble & LongInt?
+  end type
+
+  ! Solution section
+  type Cgns_Solution_Type
+    character(len=80)                  :: name
+    integer                            :: sol_type
+    integer                            :: n_fields
+    type(Cgns_Field_Type), allocatable :: field(:)
+  end type
+
+  ! Element section
   type Cgns_Section_Type
     character(len=80)    :: name
     integer, allocatable :: cell_type
@@ -23,33 +70,29 @@
     integer              :: parent_flag
   end type
 
-  !-------------------------!
-  !   Boundary conditions   ! -> it is similar to Bnd_Cond in ../Share :-(
-  !-------------------------!
+  ! Boundary conditions   ! -> it is similar to Bnd_Cond in ../Share :-(
   type Cgns_Bnd_Cond_Type
     character(len=80)    :: name
     integer, allocatable :: color
     integer, allocatable :: n_nodes
   end type
 
-  !------------!
-  !   Blocks   ! -> contains sections and bnd_conds
-  !------------!
+  ! Blocks
   type Cgns_Block_Type
     character(len=80)                     :: name
     integer                               :: type
     integer                               :: mesh_info(3)
-    integer                               :: n_sects      
+    integer                               :: n_sects
     type(Cgns_Section_Type), allocatable  :: section(:)
     integer                               :: n_bnd_conds
     type(Cgns_Bnd_Cond_Type), allocatable :: bnd_cond(:)
     integer                               :: n_coords
     character(len=80)                     :: coord_name(3)
+    integer                               :: n_solutions
+    type(Cgns_Solution_Type), allocatable :: solution(:)
   end type
 
-  !----------!
-  !   Base   ! -> contains blocks
-  !----------!
+  ! Base
   integer :: n_bases
   type Cgns_Base_Type
     character(len=80)                  :: name
@@ -77,15 +120,19 @@
   integer :: cnt_y
   integer :: cnt_z
 
+  integer, allocatable :: tflows_2_cgns_cells(:)
+
   ! Block-wise counter of boundary cells
-  integer :: cnt_block_bnd_cells  ! probably not needed  
+  integer :: cnt_block_bnd_cells  ! probably not needed
   integer :: cnt_bnd_conds
   character(len=80) :: bnd_cond_names(1024)
 
   contains
 
-  include 'Cgns_Mod/Open_File.f90'
+  ! Common
   include 'Cgns_Mod/Initialize_Counters.f90'
+
+  ! Seq only
   include 'Cgns_Mod/Read_Base_Info.f90'
   include 'Cgns_Mod/Read_Number_Of_Bases_In_File.f90'
   include 'Cgns_Mod/Read_Number_Of_Blocks_In_Base.f90'
@@ -101,22 +148,39 @@
   include 'Cgns_Mod/Read_Section_Connections.f90'
   include 'Cgns_Mod/Merge_Nodes.f90'
 
-  ! new functions
-  include 'Cgns_Mod/Close_File.f90'
-  include 'Cgns_Mod/Write_Base_Info_Seq.f90'
-  include 'Cgns_Mod/Write_Block_Info_Seq.f90'
-  include 'Cgns_Mod/Write_Coordinate_Array_Seq.f90'
-  include 'Cgns_Mod/Write_Section_Connections_Seq.f90'
-
-  include 'Cgns_Mod/Open_File_Par.f90'
-  include 'Cgns_Mod/Write_Base_Info_Par.f90'
-  include 'Cgns_Mod/Write_Block_Info_Par.f90'
+  ! Par only
   include 'Cgns_Mod/Get_Arrays_Dimensions_Par.f90'
-  include 'Cgns_Mod/Write_Coordinate_Array_Par.f90'
-  include 'Cgns_Mod/Write_Section_Connections_Par.f90'
+
+  ! Par & Seq pairs
+
+  include 'Cgns_Mod/Open_File_Seq.f90'
+  include 'Cgns_Mod/Open_File_Par.f90'
+
+  include 'Cgns_Mod/Close_File_Seq.f90'
   include 'Cgns_Mod/Close_File_Par.f90'
+
+  include 'Cgns_Mod/Write_Base_Info_Seq.f90'
+  include 'Cgns_Mod/Write_Base_Info_Par.f90'
+
+  include 'Cgns_Mod/Write_Block_Info_Seq.f90'
+  include 'Cgns_Mod/Write_Block_Info_Par.f90'
+
+  include 'Cgns_Mod/Write_Coordinate_Array_Seq.f90'
+  include 'Cgns_Mod/Write_Coordinate_Array_Par.f90'
+
+  include 'Cgns_Mod/Write_Section_Connections_Seq.f90'
+  include 'Cgns_Mod/Write_Section_Connections_Par.f90'
+
+  include 'Cgns_Mod/Write_Solution_Info_Seq.f90'
+  include 'Cgns_Mod/Write_Solution_Info_Par.f90'
+  
+  include 'Cgns_Mod/Write_Field_Seq.f90'
+  include 'Cgns_Mod/Write_Field_Par.f90'
+
 
   ! move this two from Processor to Shared?
   !include 'Cgns_Mod/Save_Grid_Seq.f90'
   !include 'Cgns_Mod/Save_Grid_Par.f90'
+  !include 'Cgns_Mod/Add_Fields_To_Grid_Seq.f90'
+  !include 'Cgns_Mod/Add_Fields_To_Grid_Par.f90'
   end module

@@ -24,10 +24,10 @@
   base_id    = base
   block_id   = block
   coord_id   = coord
-  coord_name = cgns_base(base) % block(block) % coord_name(coord_id)
+  coord_name = cgns_base(base_id) % block(block_id) % coord_name(coord_id)
 
   i = 1
-  j = cgns_base(base) % block(block) % mesh_info(1)
+  j = cgns_base(base_id) % block(block_id) % mesh_info(1)
   allocate(coordinates(i:j))
 
   ! Fetch received parameters
@@ -47,7 +47,7 @@
     block_id,            &
     RealDouble,          &
     coord_name,          &
-    coordinates(i:j),    &
+    coordinates,         &
     coord_id,            &
     error)
 

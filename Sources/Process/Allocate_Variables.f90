@@ -10,11 +10,15 @@
   use par_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type) :: grid
+  type(Grid_Type)   :: grid
+!-----------------------------------[Locals]-----------------------------------!
+  character(len=80) :: heat_transfer
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 
   ! Allocate memory for velocity components ...
@@ -61,23 +65,28 @@
   allocate (VISwall(-grid % n_bnd_cells:grid % n_cells)); VISwall =0.0
 
   ! For solution of temperature
-  if(HOT==YES) then
+  call Control_Mod_Heat_Transfer(heat_transfer)
+  if(heat_transfer == 'YES') then
     call Var_Mod_Allocate_Solution("T", t, grid)
     allocate (CONwall(-grid % n_bnd_cells:grid % n_cells)); CONwall =0.0
   end if
 
+  call Control_Mod_Turbulence_Model(turbulence_model)
+  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
+
   !----------------------------!
   !   Reynolds stress models   !
   !----------------------------!
-  if(SIMULA==EBM.or.SIMULA==HJ) then
-    if(URANS == YES) then    
+  if(turbulence_model=='EBM' .or.  &
+     turbulence_model=='HJ') then
+    if(turbulence_model_variant == 'URANS') then    
 !
 !     Should something be done here?
 !
     end if
-    if(SIMULA == HJ) then
+    if(turbulence_model == 'HJ') then
       allocate (Eps_tot(-grid % n_bnd_cells:grid % n_cells)); Eps_tot=0.
-    end if  ! SIMULA == HJ
+    end if  ! turbulence_model == 'HJ'
 
     ! Reynolds stresses
     call Var_Mod_Allocate_Solution("UU", uu, grid)
@@ -95,13 +104,13 @@
     allocate (Lsc(-grid % n_bnd_cells:grid % n_cells));     Lsc = 0.0
     allocate (p_kin(-grid % n_bnd_cells:grid % n_cells));   p_kin  = 0.0
 
-    if(SIMULA==EBM) then
+    if(turbulence_model=='EBM') then
       call Var_Mod_Allocate_Solution("F22", f22, grid)
     else
       call Var_Mod_Allocate_New_Only("F22", f22, grid)
     end if
 
-    if(URANS == YES) then
+    if(turbulence_model_variant == 'URANS') then    
       call Var_Mod_Allocate_Statistics(uu)
       call Var_Mod_Allocate_Statistics(vv)
       call Var_Mod_Allocate_Statistics(ww)
@@ -110,10 +119,10 @@
       call Var_Mod_Allocate_Statistics(vw)
       call Var_Mod_Allocate_Statistics(kin)
     end if
-  end if  ! SIMULA == EBM or HJ
+  end if  ! turbulence_model == 'EBM' or 'HJ'
 
   ! Variables for Rans models
-  if(SIMULA==K_EPS.or.SIMULA == HYB_PITM) then
+  if(turbulence_model=='K_EPS'.or.turbulence_model == 'HYB_PITM') then
 
     call Var_Mod_Allocate_Solution("KIN", kin, grid)
     call Var_Mod_Allocate_Solution("EPS", eps, grid)
@@ -123,13 +132,13 @@
     allocate (p_kin(-grid % n_bnd_cells:grid % n_cells));   p_kin    =0.0
     allocate (Ynd(-grid % n_bnd_cells:grid % n_cells));     Ynd   =0.0
 
-    if(URANS == YES) then
+    if(turbulence_model_variant == 'URANS') then
       allocate (Kin % mean(grid % n_cells));   Kin % mean=0.
       allocate (Eps % mean(grid % n_cells));   Eps % mean=0.
     end if
   end if
 
-  if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
+  if(turbulence_model=='K_EPS_VV'.or.turbulence_model=='ZETA'.or.turbulence_model=='HYB_ZETA') then
     call Var_Mod_Allocate_Solution("KIN", kin, grid)
     call Var_Mod_Allocate_Solution("EPS", eps, grid)
     call Var_Mod_Allocate_Solution("V^2", v_2, grid)
@@ -142,7 +151,7 @@
     allocate (p_kin(-grid % n_bnd_cells:grid % n_cells));   p_kin  = 0.0  
     allocate (Ynd(-grid % n_bnd_cells:grid % n_cells));     Ynd    = 0.0
 
-    if(URANS == YES) then
+    if(turbulence_model_variant == 'URANS') then
       allocate (Kin % mean(grid % n_cells));   Kin % mean = 0.
       allocate (Eps % mean(grid % n_cells));   Eps % mean = 0.
       allocate (f22 % mean(grid % n_cells));   f22 % mean = 0.
@@ -161,29 +170,30 @@
     end if
   end if                    
 
-  if(SIMULA == HYB_ZETA) then
+  if(turbulence_model == 'HYB_ZETA') then
     allocate (vis_t_sgs(-grid % n_bnd_cells:grid % n_cells));  vis_t_sgs=0.
     allocate (vis_t_eff(-grid % n_bnd_cells:grid % n_cells));  vis_t_eff=0.
   end if
 
-  if(SIMULA == DES_SPA) then
+  if(turbulence_model == 'DES_SPA') then
     allocate (Ksgs(-grid % n_bnd_cells:grid % n_cells));  Ksgs=0.
   end if
 
-  if(SIMULA == SPA_ALL.or.SIMULA == DES_SPA) then
+  if(turbulence_model == 'SPA_ALL'.or.turbulence_model == 'DES_SPA') then
     call Var_Mod_Allocate_Solution("VIS", vis, grid)
   end if
 
-  if(SIMULA == DES_SPA) then
+  if(turbulence_model == 'DES_SPA') then
     allocate (VIS % mean(grid % n_cells));   VIS % mean=0.
   end if
 
   ! Variables defined in les_mod.h90:
-  if(SIMULA == LES.or.SIMULA==HYB_ZETA) then
-    if(MODE == WALE) then 
+  if(turbulence_model == 'LES' .or.  &
+     turbulence_model == 'HYB_ZETA') then
+    if(turbulence_model_variant == 'WALE') then 
       allocate (WALEv(-grid % n_bnd_cells:grid % n_cells));  WALEv =0.
     end if
-    if(MODE == DYN) then 
+    if(turbulence_model_variant == 'DYNAMIC') then 
       allocate (U % filt(-grid % n_bnd_cells:grid % n_cells));  U % filt =0.
       allocate (V % filt(-grid % n_bnd_cells:grid % n_cells));  V % filt =0.
       allocate (W % filt(-grid % n_bnd_cells:grid % n_cells));  W % filt =0.
@@ -208,7 +218,7 @@
     allocate (Cdyn_mean(-grid % n_bnd_cells:grid % n_cells)); Cdyn_mean = 0
   end if
 
-  if(SIMULA == LES.or.SIMULA==DNS.or.SIMULA==DES_SPA) then
+  if(turbulence_model == 'LES'.or.turbulence_model=='DNS'.or.turbulence_model=='DES_SPA') then
     allocate (uu % mean(-grid % n_bnd_cells:grid % n_cells)); uu % mean=0.
     allocate (vv % mean(-grid % n_bnd_cells:grid % n_cells)); vv % mean=0.
     allocate (ww % mean(-grid % n_bnd_cells:grid % n_cells)); ww % mean=0.
@@ -261,7 +271,7 @@
 
       allocate (Diss_sgs_mean(1:grid % n_cells)); Diss_sgs_mean  =0.
 
-      if(HOT==YES) then
+      if(heat_transfer == 'YES') then
         allocate (Put_mean(1:grid % n_cells));  Put_mean =0.
         allocate (Pvt_mean(1:grid % n_cells));  Pvt_mean =0.
         allocate (Pwt_mean(1:grid % n_cells));  Pwt_mean =0.
@@ -333,7 +343,7 @@
     allocate(vis_t_mean(grid % n_cells)); vis_t_mean = 0.0
     allocate (ShearMean(grid % n_cells));  ShearMean=0.
 
-    if(HOT==YES) then
+    if(heat_transfer == 'YES') then
       allocate (T % mean(-grid % n_bnd_cells:grid % n_cells));  T % mean=0.
       allocate (TT % mean(-grid % n_bnd_cells:grid % n_cells)); TT % mean=0.
       allocate (uT % mean(-grid % n_bnd_cells:grid % n_cells)); uT % mean=0.
@@ -342,7 +352,7 @@
     end if
   end if
 
-  if(SIMULA == HYB_ZETA.or.SIMULA==HYB_PITM) then
+  if(turbulence_model == 'HYB_ZETA'.or.turbulence_model=='HYB_PITM') then
     allocate (uu % mean(-grid % n_bnd_cells:grid % n_cells)); uu % mean=0.
     allocate (vv % mean(-grid % n_bnd_cells:grid % n_cells)); vv % mean=0.
     allocate (ww % mean(-grid % n_bnd_cells:grid % n_cells)); ww % mean=0.
@@ -352,7 +362,7 @@
 
     allocate(vis_t_mean(grid % n_cells)); vis_t_mean = 0.0
     allocate (ShearMean(grid % n_cells));  ShearMean=0.
-    if(HOT==YES) then
+    if(heat_transfer == 'YES') then
       allocate (T % mean(-grid % n_bnd_cells:grid % n_cells));  T % mean=0.
       allocate (TT % mean(-grid % n_bnd_cells:grid % n_cells)); TT % mean=0.
       allocate (uT % mean(-grid % n_bnd_cells:grid % n_cells)); uT % mean=0.

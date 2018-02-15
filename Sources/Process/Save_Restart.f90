@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Restart(grid, name_aut)
+  subroutine Save_Restart(grid, time_step, name_aut)
 !------------------------------------------------------------------------------!
 !   Writes restart files. name.restart                                         !
 !----------------------------------[Modules]-----------------------------------!
@@ -10,15 +10,19 @@
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type)     :: grid
+  integer             :: time_step
   character, optional :: name_aut*(*)
 !-----------------------------------[Locals]-----------------------------------!
-  integer             :: c, s, m
-  character(len=80)   :: name_out, answer
+  integer           :: c, s, m
+  character(len=80) :: name_out, answer
+  character(len=80) :: heat_transfer
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 
   if(PRESENT(name_aut)) then
@@ -26,12 +30,13 @@
     answer = problem_name
     problem_name = name_aut
   else
-    if(this_proc  < 2)                                                     &
-      print *, '# Output restart file name [skip cancels]:'
-    call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(line % tokens(1), '(A80)')  name_out
+    call Control_Mod_Load_Restart_Name(name_out)
+
     answer=name_out
-    call To_Upper_Case(answer) 
+    call To_Upper_Case(answer)
+    if(answer == 'SKIP') then
+      return 
+    end if
 
     if(answer == 'SKIP') return 
 
@@ -39,6 +44,10 @@
     answer = problem_name
     problem_name = name_out
   end if
+
+  call Control_Mod_Heat_Transfer(heat_transfer)
+  call Control_Mod_Turbulence_Model(turbulence_model)
+  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
 
   !-------------------------!
   !   Create restart file   !
@@ -51,11 +60,11 @@
   write(9) 0.0  ! version
 
   ! 60 integer parameters 
-  write(9)        0,      grid % n_bnd_cells,       grid % n_cells,       grid % n_faces,     Ndtt,    Nstat
+  write(9) time_step,     grid % n_bnd_cells,       grid % n_cells,       grid % n_faces,     0,    0
   write(9)       Cm,        0,        0,        0,        0,        0
-  write(9)    ALGOR,    INERT,   CONVEC,    CROSS,   DIFFUS,   SIMULA
-  write(9)   POSPRO,  CHANNEL,     TEST,    OTHER,      HOT,        0
-  write(9)    BLEND,        0,   PER_BC,     MODE,     PIPE,        0
+  write(9)        0,        0,        0,        0,        0,        0
+  write(9)   POSPRO,  CHANNEL,     TEST,    OTHER,        0,        0
+  write(9)        0,        0,   PER_BC,        0,     PIPE,        0
   write(9)        0,        0,        0,        0,        0,        0
   write(9)        0,        0,        0,        0,        0,        0
   write(9)        0,        0,        0,        0,        0,        0
@@ -66,9 +75,9 @@
   write(9)     0.0,    0.0,    0.0,   bulk(1) % xp,  bulk(1) % yp,  bulk(1) % zp  
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0     
   write(9)   ReTau,   Tref,    Cs0,   Tinf,    0.0,    0.0
-  write(9)      dt,   Time,  Kflow,    0.0,    0.0,    0.0
-  write(9)   U%URF,  P%URF,   URFC, SIMTol, U%Stol,    0.0 
-  write(9) PP%Stol,  T%URF, T%STol,  Tflux,    0.0,    0.0
+  write(9)     0.0,    0.0,  Kflow,    0.0,    0.0,    0.0
+  write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0 
+  write(9)     0.0,    0.0,    0.0,  Tflux,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
@@ -118,7 +127,7 @@
   ! Fluxes 
   write(9) (Flux(s), s=1,grid % n_faces)
 
-  if(HOT == YES) then
+  if(heat_transfer == 'YES') then
     write(9) (T % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (T % q(c),    c = -grid % n_bnd_cells,-1)
     write(9) (T % o(c),    c = 1, grid % n_cells)
@@ -129,8 +138,11 @@
     write(9) (T % c_o(c),  c = 1, grid % n_cells)
   end if
 
-  if(SIMULA==K_EPS.or.SIMULA==ZETA.or.&
-     SIMULA==K_EPS_VV.or.SIMULA==HYB_ZETA.or.SIMULA == HYB_PITM) then 
+  if(turbulence_model == 'K_EPS'    .or.  &
+     turbulence_model == 'ZETA'     .or.  &
+     turbulence_model == 'K_EPS_VV' .or.  &
+     turbulence_model == 'HYB_ZETA' .or.  &
+     turbulence_model == 'HYB_PITM') then 
     write(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (kin % o(c),    c = 1, grid % n_cells)
     write(9) (kin % a(c),    c = 1, grid % n_cells)
@@ -154,7 +166,9 @@
     write(9) (TauWall(c),  c= 1,grid % n_cells)
   end if
 
-  if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA == HYB_ZETA) then
+  if(turbulence_model == 'K_EPS_VV' .or.  &
+     turbulence_model == 'ZETA'     .or.  &
+     turbulence_model == 'HYB_ZETA') then
     write(9) (v_2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (v_2 % o(c),    c = 1, grid % n_cells)
     write(9) (v_2 % a(c),    c = 1, grid % n_cells)
@@ -173,7 +187,8 @@
     write(9) (Lsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if 
 
-  if(SIMULA==EBM.or.SIMULA==HJ) then
+  if(turbulence_model == 'EBM' .or.  &
+     turbulence_model == 'HJ') then
     write(9) (uu % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (uu % o(c),    c = 1, grid % n_cells)
     write(9) (uu % a(c),    c = 1, grid % n_cells)
@@ -234,7 +249,7 @@
     write(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (vis_t(c),      c = -grid % n_bnd_cells,grid % n_cells)
 
-    if(SIMULA==EBM) then
+    if(turbulence_model == 'EBM') then
       write(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
       write(9) (f22 % o(c),    c = 1, grid % n_cells)
       write(9) (f22 % d_o(c),  c = 1, grid % n_cells)
@@ -242,7 +257,7 @@
       write(9) (f22 % c_o(c),  c = 1, grid % n_cells)
     end if
 
-    if(URANS == YES) then
+    if(turbulence_model_variant == 'URANS') then
 !     write(9) (VAR10x(c),  c = -grid % n_bnd_cells,grid % n_cells)
 !     write(9) (VAR10y(c),  c = -grid % n_bnd_cells,grid % n_cells)
 !     write(9) (VAR10z(c),  c = -grid % n_bnd_cells,grid % n_cells)
@@ -252,7 +267,8 @@
     end if  
   end if
 
-  if(SIMULA == SPA_ALL.or.SIMULA==DES_SPA) then
+  if(turbulence_model == 'SPA_ALL' .or.  &
+     turbulence_model == 'DES_SPA') then
     write(9) (vis % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (vis % o(c),    c = 1, grid % n_cells)
     write(9) (vis % a(c),    c = 1, grid % n_cells)
@@ -264,10 +280,15 @@
     write(9) (Vort(c),       c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(SIMULA/=DNS) write(9) (vis_t(c), c = -grid % n_bnd_cells,grid % n_cells)
+  if(turbulence_model/='DNS')  &
+    write(9) (vis_t(c), c = -grid % n_bnd_cells,grid % n_cells)
 
-  if(SIMULA==DNS.or.SIMULA==LES.or.SIMULA==URANS.or.&
-     SIMULA==HYB_ZETA.or.SIMULA==HYB_PITM.or.SIMULA==DES_SPA) then
+  if(turbulence_model         == 'DNS'      .or.  &
+     turbulence_model         == 'LES'      .or.  &
+     turbulence_model         == 'HYB_ZETA' .or.  &
+     turbulence_model         == 'HYB_PITM' .or.  &
+     turbulence_model         == 'DES_SPA'  .or.  &
+     turbulence_model_variant == 'URANS') then
     write(9) (U % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (V % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (W % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
@@ -279,7 +300,7 @@
     write(9) (vw % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (P % mean(c),  c = 1, grid % n_cells)
 
-    if(HOT == YES) then
+    if(heat_transfer == 'YES') then
       write(9) (T % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
       write(9) (TT % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
       write(9) (uT % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
@@ -288,17 +309,19 @@
     end if
   end if
 
-  if(SIMULA == LES) then
+  if(turbulence_model == 'LES') then
     write(9) (vis_t_mean(c), c = 1, grid % n_cells)
     write(9) (near(c),   c = -grid % n_bnd_cells,grid % n_cells)
-    if(MODE == DYN) write(9) (Cdyn_mean(c), c = 1, grid % n_cells)
+    if(turbulence_model_variant == 'DYNAMIC')  &
+      write(9) (Cdyn_mean(c), c = 1, grid % n_cells)
   end if
  
-  if(SIMULA == HYB_PITM.or.SIMULA==DES_SPA) then
+  if(turbulence_model == 'HYB_PITM' .or.  &
+     turbulence_model == 'DES_SPA') then
     write(9) (vis_t_mean(c), c = 1, grid % n_cells)
   end if
 
-  if(SIMULA == HYB_ZETA) then
+  if(turbulence_model == 'HYB_ZETA') then
     write(9) (vis_t_mean(c), c = 1, grid % n_cells)
     write(9) (vis_t_sgs(c),  c = 1, grid % n_cells)
     write(9) (vis_t_eff(c),  c = 1, grid % n_cells)

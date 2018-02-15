@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Convective_Outflow(grid)
+  subroutine Convective_Outflow(grid, dt)
 !------------------------------------------------------------------------------!
 !   Extrapoloate variables on the boundaries where needed.                     !
 !------------------------------------------------------------------------------!
@@ -9,6 +9,7 @@
   use rans_mod
   use Grid_Mod
   use Bulk_Mod
+  use Control_Mod
   use Work_Mod, only: t_x => r_cell_01,  &
                       t_y => r_cell_02,  &
                       t_z => r_cell_03           
@@ -16,11 +17,15 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
+  real            :: dt
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c1, c2, s
+  integer           :: c1, c2, s
+  character(len=80) :: heat_transfer
 !==============================================================================!
 
   call Bulk_Mod_Compute_Fluxes(grid, bulk, flux)
+
+  call Control_Mod_Heat_Transfer(heat_transfer)
 
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
@@ -42,10 +47,10 @@
     end if
   end do
 
-  if(HOT==YES) then
-    call GraPhi(grid, t % n, 1, t_x, .TRUE.)     ! dT/dx
-    call GraPhi(grid, t % n, 2, t_y, .TRUE.)     ! dT/dy
-    call GraPhi(grid, t % n, 3, t_z, .TRUE.)     ! dT/dz
+  if(heat_transfer == 'YES') then
+    call GraPhi(grid, t % n, 1, t_x, .true.)     ! dT/dx
+    call GraPhi(grid, t % n, 2, t_y, .true.)     ! dT/dy
+    call GraPhi(grid, t % n, 3, t_z, .true.)     ! dT/dz
     call GraCorNew(grid, T % n, t_x, t_y, t_z) ! needed ?
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)

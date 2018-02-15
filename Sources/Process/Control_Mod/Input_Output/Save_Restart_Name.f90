@@ -1,13 +1,13 @@
 !==============================================================================!
-  subroutine Control_Mod_Tolerance_For_Momentum_Solver(val, verbose)
+  subroutine Control_Mod_Save_Restart_Name(val, verbose)
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  real              :: val
+  character(len=80) :: val
   logical, optional :: verbose
 !==============================================================================!
 
-  call Control_Mod_Read_Real_Item('TOLERANCE_FOR_MOMENTUM_SOLVER', 1.0e-6,  &
+  call Control_Mod_Read_Char_Item('SAVE_RESTART_NAME', 'skip',  &
                                    val, verbose)
 
   end subroutine

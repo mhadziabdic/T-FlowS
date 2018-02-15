@@ -6,7 +6,7 @@
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-module pro_mod
+  module pro_mod
 
   use Var_Mod
   use Bulk_Mod
@@ -64,12 +64,6 @@ module pro_mod
   ! angular velocity 
   real :: omega_x, omega_y, omega_z, omega
 
-  ! turbulent prandtl number 
-  real    :: Prt, Numax
-
-  ! Time step and total time
-  real :: dt, Time
-
   ! Constants needed for UserProbe2d (cut lines)
   real      :: x_o, y_o, Href
   integer   :: Ncuts
@@ -83,15 +77,6 @@ module pro_mod
   ! Residuals                
   real :: errmax, res(100)  
 
-  !---------------------------!
-  !     Solver parameters     !
-  !---------------------------!
-  real    :: URFC(100), SIMTol, URFC_Tur(100), URFC_Tem(100)
-  real    :: TRFC(100)
-
-  ! Under-relaxation parameter for turbulent quantity
-  real    :: URFT, Alfa_fin1, Alfa_fin2
-
   !-----------------------------------!
   !     Area of the cross section     !
   !-----------------------------------!
@@ -100,24 +85,18 @@ module pro_mod
   !------------------------------!
   !     Algorythm parameters     !
   !------------------------------!
-  integer :: INERT,    CONVEC,    CROSS,    DIFFUS 
-  integer :: ALGOR
-  integer :: SIMULA
   integer :: POSPRO
-  integer :: CHANNEL,  TEST,      OTHER,    HOT, HOTini, PIPE, JET, ROT, TGV, URANS 
+  integer :: CHANNEL,  TEST,      OTHER,  HOTini, PIPE, JET, ROT, TGV
   integer :: BACKSTEP, AHILL, RB_CONV
   integer :: ROUGH, PER_BC, BUOY 
   integer :: SGDH, GGDH, BS
-  integer :: SHAKE(100),    BLEND(100),BLEND_TUR(100), BLEND_TEM(100)
+  integer :: SHAKE(100)
   integer :: SHAKE_PER(100),SHAKE_INT(100)
-  integer :: PREC 
-  integer :: RES_INI, MODE, BUDG 
+  integer :: RES_INI, BUDG 
   integer :: XHOM,     YHOM,     ZHOM
 
   integer,parameter :: MAXM=100 
   integer :: Cm(MAXM), Nmon
   real    :: NOM(MAXM), DEN(MAXM), R11(MAXM), U_f(MAXM)
 
-  integer :: Ndt, Ndtt, Nstat, Nini, ini, Ndyn, Nstat2, NewSta, NK, Nbudg 
-
- end module
+  end module

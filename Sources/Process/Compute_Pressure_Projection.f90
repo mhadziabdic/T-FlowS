@@ -8,18 +8,21 @@
   use pro_mod
   use Grid_Mod
   use Info_Mod
-  use Constants_Pro_Mod
-  use Solvers_Mod,     only: Bicg, Cg, Cgs
+  use Solvers_Mod, only: Bicg, Cg, Cgs
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: s, c, c1, c2, niter
-  real    :: Pmax, Pmin
-  real    :: error
-  real    :: Us, Vs, Ws, DENs, fs
-  real    :: A12
+  integer           :: s, c, c1, c2, niter
+  real              :: p_max, p_min
+  real              :: error, tol
+  real              :: Us, Vs, Ws, DENs, fs
+  real              :: A12
+  character(len=80) :: coupling
+  character(len=80) :: precond
+  real              :: urf           ! under-relaxation factor                 
 !==============================================================================!
 !     
 !   The form of equations which are being solved:
@@ -143,85 +146,41 @@
   !   Solve the pressure correction equation   !
   !--------------------------------------------!
 
-  ! Give the "false" flux back and set it to zero   ! 2mat
-  do s = 1, grid % n_faces                          ! 2mat
-    c1 = grid % faces_c(1,s)                        ! 2mat
-    c2 = grid % faces_c(2,s)                        ! 2mat
-    if( c2 > 0 .or.  &
-        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
-      if(StateMat(material(c1))==SOLID .or. &       ! 2mat
-         StateMat(material(c2))==SOLID) then        ! 2mat
-        b(c1) = b(c1) + Flux(s)                     ! 2mat
-        if(c2 > 0) b(c2) = b(c2) - Flux(s)          ! 2mat
-        Flux(s) = 0.0                               ! 2mat
-      end if                                        ! 2mat
-    end if                                          ! 2mat
-  end do                                            ! 2mat
-
-  ! Disconnect the SOLID cells from FLUID system    ! 2mat
-  do s = 1, grid % n_faces                          ! 2mat
-    c1 = grid % faces_c(1,s)                        ! 2mat
-    c2 = grid % faces_c(2,s)                        ! 2mat
-    if( c2 > 0 .or.  &
-        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
-      if(c2 > 0) then ! => not BUFFER               ! 2mat
-        if(StateMat(material(c1)) == SOLID) then    ! 2mat
-          A12 = -A % val(A % pos(2,s))              ! 2mat
-          A % val(A % pos(1,s)) = 0.0               ! 2mat
-          A % val(A % pos(2,s)) = 0.0               ! 2mat
-          if(StateMat(material(c2)) == FLUID) then  ! 2mat
-            A % val(A % dia(c2)) = &                ! 2mat
-            A % val(A % dia(c2)) -  A12             ! 2mat
-          endif                                     ! 2mat
-        end if                                      ! 2mat
-        if(StateMat(material(c2)) == SOLID) then    ! 2mat
-          A12 = -A % val(A % pos(1,s))              ! 2mat
-          A % val(A % pos(2,s)) = 0.0               ! 2mat
-          A % val(A % pos(1,s)) = 0.0               ! 2mat
-          if(StateMat(material(c1)) == FLUID) then  ! 2mat
-            A % val(A % dia(c1)) = &                ! 2mat
-            A % val(A % dia(c1)) -  A12             ! 2mat
-          endif                                     ! 2mat
-        end if                                      ! 2mat
-      else            ! => BUFFER                   ! 2mat
-        if(StateMat(material(c1)) == SOLID  .or. &  ! 2mat
-           StateMat(material(c2)) == SOLID) then    ! 2mat
-          A12 = -A % bou(c2)                        ! 2mat
-          A % bou(c2) = 0.0                         ! 2mat
-          if(StateMat(material(c1)) == FLUID) then  ! 2mat
-            A % val(A % dia(c1)) = &                ! 2mat
-            A % val(A % dia(c1)) -  A12             ! 2mat
-          endif                                     ! 2mat
-        end if                                      ! 2mat
-      end if                                        ! 2mat
-    end if                                          ! 2mat
-  end do                                            ! 2mat
-
   ! Don't solve the pressure corection too accurate.
   ! Value 1.e-18 blows the solution.
   ! Value 1.e-12 keeps the solution stable
-  if(ALGOR == FRACT)  niter = 200
-  if(ALGOR == SIMPLE) niter =  15
-  call Cg(A, pp % n, b,            &
-          PREC, niter, pp % STol,  &
-          res(4), error) 
+  call Control_Mod_Tolerance_For_Pressure_Solver(tol)
+
+  ! Get matrix precondioner
+  call Control_Mod_Preconditioner_For_System_Matrix(precond)
+
+  call Control_Mod_Pressure_Momentum_Coupling(coupling)
+  if(coupling == 'PROJECTION') niter = 200
+  if(coupling == 'SIMPLE')     niter =  15
+
+  call Cg(A, pp % n, b, precond, niter, tol, res(4), error) 
+
   call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, res(4))
 
   !-------------------------------!
   !   Update the pressure field   !
   !-------------------------------!
-  p % n  =  p % n  +  p % URF  *  pp % n
+  urf = 1.0
+  if(coupling == 'SIMPLE')  &
+    call Control_Mod_Simple_Underrelaxation_For_Pressure(urf)
+
+  p % n  =  p % n  +  urf  *  pp % n
 
   !----------------------------------!
   !   Normalize the pressure field   !
   !----------------------------------!
-  Pmax  = maxval(p % n(1:grid % n_cells))
-  Pmin  = minval(p % n(1:grid % n_cells))
+  p_max  = maxval(p % n(1:grid % n_cells))
+  p_min  = minval(p % n(1:grid % n_cells))
 
-  call glomax(Pmax) 
-  call glomin(Pmin) 
+  call glomax(p_max) 
+  call glomin(p_min) 
 
-  p % n  =  p % n  -  0.5 * (Pmax+Pmin)
+  p % n  =  p % n  -  0.5 * (p_max + p_min)
 
   call Exchange(grid, pp % n) 
 

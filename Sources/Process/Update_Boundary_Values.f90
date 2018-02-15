@@ -8,19 +8,24 @@
   use pro_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c1, c2, s
-  real    :: qx, qy, qz, Nx, Ny, Nz, Stot, CONeff, EBF, Yplus
-  real    :: Prmol, beta, Uplus
+  integer           :: c1, c2, s
+  real              :: qx, qy, qz, Nx, Ny, Nz, Stot, CONeff, EBF, Yplus
+  real              :: Prmol, beta, Uplus, Prt
+  character(len=80) :: heat_transfer
+  character(len=80) :: turbulence_model
 !==============================================================================!
 
   Area  = 0.0
   Tflux = 0.0
+
+  call Control_Mod_Heat_Transfer(heat_transfer)
+  call Control_Mod_Turbulence_Model(turbulence_model)
 
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
@@ -41,18 +46,19 @@
         U % n(c2) = U % n(c1)
         V % n(c2) = V % n(c1)
         W % n(c2) = W % n(c1)
-        if(HOT==YES) t % n(c2) = t % n(c1)
+        if(heat_transfer == 'YES') t % n(c2) = t % n(c1)
       end if
 
       if( Grid_Mod_Bnd_Cond_Type(grid,c2) == SYMMETRY ) then
         U % n(c2) = U % n(c1)
         V % n(c2) = V % n(c1)
         W % n(c2) = W % n(c1)
-        if(HOT==YES) t % n(c2) = t % n(c1)
+        if(heat_transfer == 'YES') t % n(c2) = t % n(c1)
       end if
 
       ! Spalart Allmaras
-      if(SIMULA == SPA_ALL .or. SIMULA == DES_SPA) then
+      if(turbulence_model == 'SPA_ALL' .or.  &
+         turbulence_model == 'DES_SPA') then
         if ( Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  & 
              Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .or.  &
              Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE ) then
@@ -60,8 +66,10 @@
         end if
       end if
 
-      if(SIMULA==EBM.or.SIMULA==HJ) then
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or. SIMULA==WALLFL) then
+      if(turbulence_model == 'EBM' .or.  &
+         turbulence_model == 'HJ') then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
           uu % n(c2) = 0.0 
           vv % n(c2) = 0.0 
           ww % n(c2) = 0.0 
@@ -69,12 +77,14 @@
           uw % n(c2) = 0.0 
           vw % n(c2) = 0.0 
           KIN % n(c2) = 0.0 
-          if(SIMULA==EBM) f22% n(c2) = 0.0 
+          if(turbulence_model == 'EBM') f22% n(c2) = 0.0 
         end if
       end if
 
       ! k-epsilon-v^2
-      if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
+      if(turbulence_model == 'K_EPS_VV' .or.  &
+         turbulence_model == 'ZETA'     .or.  &
+         turbulence_model == 'HYB_ZETA') then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) then
@@ -90,7 +100,7 @@
       end if 
 
       ! k-epsilon
-      if(SIMULA == K_EPS) then
+      if(turbulence_model == 'K_EPS') then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW  .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT  .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE .or.  &
@@ -100,7 +110,8 @@
         end if
       end if 
 
-      if(SIMULA==EBM.or.SIMULA==HJ) then
+      if(turbulence_model == 'EBM' .or.  &
+         turbulence_model == 'HJ') then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) then
@@ -112,14 +123,15 @@
           uv % n(c2) = uv % n(c1)
           uw % n(c2) = uw % n(c1)
           vw % n(c2) = vw % n(c1)
-          if(SIMULA==EBM) f22 % n(c2) = f22 % n(c1)
+          if(turbulence_model == 'EBM') f22 % n(c2) = f22 % n(c1)
         end if
       end if 
 
       ! Is this good in general case, when q <> 0 ??? Check it.
-      if(HOT==YES) then
+      if(heat_transfer == 'YES') then
         Prt = 0.9
-        if(SIMULA/=LES.or.SIMULA/=DNS) then
+        if(turbulence_model/='LES' .or.  &
+           turbulence_model/='DNS') then
           Prt = 1.0                           &
               / ( 0.5882 + 0.228*(vis_t(c1)    &
               / (VISc+1.0e-12)) - 0.0441      &
@@ -137,7 +149,8 @@
         qz = t % q(c2) * Nz
         CONeff = CONc(material(c1))                 &
                + CAPc(material(c1))*vis_t(c1)/Prt
-        if(SIMULA==ZETA.or.SIMULA==K_EPS) then
+        if(turbulence_model == 'ZETA' .or.  &
+           turbulence_model == 'K_EPS') then
           Yplus = max(Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1)/VISc,0.12)
           Uplus = log(Yplus*Elog) / (kappa + TINY) + TINY
           Prmol = VISc / CONc(material(c1))
@@ -186,20 +199,30 @@
         U % n(c2) = U % n(grid % bnd_cond % copy_c(c2))
         V % n(c2) = V % n(grid % bnd_cond % copy_c(c2))
         W % n(c2) = W % n(grid % bnd_cond % copy_c(c2))
-        if(HOT==YES)        t % n(c2) = t % n(grid % bnd_cond % copy_c(c2))
-        if(SIMULA==SPA_ALL .or. SIMULA == DES_SPA) &
-        VIS % n(c2) = VIS % n(grid % bnd_cond % copy_c(c2)) 
-        if(SIMULA==K_EPS_VV.or.SIMULA == ZETA.or.SIMULA == HYB_ZETA) then
+
+        if(heat_transfer == 'YES')  &
+          t % n(c2) = t % n(grid % bnd_cond % copy_c(c2))
+
+        if(turbulence_model == 'SPA_ALL' .or.   &
+           turbulence_model == 'DES_SPA') &
+          VIS % n(c2) = VIS % n(grid % bnd_cond % copy_c(c2)) 
+
+        if(turbulence_model == 'K_EPS_VV' .or.  &
+           turbulence_model == 'ZETA'     .or.  &
+           turbulence_model == 'HYB_ZETA') then
           kin % n(c2) = kin % n(grid % bnd_cond % copy_c(c2))
           eps % n(c2) = eps % n(grid % bnd_cond % copy_c(c2))
           v_2 % n(c2) = v_2 % n(grid % bnd_cond % copy_c(c2))
           f22 % n(c2) = f22 % n(grid % bnd_cond % copy_c(c2))
-        end if ! K_EPS_VV
-        if(SIMULA==K_EPS) then
+        end if ! 'K_EPS_VV'
+
+        if(turbulence_model == 'K_EPS') then
           kin % n(c2) = kin % n(grid % bnd_cond % copy_c(c2))
           eps % n(c2) = eps % n(grid % bnd_cond % copy_c(c2))
-        end if ! K_EPS
-        if(SIMULA==EBM.or.SIMULA==HJ) then
+        end if ! 'K_EPS'
+
+        if(turbulence_model == 'EBM' .or.  &
+           turbulence_model == 'HJ') then
           kin % n(c2) = kin % n(grid % bnd_cond % copy_c(c2))
           eps % n(c2) = eps % n(grid % bnd_cond % copy_c(c2))
           uu % n(c2)  = uu % n(grid % bnd_cond % copy_c(c2))
@@ -209,12 +232,12 @@
           uw % n(c2)  = uw % n(grid % bnd_cond % copy_c(c2))
           vw % n(c2)  = vw % n(grid % bnd_cond % copy_c(c2))
           f22 % n(c2) = f22 % n(grid % bnd_cond % copy_c(c2))
-        end if ! EBM 
+        end if ! 'EBM' 
       end if
     end if
   end do
 
-  !  if(HOT==YES) then 
+  !  if(heat_transfer == 'YES') then 
   !    call GloSum(Tflux)
   !    call GloSum(Area)
   !    call wait

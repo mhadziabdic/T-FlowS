@@ -25,11 +25,9 @@
     real, allocatable :: fluc(:)               ! fluctuating value
     real, allocatable :: x(:), y(:), z(:)      ! gradient components
     real, allocatable :: q(:)                  ! flux of a variable
-    real              :: URF                   ! under relaxation factor
-    real              :: Stol                  ! solver tolerance
     real              :: bound(1024)           ! boundary values
     real              :: init(1024)            ! initial values
-    real              :: pro(11024)            ! inlfow profile
+    real              :: pro(1024)             ! inlfow profile
     real              :: Sigma                 ! sigma
   end type
 

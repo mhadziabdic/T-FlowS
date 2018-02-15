@@ -9,15 +9,16 @@
   use pro_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer s, c, c1, c2, j
-  real    Sor11,  f22hg
-  real    A0
+  integer           :: s, c, c1, c2, j
+  real              :: Sor11, f22hg
+  real              :: A0
+  character(len=80) :: turbulence_model
 !==============================================================================!
 !                                                                              !
 !  The form of source terms are :                                              !
@@ -28,7 +29,7 @@
 !    |                     coefficients b(c)                                   !
 !   /                                                                          !
 !      f22hg = (1.0 - Cv_1)*(vi2(c)/kin(c) - 2.0/3.0)/Tsc(c)     &             !
-!              + 2.0*Cv_2*p_kin(c)/(3.0*kin(c))                                   !
+!              + 2.0*Cv_2*p_kin(c)/(3.0*kin(c))                                !
 !                                                                              !
 !     /                                                                        !
 !    |                                                                         !
@@ -50,8 +51,10 @@
 
   call Time_And_Length_Scale(grid)
 
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
  ! Source term f22hg
- if(SIMULA == ZETA.or.SIMULA==HYB_ZETA) then 
+ if(turbulence_model == 'ZETA'.or.turbulence_model=='HYB_ZETA') then 
    do c = 1, grid % n_cells
      f22hg = (1.0 - Cf_1 - 0.65*p_kin(c)   &
            / (eps % n(c) + TINY))       &
@@ -87,7 +90,7 @@
        end if   ! end if of BC=wall
      end if    ! end if of c2<0
    end do
- else if(SIMULA == K_EPS_VV) then
+ else if(turbulence_model == 'K_EPS_VV') then
    do c = 1, grid % n_cells
      f22hg = (1.0 - Cf_1)*(v_2 % n(c)/(kin % n(c)+TINY) - TWO_THIRDS)/(Tsc(c)+TINY)   &
                 + Cf_2*p_kin(c)/(kin % n(c)+TINY)

@@ -2,7 +2,7 @@
   subroutine NearWallCell(grid)
 !------------------------------------------------------------------------------!
 ! The subroutine links interior cells to the closes wall cell. This is         !
-! needed for Standard Smagorinsky SGS model used in LES.                       !
+! needed for Standard Smagorinsky SGS model used in 'LES'.                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod

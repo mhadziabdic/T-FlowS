@@ -9,19 +9,21 @@
   use par_mod
   use Grid_Mod
   use Info_Mod
-  use Constants_Pro_Mod
-  use Solvers_Mod,     only: Bicg, Cg, Cgs
+  use Solvers_Mod, only: Bicg, Cg, Cgs
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: s, c, c1, c2, niter
-  real    :: Us, Vs, Ws, DENs, A12, fs
-  real    :: p_max, p_min
-  real    :: error
-  real    :: SMDPN
-  real    :: dPxi, dPyi, dPzi
+  integer           :: s, c, c1, c2, niter
+  real              :: Us, Vs, Ws, DENs, A12, fs
+  real              :: p_max, p_min
+  real              :: error, tol
+  real              :: smdpn
+  real              :: dPxi, dPyi, dPzi
+  character(len=80) :: precond
+  real              :: urf           ! under-relaxation factor                 
 !==============================================================================!
 !     
 !   The form of equations which I am solving:    
@@ -84,7 +86,7 @@
     ! Face is inside the domain
     if(c2  > 0 .or. c2  < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
 
-      SMDPN = (  grid % sx(s)*grid % sx(s)   &
+      smdpn = (  grid % sx(s)*grid % sx(s)   &
                + grid % sy(s)*grid % sy(s)   &
                + grid % sz(s)*grid % sz(s) ) &
             / (  grid % sx(s)*grid % dx(s)   & 
@@ -98,7 +100,7 @@
 
       ! Calculate coeficients for the system matrix
       if(c2  > 0) then 
-        A12 = 0.5 * DENs * SMDPN *           &
+        A12 = 0.5 * DENs * smdpn *           &
            (  grid % vol(c1) / A % sav(c1)       &
             + grid % vol(c2) / A % sav(c2) )  
         A % val(A % pos(1,s))  = -A12
@@ -106,7 +108,7 @@
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
         A % val(A % dia(c2)) = A % val(A % dia(c2)) +  A12
       else 
-        A12 = 0.5 * DENs * SMDPN *           &
+        A12 = 0.5 * DENs * smdpn *           &
              (  grid % vol(c1) / A % sav(c1)     &
               + grid % vol(c2) / A % sav(c2) )  
         A % bou(c2)  = -A12
@@ -148,13 +150,13 @@
                           + Vs*grid % sy(s)  &
                           + Ws*grid % sz(s) )
         b(c1) = b(c1)-Flux(s)
-        SMDPN = (  grid % sx(s) * grid % sx(s)   &
+        smdpn = (  grid % sx(s) * grid % sx(s)   &
                  + grid % sy(s) * grid % sy(s)   &
                  + grid % sz(s) * grid % sz(s) ) &
               / (  grid % sx(s) * grid % dx(s)   &
                  + grid % sy(s) * grid % dy(s)   &
                  + grid % sz(s) * grid % dz(s) )  
-        A12 = DENs * SMDPN * grid % vol(c1) / A % sav(c1)
+        A12 = DENs * smdpn * grid % vol(c1) / A % sav(c1)
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) then
         Us = U % n(c1)
@@ -164,13 +166,13 @@
                           + Vs * grid % sy(s)  &
                           + Ws * grid % sz(s) )
         b(c1) = b(c1)-Flux(s)
-        SMDPN = ( grid % sx(s) * grid % sx(s)   &
+        smdpn = ( grid % sx(s) * grid % sx(s)   &
                 + grid % sy(s) * grid % sy(s)   &
                 + grid % sz(s) * grid % sz(s) ) &
               / ( grid % sx(s) * grid % dx(s)   &
                 + grid % sy(s) * grid % dy(s)   &
                 + grid % sz(s) * grid % dz(s) )
-        A12 = DENs * SMDPN * grid % vol(c1) / A % sav(c1)
+        A12 = DENs * smdpn * grid % vol(c1) / A % sav(c1)
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       else  ! it is SYMMETRY
         Flux(s) = 0.0
@@ -187,17 +189,23 @@
   ! Don't solve the pressure corection too accurate.
   ! Value 1.e-18 blows the solution.
   ! Value 1.e-12 keeps the solution stable
+  call Control_Mod_Tolerance_For_Pressure_Solver(tol)
+
+  ! Get matrix precondioner
+  call Control_Mod_Preconditioner_For_System_Matrix(precond)
+
   niter=40
   call bicg(A, pp % n, b,            &
-            PREC, niter, pp % STol,  &
+            precond, niter, tol,  &
             res(4), error) 
   call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, res(4))
 
   !-------------------------------!
   !   Update the pressure field   !
   !-------------------------------!
+  call Control_Mod_Simple_Underrelaxation_For_Pressure(urf)  ! retreive urf
   do c = 1, grid % n_cells
-    p % n(c)  =  p % n(c)  +  p % URF  *  pp % n(c)
+    p % n(c)  =  p % n(c)  +  urf  *  pp % n(c)
   end do
 
   !------------------------------------!

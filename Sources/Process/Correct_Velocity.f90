@@ -1,5 +1,5 @@
 !==============================================================================!
-  real function Correct_Velocity(grid)
+  real function Correct_Velocity(grid, dt)
 !------------------------------------------------------------------------------!
 !   Corrects the velocities, and mass fluxes on the cell faces.                !
 !------------------------------------------------------------------------------!
@@ -10,17 +10,21 @@
   use Grid_Mod
   use Bulk_Mod
   use Info_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
+  real            :: dt
 !-----------------------------------[Locals]-----------------------------------!
-  integer   :: c, c1, c2, s, m
-  real      :: cfl_max(256), pe_max(256)
-  real      :: cfl_t, pe_t
-  real      :: Pdrop, FluxM
+  integer           :: c, c1, c2, s, m
+  real              :: cfl_max(256), pe_max(256)
+  real              :: cfl_t, pe_t
+  real              :: Pdrop, FluxM
+  character(len=80) :: coupling
 !==============================================================================!
+
+  call Control_Mod_Pressure_Momentum_Coupling(coupling)
 
   !-----------------------------------------!
   !   Correct velocities and fluxes with    !
@@ -31,13 +35,13 @@
   !   so this loop will not correct SOLID   !
   !   velocities.                           !
   !-----------------------------------------!
-  if(ALGOR == FRACT) then
+  if(coupling == 'PROJECTION') then
     do c = 1, grid % n_cells
       U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
       V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
       W % n(c) = W % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
     end do 
-  else ! algorythm is SIMPLE
+  else ! coupling is 'SIMPLE'
     do c = 1, grid % n_cells
       U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
       V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)

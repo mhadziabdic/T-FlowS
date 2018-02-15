@@ -2,7 +2,7 @@
   subroutine Source_Ebm(grid, name_phi)
 !------------------------------------------------------------------------------!
 !   Calculate source terms for transport equations for Re stresses and         !
-!   dissipation for EBM.                                                       !  
+!   dissipation for 'EBM'.                                                       !  
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod

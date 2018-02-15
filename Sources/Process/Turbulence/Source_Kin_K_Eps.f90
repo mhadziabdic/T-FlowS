@@ -9,7 +9,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
   use Work_Mod, only: kin_x => r_cell_01,  &
                       kin_y => r_cell_02,  &
                       kin_z => r_cell_03           
@@ -18,14 +18,19 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, c1, c2, s 
-  real    :: UtotSq, Unor, UnorSq, Utan
+  integer           :: c, c1, c2, s 
+  real              :: UtotSq, Unor, UnorSq, Utan
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
+
+  call Control_Mod_Turbulence_Model(turbulence_model)
+  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
 
   !-----------------------------------------------!
   !  Compute the sources in the near wall cells   !
   !-----------------------------------------------!
-  if(MODE == HIGH_RE) then
+  if(turbulence_model_variant == 'HIGH_RE') then
     do s = 1, grid % n_faces
       c1=grid % faces_c(1,s)
       c2=grid % faces_c(2,s)
@@ -105,7 +110,7 @@
   !--------------------------------------------------------!
   !   Jones-Launder model and Launder-Sharma + Yap model   !
   !--------------------------------------------------------!
-  if(MODE == LOW_RE) then
+  if(turbulence_model_variant == 'LOW_RE') then
     do c = 1, grid % n_cells
 
       ! Production:
@@ -119,9 +124,9 @@
       kin % n(c) = sqrt(kin % n(c))
     end do
 
-    call GraPhi(kin % n, 1, kin_x, .TRUE.)  ! dK/dx
-    call GraPhi(kin % n, 2, kin_y, .TRUE.)  ! dK/dy
-    call GraPhi(kin % n, 3, kin_z, .TRUE.)  ! dK/dz
+    call GraPhi(kin % n, 1, kin_x, .true.)  ! dK/dx
+    call GraPhi(kin % n, 2, kin_y, .true.)  ! dK/dy
+    call GraPhi(kin % n, 3, kin_z, .true.)  ! dK/dz
 
     do c = 1, grid % n_cells
 
@@ -135,7 +140,7 @@
     end do
   end if
 
-  if(SIMULA == HYB_PITM) then
+  if(turbulence_model == 'HYB_PITM') then
     do c = 1, grid % n_cells
 
       ! Production:

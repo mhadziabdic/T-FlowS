@@ -2,7 +2,7 @@
 !                                 !                                    !
 !                                 !   Bojan Niceno                     !
 !   Global variable definitions   !   Delft University of Technology   !
-!      for LES computations       !   Section Heat Transfer            !
+!      for 'LES' computations       !   Section Heat Transfer            !
 !                                 !   niceno@duttwta.wt.tn.tudelft.nl  !
 !                                 !                                    !
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
@@ -13,7 +13,7 @@ module les_mod
 
   implicit none 
 
-  ! Variables relevant for LES computations
+  ! Variables relevant for 'LES' computations
   real             :: ReTau, Cs0, Kflow  
   real,allocatable :: Utau(:), Vtau(:), Wtau(:)
   real,allocatable :: Cdyn(:), Cdyn_mean(:)

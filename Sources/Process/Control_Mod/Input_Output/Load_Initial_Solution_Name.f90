@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Control_Mod_Time_Integration_Of_Innertia(val, verbose)
+  subroutine Control_Mod_Load_Initial_Solution_Name(val, verbose)
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -7,14 +7,7 @@
   logical, optional :: verbose
 !==============================================================================!
 
-  call Control_Mod_Read_Char_Item('TIME_INTEGRATION_OF_INNERTIA', 'linear',  &
+  call Control_Mod_Read_Char_Item('LOAD_INITIAL_SOLUTION_NAME', 'skip',  &
                                    val, verbose)
-  call To_Upper_Case(val)
-
-  if( val.ne.'LINEAR' .and. val.ne.'PARABOLIC') then
-    print *, '# Unknown time-integration scheme for innertia: ', trim(val)
-    print *, '# Exiting!'
-    stop 
-  end if
 
   end subroutine

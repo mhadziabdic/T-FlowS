@@ -10,7 +10,7 @@
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -21,65 +21,18 @@
   character(len=80) :: name_in, answer
   real              :: version
   real              :: r_1, r_2, r_3, r_4, r_5, r_6
+  character(len=80) :: old_heat_transfer
+  character(len=80) :: old_turbulence_model
 !==============================================================================!
 
-  if(this_proc  < 2) &              
-    print *, '# Input intial restart file name [write skip to continue]:'
-  call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(line % tokens(1), '(A80)')  name_in
+  call Control_Mod_Load_Restart_Name(name_in)
+
   answer=name_in
-  call To_Upper_Case(answer) 
-
-  if(answer == 'SKIP') then
-    return 
-  end if
-
-  ! Initiated field from previous computation 
-  if(this_proc  < 2) then
-    print *, '# Initialization of fields from previous computation: '
-    print *, '# DNS      -> Direct Numerical Simulation'
-    print *, '# LES      -> Large Eddy Simulation'
-    print *, '# K_EPS    -> High Reynolds k-eps model.'
-    print *, '# K_EPS_VV -> Durbin`s model.'
-    print *, '# SPA_ALL  -> Spalart-Allmaras model.'
-    print *, '# ZETA     -> k-eps-zeta-f model.'
-    print *, '# HJ       -> HJ model.'
-    print *, '# EBM      -> EBM model.'
-  endif
-  call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
-  if(answer == 'DNS') then
-    RES_INI = DNS
-  else if(answer == 'LES') then
-    RES_INI = LES
-  else if(answer == 'K_EPS') then
-    RES_INI = K_EPS
-  else if(answer == 'K_EPS_VV') then
-    RES_INI = K_EPS_VV
-  else if(answer == 'SPA_ALL') then
-    RES_INI = SPA_ALL
-  else if(answer == 'DES_SPA') then
-    RES_INI = DES_SPA
-  else if(answer == 'ZETA') then
-    RES_INI = ZETA
-  else if(answer == 'HYB_PITM') then
-    RES_INI = HYB_PITM
-  else if(answer == 'HYB_ZETA') then
-    RES_INI = HYB_ZETA
-  else if(answer == 'EBM') then
-    RES_INI = EBM
-  else if(answer == 'HJ') then
-    RES_INI = HJ
-  else if(answer == 'SKIP') then
-    RES_INI = 1000 
-  else
-    if(this_proc  < 2) then
-      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
-                             cmn_line_count, ' Got a: ', answer
-    endif
-    stop
-  endif
+  if(answer == 'SKIP') return
+
+  call Control_Mod_Heat_Transfer(old_heat_transfer)
+  call Control_Mod_Turbulence_Model(old_turbulence_model)
 
   ! Save the name
   answer = problem_name
@@ -163,7 +116,7 @@
   ! Fluxes 
   read(9) (Flux(s), s=1,grid % n_faces)
 
-  if(HOT == YES) then
+  if(old_heat_transfer == 'YES') then
     read(9) (T % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (T % q(c),    c = -grid % n_bnd_cells,-1)
     read(9) (T % o(c),    c = 1, grid % n_cells)
@@ -174,8 +127,11 @@
     read(9) (T % c_o(c),  c = 1, grid % n_cells)
   end if
   
-  if(RES_INI==K_EPS.or.RES_INI==ZETA.or.&
-     RES_INI==K_EPS_VV.or.RES_INI==HYB_ZETA.or.RES_INI == HYB_PITM) then 
+  if(old_turbulence_model == 'K_EPS'    .or.  &
+     old_turbulence_model == 'ZETA'     .or.  &
+     old_turbulence_model == 'K_EPS_VV' .or.  &
+     old_turbulence_model == 'HYB_ZETA' .or.  &
+     old_turbulence_model == 'HYB_PITM') then 
     read(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (kin % o(c),    c = 1, grid % n_cells)
     read(9) (kin % a(c),    c = 1, grid % n_cells)
@@ -199,7 +155,9 @@
     read(9) (TauWall(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(RES_INI==K_EPS_VV.or.RES_INI==ZETA.or.RES_INI == HYB_ZETA) then
+  if(old_turbulence_model == 'K_EPS_VV' .or.  &
+     old_turbulence_model == 'ZETA'     .or.  &
+     old_turbulence_model == 'HYB_ZETA') then
     read(9) (v_2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (v_2 % o(c),    c = 1, grid % n_cells)
     read(9) (v_2 % a(c),    c = 1, grid % n_cells)
@@ -218,7 +176,8 @@
     read(9) (Lsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if 
 
-  if(RES_INI==EBM.or.RES_INI==HJ) then
+  if(old_turbulence_model == 'EBM' .or.  &
+     old_turbulence_model == 'HJ') then
     read(9) (uu % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (uu % o(c),    c = 1, grid % n_cells)
     read(9) (uu % a(c),    c = 1, grid % n_cells)
@@ -279,7 +238,7 @@
     read(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (vis_t(c),       c = -grid % n_bnd_cells,grid % n_cells)
 
-    if(RES_INI==EBM) then
+    if(old_turbulence_model == 'EBM') then
       read(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
       read(9) (f22 % o(c),    c = 1, grid % n_cells)
       read(9) (f22 % d_o(c),  c = 1, grid % n_cells)
@@ -288,7 +247,8 @@
     end if
   end if
 
-  if(RES_INI == SPA_ALL.or.RES_INI==DES_SPA) then
+  if(old_turbulence_model == 'SPA_ALL' .or.  &
+     old_turbulence_model == 'DES_SPA') then
     read(9) (vis % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (vis % o(c),    c = 1, grid % n_cells)
     read(9) (vis % a(c),    c = 1, grid % n_cells)
@@ -300,7 +260,8 @@
     read(9) (vort(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(RES_INI/=DNS) read(9) (vis_t(c), c = -grid % n_bnd_cells,grid % n_cells)
+  if(old_turbulence_model /= 'DNS')  &
+    read(9) (vis_t(c), c = -grid % n_bnd_cells,grid % n_cells)
 
   close(9)
 

@@ -10,15 +10,17 @@
   use pro_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   integer         :: Nstep
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c
-  integer :: s, c1, c2,j     
+  integer           :: c
+  integer           :: s, c1, c2,j     
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 !   In transport equation for v2 two source terms exist which have form:       !
 !                                                                              !
@@ -34,7 +36,10 @@
 !   in order to increase stability of solver                                   !
 !------------------------------------------------------------------------------!      
 
-  if(SIMULA == ZETA.or.SIMULA==HYB_ZETA) then
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
+  if(turbulence_model == 'ZETA' .or.  &
+     turbulence_model=='HYB_ZETA') then
 
     ! Positive source term 
     ! The first option in treating the source is making computation very 
@@ -54,7 +59,7 @@
                           + grid % vol(c) * p_kin(c)     &
                           / (kin % n(c)+TINY) 
     end do
-  else if(SIMULA == K_EPS_VV) then
+  else if(turbulence_model == 'K_EPS_VV') then
     do c = 1, grid % n_cells
       b(c) = b(c) + max(0.0, f22 % n(c) * kin % n(c) * grid % vol(c))
       A % val(A % dia(c)) = A % val(A % dia(c))                            &

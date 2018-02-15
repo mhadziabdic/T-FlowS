@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Compute_Sgs(grid)
 !------------------------------------------------------------------------------!
-!   Calculates SGS stresses and turbulent viscosity for LES.                   !
+!   Calculates SGS stresses and turbulent viscosity for 'LES'.                   !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -9,7 +9,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
   use Work_Mod, only: t_x => r_cell_01,  &
                       t_y => r_cell_02,  &
                       t_z => r_cell_03           
@@ -30,8 +30,11 @@
   real    :: Stot, lf, UtauL, Uff 
   real    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus 
   real    :: Nc2
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
   
+  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
+
   !---------------!
   !               !
   !   SGS terms   !
@@ -43,7 +46,7 @@
     call GraPhi(grid, t % n, 3, t_z, .true.)  ! dT/dz
   end if 
  
-  if(MODE == SMAG) then
+  if(turbulence_model_variant == 'SMAGORINSKY') then
     do c = 1, grid % n_cells
       lf = grid % vol(c)**ONE_THIRD
 
@@ -66,7 +69,8 @@
               * (Cs*Cs)           &          ! Cs^2   
               * Shear(c) 
     end do
-  else if(MODE == DYN) then
+
+  else if(turbulence_model_variant == 'DYNAMIC') then
     if(BUOY==YES) then  
       do c = 1, grid % n_cells
         lf = grid % vol(c)**ONE_THIRD  
@@ -84,7 +88,8 @@
                 + 2.5*(grav_x*t_x(c) + grav_y*t_y(c) + grav_z*t_z(c)))  
       end do
     end if     
-  else if(MODE == WALE) then
+
+  else if(turbulence_model_variant == 'WALE') then
     do c = 1, grid % n_cells
       lf = grid % vol(c)**ONE_THIRD    
       vis_t(c) = DENc(material(c))  &

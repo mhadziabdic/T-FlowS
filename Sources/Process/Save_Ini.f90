@@ -11,7 +11,7 @@
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
   type(Grid_Type) :: grid
@@ -19,19 +19,19 @@
   integer           :: c, nn
   character(len=80) :: name_out, answer
   character(len=4)  :: ext
+  character(len=80) :: heat_transfer
+  character(len=80) :: turbulence_model
 !==============================================================================!
 
-  ! store the name
-  if(this_proc  < 2)                                                     &
-  print *, '# Saving initial files [skip cancels]:'  
-  call Tokenizer_Mod_Read_Line(CMN_FILE)
-  
-  read(line % tokens(1), '(A80)')  name_out
+  call Control_Mod_Save_Initial_Solution_Name(name_out)
+
   answer=name_out
   call To_Upper_Case(answer)
-  
   if(answer == 'SKIP') return
-  
+
+  call Control_Mod_Heat_Transfer(heat_transfer)
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
   ! save the name
   answer = problem_name
   problem_name = name_out
@@ -48,7 +48,7 @@
   end do    ! through centers 
   close(9)
 
-  ext = '.U__'
+  ext(2:4) = u % name
   call Name_File(this_proc, name_out, ext)
   open(9,file=name_out)
   do c= 1, grid % n_cells
@@ -57,7 +57,7 @@
   end do    ! through centers 
   close(9)
 
-  ext = '.V__'
+  ext(2:4) = v % name
   call Name_File(this_proc, name_out, ext)
   open(9,file=name_out)
   do c= 1, grid % n_cells
@@ -66,7 +66,7 @@
   end do    ! through centers 
   close(9)
 
-  ext = '.W__'
+  ext(2:4) = w % name
   call Name_File(this_proc, name_out, ext)
   open(9,file=name_out)
   do c= 1, grid % n_cells
@@ -75,7 +75,7 @@
   end do    ! through centers 
   close(9)
 
-  ext = '.P__'
+  ext(2:4) = p % name
   call Name_File(this_proc, name_out, ext)
   open(9,file=name_out)
   do c= 1, grid % n_cells
@@ -83,8 +83,8 @@
   end do    ! through centers 
   close(9)
  
-  if(HOT == YES) then 
-    ext = '.T__'
+  if(heat_transfer == 'YES') then 
+    ext(2:4) = t % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
     do c= 1, grid % n_cells
@@ -94,26 +94,27 @@
     close(9)
   end if 
  
-  if(SIMULA == ZETA.or.SIMULA==K_EPS_VV) then
-    ext = '.Kin'
+  if(turbulence_model == 'ZETA' .or.  &
+     turbulence_model == 'K_EPS_VV') then
+    ext(2:4) = kin % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % a(c), Kin % a_o(c),  &
-                          Kin % d_o(c), Kin % c(c), Kin % c_o(c)
+      write(9,'(7E18.8)') kin % n(c), kin % o(c), kin % a(c), kin % a_o(c),  &
+                          kin % d_o(c), kin % c(c), kin % c_o(c)
     end do    ! through centers 
     close(9)
 
-    ext = '.Eps'
+    ext(2:4) = eps % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % a(c), Eps % a_o(c),  &
-                          Eps % d_o(c), Eps % c(c), Eps % c_o(c)
+      write(9,'(7E18.8)') eps % n(c), eps % o(c), eps % a(c), eps % a_o(c),  &
+                          eps % d_o(c), eps % c(c), eps % c_o(c)
     end do    ! through centers 
     close(9)
 
-    ext = '.v_2'
+    ext(2:4) = v_2 % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
     do c= 1, grid % n_cells
@@ -122,7 +123,7 @@
     end do    ! through centers 
     close(9)
 
-    ext = '.f22'
+    ext(2:4) = f22 % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
     do c= 1, grid % n_cells
@@ -132,22 +133,22 @@
     close(9)
   end if
 
-  if(SIMULA == K_EPS) then
-    ext = '.Kin'
+  if(turbulence_model == 'K_EPS') then
+    ext(2:4) = kin % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') Kin % n(c), Kin % o(c), Kin % a(c), Kin % a_o(c),  &
-                          Kin % d_o(c), Kin % c(c), Kin % c_o(c)
+      write(9,'(7E18.8)') kin % n(c), kin % o(c), kin % a(c), kin % a_o(c),  &
+                          kin % d_o(c), kin % c(c), kin % c_o(c)
     end do    ! through centers 
     close(9)
 
-    ext = '.Eps'
+    ext(2:4) = eps % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') Eps % n(c), Eps % o(c), Eps % a(c), Eps % a_o(c),  &
-                          Eps % d_o(c), Eps % c(c), Eps % c_o(c)
+      write(9,'(7E18.8)') eps % n(c), eps % o(c), eps % a(c), eps % a_o(c),  &
+                          eps % d_o(c), eps % c(c), eps % c_o(c)
     end do    ! through centers 
     close(9)
   end if

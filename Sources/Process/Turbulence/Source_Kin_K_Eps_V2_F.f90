@@ -9,17 +9,19 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, c1, c2, s
-  real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot
-  real    :: lf, Gblend, Ustar, Ck, yPlus, Uplus
-  real    :: EBF, EBF1
-  real    :: ALPHA1, Lrans, Lsgs
+  integer           :: c, c1, c2, s
+  real              :: Utan, UnorSq, Unor, UtotSq, dely, Stot
+  real              :: lf, Gblend, Ustar, Ck, yPlus, Uplus
+  real              :: EBF, EBF1
+  real              :: ALPHA1, Lrans, Lsgs
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================! 
 !                                                                              !
 !   p_kin  is a production of turbulent kinematic energy.                         !
@@ -42,7 +44,9 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-  if(SIMULA == HYB_ZETA) then
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
+  if(turbulence_model == 'HYB_ZETA') then
     do c = 1, grid % n_cells
       lf = grid % vol(c)**ONE_THIRD
       Lsgs  = 0.8*lf

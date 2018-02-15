@@ -32,7 +32,7 @@
   ! Constants for the Spalart-Allmaras model:
   real :: Cb1, Cb2, SIGMAv, Cw1, Cw2, Cw3, Cvis1
 
-  ! Total dissipation in HJ model
+  ! Total dissipation in 'HJ' model
   real,allocatable :: eps_tot(:)
 
   ! Vorticity

@@ -11,7 +11,7 @@
   use par_mod, only: this_proc, n_proc
   use Tokenizer_Mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
   use Work_Mod, only: uu_mean => r_cell_01,  &
                       vv_mean => r_cell_02,  &
                       ww_mean => r_cell_03,  &
@@ -30,6 +30,8 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, n, offset
   character(len=80) :: name_out_8, name_out_9, store_name
+  character(len=80) :: heat_transfer
+  character(len=80) :: turbulence_model
 !------------------------------[Local parameters]------------------------------!
   integer, parameter :: VTK_TETRA      = 10  ! cell shapes in VTK format
   integer, parameter :: VTK_HEXAHEDRON = 12  
@@ -52,6 +54,9 @@
   problem_name = name_save  
 
   call Wait 
+
+  call Control_Mod_Heat_Transfer(heat_transfer)
+  call Control_Mod_Turbulence_Model(turbulence_model)
 
   !--------------------------------------!
   !                                      !
@@ -223,7 +228,7 @@
   !-----------------!
   !   Temperature   !
   !-----------------!
-  if(HOT == YES) then
+  if(heat_transfer == 'YES') then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, t % name, t % n(1))
   end if 
 
@@ -232,36 +237,36 @@
   !--------------------------!
   
   ! Save kin and eps
-  if(SIMULA == K_EPS .or. SIMULA == K_EPS_VV .or.  &
-     SIMULA == ZETA  .or. SIMULA == HYB_ZETA .or.  &
-     SIMULA == EBM   .or. SIMULA == HJ  ) then
+  if(turbulence_model == 'K_EPS' .or. turbulence_model == 'K_EPS_VV' .or.  &
+     turbulence_model == 'ZETA'  .or. turbulence_model == 'HYB_ZETA' .or.  &
+     turbulence_model == 'EBM'   .or. turbulence_model == 'HJ'  ) then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, kin % name, kin % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, eps % name, eps % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "P_KIN", p_kin(1))
   end if
 
   ! Save v_2 and f22
-  if(SIMULA == K_EPS_VV .or.  &
-     SIMULA == ZETA     .or. SIMULA == HYB_ZETA) then
+  if(turbulence_model == 'K_EPS_VV' .or.  &
+     turbulence_model == 'ZETA'     .or. turbulence_model == 'HYB_ZETA') then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, v_2 % name, v_2 % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, f22 % name, f22 % n(1))
   end if
 
   ! Save vis and vis_t
-  if(SIMULA == DES_SPA .or. SIMULA == SPA_ALL) then
+  if(turbulence_model == 'DES_SPA' .or. turbulence_model == 'SPA_ALL') then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, vis % name, vis % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "VORT", vort(1))
   end if
-  if(SIMULA == K_EPS   .or. SIMULA == K_EPS_VV .or.  &
-     SIMULA == ZETA    .or. SIMULA == HYB_ZETA .or.  &
-     SIMULA == EBM     .or. SIMULA == HJ       .or.  &
-     SIMULA == LES                           .or.  &
-     SIMULA == DES_SPA .or. SIMULA == SPA_ALL) then
+  if(turbulence_model == 'K_EPS'   .or. turbulence_model == 'K_EPS_VV' .or.  &
+     turbulence_model == 'ZETA'    .or. turbulence_model == 'HYB_ZETA' .or.  &
+     turbulence_model == 'EBM'     .or. turbulence_model == 'HJ'       .or.  &
+     turbulence_model == 'LES'                           .or.  &
+     turbulence_model == 'DES_SPA' .or. turbulence_model == 'SPA_ALL') then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "VIS_T", vis_t(1))
   end if
 
   ! Reynolds stress models
-  if(SIMULA == EBM .or. SIMULA == HJ) then
+  if(turbulence_model == 'EBM' .or. turbulence_model == 'HJ') then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, uu % name, uu % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, vv % name, vv % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, ww % name, ww % n(1))
@@ -271,7 +276,8 @@
   end if
 
   ! Statistics for large-scale simulations of turbulence
-  if(SIMULA == LES .or. SIMULA == DES_SPA) then
+  if(turbulence_model == 'LES' .or.  &
+     turbulence_model == 'DES_SPA') then
     call Save_Vtu_Vector(grid, IN_4, IN_5, "UVW_MEAN",  &
                                 u % mean(1), v % mean(1), w % mean(1))
     uu_mean = uu % mean(c) - u % mean(c) * u % mean(c)
@@ -286,7 +292,7 @@
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "UV_MEAN", uv_mean(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "UW_MEAN", uw_mean(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "VW_MEAN", vw_mean(1))
-    if(HOT == YES) then
+    if(heat_transfer == 'YES') then
       call Save_Vtu_Scalar(grid, IN_4, IN_5, "T_MEAN", t % mean(1))
       tt_mean = tt % mean(c) - t % mean(c) * t % mean(c)
       ut_mean = ut % mean(c) - u % mean(c) * t % mean(c)

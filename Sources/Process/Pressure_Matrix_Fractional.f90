@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Pressure_Matrix_Fractional(grid)
+  subroutine Pressure_Matrix_Fractional(grid, dt)
 !------------------------------------------------------------------------------!
 !   Forms the pressure system matrix for the fractional step method.           !
 !------------------------------------------------------------------------------!
@@ -11,6 +11,7 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
+  real            :: dt
 !-----------------------------------[Locals]-----------------------------------!
   real    :: A12
   integer :: c, c1, c2, s 

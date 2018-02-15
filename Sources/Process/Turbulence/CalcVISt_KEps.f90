@@ -25,15 +25,22 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, c1, c2, s
-  real    :: CK, Yplus, Fmu, Ret, yStar, Prturb, EBF, Prmol, beta                                        
+  integer           :: c, c1, c2, s
+  real              :: CK, Yplus, Fmu, Ret, yStar, Prturb, EBF, Prmol, beta                                        
+  character(len=80) :: heat_transfer
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
+
+  call Control_Mod_Heat_Transfer(heat_transfer)
+  call Control_Mod_Turbulence_Model(turbulence_model)
+  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
 
 !======================================================================!
 !  K-EPS model
@@ -43,7 +50,7 @@
   yPlus = 0.0 
   Prturb = 0.9
 
-  if(MODE == HIGH_RE) then
+  if(turbulence_model_variant == 'HIGH_RE') then
     do c = 1, grid % n_cells
       vis_t(c) = Cmu * DENc(material(c)) * kin%n(c) * kin%n(c) / (eps % n(c)+1.0e-14)
     end do
@@ -76,14 +83,14 @@
     end if   
   end if
   
-  if(MODE==LOW_RE) then
+  if(turbulence_model_variant == 'LOW_RE') then
     do c = 1, grid % n_cells 
       Ret = kin % n(c)*kin % n(c)/(VISc*eps % n(c))
       Fmu = exp(-3.4/(1.0 + 0.02*Ret)**2.0) 
       vis_t(c) = Fmu * Cmu * DENc(material(c)) * kin%n(c) * kin%n(c) / eps % n(c)
     end do
   end if
-  if(HOT == YES) then
+  if(heat_transfer == 'YES') then
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
@@ -97,7 +104,7 @@
     end do
   end if   
 
-  if(SIMULA==HYB_PITM) then
+  if(turbulence_model == 'HYB_PITM') then
     do c = 1, grid % n_cells
       Ret = kin % n(c)*kin % n(c)/(VISc*eps % n(c))
 

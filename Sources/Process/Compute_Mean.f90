@@ -9,14 +9,18 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   integer         :: n0, n1
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, n
+  integer           :: c, n
+  character(len=80) :: heat_transfer
 !==============================================================================!
+
+  call Control_Mod_Heat_Transfer(heat_transfer)
 
   n=n1-n0
 
@@ -51,7 +55,7 @@
       ! VISt_mean(c) = ( VISt_mean(c)*(1.*n) + VISt(c) ) & 
       !              / (1.*(n+1))
 
-      if(HOT==YES) then
+      if(heat_transfer == 'YES') then
         T % mean(c) = ( T % mean(c) * (1.*n) + T % n(c) ) / (1.*(n+1))
         TT % mean(c) = ( TT % mean(c)*(1.*n) + T % n(c) * T % n(c) ) & 
                      / (1.*(n+1))

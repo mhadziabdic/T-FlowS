@@ -9,21 +9,25 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c 
-  real    :: Xrat, Fv1, Fv2, Fw, SS, DistV, ProdV, R, GG, Dif
-  real    :: dist
-  real    :: phi_x(-grid % n_bnd_cells:grid % n_cells),  &
-             phi_y(-grid % n_bnd_cells:grid % n_cells),  &
-             phi_z(-grid % n_bnd_cells:grid % n_cells)
+  integer           :: c 
+  real              :: Xrat, Fv1, Fv2, Fw, SS, DistV, ProdV, R, GG, Dif
+  real              :: dist
+  real              :: phi_x(-grid % n_bnd_cells:grid % n_cells),  &
+                       phi_y(-grid % n_bnd_cells:grid % n_cells),  &
+                       phi_z(-grid % n_bnd_cells:grid % n_cells)
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 
-  if(SIMULA == SPA_ALL) then
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
+  if(turbulence_model == 'SPA_ALL') then
     do c = 1, grid % n_cells
 
       !---------------------------------!
@@ -55,7 +59,7 @@
       b(c)  = b(c) + Dif * grid % vol(c)
     end do
 
-  else if(SIMULA == DES_SPA) then
+  else if(turbulence_model == 'DES_SPA') then
     do c = 1, grid % n_cells
 
       ! What is 0.65 here?  A ghost number

@@ -103,8 +103,7 @@ SRC_MOD =  allp_mod.f90			\
            Tokenizer_Mod.f90
 
 # Sources for modules in the local directory
-SRC_MOD += Constants_Pro_Mod.f90	\
-           Info_Mod.f90 		\
+SRC_MOD += Info_Mod.f90 		\
            Bulk_Mod.f90 		\
            Var_Mod.f90			\
            Matrix_Mod.f90		\

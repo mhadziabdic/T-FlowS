@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Calcvist_RSM(grid) 
 !------------------------------------------------------------------------------!
-!   Computes the turbulent viscosity for RSM models (EBM and HJ).              !
+!   Computes the turbulent viscosity for RSM models ('EBM' and 'HJ').              !
 !   If hybrid option is used turbulent diffusivity is modeled by vis_t.         !
 !   Otherwise, vis_t is used as false diffusion in order to increase            !
 !   stability of computation.                                                  !
@@ -12,19 +12,23 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c
-  real    :: Cmu_mod                                        
+  integer           :: c
+  real              :: Cmu_mod                                        
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 
   call Compute_Shear_And_Vorticity(grid)
 
-  if(SIMULA == HJ) then
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
+  if(turbulence_model == 'HJ') then
     do c=1, grid % n_cells
       kin % n(c) = 0.5*max(uu%n(c)+vv%n(c)+ww%n(c),1.0e-12)
 
@@ -39,7 +43,7 @@
       Cmu_mod = min(0.12,Cmu_mod) 
       vis_t(c) = Cmu_mod * DENc(material(c)) * kin % n(c)**2 / eps_tot(c)
     end do 
-  else if(SIMULA==EBM) then
+  else if(turbulence_model=='EBM') then
     do c=1, grid % n_cells
       kin % n(c) = 0.5*max(uu%n(c)+vv%n(c)+ww%n(c),1.0e-12)
 

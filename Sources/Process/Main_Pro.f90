@@ -1,7 +1,7 @@
 !==============================================================================!
   program Processor
 !------------------------------------------------------------------------------!
-!   Unstructured Finite Volume LES/RANS solver.                                !
+!   Unstructured Finite Volume 'LES'/RANS solver.                                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -14,7 +14,6 @@
   use Bulk_Mod
   use Var_Mod
   use Solvers_Mod, only: D
-  use Constants_Pro_Mod
   use Info_Mod
   use User_Mod
   use Control_Mod
@@ -23,11 +22,25 @@
 !----------------------------------[Calling]-----------------------------------!
   real :: Correct_Velocity
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: i, m, n, Ndtt_temp
+  integer           :: i, m, n
   real              :: mres, wall_time_start, wall_time_current
   character(len=80) :: name_save
   logical           :: restar, multiple, save_now, exit_now
-  type(Grid_Type)   :: grid  ! grid used in computations
+  real, allocatable :: dum_x(:), dum_y(:), dum_z(:)
+
+  type(Grid_Type)   :: grid        ! grid used in computations
+  real              :: time        ! physical time
+  real              :: dt          ! time step       
+  integer           :: first_dt    ! first time step in this run
+  integer           :: last_dt     ! number of time steps
+  integer           :: n_ini       ! number of inner iterations
+  integer           :: n_stat      ! starting time step for statistic
+  integer           :: ini         ! inner iteration counter
+  real              :: simple_tol  ! tolerance for SIMPLE algorithm
+  character(len=80) :: coupling    ! pressure velocity coupling
+  character(len=80) :: heat_transfer
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !---------------------------------[Interfaces]---------------------------------!
   interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
@@ -41,19 +54,13 @@
   end interface
 !==============================================================================!
 
-! call Control_Mod_Open_File()
-! call Control_Mod_Problem_Name(problem_name)
-! call Control_Mod_Turbulence_Model(name_save)
-! call Control_Mod_Number_Of_Time_Steps(ndt, verbose=.true.)
-! call Control_Mod_Time_Step           (dt,  verbose=.true.)
-! print *, 'Number of time steps: ', ndt
-! print *, 'Time step:            ', dt 
-! print *, 'Problem name:         ', problem_name
-! print *, 'Turbulence model:     ', name_save    
-! stop
-
   ! Get starting time
   call cpu_time(wall_time_start)
+
+  !------------------------------!
+  !   Start parallel execution   !
+  !------------------------------!
+  call StaPar()
 
   !--------------------------------!
   !   Splash out the logo screen   !             
@@ -62,30 +69,21 @@
     call Logo_Pro
   endif
 
-  !------------------------------!
-  !   Start parallel execution   !
-  !------------------------------!
-  call StaPar()
+  !---------------------------------------------!
+  !   Open control file and read problem name   !
+  !---------------------------------------------!
+  call Control_Mod_Open_File()
+  call Control_Mod_Problem_Name(problem_name)
 
-  !--------------------------------------------!
-  !   Open the command file, initialize line   !
-  !    count to zero, and read problem name    ! 
-  !--------------------------------------------!
-  open(CMN_FILE, file='T-FlowS.cmn')    
-  cmn_line_count = 0
-
-  if(this_proc < 2) print *, '# Input problem name:'
-  call Tokenizer_Mod_Read_Line(CMN_FILE)  
-  read(line % tokens(1), '(A80)')  problem_name
-
-  call Wait   
-
-  ! Initialize parameters
+  ! Initialize parameters -> bad practice, candidate for deletion
   call IniPar
   
   ! Load the finite volume grid      
-  call Load_Cns       (grid, this_proc)
-  call Read_Problem           ! bad practice, should be avoided
+  call Load_Cns(grid, this_proc)
+
+  ! Read problem type -> bad practice, candidate for deletion
+  ! call Read_Problem 
+
   call Allocate_Memory(grid)
   call Load_Geo       (grid, this_proc)
   call BufLoa
@@ -103,9 +101,14 @@
   !   Time loop   !
   !               !
   !---------------!
-  Ndt  = 0
-  Ndtt = 0
-  call Load_Restart(grid, restar)
+  
+  ! Get the number of time steps from the control file
+  call Control_Mod_Number_Of_Time_Steps(last_dt, verbose=.true.)
+  call Control_Mod_Starting_Time_Step_For_Statistics(n_stat, verbose=.true.)
+
+  ! First time step is one, unless read from restart otherwise
+  first_dt = 0
+  call Load_Restart(grid, first_dt, restar)
 
   if(restar) then
     call Load_Boundary_Conditions(grid, .false.)
@@ -132,21 +135,30 @@
   end do
 
   ! Loading data from previous computation   
-  !  if(this_proc<2) print *,'Reading data from previous computation on the same mesh'
+  !  if(this_proc<2)  &
+  !    print *,'Reading data from previous computation on the same mesh'
   call Load_Restart_Ini(grid)
+
+  call Control_Mod_Heat_Transfer(heat_transfer)
+  call Control_Mod_Turbulence_Model(turbulence_model)
+  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
 
   ! Prepare ...
   call Compute_Face_Geometry(grid)
   call Bulk_Mod_Monitoring_Planes_Areas(grid, bulk)
   call Find_Bad        (grid)
-  if(SIMULA==LES.and.MODE==SMAG.and..NOT.restar) call NearWallCell(grid)
+  if(turbulence_model == 'LES'                 .and.  &
+     turbulence_model_variant == 'SMAGORINSKY' .and.  &
+     .not. restar)                                    &
+     call NearWallCell(grid)
 
   ! Prepare the gradient matrix for velocities
   call Compute_Gradient_Matrix(grid, .true.) 
 
   ! Prepare matrix for fractional step method
-  if(ALGOR  ==  FRACT) then 
-    call Pressure_Matrix_Fractional(grid)
+  call Control_Mod_Pressure_Momentum_Coupling(coupling)
+  if(coupling == 'PROJECTION') then 
+    call Pressure_Matrix_Fractional(grid, dt)
   end if
 
   ! Print the areas of monitoring planes
@@ -163,7 +175,10 @@
   !   Time loop   !
   !               !
   !---------------!
-  do n=Ndtt+1, Ndt 
+
+  call Control_Mod_Time_Step(dt, verbose=.true.)
+
+  do n = first_dt + 1, last_dt 
 
     time = time + dt
 
@@ -177,30 +192,38 @@
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
     call Info_Mod_Time_Print()
 
-    if(SIMULA==DES_SPA) then
+    if(turbulence_model == 'DES_SPA') then
       call Compute_Shear_And_Vorticity(grid)
       call CalcVort (grid, U % n, V % n, W % n, vort)
     end if
 
-    if(SIMULA == LES) then
+    if(turbulence_model == 'LES') then
       call Compute_Shear_And_Vorticity(grid)
-      if(MODE == DYN) call Compute_Sgs_Dynamic(grid) 
-      if(MODE == WALE) call CalcWALE(grid) 
+      if(turbulence_model_variant == 'DYNAMIC') call Compute_Sgs_Dynamic(grid) 
+      if(turbulence_model_variant == 'WALE')    call CalcWALE(grid) 
       call Compute_Sgs(grid)
     end if  
 
-    If(SIMULA==HYB_ZETA) then  
+    If(turbulence_model == 'HYB_ZETA') then  
       call Compute_Sgs_Dynamic(grid)      
       call Compute_Sgs_Hybrid(grid)
     end if
 
-    call Convective_Outflow(grid)
-    if(SIMULA==EBM.or.SIMULA==HJ) call CalcVISt_RSM(grid)
+    call Convective_Outflow(grid, dt)
+    if(turbulence_model == 'EBM' .or.  &
+       turbulence_model == 'HJ')       &
+      call CalcVISt_RSM(grid)
     
     !--------------------------!
     !   Inner-iteration loop   !
     !--------------------------!
-    do ini=1,Nini                   !  FRACTION & SIMPLE  
+    if(coupling == 'PROJECTION') then
+      n_ini = 1
+    else 
+      call Control_Mod_Max_Simple_Iterations(n_ini)
+    end if
+
+    do ini=1, n_ini                   !  PROJECTION & SIMPLE  
 
       call Info_Mod_Iter_Fill(ini)
 
@@ -222,32 +245,32 @@
       call GraPhi(grid, W % n, 3, W % z, .true.)
 
       ! U velocity component
-      call NewUVW(grid, 1, U,                             &
+      call Compute_Momentum(grid, dt, ini, 1, U,          &
                   U % x,   U % y,   U % z,                & 
                   grid % sx,   grid % sy,   grid % sz,    &                             
                   grid % dx,   grid % dy,   grid % dz,    &                             
                   p % x,   V % x,   W % x)      ! dP/dx, dV/dx, dW/dx
 
       ! V velocity component
-      call NewUVW(grid, 2, v,                             &
+      call Compute_Momentum(grid, dt, ini, 2, v,          &
                   V % y,   V % x,   V % z,                & 
                   grid % sy,   grid % sx,   grid % sz,    &
                   grid % dy,   grid % dx,   grid % dz,    &
                   p % y,   U % y,   W % y)      ! dP/dy, dU/dy, dW/dy
 
       ! W velocity component
-      call NewUVW(grid, 3, w,                             &
+      call Compute_Momentum(grid, dt, ini, 3, w,          &
                   W % z,   W % x,   W % y,                & 
                   grid % sz,   grid % sx,   grid % sy,    &                         
                   grid % dz,   grid % dx,   grid % dy,    &                         
                   p % z,   U % z,   V % z)      ! dP/dz, dU/dz, dV/dz
 
-      if(ALGOR == FRACT) then
+      if(coupling == 'PROJECTION') then 
         call Exchange(grid, A % sav)  
         call Balance_Mass(grid)
-        call Compute_Pressure_Fractional(grid)
+        call Compute_Pressure_Fractional(grid, dt)
       endif
-      if(ALGOR == SIMPLE) then
+      if(coupling == 'SIMPLE') then 
         call Exchange(grid, A % sav)  
         call Balance_Mass(grid)
         call Compute_Pressure_Simple(grid)
@@ -260,48 +283,49 @@
       end if
 
       call Bulk_Mod_Compute_Fluxes(grid, bulk, flux)
-      Mres = Correct_Velocity(grid) !  project the velocities
+      Mres = Correct_Velocity(grid, dt) !  project the velocities
 
       ! Temperature
-      if(HOT==YES) then
-        call Compute_Scalar(grid, 5, T)
+      if(heat_transfer == 'YES') then
+        call Compute_Temperature(grid, dt, ini, 5, T)
       end if 
 
       ! Rans models
-      if(SIMULA==K_EPS.or.SIMULA == HYB_PITM) then
+      if(turbulence_model == 'K_EPS' .or.  &
+         turbulence_model == 'HYB_PITM') then
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
         call Compute_Shear_And_Vorticity(grid)
-        call Compute_Turbulent(grid, 6, Kin, n)
-        call Compute_Turbulent(grid, 7, Eps, n)
+        call Compute_Turbulent(grid, dt, ini, 6, Kin, n)
+        call Compute_Turbulent(grid, dt, ini, 7, Eps, n)
         call CalcVISt_KEps(grid)
       end if 
 
-      if(SIMULA == K_EPS_VV .or.  &
-         SIMULA == ZETA     .or.  &
-         SIMULA == HYB_ZETA) then
+      if(turbulence_model == 'K_EPS_VV' .or.  &
+         turbulence_model == 'ZETA'     .or.  &
+         turbulence_model == 'HYB_ZETA') then
         call Compute_Shear_And_Vorticity(grid)
 
-        call Compute_Turbulent(grid, 6, Kin, n)
-        call Compute_Turbulent(grid, 7, Eps, n)
+        call Compute_Turbulent(grid, dt, ini, 6, Kin, n)
+        call Compute_Turbulent(grid, dt, ini, 7, Eps, n)
          
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        call Compute_F22(grid, 8, f22) 
+        call Compute_F22(grid, ini, 8, f22) 
 
-        call Compute_Turbulent(grid, 9, v_2, n)  
+        call Compute_Turbulent(grid, dt, ini, 9, v_2, n)  
 
         call CalcVISt_KepsV2F(grid)
       end if                 
 
-      if(SIMULA==EBM.or.SIMULA==HJ) then
+      if(turbulence_model == 'EBM'.or.turbulence_model == 'HJ') then
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        if(SIMULA==EBM) call Time_And_Length_Scale(grid)
+        if(turbulence_model == 'EBM') call Time_And_Length_Scale(grid)
 
         call GraPhi(grid, U % n, 1, U % x,.true.)    ! dU/dx
         call GraPhi(grid, U % n, 2, U % y,.true.)    ! dU/dy
@@ -315,31 +339,32 @@
         call GraPhi(grid, W % n, 2, W % y,.true.)    ! dW/dy 
         call GraPhi(grid, W % n, 3, W % z,.true.)    ! dW/dz
 
-        call Compute_Stresses(grid, 6, uu)
-        call Compute_Stresses(grid, 7, vv)
-        call Compute_Stresses(grid, 8, ww) 
+        call Compute_Stresses(grid, dt, ini, 6, uu)
+        call Compute_Stresses(grid, dt, ini, 7, vv)
+        call Compute_Stresses(grid, dt, ini, 8, ww) 
 
-        call Compute_Stresses(grid,  9, uv)  
-        call Compute_Stresses(grid, 10, uw) 
-        call Compute_Stresses(grid, 11, vw) 
+        call Compute_Stresses(grid, dt, ini,  9, uv)  
+        call Compute_Stresses(grid, dt, ini, 10, uw) 
+        call Compute_Stresses(grid, dt, ini, 11, vw) 
 
-        if(SIMULA==EBM) then
-          call Compute_F22(grid, 12, f22) 
+        if(turbulence_model == 'EBM') then
+          call Compute_F22(grid, ini, 12, f22) 
         end if 
 
-        call Compute_Stresses(grid, 13, Eps) 
+        call Compute_Stresses(grid, dt, ini, 13, Eps) 
  
         call CalcVISt_RSM(grid)
       end if                 
 
-      if(SIMULA==SPA_ALL.or.SIMULA==DES_SPA) then
+      if(turbulence_model == 'SPA_ALL' .or.  &
+         turbulence_model == 'DES_SPA') then
         call Compute_Shear_And_Vorticity(grid)
         call CalcVort(grid, U % n, V % n, W % n, vort)
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        call Compute_Turbulent(grid, 6, vis, n)
+        call Compute_Turbulent(grid, dt, ini, 6, vis, n)
         call CalcVISt_SPA_ALL(grid, n)
       end if
 
@@ -349,9 +374,10 @@
       ! End of the current iteration 
       call Info_Mod_Iter_Print()
 
-      if(ALGOR == SIMPLE) then
-        if( res(1) <= SIMTol .and. res(2) <= SIMTol .and. &
-            res(3) <= SIMTol .and. res(4) <= SIMTol ) goto 4 
+      if(coupling == 'SIMPLE') then 
+        call Control_Mod_Tolerance_For_Simple_Algorithm(simple_tol)
+        if( res(1) <= simple_tol .and. res(2) <= simple_tol .and. &
+            res(3) <= simple_tol .and. res(4) <= simple_tol ) goto 4 
       endif
     end do 
 
@@ -361,7 +387,7 @@
     ! Write the values in monitoring points
     do i=1,Nmon
       if(Cm(i)  > 0) then                               
-        if(HOT==NO) then
+        if(heat_transfer == 'NO') then
           write(10+i,'(I9,4E16.6)')                    &
            n, U % n(Cm(i)), V%n(Cm(i)), W%n(Cm(i)), P%n(Cm(i))
         else
@@ -372,11 +398,9 @@
     end do  
 
    if(PIPE==YES.or.JET==YES) then 
-     call CalcMn_Cylind(grid, Nstat, n)  !  calculate mean values 
-!BOJAN     if(BUDG == YES.and.HOT==YES) call CalcBudgets_cylind(Nbudg, n)
-!BOJAN     if(BUDG == YES.and.HOT==NO)  call CalcBudgets_cylind(Nbudg, n)
+     call CalcMn_Cylind(grid, n_stat, n)  !  calculate mean values 
    else
-     call Compute_Mean(grid, Nstat, n)  !  calculate mean values 
+     call Compute_Mean(grid, n_stat, n)  !  calculate mean values 
    end if
 
     !-----------------------------------------------------!  
@@ -432,20 +456,14 @@
     ! Is it time to save the restart file?
     if(save_now .or. exit_now .or. mod(n,1000) == 0) then
       call Wait
-      Ndtt_temp = Ndtt
-      Ndtt      = n
-      call Save_Restart(grid, name_save)                          
-      Ndtt = Ndtt_temp
+      call Save_Restart(grid, n, name_save)                          
     end if
 
     ! Is it time to save results for post-processing
-    if(save_now .or. exit_now .or. mod(n, 10) == 0) then
+    if(save_now .or. exit_now .or. mod(n, 1) == 0) then
       call Wait
-      Ndtt_temp = Ndtt
-      Ndtt      = n
       call Save_Vtu_Results(grid, name_save)
       call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
-      Ndtt = Ndtt_temp
     end if
 
     if(save_now) then
@@ -466,11 +484,6 @@
   end if
 
   if(this_proc  < 2) print *, '# Exiting !'
-
-  !----------------------------!
-  !   Close the command file   !
-  !----------------------------!
-  close(CMN_FILE)                
 
   !--------------------------------!
   !   Close the monitoring files   !

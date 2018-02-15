@@ -20,7 +20,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
   use Work_Mod, only: shear_x => r_cell_01,  &
                       shear_y => r_cell_02,  &
                       shear_z => r_cell_03           
@@ -29,11 +29,16 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: s, c, c1, c2, j, i
-  real    :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
+  integer           :: s, c, c1, c2, j, i
+  real              :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 
-  if(MODE == HIGH_RE) then
+  call Control_Mod_Turbulence_Model(turbulence_model)
+  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
+
+  if(turbulence_model_variant == 'HIGH_RE') then
     do c = 1, grid % n_cells
 
       ! Positive contribution:
@@ -54,8 +59,8 @@
       c2=grid % faces_c(2,s)
 
       if(c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then  
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
 
           ! This will fix the value of eps in the first cell
           if(ROUGH==NO) then
@@ -78,12 +83,12 @@
   !-------------------------!
   !   Jones-Launder model   !
   !-------------------------!
-  if(MODE == LOW_RE) then
+  if(turbulence_model_variant == 'LOW_RE') then
 
    call Compute_Shear_And_Vorticity(grid)
-   call GraPhi(shear, 1, shear_x, .TRUE.)  ! dU/dx
-   call GraPhi(shear, 2, shear_y, .TRUE.)  ! dW/dy
-   call GraPhi(shear, 3, shear_z, .TRUE.)  ! dV/dz
+   call GraPhi(shear, 1, shear_x, .true.)  ! dU/dx
+   call GraPhi(shear, 2, shear_y, .true.)  ! dW/dy
+   call GraPhi(shear, 3, shear_z, .true.)  ! dV/dz
 
     do c = 1, grid % n_cells
 
@@ -125,7 +130,7 @@
     end do
   end if
 
-  if(SIMULA == HYB_PITM) then
+  if(turbulence_model == 'HYB_PITM') then
     do c = 1, grid % n_cells
 
       ! Positive contribution:

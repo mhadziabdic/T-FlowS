@@ -9,28 +9,34 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, c1, c2, s
-  real    :: UnorSq, Unor, UtotSq, Cmu1, beta, Prmol, Prturb
-  real    :: lf, Gblend, Ustar, Ck, yPlus, Uplus, EBF
+  integer           :: c, c1, c2, s
+  real              :: UnorSq, Unor, UtotSq, Cmu1, beta, Prmol, Prturb
+  real              :: lf, Gblend, Ustar, Ck, yPlus, Uplus, EBF
+  character(len=80) :: heat_transfer
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 
   call Time_And_Length_Scale(grid)
 
-  if(SIMULA == K_EPS_VV) then
+  call Control_Mod_Heat_Transfer(heat_transfer)
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
+  if(turbulence_model == 'K_EPS_VV') then
     do c = 1, grid % n_cells
       vis_t(c) = CmuD*v_2%n(c)*Tsc(c)
     end do
-  else if(SIMULA == ZETA) then
+  else if(turbulence_model == 'ZETA') then
     do c = 1, grid % n_cells
       vis_t(c) = CmuD*v_2%n(c)*kin % n(c)*Tsc(c)
     end do
-  else if(SIMULA == HYB_ZETA) then
+  else if(turbulence_model == 'HYB_ZETA') then
     do c = 1, grid % n_cells
       vis_t(c) = CmuD*v_2%n(c)*kin % n(c)*Tsc(c)
       vis_t_eff(c) = max(vis_t(c),vis_t_sgs(c))
@@ -73,7 +79,7 @@
           VISwall(c1) = min(Yplus*VISc*kappa/LOG((grid % wall_dist(c1)+Zo)/Zo),1.0e+6*VISc)
        end if
 
-        if(HOT==YES) then
+        if(heat_transfer == 'YES') then
           Prturb = 1.0 / ( 0.5882 + 0.228*vis_t(c1)/VISc   &
                  - 0.0441 * (vis_t(c1)/VISc)**2.0  &
                  * (1.0 - exp(-5.165*VISc/(vis_t(c1)+tiny))) )

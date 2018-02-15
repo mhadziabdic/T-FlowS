@@ -11,7 +11,7 @@
   use rans_mod
   use Grid_Mod
   use Bulk_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -21,7 +21,12 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, m, s, n
   integer :: n_wall, n_inflow, n_outflow, n_symmetry, n_heated_wall, n_convect
+  character(len=80) :: heat_transfer
+  character(len=80) :: turbulence_model
 !==============================================================================!
+
+  call Control_Mod_Heat_Transfer(heat_transfer)
+  call Control_Mod_Turbulence_Model(turbulence_model)
 
   area  = 0.0
   print *, 'grid % n_materials: ', grid % n_materials
@@ -39,13 +44,14 @@
       w % n(c)    = w % init(material(c)) 
       w % o(c)    = w % init(material(c))
       w % oo(c)   = w % init(material(c))
-      if(HOT==YES) then
+      if(heat_transfer == 'YES') then
         t % n(c)  = t % init(material(c)) 
         t % o(c)  = t % init(material(c)) 
         t % oo(c) = t % init(material(c)) 
         Tinf      = t % init(material(c))
       end if 
-      if(SIMULA==EBM.or.SIMULA==HJ) then
+      if(turbulence_model == 'EBM' .or.  &
+         turbulence_model == 'HJ') then
         uu % n(c)  = uu % init(material(c))
         vv % n(c)  = vv % init(material(c))
         ww % n(c)  = ww % init(material(c))
@@ -53,9 +59,10 @@
         uw % n(c)  = uw % init(material(c))
         vw % n(c)  = vw % init(material(c))
         eps % n(c) = eps % init(material(c))
-        if(SIMULA==EBM) f22 % n(c) = f22 % init(material(c))
+        if(turbulence_model=='EBM') f22 % n(c) = f22 % init(material(c))
       end if
-      if(SIMULA==K_EPS.or.SIMULA==HYB_PITM) then
+      if(turbulence_model == 'K_EPS' .or.  &
+         turbulence_model == 'HYB_PITM') then
         kin % n(c)  = kin % init(material(c))
         kin % o(c)  = kin % init(material(c))
         kin % oo(c) = kin % init(material(c))
@@ -65,7 +72,9 @@
         Uf(c)       = 0.047
         Ynd(c)      = 30.0
       end if
-      if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
+      if(turbulence_model == 'K_EPS_VV' .or.  &
+         turbulence_model == 'ZETA'     .or.  & 
+         turbulence_model == 'HYB_ZETA') then
         kin % n(c)  = kin % init(material(c))
         kin % o(c)  = kin % init(material(c))
         kin % oo(c) = kin % init(material(c))
@@ -81,7 +90,8 @@
         Uf(c)       = 0.047
         Ynd(c)      = 30.0
       end if
-      if(SIMULA == SPA_ALL .or. SIMULA==DES_SPA) then      
+      if(turbulence_model == 'SPA_ALL' .or.  &
+         turbulence_model == 'DES_SPA') then      
         VIS % n(c)  = VIS % init(material(c))
         VIS % o(c)  = VIS % init(material(c))
         VIS % oo(c) = VIS % init(material(c))
@@ -161,7 +171,6 @@
   !----------------------!
   !   Initializes time   ! 
   !----------------------!
-  Time   = 0.0   
   if(this_proc  < 2) then
     print *, '# MassIn=', bulk(1) % mass_in
     print *, '# Average inflow velocity =', bulk(1) % mass_in / area

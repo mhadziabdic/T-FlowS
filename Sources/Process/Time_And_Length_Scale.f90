@@ -13,16 +13,19 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !----------------------------------------------------------------------!
   implicit none
   type(Grid_Type) :: grid
 !-------------------------------[Locals]-------------------------------!
-  integer c 
-  real T1, T2, L1, L2, L3, T3
+  integer           :: c 
+  real              :: T1, T2, L1, L2, L3, T3
+  character(len=80) :: turbulence_model
 !======================================================================!
 
-  if(SIMULA==K_EPS_VV) then
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
+  if(turbulence_model == 'K_EPS_VV') then
     do c = 1, grid % n_cells 
       T1 = Kin%n(c)/(Eps%n(c) )
       T2 = Ct*(abs(VISc/(Eps%n(c) )))**0.5
@@ -35,7 +38,8 @@
       Tsc(c) = max(min(T1,T3),T2)
       Lsc(c) = Cl*max(min(L1,L3),L2)
     end do
-  else if(SIMULA == ZETA.or.SIMULA==HYB_ZETA) then
+  else if(turbulence_model == 'ZETA' .or.  &
+          turbulence_model == 'HYB_ZETA') then
     if(ROUGH == YES) then
       do c = 1, grid % n_cells 
         T1 = Kin%n(c)/(Eps%n(c))
@@ -61,7 +65,7 @@
         Lsc(c) = Cl*max(min(L1,L3),L2)
       end do
     end if 
-  else if(SIMULA == EBM) then
+  else if(turbulence_model == 'EBM') then
     do c = 1, grid % n_cells
       Kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)),1.0e-12)
       T1 = Kin%n(c)/(Eps%n(c))

@@ -12,7 +12,7 @@
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
   type(Grid_Type) :: grid
@@ -35,10 +35,12 @@
   ! Variables for ReadC:
   character(len=80) :: answer
   character(len=80) :: name_in
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!  
 
-  call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(line % tokens(1), '(A80)') name_in
+  call Control_Mod_Load_Initial_Solution_Name(name_in)
+
   answer=name_in
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return
@@ -47,9 +49,11 @@
   answer = problem_name
   problem_name = name_in
 
-  HOTini = NO
-
   call Name_File(this_proc, name_in, '.ini')
+
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
+  HOTini = NO
 
   if(this_proc < 2) print *,'now reading file: ', name_in 
 
@@ -122,9 +126,9 @@
   j = NCold
   do k = 1, j
     if(this_proc < 2) then
-      if(mod(k,20000) == 0) print *, (100.*k/(1.*j)), '% c_omplete...'  
+      if(mod(k,20000) == 0) print *, (100.*k/(1.*j)), '% complete...'  
     end if
-    if(SIMULA == LES) then 
+    if(turbulence_model == 'LES') then 
       if(HOTini==YES) then
         read(5,*) Xold(k), Yold(k), Zold(k), &
                   Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k), &
@@ -138,7 +142,8 @@
                   Wold(k), Woold(k), WCold(k), WCoold(k), WDoold(k), WXold(k), WXoold(k)
       end if
     end if 
-    if(SIMULA == ZETA.or.SIMULA == K_EPS_VV) then 
+    if(turbulence_model == 'ZETA' .or.  &
+       turbulence_model == 'K_EPS_VV') then 
       if(HOTini==YES) then
         read(5,*) Xold(k), Yold(k), Zold(k), &
                   Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k), &
@@ -160,7 +165,7 @@
 !                  F22old(k), F22oold(k), F22Doold(k), F22Xold(k), F22Xoold(k)
       end if
     end if 
-    if(SIMULA == K_EPS) then 
+    if(turbulence_model == 'K_EPS') then 
       if(HOTini==YES) then
         read(5,*) Xold(k), Yold(k), Zold(k), &
                   Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k), &
@@ -217,7 +222,9 @@
       W % d_o(c) = WDoold(nearest_cell) 
       W % c(c)   = WXold(nearest_cell) 
       W % c_o(c) = WXoold(nearest_cell) 
-      if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==K_EPS) then
+      if(turbulence_model=='K_EPS_VV' .or.  &
+         turbulence_model=='ZETA'     .or.  &
+         turbulence_model=='K_EPS') then
         Kin % n(c)   = Kold(near(c)) 
         Kin % o(c)   = Koold(near(c)) 
         Kin % a(c)   = KCold(near(c)) 
@@ -234,7 +241,8 @@
         Eps % c(c)   = EXold(near(c)) 
         Eps % c_o(c) = EXoold(near(c)) 
       end if
-      if(SIMULA==K_EPS_VV.or.SIMULA==ZETA) then
+      if(turbulence_model=='K_EPS_VV' .or.  &
+         turbulence_model=='ZETA') then
         v_2 % n(c)   = v_2old(near(c)) 
         v_2 % o(c)   = v_2oold(near(c)) 
         v_2 % a(c)   = v_2Cold(near(c)) 

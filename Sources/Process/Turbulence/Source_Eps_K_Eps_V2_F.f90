@@ -10,7 +10,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -20,6 +20,8 @@
   real    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret, Ck, EBF
   real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, EpsWall, EpsHom
   real    :: BL_EPS, Pro, p_kin_turb, p_kin_vis, Yplus
+  character(len=80) :: turbulence_model
+  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 !   In dissipation of turbulent kinetic energy equation exist two              !
 !   source terms which have form:                                              !
@@ -39,7 +41,10 @@
 
   call Time_And_Length_Scale(grid)
 
-  if(SIMULA == ZETA.or.SIMULA==HYB_ZETA) then
+  call Control_Mod_Turbulence_Model(turbulence_model)
+
+  if(turbulence_model == 'ZETA' .or.  &
+     turbulence_model == 'HYB_ZETA') then
     do c = 1, grid % n_cells 
       Esor = grid % vol(c)/(Tsc(c)+tiny)
       Ce_11 = Ce1*(1.0 + alpha*(1.0/(v_2%n(c)+tiny) ))    
@@ -105,7 +110,7 @@
     end if
   end do  
 
-  if(SIMULA == K_EPS_VV) then
+  if(turbulence_model == 'K_EPS_VV') then
     do c = 1, grid % n_cells
       Esor = grid % vol(c)/Tsc(c)
       Ce_11 = Ce1*(1.0 + alpha*(kin%n(c)/(v_2%n(c)) + tiny)**0.5)

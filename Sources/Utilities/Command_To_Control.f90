@@ -69,6 +69,11 @@ include 'Tokenizer.f90'
       print *, 'HEAT_TRANSFER    yes'
       HOT = .true.
 
+    else if(answer == 'urans') then
+
+      ! Print entry for the control file
+      print *, 'TURBULENCE_MODEL_VARIANT    urans'
+
     else if(answer == 'rot') then
       print *, '# Angular velocity vector: '
       call Tokenizer_Mod_Read_Line(CMN_FILE)
@@ -78,7 +83,7 @@ include 'Tokenizer.f90'
                                                trim(line % tokens(2)), '  ',  &
                                                trim(line % tokens(3))
 
-    else if(answer == 'BUOY') then
+    else if(answer == 'buoy') then
       print *, '# Gravitational constant in x, y and z directions: '
       call Tokenizer_Mod_Read_Line(CMN_FILE)
 
@@ -113,7 +118,7 @@ include 'Tokenizer.f90'
 
   ! Print entry for the control file
   if(answer .ne. 'SKIP') then
-    print *, 'RESTART_FILE_NAME    ', trim(line % tokens(1))
+    print *, 'LOAD_RESTART_NAME    ', trim(line % tokens(1))
   end if
 
   !-----------------------!
@@ -295,9 +300,9 @@ include 'Tokenizer.f90'
   read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
   if(answer == 'LIN') then
-    print *, 'TIME_INTEGRATION_FOR_INNERTIA    linear'
+    print *, 'TIME_INTEGRATION_FOR_INERTIA    linear'
   else if(answer == 'PAR') then
-    print *, 'TIME_INTEGRATION_FOR_INNERTIA    parabolic'
+    print *, 'TIME_INTEGRATION_FOR_INERTIA    parabolic'
   endif
   
   print *, '# Integration of advection terms: '
@@ -368,7 +373,7 @@ include 'Tokenizer.f90'
       print *, 'BLENDING_COEFFICIENT_MOMENTUM    ', trim(line % tokens(2))
     end if
   else if(answer == 'NO') then
-    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    no'  ! Whatever that means :-(
+    print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    central'
   else if(answer == 'UDS') then
     print *, 'ADVECTION_SCHEME_FOR_MOMENTUM    upwind'
   else if(answer == 'CDS') then

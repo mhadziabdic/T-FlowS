@@ -1,7 +1,0 @@
- #================================
- # Uncomment desired file format: 
- #--------------------------------
-   GMV -> GMV and VisIt format.
- # DAT -> Fluent format.
- # VTK -> Paraview format.
- #--------------------------------

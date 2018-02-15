@@ -83,6 +83,16 @@ include 'Tokenizer.f90'
                                                trim(line % tokens(2)), '  ',  &
                                                trim(line % tokens(3))
 
+    else if(answer == 'rb_conv') then
+      print *, '# Gravitational constant in x, y and z directions: '
+      call Tokenizer_Mod_Read_Line(CMN_FILE)
+
+      ! Print entry for the control file
+      print *, 'GRAVITATIONAL_VECTOR    ',  trim(line % tokens(1)), '  ', &
+                                            trim(line % tokens(2)), '  ',  &
+                                            trim(line % tokens(3))
+      print *, 'REFERENCE_TEMPERATURE    ', trim(line % tokens(4))
+
     else if(answer == 'buoy') then
       print *, '# Gravitational constant in x, y and z directions: '
       call Tokenizer_Mod_Read_Line(CMN_FILE)

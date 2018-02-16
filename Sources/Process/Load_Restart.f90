@@ -68,7 +68,7 @@
   read(9)   ReTau,   Tref,    Cs0,   Tinf,    r_4,    r_6 
   read(9)      dt,   Time,  Kflow,    r_4,    r_5,    r_6 
   read(9)   U%URF,  P%URF,   URFC, SIMTol, U%Stol,    r_6 
-  read(9) PP%Stol,  T%URF, T%STol,  Tflux,    r_5,    r_6   
+  read(9) PP%Stol,  T%URF, T%STol,  Qflux,    r_5,    r_6   
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6 
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6   
@@ -243,15 +243,6 @@
       read(9) (f22 % c(c),    c = 1, grid % n_cells)
       read(9) (f22 % c_o(c),  c = 1, grid % n_cells)
     end if
-
-    if(URANS == YES) then
-!     read(9) (VAR10x(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     read(9) (VAR10y(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     read(9) (VAR10z(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     read(9) (VAR11x(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     read(9) (VAR11y(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     read(9) (VAR11z(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    end if  
   end if
 
   if(SIMULA == SPA_ALL.or.SIMULA==DES_SPA) then
@@ -268,7 +259,7 @@
 
   if(SIMULA/=DNS) read(9) (VISt(c), c = -grid % n_bnd_cells,grid % n_cells)
 
-  if(SIMULA==DNS.or.SIMULA==LES.or.SIMULA==URANS.or.&
+  if(SIMULA==DNS.or.SIMULA==LES.or.URANS==YES.or.&
      SIMULA==HYB_ZETA.or.SIMULA==HYB_PITM.or.SIMULA==DES_SPA) then
     read(9) (U % mean(c),   c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (V % mean(c),   c = -grid % n_bnd_cells,grid % n_cells)
@@ -304,6 +295,11 @@
     read(9) (VISt_mean(c), c = 1, grid % n_cells)
     read(9) (VISt_sgs(c),  c = 1, grid % n_cells)
     read(9) (VISt_eff(c),  c = 1, grid % n_cells)
+  end if
+
+  if((SIMULA==ZETA.or.SIMULA==K_EPS).and.URANS==YES) then
+    read(9) (Kin % mean(c), c = 1, grid % n_cells)
+    read(9) (Eps % mean(c), c = 1, grid % n_cells)
   end if
 
   close(9)

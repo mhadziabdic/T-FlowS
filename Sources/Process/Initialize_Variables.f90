@@ -27,9 +27,6 @@
   write(*,*) 'grid % n_materials: ', grid % n_materials
   do n = 1, grid % n_materials
     do c = 1, grid % n_cells
-      U % mean(c) = 0.0
-      V % mean(c) = 0.0
-      W % mean(c) = 0.0
       U % n(c)    = U % init(material(c))
       U % o(c)    = U % init(material(c)) 
       U % oo(c)   = U % init(material(c))
@@ -43,7 +40,6 @@
         T % n(c)  = T % init(material(c)) 
         T % o(c)  = T % init(material(c)) 
         T % oo(c) = T % init(material(c)) 
-        Tinf      = T % init(material(c))
       end if 
       if(SIMULA==EBM.or.SIMULA==HJ) then
         uu % n(c)  = uu % init(material(c))
@@ -85,6 +81,12 @@
         VIS % n(c)  = VIS % init(material(c))
         VIS % o(c)  = VIS % init(material(c))
         VIS % oo(c) = VIS % init(material(c))
+      end if
+      if(SIMULA==HYB_ZETA.or.SIMULA==DES_SPA.or.&
+      SIMULA==DNS.or.SIMULA==HYB_PITM.or.URANS==YES) then
+        U % mean(c) = 0.0
+        V % mean(c) = 0.0
+        W % mean(c) = 0.0
       end if
     end do 
   end do   !end do n=1,grid % n_materials

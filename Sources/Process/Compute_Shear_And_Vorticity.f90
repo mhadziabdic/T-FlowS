@@ -24,9 +24,6 @@
   call Exchange(grid, v % n)
   call Exchange(grid, w % n)
 
-  !---------------!
-  !   SGS terms   !
-  !---------------!
   call GraPhi(grid, u % n, 1, u % x, .TRUE.)  ! dU/dx
   call GraPhi(grid, u % n, 2, u % y, .TRUE.)  ! dU/dy
   call GraPhi(grid, u % n, 3, u % z, .TRUE.)  ! dU/dz

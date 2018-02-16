@@ -36,6 +36,7 @@
   real    :: CONeff1, FUex1, FUim1, phixS1, phiyS1, phizS1
   real    :: CONeff2, FUex2, FUim2, phixS2, phiyS2, phizS2
   real    :: Stot, phis, CAPs, Prt1, Prt2
+  real    :: utS, vtS, wtS, Fstress, CONc2, CONc1, CONt2, CONt1
 !------------------------------------------------------------------------------!
 !     
 !  The form of equations which are solved:    
@@ -255,10 +256,13 @@
         phixS2 = phixS1 
         phiyS2 = phiyS1 
         phizS2 = phizS1 
-        CONeff1 =      grid % f(s) * ( CONc(material(c1))                 &
-                                     + CAPc(material(c1))*VISt(c1)/Prt )  &
-                + (1.-grid % f(s)) * ( CONc(material(c2))                 &
-                                     + CAPc(material(c2))*VISt(c2)/Prt )
+        CONc1  = grid % f(s) * CONc(material(c1)) + &
+            (1.-grid % f(s)) * CONc(material(c2))
+        CONc2  = CONc1 
+        CONt1  = grid % f(s) * CAPc(material(c1))*VISt(c1)/Prt + &
+            (1.-grid % f(s)) * CAPc(material(c2))*VISt(c2)/Prt
+        CONt2  = CONt1
+        CONeff1 = CONc1 + CONt1   
         CONeff2 = CONeff1 
       else 
         phixS1 = phi_x(c1) 
@@ -279,9 +283,10 @@
       phixS2 = phixS1 
       phiyS2 = phiyS1 
       phizS2 = phizS1 
-      CONeff1 =   CONc(material(c1))                 &
-                + CAPc(material(c1))*VISt(c1)/Prt   
-      CONeff2 = CONeff1 
+      CONc1 =   CONc(material(c1))
+      CONt1 =   CAPc(material(c1))*VISt(c1)/Prt
+      CONeff1 = CONc1 + CONt1
+      CONeff2 = CONeff1
     endif
 
 
@@ -344,10 +349,24 @@
       end if 
     end if
 
+    ! Substracting false diffusion and adding turbulent heat fluxes
+    if(phi % name == 'T'.and.SIMULA==EBM.or.SIMULA==HJ) then
+      utS =  (Ff(s) * uT % n(c1)  &
+           + (1.-Ff(s)) * uT % n(c2))
+      vtS =  (Ff(s) * vT % n(c1)  &
+           + (1.-Ff(s)) * vT % n(c2))
+      wtS =  (Ff(s) * wT % n(c1)  &
+           + (1.-Ff(s)) * wT % n(c2))
+      Fstress = - (utS * grid % sx(s) + vtS * grid % sy(s) + &
+                   wtS * grid % sz(s)) &
+                - (CONt1 * (phixS1 * grid % sx(s) + &
+                  phiyS1 * grid % sy(s) + phizS1 * grid % sz(s)))
+    end if
+
     ! Cross diffusion part
-    phi % c(c1) = phi % c(c1) + FUex1 - FUim1 
+    phi % c(c1) = phi % c(c1) + FUex1 - FUim1 + Fstress
     if(c2.gt.0) then
-      phi % c(c2) = phi % c(c2) - FUex2 + FUim2 
+      phi % c(c2) = phi % c(c2) - FUex2 + FUim2 - Fstress
     end if 
 
     ! Calculate the coefficients for the sysytem matrix
@@ -500,87 +519,87 @@
     end do
   end if
 
-  if(SIMULA==EBM.or.SIMULA==HJ) then
-    if(MODE/=HYB) then
-      do c = 1, grid % n_cells
-        u1uj_phij(c) = -0.22*Tsc(c) *&
-                   (uu%n(c)*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c))
-        u2uj_phij(c) = -0.22*Tsc(c)*&
-                   (uv%n(c)*phi_x(c)+vv%n(c)*phi_y(c)+vw%n(c)*phi_z(c))
-        u3uj_phij(c) = -0.22*Tsc(c)*&
-                   (uw%n(c)*phi_x(c)+vw%n(c)*phi_y(c)+ww%n(c)*phi_z(c))
-      end do
-      call GraPhi(grid, u1uj_phij, 1, u1uj_phij_x, .TRUE.)
-      call GraPhi(grid, u2uj_phij, 2, u2uj_phij_y, .TRUE.)
-      call GraPhi(grid, u3uj_phij, 3, u3uj_phij_z, .TRUE.)
-      do c = 1, grid % n_cells
-        b(c) = b(c) - (  u1uj_phij_x(c)  &
-                       + u2uj_phij_y(c)  &
-                       + u3uj_phij_z(c) ) * grid % vol(c)
-      end do
+!  if(SIMULA==EBM.or.SIMULA==HJ) then
+!    if(MODE/=HYB) then
+!      do c = 1, grid % n_cells
+!        u1uj_phij(c) = -0.22*Tsc(c) *&
+!                   (uu%n(c)*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c))
+!        u2uj_phij(c) = -0.22*Tsc(c)*&
+!                   (uv%n(c)*phi_x(c)+vv%n(c)*phi_y(c)+vw%n(c)*phi_z(c))
+!        u3uj_phij(c) = -0.22*Tsc(c)*&
+!                   (uw%n(c)*phi_x(c)+vw%n(c)*phi_y(c)+ww%n(c)*phi_z(c))
+!      end do
+!      call GraPhi(grid, u1uj_phij, 1, u1uj_phij_x, .TRUE.)
+!      call GraPhi(grid, u2uj_phij, 2, u2uj_phij_y, .TRUE.)
+!      call GraPhi(grid, u3uj_phij, 3, u3uj_phij_z, .TRUE.)
+!      do c = 1, grid % n_cells
+!        b(c) = b(c) - (  u1uj_phij_x(c)  &
+!                       + u2uj_phij_y(c)  &
+!                       + u3uj_phij_z(c) ) * grid % vol(c)
+!      end do
+!
+!      !------------------------------------------------------------------!
+!      !   Here we clean up transport equation from the false diffusion   !
+!      !------------------------------------------------------------------!
+!      do s = 1, grid % n_faces
+!
+!        c1 = grid % faces_c(1,s)
+!        c2 = grid % faces_c(2,s)
+!
+!        Prt1 = 1.0/( 0.5882 + 0.228*(VISt(c1)/(VISc+1.0e-12)) - 0.0441*                  &
+!              (VISt(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c1)+1.0e-12) ))) )
+!        Prt2 = 1.0/( 0.5882 + 0.228*(VISt(c2)/(VISc+1.0e-12)) - 0.0441*                  &
+!              (VISt(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c2)+1.0e-12) ))) )
+!
+!        Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
+!        if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
+!          phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
+!          phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
+!          phizS1 = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
+!          phixS2 = phixS1 
+!          phiyS2 = phiyS1 
+!          phizS2 = phizS1 
+!          CONeff1 =       grid % f(s)  * (CAPc(material(c1))*VISt(c1)/Prt )  &
+!                  + (1. - grid % f(s)) * (CAPc(material(c2))*VISt(c2)/Prt )
+!          CONeff2 = CONeff1 
+!        else
+!          phixS1 = phi_x(c1) 
+!          phiyS1 = phi_y(c1) 
+!          phizS1 = phi_z(c1) 
+!          phixS2 = phixS1 
+!          phiyS2 = phiyS1 
+!          phizS2 = phizS1 
+!          CONeff1 = CAPc(material(c1))*VISt(c1)/Prt   
+!          CONeff2 = CONeff1 
+!        endif
+!
+!        ! Total (exact) diffusive flux
+!        FUex1 = CONeff1 * (  phixS1*grid % sx(s)  &
+!                           + phiyS1*grid % sy(s)  &
+!                           + phizS1*grid % sz(s))
+!        FUex2 = CONeff2 * (  phixS2*grid % sx(s)  &
+!                           + phiyS2*grid % sy(s)  &
+!                           + phizS2*grid % sz(s))
+!
+!        ! Implicit diffusive flux
+!        FUim1 = CONeff1*Scoef(s)*    &
+!                (  phixS1*grid % dx(s)      &
+!                 + phiyS1*grid % dy(s)      &
+!                 + phizS1*grid % dz(s) )
+!        FUim2 = CONeff2*Scoef(s)*    &
+!                (  phixS2*grid % dx(s)      &
+!                 + phiyS2*grid % dy(s)      &
+!                 + phizS2*grid % dz(s) )
+!
+!        b(c1) = b(c1) - CONeff1*(phi%n(c2)-phi%n(c1))*Scoef(s)- FUex1 + FUim1
+!        if(c2  > 0) then
+!         b(c2) = b(c2) + CONeff1*(phi%n(c2)-phi%n(c1))*Scoef(s)+ FUex2 - FUim2
+!        end if
+!      end do
+!    end if  
+!  end if  
 
-      !------------------------------------------------------------------!
-      !   Here we clean up transport equation from the false diffusion   !
-      !------------------------------------------------------------------!
-      do s = 1, grid % n_faces
-
-        c1 = grid % faces_c(1,s)
-        c2 = grid % faces_c(2,s)
-
-        Prt1 = 1.0/( 0.5882 + 0.228*(VISt(c1)/(VISc+1.0e-12)) - 0.0441*                  &
-              (VISt(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c1)+1.0e-12) ))) )
-        Prt2 = 1.0/( 0.5882 + 0.228*(VISt(c2)/(VISc+1.0e-12)) - 0.0441*                  &
-              (VISt(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(VISt(c2)+1.0e-12) ))) )
-
-        Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
-        if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
-          phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
-          phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
-          phizS1 = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
-          phixS2 = phixS1 
-          phiyS2 = phiyS1 
-          phizS2 = phizS1 
-          CONeff1 =       grid % f(s)  * (CAPc(material(c1))*VISt(c1)/Prt )  &
-                  + (1. - grid % f(s)) * (CAPc(material(c2))*VISt(c2)/Prt )
-          CONeff2 = CONeff1 
-        else
-          phixS1 = phi_x(c1) 
-          phiyS1 = phi_y(c1) 
-          phizS1 = phi_z(c1) 
-          phixS2 = phixS1 
-          phiyS2 = phiyS1 
-          phizS2 = phizS1 
-          CONeff1 = CAPc(material(c1))*VISt(c1)/Prt   
-          CONeff2 = CONeff1 
-        endif
-
-        ! Total (exact) diffusive flux
-        FUex1 = CONeff1 * (  phixS1*grid % sx(s)  &
-                           + phiyS1*grid % sy(s)  &
-                           + phizS1*grid % sz(s))
-        FUex2 = CONeff2 * (  phixS2*grid % sx(s)  &
-                           + phiyS2*grid % sy(s)  &
-                           + phizS2*grid % sz(s))
-
-        ! Implicit diffusive flux
-        FUim1 = CONeff1*Scoef(s)*    &
-                (  phixS1*grid % dx(s)      &
-                 + phiyS1*grid % dy(s)      &
-                 + phizS1*grid % dz(s) )
-        FUim2 = CONeff2*Scoef(s)*    &
-                (  phixS2*grid % dx(s)      &
-                 + phiyS2*grid % dy(s)      &
-                 + phizS2*grid % dz(s) )
-
-        b(c1) = b(c1) - CONeff1*(phi%n(c2)-phi%n(c1))*Scoef(s)- FUex1 + FUim1
-        if(c2  > 0) then
-         b(c2) = b(c2) + CONeff1*(phi%n(c2)-phi%n(c1))*Scoef(s)+ FUex2 - FUim2
-        end if
-      end do
-    end if  
-  end if  
-
-  call User_Source(grid)
+  call User_Source(grid, T, a, b)
 
   !---------------------------------!
   !                                 !

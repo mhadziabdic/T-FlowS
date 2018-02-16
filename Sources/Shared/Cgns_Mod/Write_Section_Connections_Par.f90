@@ -7,8 +7,8 @@
 !   https://cgns.github.io/CGNS_docs_current/midlevel/grid.html                !
 !------------------------------------------------------------------------------!
 !   Array structures in current function are strictly followings:              !
-!   Processor:    |        P_1        |               P_2               | ...  !
-!   Connections:  |   (?, 1 : NC_1)   |   (?, NC_1 + 1 : NC_1 + NC_2)   | ...  !
+!   Cell type:    |      HEXA_8      |     PENTA_6      |       PYRA_5     |...!
+!   Connections:  |-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|...!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
   use par_mod, only: this_proc
@@ -115,11 +115,9 @@
         cell_n (6, i) = grid % cells_n(6, c)
         cell_n (7, i) = grid % cells_n(8, c)
         cell_n (8, i) = grid % cells_n(7, c)
-        tflows_2_cgns_cells(c) = i
         i = i + 1
       elseif (grid % cells_n_nodes(c).eq.6 .and. n_nodes.eq.6) then ! wedge
         cell_n (1:6, i) = grid % cells_n(1:6, c)
-        tflows_2_cgns_cells(c) = i
         i = i + 1
       elseif (grid % cells_n_nodes(c).eq.5 .and. n_nodes.eq.5) then ! pyramid
         cell_n (1, i) = grid % cells_n(5, c)
@@ -127,11 +125,9 @@
         cell_n (3, i) = grid % cells_n(2, c)
         cell_n (4, i) = grid % cells_n(4, c)
         cell_n (5, i) = grid % cells_n(3, c)
-        tflows_2_cgns_cells(c) = i
         i = i + 1
       elseif (grid % cells_n_nodes(c).eq.4 .and. n_nodes.eq.4) then ! tetra
         cell_n (1:4, i) = grid % cells_n(1:4, c)
-        tflows_2_cgns_cells(c) = i
         i = i + 1
       end if
     end do

@@ -173,7 +173,7 @@
     !  stop
     !end if
 
-    if (n == 3) then
+    if (n == 21) then
       call Save_Grid_Par(grid,"test_par")
       call Add_Fields_To_Grid_Par(grid,"test_par")
       stop

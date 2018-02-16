@@ -26,7 +26,7 @@
   sol_type = cgns_base(base_id)%block(block_id)%solution(sol_id)%sol_type
 
   ! Create a FlowSolution_t node 
-  call Cg_Sol_Write_F( & !(in )
+  call Cg_Sol_Write_F( &
      file_id,          & !(in )
      base_id,          & !(in )
      block_id,         & !(in )

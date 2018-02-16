@@ -39,7 +39,7 @@
           !   Field section  !
           !------------------!
 
-! TO DO : Pack monitoring points in ConvergenceHistory_t
+  ! TO DO : Pack monitoring points in ConvergenceHistory_t
 
   ! File
   integer           :: file_id
@@ -48,17 +48,17 @@
   logical           :: verbose = .true.
 
   ! Field section
-  type Cgns_Field_Type
-    character(len=80) :: name
-    integer           :: field_type ! RealDouble & LongInt?
-  end type
+  !type Cgns_Field_Type
+  !  !character(len=80) :: name
+  !  !integer           :: field_type ! RealDouble & LongInt?
+  !end type
 
   ! Solution section
   type Cgns_Solution_Type
     character(len=80)                  :: name
     integer                            :: sol_type
-    integer                            :: n_fields
-    type(Cgns_Field_Type), allocatable :: field(:)
+    !integer                            :: n_fields
+    !type(Cgns_Field_Type), allocatable :: field(:)
   end type
 
   ! Element section
@@ -120,8 +120,6 @@
   integer :: cnt_y
   integer :: cnt_z
 
-  integer, allocatable :: tflows_2_cgns_cells(:)
-
   ! Block-wise counter of boundary cells
   integer :: cnt_block_bnd_cells  ! probably not needed
   integer :: cnt_bnd_conds
@@ -173,7 +171,7 @@
 
   include 'Cgns_Mod/Write_Solution_Info_Seq.f90'
   include 'Cgns_Mod/Write_Solution_Info_Par.f90'
-  
+
   include 'Cgns_Mod/Write_Field_Seq.f90'
   include 'Cgns_Mod/Write_Field_Par.f90'
 

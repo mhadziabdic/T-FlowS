@@ -14,7 +14,7 @@ subroutine Save_Grid_Seq(grid, name_save)                                       
   character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: store_name
-  integer           :: c, base, block, sect, coord, mode
+  integer           :: c, base, block, sect, coord
 !==============================================================================!
 
   print *, "# subroutine Cgns_Mod_Save_Grid_Seq"
@@ -103,31 +103,31 @@ subroutine Save_Grid_Seq(grid, name_save)                                       
     cgns_base(base) % block(block) % n_sects))
 
   sect = 1
-  cgns_base(base) % block(block) % section(sect) % name = 'Hexagons'
-  cgns_base(base) % block(block) % section(sect) % cell_type = HEXA_8
-  cgns_base(base) % block(block) % section(sect) % first_cell = 1
-  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_hex
+  cgns_base(base)%block(block)%section(sect)%name = 'Hexagons'
+  cgns_base(base)%block(block)%section(sect)%cell_type = HEXA_8
+  cgns_base(base)%block(block)%section(sect)%first_cell = 1      ! + cnt_cells
+  cgns_base(base)%block(block)%section(sect)%last_cell  = cnt_hex! + cnt_cells
   call Cgns_Mod_Write_Section_Connections_Seq(base, block, sect, grid)
 
   sect = 2
-  cgns_base(base) % block(block) % section(sect) % name = 'Pyramids'
-  cgns_base(base) % block(block) % section(sect) % cell_type = PYRA_5
-  cgns_base(base) % block(block) % section(sect) % first_cell = 1
-  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_pyr
+  cgns_base(base)%block(block)%section(sect)%name = 'Pyramids'
+  cgns_base(base)%block(block)%section(sect)%cell_type = PYRA_5
+  cgns_base(base)%block(block)%section(sect)%first_cell = 1     ! + cnt_cells
+  cgns_base(base)%block(block)%section(sect)%last_cell = cnt_pyr! + cnt_cells
   call Cgns_Mod_Write_Section_Connections_Seq(base, block, sect, grid)
 
   sect = 3
-  cgns_base(base) % block(block) % section(sect) % name = 'Wedges'
-  cgns_base(base) % block(block) % section(sect) % cell_type = PENTA_6
-  cgns_base(base) % block(block) % section(sect) % first_cell = 1
-  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_wed
+  cgns_base(base)%block(block)%section(sect)%name = 'Wedges'
+  cgns_base(base)%block(block)%section(sect)%cell_type = PENTA_6
+  cgns_base(base)%block(block)%section(sect)%first_cell = 1     ! + cnt_cells
+  cgns_base(base)%block(block)%section(sect)%last_cell = cnt_wed! + cnt_cells
   call Cgns_Mod_Write_Section_Connections_Seq(base, block, sect, grid)
 
   sect = 4
-  cgns_base(base) % block(block) % section(sect) % name = 'Tetrahedrons'
-  cgns_base(base) % block(block) % section(sect) % cell_type = TETRA_4
-  cgns_base(base) % block(block) % section(sect) % first_cell = 1
-  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_tet
+  cgns_base(base)%block(block)%section(sect)%name = 'Tetrahedrons'
+  cgns_base(base)%block(block)%section(sect)%cell_type = TETRA_4
+  cgns_base(base)%block(block)%section(sect)%first_cell = 1     ! + cnt_cells
+  cgns_base(base)%block(block)%section(sect)%last_cell = cnt_tet! + cnt_cells
   call Cgns_Mod_Write_Section_Connections_Seq(base, block, sect, grid)
 
   ! Close DB

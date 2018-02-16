@@ -44,9 +44,6 @@ subroutine Save_Grid_Par(grid, name_save)                                       
     if(grid % cells_n_nodes(c) == 4) cnt_tet = cnt_tet + 1
   end do
 
-  ! TEST
-  allocate(tflows_2_cgns_cells(1:grid % n_cells))
-
   !-----------------!
   !                 !
   !   Bases block   !

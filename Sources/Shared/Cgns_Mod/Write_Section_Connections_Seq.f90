@@ -5,6 +5,7 @@
 !------------------------------------------------------------------------------!
 !   Each node in zone/block must have unique id                                !
 !   https://cgns.github.io/CGNS_docs_current/midlevel/grid.html                !
+!   Connections:  | HEXA_8 | PENTA_6 | PYRA_5 | TETRA_4 |                      !
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -55,7 +56,7 @@
 
     if (error .ne. 0) then
        print*, '*FAILED* to allocate ', trim(sect_name)
-       call cg_error_exit_f()
+       call Cg_Error_Exit_F()
     endif
 
     ! Convert T-FlowS -> CGNS [same as VTK]
@@ -102,7 +103,7 @@
 
     if (error .ne. 0) then
        print*, '*FAILED* to write ', trim(sect_name), ' connections'
-       call cg_error_exit_f()
+       call Cg_Error_Exit_F()
     endif
 
     deallocate(cell_n)

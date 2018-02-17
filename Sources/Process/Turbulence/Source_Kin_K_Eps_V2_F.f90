@@ -63,6 +63,11 @@
                             / (lf*0.01)) / (Kin % n(c) + TINY) * grid % vol(c)
       end if
       Pk(c) =  VISt(c) * Shear(c) * Shear(c)
+
+      ! Buoyancy contribution:
+      if (BUOY == YES) then 
+        b(c) = b(c) + Pbuoy(c) * grid % vol(c)
+      end if
     end do
   else
     do c = 1, grid % n_cells
@@ -74,15 +79,11 @@
       A % val(A % dia(c)) = A % val(A % dia(c)) +                             &
            DENc(material(c))*Eps % n(c)/(Kin % n(c)+TINY) * grid % vol(c)
       Pk(c) =  VISt(c) * Shear(c) * Shear(c) 
-      if (BUOY == YES) then 
-        buoyBeta(c) = 1.0
-        Gbuoy(c) = -buoyBeta(c) * (grav_x * ut % n(c) +  &
-                                   grav_y * vt % n(c) +  &
-                                   grav_z * wt % n(c))
-        b(c) = b(c) + max(0.0, Gbuoy(c) * grid % vol(c))
-        A % val(A % dia(c)) = A % val(A % dia(c))                            &
-                     + max(0.0,-Gbuoy(c)*grid % vol(c) / (Kin % n(c) + TINY))
-      end if
+
+      ! Buoyancy contribution:
+      if (BUOY == YES) &
+      b(c) = b(c) + Pbuoy(c) * grid % vol(c)
+      
     end do
   end if
 

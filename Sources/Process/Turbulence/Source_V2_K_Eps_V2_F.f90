@@ -53,6 +53,11 @@
       A % val(A % dia(c)) =  A % val(A % dia(c))  &
                           + grid % vol(c) * Pk(c)     &
                           / (Kin % n(c)+TINY) 
+
+      ! Buoyancy contribution:
+      if(BUOY == YES) A % val(A % dia(c)) =  A % val(A % dia(c))  &
+                          + grid % vol(c) * Pbuoy(c)     &
+                          / (Kin % n(c)+TINY) 
     end do
   else if(SIMULA == K_EPS_VV) then
     do c = 1, grid % n_cells

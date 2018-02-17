@@ -44,7 +44,10 @@
       Esor = grid % vol(c)/(Tsc(c)+tiny)
       Ce_11 = Ce1*(1.0 + alpha*(1.0/(v_2%n(c)+tiny) ))    
       b(c) = b(c) + Ce_11*Pk(c)*Esor
- 
+
+      ! Buoyancy contribution:
+      if(BUOY == YES) b(c) = b(c) + Ce_11*Pbuoy(c)*Esor 
+
       ! Fill in a diagonal of coefficient matrix
       A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
     end do                   

@@ -59,6 +59,11 @@
            / (Tsc(c) + TINY)            &
            + 0.0085 * Pk(c) / (Kin % n(c) + TINY)
      b(c) = b(c) + f22hg * grid % vol(c) / (Lsc(c)**2 + TINY) 
+
+     ! Buoyancy contribution:
+     if(BUOY == YES) f22hg = (- 0.65*Pbuoy(c)/(Eps % n(c) + tiny))*&
+           (v_2 % n(c) - 2.0/3.0)/(Tsc(c) + tiny)   &
+            + 0.0085 * Pbuoy(c)/(Kin % n(c) + tiny)
    end do
 
    ! Source term f22hg

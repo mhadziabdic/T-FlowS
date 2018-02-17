@@ -24,7 +24,8 @@ libTurbulence_a_SOURCES =	\
   Source_Ebm.f90		\
   Source_F22_Ebm.f90		\
   Source_Hanjalic_Jakirlic.f90	\
-  Source_Vis_Spalart_Almaras.f90
+  Source_Vis_Spalart_Almaras.f90\
+  CalcHeatFlux.f90
 
 SUBDIRS = ../../Shared
 

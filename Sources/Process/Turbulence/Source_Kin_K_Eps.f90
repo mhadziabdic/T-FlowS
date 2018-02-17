@@ -115,9 +115,9 @@
       A % val(A % dia(c)) = A % val(A % dia(c)) + &
       DENc(material(c))*eps%n(c)/(kin%n(c)+TINY)*grid % vol(c)
 
-      if (BUOY == YES) then
-        b(c) = b(c) + Pbuoy(c) * grid % vol(c)
-      end if
+      ! Buoyancy contribution:
+      if (BUOY == YES) &
+      b(c) = b(c) + Pbuoy(c) * grid % vol(c)
 
       ! Preparation of kin for the boundary condition. kin variable is temporaraly borrowed.
       kin % n(c) = sqrt(kin % n(c))

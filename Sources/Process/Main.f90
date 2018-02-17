@@ -92,7 +92,7 @@
     end subroutine
   end interface
 !======================================================================!
-
+  
   ! Grid used in computations
   type(Grid_Type) :: grid  
 
@@ -105,7 +105,6 @@
   if(this_proc  < 2) then
     call logo
   endif
-
   !------------------------------!
   !   Start parallel execution   !
   !------------------------------!
@@ -200,7 +199,6 @@
   write(*,*) 'At line: ', cmn_line_count
 
   ! Loading data from previous computation   
-  !  if(this_proc<2) write(*,*)'Reading data from previous computation on the same mesh'
   call Load_Restart_Ini(grid)
 
   ! Prepare ...
@@ -226,7 +224,6 @@
   end if
 
   if(Ndt == 0)  goto 6 
-
   ! Update the values at boundaries
   call Update_Boundary_Values(grid)
 
@@ -348,6 +345,7 @@
         call Compute_Turbulent(grid, 6, Kin, n)
         call Compute_Turbulent(grid, 7, Eps, n)
         call CalcVISt_KEps(grid)
+        if(HOT == YES) call CalcHeatFlux(grid)
       end if 
 
       if(SIMULA == K_EPS_VV .or.  &
@@ -366,6 +364,7 @@
         call Compute_Turbulent(grid, 9, v_2, n)  
 
         call CalcVISt_KepsV2F(grid)
+        if(HOT == YES) call CalcHeatFlux(grid)
       end if                 
 
       if(SIMULA==EBM.or.SIMULA==HJ) then
@@ -400,7 +399,8 @@
         end if 
 
         call Compute_Stresses(grid, 13, Eps) 
- 
+        if(HOT == YES) call CalcHeatFlux(grid)
+
         call CalcVISt_RSM(grid)
       end if                 
 
@@ -443,13 +443,11 @@
       end if
     end do  
 
-   if(PIPE==YES.or.JET==YES) then 
-     call CalcMn_Cylind(grid, Nstat, n)  !  calculate mean values 
-!BOJAN     if(BUDG == YES.and.HOT==YES) call CalcBudgets_cylind(Nbudg, n)
-!BOJAN     if(BUDG == YES.and.HOT==NO)  call CalcBudgets_cylind(Nbudg, n)
-   else
-     call Compute_Mean(grid, Nstat, n)  !  calculate mean values 
-   end if
+    if(PIPE==YES.or.JET==YES) then 
+      call CalcMn_Cylind(grid, Nstat, n) !  calculate mean values 
+    else
+      call Compute_Mean(grid, Nstat, n)  !  calculate mean values 
+    end if
 
     !-----------------------------------------------------!  
     !   Recalculate the pressure drop                     !
@@ -543,6 +541,8 @@
   write(name_save(5:10),'(I6.6)') n
   call SavParView(this_proc, grid % n_cells, name_save, Nstat, n)
   call Wait
+
+  if(CHANNEL==YES) call UserCutLines_channel(grid, grid % zc)
 
   if(this_proc  < 2) write(*,*) '# Exiting !'
 

@@ -311,29 +311,6 @@
       write(9,*) Eps%n(c) 
     end do  
     write(9,'(A20)') '        </DataArray>'
-
-    if(BUOY == YES) then
-      write(9,'(A99)') '        <DataArray type="Float32" Name="tt" format="ascii">'
-      do c=1,NCsub
-        write(9,*) tt%n(c) 
-      end do  
-      write(9,'(A20)') '        </DataArray>'
-      write(9,'(A99)') '        <DataArray type="Float32" Name="ut" format="ascii">'
-      do c=1,NCsub
-        write(9,*) ut%n(c) 
-      end do  
-      write(9,'(A20)') '        </DataArray>'
-      write(9,'(A99)') '        <DataArray type="Float32" Name="vt" format="ascii">'
-      do c=1,NCsub
-        write(9,*) vt%n(c) 
-      end do  
-      write(9,'(A20)') '        </DataArray>'
-      write(9,'(A99)') '        <DataArray type="Float32" Name="wt" format="ascii">'
-      do c=1,NCsub
-        write(9,*) wt%n(c) 
-      end do  
-      write(9,'(A20)') '        </DataArray>'
-    end if
   end if
 
   call wait

@@ -89,7 +89,12 @@
            + Ce1 * Eps % n(c) / Kin % n(c) * Pk(c) * grid % vol(c)        & 
            + 2.0 * VISc * VISt(c) * &
            (shear_x(c)**2 + shear_y(c)**2 + shear_z(c)**2) * grid % vol(c)
-    
+
+      ! Buoyancy contribution:    
+      if(BUOY == YES) &
+      b(c) = b(c) & 
+           + Ce1 * Eps % n(c) / Kin % n(c) * Pbuoy(c) * grid % vol(c)        
+ 
       ! Negative contribution:
       Ret = Kin % n(c)*Kin % n(c)/(VISc*Eps % n(c))
       Fmu = 1.0 - 0.3*exp(-(Ret*Ret))

@@ -101,7 +101,7 @@ module pro_mod
   !-----------------------------------!
   !     Area of the cross section     !
   !-----------------------------------!
-  real :: Area, Tflux, Qflux, Xmax, Ymax, Zmax, Tref, Tinf           
+  real :: Area, Tflux, Qflux, Xmax, Ymax, Zmax, Tref, Tinf, Heat           
 
   !------------------------------!
   !     Algorythm parameters     !

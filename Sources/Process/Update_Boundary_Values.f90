@@ -17,11 +17,12 @@
   integer :: c1, c2, s
   real    :: qx, qy, qz, Nx, Ny, Nz, Stot, CONeff, EBF, Yplus
   real    :: Prmol, beta, Uplus
+  logical :: wall_tem 
 !==============================================================================!
 
   Area  = 0.0
-  Tflux = 0.0
-
+  Qflux = 0.0
+  wall_tem = .false. 
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
@@ -148,13 +149,14 @@
                         + qy * grid % dy(s)   &
                         + qz * grid % dz(s))  &
                      / CONwall(c1)
-            Tflux = T % q(c2)
+            Qflux = T % q(c2)
+            Area  = Area  + Stot
           else if(TypeBC(c2) == WALL) then
-            T % q(c2) = ( T % n(c2) - T % n(c1) ) * CONeff     &
-                      / (  Nx * grid % dx(s)  &
-                         + Ny * grid % dy(s)  &
-                         + Nz * grid % dz(s) )
-            Tflux = T % q(c2)
+            T % q(c2) = Stot * (T % n(c2) - T % n(c1)) * CONeff     &
+                        / WallDs(c1)
+            Qflux = Qflux + T % q(c2)
+            Area  = Area  + Stot
+            wall_tem  = .true. 
           end if
         else
           if(TypeBC(c2) == WALLFL) then
@@ -162,13 +164,14 @@
                     * (  qx * grid % dx(s)  &
                        + qy * grid % dy(s)  &
                        + qz * grid % dz(s) ) 
-            Tflux = T % q(c2) 
+            Qflux = T % q(c2) 
+            Area  = Area  + Stot
           else if(TypeBC(c2) == WALL) then
-            T % q(c2) = ( T % n(c2) - T % n(c1) ) * CONeff     &
-                      / (  Nx * grid % dx(s)  &
-                         + Ny * grid % dy(s)  &
-                         + Nz * grid % dz(s) )
-            Tflux = T % q(c2) 
+            T % q(c2) = Stot * ( T % n(c2) - T % n(c1) ) * CONeff     &
+                      / WallDs(c1)
+            Qflux = Qflux + T % q(c2) 
+            Area  = Area  + Stot
+            wall_tem  = .true. 
           end if
         end if
       end if
@@ -184,9 +187,9 @@
       !                    + grid % sy(s)*grid % sy(s)  &
       !                    + grid % sz(s)*grid % sz(s))
       !        if(Ynd(c1) < 3) then
-      !          Tflux = Tflux + CONc(material(c1))*abs(PHIz(c1)) * Stot
+      !          Qflux = Qflux + CONc(material(c1))*abs(PHIz(c1)) * Stot
       !        else 
-      !          Tflux = Tflux + CONeff*(T % n(c1))  &
+      !          Qflux = Qflux + CONeff*(T % n(c1))  &
       !                / WallDs(c1) * Stot
       !        end if
       !        write(*,*) (T % n(c2) - T % n(c1))/WallDs(c1), PHIz(c1)
@@ -228,18 +231,14 @@
     end if
   end do
 
-  !  if(HOT==YES) then 
-  !    call GloSum(Tflux)
-  !    call GloSum(Area)
-  !    call wait
-  !   
-  !    Tflux  = Tflux/(Area+TINY)
-  !    Qflux  = Tflux * Area/(4.0*AreaZ(1))
-  !  end if 
-  !  write(*,*) Tflux
-  !  This is done for pipe flow
-  !  In order to be consistent we did not use ideal d*pi but Area/L where
-  !  Area is total wall surface of pipe and L is lenght of pipe
-  !  AreaZ(1) is surface in direction of to the flow stream
+  if(HOT==YES) then 
+    call GloSum(Qflux)
+    call GloSum(Area)
+    call wait
+    if(wall_tem) then
+      Qflux = Qflux/Area
+    end if
+    Heat = Qflux * Area 
+  end if   
 
   end subroutine

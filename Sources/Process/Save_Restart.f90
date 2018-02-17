@@ -68,7 +68,7 @@
   write(9)   ReTau,   Tref,    Cs0,   Tinf,    0.0,    0.0
   write(9)      dt,   Time,  Kflow,    0.0,    0.0,    0.0
   write(9)   U%URF,  P%URF,   URFC, SIMTol, U%Stol,    0.0 
-  write(9) PP%Stol,  T%URF, T%STol,  Tflux,    0.0,    0.0
+  write(9) PP%Stol,  T%URF, T%STol,  Qflux,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
@@ -241,15 +241,6 @@
       write(9) (f22 % c(c),    c = 1, grid % n_cells)
       write(9) (f22 % c_o(c),  c = 1, grid % n_cells)
     end if
-
-    if(URANS == YES) then
-!     write(9) (VAR10x(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     write(9) (VAR10y(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     write(9) (VAR10z(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     write(9) (VAR11x(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     write(9) (VAR11y(c),  c = -grid % n_bnd_cells,grid % n_cells)
-!     write(9) (VAR11z(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    end if  
   end if
 
   if(SIMULA == SPA_ALL.or.SIMULA==DES_SPA) then
@@ -265,8 +256,7 @@
   end if
 
   if(SIMULA/=DNS) write(9) (VISt(c), c = -grid % n_bnd_cells,grid % n_cells)
-
-  if(SIMULA==DNS.or.SIMULA==LES.or.SIMULA==URANS.or.&
+  if(SIMULA==DNS.or.SIMULA==LES.or.URANS==YES.or.&
      SIMULA==HYB_ZETA.or.SIMULA==HYB_PITM.or.SIMULA==DES_SPA) then
     write(9) (U % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (V % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
@@ -280,7 +270,7 @@
     write(9) (P % mean(c),  c = 1, grid % n_cells)
 
     if(HOT == YES) then
-      write(9) (T % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
+      write(9) (T % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
       write(9) (TT % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
       write(9) (uT % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
       write(9) (vT % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
@@ -302,6 +292,11 @@
     write(9) (VISt_mean(c), c = 1, grid % n_cells)
     write(9) (VISt_sgs(c), c = 1, grid % n_cells)
     write(9) (VISt_eff(c), c = 1, grid % n_cells)
+  end if
+
+  if((SIMULA==ZETA.or.SIMULA==K_EPS).and.URANS==YES) then
+    write(9) (Kin % mean(c), c = 1, grid % n_cells)
+    write(9) (Eps % mean(c), c = 1, grid % n_cells)
   end if
 
   close(9)

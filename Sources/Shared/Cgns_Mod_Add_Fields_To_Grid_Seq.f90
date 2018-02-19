@@ -5,13 +5,12 @@
 !------------------------------------------------------------------------------!
   use allp_mod
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use rans_mod
   use par_mod, only: this_proc, n_proc
   use Tokenizer_Mod
   use Grid_Mod
   use Cgns_Mod
-  use Constants_Pro_Mod
   use Work_Mod, only: uu_mean => r_cell_01,  &
                       vv_mean => r_cell_02,  &
                       ww_mean => r_cell_03,  &
@@ -133,7 +132,7 @@
   !-----------------!
   !   Temperature   !
   !-----------------!
-  if(HOT == YES) then
+  if(heat_transfer == YES) then
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
       T % n(1:grid % n_cells),'Temperature')
   end if
@@ -142,45 +141,55 @@
   !--------------------------!
 
   ! Kin and Eps
-  if(SIMULA == K_EPS .or. SIMULA == K_EPS_VV .or.  &
-     SIMULA == ZETA  .or. SIMULA == HYB_ZETA .or.  &
-     SIMULA == EBM   .or. SIMULA == HJ  ) then
+  if(turbulence_model == K_EPS                 .or.  &
+     turbulence_model == K_EPS_V2              .or.  &
+     turbulence_model == K_EPS_ZETA_F          .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F   .or.  &
+     turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+     turbulence_model == HANJALIC_JAKIRLIC  ) then
 
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
       Kin % n(1:grid % n_cells),'TurbulentEnergyKinetic')
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
       Eps % n(1:grid % n_cells),'TurbulentDissipation')
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
-      p_kin(1:grid % n_cells),'P_KIN')
+      p_kin(1:grid % n_cells),'TurbulentEnergyKineticProduction')
   end if
 
-  ! v_2 and f22
-  if(SIMULA == K_EPS_VV .or.  &
-     SIMULA == ZETA     .or. SIMULA == HYB_ZETA) then
+  ! v2 and f22
+  if(turbulence_model == K_EPS_V2       .or.  &
+     turbulence_model == K_EPS_ZETA_F   .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
-      v_2 % n(1:grid % n_cells),v_2 % name)
+      v2 % n(1:grid % n_cells), v2 % name)
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
-      f22 % n(1:grid % n_cells),f22 % name)
+      f22 % n(1:grid % n_cells), f22 % name)
   end if
 
   ! Vis and Turbulent Vicosity_t
-  if(SIMULA == DES_SPA .or. SIMULA == SPA_ALL) then
+  if(turbulence_model == DES_SPALART .or.  &
+     turbulence_model == SPALART_ALLMARAS) then
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
       vis % n(1:grid % n_cells),'ViscosityKinematic')
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
       vort(1:grid % n_cells),'VorticityMagnitude')
   end if
-  if(SIMULA == K_EPS   .or. SIMULA == K_EPS_VV .or.  &
-     SIMULA == ZETA    .or. SIMULA == HYB_ZETA .or.  &
-     SIMULA == EBM     .or. SIMULA == HJ       .or.  &
-     SIMULA == LES                             .or.  &
-     SIMULA == DES_SPA .or. SIMULA == SPA_ALL) then
+  if(turbulence_model == K_EPS                 .or.  &
+     turbulence_model == K_EPS_V2              .or.  &
+     turbulence_model == K_EPS_ZETA_F          .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F   .or.  &
+     turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+     turbulence_model == HANJALIC_JAKIRLIC     .or.  &
+     turbulence_model == LES                   .or.  &
+     turbulence_model == DES_SPALART           .or.  &
+     turbulence_model == SPALART_ALLMARAS) then
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
       vis_t(1:grid % n_cells),'ViscosityEddyKinematic')
   end if
 
   ! Reynolds stress models
-  if(SIMULA == EBM .or. SIMULA == HJ) then
+  if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+     turbulence_model == HANJALIC_JAKIRLIC) then
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
       uu % n(1:grid % n_cells),'ReynoldsStressXX')
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
@@ -196,7 +205,8 @@
   end if
 
   ! Statistics for large-scale simulations of turbulence
-  if(SIMULA == LES .or. SIMULA == DES_SPA) then
+  if(turbulence_model == LES .or.  &
+     turbulence_model == DES_SPALART) then
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
       U % n(1:grid % n_cells),'Velocity_MeanX')
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
@@ -221,9 +231,9 @@
       uw_mean(1:grid % n_cells),'ReynoldsStress_MeanXZ')
     call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
       vw_mean(1:grid % n_cells),'ReynoldsStress_MeanYZ')
-    if(HOT == YES) then
+    if(heat_transfer == YES) then
       call Cgns_Mod_Write_Field_Seq(base, block, solution, field, grid, &
-        T % mean(1:grid % n_cells),'Temperature_Mean')
+        t % mean(1:grid % n_cells),'Temperature_Mean')
       tt_mean = tt % mean(c) - t % mean(c) * t % mean(c)
       ut_mean = ut % mean(c) - u % mean(c) * t % mean(c)
       vt_mean = vt % mean(c) - v % mean(c) * t % mean(c)

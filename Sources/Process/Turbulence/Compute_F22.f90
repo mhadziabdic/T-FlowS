@@ -1,19 +1,20 @@
 !==============================================================================!
-  subroutine Compute_F22(grid, var, phi)
+  subroutine Compute_F22(grid, ini, phi)
 !------------------------------------------------------------------------------!
 !   Discretizes and solves eliptic relaxation equations for f22.               !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use par_mod
   use Var_Mod
   use Grid_Mod
   use Info_Mod
-  use Constants_Pro_Mod
+  use Numerics_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
+  use Control_Mod
   use Work_Mod,    only: phi_x => r_cell_01,  &
                          phi_y => r_cell_02,  &
                          phi_z => r_cell_03           
@@ -21,14 +22,21 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: var
+  integer         :: ini
   type(Var_Type)  :: phi
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: s, c, c1, c2, niter, miter
-  real    :: Fex, Fim 
-  real    :: A0, A12, A21
-  real    :: error
-  real    :: phi_x_f, phi_y_f, phi_z_f
+  integer           :: s, c, c1, c2, niter, miter
+  real              :: Fex, Fim 
+  real              :: A0, A12, A21
+  real              :: error, tol
+  real              :: phi_x_f, phi_y_f, phi_z_f
+  character(len=80) :: coupling
+  character(len=80) :: precond
+  integer           :: td_inertia    ! time-disretization for inerita  
+  integer           :: td_advection  ! time-disretization for advection
+  integer           :: td_diffusion  ! time-disretization for diffusion 
+  integer           :: td_cross_diff ! time-disretization for cross-difusion
+  real              :: urf           ! under-relaxation factor                 
 !==============================================================================! 
 !
 !   The form of equations which are solved:
@@ -63,6 +71,11 @@
   !   Initialize variables and fluxes   !
   !-------------------------------------! 
 
+  call Control_Mod_Time_Integration_For_Inertia(td_inertia)
+  call Control_Mod_Time_Integration_For_Advection(td_advection)
+  call Control_Mod_Time_Integration_For_Diffusion(td_diffusion)
+  call Control_Mod_Time_Integration_For_Cross_Diffusion(td_cross_diff)
+
   ! Old values (o) and older than old (oo)
   if(ini == 1) then
     do c=1,grid % n_cells
@@ -81,9 +94,9 @@
   end do
 
   ! Gradients
-  call GraPhi(grid, phi % n, 1, phi_x, .TRUE.)
-  call GraPhi(grid, phi % n, 2, phi_y, .TRUE.)
-  call GraPhi(grid, phi % n, 3, phi_z, .TRUE.)
+  call GraPhi(grid, phi % n, 1, phi_x, .true.)
+  call GraPhi(grid, phi % n, 2, phi_y, .true.)
+  call GraPhi(grid, phi % n, 3, phi_z, .true.)
 
   !------------------!
   !                  !
@@ -99,9 +112,9 @@
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)   
 
-    phi_x_f = fF(s) * phi_x(c1) + (1.0 - fF(s)) * phi_x(c2)
-    phi_y_f = fF(s) * phi_y(c1) + (1.0 - fF(s)) * phi_y(c2)
-    phi_z_f = fF(s) * phi_z(c1) + (1.0 - fF(s)) * phi_z(c2)
+    phi_x_f = fw(s) * phi_x(c1) + (1.0 - fw(s)) * phi_x(c2)
+    phi_y_f = fw(s) * phi_y(c1) + (1.0 - fw(s)) * phi_y(c2)
+    phi_z_f = fw(s) * phi_z(c1) + (1.0 - fw(s)) * phi_z(c2)
 
 
     ! Total (exact) diffusive flux
@@ -109,24 +122,14 @@
            + phi_y_f * grid % sy(s)   &
            + phi_z_f * grid % sz(s) )
 
-    A0 = Scoef(s)
+    A0 = f_coef(s)
 
     ! Implicit diffusive flux
-    ! (this is a very crude approximation: Scoef is
+    ! (this is a very crude approximation: f_coef is
     !  not corrected at interface between materials)
     Fim=(   phi_x_f * grid % dx(s)        &
           + phi_y_f * grid % dy(s)        &
           + phi_z_f * grid % dz(s)) * A0
-
-    ! This is yet another crude approximation:
-    ! A0 is calculated approximatelly
-    !    if( StateMat(material(c1))==FLUID .and.  &  ! 2mat
-    !        StateMat(material(c2))==SOLID        &  ! 2mat
-    !        .or.                                 &  ! 2mat 
-    !        StateMat(material(c1))==SOLID .and.  &  ! 2mat
-    !        StateMat(material(c2))==FLUID ) then    ! 2mat
-    !      A0 = A0 + A0                              ! 2mat
-    !    end if                                      ! 2mat
 
     ! Straight diffusion part 
     if(ini == 1) then
@@ -134,7 +137,7 @@
         phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
         phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*A0    
       else
-        if(TypeBC(c2) /= SYMMETRY) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) /= SYMMETRY) then
           phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
         end if 
       end if 
@@ -147,14 +150,15 @@
     end if 
 
     ! Calculate the coefficients for the sysytem matrix
-    if( (DIFFUS == CN) .or. (DIFFUS == FI) ) then  
+    if( (td_diffusion == CRANK_NICOLSON) .or.  &
+        (td_diffusion == FULLY_IMPLICIT) ) then  
 
-      if(DIFFUS  ==  CN) then       ! Crank Nicholson
+      if(td_diffusion == CRANK_NICOLSON) then 
         A12 = 0.5 * A0 
         A21 = 0.5 * A0 
       end if
 
-      if(DIFFUS  ==  FI) then       ! Fully implicit
+      if(td_diffusion == FULLY_IMPLICIT) then
         A12 = A0 
         A21 = A0
       end if
@@ -167,14 +171,14 @@
         A % val(A % dia(c2))  = A % val(A % dia(c2))  + A21
       else if(c2  < 0) then
         ! Outflow is not included because it was causing problems  
-        if( (TypeBC(c2) == INFLOW)) then                    
+        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW)) then                    
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           b(c1) = b(c1) + A12 * phi % n(c2)
 
         else
 
-        if( (TypeBC(c2) == WALL).or.                          &
-            (TypeBC(c2) == WALLFL) ) then
+        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL).or.                          &
+            (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) ) then
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           !---------------------------------------------------------------!
           !   Source coefficient is filled in SourceF22.f90 in order to   !
@@ -182,7 +186,7 @@
           !   equation does not converge very well                        !
           !   b(c1) = b(c1) + A12 * phi % n(c2)                           !
           !---------------------------------------------------------------!
-        else if( TypeBC(c2) == BUFFER ) then  
+        else if( Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER ) then  
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
           A % bou(c2) = - A12  ! cool parallel stuff
         endif
@@ -190,21 +194,21 @@
      end if
     end if
 
-  end do  ! through sides
+  end do  ! through faces
 
   !-----------------------------!
   !   Temporal discretization   !
   !-----------------------------!
 
   ! Adams-Bashfort scheeme for diffusion fluxes
-  if(DIFFUS == AB) then 
+  if(td_diffusion == ADAMS_BASHFORTH) then 
     do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * phi % d_o(c) - 0.5 * phi % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
-  if(DIFFUS == CN) then 
+  if(td_diffusion == CRANK_NICOLSON) then 
     do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * phi % d_o(c)
     end do  
@@ -212,7 +216,7 @@
                  
 
   ! Adams-Bashfort scheeme for cross diffusion 
-  if(CROSS == AB) then
+  if(td_cross_diff == ADAMS_BASHFORTH) then
     do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * phi % c_o(c) - 0.5 * phi % c_oo(c)
     end do 
@@ -222,14 +226,14 @@
   ! is handled via the linear system of equations 
 
   ! Crank-Nicholson scheme for cross difusive terms
-  if(CROSS == CN) then
+  if(td_cross_diff == CRANK_NICOLSON) then
     do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * phi % c(c) + 0.5 * phi % c_o(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
-  if(CROSS == FI) then
+  if(td_cross_diff == FULLY_IMPLICIT) then
     do c=1,grid % n_cells
       b(c) = b(c) + phi % c(c)
     end do 
@@ -242,7 +246,7 @@
   !    before the under relaxation ?)   !
   !                                     !
   !-------------------------------------!
-  if(SIMULA == EBM) then
+  if(turbulence_model == REYNOLDS_STRESS_MODEL) then
     call Source_F22_Ebm(grid)
   else
     call Source_F22_K_Eps_V2_F(grid)
@@ -253,20 +257,34 @@
   !   Solve the equations for phi   !
   !                                 !    
   !---------------------------------!
+
+  ! Type of coupling is important
+  call Control_Mod_Pressure_Momentum_Coupling(coupling)
+
+  ! Set under-relaxation factor
+  urf = 1.0
+  if(coupling == 'SIMPLE')  &
+    call Control_Mod_Simple_Underrelaxation_For_Turbulence(urf)
+
   do c=1,grid % n_cells
-    b(c) = b(c) + A % val(A % dia(c)) * (1.0-phi % URF)*phi % n(c) / phi % URF
-    A % val(A % dia(c)) = A % val(A % dia(c)) / phi % URF
+    b(c) = b(c) + A % val(A % dia(c)) * (1.0 - urf)*phi % n(c) / urf
+    A % val(A % dia(c)) = A % val(A % dia(c)) / urf
   end do 
 
-  if(ALGOR == SIMPLE)   miter=300
-  if(ALGOR == FRACT)    miter=5
+  ! Get tolerance for linear solver
+  call Control_Mod_Tolerance_For_Turbulence_Solver(tol)
+
+  ! Get matrix precondioner
+  call Control_Mod_Preconditioner_For_System_Matrix(precond)
+
+  ! Set number of solver iterations on coupling method
+  if(coupling == 'PROJECTION') miter = 300
+  if(coupling == 'SIMPLE')     miter =   5
 
   niter=miter
-  call cg(A, phi % n, b,            &
-          PREC, niter, phi % STol,  &
-          res(var), error)
+  call cg(A, phi % n, b, precond, niter, tol, phi % res, error)
   
-  call Info_Mod_Iter_Fill_At(3, 4, phi % name, niter, res(var))
+  call Info_Mod_Iter_Fill_At(3, 4, phi % name, niter, phi % res)
 
   call Exchange(grid, phi % n)
 

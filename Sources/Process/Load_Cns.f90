@@ -41,8 +41,9 @@
   read(9) grid % n_materials
   read(9) grid % n_bnd_cond
 
-  allocate(grid % materials          (grid % n_materials))
+  allocate(grid % materials(grid % n_materials))
   allocate(grid % bnd_cond % name(grid % n_bnd_cond))
+  allocate(grid % bnd_cond % type(grid % n_bnd_cond+1))  ! +1 for buffer
 
   ! Materials' and boundary conditions' keys
   do n = 1, grid % n_materials
@@ -72,11 +73,11 @@
   read(9) (grid % faces_c(2,s), s = 1, grid % n_faces)
 
   ! Boundary cells
-  allocate (grid % bnd_cond % color(-grid % n_bnd_cells:-1))
+  allocate(grid % bnd_cond % color(-grid % n_bnd_cells:-1))
   read(9) (grid % bnd_cond % color(c), c = -1,-grid % n_bnd_cells, -1) 
 
   ! Boundary copy cells
-  allocate (grid % bnd_cond % copy_c(-grid % n_bnd_cells:-1))
+  allocate(grid % bnd_cond % copy_c(-grid % n_bnd_cells:-1))
   read(9) (grid % bnd_cond % copy_c(c), c = -1,-grid % n_bnd_cells, -1)
 
   close(9)

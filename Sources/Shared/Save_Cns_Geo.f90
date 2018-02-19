@@ -22,6 +22,7 @@
                      n_bnd_cells_sub,  n_buf_cells_sub, NCFsub
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: b, c, s, n, c1, c2, count, var, subo 
+  integer              :: lower_bound, upper_bound
   character(len=80)    :: name_out
   integer, allocatable :: iwork(:,:)
   real, allocatable    :: work(:)
@@ -37,10 +38,11 @@
 !   n_buf_cells_sub - number of buffer boundary faces in subdomain             !
 !------------------------------------------------------------------------------!
 
-  allocate(iwork(-n_buf_cells_sub-grid % n_bnd_cells:(grid % n_cells*8), 0:2)) 
-  iwork=0
-  allocate(work(grid % n_faces))           
-  work=0
+  lower_bound = min(-n_buf_cells_sub, -grid % n_bnd_cells)
+  upper_bound = max(grid % n_cells*8, grid % n_faces*4)
+
+  allocate(iwork(lower_bound:upper_bound, 0:2));  iwork=0
+  allocate(work(grid % n_faces));                 work=0
 
   !----------------------!
   !                      !

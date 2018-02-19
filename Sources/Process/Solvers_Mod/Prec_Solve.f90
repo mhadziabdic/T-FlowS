@@ -20,7 +20,7 @@
   type(Matrix_Type) :: A           
   real              :: x(-A % pnt_grid % n_bnd_cells : A % pnt_grid % n_cells)
   real              :: b( A % pnt_grid % n_cells)
-  integer           :: prec
+  character(len=80) :: prec  ! preconditioner
 !-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, k, N, NB
   real    :: sum1
@@ -32,7 +32,7 @@
   !---------------------------------! 
   !   1) diagonal preconditioning   !
   !---------------------------------!
-  if(prec == 1) then
+  if(prec == 'DIAGONAL') then        
     do i=1,N
       x(i)=b(i)/D % val(D % dia(i))
     end do
@@ -40,7 +40,7 @@
   !--------------------------------------------! 
   !   2) incomplete cholesky preconditioning   !
   !--------------------------------------------!
-  else if(prec == 2) then
+  else if(prec == 'INCOMPLETE_CHOLESKY') then   
 
     ! Forward substitutionn
     do i=1,N

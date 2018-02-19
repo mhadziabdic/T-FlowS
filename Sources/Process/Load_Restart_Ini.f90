@@ -4,13 +4,13 @@
 ! Reads: name.restart                                                          !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -23,63 +23,11 @@
   real              :: r_1, r_2, r_3, r_4, r_5, r_6
 !==============================================================================!
 
-  if(this_proc  < 2) &              
-    print *, '# Input intial restart file name [write skip to continue]:'
-  call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(line % tokens(1), '(A80)')  name_in
+  call Control_Mod_Load_Restart_Name(name_in)
+
   answer=name_in
-  call To_Upper_Case(answer) 
-
-  if(answer == 'SKIP') then
-    return 
-  end if
-
-  ! Initiated field from previous computation 
-  if(this_proc  < 2) then
-    print *, '# Initialization of fields from previous computation: '
-    print *, '# DNS      -> Direct Numerical Simulation'
-    print *, '# LES      -> Large Eddy Simulation'
-    print *, '# K_EPS    -> High Reynolds k-eps model.'
-    print *, '# K_EPS_VV -> Durbin`s model.'
-    print *, '# SPA_ALL  -> Spalart-Allmaras model.'
-    print *, '# ZETA     -> k-eps-zeta-f model.'
-    print *, '# HJ       -> HJ model.'
-    print *, '# EBM      -> EBM model.'
-  endif
-  call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(line % tokens(1),'(A)')  answer
   call To_Upper_Case(answer)
-  if(answer == 'DNS') then
-    RES_INI = DNS
-  else if(answer == 'LES') then
-    RES_INI = LES
-  else if(answer == 'K_EPS') then
-    RES_INI = K_EPS
-  else if(answer == 'K_EPS_VV') then
-    RES_INI = K_EPS_VV
-  else if(answer == 'SPA_ALL') then
-    RES_INI = SPA_ALL
-  else if(answer == 'DES_SPA') then
-    RES_INI = DES_SPA
-  else if(answer == 'ZETA') then
-    RES_INI = ZETA
-  else if(answer == 'HYB_PITM') then
-    RES_INI = HYB_PITM
-  else if(answer == 'HYB_ZETA') then
-    RES_INI = HYB_ZETA
-  else if(answer == 'EBM') then
-    RES_INI = EBM
-  else if(answer == 'HJ') then
-    RES_INI = HJ
-  else if(answer == 'SKIP') then
-    RES_INI = 1000 
-  else
-    if(this_proc  < 2) then
-      write(*,'(A,I3,A,A)') 'Error in T-FlowS.cmn file in line ', &
-                             cmn_line_count, ' Got a: ', answer
-    endif
-    stop
-  endif
+  if(answer == 'SKIP') return
 
   ! Save the name
   answer = problem_name
@@ -161,21 +109,24 @@
   end do
 
   ! Fluxes 
-  read(9) (Flux(s), s=1,grid % n_faces)
+  read(9) (flux(s), s=1,grid % n_faces)
 
-  if(HOT == YES) then
-    read(9) (T % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (T % q(c),    c = -grid % n_bnd_cells,-1)
-    read(9) (T % o(c),    c = 1, grid % n_cells)
-    read(9) (T % a(c),    c = 1, grid % n_cells)
-    read(9) (T % a_o(c),  c = 1, grid % n_cells)
-    read(9) (T % d_o(c),  c = 1, grid % n_cells)
-    read(9) (T % c(c),    c = 1, grid % n_cells)
-    read(9) (T % c_o(c),  c = 1, grid % n_cells)
+  if(heat_transfer == YES) then
+    read(9) (t % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (t % q(c),    c = -grid % n_bnd_cells,-1)
+    read(9) (t % o(c),    c = 1, grid % n_cells)
+    read(9) (t % a(c),    c = 1, grid % n_cells)
+    read(9) (t % a_o(c),  c = 1, grid % n_cells)
+    read(9) (t % d_o(c),  c = 1, grid % n_cells)
+    read(9) (t % c(c),    c = 1, grid % n_cells)
+    read(9) (t % c_o(c),  c = 1, grid % n_cells)
   end if
   
-  if(RES_INI==K_EPS.or.RES_INI==ZETA.or.&
-     RES_INI==K_EPS_VV.or.RES_INI==HYB_ZETA.or.RES_INI == HYB_PITM) then 
+  if(turbulence_model == K_EPS               .or.  &
+     turbulence_model == K_EPS_ZETA_F        .or.  &
+     turbulence_model == K_EPS_V2            .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
+     turbulence_model == HYBRID_PITM) then 
     read(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (kin % o(c),    c = 1, grid % n_cells)
     read(9) (kin % a(c),    c = 1, grid % n_cells)
@@ -196,17 +147,19 @@
     read(9) (Uf(c),       c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (Ynd(c),      c = -grid % n_bnd_cells,grid % n_cells) 
     read(9) (viswall(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (TauWall(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (tau_wall(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(RES_INI==K_EPS_VV.or.RES_INI==ZETA.or.RES_INI == HYB_ZETA) then
-    read(9) (v_2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (v_2 % o(c),    c = 1, grid % n_cells)
-    read(9) (v_2 % a(c),    c = 1, grid % n_cells)
-    read(9) (v_2 % a_o(c),  c = 1, grid % n_cells)
-    read(9) (v_2 % d_o(c),  c = 1, grid % n_cells)
-    read(9) (v_2 % c(c),    c = 1, grid % n_cells)
-    read(9) (v_2 % c_o(c),  c = 1, grid % n_cells)
+  if(turbulence_model == K_EPS_V2 .or.  &
+     turbulence_model == K_EPS_ZETA_F     .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
+    read(9) (v2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (v2 % o(c),    c = 1, grid % n_cells)
+    read(9) (v2 % a(c),    c = 1, grid % n_cells)
+    read(9) (v2 % a_o(c),  c = 1, grid % n_cells)
+    read(9) (v2 % d_o(c),  c = 1, grid % n_cells)
+    read(9) (v2 % c(c),    c = 1, grid % n_cells)
+    read(9) (v2 % c_o(c),  c = 1, grid % n_cells)
 
     read(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (f22 % o(c),    c = 1, grid % n_cells)
@@ -218,7 +171,8 @@
     read(9) (Lsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if 
 
-  if(RES_INI==EBM.or.RES_INI==HJ) then
+  if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+     turbulence_model == HANJALIC_JAKIRLIC) then
     read(9) (uu % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (uu % o(c),    c = 1, grid % n_cells)
     read(9) (uu % a(c),    c = 1, grid % n_cells)
@@ -279,7 +233,7 @@
     read(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (vis_t(c),       c = -grid % n_bnd_cells,grid % n_cells)
 
-    if(RES_INI==EBM) then
+    if(turbulence_model == REYNOLDS_STRESS_MODEL) then
       read(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
       read(9) (f22 % o(c),    c = 1, grid % n_cells)
       read(9) (f22 % d_o(c),  c = 1, grid % n_cells)
@@ -288,7 +242,8 @@
     end if
   end if
 
-  if(RES_INI == SPA_ALL.or.RES_INI==DES_SPA) then
+  if(turbulence_model == SPALART_ALLMARAS .or.  &
+     turbulence_model == DES_SPALART) then
     read(9) (vis % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (vis % o(c),    c = 1, grid % n_cells)
     read(9) (vis % a(c),    c = 1, grid % n_cells)
@@ -300,7 +255,8 @@
     read(9) (vort(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(RES_INI/=DNS) read(9) (vis_t(c), c = -grid % n_bnd_cells,grid % n_cells)
+  if(turbulence_model /= DNS)  &
+    read(9) (vis_t(c), c = -grid % n_bnd_cells,grid % n_cells)
 
   close(9)
 

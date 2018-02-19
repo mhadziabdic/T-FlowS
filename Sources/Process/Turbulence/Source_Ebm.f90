@@ -2,11 +2,11 @@
   subroutine Source_Ebm(grid, name_phi)
 !------------------------------------------------------------------------------!
 !   Calculate source terms for transport equations for Re stresses and         !
-!   dissipation for EBM.                                                       !  
+!   dissipation for 'EBM'.                                                       !  
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use rans_mod
   use Grid_Mod
   use Work_Mod, only: f22_x => r_cell_01,  &
@@ -76,12 +76,12 @@
     V11 = 0.0
     V22 = 0.0
     V33 = 0.0
-    V12 = 0.5*(u % y(c)-v % x(c)) - omegaZ
-    V21 = -V12 + omegaZ
-    V13 = 0.5*(u % z(c)-w % x(c)) + omegaY
-    V31 = -V13 - omegaY
-    V23 = 0.5*(v % z(c)-w % y(c)) - omegaX
-    V32 = -V23 + omegaX
+    V12 = 0.5*(u % y(c)-v % x(c)) - omega_z
+    V21 = -V12 + omega_z
+    V13 = 0.5*(u % z(c)-w % x(c)) + omega_y
+    V31 = -V13 - omega_y
+    V23 = 0.5*(v % z(c)-w % y(c)) - omega_x
+    V32 = -V23 + omega_x
 
     b_mn_b_mn = b11*b11 + b22*b22 + b33*b33 + 2.0*(b12*b12+b13*b13+b23*b23)
     b_lk_s_lk = b11*S11 + b22*S22 + b33*S33 + 2.0*(b12*S12+b13*S13+b23*S23)
@@ -103,7 +103,7 @@
 
 
       Prod = -2.0*(uu%n(c)*u % x(c) + uv % n(c)*u % y(c) + uw % n(c)*u % z(c))  &
-             -2.0*omegaY*2.0*uw%n(c) + 2.0*omegaZ*2.0*uv%n(c)   
+             -2.0*omega_y*2.0*uw%n(c) + 2.0*omega_z*2.0*uv%n(c)   
 
 
       Diss_wall = uu % n(c)/kin % n(c) * eps % n(c) 
@@ -129,7 +129,7 @@
                  g5*kin%n(c)*(2.0*(b21*V21+b22*V22+b23*V23))
 
       Prod = -2.0*(uv % n(c)*v % x(c) + vv%n(c)*v % y(c) + vw % n(c)*v % z(c))  &
-             +2.0*omegaX*2.0*vw%n(c) - 2.0*omegaZ*2.0*uw%n(c)   
+             +2.0*omega_x*2.0*vw%n(c) - 2.0*omega_z*2.0*uw%n(c)   
 
 
       PHI_tot = (1.0-f22 % n(c)*f22 % n(c))*PHI_wall &
@@ -158,7 +158,7 @@
                  g5*kin%n(c)*(2.0*(b31*V31+b32*V32+b33*V33))
 
       Prod = -2.0*(uw % n(c)*w % x(c) + vw % n(c)*w % y(c) + ww%n(c)*w % z(c))  &
-             -2.0*omegaX*2.0*vw%n(c) + 2.0*omegaY*2.0*uw%n(c) 
+             -2.0*omega_x*2.0*vw%n(c) + 2.0*omega_y*2.0*uw%n(c) 
 
       PHI_tot = (1.0-f22 % n(c)*f22 % n(c))*PHI_wall &
                + f22 % n(c)*f22 % n(c)*PHI_hom 
@@ -189,7 +189,7 @@
  
       Prod = -(uu % n(c)*v % x(c) + uw % n(c)*v % z(c) + uv%n(c)*(v % y(c)+u % x(c)) +&
                vv % n(c)*u % y(c) + vw % n(c)*u % z(c)) &
-             +2.0*omegaX*uw%n(c) - 2.0*omegaY*vw%n(c) + 2.0*omegaZ*(vv%n(c)-uu%n(c))  
+             +2.0*omega_x*uw%n(c) - 2.0*omega_y*vw%n(c) + 2.0*omega_z*(vv%n(c)-uu%n(c))  
 
       PHI_tot = (1.0-f22 % n(c)*f22 % n(c))*PHI_wall &
                + f22 % n(c)*f22 % n(c)*PHI_hom 
@@ -220,7 +220,7 @@
 
       Prod = -(uu % n(c)*w % x(c) + uv % n(c)*w % y(c)+ uw%n(c)*(w % z(c)+u % x(c)) +&
                vw % n(c)*u % y(c) + ww % n(c)*u % z(c)) & 
-             -2.0*omegaX*uv%n(c)-2.0*omegaY*(ww%n(c)-uu%n(c))+2.0*omegaZ*vw%n(c)   
+             -2.0*omega_x*uv%n(c)-2.0*omega_y*(ww%n(c)-uu%n(c))+2.0*omega_z*vw%n(c)   
 
       PHI_tot = (1.0-f22 % n(c)*f22 % n(c))*PHI_wall &
                + f22 % n(c)*f22 % n(c)*PHI_hom 
@@ -250,7 +250,7 @@
 
       Prod = -(uv % n(c)*w % x(c) + vv % n(c)*w % y(c)+ vw%n(c)*(w % z(c)+v % y(c))+&
                uw % n(c)*v % x(c) + ww % n(c)*v % z(c))  &
-             -2.0*omegaX*(vw%n(c)-ww%n(c))+2.0*omegaY*uv%n(c)-2.0*omegaZ*uw%n(c)   
+             -2.0*omega_x*(vw%n(c)-ww%n(c))+2.0*omega_y*uv%n(c)-2.0*omega_z*uw%n(c)   
 
       PHI_tot = (1.0-f22 % n(c)*f22 % n(c))*PHI_wall &
                + f22 % n(c)*f22 % n(c)*PHI_hom 
@@ -274,7 +274,7 @@
       b(c) = b(c) + Ce11*p_kin(c)*Esor 
 
       ! Fill in a diagonal of coefficient matrix
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*density
     end if
   end do
 
@@ -284,9 +284,10 @@
       c2=grid % faces_c(2,s)
 
       ! Calculate values of dissipation on wall
-      if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
-        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
-          eps%n(c2) = VISc*(uu%n(c1)+vv%n(c1)+ww%n(c1))/grid % wall_dist(c1)**2
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
+          eps%n(c2) = viscosity*(uu%n(c1)+vv%n(c1)+ww%n(c1))/grid % wall_dist(c1)**2
         end if   ! end if of BC=wall
       end if    ! end if of c2<0
     end do

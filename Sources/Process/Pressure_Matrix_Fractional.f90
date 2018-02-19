@@ -1,16 +1,17 @@
 !==============================================================================!
-  subroutine Pressure_Matrix_Fractional(grid)
+  subroutine Pressure_Matrix_Fractional(grid, dt)
 !------------------------------------------------------------------------------!
 !   Forms the pressure system matrix for the fractional step method.           !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
+  real            :: dt
 !-----------------------------------[Locals]-----------------------------------!
   real    :: A12
   integer :: c, c1, c2, s 
@@ -29,7 +30,7 @@
     c2 = grid % faces_c(2,s)
 
     if(c2  > 0) then
-      A12 = dt * Scoef(s) 
+      A12 = dt * f_coef(s) 
       A % val(A % pos(1,s)) = -A12
       A % val(A % pos(2,s)) = -A12
       A % val(A % dia(c1)) =                                            &
@@ -37,8 +38,8 @@
       A % val(A % dia(c2)) =                                            &
       A % val(A % dia(c2)) +  A12
     else
-      if(TypeBC(c2) == BUFFER) then
-        A12 = dt * Scoef(s)
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
+        A12 = dt * f_coef(s)
         A % val(A % dia(c1)) =                                          &
         A % val(A % dia(c1)) +  A12
         A % bou(c2) = -A12

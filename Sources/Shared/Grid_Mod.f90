@@ -43,6 +43,9 @@
     
     ! Wall distance - distance from the nearest wall
     real, allocatable :: wall_dist(:)
+
+    ! True if cell is near wall.  Used in Process for some turblence models.
+    logical, allocatable :: cell_near_wall(:)
     
     ! Cells' nodes and neigboring cells
     integer, allocatable :: cells_n(:,:)      
@@ -98,6 +101,7 @@
   include 'Grid_Mod/Allocate_Cells.f90'
   include 'Grid_Mod/Allocate_Faces.f90'
   include 'Grid_Mod/Allocate_Nodes.f90'
+  include 'Grid_Mod/Bnd_Cond_Type.f90'
   include 'Grid_Mod/Print_Bnd_Cond_Info.f90'
   include 'Grid_Mod/Sort_Cells_By_Index.f90'
   include 'Grid_Mod/Sort_Faces_By_Index.f90'

@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Tokenizer_Mod_Read_Line(un) 
+  subroutine Tokenizer_Mod_Read_Line(un, reached_end) 
 !------------------------------------------------------------------------------!
 !  Reads a line from a file (unit 9) and discards if it is comment.            !
 !------------------------------------------------------------------------------!
@@ -8,7 +8,8 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer   :: un  ! unit
+  integer           :: un  ! unit
+  logical, optional :: reached_end
 !-----------------------------------[Locals]-----------------------------------!
   integer :: i
 !==============================================================================!
@@ -16,10 +17,15 @@
 !   Input line must not exceed the lenght of 300 characters.                   !
 !------------------------------------------------------------------------------!
 
+  ! If present, assumed the end of file has not been reached
+  if(present(reached_end)) then
+    reached_end = .false.
+  end if
+
   !-----------------------------------!
   !  Read the whole line into whole  !
   !-----------------------------------!
-1 read(un,'(A300)') line % whole
+1 read(un,'(A300)', end=2) line % whole
 
   ! Shift the whole line to the left (remove leading spaces)
   line % whole = adjustl(line % whole)
@@ -68,5 +74,12 @@
   do i = 1, line % n_tokens
     line % tokens(i) = line % whole(line % s(i) : line % e(i))
   end do
+
+  return
+
+  ! Error trap, if here, you reached the end of file
+2 if(present(reached_end)) then
+    reached_end = .true.
+  end if
 
   end subroutine

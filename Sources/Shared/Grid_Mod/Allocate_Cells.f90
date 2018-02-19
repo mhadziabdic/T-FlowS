@@ -18,13 +18,14 @@
   allocate(grid % zc(-nb:nc));  grid % zc = 0.0
 
   ! Memory for cells' volumes, delta and wall distance
-  allocate(grid % vol      (-nb:nc));  grid % vol       = 0.0
-  allocate(grid % delta    (-nb:nc));  grid % delta     = 0.0
-  allocate(grid % wall_dist(-nb:nc));  grid % wall_dist = 0.0
+  allocate(grid % vol           (-nb:nc));  grid % vol            = 0.0
+  allocate(grid % delta         (-nb:nc));  grid % delta          = 0.0
+  allocate(grid % wall_dist     (-nb:nc));  grid % wall_dist      = 0.0
+  allocate(grid % cell_near_wall(-nb:nc));  grid % cell_near_wall = .false.
 
   ! Cells' nodes and neigboring cells
-  allocate(grid % cells_n( 8, -nb:nc));    grid % cells_n       = 0
-  allocate(grid % cells_c(24, -nb:nc));    grid % cells_c       = 0
+  allocate(grid % cells_n( 8, -nb:nc));  grid % cells_n = 0
+  allocate(grid % cells_c(24, -nb:nc));  grid % cells_c = 0
 
   ! Number of nodes at each cell (determines cell's shape really)
   allocate(grid % cells_n_nodes(-nb:nc));  grid % cells_n_nodes = 0

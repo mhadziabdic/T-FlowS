@@ -27,9 +27,10 @@
   type(Matrix_Type) :: A           
   real              :: x(-A % pnt_grid % n_bnd_cells : A % pnt_grid % n_cells)
   real              :: r1(A % pnt_grid % n_cells)    !  [A]{x}={r1}
-  integer           :: prec,  niter       !  preconditioning
-  real              :: tol                !  tolerance
-  real              :: ini_res, fin_res   !  residual
+  character(len=80) :: prec               ! preconditioner
+  integer           :: niter              ! number of iterations
+  real              :: tol                ! tolerance
+  real              :: ini_res, fin_res   ! residual
 !-----------------------------------[Locals]-----------------------------------!
   integer :: N, NB
   real    :: alfa, beta, rho, rhoold, bnrm2, error

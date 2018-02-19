@@ -6,13 +6,13 @@
 ! subroutine 
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
   type(Grid_Type) :: grid
@@ -22,13 +22,13 @@
   integer          :: j, k,  c, nearest_cell, c1, c2, s 
   integer          :: NCold  
   real,allocatable :: Xold(:),Yold(:),Zold(:)
-  real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v_2old(:), f22old(:)
-  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v_2Cold(:), f22Cold(:)
-  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v_2Coold(:), f22Coold(:)
-  real,allocatable :: Uoold(:),Voold(:),Woold(:),Toold(:), Koold(:), Eoold(:), v_2oold(:), f22oold(:)
-  real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v_2Doold(:), f22Doold(:)
-  real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v_2Xold(:), f22Xold(:)
-  real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v_2Xoold(:), f22Xoold(:)
+  real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v2old(:), f22old(:)
+  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v2Cold(:), f22Cold(:)
+  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v2Coold(:), f22Coold(:)
+  real,allocatable :: Uoold(:),Voold(:),Woold(:),Toold(:), Koold(:), Eoold(:), v2oold(:), f22oold(:)
+  real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v2Doold(:), f22Doold(:)
+  real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v2Xold(:), f22Xold(:)
+  real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v2Xoold(:), f22Xoold(:)
   real             :: Us, Ws, Vs
   real             :: old_distance
 
@@ -37,8 +37,8 @@
   character(len=80) :: name_in
 !==============================================================================!  
 
-  call Tokenizer_Mod_Read_Line(CMN_FILE)
-  read(line % tokens(1), '(A80)') name_in
+  call Control_Mod_Load_Initial_Solution_Name(name_in)
+
   answer=name_in
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return
@@ -47,9 +47,9 @@
   answer = problem_name
   problem_name = name_in
 
-  HOTini = NO
-
   call Name_File(this_proc, name_in, '.ini')
+
+  HOTini = NO
 
   if(this_proc < 2) print *,'now reading file: ', name_in 
 
@@ -105,13 +105,13 @@
   allocate (EXold(NCold)); EXold = 0.0
   allocate (EXoold(NCold)); EXoold = 0.0
 
-  allocate (v_2old(NCold)); v_2old = 0.0
-  allocate (v_2oold(NCold)); v_2oold = 0.0
-  allocate (v_2Doold(NCold)); v_2Doold = 0.0
-  allocate (v_2Cold(NCold)); v_2Cold = 0.0
-  allocate (v_2Coold(NCold)); v_2Coold = 0.0
-  allocate (v_2Xold(NCold)); v_2Xold = 0.0
-  allocate (v_2Xoold(NCold)); v_2Xoold = 0.0
+  allocate (v2old(NCold)); v2old = 0.0
+  allocate (v2oold(NCold)); v2oold = 0.0
+  allocate (v2Doold(NCold)); v2Doold = 0.0
+  allocate (v2Cold(NCold)); v2Cold = 0.0
+  allocate (v2Coold(NCold)); v2Coold = 0.0
+  allocate (v2Xold(NCold)); v2Xold = 0.0
+  allocate (v2Xoold(NCold)); v2Xoold = 0.0
 
   allocate (F22old(NCold)); F22old = 0.0
   allocate (F22oold(NCold)); F22oold = 0.0
@@ -122,9 +122,9 @@
   j = NCold
   do k = 1, j
     if(this_proc < 2) then
-      if(mod(k,20000) == 0) print *, (100.*k/(1.*j)), '% c_omplete...'  
+      if(mod(k,20000) == 0) print *, (100.*k/(1.*j)), '% complete...'  
     end if
-    if(SIMULA == LES) then 
+    if(turbulence_model == LES) then 
       if(HOTini==YES) then
         read(5,*) Xold(k), Yold(k), Zold(k), &
                   Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k), &
@@ -138,7 +138,8 @@
                   Wold(k), Woold(k), WCold(k), WCoold(k), WDoold(k), WXold(k), WXoold(k)
       end if
     end if 
-    if(SIMULA == ZETA.or.SIMULA == K_EPS_VV) then 
+    if(turbulence_model == K_EPS_ZETA_F .or.  &
+       turbulence_model == K_EPS_V2) then 
       if(HOTini==YES) then
         read(5,*) Xold(k), Yold(k), Zold(k), &
                   Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k), &
@@ -147,7 +148,7 @@
                   Told(k), Toold(k), TCold(k), TCoold(k), TDoold(k), TXold(k), TXoold(k)!, &
 !                  Kold(k), Koold(k), KCold(k), KCoold(k), KDoold(k), KXold(k), KXoold(k), &
 !                  Eold(k), Eoold(k), ECold(k), ECoold(k), EDoold(k), EXold(k), EXoold(k), &
-!                  v_2old(k), v_2oold(k), v_2Cold(k), v_2Coold(k), v_2Doold(k), v_2Xold(k), v_2Xoold(k), &
+!                  v2old(k), v2oold(k), v2Cold(k), v2Coold(k), v2Doold(k), v2Xold(k), v2Xoold(k), &
 !                  F22old(k), F22oold(k), F22Doold(k), F22Xold(k), F22Xoold(k)
       else
         read(5,*) Xold(k), Yold(k), Zold(k), &
@@ -156,11 +157,11 @@
                   Wold(k), Woold(k), WCold(k), WCoold(k), WDoold(k), WXold(k), WXoold(k)!, &
 !                  Kold(k), Koold(k), KCold(k), KCoold(k), KDoold(k), KXold(k), KXoold(k), &
 !                  Eold(k), Eoold(k), ECold(k), ECoold(k), EDoold(k), EXold(k), EXoold(k), &
-!                  v_2old(k), v_2oold(k), v_2Cold(k), v_2Coold(k), v_2Doold(k), v_2Xold(k), v_2Xoold(k), &
+!                  v2old(k), v2oold(k), v2Cold(k), v2Coold(k), v2Doold(k), v2Xold(k), v2Xoold(k), &
 !                  F22old(k), F22oold(k), F22Doold(k), F22Xold(k), F22Xoold(k)
       end if
     end if 
-    if(SIMULA == K_EPS) then 
+    if(turbulence_model == K_EPS) then 
       if(HOTini==YES) then
         read(5,*) Xold(k), Yold(k), Zold(k), &
                   Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k), &
@@ -183,7 +184,6 @@
   if(this_proc < 2) print *, 'LoaInI: finished with reading the files'
 
   nearest_cell = 0
-  near = 0
   old_distance = HUGE
     do c = 1, grid % n_cells
       if(this_proc < 2) then
@@ -217,37 +217,40 @@
       W % d_o(c) = WDoold(nearest_cell) 
       W % c(c)   = WXold(nearest_cell) 
       W % c_o(c) = WXoold(nearest_cell) 
-      if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==K_EPS) then
-        Kin % n(c)   = Kold(near(c)) 
-        Kin % o(c)   = Koold(near(c)) 
-        Kin % a(c)   = KCold(near(c)) 
-        Kin % a_o(c) = KCoold(near(c)) 
-        Kin % d_o(c) = KDoold(near(c)) 
-        Kin % c(c)   = KXold(near(c)) 
-        Kin % c_o(c) = KXoold(near(c)) 
+      if(turbulence_model == K_EPS_V2 .or.  &
+         turbulence_model == K_EPS_ZETA_F     .or.  &
+         turbulence_model == K_EPS) then
+        Kin % n(c)   = Kold(nearest_cell) 
+        Kin % o(c)   = Koold(nearest_cell) 
+        Kin % a(c)   = KCold(nearest_cell) 
+        Kin % a_o(c) = KCoold(nearest_cell) 
+        Kin % d_o(c) = KDoold(nearest_cell) 
+        Kin % c(c)   = KXold(nearest_cell) 
+        Kin % c_o(c) = KXoold(nearest_cell) 
 
-        Eps % n(c)   = Eold(near(c)) 
-        Eps % o(c)   = Eoold(near(c)) 
-        Eps % a(c)   = ECold(near(c)) 
-        Eps % a_o(c) = ECoold(near(c)) 
-        Eps % d_o(c) = EDoold(near(c)) 
-        Eps % c(c)   = EXold(near(c)) 
-        Eps % c_o(c) = EXoold(near(c)) 
+        Eps % n(c)   = Eold(nearest_cell) 
+        Eps % o(c)   = Eoold(nearest_cell) 
+        Eps % a(c)   = ECold(nearest_cell) 
+        Eps % a_o(c) = ECoold(nearest_cell) 
+        Eps % d_o(c) = EDoold(nearest_cell) 
+        Eps % c(c)   = EXold(nearest_cell) 
+        Eps % c_o(c) = EXoold(nearest_cell) 
       end if
-      if(SIMULA==K_EPS_VV.or.SIMULA==ZETA) then
-        v_2 % n(c)   = v_2old(near(c)) 
-        v_2 % o(c)   = v_2oold(near(c)) 
-        v_2 % a(c)   = v_2Cold(near(c)) 
-        v_2 % a_o(c) = v_2Coold(near(c)) 
-        v_2 % d_o(c) = v_2Doold(near(c)) 
-        v_2 % c(c)   = v_2Xold(near(c)) 
-        v_2 % c_o(c) = v_2Xoold(near(c)) 
+      if(turbulence_model == K_EPS_V2 .or.  &
+         turbulence_model == K_EPS_ZETA_F) then
+        v2 % n(c)   = v2old(nearest_cell) 
+        v2 % o(c)   = v2oold(nearest_cell) 
+        v2 % a(c)   = v2Cold(nearest_cell) 
+        v2 % a_o(c) = v2Coold(nearest_cell) 
+        v2 % d_o(c) = v2Doold(nearest_cell) 
+        v2 % c(c)   = v2Xold(nearest_cell) 
+        v2 % c_o(c) = v2Xoold(nearest_cell) 
 
-        F22 % n(c)   = F22old(near(c)) 
-        F22 % o(c)   = F22oold(near(c)) 
-        F22 % d_o(c) = F22Doold(near(c)) 
-        F22 % c(c)   = F22Xold(near(c)) 
-        F22 % c_o(c) = F22Xoold(near(c)) 
+        F22 % n(c)   = F22old(nearest_cell) 
+        F22 % o(c)   = F22oold(nearest_cell) 
+        F22 % d_o(c) = F22Doold(nearest_cell) 
+        F22 % c(c)   = F22Xold(nearest_cell) 
+        F22 % c_o(c) = F22Xoold(nearest_cell) 
       end if
     end do
   do s = 1, grid % n_faces
@@ -258,7 +261,7 @@
     Us = grid % f(s) * U % n(c1) + (1.0 - grid % f(s)) * U % n(c2)
     Vs = grid % f(s) * V % n(c1) + (1.0 - grid % f(s)) * V % n(c2)
     Ws = grid % f(s) * W % n(c1) + (1.0 - grid % f(s)) * W % n(c2)
-    Flux(s) = (  Us * grid % sx(s)  &
+    flux(s) = (  Us * grid % sx(s)  &
                + Vs * grid % sy(s)  &
                + Ws * grid % sz(s) )
   end do 
@@ -273,47 +276,47 @@
   deallocate(Wold)
   deallocate(Kold)
   deallocate(Eold)
-  deallocate(v_2old)
+  deallocate(v2old)
   deallocate(F22old)
   deallocate(Uoold)
   deallocate(Voold)
   deallocate(Woold)
   deallocate(Koold)
   deallocate(Eoold)
-  deallocate(v_2oold)
+  deallocate(v2oold)
   deallocate(F22oold)
   deallocate(UDoold)
   deallocate(VDoold)
   deallocate(WDoold)
   deallocate(KDoold)
   deallocate(EDoold)
-  deallocate(v_2Doold)
+  deallocate(v2Doold)
   deallocate(F22Doold)
   deallocate(UCold)
   deallocate(VCold)
   deallocate(WCold)
   deallocate(KCold)
   deallocate(ECold)
-  deallocate(v_2Cold)
+  deallocate(v2Cold)
   deallocate(UCoold)
   deallocate(VCoold)
   deallocate(WCoold)
   deallocate(KCoold)
   deallocate(ECoold)
-  deallocate(v_2Coold)
+  deallocate(v2Coold)
   deallocate(UXold)
   deallocate(VXold)
   deallocate(WXold)
   deallocate(KXold)
   deallocate(EXold)
-  deallocate(v_2Xold)
+  deallocate(v2Xold)
   deallocate(F22Xold)
   deallocate(UXoold)
   deallocate(VXoold)
   deallocate(WXoold)
   deallocate(KXoold)
   deallocate(EXoold)
-  deallocate(v_2Xoold)
+  deallocate(v2Xoold)
   deallocate(F22Xoold)
 !  deallocate(Pold)
 !  deallocate(PPold)

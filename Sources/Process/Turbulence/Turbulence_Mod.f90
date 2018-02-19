@@ -9,6 +9,36 @@
   implicit none
 !==============================================================================!
 
+  ! Varibale holing the turbulence model
+  integer :: turbulence_model
+
+  ! Parameters describing turbulence model choice
+  integer, parameter :: K_EPS                 = 30011
+  integer, parameter :: K_EPS_V2              = 30013
+  integer, parameter :: K_EPS_ZETA_F          = 30029
+  integer, parameter :: HYBRID_K_EPS_ZETA_F   = 30047
+  integer, parameter :: HYBRID_PITM           = 30059
+  integer, parameter :: LES                   = 30071
+  integer, parameter :: DNS                   = 30089
+  integer, parameter :: DES_SPALART           = 30091
+  integer, parameter :: SPALART_ALLMARAS      = 30097  
+  integer, parameter :: HANJALIC_JAKIRLIC     = 30103
+  integer, parameter :: REYNOLDS_STRESS_MODEL = 30109
+
+  ! Varibale holing turbulence model variant
+  integer :: turbulence_model_variant
+
+  ! Turbulence model variants
+  integer, parameter :: NONE        = 30113
+  integer, parameter :: HYBRID      = 30119
+  integer, parameter :: PURE        = 30133
+  integer, parameter :: URANS       = 30137
+  integer, parameter :: LOW_RE      = 30139
+  integer, parameter :: HIGH_RE     = 30161
+  integer, parameter :: WALE        = 30169
+  integer, parameter :: DYNAMIC     = 30181
+  integer, parameter :: SMAGORINSKY = 30187
+
   ! Reynolds stresses
   type(Var_Type) :: uu
   type(Var_Type) :: vv
@@ -28,5 +58,9 @@
   type(Var_Type) :: vvu, vvv, vvw
   type(Var_Type) :: wwu, wwv, www
   type(Var_Type) :: uwu, uwv, uww
+
+  ! Shear and wall stress are used in a number of turbulence models
+  real, allocatable :: shear(:)
+  real, allocatable :: tau_wall(:)
 
   end module 

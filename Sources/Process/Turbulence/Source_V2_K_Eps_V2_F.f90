@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Source_V2_K_Eps_V2_F(grid, Nstep)
+  subroutine Source_V2_K_Eps_V2_F(grid, n_step)
 !------------------------------------------------------------------------------!
 !   Calculate source terms in equation for v2                                  !
 !   Term which is negative is put on left hand side in diagonal of             !
@@ -7,18 +7,18 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: Nstep
+  integer         :: n_step
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c
-  integer :: s, c1, c2,j     
+  integer           :: c
+  integer           :: s, c1, c2,j     
 !==============================================================================!
 !   In transport equation for v2 two source terms exist which have form:       !
 !                                                                              !
@@ -34,7 +34,8 @@
 !   in order to increase stability of solver                                   !
 !------------------------------------------------------------------------------!      
 
-  if(SIMULA == ZETA.or.SIMULA==HYB_ZETA) then
+  if(turbulence_model == K_EPS_ZETA_F .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
 
     ! Positive source term 
     ! The first option in treating the source is making computation very 
@@ -42,24 +43,24 @@
     ! instabilities for some cases such as flow around cylinder. That is why we 
     ! choose this particular way to the add source term. 
     do c = 1, grid % n_cells
-      if(Nstep > 500) then
-        b(c) = b(c) + f22%n(c)*grid % vol(c)
+      if(n_step > 500) then
+        b(c) = b(c) + f22 % n(c) * grid % vol(c)
       else
         b(c) = b(c) + max(0.0,f22 % n(c)*grid % vol(c))
         A % val(A % dia(c)) = A % val(A % dia(c))               &
                             + max(0.0, -f22 % n(c) * grid % vol(c)  &
-                            / (v_2 % n(c) + TINY))    
+                            / (v2 % n(c) + TINY))    
       end if      
       A % val(A % dia(c)) =  A % val(A % dia(c))  &
                           + grid % vol(c) * p_kin(c)     &
                           / (kin % n(c)+TINY) 
     end do
-  else if(SIMULA == K_EPS_VV) then
+  else if(turbulence_model == K_EPS_V2) then
     do c = 1, grid % n_cells
       b(c) = b(c) + max(0.0, f22 % n(c) * kin % n(c) * grid % vol(c))
       A % val(A % dia(c)) = A % val(A % dia(c))                            &
                           + max(0.0, -f22 % n(c) * kin % n(c) * grid % vol(c)  &
-                          / (v_2 % n(c) + TINY))
+                          / (v2 % n(c) + TINY))
     end do
     do c = 1, grid % n_cells  
       A % val(A % dia(c)) = A % val(A % dia(c))  &

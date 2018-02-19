@@ -17,7 +17,7 @@
   ! Turbulence models variables
   type(Var_Type) :: kin
   type(Var_Type) :: eps
-  type(Var_Type) :: v_2
+  type(Var_Type) :: v2
   type(Var_Type) :: f22
   type(Var_Type) :: vis
 
@@ -32,7 +32,7 @@
   ! Constants for the Spalart-Allmaras model:
   real :: Cb1, Cb2, SIGMAv, Cw1, Cw2, Cw3, Cvis1
 
-  ! Total dissipation in HJ model
+  ! Total dissipation in 'HJ' model
   real,allocatable :: eps_tot(:)
 
   ! Vorticity

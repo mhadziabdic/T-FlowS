@@ -1,26 +1,31 @@
 !==============================================================================!
-  real function Correct_Velocity(grid)
+  real function Correct_Velocity(grid, dt)
 !------------------------------------------------------------------------------!
 !   Corrects the velocities, and mass fluxes on the cell faces.                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
-  use Grid_Mod
+  use Grid_Mod,     only: Grid_Type
   use Bulk_Mod
   use Info_Mod
-  use Constants_Pro_Mod
+  use Numerics_Mod, only: errmax
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
+  real            :: dt
 !-----------------------------------[Locals]-----------------------------------!
-  integer   :: c, c1, c2, s, m
-  real      :: cfl_max(256), pe_max(256)
-  real      :: cfl_t, pe_t
-  real      :: Pdrop, FluxM
+  integer           :: c, c1, c2, s, m
+  real              :: cfl_max(256), pe_max(256)
+  real              :: cfl_t, pe_t
+  real              :: Pdrop, FluxM
+  character(len=80) :: coupling
 !==============================================================================!
+
+  call Control_Mod_Pressure_Momentum_Coupling(coupling)
 
   !-----------------------------------------!
   !   Correct velocities and fluxes with    !
@@ -31,13 +36,13 @@
   !   so this loop will not correct SOLID   !
   !   velocities.                           !
   !-----------------------------------------!
-  if(ALGOR == FRACT) then
+  if(coupling == 'PROJECTION') then
     do c = 1, grid % n_cells
       U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
       V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
       W % n(c) = W % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
     end do 
-  else ! algorythm is SIMPLE
+  else ! coupling is 'SIMPLE'
     do c = 1, grid % n_cells
       U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
       V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
@@ -50,7 +55,7 @@
     c2 = grid % faces_c(2,s)
 
     if(c2  < 0) then
-      if( (TypeBC(c2) == PRESSURE) ) then
+      if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) ) then
         U % n(c2) = U % n(c1) 
         V % n(c2) = V % n(c1) 
         W % n(c2) = W % n(c1) 
@@ -72,11 +77,12 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
+    if(c2 > 0 .or.  &
+       c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       if(c2  > 0) then
-        Flux(s)=Flux(s)+(PP % n(c2) - PP % n(c1))*A % val(A % pos(1,s))
+        flux(s)=flux(s)+(PP % n(c2) - PP % n(c1))*A % val(A % pos(1,s))
       else 
-        Flux(s)=Flux(s)+(PP % n(c2) - PP % n(c1))*A % bou(c2)
+        flux(s)=flux(s)+(PP % n(c2) - PP % n(c1))*A % bou(c2)
       endif
     end if             !                                          !
   end do               !<---------- this is correction ---------->!
@@ -92,16 +98,17 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if(c2  > 0 .or. c2  < 0 .and. TypeBC(c2) == BUFFER) then
-      b(c1)=b(c1)-Flux(s)
-      if(c2  > 0) b(c2)=b(c2)+Flux(s)
+    if(c2 > 0 .or.  &
+       c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
+      b(c1)=b(c1)-flux(s)
+      if(c2  > 0) b(c2)=b(c2)+flux(s)
     else
-      b(c1) = b(c1)-Flux(s)
+      b(c1) = b(c1)-flux(s)
     end if
   end do
 
   do c = 1, grid % n_cells
-    b(c) = b(c) / (grid % vol(c) * DENc(material(c)))
+    b(c) = b(c) / (grid % vol(c) * density)
   end do
 
   errmax=0.0
@@ -121,13 +128,14 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
     if( (material(c1) .eq. m) .or. (material(c2) .eq. m) ) then
-      if(c2  > 0 .or. c2  < 0.and.TypeBC(c2) == BUFFER) then
-        cfl_t = abs( dt * Flux(s) /                &
-                     ( Scoef(s) *                  &
+      if(c2 > 0 .or.   &
+         c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
+        cfl_t = abs( dt * flux(s) /                &
+                     ( f_coef(s) *                 &
                      (  grid % dx(s)*grid % dx(s)  &
                       + grid % dy(s)*grid % dy(s)  &
                       + grid % dz(s)*grid % dz(s)) ) )
-        pe_t  = abs( Flux(s) / Scoef(s) / (VISc+TINY) )
+        pe_t  = abs( flux(s) / f_coef(s) / (viscosity+TINY) )
         cfl_max(m) = max( cfl_max(m), cfl_t ) 
         pe_max(m)  = max( pe_max(m),  pe_t  ) 
       end if

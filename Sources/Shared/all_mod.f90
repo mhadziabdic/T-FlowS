@@ -18,6 +18,4 @@ module all_mod
   !-------------------------------------------!
   integer, allocatable :: material(:)     ! material markers
 
-  integer, allocatable :: TypeBC(:)       ! type of boundary condition
-
 end module 

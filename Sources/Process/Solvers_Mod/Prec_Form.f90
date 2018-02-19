@@ -10,7 +10,7 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Matrix_Type) :: A
-  integer           :: prec
+  character(len=80) :: prec  ! preconditioner
 !-----------------------------------[Locals]-----------------------------------!
   real     :: sum1
   integer  :: i, j, k, N
@@ -21,7 +21,7 @@
   !---------------------------------! 
   !   1) diagonal preconditioning   !
   !---------------------------------!
-  if(prec == 1) then        
+  if(prec == 'DIAGONAL') then        
     do i=1,N                     
       D % val(D % dia(i)) = A % val(A % dia(i))           
     end do                      
@@ -29,7 +29,7 @@
   !--------------------------------------------! 
   !   2) incomplete cholesky preconditioning   !
   !--------------------------------------------!
-  else if(prec == 2) then   
+  else if(prec == 'INCOMPLETE_CHOLESKY') then   
     do i = 1,N
       sum1 = A % val(A % dia(i))       ! take diaginal entry   
       do j = A % row(i), A % dia(i)-1  ! only lower traingular

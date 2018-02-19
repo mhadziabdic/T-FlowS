@@ -5,19 +5,22 @@
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Control_Mod
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
   type(Grid_Type) :: grid
   integer         :: n0, n1
 !-------------------------------[Locals]-------------------------------!
-  integer :: c, n
-  real    :: Urad_mean, Utan_mean, R, Urad, Utan
+  integer           :: c, n
+  real              :: Urad_mean, Utan_mean, R, Urad, Utan
 !======================================================================!
+
+  call Control_Mod_Heat_Transfer(verbose = .true.)
 
   n=n1-n0
 
@@ -55,7 +58,7 @@
       vis_t_mean(c) = ( vis_t_mean(c)*(1.*n) + vis_t(c) ) & 
                    / (1.*(n+1))
 
-      if(HOT==YES) then
+      if(heat_transfer == YES) then
         T % mean(c) = ( T % mean(c) * (1.*n) + T % n(c) ) / (1.*(n+1))
 
         TT % mean(c) = ( TT % mean(c)*(1.*n) + T % n(c) * T % n(c) ) & 

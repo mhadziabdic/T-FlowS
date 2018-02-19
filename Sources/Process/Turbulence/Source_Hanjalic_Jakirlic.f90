@@ -6,7 +6,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use rans_mod
   use Grid_Mod
   use Work_Mod, only: l_sc_x => r_cell_01,  &
@@ -35,7 +35,7 @@
   integer :: c, s, c1, c2, i, icont
   real    :: mag
   real    :: a11, a22, a33, a12, a13, a21, a31, a23, a32
-  real    :: n1,n2,n3,AA2,AA3,AA,Ret,ff2,fd,FF1,CC,C1W,C2W,fw,uu_nn
+  real    :: n1,n2,n3,AA2,AA3,AA,Ret,ff2,fd,FF1,CC,C1W,C2W,f_w,uu_nn
   real    :: e11,e12,e13,e21,e22,e23,e31,e32,e33
   real    :: Eps11,Eps12,Eps13,Eps21,Eps22,Eps23,Eps31,Eps32,Eps33
   real    :: Feps, phi2_nn
@@ -77,7 +77,7 @@
   call GraPhi(grid, kin_z, 3, kin_zz, .true.)  ! d^2 K / dz^2
 
   do c = 1, grid % n_cells
-    Eps_tot(c) = eps % n(c) + 0.5 * VISc * (kin_xx(c) + kin_yy(c) + kin_zz(c))
+    Eps_tot(c) = eps % n(c) + 0.5 * viscosity * (kin_xx(c) + kin_yy(c) + kin_zz(c))
   end do
 
 ! !---------------------------------------------------!
@@ -217,7 +217,7 @@
 !                           duw_dx*dWdx  + dvw_dx*dWdy  + dww_dx*dWdz ) + &
 !                 Wyz    * (duv_dz*dWdx  + dvv_dz*dWdy  + dvw_dz*dWdz   + &
 !                           duw_dy*dWdx  + dvw_dy*dWdy  + dww_dy*dWdz ))  
-!     Diss1(c) =  -2.0 * VISc * Diss1(c)
+!     Diss1(c) =  -2.0 * viscosity * Diss1(c)
 !   end do
 ! end if
 
@@ -260,7 +260,7 @@
         Uzy = Uyz
         Uzz = ui_zz(c)
         Diss1(c) =                                    &
-                2.0*0.25*VISc*kin%n(c)/Eps_tot(c)  *  &
+                2.0*0.25*viscosity*kin%n(c)/Eps_tot(c)  *  &
                (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+  &
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+  &
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+  &
@@ -282,7 +282,7 @@
         Uzy = Uyz
         Uzz = ui_zz(c)
         Diss1(c) = Diss1(c) +                         &
-                2.0*0.25*VISc*kin%n(c)/Eps_tot(c)  *  &
+                2.0*0.25*viscosity*kin%n(c)/Eps_tot(c)  *  &
                (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+  &
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+  &
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+  &
@@ -304,7 +304,7 @@
         Uzy = Uyz
         Uzz = ui_zz(c)
         Diss1(c) = Diss1(c) +                         &
-                2.0*0.25*VISc*kin%n(c)/Eps_tot(c)  *  &
+                2.0*0.25*viscosity*kin%n(c)/Eps_tot(c)  *  &
                (uu % n(c)*(Uxx*Uxx+Uxy*Uxy+Uxz*Uxz)+  &
                 uv % n(c)*(Uxx*Uyx+Uxy*Uyy+Uxz*Uyz)+  &
                 uw % n(c)*(Uxx*Uzx+Uxy*Uzy+Uxz*Uzz)+  &
@@ -361,12 +361,12 @@
     V11 = 0.0
     V22 = 0.0
     V33 = 0.0
-    V12 = 0.5*(u % y(c)-v % x(c)) - omegaZ
-    V21 = -V12 + omegaZ
-    V13 = 0.5*(u % z(c)-w % x(c)) + omegaY
-    V31 = -V13 - omegaY
-    V23 = 0.5*(v % z(c)-w % y(c)) - omegaX
-    V32 = -V23 + omegaX
+    V12 = 0.5*(u % y(c)-v % x(c)) - omega_z
+    V21 = -V12 + omega_z
+    V13 = 0.5*(u % z(c)-w % x(c)) + omega_y
+    V31 = -V13 - omega_y
+    V23 = 0.5*(v % z(c)-w % y(c)) - omega_x
+    V32 = -V23 + omega_x
 
     AA2 = (a11**2)+(a22**2)+(a33**2)+2*((a12**2)+(a13**2)+(a23**2))
 
@@ -420,7 +420,7 @@
       fss=1.0-(AA**0.5*EE**2.0)
     end do
      
-    Ret= (kin % n(c)*kin % n(c))/(VISc*Eps_tot(c)+tiny)
+    Ret= (kin % n(c)*kin % n(c))/(viscosity*Eps_tot(c)+tiny)
     Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
     ff2=min((Ret/150)**1.5, 1.0)
     fd=1.0/(1.0+0.1*Ret)
@@ -430,25 +430,25 @@
     CC2=0.8*SQRT(AA)
     C1W=max((1.0-0.7*CC), 0.3)
     C2W=min(AA,0.3)
-    fw=min((kin%n(c)**1.5)/(2.5*Eps_tot(c)*grid % wall_dist(c)),1.4)
+    f_w=min((kin%n(c)**1.5)/(2.5*Eps_tot(c)*grid % wall_dist(c)),1.4)
 
     P11 = - 2.0*(  uu % n(c) * u % x(c)     &
                  + uv % n(c) * u % y(c)     &
                  + uw % n(c) * u % z(c))    &
-          - 2.0 * omegaY * 2.0 * uw % n(c)  &
-          + 2.0 * omegaZ * 2.0 * uv % n(c) 
+          - 2.0 * omega_y * 2.0 * uw % n(c)  &
+          + 2.0 * omega_z * 2.0 * uv % n(c) 
 
     P22 = - 2.0*(  uv % n(c) * v % x(c)     &
                  + vv % n(c) * v % y(c)     &
                  + vw % n(c) * v % z(c))    &
-          + 2.0 * omegaX * 2.0 * vw % n(c)  &
-          - 2.0 * omegaZ * 2.0 * uw % n(c) 
+          + 2.0 * omega_x * 2.0 * vw % n(c)  &
+          - 2.0 * omega_z * 2.0 * uw % n(c) 
 
     P33 = - 2.0*(  uw % n(c) * w % x(c)     &
                  + vw % n(c) * w % y(c)     &
                  + ww % n(c) * w % z(c))    &
-          - 2.0 * omegaX * 2.0 * vw % n(c)  &
-          + 2.0 * omegaY * 2.0 * uw % n(c) 
+          - 2.0 * omega_x * 2.0 * vw % n(c)  &
+          + 2.0 * omega_y * 2.0 * uw % n(c) 
 
     P12 = -(  uu % n(c) * v % x(c)      &
             + uv % n(c) * v % y(c)      &
@@ -456,9 +456,9 @@
             + uv % n(c) * u % x(c)      &
             + vv % n(c) * u % y(c)      &
             + vw % n(c) * u % z(c))     &
-            + 2.0 * omegaX * uw % n(c)  &
-            - 2.0 * omegaY * vw % n(c)  &
-            + 2.0 * omegaZ * (vv % n(c) - uu % n(c)) 
+            + 2.0 * omega_x * uw % n(c)  &
+            - 2.0 * omega_y * vw % n(c)  &
+            + 2.0 * omega_z * (vv % n(c) - uu % n(c)) 
 
     P13 = -(  uw % n(c)*u % x(c)                      &
             + vw % n(c)*u % y(c)                      &
@@ -466,9 +466,9 @@
             + uu % n(c)*w % x(c)                      &
             + uv % n(c)*w % y(c)                      &
             + uw % n(c)*w % z(c))                     &
-            - 2.0 * omegaX * uv % n(c)                &
-            - 2.0 * omegaY * (ww % n(c) - uu % n(c))  &
-            + 2.0 * omegaZ * vw % n(c) 
+            - 2.0 * omega_x * uv % n(c)                &
+            - 2.0 * omega_y * (ww % n(c) - uu % n(c))  &
+            + 2.0 * omega_z * vw % n(c) 
 
     P23 = -(  uv % n(c) * w % x(c)                    &
             + vv % n(c) * w % y(c)                    &
@@ -476,9 +476,9 @@
             + uw % n(c) * v % x(c)                    &
             + vw % n(c) * v % y(c)                    &
             + ww % n(c) * v % z(c))                   &
-            - 2.0 * omegaX * (vw % n(c) - ww % n(c))  &
-            + 2.0 * omegaY * uv % n(c)                &
-            - 2.0 * omegaZ * uw % n(c) 
+            - 2.0 * omega_x * (vw % n(c) - ww % n(c))  &
+            + 2.0 * omega_y * uv % n(c)                &
+            - 2.0 * omega_z * uw % n(c) 
 
     VAR1_11 = -CC1*eps%n(c)*a11 
     VAR1_22 = -CC1*eps%n(c)*a22 
@@ -496,31 +496,31 @@
 
     phi2_nn = VAR2_11*n1*n1+2*VAR2_12*n1*n2+2*VAR2_13*n1*n3+VAR2_22*n2*n2+2*VAR2_23*n2*n3+VAR2_33*n3*n3  
 
-    VAR1w_11 = C1W*fw*eps%n(c)/kin%n(c)*(uu_nn-1.5*2.0*(uu%n(c)*n1*n1*0.0+uv%n(c)*n1*n2+uw%n(c)*n1*n3))
-    VAR1w_22 = C1W*fw*eps%n(c)/kin%n(c)*(uu_nn-1.5*2.0*(uv%n(c)*n2*n1+vv%n(c)*n2*n2*0.0+vw%n(c)*n2*n3))
-    VAR1w_33 = C1W*fw*eps%n(c)/kin%n(c)*(uu_nn-1.5*2.0*(uw%n(c)*n3*n1+vw%n(c)*n3*n2+ww%n(c)*n3*n3*0.0))
-    VAR1w_12 = C1W*fw*eps%n(c)/kin%n(c)*(-1.5*(uu%n(c)*n2*n1+uv%n(c)*n2*n2*0.0+uw%n(c)*n2*n3 +&
+    VAR1w_11 = C1W*f_w*eps%n(c)/kin%n(c)*(uu_nn-1.5*2.0*(uu%n(c)*n1*n1*0.0+uv%n(c)*n1*n2+uw%n(c)*n1*n3))
+    VAR1w_22 = C1W*f_w*eps%n(c)/kin%n(c)*(uu_nn-1.5*2.0*(uv%n(c)*n2*n1+vv%n(c)*n2*n2*0.0+vw%n(c)*n2*n3))
+    VAR1w_33 = C1W*f_w*eps%n(c)/kin%n(c)*(uu_nn-1.5*2.0*(uw%n(c)*n3*n1+vw%n(c)*n3*n2+ww%n(c)*n3*n3*0.0))
+    VAR1w_12 = C1W*f_w*eps%n(c)/kin%n(c)*(-1.5*(uu%n(c)*n2*n1+uv%n(c)*n2*n2*0.0+uw%n(c)*n2*n3 +&
                                                uv%n(c)*n1*n1*0.0+vv%n(c)*n1*n2+vw%n(c)*n1*n3)) 
-    VAR1w_13 = C1W*fw*eps%n(c)/kin%n(c)*(-1.5*(uu%n(c)*n3*n1+uv%n(c)*n3*n2+uw%n(c)*n3*n3*0.0 +&
+    VAR1w_13 = C1W*f_w*eps%n(c)/kin%n(c)*(-1.5*(uu%n(c)*n3*n1+uv%n(c)*n3*n2+uw%n(c)*n3*n3*0.0 +&
                                                uw%n(c)*n1*n1*0.0+vw%n(c)*n1*n2+ww%n(c)*n1*n3))
-    VAR1w_23 = C1W*fw*eps%n(c)/kin%n(c)*(-1.5*(uw%n(c)*n2*n1+vw%n(c)*n2*n2*0.0+ww%n(c)*n2*n3 +&
+    VAR1w_23 = C1W*f_w*eps%n(c)/kin%n(c)*(-1.5*(uw%n(c)*n2*n1+vw%n(c)*n2*n2*0.0+ww%n(c)*n2*n3 +&
                                                uv%n(c)*n3*n1+vv%n(c)*n3*n2+vw%n(c)*n3*n3)*0.0)
 
-    VAR2w_11 = C2W*fw*(phi2_nn-1.5*2.0*(VAR2_11*n1*n1+VAR2_12*n1*n2+VAR2_13*n1*n3))
-    VAR2w_22 = C2W*fw*(phi2_nn-1.5*2.0*(VAR2_12*n1*n2+VAR2_22*n2*n2+VAR2_23*n3*n2))
-    VAR2w_33 = C2W*fw*(phi2_nn-1.5*2.0*(VAR2_13*n1*n3+VAR2_23*n2*n3+VAR2_33*n3*n3))
-    VAR2w_12 = C2W*fw*(-1.5*(VAR2_11*n2*n1+VAR2_12*n2*n2+VAR2_13*n2*n3 +&
+    VAR2w_11 = C2W*f_w*(phi2_nn-1.5*2.0*(VAR2_11*n1*n1+VAR2_12*n1*n2+VAR2_13*n1*n3))
+    VAR2w_22 = C2W*f_w*(phi2_nn-1.5*2.0*(VAR2_12*n1*n2+VAR2_22*n2*n2+VAR2_23*n3*n2))
+    VAR2w_33 = C2W*f_w*(phi2_nn-1.5*2.0*(VAR2_13*n1*n3+VAR2_23*n2*n3+VAR2_33*n3*n3))
+    VAR2w_12 = C2W*f_w*(-1.5*(VAR2_11*n2*n1+VAR2_12*n2*n2+VAR2_13*n2*n3 +&
                              VAR2_12*n1*n1+VAR2_22*n1*n2+VAR2_23*n1*n3))
-    VAR2w_13 = C2W*fw*(-1.5*(VAR2_11*n3*n1+VAR2_12*n3*n2+VAR2_13*n3*n3 +&
+    VAR2w_13 = C2W*f_w*(-1.5*(VAR2_11*n3*n1+VAR2_12*n3*n2+VAR2_13*n3*n3 +&
                              VAR2_13*n1*n1+VAR2_23*n1*n2+VAR2_33*n1*n3))
-    VAR2w_23 = C2W*fw*(-1.5*(VAR2_13*n2*n1+VAR2_23*n2*n2+VAR2_33*n2*n3 +&
+    VAR2w_23 = C2W*f_w*(-1.5*(VAR2_13*n2*n1+VAR2_23*n2*n2+VAR2_33*n2*n3 +&
                              VAR2_12*n3*n1+VAR2_22*n3*n2+VAR2_23*n3*n3))
 
     ! uu stress
     if(name_phi == 'UU') then
 !==============================================================================================================================!
       b(c) = b(c) + (max(P11,0.0)+CC1*eps%n(c)*r23+max(VAR2_11,0.0)+max(VAR1w_11,0.0)+max(VAR2w_11,0.0))*grid % vol(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*fw*eps%n(c)/kin%n(c)*3.0*n1*n1 + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*3.0*n1*n1 + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P11,0.0)+max(-VAR2_11,0.0)+max(-VAR1w_11,0.0)+max(-VAR2w_11,0.0) + &
                       (1.0-fss)*r23*eps%n(c))/max(uu%n(c),1.0e-10)*grid % vol(c) 
@@ -529,7 +529,7 @@
     else if(name_phi == 'VV') then
 !==============================================================================================================================!
       b(c) = b(c) + (max(P22,0.0)+CC1*eps%n(c)*r23+max(VAR2_22,0.0)+max(VAR1w_22,0.0)+max(VAR2w_22,0.0))*grid % vol(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*fw*eps%n(c)/kin%n(c)*3.0*n2*n2 + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*3.0*n2*n2 + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P22,0.0)+max(-VAR2_22,0.0)+max(-VAR1w_22,0.0)+max(-VAR2w_22,0.0)+ &
                       (1.0-fss)*r23*eps%n(c))/max(vv%n(c),1.0e-10)*grid % vol(c) 
@@ -538,7 +538,7 @@
     else if(name_phi == 'WW') then
 !==============================================================================================================================!
       b(c) = b(c) + (max(P33,0.0)+CC1*eps%n(c)*r23+max(VAR2_33,0.0)+max(VAR1w_33,0.0)+max(VAR2w_33,0.0))*grid % vol(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*fw*eps%n(c)/kin%n(c)*3.0*n3*n3 + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*3.0*n3*n3 + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P33,0.0)+max(-VAR2_33,0.0)+max(-VAR1w_33,0.0)+max(-VAR2w_33,0.0)+ &
                       (1.0-fss)*r23*eps%n(c))/max(ww%n(c),1.0e-10)*grid % vol(c) 
@@ -547,14 +547,14 @@
     ! uv stress
     else if(name_phi == 'UV') then
       b(c) = b(c) + (P12 + VAR2_12 + VAR1w_12 + VAR2w_12)*grid % vol(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*fw*eps%n(c)/kin%n(c)*1.5*(n1*n1+n2*n2) + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*1.5*(n1*n1+n2*n2) + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
 !==============================================================================================================================!
 !==============================================================================================================================!
     ! uw stress
     else if(name_phi == 'UW') then
       b(c) = b(c) + (P13 + VAR2_13 + VAR1w_13 + VAR2w_13)*grid % vol(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*fw*eps%n(c)/kin%n(c)*1.5*(n1*n1+n3*n3) + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*1.5*(n1*n1+n3*n3) + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
 
 !==============================================================================================================================!
@@ -562,7 +562,7 @@
     ! vw stress
     else if(name_phi == 'VW') then
       b(c) = b(c) + (P23 + VAR2_23 + VAR1w_23 + VAR2w_23)*grid % vol(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*fw*eps%n(c)/kin%n(c)*1.5*(n2*n2+n3*n3) + &
+      A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*1.5*(n2*n2+n3*n3) + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
 !==============================================================================================================================!
 !==============================================================================================================================!
@@ -586,10 +586,10 @@
     call GraPhi(grid, kin_e, 2, kin_y, .true.)             ! dK/dy
     call GraPhi(grid, kin_e, 3, kin_z, .true.)             ! dK/dz
     do c = 1, grid % n_cells
-      Ret  = (kin % n(c)**2) / (VISc*eps % n(c) + TINY)
+      Ret  = (kin % n(c)**2) / (viscosity*eps % n(c) + TINY)
       Feps = 1.0 - ((Ce2-1.4)/Ce2) * exp(-(Ret/6.0)**2)
       b(c) = b(c) + (Ce2 * Feps * eps % n(c) / kin % n(c)                 &
-                     * (VISc*(kin_x(c)**2 + kin_y(c)**2 + kin_z(c)**2)))  &
+                     * (viscosity*(kin_x(c)**2 + kin_y(c)**2 + kin_z(c)**2)))  &
                   * grid % vol(c)
     end do
   end if
@@ -600,9 +600,10 @@
       c2 = grid % faces_c(2,s)
 
       ! Calculate a values of dissipation  on wall
-      if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
-        if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
-          eps%n(c2) = VISc*(kin_x(c)**2 + kin_y(c)**2 + kin_z(c)**2)
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
+          eps%n(c2) = viscosity*(kin_x(c)**2 + kin_y(c)**2 + kin_z(c)**2)
         end if   ! end if of BC=wall
       end if    ! end if of c2<0
     end do

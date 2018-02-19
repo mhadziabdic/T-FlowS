@@ -6,11 +6,11 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Constants_Pro_Mod
+  use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -19,7 +19,7 @@
   integer :: c, s, c1, c2,j 
   real    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret, Ck, EBF
   real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, EpsWall, EpsHom
-  real    :: BL_EPS, Pro, p_kin_turb, p_kin_vis, Yplus
+  real    :: BL_EPS, Pro, p_kin_turb, p_kin_vis, y_plus
 !==============================================================================!
 !   In dissipation of turbulent kinetic energy equation exist two              !
 !   source terms which have form:                                              !
@@ -39,14 +39,15 @@
 
   call Time_And_Length_Scale(grid)
 
-  if(SIMULA == ZETA.or.SIMULA==HYB_ZETA) then
+  if(turbulence_model == K_EPS_ZETA_F .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
     do c = 1, grid % n_cells 
-      Esor = grid % vol(c)/(Tsc(c)+tiny)
-      Ce_11 = Ce1*(1.0 + alpha*(1.0/(v_2%n(c)+tiny) ))    
+      Esor = grid % vol(c)/(Tsc(c)+TINY)
+      Ce_11 = Ce1*(1.0 + alpha*(1.0/(v2%n(c)+TINY) ))    
       b(c) = b(c) + Ce_11*p_kin(c)*Esor
  
       ! Fill in a diagonal of coefficient matrix
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*density
     end do                   
   end if
 
@@ -55,8 +56,9 @@
   do s = 1, grid % n_faces
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)
-    if(c2 < 0 .and. TypeBC(c2) /= BUFFER ) then
-     if(TypeBC(c2)==WALL .or. TypeBC(c2)==WALLFL) then
+    if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
+     if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
+        Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
         UtotSq = U % n(c1) * U % n(c1) &
                + V % n(c1) * V % n(c1) &
                + W % n(c1) * W % n(c1) 
@@ -74,7 +76,7 @@
           Utan = TINY
         end if
 
-        EpsWall = 2.0 * VISc * kin%n(c1) / grid % wall_dist(c1)**2.0
+        EpsWall = 2.0 * viscosity * kin%n(c1) / grid % wall_dist(c1)**2
         EpsHom = Cmu75 * kin%n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
         Uf(c1) = Cmu25 * kin%n(c1)**0.5
 
@@ -82,12 +84,12 @@
         p_kin_vis = vis_t(c1)*Shear(c1)*Shear(c1)  ! standard
 
         ! Kader
-        ! EBF = 0.01 * Yplus**4.0 / (1.0 + 5.0*Yplus) + TINY           !original
+        ! EBF = 0.01 * y_plus**4.0 / (1.0 + 5.0*y_plus) + TINY           !original
         ! Pro = p_kin_vis * exp(-1.0 * EBF) + p_kin_turb * exp(-1.0 / EBF) 
         ! BL_EPS = min((p_kin_turb * exp(-1.0 / EBF))/Pro,1.0)
 
-        Yplus = Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1) / VISc + TINY     !standard
-        EBF  = 0.001*Yplus**4.0/(1.0+Yplus)
+        y_plus = Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1) / viscosity + TINY     !standard
+        EBF  = 0.001*y_plus**4.0/(1.0+y_plus)
         eps%n (c1) = EpsWall * exp(-1.0 * EBF) + EpsHom * exp(-1.0 / EBF) 
         
         if(ROUGH == YES) then
@@ -104,14 +106,14 @@
     end if
   end do  
 
-  if(SIMULA == K_EPS_VV) then
+  if(turbulence_model == K_EPS_V2) then
     do c = 1, grid % n_cells
       Esor = grid % vol(c)/Tsc(c)
-      Ce_11 = Ce1*(1.0 + alpha*(kin%n(c)/(v_2%n(c)) + tiny)**0.5)
+      Ce_11 = Ce1*(1.0 + alpha*(kin%n(c)/(v2%n(c)) + TINY)**0.5)
       b(c) = b(c) + Ce_11*p_kin(c)*Esor
 
       ! Fill in a diagonal of coefficient matrix
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*density
     end do
   end if 
 

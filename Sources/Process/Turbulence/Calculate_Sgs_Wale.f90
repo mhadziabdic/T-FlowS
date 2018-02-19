@@ -1,12 +1,12 @@
 !==============================================================================!
-  subroutine CalcWALE(grid)
+  subroutine Calculate_Sgs_Wale(grid)
 !------------------------------------------------------------------------------!
 !  Compute SGS viscosity for 'LES' by using WALE model.  
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use allp_mod, only: ONE_THIRD
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -24,7 +24,7 @@
   real    :: V11,  V22,  V33,  V12,  V13,  V23,  V21,  V31,  V32
 !==============================================================================!
 
-  print *, '# I think there is a bug in this function (Bojan)'
+  ! print *, '# I think there is a bug in this function (Bojan)'
 
   !---------------!
   !               !
@@ -78,9 +78,9 @@
     SijdSijd(c) = S11d*S11d + S22d*S22d + S33d*S33d  &
                 + S12d*S12d + S13d*S13d + S23d*S23d
     
-    WALEv(c) =  sqrt( abs (SijdSijd(c)**3) )          &
-             / (sqrt( abs (She(c)     **5) ) +        &
-                sqrt( sqrt(SijdSijd(c)**6) ) + TINY)
+    wale_v(c) =  sqrt( abs (SijdSijd(c)**3) )          &
+              / (sqrt( abs (She(c)     **5) ) +        &
+                 sqrt( sqrt(SijdSijd(c)**6) ) + TINY)
   end do 
 
   end subroutine

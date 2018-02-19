@@ -14,23 +14,26 @@ module les_mod
   implicit none 
 
   ! Variables relevant for 'LES' computations
-  real             :: ReTau, Cs0, Kflow  
-  real,allocatable :: Utau(:), Vtau(:), Wtau(:)
-  real,allocatable :: Cdyn(:), Cdyn_mean(:)
+  real              :: ReTau, Cs0, Kflow  
+  real, allocatable :: Utau(:), Vtau(:), Wtau(:)
+  real, allocatable :: c_dyn(:), c_dyn_mean(:)
 
   ! Used in Dynamic Smgaorinsky model 
   real,allocatable :: Aval_dif(:)
 
-  real,allocatable :: Shear(:), ShearMean(:), Ksgs(:), TauWall(:)
+  ! For LES you need to know nearest wall cell
+  integer, allocatable :: nearest_wall_cell(:)
+
+  real,allocatable :: shear_mean(:), kin_sgs(:)
   real,allocatable :: vis_t_sgs(:), vis_t_mean(:)
 
-  real,allocatable :: Shear_r(:), ShearMean_r(:), WALEv(:)
+  real,allocatable :: shear_r(:), shear_mean_r(:), wale_v(:)
   real,allocatable ::                             &
                        UUf(:), VVf(:), WWf(:),    &
                        UVf(:), UWf(:), VWf(:),    &
                        M11f(:), M22f(:), M33f(:), &
                        M12f(:), M13f(:), M23f(:), &
-                       ShearTest(:),              &
+                       shear_test(:),             &
                        Cinst(:)
   real,allocatable ::  Puu_mean(:), Pvv_mean(:), Pww_mean(:), &
                        Puv_mean(:), Puw_mean(:), Pvw_mean(:), &

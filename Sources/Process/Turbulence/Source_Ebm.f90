@@ -6,7 +6,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use rans_mod
   use Grid_Mod
   use Work_Mod, only: f22_x => r_cell_01,  &
@@ -274,7 +274,7 @@
       b(c) = b(c) + Ce11*p_kin(c)*Esor 
 
       ! Fill in a diagonal of coefficient matrix
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*DENc(material(c))
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*density
     end if
   end do
 
@@ -287,7 +287,7 @@
       if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
-          eps%n(c2) = VISc*(uu%n(c1)+vv%n(c1)+ww%n(c1))/grid % wall_dist(c1)**2
+          eps%n(c2) = viscosity*(uu%n(c1)+vv%n(c1)+ww%n(c1))/grid % wall_dist(c1)**2
         end if   ! end if of BC=wall
       end if    ! end if of c2<0
     end do

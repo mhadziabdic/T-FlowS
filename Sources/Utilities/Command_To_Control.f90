@@ -87,6 +87,8 @@ include 'Tokenizer.f90'
       print *, '# Gravitational constant in x, y and z directions: '
       call Tokenizer_Mod_Read_Line(CMN_FILE)
 
+      print *, 'BUOYANCY    yes'
+
       ! Print entry for the control file
       print *, 'GRAVITATIONAL_VECTOR    ',  trim(line % tokens(1)), '  ', &
                                             trim(line % tokens(2)), '  ',  &
@@ -96,6 +98,8 @@ include 'Tokenizer.f90'
     else if(answer == 'buoy') then
       print *, '# Gravitational constant in x, y and z directions: '
       call Tokenizer_Mod_Read_Line(CMN_FILE)
+
+      print *, 'BUOYANCY    yes'
 
       ! Print entry for the control file
       print *, 'GRAVITATIONAL_VECTOR    ',  trim(line % tokens(1)), '  ', &
@@ -201,7 +205,34 @@ include 'Tokenizer.f90'
 
   ! Print entry for the control file
   call To_Lower_Case(model)
-  print *, 'TURBULENCE_MODEL    ', trim(model)
+
+  if(model == 'ZETA') then
+    print *, 'TURBULENCE_MODEL    k_eps_zeta_f'
+
+  else if(model == 'HYB_ZETA') then
+    print *, 'TURBULENCE_MODEL    hybrid_k_eps_zeta_f'
+
+  else if(model == 'K_EPS_VV') then
+    print *, 'TURBULENCE_MODEL    k_eps_v2'
+
+  else if(model == 'HYB_PITM') then
+    print *, 'TURBULENCE_MODEL    hybrid_pitm'
+
+  else if(model == 'DES_SAP') then
+    print *, 'TURBULENCE_MODEL    des_spalart'
+
+  else if(model == 'SPA_ALL') then
+    print *, 'TURBULENCE_MODEL    spalart_allmaras'
+
+  else if(model == 'EBM') then
+    print *, 'TURBULENCE_MODEL    reynolds_stress_model'
+
+  else if(model == 'HJ') then
+    print *, 'TURBULENCE_MODEL    hanjalic_jakirlic'
+
+  ! K_EPS, LES, DES
+  else
+    print *, 'TURBULENCE_MODEL    ', trim(model)
 
   call To_Upper_Case(model)
 

@@ -25,7 +25,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use Grid_Mod
   use Work_Mod, only: p1 => r_cell_01,  &
                       p2 => r_cell_02
@@ -63,12 +63,12 @@
       dz_c2 = grid % zf(s) - grid % zc(c2)                     
 
       ! Missing parts of the gradient vector
-      p1(c1) = CONc(material(c1)) *  &
+      p1(c1) = conductivity *  &
            ( (g(1,c1)*dx_c1+g(4,c1)*dy_c1+g(5,c1)*dz_c1) * grid % sx(s) + &
              (g(4,c1)*dx_c1+g(2,c1)*dy_c1+g(6,c1)*dz_c1) * grid % sy(s) + & 
              (g(5,c1)*dx_c1+g(6,c1)*dy_c1+g(3,c1)*dz_c1) * grid % sz(s) )
       if(c2 > 0) then               
-        p2(c2) = CONc(material(c2)) *  &
+        p2(c2) = conductivity *  &
               ( (g(1,c2)*dx_c2+g(4,c2)*dy_c2+g(5,c2)*dz_c2) * grid % sx(s) + &
                 (g(4,c2)*dx_c2+g(2,c2)*dy_c2+g(6,c2)*dz_c2) * grid % sy(s) + &
                 (g(5,c2)*dx_c2+g(6,c2)*dy_c2+g(3,c2)*dz_c2) * grid % sz(s) )
@@ -92,13 +92,13 @@
         StateMat(material(c2))==FLUID ) then   
 
       ! Flux from cell 1 towards the material interface
-      f1 = CONc(material(c1)) *    &
+      f1 = conductivity *    &
            (  phi_x(c1) * grid % sx(s)    &
             + phi_y(c1) * grid % sy(s)    &
             + phi_z(c1) * grid % sz(s))
 
       ! Flux from cell 2 towards the material interface
-      f2 = CONc(material(c2)) *    &
+      f2 = conductivity *    &
            (  phi_x(c2) * grid % sx(s)    &
             + phi_y(c2) * grid % sy(s)    &
             + phi_z(c2) * grid % sz(s))
@@ -118,8 +118,8 @@
       D1 = sqrt(dx_c1*dx_c1 + dy_c1*dy_c1 + dz_c1*dz_c1)
       D2 = sqrt(dx_c2*dx_c2 + dy_c2*dy_c2 + dz_c2*dz_c2)
  
-      L1 = CONc(material(c1))
-      L2 = CONc(material(c2))
+      L1 = conductivity
+      L2 = conductivity
 
       phi_f = (L1/D1*phi(c1) + L2/D2*phi(c2)) / (L1/D1 + L2/D2)
 

@@ -16,7 +16,7 @@
 !                                                                              !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -31,14 +31,9 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, j, i
   real              :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
-  character(len=80) :: turbulence_model
-  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 
-  call Control_Mod_Turbulence_Model(turbulence_model)
-  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
-
-  if(turbulence_model_variant == 'HIGH_RE') then
+  if(turbulence_model_variant == HIGH_RE) then
     do c = 1, grid % n_cells
 
       ! Positive contribution:
@@ -47,7 +42,7 @@
     
       ! Negative contribution:
       A % val(A % dia(c)) = A % val(A % dia(c)) &
-           + Ce2 * DENc(material(c)) * eps % n(c) / kin % n(c) * grid % vol(c)
+           + Ce2 * density * eps % n(c) / kin % n(c) * grid % vol(c)
     end do 
 
     !--------------------------------------------!
@@ -83,9 +78,9 @@
   !-------------------------!
   !   Jones-Launder model   !
   !-------------------------!
-  if(turbulence_model_variant == 'LOW_RE') then
+  if(turbulence_model_variant == LOW_RE) then
 
-   call Compute_Shear_And_Vorticity(grid)
+   call Calculate_Shear_And_Vorticity(grid)
    call GraPhi(shear, 1, shear_x, .true.)  ! dU/dx
    call GraPhi(shear, 2, shear_y, .true.)  ! dW/dy
    call GraPhi(shear, 3, shear_z, .true.)  ! dV/dz
@@ -95,14 +90,14 @@
       ! Positive contribution:
       b(c) = b(c) & 
            + Ce1 * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)        & 
-           + 2.0 * VISc * vis_t(c) * &
+           + 2.0 * viscosity * vis_t(c) * &
            (shear_x(c)**2 + shear_y(c)**2 + shear_z(c)**2) * grid % vol(c)
     
       ! Negative contribution:
-      Ret = kin % n(c)*kin % n(c)/(VISc*eps % n(c))
+      Ret = kin % n(c)*kin % n(c)/(viscosity*eps % n(c))
       Fmu = 1.0 - 0.3*exp(-(Ret*Ret))
       A % val(A % dia(c)) = A % val(A % dia(c))  &
-      + Fmu * Ce2 * DENc(material(c)) * eps % n(c) / kin % n(c) * grid % vol(c)        
+      + Fmu * Ce2 * density * eps % n(c) / kin % n(c) * grid % vol(c)        
 
        ! Yap correction
        L1 = kin % n(c)**1.5/eps % n(c)
@@ -130,7 +125,7 @@
     end do
   end if
 
-  if(turbulence_model == 'HYB_PITM') then
+  if(turbulence_model == HYBRID_PITM) then
     do c = 1, grid % n_cells
 
       ! Positive contribution:
@@ -140,8 +135,8 @@
       Lf = grid % vol(c)**ONE_THIRD
 
       ! Negative contribution:
-      Ret = kin % n(c)*kin % n(c)/(VISc*eps % n(c))
-      yStar = (VISc * eps % n(c))**0.25 * grid % wall_dist(c) / VISc
+      Ret = kin % n(c)*kin % n(c)/(viscosity*eps % n(c))
+      yStar = (viscosity * eps % n(c))**0.25 * grid % wall_dist(c) / viscosity
       Fmu = (1.0 - exp(-yStar/3.1))**2*(1.0 - 0.25*exp(-(Ret/6.)*(Ret/6.)))
       Fmu = min(Fmu,1.0)
 
@@ -149,7 +144,7 @@
 
       A % val(A % dia(c)) = A % val(A % dia(c))            &
                          + (Ce1 + (Ce2 - Ce1) * Fmu )      &
-                         * DENc(material(c)) * eps % n(c)  &
+                         * density * eps % n(c)  &
                          / kin % n(c) * grid % vol(c)
 
     end do
@@ -165,7 +160,7 @@
         if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
-          eps % n(c2) = 2.0 * VISc * kin % n(c1)  &
+          eps % n(c2) = 2.0 * viscosity * kin % n(c1)  &
                       / (grid % wall_dist(c1)*grid % wall_dist(c1))
 
         end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL

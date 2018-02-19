@@ -6,7 +6,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use par_mod,  only: this_proc
   use rans_mod, only: grav_x, grav_y, grav_z, Zo
   use Tokenizer_Mod
@@ -56,10 +56,10 @@
     else if(answer == 'ROT') then
       ROT = YES
     else if(answer == 'BUOY') then
-      BUOY = YES
+!     BUOY = YES
     else if(answer == 'RB_CONV') then
       RB_CONV = YES
-      BUOY = YES
+!     BUOY = YES
     else if(answer == 'BUDG') then
       BUDG = YES
     else if(answer == 'BACKSTEP') then
@@ -88,15 +88,15 @@
     read(line % tokens(3), *)  omega_z
   end if
 
-  ! Gravity
-  if(BUOY == YES) then
-    if(this_proc  < 2)  &
-    print *, '# Gravitational constant in x, y and z directions: '
+! ! Gravity
+! if(BUOY == YES) then
+!   if(this_proc  < 2)  &
+!   print *, '# Gravitational constant in x, y and z directions: '
 !   call Tokenizer_Mod_Read_Line(CMN_FILE)
-    read(line % tokens(1), *) grav_x
-    read(line % tokens(2), *) grav_y
-    read(line % tokens(3), *) grav_z
-    read(line % tokens(4), *) Tref
-  end if
+!   read(line % tokens(1), *) grav_x
+!   read(line % tokens(2), *) grav_y
+!   read(line % tokens(3), *) grav_z
+!   read(line % tokens(4), *) Tref
+! end if
 
   end subroutine

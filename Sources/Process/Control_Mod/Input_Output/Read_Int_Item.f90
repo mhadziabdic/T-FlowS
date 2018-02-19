@@ -34,8 +34,8 @@
 1 if( .not. found) then
     if(present(verbose)) then
       if(verbose) then
-        print '(a,a,a)', '# Couldn''t find keyword: ', keyword, '.'
-        print '(a,i9)', '# Using the default value of ', def
+        print '(a,a,a)', ' # Couldn''t find the keyword: ', keyword, '.'
+        print '(a,i9)',  ' # Using the default value of: ', def
       end if
     end if
   end if 

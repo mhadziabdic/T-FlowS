@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use par_mod
   use rans_mod
@@ -25,7 +25,6 @@
   character(len=80) :: answer, nammon
   real, allocatable :: mres(:), xm(:), ym(:), zm(:)
   character(len=80) :: coupling
-  character(len=80) :: turbulence_model
 !==============================================================================!
 
   call Wait   
@@ -86,10 +85,10 @@
 
   if(.not. restar) call Allocate_Variables(grid)
 
-  call Control_Mod_Turbulence_Model(turbulence_model)
+  call Control_Mod_Turbulence_Model(.true.)
 
-  if(turbulence_model == 'K_EPS' .or.  &
-     turbulence_model == 'HYB_PITM') then
+  if(turbulence_model == K_EPS .or.  &
+     turbulence_model == HYBRID_PITM) then
     Ce1 = 1.44
     Ce2 = 1.92
     Cmu = 0.09
@@ -105,7 +104,7 @@
 !    end if
   endif
  
-  if(turbulence_model == 'K_EPS_VV') then
+  if(turbulence_model == K_EPS_V2) then
     Ce1   = 1.4
     Ce2   = 1.9
     Cmu   = 0.09
@@ -126,10 +125,10 @@
     Lim   = 11.0
     Kin % Sigma = 1.0
     Eps % Sigma = 1.3
-    v_2 % Sigma = 1.0
+    v2  % Sigma = 1.0
   endif
 
-  if(turbulence_model == 'EBM') then
+  if(turbulence_model == REYNOLDS_STRESS_MODEL) then
     Ce1   = 1.44
     Ce2   = 1.83
     Ce3   = 0.55
@@ -156,7 +155,7 @@
     g5    = 0.4
   endif
 
-  if(turbulence_model == 'HJ') then
+  if(turbulence_model == HANJALIC_JAKIRLIC) then
     Ce1   = 1.44
     Ce2   = 1.83
     Ce3   = 0.55
@@ -183,8 +182,8 @@
     g5    = 0.4
   endif
 
-  if(turbulence_model == 'ZETA' .or.  &
-     turbulence_model == 'HYB_ZETA') then
+  if(turbulence_model == K_EPS_ZETA_F .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
     Ce1   = 1.4
     Ce2   = 1.9
     Cmu   = 0.09 
@@ -205,11 +204,11 @@
     Lim   = 11.0
     Kin % Sigma = 1.0
     Eps % Sigma = 1.3
-    v_2 % Sigma = 1.2
+    v2  % Sigma = 1.2
   endif
 
-  if(turbulence_model == 'SPA_ALL' .or.  &
-     turbulence_model == 'DES_SPA') then
+  if(turbulence_model == SPALART_ALLMARAS .or.  &
+     turbulence_model == DES_SPALART) then
     kappa  = 0.41
     Cb1    = 0.1355
     Cb2    = 0.622

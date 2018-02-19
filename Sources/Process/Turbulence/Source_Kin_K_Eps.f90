@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -20,32 +20,27 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, c1, c2, s 
   real              :: UtotSq, Unor, UnorSq, Utan
-  character(len=80) :: turbulence_model
-  character(len=80) :: turbulence_model_variant
 !==============================================================================!
-
-  call Control_Mod_Turbulence_Model(turbulence_model)
-  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
 
   !-----------------------------------------------!
   !  Compute the sources in the near wall cells   !
   !-----------------------------------------------!
-  if(turbulence_model_variant == 'HIGH_RE') then
+  if(turbulence_model_variant == HIGH_RE) then
     do s = 1, grid % n_faces
       c1=grid % faces_c(1,s)
       c2=grid % faces_c(2,s)
  
       if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
 
           ! Compute tangential velocity component
-          UtotSq = U % n(c1) * U % n(c1) &
-                 + V % n(c1) * V % n(c1) &
-                 + W % n(c1) * W % n(c1)
-          Unor = ( U % n(c1) * grid % sx(s)     &
-                 + V % n(c1) * grid % sy(s)     &
-                 + W % n(c1) * grid % sz(s) )   &
+          UtotSq = u % n(c1) * u % n(c1) &
+                 + v % n(c1) * v % n(c1) &
+                 + w % n(c1) * w % n(c1)
+          Unor = ( u % n(c1) * grid % sx(s)     &
+                 + v % n(c1) * grid % sy(s)     &
+                 + w % n(c1) * grid % sz(s) )   &
                  / sqrt(  grid % sx(s)*grid % sx(s)    &
                         + grid % sy(s)*grid % sy(s)    &
                         + grid % sz(s)*grid % sz(s))
@@ -60,25 +55,25 @@
           ! Compute nondimensional wall distance and wall-shear stress
           if(ROUGH == NO) then
             Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * grid % wall_dist(c1)  &
-                    / VISc
-            TauWall(c1) = abs(DENc(material(c1))                   &
+                    / viscosity
+            tau_wall(c1) = abs(density                   &
                         * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan &
                         / (log(Elog*Ynd(c1))))  
 
             ! Compute production in the first wall cell 
-            p_kin(c1) = TauWall(c1) * Cmu25 * sqrt(kin % n(c1)) &
+            p_kin(c1) = tau_wall(c1) * Cmu25 * sqrt(kin % n(c1)) &
                    / (kappa*grid % wall_dist(c1))
 
           else if(ROUGH==YES) then
             Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * (grid % wall_dist(c1)+Zo)  &
-                    / VISc
-            TauWall(c1) = abs(DENc(material(c1))                     &
+                    / viscosity
+            tau_wall(c1) = abs(density                     &
                         * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan   &
                         / (log((grid % wall_dist(c1)+Zo)/Zo)))  
 
-            p_kin(c1) = TauWall(c1) * Cmu25 * sqrt(kin % n(c1)) &
+            p_kin(c1) = tau_wall(c1) * Cmu25 * sqrt(kin % n(c1)) &
                    / (kappa*(grid % wall_dist(c1)+Zo))
-            kin % n(c2) = TauWall(c1)/0.09**0.5
+            kin % n(c2) = tau_wall(c1)/0.09**0.5
           end if  
 
           ! Filling up the source term
@@ -92,17 +87,17 @@
     !-----------------------------------------!
     do c=1,grid % n_cells
 
-      ! IsNearWall ensures not to put p_kin twice into the near wall cells
-      if(.NOT. IsNearWall(c)) then
+      ! grid % cell_near_wall ensures not to put p_kin twice into the near wall cells
+      if(.not. grid % cell_near_wall(c)) then
 
         ! Production:
-        p_kin(c)= vis_t(c) * Shear(c)*Shear(c)
+        p_kin(c)= vis_t(c) * shear(c)*shear(c)
         b(c) = b(c) + p_kin(c) * grid % vol(c)
       end if
 
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c))                          &
-                          + DENc(material(c)) * eps % n(c) / kin % n(c)  &
+                          + density * eps % n(c) / kin % n(c)  &
                           * grid % vol(c)
     end do
   end if    ! end if mode = wf 
@@ -110,15 +105,15 @@
   !--------------------------------------------------------!
   !   Jones-Launder model and Launder-Sharma + Yap model   !
   !--------------------------------------------------------!
-  if(turbulence_model_variant == 'LOW_RE') then
+  if(turbulence_model_variant == LOW_RE) then
     do c = 1, grid % n_cells
 
       ! Production:
-      p_kin(c)= vis_t(c) * Shear(c) * Shear(c)
+      p_kin(c)= vis_t(c) * shear(c) * shear(c)
       b(c) = b(c) + p_kin(c) * grid % vol(c)
 
       ! Dissipation:
-      A % val(A % dia(c)) = A % val(A % dia(c)) + DENc(material(c))*eps%n(c)/(kin%n(c)+TINY)*grid % vol(c)
+      A % val(A % dia(c)) = A % val(A % dia(c)) + density*eps%n(c)/(kin%n(c)+TINY)*grid % vol(c)
 
       ! Preparation of kin for the boundary condition. kin variable is temporaraly borrowed.
       kin % n(c) = sqrt(kin % n(c))
@@ -132,24 +127,24 @@
 
       ! Turning kin back to its real value
       kin % n(c) = kin % n(c) * kin % n(c) 
-      A % val(A % dia(c)) = A % val(A % dia(c))           &
-                          + 2.0 * VISc*(  kin_x(c)**2     &
-                                        + kin_y(c)**2     &
-                                        + kin_z(c)**2 )   &
+      A % val(A % dia(c)) = A % val(A % dia(c))                &
+                          + 2.0 * viscosity*(  kin_x(c)**2     &
+                                             + kin_y(c)**2     &
+                                             + kin_z(c)**2 )   &
                            * grid % vol(c) / (kin % n(c) + TINY)          
     end do
   end if
 
-  if(turbulence_model == 'HYB_PITM') then
+  if(turbulence_model == HYBRID_PITM) then
     do c = 1, grid % n_cells
 
       ! Production:
-      p_kin(c)= vis_t(c) * Shear(c) * Shear(c)
+      p_kin(c)= vis_t(c) * shear(c) * shear(c)
       b(c) = b(c) + p_kin(c) * grid % vol(c)
 
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c))      &
-                          + DENc(material(c))        &
+                          + density                  &
                           * eps % n(c) / kin % n(c)  &
                           * grid % vol(c)
     end do

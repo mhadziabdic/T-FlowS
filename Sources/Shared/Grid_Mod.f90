@@ -43,6 +43,9 @@
     
     ! Wall distance - distance from the nearest wall
     real, allocatable :: wall_dist(:)
+
+    ! True if cell is near wall.  Used in Process for some turblence models.
+    logical, allocatable :: cell_near_wall(:)
     
     ! Cells' nodes and neigboring cells
     integer, allocatable :: cells_n(:,:)      

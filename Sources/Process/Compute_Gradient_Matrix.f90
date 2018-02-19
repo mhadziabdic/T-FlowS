@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -37,20 +37,6 @@
     dx_c2 = grid % dx(s)
     dy_c2 = grid % dy(s)
     dz_c2 = grid % dz(s)
-
-    ! Take care of material interfaces          ! 2mat
-    if( StateMat(material(c1))==FLUID .and. &   ! 2mat
-        StateMat(material(c2))==SOLID       &   ! 2mat 
-        .or.                                &   ! 2mat
-        StateMat(material(c1))==SOLID .and. &   ! 2mat
-        StateMat(material(c2))==FLUID ) then    ! 2mat
-      dx_c1 = grid % xf(s) - grid % xc(c1)      ! 2mat
-      dy_c1 = grid % yf(s) - grid % yc(c1)      ! 2mat
-      dz_c1 = grid % zf(s) - grid % zc(c1)      ! 2mat 
-      dx_c2 = grid % xf(s) - grid % xc(c2)      ! 2mat
-      dy_c2 = grid % yf(s) - grid % yc(c2)      ! 2mat 
-      dz_c2 = grid % zf(s) - grid % zc(c2)      ! 2mat
-    end if                                      ! 2mat
 
     ! With boundary cells, velocities, temperatures
     if(boundary) then

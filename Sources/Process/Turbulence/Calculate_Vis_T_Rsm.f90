@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Calcvist_RSM(grid) 
+  subroutine Calculate_Vis_T_Rsm(grid) 
 !------------------------------------------------------------------------------!
 !   Computes the turbulent viscosity for RSM models ('EBM' and 'HJ').              !
 !   If hybrid option is used turbulent diffusivity is modeled by vis_t.         !
@@ -8,7 +8,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -19,44 +19,40 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c
-  real              :: Cmu_mod                                        
-  character(len=80) :: turbulence_model
-  character(len=80) :: turbulence_model_variant
+  real              :: cmu_mod                                        
 !==============================================================================!
 
-  call Compute_Shear_And_Vorticity(grid)
+  call Calculate_shear_And_Vorticity(grid)
 
-  call Control_Mod_Turbulence_Model(turbulence_model)
-
-  if(turbulence_model == 'HJ') then
+  if(turbulence_model == HANJALIC_JAKIRLIC) then
     do c=1, grid % n_cells
       kin % n(c) = 0.5*max(uu%n(c)+vv%n(c)+ww%n(c),1.0e-12)
 
-      Cmu_mod = max(-(  uu % n(c) * u % x(c)  &
+      cmu_mod = max(-(  uu % n(c) * u % x(c)  &
                       + vv % n(c) * v % y(c)  &
                       + ww % n(c) * w % z(c)  &
                       + uv % n(c) * (v % x(c) + u % y(c))  &
                       + uw % n(c) * (u % z(c) + w % x(c))  &
                       + vw % n(c) * (v % z(c) + w % y(c))) &
-               / max(kin % n(c)**2 / eps_tot(c) * Shear(c)**2, 1.0e-12), 0.0)
+               / max(kin % n(c)**2 / eps_tot(c) * shear(c)**2, 1.0e-12), 0.0)
 
-      Cmu_mod = min(0.12,Cmu_mod) 
-      vis_t(c) = Cmu_mod * DENc(material(c)) * kin % n(c)**2 / eps_tot(c)
+      cmu_mod = min(0.12,cmu_mod) 
+      vis_t(c) = cmu_mod * density * kin % n(c)**2 / eps_tot(c)
     end do 
-  else if(turbulence_model=='EBM') then
+  else if(turbulence_model == REYNOLDS_STRESS_MODEL) then
     do c=1, grid % n_cells
       kin % n(c) = 0.5*max(uu%n(c)+vv%n(c)+ww%n(c),1.0e-12)
 
-      Cmu_mod = max(-(  uu % n(c) * u % x(c)  &
+      cmu_mod = max(-(  uu % n(c) * u % x(c)  &
                       + vv % n(c) * v % y(c)  &
                       + ww % n(c) * w % z(c)  &
                       + uv % n(c) * (v % x(c) + u % y(c))  &
                       + uw % n(c) * (u % z(c) + w % x(c))  &
                       + vw % n(c) * (v % z(c) + w % y(c))) &
-               / max(kin % n(c)**2 / eps % n(c) * Shear(c)**2, 1.0e-12), 0.0)
+               / max(kin % n(c)**2 / eps % n(c) * shear(c)**2, 1.0e-12), 0.0)
 
-      Cmu_mod = min(0.12,Cmu_mod)
-      vis_t(c) = Cmu_mod*DENc(material(c)) * kin%n(c) * kin%n(c) / eps % n(c)
+      cmu_mod = min(0.12,cmu_mod)
+      vis_t(c) = cmu_mod*density * kin%n(c) * kin%n(c) / eps % n(c)
     end do
   end if
 

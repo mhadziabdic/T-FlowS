@@ -4,7 +4,7 @@
 !   Reads: .bnd file                                                           !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use rans_mod
   use par_mod
   use Tokenizer_Mod
@@ -27,12 +27,7 @@
   real              :: x1(65536), x2(65536), Mres
   logical           :: here
   character         :: name_ini(128)*80
-  character(len=80) :: heat_transfer
-  character(len=80) :: turbulence_model
 !==============================================================================!
-
-  call Control_Mod_Heat_Transfer(heat_transfer)
-  call Control_Mod_Turbulence_Model(turbulence_model)
 
   !--------------------------------------------!
   !   Read the file with boundary conditions   !
@@ -68,10 +63,10 @@
         print *, '# Load_Boundary_Conditions: Unknown material state'
       stop  
     end if
-    read(line % tokens(3),*) VISc
-    read(line % tokens(4),*) DENc(n)
-    if(heat_transfer == 'YES') read(line % tokens(5),*) CONc(n)
-    if(heat_transfer == 'YES') read(line % tokens(6),*) CAPc(n)
+    read(line % tokens(3),*) viscosity
+    read(line % tokens(4),*) density
+    if(heat_transfer == YES) read(line % tokens(5),*) conductivity
+    if(heat_transfer == YES) read(line % tokens(6),*) capacity 
   end do
   
   !-----------------------------------------------------!
@@ -125,15 +120,15 @@
     if( line % tokens(3)  ==  'FILE') then
       read(line % tokens(4),'(A80)') name_prof(n)
     else
-      read(line % tokens(3),*) U % bound(n)
-      read(line % tokens(4),*) V % bound(n)
-      read(line % tokens(5),*) W % bound(n)
+      read(line % tokens(3),*) u % bound(n)
+      read(line % tokens(4),*) v % bound(n)
+      read(line % tokens(5),*) w % bound(n)
       if(type_bnd_cond(n)==PRESSURE) then
         read(line % tokens(6),*) P % bound(n)
-        if(heat_transfer == 'YES') then 
+        if(heat_transfer == YES) then 
           read(line % tokens(7),*) T % bound(n)
-          if(turbulence_model == 'EBM' .or.  &
-             turbulence_model == 'HJ') then
+          if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+             turbulence_model == HANJALIC_JAKIRLIC) then
             read(line % tokens(8),*)   uu % bound(n)
             read(line % tokens(9),*)   vv % bound(n)
             read(line % tokens(10),*) ww % bound(n)
@@ -141,30 +136,30 @@
             read(line % tokens(12),*) uw % bound(n)
             read(line % tokens(13),*) vw % bound(n)
             read(line % tokens(14),*) eps% bound(n)
-            if(turbulence_model == 'EBM')  &
+            if(turbulence_model == REYNOLDS_STRESS_MODEL)  &
               read(line % tokens(15),*) f22 % bound(n)
           end if
-          if(turbulence_model == 'K_EPS') then
+          if(turbulence_model == K_EPS) then
             read(line % tokens(8),*) kin % bound(n)
             read(line % tokens(9),*) eps % bound(n)
           end if
-          if(turbulence_model == 'K_EPS_VV' .or.  &
-             turbulence_model == 'ZETA'     .or.  &
-             turbulence_model == 'HYB_ZETA') then
+          if(turbulence_model == K_EPS_V2 .or.  &
+             turbulence_model == K_EPS_ZETA_F     .or.  &
+             turbulence_model == HYBRID_K_EPS_ZETA_F) then
             read(line % tokens(8),*) kin % bound(n)
             read(line % tokens(9),*) eps % bound(n)
-            read(line % tokens(10),*) v_2 % bound(n)
+            read(line % tokens(10),*) v2  % bound(n)
             read(line % tokens(11),*) f22 % bound(n)
           end if
-          if(turbulence_model == 'SPA_ALL') then
+          if(turbulence_model == SPALART_ALLMARAS) then
             read(line % tokens(8),*) VIS % bound(n)
           end if
-          if(turbulence_model == 'DES_SPA') then
+          if(turbulence_model == DES_SPALART) then
             read(line % tokens(8),*) VIS % bound(n)
           end if
-        else  ! heat_transfer .ne. 'YES'
-          if(turbulence_model == 'EBM' .or.   &
-             turbulence_model == 'HJ') then
+        else  ! heat_transfer .ne. YES
+          if(turbulence_model == REYNOLDS_STRESS_MODEL .or.   &
+             turbulence_model == HANJALIC_JAKIRLIC) then
             read(line % tokens(7),*)   uu % bound(n)
             read(line % tokens(8),*)   vv % bound(n)
             read(line % tokens(9),*) ww % bound(n)
@@ -172,34 +167,34 @@
             read(line % tokens(11),*) uw % bound(n)
             read(line % tokens(12),*) vw % bound(n)
             read(line % tokens(13),*) eps% bound(n)
-            if(turbulence_model == 'EBM')  &
+            if(turbulence_model == REYNOLDS_STRESS_MODEL)  &
               read(line % tokens(14),*) f22 % bound(n)
           end if
-          if(turbulence_model == 'K_EPS') then
+          if(turbulence_model == K_EPS) then
             read(line % tokens(7),*) kin % bound(n)
             read(line % tokens(8),*) eps % bound(n)
           end if
-          if(turbulence_model == 'K_EPS_VV' .or.  &
-             turbulence_model == 'ZETA'     .or.  &
-             turbulence_model == 'HYB_ZETA') then
+          if(turbulence_model == K_EPS_V2 .or.  &
+             turbulence_model == K_EPS_ZETA_F     .or.  &
+             turbulence_model == HYBRID_K_EPS_ZETA_F) then
             read(line % tokens(7),*) kin % bound(n)
             read(line % tokens(8),*) eps % bound(n)
-            read(line % tokens(9),*) v_2  % bound(n)
+            read(line % tokens(9),*) v2   % bound(n)
             read(line % tokens(10),*) f22 % bound(n)
           end if
-          if(turbulence_model == 'SPA_ALL') then
+          if(turbulence_model == SPALART_ALLMARAS) then
             read(line % tokens(7),*) VIS % bound(n)
           end if
-          if(turbulence_model == 'DES_SPA') then
+          if(turbulence_model == DES_SPALART) then
             read(line % tokens(7),*) VIS % bound(n)
           end if
-        end if  ! heat_transfer == 'YES'
+        end if  ! heat_transfer == YES
         name_prof(n)=''
       else   ! type_bnd_cond .ne. PRESSURE
-        if(heat_transfer == 'YES') then 
+        if(heat_transfer == YES) then 
           read(line % tokens(6),*) T % bound(n)
-          if(turbulence_model == 'EBM' .or.  &
-             turbulence_model == 'HJ') then
+          if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+             turbulence_model == HANJALIC_JAKIRLIC) then
             read(line % tokens(7),*) uu % bound(n)
             read(line % tokens(8),*) vv % bound(n)
             read(line % tokens(9),*) ww % bound(n)
@@ -207,30 +202,30 @@
             read(line % tokens(11),*) uw % bound(n)
             read(line % tokens(12),*) vw % bound(n)
             read(line % tokens(13),*) eps% bound(n)
-            if(turbulence_model == 'EBM')  &
+            if(turbulence_model == REYNOLDS_STRESS_MODEL)  &
               read(line % tokens(14),*) f22 % bound(n)
           end if
-          if(turbulence_model == 'K_EPS') then
+          if(turbulence_model == K_EPS) then
             read(line % tokens(7),*) kin % bound(n)
             read(line % tokens(8),*) eps % bound(n)
           end if
-          if(turbulence_model == 'K_EPS_VV' .or.  &
-             turbulence_model == 'ZETA'     .or.  &
-             turbulence_model == 'HYB_ZETA') then
+          if(turbulence_model == K_EPS_V2 .or.  &
+             turbulence_model == K_EPS_ZETA_F     .or.  &
+             turbulence_model == HYBRID_K_EPS_ZETA_F) then
             read(line % tokens(7),*) kin % bound(n)
             read(line % tokens(8),*) eps % bound(n)
-            read(line % tokens(9),*) v_2 % bound(n)
+            read(line % tokens(9),*) v2  % bound(n)
             read(line % tokens(10),*) f22 % bound(n)
           end if
-          if(turbulence_model == 'SPA_ALL') then
+          if(turbulence_model == SPALART_ALLMARAS) then
             read(line % tokens(7),*) VIS % bound(n)
           end if
-          if(turbulence_model == 'DES_SPA') then
+          if(turbulence_model == DES_SPALART) then
             read(line % tokens(7),*) VIS % bound(n)
           end if
         else  ! HOT .ne. YES
-          if(turbulence_model == 'EBM' .or.  &
-             turbulence_model == 'HJ') then
+          if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+             turbulence_model == HANJALIC_JAKIRLIC) then
             read(line % tokens(6),*) uu % bound(n)
             read(line % tokens(7),*) vv % bound(n)
             read(line % tokens(8),*) ww % bound(n)
@@ -238,28 +233,28 @@
             read(line % tokens(10),*) uw % bound(n)
             read(line % tokens(11),*) vw % bound(n)
             read(line % tokens(12),*) eps% bound(n)
-            if(turbulence_model == 'EBM')  &
+            if(turbulence_model == REYNOLDS_STRESS_MODEL)  &
               read(line % tokens(13),*) f22 % bound(n)
           end if
-          if(turbulence_model == 'K_EPS') then
+          if(turbulence_model == K_EPS) then
             read(line % tokens(6),*) kin % bound(n)
             read(line % tokens(7),*) eps % bound(n)
           end if
-          if(turbulence_model == 'K_EPS_VV' .or.  &
-             turbulence_model == 'ZETA'     .or.  &
-             turbulence_model == 'HYB_ZETA') then
+          if(turbulence_model == K_EPS_V2 .or.  &
+             turbulence_model == K_EPS_ZETA_F     .or.  &
+             turbulence_model == HYBRID_K_EPS_ZETA_F) then
             read(line % tokens(6),*) kin % bound(n)
             read(line % tokens(7),*) eps % bound(n)
-            read(line % tokens(8),*) v_2  % bound(n)
+            read(line % tokens(8),*) v2   % bound(n)
             read(line % tokens(9),*) f22 % bound(n)
           end if
-          if(turbulence_model == 'SPA_ALL') then
+          if(turbulence_model == SPALART_ALLMARAS) then
             read(line % tokens(6),*) VIS % bound(n)
           end if
-          if(turbulence_model == 'DES_SPA') then
+          if(turbulence_model == DES_SPALART) then
             read(line % tokens(6),*) VIS % bound(n)
           end if
-        end if  ! heat_transfer == 'YES'
+        end if  ! heat_transfer == YES
         name_prof(n)=''
       end if  ! type_bnd_cond == PRESSURE
     end if    
@@ -289,14 +284,14 @@
       name_ini(n) = ''
 
       ! Initial conditions given by constant
-      read(line % tokens(2),*) U % init(n)
-      read(line % tokens(3),*) V % init(n)
-      read(line % tokens(4),*) W % init(n)
+      read(line % tokens(2),*) u % init(n)
+      read(line % tokens(3),*) v % init(n)
+      read(line % tokens(4),*) w % init(n)
  
-      if(heat_transfer == 'YES') then
+      if(heat_transfer == YES) then
         read(line % tokens(5),*) T % init(n)
-        if(turbulence_model == 'EBM' .or.  &
-           turbulence_model == 'HJ') then
+        if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+           turbulence_model == HANJALIC_JAKIRLIC) then
           read(line % tokens(6),*) uu % init(n)
           read(line % tokens(7),*) vv % init(n)
           read(line % tokens(8),*) ww % init(n)
@@ -304,30 +299,30 @@
           read(line % tokens(10),*) uw % init(n)
           read(line % tokens(11),*) vw % init(n)
           read(line % tokens(12),*) eps% init(n)
-          if(turbulence_model == 'EBM')  &
+          if(turbulence_model == REYNOLDS_STRESS_MODEL)  &
             read(line % tokens(13),*) f22 % init(n)
         end if
-        if(turbulence_model == 'K_EPS') then
+        if(turbulence_model == K_EPS) then
           read(line % tokens(6),*) kin % init(n)
           read(line % tokens(7),*) eps % init(n)
         end if
-        if(turbulence_model == 'K_EPS_VV' .or.  &
-           turbulence_model == 'ZETA'     .or.  &
-           turbulence_model == 'HYB_ZETA') then
+        if(turbulence_model == K_EPS_V2 .or.  &
+           turbulence_model == K_EPS_ZETA_F     .or.  &
+           turbulence_model == HYBRID_K_EPS_ZETA_F) then
           read(line % tokens(6),*) kin % init(n)
           read(line % tokens(7),*) eps % init(n)
-          read(line % tokens(8),*) v_2  % init(n)
+          read(line % tokens(8),*) v2   % init(n)
           read(line % tokens(9),*) f22 % init(n)
         end if
-        if(turbulence_model == 'SPA_ALL') then
+        if(turbulence_model == SPALART_ALLMARAS) then
           read(line % tokens(6),*) VIS % init(n)
         end if
-        if(turbulence_model == 'DES_SPA') then
+        if(turbulence_model == DES_SPALART) then
           read(line % tokens(6),*) VIS % init(n)
         end if
       else ! HOT /= YES
-        if(turbulence_model == 'EBM' .or.  &
-           turbulence_model == 'HJ') then
+        if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+           turbulence_model == HANJALIC_JAKIRLIC) then
           read(line % tokens(5),*) uu % init(n)
           read(line % tokens(6),*) vv % init(n)
           read(line % tokens(7),*) ww % init(n)
@@ -335,25 +330,25 @@
           read(line % tokens(9),*) uw % init(n)
           read(line % tokens(10),*) vw % init(n)
           read(line % tokens(11),*) eps% init(n)
-          if(turbulence_model == 'EBM')  &
+          if(turbulence_model == REYNOLDS_STRESS_MODEL)  &
             read(line % tokens(12),*) f22 % init(n)
         end if
-        if(turbulence_model == 'K_EPS') then
+        if(turbulence_model == K_EPS) then
           read(line % tokens(5),*) kin % init(n)
           read(line % tokens(6),*) eps % init(n)
         end if
-        if(turbulence_model == 'K_EPS_VV' .or.  &
-           turbulence_model == 'ZETA'     .or.  &
-           turbulence_model == 'HYB_ZETA') then
+        if(turbulence_model == K_EPS_V2 .or.  &
+           turbulence_model == K_EPS_ZETA_F     .or.  &
+           turbulence_model == HYBRID_K_EPS_ZETA_F) then
           read(line % tokens(5),*) kin % init(n)
           read(line % tokens(6),*) eps % init(n)
-          read(line % tokens(7),*) v_2  % init(n)
+          read(line % tokens(7),*) v2   % init(n)
           read(line % tokens(8),*) f22 % init(n)
         end if
-        if(turbulence_model == 'SPA_ALL') then
+        if(turbulence_model == SPALART_ALLMARAS) then
           read(line % tokens(5),*) VIS % init(n)
         end if
-        if(turbulence_model == 'DES_SPA') then
+        if(turbulence_model == DES_SPALART) then
           read(line % tokens(5),*) VIS % init(n)
         end if
       end if
@@ -396,19 +391,19 @@
           ! If in_out is set to true, set boundary values,
           ! otherwise, just the ypTeBC remains set.
           if(in_out) then
-            U % n(c) = U % bound(n) 
-            V % n(c) = V % bound(n)
-            W % n(c) = W % bound(n)
+            u % n(c) = u % bound(n) 
+            v % n(c) = v % bound(n)
+            w % n(c) = w % bound(n)
             P % n(c) = P % bound(n) 
-            if(heat_transfer == 'YES') then
+            if(heat_transfer == YES) then
               if(type_bnd_cond(n) .eq. WALLFL) then
                 T % q(c) =  T % bound(n)
               else
                 T % n(c) =  T % bound(n)
               endif
-            end if  ! for heat_transfer == 'YES'
-            if(turbulence_model == 'EBM' .or.  &
-               turbulence_model == 'HJ') then
+            end if  ! for heat_transfer == YES
+            if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+               turbulence_model == HANJALIC_JAKIRLIC) then
               uu % n(c) = uu % bound(n)
               vv % n(c) = vv % bound(n)
               ww % n(c) = ww % bound(n)
@@ -416,26 +411,28 @@
               uw % n(c) = uw % bound(n)
               vw % n(c) = vw % bound(n)
               eps % n(c) = eps % bound(n)
-              if(turbulence_model == 'EBM') f22 % n(c)   = f22 % bound(n)
+              if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+                f22 % n(c)   = f22 % bound(n)
+              end if
             end if
-            if(turbulence_model == 'K_EPS') then
+            if(turbulence_model == K_EPS) then
               kin % n(c) = kin % bound(n)
               eps % n(c) = eps % bound(n)
               Uf(c)        = 0.047
               Ynd(c)       = 30.0
             end if
-            if(turbulence_model == 'K_EPS_VV' .or.  &
-               turbulence_model == 'ZETA'     .or.  &
-               turbulence_model == 'HYB_ZETA') then
+            if(turbulence_model == K_EPS_V2 .or.  &
+               turbulence_model == K_EPS_ZETA_F     .or.  &
+               turbulence_model == HYBRID_K_EPS_ZETA_F) then
               kin % n(c)   = kin % bound(n)
               eps % n(c)   = eps % bound(n)
               f22 % n(c)   = f22 % bound(n)
-              v_2 % n(c)   = v_2 % bound(n)
+              v2  % n(c)   = v2  % bound(n)
             end if
-            if(turbulence_model == 'SPA_ALL') then
+            if(turbulence_model == SPALART_ALLMARAS) then
               VIS % n(c)   = VIS % bound(n)
             end if
-            if(turbulence_model == 'DES_SPA') then
+            if(turbulence_model == DES_SPALART) then
               VIS % n(c)   = VIS % bound(n)
             end if
           end if
@@ -456,14 +453,14 @@
           call Tokenizer_Mod_Read_Line(9)
           read(line % tokens(1),*) x1(m)
           read(line % tokens(2),*) x2(m)
-          read(line % tokens(3),*) U % pro(m)
-          read(line % tokens(4),*) V % pro(m)
-          read(line % tokens(5),*) W % pro(m)
-          if(turbulence_model == 'EBM') then
-            read(line % tokens(6),*) uu % pro(m)
-            read(line % tokens(7),*) vv % pro(m)
-            read(line % tokens(8),*) ww % pro(m)
-            read(line % tokens(9),*) uv % pro(m)
+          read(line % tokens(3),*) u % pro(m)
+          read(line % tokens(4),*) v % pro(m)
+          read(line % tokens(5),*) w % pro(m)
+          if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+            read(line % tokens(6),*)  uu % pro(m)
+            read(line % tokens(7),*)  vv % pro(m)
+            read(line % tokens(8),*)  ww % pro(m)
+            read(line % tokens(9),*)  uv % pro(m)
             read(line % tokens(10),*) uw % pro(m)
             read(line % tokens(11),*) vw % pro(m)
             read(line % tokens(12),*) f22 % pro(m)
@@ -495,25 +492,25 @@
                   end if
                 end if
               end do
-              U%n(c) = U % pro(c1)
-              V%n(c) = V % pro(c1)
-              W%n(c) = W % pro(c1)
-              if(heat_transfer == 'YES') T%n(c) = T%pro(c1)
-              if(turbulence_model == 'K_EPS') then
+              u%n(c) = u % pro(c1)
+              v%n(c) = v % pro(c1)
+              w%n(c) = w % pro(c1)
+              if(heat_transfer == YES) T%n(c) = T%pro(c1)
+              if(turbulence_model == K_EPS) then
                 kin%n(c) = kin%pro(c1)
                 eps%n(c) = eps%pro(c1)
               end if
-              if(turbulence_model == 'K_EPS_VV' .or.  &
-                 turbulence_model == 'ZETA') then
+              if(turbulence_model == K_EPS_V2 .or.  &
+                 turbulence_model == K_EPS_ZETA_F) then
                 kin%n(c) = kin%pro(c1)
                 eps%n(c) = eps%pro(c1)
-                v_2%n(c) = v_2%pro(c1)
+                v2 %n(c) = v2 %pro(c1)
                 f22%n(c) = f22%pro(c1)
               end if
-              if(turbulence_model == 'DES_SPA') then
+              if(turbulence_model == DES_SPALART) then
                 VIS%n(c) = VIS%pro(c1)
               end if
-              if(turbulence_model == 'EBM') then
+              if(turbulence_model == REYNOLDS_STRESS_MODEL) then
                 uu%n(c) = uu % pro(c1)
                 vv%n(c) = vv % pro(c1)
                 ww%n(c) = ww % pro(c1)
@@ -530,49 +527,49 @@
         do m=1,n_points
           call Tokenizer_Mod_Read_Line(9)
           read(line % tokens(1),*) xyz(m)
-          read(line % tokens(2),*) U % pro(m)
-          read(line % tokens(3),*) V % pro(m)
-          read(line % tokens(4),*) W % pro(m)
-          if(heat_transfer == 'YES') then
+          read(line % tokens(2),*) u % pro(m)
+          read(line % tokens(3),*) v % pro(m)
+          read(line % tokens(4),*) w % pro(m)
+          if(heat_transfer == YES) then
             read(line % tokens(5),*) T % pro(m)
-            if(turbulence_model == 'K_EPS') then
+            if(turbulence_model == K_EPS) then
               read(line % tokens(6),*) kin % pro(m)
               read(line % tokens(7),*) eps % pro(m)
             end if
-            if(turbulence_model == 'K_EPS_VV' .or.  &
-               turbulence_model == 'ZETA'     .or.  &
-               turbulence_model == 'HYB_ZETA') then
+            if(turbulence_model == K_EPS_V2 .or.  &
+               turbulence_model == K_EPS_ZETA_F     .or.  &
+               turbulence_model == HYBRID_K_EPS_ZETA_F) then
               read(line % tokens(6),*) kin % pro(m)
               read(line % tokens(7),*) eps % pro(m)
-              read(line % tokens(8),*) v_2 % pro(m)
+              read(line % tokens(8),*) v2  % pro(m)
               read(line % tokens(9),*) f22 % pro(m)
             end if
-            if(turbulence_model == 'SPA_ALL') then
+            if(turbulence_model == SPALART_ALLMARAS) then
               read(line % tokens(6),*) VIS % pro(m)
             end if
-            if(turbulence_model == 'DES_SPA') then
+            if(turbulence_model == DES_SPALART) then
               read(line % tokens(6),*) VIS % pro(m)
             end if
           else
-            if(turbulence_model == 'K_EPS') then
+            if(turbulence_model == K_EPS) then
               read(line % tokens(5),*) kin % pro(m)
               read(line % tokens(6),*) eps % pro(m)
             end if
-            if(turbulence_model == 'K_EPS_VV' .or.  &
-               turbulence_model == 'ZETA'     .or.  &
-               turbulence_model == 'HYB_ZETA') then
+            if(turbulence_model == K_EPS_V2 .or.  &
+               turbulence_model == K_EPS_ZETA_F     .or.  &
+               turbulence_model == HYBRID_K_EPS_ZETA_F) then
               read(line % tokens(5),*) kin % pro(m)
               read(line % tokens(6),*) eps % pro(m)
-              read(line % tokens(7),*) v_2 % pro(m)
+              read(line % tokens(7),*) v2  % pro(m)
               read(line % tokens(8),*) f22 % pro(m)
             end if
-            if(turbulence_model == 'SPA_ALL') then
+            if(turbulence_model == SPALART_ALLMARAS) then
               read(line % tokens(5),*) VIS % pro(m)
             end if
-            if(turbulence_model == 'DES_SPA') then
+            if(turbulence_model == DES_SPALART) then
               read(line % tokens(5),*) VIS % pro(m)
             end if
-            if(turbulence_model == 'EBM') then
+            if(turbulence_model == REYNOLDS_STRESS_MODEL) then
               read(line % tokens(5),*) uu % pro(m)
               read(line % tokens(6),*) vv % pro(m)
               read(line % tokens(7),*) ww % pro(m)
@@ -593,64 +590,64 @@
             ! otherwise, just the TypeBC remains set.
             if(in_out) then
               do m=1,n_points-1
-                here = .FALSE. 
+                here = .false. 
 
                 ! Compute the weight factors
                 if( (dir == 'X' .or. dir == 'x') .and.                  &
                    grid % xc(c) >= xyz(m) .and. grid % xc(c) <= xyz(m+1) ) then
                   wi = ( xyz(m+1)-grid % xc(c) ) / ( xyz(m+1) - xyz(m) )
-                  here = .TRUE.
+                  here = .true.
                 else if( (dir == 'Y' .or. dir == 'y') .and.             &
                      grid % yc(c) >= xyz(m) .and. grid % yc(c) <= xyz(m+1) ) then
                   wi = ( xyz(m+1)-grid % yc(c) ) / ( xyz(m+1) - xyz(m) )
-                    here = .TRUE.
+                    here = .true.
                 else if( (dir == 'Z' .or. dir == 'z') .and.             &
                      grid % zc(c) >= xyz(m) .and. grid % zc(c) <= xyz(m+1) ) then
                   wi = ( xyz(m+1)-grid % zc(c) ) / ( xyz(m+1) - xyz(m) )
-                  here = .TRUE.
+                  here = .true.
                 else if( (dir == 'RX' .or. dir == 'rx') .and.           &
                      sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) >= xyz(m) .and.      &
                      sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) <= xyz(m+1) ) then
                   wi = ( xyz(m+1) - sqrt(grid % yc(c)*grid % yc(c)+grid % zc(c)*grid % zc(c)) )     &
                      / ( xyz(m+1) - xyz(m) )
-                  here = .TRUE.
+                  here = .true.
                 else if( (dir == 'RY' .or. dir == 'ry') .and.           &
                      sqrt(grid % xc(c)*grid % xc(c)+grid % zc(c)*grid % zc(c)) >= xyz(m) .and.      &
                      sqrt(grid % xc(c)*grid % xc(c)+grid % zc(c)*grid % zc(c)) <= xyz(m+1) ) then
                   wi = ( xyz(m+1) - sqrt(grid % xc(c)*grid % xc(c)+grid % zc(c)*grid % zc(c)) )     &
                      / ( xyz(m+1) - xyz(m) )
-                  here = .TRUE.
+                  here = .true.
                 else if( (dir == 'RZ' .or. dir == 'rz') .and.           &
                      sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) <= xyz(m) .and.      &
                      sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) >= xyz(m+1) ) then
                     wi = ( xyz(m+1) - sqrt(grid % xc(c)*grid % xc(c)+grid % yc(c)*grid % yc(c)) )   &
                      / ( xyz(m+1) - xyz(m) )
-                  here = .TRUE.
+                  here = .true.
                 end if
 
                 ! Interpolate the profiles     
                 if(here) then
-                  U % n(c) = wi*U % pro(m) + (1.-wi)*U % pro(m+1)
-                  V % n(c) = wi*V % pro(m) + (1.-wi)*V % pro(m+1)
-                  W % n(c) = wi*W % pro(m) + (1.-wi)*W % pro(m+1)
-                  if(heat_transfer == 'YES') &
+                  u % n(c) = wi*u % pro(m) + (1.-wi)*u % pro(m+1)
+                  v % n(c) = wi*v % pro(m) + (1.-wi)*v % pro(m+1)
+                  w % n(c) = wi*w % pro(m) + (1.-wi)*w % pro(m+1)
+                  if(heat_transfer == YES)  &
                     T % n(c) = wi*T % pro(m) + (1.-wi)*T % pro(m+1)
-                  if(turbulence_model == 'K_EPS') then
+                  if(turbulence_model == K_EPS) then
                     kin % n(c) = wi*kin % pro(m) + (1.-wi)*kin % pro(m+1)
                     eps % n(c) = wi*eps % pro(m) + (1.-wi)*eps % pro(m+1)
                   end if
-                  if(turbulence_model == 'K_EPS_VV' .or.  &
-                     turbulence_model == 'ZETA'     .or.  &
-                     turbulence_model == 'HYB_ZETA') then
+                  if(turbulence_model == K_EPS_V2      .or.  &
+                     turbulence_model == K_EPS_ZETA_F  .or.  &
+                     turbulence_model == HYBRID_K_EPS_ZETA_F) then
                     kin % n(c) = wi*kin % pro(m) + (1.-wi)*kin % pro(m+1)
                     eps % n(c) = wi*eps % pro(m) + (1.-wi)*eps % pro(m+1)
                     f22 % n(c) = wi*f22 % pro(m) + (1.-wi)*f22 % pro(m+1)
-                    v_2 % n(c) = wi*v_2 % pro(m)  + (1.-wi)*v_2% pro(m+1)
+                    v2  % n(c) = wi*v2  % pro(m)  + (1.-wi)*v2 % pro(m+1)
                   end if
-                  if(turbulence_model == 'SPA_ALL') then
+                  if(turbulence_model == SPALART_ALLMARAS) then
                     VIS % n(c) = wi*VIS % pro(m) + (1.-wi)*VIS % pro(m+1)
                   end if
-                  if(turbulence_model == 'DES_SPA') then
+                  if(turbulence_model == DES_SPALART) then
                     VIS % n(c) = wi*VIS % pro(m) + (1.-wi)*VIS % pro(m+1)
                   end if
                 end if

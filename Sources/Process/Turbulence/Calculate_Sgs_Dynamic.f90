@@ -1,11 +1,11 @@
 !==============================================================================!
-  subroutine Compute_Sgs_Dynamic(grid)
+  subroutine Calculate_Sgs_Dynamic(grid)
 !------------------------------------------------------------------------------!
 !   Calculates Smagorinsky constant with dynamic procedure                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -43,10 +43,10 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-  call Exchange(grid, U % n)
-  call Exchange(grid, V % n)
-  call Exchange(grid, W % n)
-  call Exchange(grid, Shear)
+  call Exchange(grid, u % n)
+  call Exchange(grid, v % n)
+  call Exchange(grid, w % n)
+  call Exchange(grid, shear)
 
   do c =1, grid % n_cells
     u_a   = 0.0
@@ -73,27 +73,27 @@
       if(cj /= c) then
 
         ! Test velocities
-        u_a = u_a + grid % vol(cj) * U % n(cj)
-        v_a = v_a + grid % vol(cj) * V % n(cj)
-        w_a = w_a + grid % vol(cj) * W % n(cj)
+        u_a = u_a + grid % vol(cj) * u % n(cj)
+        v_a = v_a + grid % vol(cj) * v % n(cj)
+        w_a = w_a + grid % vol(cj) * w % n(cj)
 
         ! Test stresses
-        uu_a = uu_a + grid % vol(cj) * U % n(cj) * U % n(cj)
-        vv_a = vv_a + grid % vol(cj) * V % n(cj) * V % n(cj)
-        ww_a = ww_a + grid % vol(cj) * W % n(cj) * W % n(cj)
-        uv_a = uv_a + grid % vol(cj) * U % n(cj) * V % n(cj)
-        uw_a = uw_a + grid % vol(cj) * U % n(cj) * W % n(cj)
-        vw_a = vw_a + grid % vol(cj) * V % n(cj) * W % n(cj)
+        uu_a = uu_a + grid % vol(cj) * u % n(cj) * u % n(cj)
+        vv_a = vv_a + grid % vol(cj) * v % n(cj) * v % n(cj)
+        ww_a = ww_a + grid % vol(cj) * w % n(cj) * w % n(cj)
+        uv_a = uv_a + grid % vol(cj) * u % n(cj) * v % n(cj)
+        uw_a = uw_a + grid % vol(cj) * u % n(cj) * w % n(cj)
+        vw_a = vw_a + grid % vol(cj) * v % n(cj) * w % n(cj)
 
         ! Test Mija
-        m_11_a = m_11_a + grid % vol(cj) * Shear(cj) * u % x(cj)
-        m_22_a = m_22_a + grid % vol(cj) * Shear(cj) * v % y(cj)
-        m_33_a = m_33_a + grid % vol(cj) * Shear(cj) * w % z(cj)
-        m_12_a = m_12_a + grid % vol(cj) * Shear(cj)                &    
+        m_11_a = m_11_a + grid % vol(cj) * shear(cj) * u % x(cj)
+        m_22_a = m_22_a + grid % vol(cj) * shear(cj) * v % y(cj)
+        m_33_a = m_33_a + grid % vol(cj) * shear(cj) * w % z(cj)
+        m_12_a = m_12_a + grid % vol(cj) * shear(cj)                &    
                * 0.5 * ( u % y(cj) + v % x(cj) ) 
-        m_13_a = m_13_a + grid % vol(cj) * Shear(cj)                &
+        m_13_a = m_13_a + grid % vol(cj) * shear(cj)                &
                * 0.5 * ( u % z(cj) + w % x(cj) )     
-        m_23_a = m_23_a + grid % vol(cj) * Shear(cj)                &
+        m_23_a = m_23_a + grid % vol(cj) * shear(cj)                &
                * 0.5 * ( v % z(cj) + w % y(cj) )
 
         ! Test volume 
@@ -104,28 +104,28 @@
     ! Take into account influence of central cell within test molecule
     vol_e = vol_e + grid % vol(c)
 
-    u_a = u_a + grid % vol(c) * U % n(c)
-    v_a = v_a + grid % vol(c) * V % n(c)
-    w_a = w_a + grid % vol(c) * W % n(c)
+    u_a = u_a + grid % vol(c) * u % n(c)
+    v_a = v_a + grid % vol(c) * v % n(c)
+    w_a = w_a + grid % vol(c) * w % n(c)
 
-    uu_a = uu_a + grid % vol(c) * U % n(c) * U % n(c)
-    vv_a = vv_a + grid % vol(c) * V % n(c) * V % n(c)
-    ww_a = ww_a + grid % vol(c) * W % n(c) * W % n(c)
-    uv_a = uv_a + grid % vol(c) * U % n(c) * V % n(c)
-    uw_a = uw_a + grid % vol(c) * U % n(c) * W % n(c)
-    vw_a = vw_a + grid % vol(c) * V % n(c) * W % n(c)
+    uu_a = uu_a + grid % vol(c) * u % n(c) * u % n(c)
+    vv_a = vv_a + grid % vol(c) * v % n(c) * v % n(c)
+    ww_a = ww_a + grid % vol(c) * w % n(c) * w % n(c)
+    uv_a = uv_a + grid % vol(c) * u % n(c) * v % n(c)
+    uw_a = uw_a + grid % vol(c) * u % n(c) * w % n(c)
+    vw_a = vw_a + grid % vol(c) * v % n(c) * w % n(c)
 
-    m_11_a = m_11_a + grid % vol(c) * Shear(c) * u % x(c)
-    m_22_a = m_22_a + grid % vol(c) * Shear(c) * v % y(c)
-    m_33_a = m_33_a + grid % vol(c) * Shear(c) * w % z(c)
-    m_12_a = m_12_a + grid % vol(c) * Shear(c) * 0.5 * ( u % y(c) + v % x(c) ) 
-    m_13_a = m_13_a + grid % vol(c) * Shear(c) * 0.5 * ( u % z(c) + w % x(c) )
-    m_23_a = m_23_a + grid % vol(c) * Shear(c) * 0.5 * ( v % z(c) + w % y(c) )
+    m_11_a = m_11_a + grid % vol(c) * shear(c) * u % x(c)
+    m_22_a = m_22_a + grid % vol(c) * shear(c) * v % y(c)
+    m_33_a = m_33_a + grid % vol(c) * shear(c) * w % z(c)
+    m_12_a = m_12_a + grid % vol(c) * shear(c) * 0.5 * ( u % y(c) + v % x(c) ) 
+    m_13_a = m_13_a + grid % vol(c) * shear(c) * 0.5 * ( u % z(c) + w % x(c) )
+    m_23_a = m_23_a + grid % vol(c) * shear(c) * 0.5 * ( v % z(c) + w % y(c) )
     
     ! Now calculating test values
-    U % filt(c) = u_a / vol_e
-    V % filt(c) = v_a / vol_e
-    W % filt(c) = w_a / vol_e
+    u % filt(c) = u_a / vol_e
+    v % filt(c) = v_a / vol_e
+    w % filt(c) = w_a / vol_e
 
     UUf(c)  = uu_a / vol_e
     VVf(c)  = vv_a / vol_e
@@ -142,48 +142,48 @@
     M23f(c) = m_23_a / vol_e 
   end do
 
-  call GraPhi(grid, U % filt, 1, u % x, .TRUE.)  ! dU/dx
-  call GraPhi(grid, U % filt, 2, u % y, .TRUE.)  ! dU/dy
-  call GraPhi(grid, U % filt, 3, u % z, .TRUE.)  ! dU/dz
-  call GraPhi(grid, V % filt, 1, v % x, .TRUE.)  ! dV/dx
-  call GraPhi(grid, V % filt, 2, v % y, .TRUE.)  ! dV/dy
-  call GraPhi(grid, V % filt, 3, v % z, .TRUE.)  ! dV/dz
-  call GraPhi(grid, W % filt, 1, w % x, .TRUE.)  ! dW/dx
-  call GraPhi(grid, W % filt, 2, w % y, .TRUE.)  ! dW/dy
-  call GraPhi(grid, W % filt, 3, w % z, .TRUE.)  ! dW/dz
+  call GraPhi(grid, u % filt, 1, u % x, .true.)  ! dU/dx
+  call GraPhi(grid, u % filt, 2, u % y, .true.)  ! dU/dy
+  call GraPhi(grid, u % filt, 3, u % z, .true.)  ! dU/dz
+  call GraPhi(grid, v % filt, 1, v % x, .true.)  ! dV/dx
+  call GraPhi(grid, v % filt, 2, v % y, .true.)  ! dV/dy
+  call GraPhi(grid, v % filt, 3, v % z, .true.)  ! dV/dz
+  call GraPhi(grid, w % filt, 1, w % x, .true.)  ! dW/dx
+  call GraPhi(grid, w % filt, 2, w % y, .true.)  ! dW/dy
+  call GraPhi(grid, w % filt, 3, w % z, .true.)  ! dW/dz
 
   do c = 1, grid % n_cells
     Lg  = grid % vol(c)**ONE_THIRD
     Lf  = 2.0 * Lg
 
-    ShearTest(c) = sqrt(2.0*(  u % x(c)*u % x(c)                            &
-                             + v % y(c)*v % y(c)                            &
-                             + w % z(c)*w % z(c) +                          &
-                        0.5*(v % z(c) + w % y(c))*(v % z(c) + w % y(c)) +   &
-                        0.5*(u % z(c) + w % x(c))*(u % z(c) + w % x(c)) +   &
-                        0.5*(v % x(c) + u % y(c))*(v % x(c) + u % y(c))))
+    shear_test(c) = sqrt(2.0*(  u % x(c)*u % x(c)                            &
+                              + v % y(c)*v % y(c)                            &
+                              + w % z(c)*w % z(c) +                          &
+                         0.5*(v % z(c) + w % y(c))*(v % z(c) + w % y(c)) +   &
+                         0.5*(u % z(c) + w % x(c))*(u % z(c) + w % x(c)) +   &
+                         0.5*(v % x(c) + u % y(c))*(v % x(c) + u % y(c))))
 
-    l_11 = UUf(c) - U % filt(c) * U % filt(c) 
-    l_22 = VVf(c) - V % filt(c) * V % filt(c) 
-    l_33 = WWf(c) - W % filt(c) * W % filt(c) 
-    l_12 = UVf(c) - U % filt(c) * V % filt(c) 
-    l_13 = UWf(c) - U % filt(c) * W % filt(c) 
-    l_23 = VWf(c) - V % filt(c) * W % filt(c) 
+    l_11 = UUf(c) - u % filt(c) * u % filt(c) 
+    l_22 = VVf(c) - v % filt(c) * v % filt(c) 
+    l_33 = WWf(c) - w % filt(c) * w % filt(c) 
+    l_12 = UVf(c) - u % filt(c) * v % filt(c) 
+    l_13 = UWf(c) - u % filt(c) * w % filt(c) 
+    l_23 = VWf(c) - v % filt(c) * w % filt(c) 
 
-    m_11 = Lf * Lf * ShearTest(c) * u % x(c)       &
+    m_11 = Lf * Lf * shear_test(c) * u % x(c)       &
          - Lg * Lg * M11f(c) 
-    m_22 = Lf * Lf * ShearTest(c) * v % y(c)       &
+    m_22 = Lf * Lf * shear_test(c) * v % y(c)       &
          - Lg * Lg * M22f(c) 
-    m_33 = Lf * Lf * ShearTest(c) * w % z(c)       &
+    m_33 = Lf * Lf * shear_test(c) * w % z(c)       &
          - Lg * Lg * M33f(c) 
 
-    m_12 = Lf * Lf * ShearTest(c)                &
+    m_12 = Lf * Lf * shear_test(c)                &
          * 0.5 * (u % y(c) + v % x(c)) - Lg * Lg * M12f(c)
 
-    m_13 = Lf * Lf * ShearTest(c)                &
+    m_13 = Lf * Lf * shear_test(c)                &
          * 0.5 * (u % z(c) + w % x(c)) - Lg * Lg * M13f(c) 
 
-    m_23 = Lf * Lf * ShearTest(c)                &
+    m_23 = Lf * Lf * shear_test(c)                &
          * 0.5 * (v % z(c) + w % y(c)) - Lg * Lg * M23f(c)  
 
     m_dot_m = m_11 * m_11 + m_22 * m_22 + m_33 * m_33   & 
@@ -196,12 +196,12 @@
             + 2.0 * l_13 * m_13                         &
             + 2.0 * l_23 * m_23
 
-    Cdyn(c)  =  -0.5 * l_dot_m / (m_dot_m + TINY) 
+    c_dyn(c)  =  -0.5 * l_dot_m / (m_dot_m + TINY) 
 
-    if(Cdyn(c) < 0.0) then
-      Cdyn(c) = 0.0 
-    else if(Cdyn(c) > 0.04) then
-      Cdyn(c) = 0.04
+    if(c_dyn(c) < 0.0) then
+      c_dyn(c) = 0.0 
+    else if(c_dyn(c) > 0.04) then
+      c_dyn(c) = 0.04
     end if 
   end do
 

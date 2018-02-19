@@ -4,7 +4,7 @@
 ! Reads: name.restart                                                          !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
@@ -21,8 +21,6 @@
   character(len=80) :: name_in, answer
   real              :: version
   real              :: r_1, r_2, r_3, r_4, r_5, r_6
-  character(len=80) :: old_heat_transfer
-  character(len=80) :: old_turbulence_model
 !==============================================================================!
 
   call Control_Mod_Load_Restart_Name(name_in)
@@ -30,9 +28,6 @@
   answer=name_in
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return
-
-  call Control_Mod_Heat_Transfer(old_heat_transfer)
-  call Control_Mod_Turbulence_Model(old_turbulence_model)
 
   ! Save the name
   answer = problem_name
@@ -114,24 +109,24 @@
   end do
 
   ! Fluxes 
-  read(9) (Flux(s), s=1,grid % n_faces)
+  read(9) (flux(s), s=1,grid % n_faces)
 
-  if(old_heat_transfer == 'YES') then
-    read(9) (T % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (T % q(c),    c = -grid % n_bnd_cells,-1)
-    read(9) (T % o(c),    c = 1, grid % n_cells)
-    read(9) (T % a(c),    c = 1, grid % n_cells)
-    read(9) (T % a_o(c),  c = 1, grid % n_cells)
-    read(9) (T % d_o(c),  c = 1, grid % n_cells)
-    read(9) (T % c(c),    c = 1, grid % n_cells)
-    read(9) (T % c_o(c),  c = 1, grid % n_cells)
+  if(heat_transfer == YES) then
+    read(9) (t % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (t % q(c),    c = -grid % n_bnd_cells,-1)
+    read(9) (t % o(c),    c = 1, grid % n_cells)
+    read(9) (t % a(c),    c = 1, grid % n_cells)
+    read(9) (t % a_o(c),  c = 1, grid % n_cells)
+    read(9) (t % d_o(c),  c = 1, grid % n_cells)
+    read(9) (t % c(c),    c = 1, grid % n_cells)
+    read(9) (t % c_o(c),  c = 1, grid % n_cells)
   end if
   
-  if(old_turbulence_model == 'K_EPS'    .or.  &
-     old_turbulence_model == 'ZETA'     .or.  &
-     old_turbulence_model == 'K_EPS_VV' .or.  &
-     old_turbulence_model == 'HYB_ZETA' .or.  &
-     old_turbulence_model == 'HYB_PITM') then 
+  if(turbulence_model == K_EPS               .or.  &
+     turbulence_model == K_EPS_ZETA_F        .or.  &
+     turbulence_model == K_EPS_V2            .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
+     turbulence_model == HYBRID_PITM) then 
     read(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (kin % o(c),    c = 1, grid % n_cells)
     read(9) (kin % a(c),    c = 1, grid % n_cells)
@@ -152,19 +147,19 @@
     read(9) (Uf(c),       c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (Ynd(c),      c = -grid % n_bnd_cells,grid % n_cells) 
     read(9) (viswall(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (TauWall(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (tau_wall(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(old_turbulence_model == 'K_EPS_VV' .or.  &
-     old_turbulence_model == 'ZETA'     .or.  &
-     old_turbulence_model == 'HYB_ZETA') then
-    read(9) (v_2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (v_2 % o(c),    c = 1, grid % n_cells)
-    read(9) (v_2 % a(c),    c = 1, grid % n_cells)
-    read(9) (v_2 % a_o(c),  c = 1, grid % n_cells)
-    read(9) (v_2 % d_o(c),  c = 1, grid % n_cells)
-    read(9) (v_2 % c(c),    c = 1, grid % n_cells)
-    read(9) (v_2 % c_o(c),  c = 1, grid % n_cells)
+  if(turbulence_model == K_EPS_V2 .or.  &
+     turbulence_model == K_EPS_ZETA_F     .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
+    read(9) (v2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (v2 % o(c),    c = 1, grid % n_cells)
+    read(9) (v2 % a(c),    c = 1, grid % n_cells)
+    read(9) (v2 % a_o(c),  c = 1, grid % n_cells)
+    read(9) (v2 % d_o(c),  c = 1, grid % n_cells)
+    read(9) (v2 % c(c),    c = 1, grid % n_cells)
+    read(9) (v2 % c_o(c),  c = 1, grid % n_cells)
 
     read(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (f22 % o(c),    c = 1, grid % n_cells)
@@ -176,8 +171,8 @@
     read(9) (Lsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if 
 
-  if(old_turbulence_model == 'EBM' .or.  &
-     old_turbulence_model == 'HJ') then
+  if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+     turbulence_model == HANJALIC_JAKIRLIC) then
     read(9) (uu % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (uu % o(c),    c = 1, grid % n_cells)
     read(9) (uu % a(c),    c = 1, grid % n_cells)
@@ -238,7 +233,7 @@
     read(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (vis_t(c),       c = -grid % n_bnd_cells,grid % n_cells)
 
-    if(old_turbulence_model == 'EBM') then
+    if(turbulence_model == REYNOLDS_STRESS_MODEL) then
       read(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
       read(9) (f22 % o(c),    c = 1, grid % n_cells)
       read(9) (f22 % d_o(c),  c = 1, grid % n_cells)
@@ -247,8 +242,8 @@
     end if
   end if
 
-  if(old_turbulence_model == 'SPA_ALL' .or.  &
-     old_turbulence_model == 'DES_SPA') then
+  if(turbulence_model == SPALART_ALLMARAS .or.  &
+     turbulence_model == DES_SPALART) then
     read(9) (vis % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (vis % o(c),    c = 1, grid % n_cells)
     read(9) (vis % a(c),    c = 1, grid % n_cells)
@@ -260,7 +255,7 @@
     read(9) (vort(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(old_turbulence_model /= 'DNS')  &
+  if(turbulence_model /= DNS)  &
     read(9) (vis_t(c), c = -grid % n_bnd_cells,grid % n_cells)
 
   close(9)

@@ -1,17 +1,18 @@
 !==============================================================================!
-  subroutine Compute_F22(grid, ini, var, phi)
+  subroutine Compute_F22(grid, ini, phi)
 !------------------------------------------------------------------------------!
 !   Discretizes and solves eliptic relaxation equations for f22.               !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use par_mod
   use Var_Mod
   use Grid_Mod
   use Info_Mod
+  use Numerics_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
   use Control_Mod
   use Work_Mod,    only: phi_x => r_cell_01,  &
@@ -22,7 +23,6 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   integer         :: ini
-  integer         :: var
   type(Var_Type)  :: phi
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, niter, miter
@@ -32,13 +32,11 @@
   real              :: phi_x_f, phi_y_f, phi_z_f
   character(len=80) :: coupling
   character(len=80) :: precond
-  character(len=80) :: td_inertia    ! time-disretization for inerita  
-  character(len=80) :: td_advection  ! time-disretization for advection
-  character(len=80) :: td_diffusion  ! time-disretization for diffusion 
-  character(len=80) :: td_cross_diff ! time-disretization for cross-difusion
+  integer           :: td_inertia    ! time-disretization for inerita  
+  integer           :: td_advection  ! time-disretization for advection
+  integer           :: td_diffusion  ! time-disretization for diffusion 
+  integer           :: td_cross_diff ! time-disretization for cross-difusion
   real              :: urf           ! under-relaxation factor                 
-  character(len=80) :: turbulence_model
-  character(len=80) :: turbulence_model_variant
 !==============================================================================! 
 !
 !   The form of equations which are solved:
@@ -78,8 +76,6 @@
   call Control_Mod_Time_Integration_For_Diffusion(td_diffusion)
   call Control_Mod_Time_Integration_For_Cross_Diffusion(td_cross_diff)
 
-  call Control_Mod_Turbulence_Model(turbulence_model)
-
   ! Old values (o) and older than old (oo)
   if(ini == 1) then
     do c=1,grid % n_cells
@@ -116,9 +112,9 @@
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)   
 
-    phi_x_f = fF(s) * phi_x(c1) + (1.0 - fF(s)) * phi_x(c2)
-    phi_y_f = fF(s) * phi_y(c1) + (1.0 - fF(s)) * phi_y(c2)
-    phi_z_f = fF(s) * phi_z(c1) + (1.0 - fF(s)) * phi_z(c2)
+    phi_x_f = fw(s) * phi_x(c1) + (1.0 - fw(s)) * phi_x(c2)
+    phi_y_f = fw(s) * phi_y(c1) + (1.0 - fw(s)) * phi_y(c2)
+    phi_z_f = fw(s) * phi_z(c1) + (1.0 - fw(s)) * phi_z(c2)
 
 
     ! Total (exact) diffusive flux
@@ -126,10 +122,10 @@
            + phi_y_f * grid % sy(s)   &
            + phi_z_f * grid % sz(s) )
 
-    A0 = Scoef(s)
+    A0 = f_coef(s)
 
     ! Implicit diffusive flux
-    ! (this is a very crude approximation: Scoef is
+    ! (this is a very crude approximation: f_coef is
     !  not corrected at interface between materials)
     Fim=(   phi_x_f * grid % dx(s)        &
           + phi_y_f * grid % dy(s)        &
@@ -154,15 +150,15 @@
     end if 
 
     ! Calculate the coefficients for the sysytem matrix
-    if( (td_diffusion == 'CRANK_NICOLSON') .or.  &
-        (td_diffusion == 'FULLY_IMPLICIT') ) then  
+    if( (td_diffusion == CRANK_NICOLSON) .or.  &
+        (td_diffusion == FULLY_IMPLICIT) ) then  
 
-      if(td_diffusion == 'CRANK_NICOLSON') then 
+      if(td_diffusion == CRANK_NICOLSON) then 
         A12 = 0.5 * A0 
         A21 = 0.5 * A0 
       end if
 
-      if(td_diffusion == 'FULLY_IMPLICIT') then
+      if(td_diffusion == FULLY_IMPLICIT) then
         A12 = A0 
         A21 = A0
       end if
@@ -205,14 +201,14 @@
   !-----------------------------!
 
   ! Adams-Bashfort scheeme for diffusion fluxes
-  if(td_diffusion == 'ADAMS_BASHFORTH') then 
+  if(td_diffusion == ADAMS_BASHFORTH) then 
     do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * phi % d_o(c) - 0.5 * phi % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
-  if(td_diffusion == 'CRANK_NICOLSON') then 
+  if(td_diffusion == CRANK_NICOLSON) then 
     do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * phi % d_o(c)
     end do  
@@ -220,7 +216,7 @@
                  
 
   ! Adams-Bashfort scheeme for cross diffusion 
-  if(td_cross_diff == 'ADAMS_BASHFORTH') then
+  if(td_cross_diff == ADAMS_BASHFORTH) then
     do c=1,grid % n_cells
       b(c) = b(c) + 1.5 * phi % c_o(c) - 0.5 * phi % c_oo(c)
     end do 
@@ -230,14 +226,14 @@
   ! is handled via the linear system of equations 
 
   ! Crank-Nicholson scheme for cross difusive terms
-  if(td_cross_diff == 'CRANK_NICOLSON') then
+  if(td_cross_diff == CRANK_NICOLSON) then
     do c=1,grid % n_cells
       b(c) = b(c) + 0.5 * phi % c(c) + 0.5 * phi % c_o(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
-  if(td_cross_diff == 'FULLY_IMPLICIT') then
+  if(td_cross_diff == FULLY_IMPLICIT) then
     do c=1,grid % n_cells
       b(c) = b(c) + phi % c(c)
     end do 
@@ -250,7 +246,7 @@
   !    before the under relaxation ?)   !
   !                                     !
   !-------------------------------------!
-  if(turbulence_model == 'EBM') then
+  if(turbulence_model == REYNOLDS_STRESS_MODEL) then
     call Source_F22_Ebm(grid)
   else
     call Source_F22_K_Eps_V2_F(grid)
@@ -286,9 +282,9 @@
   if(coupling == 'SIMPLE')     miter =   5
 
   niter=miter
-  call cg(A, phi % n, b, precond, niter, tol, res(var), error)
+  call cg(A, phi % n, b, precond, niter, tol, phi % res, error)
   
-  call Info_Mod_Iter_Fill_At(3, 4, phi % name, niter, res(var))
+  call Info_Mod_Iter_Fill_At(3, 4, phi % name, niter, phi % res)
 
   call Exchange(grid, phi % n)
 

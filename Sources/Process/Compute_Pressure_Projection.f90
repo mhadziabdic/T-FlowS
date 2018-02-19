@@ -5,10 +5,11 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
-  use Grid_Mod
+  use Flow_Mod
+  use Grid_Mod,     only: Grid_Type  
   use Info_Mod
-  use Solvers_Mod, only: Bicg, Cg, Cgs
+  use Numerics_Mod, only: errmax
+  use Solvers_Mod,  only: Bicg, Cg, Cgs
   use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -18,7 +19,7 @@
   integer           :: s, c, c1, c2, niter
   real              :: p_max, p_min
   real              :: error, tol
-  real              :: Us, Vs, Ws, DENs, fs
+  real              :: Us, Vs, Ws, fs
   real              :: A12
   character(len=80) :: coupling
   character(len=80) :: precond
@@ -58,22 +59,6 @@
     c2 = grid % faces_c(2,s)
     fs = grid % f(s)
 
-    ! Handle two materials
-    if( StateMat(material(c1))==FLUID .and.      &
-        StateMat(material(c2))==FLUID) then
-      DENs =      fs  * DENc(material(c1))     &
-           + (1.0-fs) * DENc(material(c2))
-    else if( StateMat(material(c1))==FLUID .and. &
-             StateMat(material(c2))==SOLID) then
-      DENs = DENc(material(c1)) 
-    else if( StateMat(material(c1))==SOLID .and. &
-             StateMat(material(c2))==FLUID) then
-      DENs = DENc(material(c2)) 
-    else
-      DENs =      fs  * DENc(material(c1))     &
-           + (1.0-fs) * DENc(material(c2))
-    end if  
-
     ! Face is inside the domain
     if( c2  > 0 .or. c2  < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then 
 
@@ -96,9 +81,11 @@
          ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
 
       ! Now calculate the flux through cell face
-      Flux(s) = DENs * ( Us*grid % sx(s) + Vs*grid % sy(s) + Ws*grid % sz(s) )
+      flux(s) = density * ( Us * grid % sx(s) +  &
+                            Vs * grid % sy(s) +  &
+                            Ws * grid % sz(s) )
 
-      A12=DENs*(  grid % sx(s)*grid % sx(s)  &
+      A12=density*(  grid % sx(s)*grid % sx(s)  &
                 + grid % sy(s)*grid % sy(s)  &
                 + grid % sz(s)*grid % sz(s))
       A12=A12*(fs/A % sav(c1)+(1.-fs)/A % sav(c2))
@@ -113,8 +100,8 @@
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       endif
 
-      b(c1)=b(c1)-Flux(s)
-      if(c2  > 0) b(c2)=b(c2)+Flux(s)
+      b(c1)=b(c1)-flux(s)
+      if(c2  > 0) b(c2)=b(c2)+flux(s)
 
     ! Face is on the boundary
     else
@@ -122,11 +109,11 @@
       Vs = V % n(c2)
       Ws = W % n(c2)
 
-      Flux(s) = DENs * (  Us*grid % sx(s)  &
-                        + Vs*grid % sy(s)  &
-                        + Ws*grid % sz(s) )
+      flux(s) = density * (  Us * grid % sx(s)  &
+                           + Vs * grid % sy(s)  &
+                           + Ws * grid % sz(s) )
 
-      b(c1) = b(c1)-Flux(s)
+      b(c1) = b(c1)-flux(s)
     end if
 
   end do
@@ -158,9 +145,9 @@
   if(coupling == 'PROJECTION') niter = 200
   if(coupling == 'SIMPLE')     niter =  15
 
-  call Cg(A, pp % n, b, precond, niter, tol, res(4), error) 
+  call Cg(A, pp % n, b, precond, niter, tol, pp % res, error) 
 
-  call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, res(4))
+  call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, pp % res)
 
   !-------------------------------!
   !   Update the pressure field   !

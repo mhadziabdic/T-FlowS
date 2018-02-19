@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use par_mod
   use rans_mod
@@ -19,8 +19,6 @@
   integer           :: c, nn
   character(len=80) :: name_out, answer
   character(len=4)  :: ext
-  character(len=80) :: heat_transfer
-  character(len=80) :: turbulence_model
 !==============================================================================!
 
   call Control_Mod_Save_Initial_Solution_Name(name_out)
@@ -28,9 +26,6 @@
   answer=name_out
   call To_Upper_Case(answer)
   if(answer == 'SKIP') return
-
-  call Control_Mod_Heat_Transfer(heat_transfer)
-  call Control_Mod_Turbulence_Model(turbulence_model)
 
   ! save the name
   answer = problem_name
@@ -48,6 +43,7 @@
   end do    ! through centers 
   close(9)
 
+  ext(1:4) = '.  '
   ext(2:4) = u % name
   call Name_File(this_proc, name_out, ext)
   open(9,file=name_out)
@@ -83,7 +79,7 @@
   end do    ! through centers 
   close(9)
  
-  if(heat_transfer == 'YES') then 
+  if(heat_transfer == YES) then 
     ext(2:4) = t % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
@@ -94,8 +90,8 @@
     close(9)
   end if 
  
-  if(turbulence_model == 'ZETA' .or.  &
-     turbulence_model == 'K_EPS_VV') then
+  if(turbulence_model == K_EPS_ZETA_F .or.  &
+     turbulence_model == K_EPS_V2) then
     ext(2:4) = kin % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
@@ -114,12 +110,12 @@
     end do    ! through centers 
     close(9)
 
-    ext(2:4) = v_2 % name
+    ext(2:4) = v2  % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') v_2 % n(c), v_2 % o(c), v_2 % a(c), v_2 % a_o(c),  &
-                          v_2 % d_o(c), v_2 % c(c), v_2 % c_o(c)
+      write(9,'(7E18.8)') v2 % n(c), v2 % o(c), v2 % a(c), v2 % a_o(c),  &
+                          v2 % d_o(c), v2 % c(c), v2 % c_o(c)
     end do    ! through centers 
     close(9)
 
@@ -133,7 +129,7 @@
     close(9)
   end if
 
-  if(turbulence_model == 'K_EPS') then
+  if(turbulence_model == K_EPS) then
     ext(2:4) = kin % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)

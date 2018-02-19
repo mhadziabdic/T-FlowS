@@ -5,7 +5,7 @@
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use rans_mod
 !----------------------------------------------------------------------!
   implicit none
@@ -32,7 +32,6 @@
   ROT    = NO      ! YES, NO
   HOTini = NO      ! YES, NO
   SHAKE  = NO      ! YES, NO
-  BUOY   = NO
   BUDG   = NO
   SHAKE_PER = -10
   SHAKE_INT = -10

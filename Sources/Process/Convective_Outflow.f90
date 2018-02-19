@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use rans_mod
   use Grid_Mod
   use Bulk_Mod
@@ -19,13 +19,10 @@
   type(Grid_Type) :: grid
   real            :: dt
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c1, c2, s
-  character(len=80) :: heat_transfer
+  integer :: c1, c2, s
 !==============================================================================!
 
   call Bulk_Mod_Compute_Fluxes(grid, bulk, flux)
-
-  call Control_Mod_Heat_Transfer(heat_transfer)
 
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
@@ -47,7 +44,7 @@
     end if
   end do
 
-  if(heat_transfer == 'YES') then
+  if(heat_transfer == YES) then
     call GraPhi(grid, t % n, 1, t_x, .true.)     ! dT/dx
     call GraPhi(grid, t % n, 2, t_y, .true.)     ! dT/dy
     call GraPhi(grid, t % n, 3, t_z, .true.)     ! dT/dz

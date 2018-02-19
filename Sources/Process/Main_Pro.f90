@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use par_mod
   use rans_mod
@@ -38,16 +38,13 @@
   integer           :: ini         ! inner iteration counter
   real              :: simple_tol  ! tolerance for SIMPLE algorithm
   character(len=80) :: coupling    ! pressure velocity coupling
-  character(len=80) :: heat_transfer
-  character(len=80) :: turbulence_model
-  character(len=80) :: turbulence_model_variant
 !---------------------------------[Interfaces]---------------------------------!
   interface
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine UserProbe2D(namAut)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
       use all_mod
-      use pro_mod
+      use Flow_Mod
       implicit none
       character, optional :: namAut*(*)
     end subroutine
@@ -139,18 +136,14 @@
   !    print *,'Reading data from previous computation on the same mesh'
   call Load_Restart_Ini(grid)
 
-  call Control_Mod_Heat_Transfer(heat_transfer)
-  call Control_Mod_Turbulence_Model(turbulence_model)
-  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
-
   ! Prepare ...
-  call Compute_Face_Geometry(grid)
+  call Calculate_Face_Geometry(grid)
   call Bulk_Mod_Monitoring_Planes_Areas(grid, bulk)
   call Find_Bad        (grid)
-  if(turbulence_model == 'LES'                 .and.  &
-     turbulence_model_variant == 'SMAGORINSKY' .and.  &
-     .not. restar)                                    &
-     call NearWallCell(grid)
+  if(turbulence_model == LES                 .and.  &
+     turbulence_model_variant == SMAGORINSKY .and.  &
+     .not. restar)                                  &
+     call Find_Nearest_Wall_Cell(grid)
 
   ! Prepare the gradient matrix for velocities
   call Compute_Gradient_Matrix(grid, .true.) 
@@ -192,27 +185,27 @@
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
     call Info_Mod_Time_Print()
 
-    if(turbulence_model == 'DES_SPA') then
-      call Compute_Shear_And_Vorticity(grid)
-      call CalcVort (grid, U % n, V % n, W % n, vort)
+    if(turbulence_model == DES_SPALART) then
+      call Calculate_Shear_And_Vorticity(grid)
+      call Calculate_Vorticity (grid, u % n, v % n, w % n, vort)
     end if
 
-    if(turbulence_model == 'LES') then
-      call Compute_Shear_And_Vorticity(grid)
-      if(turbulence_model_variant == 'DYNAMIC') call Compute_Sgs_Dynamic(grid) 
-      if(turbulence_model_variant == 'WALE')    call CalcWALE(grid) 
-      call Compute_Sgs(grid)
+    if(turbulence_model == LES) then
+      call Calculate_Shear_And_Vorticity(grid)
+      if(turbulence_model_variant == DYNAMIC) call Calculate_Sgs_Dynamic(grid) 
+      if(turbulence_model_variant == WALE)    call Calculate_Sgs_Wale(grid) 
+      call Calculate_Sgs(grid)
     end if  
 
-    If(turbulence_model == 'HYB_ZETA') then  
-      call Compute_Sgs_Dynamic(grid)      
-      call Compute_Sgs_Hybrid(grid)
+    If(turbulence_model == HYBRID_K_EPS_ZETA_F) then  
+      call Calculate_Sgs_Dynamic(grid)      
+      call Calculate_Sgs_Hybrid(grid)
     end if
 
     call Convective_Outflow(grid, dt)
-    if(turbulence_model == 'EBM' .or.  &
-       turbulence_model == 'HJ')       &
-      call CalcVISt_RSM(grid)
+    if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+       turbulence_model == HANJALIC_JAKIRLIC)       &
+      call Calculate_Vis_T_Rsm(grid)
     
     !--------------------------!
     !   Inner-iteration loop   !
@@ -223,7 +216,7 @@
       call Control_Mod_Max_Simple_Iterations(n_ini)
     end if
 
-    do ini=1, n_ini                   !  PROJECTION & SIMPLE  
+    do ini=1, n_ini  !  PROJECTION & SIMPLE  
 
       call Info_Mod_Iter_Fill(ini)
 
@@ -234,36 +227,36 @@
       end if
     
       ! Compute velocity gradients
-      call GraPhi(grid, U % n, 1, U % x, .true.)
-      call GraPhi(grid, U % n, 2, U % y, .true.)
-      call GraPhi(grid, U % n, 3, U % z, .true.)
-      call GraPhi(grid, V % n, 1, V % x, .true.)
-      call GraPhi(grid, V % n, 2, V % y, .true.)
-      call GraPhi(grid, V % n, 3, V % z, .true.)
-      call GraPhi(grid, W % n, 1, W % x, .true.)
-      call GraPhi(grid, W % n, 2, W % y, .true.)
-      call GraPhi(grid, W % n, 3, W % z, .true.)
+      call GraPhi(grid, u % n, 1, u % x, .true.)
+      call GraPhi(grid, u % n, 2, u % y, .true.)
+      call GraPhi(grid, u % n, 3, u % z, .true.)
+      call GraPhi(grid, v % n, 1, v % x, .true.)
+      call GraPhi(grid, v % n, 2, v % y, .true.)
+      call GraPhi(grid, v % n, 3, v % z, .true.)
+      call GraPhi(grid, w % n, 1, w % x, .true.)
+      call GraPhi(grid, w % n, 2, w % y, .true.)
+      call GraPhi(grid, w % n, 3, w % z, .true.)
 
-      ! U velocity component
-      call Compute_Momentum(grid, dt, ini, 1, U,          &
-                  U % x,   U % y,   U % z,                & 
+      ! u velocity component
+      call Compute_Momentum(grid, dt, ini, u,          &
+                  u % x,   u % y,   u % z,                & 
                   grid % sx,   grid % sy,   grid % sz,    &                             
                   grid % dx,   grid % dy,   grid % dz,    &                             
-                  p % x,   V % x,   W % x)      ! dP/dx, dV/dx, dW/dx
+                  p % x,   v % x,   w % x)      ! dP/dx, dV/dx, dW/dx
 
-      ! V velocity component
-      call Compute_Momentum(grid, dt, ini, 2, v,          &
-                  V % y,   V % x,   V % z,                & 
+      ! v velocity component
+      call Compute_Momentum(grid, dt, ini, v,          &
+                  v % y,   v % x,   v % z,                & 
                   grid % sy,   grid % sx,   grid % sz,    &
                   grid % dy,   grid % dx,   grid % dz,    &
-                  p % y,   U % y,   W % y)      ! dP/dy, dU/dy, dW/dy
+                  p % y,   u % y,   w % y)      ! dP/dy, dU/dy, dW/dy
 
-      ! W velocity component
-      call Compute_Momentum(grid, dt, ini, 3, w,          &
-                  W % z,   W % x,   W % y,                & 
+      ! w velocity component
+      call Compute_Momentum(grid, dt, ini, w,          &
+                  w % z,   w % x,   w % y,                & 
                   grid % sz,   grid % sx,   grid % sy,    &                         
                   grid % dz,   grid % dx,   grid % dy,    &                         
-                  p % z,   U % z,   V % z)      ! dP/dz, dU/dz, dV/dz
+                  p % z,   u % z,   v % z)      ! dP/dz, dU/dz, dV/dz
 
       if(coupling == 'PROJECTION') then 
         call Exchange(grid, A % sav)  
@@ -286,86 +279,89 @@
       Mres = Correct_Velocity(grid, dt) !  project the velocities
 
       ! Temperature
-      if(heat_transfer == 'YES') then
-        call Compute_Temperature(grid, dt, ini, 5, T)
+      if(heat_transfer == YES) then
+        call Compute_Temperature(grid, dt, ini, T)
       end if 
 
       ! Rans models
-      if(turbulence_model == 'K_EPS' .or.  &
-         turbulence_model == 'HYB_PITM') then
+      if(turbulence_model == K_EPS .or.  &
+         turbulence_model == HYBRID_PITM) then
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
-        call Compute_Shear_And_Vorticity(grid)
-        call Compute_Turbulent(grid, dt, ini, 6, Kin, n)
-        call Compute_Turbulent(grid, dt, ini, 7, Eps, n)
-        call CalcVISt_KEps(grid)
+        call Calculate_Shear_And_Vorticity(grid)
+        call Compute_Turbulent(grid, dt, ini, kin, n)
+        call Compute_Turbulent(grid, dt, ini, eps, n)
+        call Calculate_Vis_T_K_Eps(grid)
       end if 
 
-      if(turbulence_model == 'K_EPS_VV' .or.  &
-         turbulence_model == 'ZETA'     .or.  &
-         turbulence_model == 'HYB_ZETA') then
-        call Compute_Shear_And_Vorticity(grid)
+      if(turbulence_model == K_EPS_V2 .or.  &
+         turbulence_model == K_EPS_ZETA_F     .or.  &
+         turbulence_model == HYBRID_K_EPS_ZETA_F) then
+        call Calculate_Shear_And_Vorticity(grid)
 
-        call Compute_Turbulent(grid, dt, ini, 6, Kin, n)
-        call Compute_Turbulent(grid, dt, ini, 7, Eps, n)
+        call Compute_Turbulent(grid, dt, ini, kin, n)
+        call Compute_Turbulent(grid, dt, ini, eps, n)
          
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        call Compute_F22(grid, ini, 8, f22) 
+        call Compute_F22(grid, ini, f22) 
 
-        call Compute_Turbulent(grid, dt, ini, 9, v_2, n)  
+        call Compute_Turbulent(grid, dt, ini, v2, n)  
 
-        call CalcVISt_KepsV2F(grid)
+        call Calculate_Vis_T_K_Eps_V2(grid)
       end if                 
 
-      if(turbulence_model == 'EBM'.or.turbulence_model == 'HJ') then
+      if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+         turbulence_model == HANJALIC_JAKIRLIC) then
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        if(turbulence_model == 'EBM') call Time_And_Length_Scale(grid)
+        if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+          call Time_And_Length_Scale(grid)
+        end if
 
-        call GraPhi(grid, U % n, 1, U % x,.true.)    ! dU/dx
-        call GraPhi(grid, U % n, 2, U % y,.true.)    ! dU/dy
-        call GraPhi(grid, U % n, 3, U % z,.true.)    ! dU/dz
+        call GraPhi(grid, u % n, 1, u % x,.true.)    ! dU/dx
+        call GraPhi(grid, u % n, 2, u % y,.true.)    ! dU/dy
+        call GraPhi(grid, u % n, 3, u % z,.true.)    ! dU/dz
  
-        call GraPhi(grid, V % n, 1, V % x,.true.)    ! dV/dx
-        call GraPhi(grid, V % n, 2, V % y,.true.)    ! dV/dy
-        call GraPhi(grid, V % n, 3, V % z,.true.)    ! dV/dz
+        call GraPhi(grid, v % n, 1, v % x,.true.)    ! dV/dx
+        call GraPhi(grid, v % n, 2, v % y,.true.)    ! dV/dy
+        call GraPhi(grid, v % n, 3, v % z,.true.)    ! dV/dz
 
-        call GraPhi(grid, W % n, 1, W % x,.true.)    ! dW/dx
-        call GraPhi(grid, W % n, 2, W % y,.true.)    ! dW/dy 
-        call GraPhi(grid, W % n, 3, W % z,.true.)    ! dW/dz
+        call GraPhi(grid, w % n, 1, w % x,.true.)    ! dW/dx
+        call GraPhi(grid, w % n, 2, w % y,.true.)    ! dW/dy 
+        call GraPhi(grid, w % n, 3, w % z,.true.)    ! dW/dz
 
-        call Compute_Stresses(grid, dt, ini, 6, uu)
-        call Compute_Stresses(grid, dt, ini, 7, vv)
-        call Compute_Stresses(grid, dt, ini, 8, ww) 
+        call Compute_Stresses(grid, dt, ini, uu)
+        call Compute_Stresses(grid, dt, ini, vv)
+        call Compute_Stresses(grid, dt, ini, ww) 
 
-        call Compute_Stresses(grid, dt, ini,  9, uv)  
-        call Compute_Stresses(grid, dt, ini, 10, uw) 
-        call Compute_Stresses(grid, dt, ini, 11, vw) 
+        call Compute_Stresses(grid, dt, ini, uv)  
+        call Compute_Stresses(grid, dt, ini, uw) 
+        call Compute_Stresses(grid, dt, ini, vw) 
 
-        if(turbulence_model == 'EBM') then
-          call Compute_F22(grid, ini, 12, f22) 
+        if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+          call Compute_F22(grid, ini, f22) 
         end if 
 
-        call Compute_Stresses(grid, dt, ini, 13, Eps) 
+        call Compute_Stresses(grid, dt, ini, eps) 
  
-        call CalcVISt_RSM(grid)
+        call Calculate_Vis_T_Rsm(grid)
       end if                 
 
-      if(turbulence_model == 'SPA_ALL' .or.  &
-         turbulence_model == 'DES_SPA') then
-        call Compute_Shear_And_Vorticity(grid)
-        call CalcVort(grid, U % n, V % n, W % n, vort)
+      if(turbulence_model == SPALART_ALLMARAS .or.  &
+         turbulence_model == DES_SPALART) then
+        call Calculate_Shear_And_Vorticity(grid)
+        call Calculate_Vorticity(grid, u % n, v % n, w % n, vort)
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        call Compute_Turbulent(grid, dt, ini, 6, vis, n)
-        call CalcVISt_SPA_ALL(grid, n)
+        call Compute_Turbulent(grid, dt, ini, vis, n)
+        call Calculate_Vis_T_Spalart_Allmaras(grid)
       end if
 
       ! Update the values at boundaries
@@ -376,8 +372,8 @@
 
       if(coupling == 'SIMPLE') then 
         call Control_Mod_Tolerance_For_Simple_Algorithm(simple_tol)
-        if( res(1) <= simple_tol .and. res(2) <= simple_tol .and. &
-            res(3) <= simple_tol .and. res(4) <= simple_tol ) goto 4 
+        if( u % res <= simple_tol .and. v % res  <= simple_tol .and. &
+            w % res <= simple_tol .and. pp % res <= simple_tol ) goto 4 
       endif
     end do 
 
@@ -387,12 +383,12 @@
     ! Write the values in monitoring points
     do i=1,Nmon
       if(Cm(i)  > 0) then                               
-        if(heat_transfer == 'NO') then
+        if(heat_transfer == NO) then
           write(10+i,'(I9,4E16.6)')                    &
-           n, U % n(Cm(i)), V%n(Cm(i)), W%n(Cm(i)), P%n(Cm(i))
+           n, u % n(Cm(i)), v%n(Cm(i)), w%n(Cm(i)), P%n(Cm(i))
         else
           write(10+i,'(I9,5E16.6)')                    &
-           n, U % n(Cm(i)), V%n(Cm(i)), W%n(Cm(i)), P%n(Cm(i)), T%n(Cm(i))
+           n, u % n(Cm(i)), v%n(Cm(i)), w%n(Cm(i)), P%n(Cm(i)), T%n(Cm(i))
         end if
       end if
     end do  
@@ -414,14 +410,14 @@
     !   where:                                            !
     !                                                     !
     !   a = dv / dt = dFlux / dt * 1 / (A * rho)          !
-    !   m = rho * V                                       !
-    !   F = Pdrop * l * A = Pdrop * V                     !
+    !   m = rho * v                                       !
+    !   F = Pdrop * l * A = Pdrop * v                     !
     !                                                     !
     !   finally:                                          !
     !                                                     !
-    !   Pdrop * V = rho * V * dFlux / dt * 1 / (A * rho)  !
+    !   Pdrop * v = rho * v * dFlux / dt * 1 / (A * rho)  !
     !                                                     !
-    !   after cancelling: V and rho, it yields:           !
+    !   after cancelling: v and rho, it yields:           !
     !                                                     !
     !   Pdrop = dFlux/dt/A                                !
     !-----------------------------------------------------!
@@ -460,7 +456,7 @@
     end if
 
     ! Is it time to save results for post-processing
-    if(save_now .or. exit_now .or. mod(n, 1) == 0) then
+    if(save_now .or. exit_now .or. mod(n,50) == 0) then
       call Wait
       call Save_Vtu_Results(grid, name_save)
       call User_Mod_Save_Results(grid, n)  ! write results in user-customized format

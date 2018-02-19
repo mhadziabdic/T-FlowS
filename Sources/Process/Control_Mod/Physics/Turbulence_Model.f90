@@ -1,26 +1,62 @@
 !==============================================================================!
-  subroutine Control_Mod_Turbulence_Model(val, verbose)
+  subroutine Control_Mod_Turbulence_Model(verbose)
+!------------------------------------------------------------------------------!
+!   Reading turbulence model from the control file.                            !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
+  use Turbulence_Mod, only: turbulence_model,      &
+                            K_EPS,                 &
+                            K_EPS_V2,              &
+                            K_EPS_ZETA_F,          &
+                            HYBRID_K_EPS_ZETA_F,   &
+                            HYBRID_PITM,           &
+                            LES,                   &
+                            DNS,                   &
+                            DES_SPALART,           &
+                            SPALART_ALLMARAS,      &
+                            HANJALIC_JAKIRLIC,     &
+                            REYNOLDS_STRESS_MODEL
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  character(len=80) :: val
   logical, optional :: verbose
+!-----------------------------------[Locals]-----------------------------------!
+  character(len=80) :: val
 !==============================================================================!
 
-  call Control_Mod_Read_Char_Item('TURBULENCE_MODEL', 'k_eps',  &
+  call Control_Mod_Read_Char_Item('TURBULENCE_MODEL', 'none',  &
                                    val, verbose)
   call To_Upper_Case(val)
 
-  if( val .ne. 'K_EPS'    .and.  &
-      val .ne. 'K_EPS_VV' .and.  &
-      val .ne. 'ZETA'     .and.  &
-      val .ne. 'HYB_ZETA' .and.  &
-      val .ne. 'LES'      .and.  &
-      val .ne. 'DES_SPA'  .and.  &
-      val .ne. 'SPA_ALL') then
-    print *, '# Unknown turbulence model: ', trim(val)
-    print *, '# Exiting!'
-    stop 
-  end if
+  select case(val)
+
+    case('K_EPS')                 
+      turbulence_model = K_EPS
+    case('K_EPS_V2')              
+      turbulence_model = K_EPS_V2
+    case('K_EPS_ZETA_F')          
+      turbulence_model = K_EPS_ZETA_F
+    case('HYBRID_K_EPS_ZETA_F')   
+      turbulence_model = HYBRID_K_EPS_ZETA_F
+    case('HYBRID_PITM')           
+      turbulence_model = HYBRID_PITM
+    case('LES')                   
+      turbulence_model = LES
+    case('DNS')                   
+      turbulence_model = DNS
+    case('DES_SPALART')           
+      turbulence_model = DES_SPALART
+    case('SPALART_ALLMAR AS')     
+      turbulence_model = SPALART_ALLMARAS
+    case('HANJALIC_JAKIRLIC')     
+      turbulence_model = HANJALIC_JAKIRLIC
+    case('REYNOLDS_STRESS_MODEL') 
+      turbulence_model = REYNOLDS_STRESS_MODEL
+
+    case default
+      print *, '# Exiting!'
+      stop 
+
+  end select
 
   end subroutine

@@ -1,16 +1,17 @@
 !==============================================================================!
-  subroutine Compute_Temperature(grid, dt, ini, var, phi)
+  subroutine Compute_Temperature(grid, dt, ini, phi)
 !------------------------------------------------------------------------------!
 !   Purpose: Solve transport equation for scalar (such as temperature)         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use rans_mod
   use par_mod
   use Var_Mod
   use Grid_Mod
   use Info_Mod
+  use Numerics_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
   use Control_Mod
   use Work_Mod,    only: phi_x       => r_cell_01,  &
@@ -29,7 +30,6 @@
   type(Grid_Type) :: grid
   integer         :: ini
   real            :: dt
-  integer         :: var
   type(Var_Type)  :: phi
 !----------------------------------[Calling]-----------------------------------!
   include "../Shared/Approx.int"
@@ -38,18 +38,16 @@
   real              :: A0, A12, A21, error, tol
   real              :: CONeff1, FUex1, FUim1, phixS1, phiyS1, phizS1
   real              :: CONeff2, FUex2, FUim2, phixS2, phiyS2, phizS2
-  real              :: Stot, phis, CAPs, Prt, Prt1, Prt2
+  real              :: Stot, phis, Prt, Prt1, Prt2
   character(len=80) :: coupling   ! pressure-momentum coupling
   character(len=80) :: precond    ! preconditioner
-  character(len=80) :: sd_advection  ! space-discretiztion of advection scheme)
+  integer           :: adv_scheme  ! space-discretiztion of advection scheme)
   real              :: blend         ! blending coeff (1.0 central; 0.0 upwind)
-  character(len=80) :: td_inertia    ! time-disretization for inerita  
-  character(len=80) :: td_advection  ! time-disretization for advection
-  character(len=80) :: td_diffusion  ! time-disretization for diffusion 
-  character(len=80) :: td_cross_diff ! time-disretization for cross-difusion
+  integer           :: td_inertia    ! time-disretization for inerita  
+  integer           :: td_advection  ! time-disretization for advection
+  integer           :: td_diffusion  ! time-disretization for diffusion 
+  integer           :: td_cross_diff ! time-disretization for cross-difusion
   real              :: urf           ! under-relaxation factor                 
-  character(len=80) :: turbulence_model
-  character(len=80) :: turbulence_model_variant
 !------------------------------------------------------------------------------!
 !     
 !  The form of equations which are solved:    
@@ -80,7 +78,7 @@
 ! 
 !==============================================================================!
 
-!  if(turbulence_model=='EBM') then
+!  if(turbulence_model == REYNOLDS_STRESS_MODEL) then
 !    TDC = 1.0         
 !  else
 !    TDC = 1.0       
@@ -111,9 +109,6 @@
   call Control_Mod_Time_Integration_For_Diffusion(td_diffusion)
   call Control_Mod_Time_Integration_For_Cross_Diffusion(td_cross_diff)
 
-  call Control_Mod_Turbulence_Model(turbulence_model)
-  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
-
   ! Old values (o and oo)
   if(ini.lt.2) then
     do c = 1, grid % n_cells
@@ -140,12 +135,12 @@
   !---------------!
 
   ! Retreive advection scheme and blending coefficient
-  call Control_Mod_Advection_Scheme_For_Energy(sd_advection)
+  call Control_Mod_Advection_Scheme_For_Energy(adv_scheme)
   call Control_Mod_Blending_Coefficient_Energy(blend)
   
   ! Compute phimax and phimin
   do mat = 1, grid % n_materials
-    if(sd_advection .ne. 'CENTRAL') then
+    if(adv_scheme .ne. CENTRAL) then
       call Compute_Minimum_Maximum(grid, phi % n)  ! or phi % o ???
       goto 1  ! why this???
     end if
@@ -169,43 +164,40 @@
          + (1.0-grid % f(s)) * phi % n(c2)
 
     ! Compute phis with desired advection scheme
-    if(sd_advection .ne. 'CENTRAL') then
+    if(adv_scheme .ne. CENTRAL) then
       call Advection_Scheme(grid, phis, s, phi % n,           &
                             phi_x, phi_y, phi_z,              &
                             grid % dx, grid % dy, grid % dz,  &
-                            sd_advection, blend) 
+                            adv_scheme, blend) 
     end if
-
-    CAPs = grid % f(s)       * CAPc(material(c1)) &
-         + (1.0-grid % f(s)) * CAPc(material(c2))
 
     ! Compute advection term
     if(ini.eq.1) then
       if(c2.gt.0) then
-        phi % a_o(c1) = phi % a_o(c1)-Flux(s)*phis*CAPs
-        phi % a_o(c2) = phi % a_o(c2)+Flux(s)*phis*CAPs
+        phi % a_o(c1) = phi % a_o(c1)-flux(s)*phis*capacity
+        phi % a_o(c2) = phi % a_o(c2)+flux(s)*phis*capacity
       else
-        phi % a_o(c1) = phi % a_o(c1)-Flux(s)*phis*CAPs
+        phi % a_o(c1) = phi % a_o(c1)-flux(s)*phis*capacity
       endif
     end if
     if(c2.gt.0) then
-      phi % a(c1) = phi % a(c1)-Flux(s)*phis*CAPs
-      phi % a(c2) = phi % a(c2)+Flux(s)*phis*CAPs
+      phi % a(c1) = phi % a(c1)-flux(s)*phis*capacity
+      phi % a(c2) = phi % a(c2)+flux(s)*phis*capacity
     else
-      phi % a(c1) = phi % a(c1)-Flux(s)*phis*CAPs
+      phi % a(c1) = phi % a(c1)-flux(s)*phis*capacity
     endif
 
     ! Store upwinded part of the advection term in "c"
     if(coupling .ne. 'PROJECTION') then
-      if(Flux(s).lt.0) then   ! from c2 to c1
-        phi % c(c1) = phi % c(c1)-Flux(s)*phi % n(c2) * CAPs
+      if(flux(s).lt.0) then   ! from c2 to c1
+        phi % c(c1) = phi % c(c1)-flux(s)*phi % n(c2) * capacity
         if(c2.gt.0) then
-          phi % c(c2) = phi % c(c2)+Flux(s)*phi % n(c2) * CAPs
+          phi % c(c2) = phi % c(c2)+flux(s)*phi % n(c2) * capacity
         endif
       else
-        phi % c(c1) = phi % c(c1)-Flux(s)*phi % n(c1) * CAPs
+        phi % c(c1) = phi % c(c1)-flux(s)*phi % n(c1) * capacity
         if(c2.gt.0) then
-          phi % c(c2) = phi % c(c2)+Flux(s)*phi % n(c1) * CAPs
+          phi % c(c2) = phi % c(c2)+flux(s)*phi % n(c1) * capacity
         endif
       end if
     end if  
@@ -220,21 +212,21 @@
   !-----------------------------!
    
   ! Adams-Bashforth scheeme for advection fluxes
-  if(td_advection == 'ADAMS_BASHFORTH') then
+  if(td_advection == ADAMS_BASHFORTH) then
     do c = 1, grid % n_cells
       b(c) = b(c) + 1.5*phi % a_o(c) - 0.5*phi % a_oo(c) - phi % c(c)
     end do
   endif
 
   ! Crank-Nicholson scheeme for advection fluxes
-  if(td_advection == 'CRANK_NICOLSON') then
+  if(td_advection == CRANK_NICOLSON) then
     do c = 1, grid % n_cells
       b(c) = b(c) + 0.5 * (phi % a(c) + phi % a_o(c)) - phi % c(c)
     end do
   endif
 
   ! Fully implicit treatment of advection fluxes
-  if(td_advection == 'FULLY_IMPLICIT') then
+  if(td_advection == FULLY_IMPLICIT) then
     do c = 1, grid % n_cells
       b(c) = b(c) + phi % a(c) - phi % c(c)
     end do
@@ -261,31 +253,29 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
      
-    CAPs = grid % f(s)       * CAPc(material(c1)) &
-         + (1.0-grid % f(s)) * CAPc(material(c2))
-
-    if(turbulence_model/='LES'.or.turbulence_model/='DNS') then
-      Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(VISc+1.0e-12)) - 0.0441*                  &
-            (vis_t(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(vis_t(c1)+1.0e-12) ))) )
-      Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(VISc+1.0e-12)) - 0.0441*                  &
-           (vis_t(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(vis_t(c2)+1.0e-12) ))) )
-      Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
+    if(turbulence_model /= LES .or.  &
+       turbulence_model /= DNS) then
+      Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(viscosity+1.0e-12)) - 0.0441*                  &
+            (vis_t(c1)/(viscosity+1.0e-12))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c1)+1.0e-12) ))) )
+      Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(viscosity+1.0e-12)) - 0.0441*                  &
+           (vis_t(c2)/(viscosity+1.0e-12))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c2)+1.0e-12) ))) )
+      Prt = fw(s)*Prt1 + (1.0-fw(s))*Prt2
     end if
 
     ! Gradients on the cell face 
     if(c2 > 0 .or.  &
        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       if(material(c1) == material(c2)) then
-        phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
-        phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
-        phizS1 = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
+        phixS1 = fw(s)*phi_x(c1) + (1.0-fw(s))*phi_x(c2) 
+        phiyS1 = fw(s)*phi_y(c1) + (1.0-fw(s))*phi_y(c2)
+        phizS1 = fw(s)*phi_z(c1) + (1.0-fw(s))*phi_z(c2)
         phixS2 = phixS1 
         phiyS2 = phiyS1 
         phizS2 = phizS1 
-        CONeff1 =      grid % f(s) * ( CONc(material(c1))                 &
-                                     + CAPc(material(c1))*vis_t(c1)/Prt )  &
-                + (1.-grid % f(s)) * ( CONc(material(c2))                 &
-                                     + CAPc(material(c2))*vis_t(c2)/Prt )
+        CONeff1 =      grid % f(s) * ( conductivity                 &
+                                     + capacity*vis_t(c1)/Prt )  &
+                + (1.-grid % f(s)) * ( conductivity                 &
+                                     + capacity*vis_t(c2)/Prt )
         CONeff2 = CONeff1 
       else 
         phixS1 = phi_x(c1) 
@@ -294,10 +284,10 @@
         phixS2 = phi_x(c2) 
         phiyS2 = phi_y(c2) 
         phizS2 = phi_z(c2) 
-        CONeff1 =   CONc(material(c1))                 &
-                  + CAPc(material(c1))*vis_t(c1)/Prt   
-        CONeff2 =   CONc(material(c2))                 &
-                  + CAPc(material(c2))*vis_t(c2)/Prt   
+        CONeff1 =   conductivity                 &
+                  + capacity*vis_t(c1)/Prt   
+        CONeff2 =   conductivity                 &
+                  + capacity*vis_t(c2)/Prt   
       end if
     else
       phixS1 = phi_x(c1) 
@@ -306,16 +296,16 @@
       phixS2 = phixS1 
       phiyS2 = phiyS1 
       phizS2 = phizS1 
-      CONeff1 =   CONc(material(c1))                 &
-                + CAPc(material(c1))*vis_t(c1)/Prt   
+      CONeff1 =   conductivity                 &
+                + capacity*vis_t(c1)/Prt   
       CONeff2 = CONeff1 
     endif
 
 
-    if(turbulence_model == 'ZETA'      .or.  &
-       turbulence_model == 'K_EPS_VV'  .or.  &
-       turbulence_model == 'K_EPS'     .or.  &
-       turbulence_model == 'HYB_ZETA') then
+    if(turbulence_model == K_EPS_ZETA_F  .or.  &
+       turbulence_model == K_EPS_V2      .or.  &
+       turbulence_model == K_EPS         .or.  &
+       turbulence_model == HYBRID_K_EPS_ZETA_F) then
       if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
@@ -334,11 +324,11 @@
                      + phizS2*grid % sz(s))
 
     ! Implicit diffusive flux
-    FUim1 = CONeff1*Scoef(s)*    &
+    FUim1 = CONeff1*f_coef(s)*    &
             (  phixS1*grid % dx(s)      &
              + phiyS1*grid % dy(s)      &
              + phizS1*grid % dz(s) )
-    FUim2 = CONeff2*Scoef(s)*    &
+    FUim2 = CONeff2*f_coef(s)*    &
             (  phixS2*grid % dx(s)      &
              + phiyS2*grid % dy(s)      &
              + phizS2*grid % dz(s) )
@@ -348,25 +338,25 @@
       if(c2.gt.0) then
         if(material(c1) == material(c2)) then
           phi % d_o(c1) = phi % d_o(c1)  &
-                       + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1)) 
+                       + CONeff1*f_coef(s)*(phi % n(c2) - phi % n(c1)) 
           phi % d_o(c2) = phi % d_o(c2)  &
-                       - CONeff2*Scoef(s)*(phi % n(c2) - phi % n(c1))   
+                       - CONeff2*f_coef(s)*(phi % n(c2) - phi % n(c1))   
         else
           phi % d_o(c1) = phi % d_o(c1)            &
-                       + 2.*CONc(material(c1))   &
-                       * Scoef(s) * (phi_face(s) - phi % n(c1)) 
+                       + 2.*conductivity   &
+                       * f_coef(s) * (phi_face(s) - phi % n(c1)) 
           phi % d_o(c2) = phi % d_o(c2)            &
-                       - 2.*CONc(material(c2))   &
-                       * Scoef(s)*(phi % n(c2) - phi_face(s))   
+                       - 2.*conductivity   &
+                       * f_coef(s)*(phi % n(c2) - phi_face(s))   
         end if
       else
         if(Grid_Mod_Bnd_Cond_Type(grid,c2).ne.SYMMETRY) then 
           if(material(c1) == material(c2)) then
             phi % d_o(c1) = phi % d_o(c1)  &
-                + CONeff1*Scoef(s)*(phi % n(c2) - phi % n(c1))   
+                + CONeff1*f_coef(s)*(phi % n(c2) - phi % n(c1))   
           else
             phi % d_o(c1) = phi % d_o(c1)  &
-                + 2.*CONc(material(c1))*Scoef(s)*(phi_face(s)-phi % n(c1)) 
+                + 2.*conductivity*f_coef(s)*(phi_face(s)-phi % n(c1)) 
           end if
         end if
       end if 
@@ -379,32 +369,32 @@
     end if 
 
     ! Calculate the coefficients for the sysytem matrix
-    if( (td_diffusion == 'CRANK_NICOLSON') .or.  &
-        (td_diffusion == 'FULLY_IMPLICIT') ) then
+    if( (td_diffusion == CRANK_NICOLSON) .or.  &
+        (td_diffusion == FULLY_IMPLICIT) ) then
 
-      if(td_diffusion == 'CRANK_NICOLSON') then 
+      if(td_diffusion == CRANK_NICOLSON) then 
         if(material(c1) == material(c2)) then
-          A12 = .5*CONeff1*Scoef(s)  
-          A21 = .5*CONeff2*Scoef(s)  
+          A12 = .5*CONeff1*f_coef(s)  
+          A21 = .5*CONeff2*f_coef(s)  
         else
-          A12 = CONc(material(c1))*Scoef(s)  
-          A21 = CONc(material(c2))*Scoef(s)  
+          A12 = conductivity*f_coef(s)  
+          A21 = conductivity*f_coef(s)  
         end if
       end if
 
-      if(td_diffusion == 'FULLY_IMPLICIT') then 
+      if(td_diffusion == FULLY_IMPLICIT) then 
         if(material(c1) == material(c2)) then
-          A12 = CONeff1*Scoef(s)  
-          A21 = CONeff2*Scoef(s)  
+          A12 = CONeff1*f_coef(s)  
+          A21 = CONeff2*f_coef(s)  
         else
-          A12 = 2.*CONc(material(c1))*Scoef(s)  
-          A21 = 2.*CONc(material(c2))*Scoef(s)  
+          A12 = 2.*conductivity*f_coef(s)  
+          A21 = 2.*conductivity*f_coef(s)  
         end if
       end if
 
       if(coupling .ne. 'PROJECTION') then
-        A12 = A12  - min(Flux(s), 0.0) * CAPs
-        A21 = A21  + max(Flux(s), 0.0) * CAPs
+        A12 = A12  - min(flux(s), 0.0) * capacity
+        A21 = A21  + max(flux(s), 0.0) * capacity
       endif
                 
       ! Fill the system matrix
@@ -458,14 +448,14 @@
   !-----------------------------!
    
   ! Adams-Bashfort scheeme for diffusion fluxes
-  if(td_diffusion == 'ADAMS_BASHFORTH') then 
+  if(td_diffusion == ADAMS_BASHFORTH) then 
     do c = 1, grid % n_cells
       b(c)  = b(c) + 1.5*phi % d_o(c) - 0.5*phi % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
-  if(td_diffusion == 'CRANK_NICOLSON') then 
+  if(td_diffusion == CRANK_NICOLSON) then 
     do c = 1, grid % n_cells
       b(c)  = b(c) + 0.5*phi % d_o(c)
     end do  
@@ -475,14 +465,14 @@
   ! is handled via the linear system of equations 
 
   ! Adams-Bashfort scheeme for cross diffusion 
-  if(td_cross_diff == 'ADAMS_BASHFORTH') then
+  if(td_cross_diff == ADAMS_BASHFORTH) then
     do c = 1, grid % n_cells
       b(c)  = b(c) + 1.5*phi % c_o(c) - 0.5*phi % c_oo(c)
     end do 
   end if
 
   ! Crank-Nicholson scheme for cross difusive terms
-  if(td_cross_diff == 'CRANK_NICOLSON') then
+  if(td_cross_diff == CRANK_NICOLSON) then
     do c = 1, grid % n_cells
       if( (phi % c(c)+phi % c_o(c))  >= 0) then
         b(c)  = b(c) + 0.5*(phi % c(c) + phi % c_o(c))
@@ -494,7 +484,7 @@
   end if
  
   ! Fully implicit treatment for cross difusive terms
-  if(td_cross_diff == 'FULLY_IMPLICIT') then
+  if(td_cross_diff == FULLY_IMPLICIT) then
     do c = 1, grid % n_cells
       if(phi % c(c) >= 0) then
         b(c)  = b(c) + phi % c(c)
@@ -512,25 +502,26 @@
   !--------------------!
 
   ! Two time levels; Linear interpolation
-  if(td_inertia == 'LINEAR') then
+  if(td_inertia == LINEAR) then
     do c = 1, grid % n_cells
-      A0 = CAPc(material(c)) * DENc(material(c)) * grid % vol(c)/dt
+      A0 = capacity * density * grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + A0
       b(c)  = b(c) + A0*phi % o(c)
     end do
   end if
 
   ! Three time levels; parabolic interpolation
-  if(td_inertia == 'PARABOLIC') then
+  if(td_inertia == PARABOLIC) then
     do c = 1, grid % n_cells
-      A0 = CAPc(material(c)) * DENc(material(c)) * grid % vol(c)/dt
+      A0 = capacity * density * grid % vol(c)/dt
       A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
       b(c)  = b(c) + 2.0 * A0 * phi % o(c) - 0.5 * A0 * phi % oo(c)
     end do
   end if
 
-  if(turbulence_model=='EBM'.or.turbulence_model=='HJ') then
-    if(turbulence_model_variant /= 'HYBRID') then
+  if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+     turbulence_model == HANJALIC_JAKIRLIC) then
+    if(turbulence_model_variant /= HYBRID) then
       do c = 1, grid % n_cells
         u1uj_phij(c) = -0.22*Tsc(c) *&
                    (uu%n(c)*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c))
@@ -556,22 +547,22 @@
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
 
-        Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(VISc+1.0e-12)) - 0.0441*                  &
-              (vis_t(c1)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(vis_t(c1)+1.0e-12) ))) )
-        Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(VISc+1.0e-12)) - 0.0441*                  &
-              (vis_t(c2)/(VISc+1.0e-12))**2.0*(1.0 - exp(-5.165*( VISc/(vis_t(c2)+1.0e-12) ))) )
+        Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(viscosity+1.0e-12)) - 0.0441*                  &
+              (vis_t(c1)/(viscosity+1.0e-12))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c1)+1.0e-12) ))) )
+        Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(viscosity+1.0e-12)) - 0.0441*                  &
+              (vis_t(c2)/(viscosity+1.0e-12))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c2)+1.0e-12) ))) )
 
-        Prt = fF(s)*Prt1 + (1.0-fF(s))*Prt2
+        Prt = fw(s)*Prt1 + (1.0-fw(s))*Prt2
         if(c2 > 0 .or.  &
            c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
-          phixS1 = fF(s)*phi_x(c1) + (1.0-fF(s))*phi_x(c2) 
-          phiyS1 = fF(s)*phi_y(c1) + (1.0-fF(s))*phi_y(c2)
-          phizS1 = fF(s)*phi_z(c1) + (1.0-fF(s))*phi_z(c2)
+          phixS1 = fw(s)*phi_x(c1) + (1.0-fw(s))*phi_x(c2) 
+          phiyS1 = fw(s)*phi_y(c1) + (1.0-fw(s))*phi_y(c2)
+          phizS1 = fw(s)*phi_z(c1) + (1.0-fw(s))*phi_z(c2)
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 
-          CONeff1 =       grid % f(s)  * (CAPc(material(c1))*vis_t(c1)/Prt )  &
-                  + (1. - grid % f(s)) * (CAPc(material(c2))*vis_t(c2)/Prt )
+          CONeff1 =       grid % f(s)  * (capacity*vis_t(c1)/Prt )  &
+                  + (1. - grid % f(s)) * (capacity*vis_t(c2)/Prt )
           CONeff2 = CONeff1 
         else
           phixS1 = phi_x(c1) 
@@ -580,7 +571,7 @@
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 
-          CONeff1 = CAPc(material(c1))*vis_t(c1)/Prt   
+          CONeff1 = capacity*vis_t(c1)/Prt   
           CONeff2 = CONeff1 
         endif
 
@@ -593,18 +584,18 @@
                            + phizS2*grid % sz(s))
 
         ! Implicit diffusive flux
-        FUim1 = CONeff1*Scoef(s)*    &
+        FUim1 = CONeff1*f_coef(s)*    &
                 (  phixS1*grid % dx(s)      &
                  + phiyS1*grid % dy(s)      &
                  + phizS1*grid % dz(s) )
-        FUim2 = CONeff2*Scoef(s)*    &
+        FUim2 = CONeff2*f_coef(s)*    &
                 (  phixS2*grid % dx(s)      &
                  + phiyS2*grid % dy(s)      &
                  + phizS2*grid % dz(s) )
 
-        b(c1) = b(c1) - CONeff1*(phi%n(c2)-phi%n(c1))*Scoef(s)- FUex1 + FUim1
+        b(c1) = b(c1) - CONeff1*(phi%n(c2)-phi%n(c1))*f_coef(s)- FUex1 + FUim1
         if(c2  > 0) then
-         b(c2) = b(c2) + CONeff1*(phi%n(c2)-phi%n(c1))*Scoef(s)+ FUex2 - FUim2
+         b(c2) = b(c2) + CONeff1*(phi%n(c2)-phi%n(c1))*f_coef(s)+ FUex2 - FUim2
         end if
       end do
     end if  
@@ -643,9 +634,9 @@
   if(coupling == 'SIMPLE')     miter =  5
 
   niter=miter
-  call bicg(A, phi % n, b, precond, niter, tol, res(var), error)
+  call bicg(A, phi % n, b, precond, niter, tol, phi % res, error)
 
-  call Info_Mod_Iter_Fill_At(2, 4, phi % name, niter, res(var))
+  call Info_Mod_Iter_Fill_At(2, 4, phi % name, niter, phi % res)
 
   call Exchange(grid, phi % n)
 

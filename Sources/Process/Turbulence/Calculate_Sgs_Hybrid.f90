@@ -1,11 +1,11 @@
 !==============================================================================!
-  subroutine Compute_Sgs_Hybrid(grid)
+  subroutine Calculate_Sgs_Hybrid(grid)
 !------------------------------------------------------------------------------!
 !   Calculates SGS stresses and turbulent viscosity for 'LES'.                   !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -29,11 +29,11 @@
 !==============================================================================!
 
   do c = 1, grid % n_cells
-    lf = grid % vol(c)**ONE_THIRD    
-    vis_t_sgs(c) = DENc(material(c))      &
+    lf = grid % vol(c) ** ONE_THIRD    
+    vis_t_sgs(c) = density                &
                  * (lf*lf)                &          ! delta^2 
-                 * Cdyn(c)                &          ! Cdynamic   
-                 * Shear(c)      
+                 * c_dyn(c)               &          ! c_dynamic   
+                 * shear(c)      
   end do
 
   call Exchange(grid, vis_t_sgs)

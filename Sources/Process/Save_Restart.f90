@@ -4,7 +4,7 @@
 !   Writes restart files. name.restart                                         !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
-  use pro_mod
+  use Flow_Mod
   use les_mod
   use par_mod, only: this_proc
   use rans_mod
@@ -20,12 +20,9 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, s, m
   character(len=80) :: name_out, answer
-  character(len=80) :: heat_transfer
-  character(len=80) :: turbulence_model
-  character(len=80) :: turbulence_model_variant
 !==============================================================================!
 
-  if(PRESENT(name_aut)) then
+  if(present(name_aut)) then
     ! Save the name
     answer = problem_name
     problem_name = name_aut
@@ -44,10 +41,6 @@
     answer = problem_name
     problem_name = name_out
   end if
-
-  call Control_Mod_Heat_Transfer(heat_transfer)
-  call Control_Mod_Turbulence_Model(turbulence_model)
-  call Control_Mod_Turbulence_Model_Variant(turbulence_model_variant)
 
   !-------------------------!
   !   Create restart file   !
@@ -125,9 +118,9 @@
   end do
 
   ! Fluxes 
-  write(9) (Flux(s), s=1,grid % n_faces)
+  write(9) (flux(s), s=1,grid % n_faces)
 
-  if(heat_transfer == 'YES') then
+  if(heat_transfer == YES) then
     write(9) (T % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (T % q(c),    c = -grid % n_bnd_cells,-1)
     write(9) (T % o(c),    c = 1, grid % n_cells)
@@ -138,11 +131,11 @@
     write(9) (T % c_o(c),  c = 1, grid % n_cells)
   end if
 
-  if(turbulence_model == 'K_EPS'    .or.  &
-     turbulence_model == 'ZETA'     .or.  &
-     turbulence_model == 'K_EPS_VV' .or.  &
-     turbulence_model == 'HYB_ZETA' .or.  &
-     turbulence_model == 'HYB_PITM') then 
+  if(turbulence_model == K_EPS    .or.  &
+     turbulence_model == K_EPS_ZETA_F     .or.  &
+     turbulence_model == K_EPS_V2 .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
+     turbulence_model == HYBRID_PITM) then 
     write(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (kin % o(c),    c = 1, grid % n_cells)
     write(9) (kin % a(c),    c = 1, grid % n_cells)
@@ -163,19 +156,19 @@
     write(9) (Uf(c),       c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (Ynd(c),      c = -grid % n_bnd_cells,grid % n_cells) 
     write(9) (viswall(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (TauWall(c),  c= 1,grid % n_cells)
+    write(9) (tau_wall(c),  c= 1,grid % n_cells)
   end if
 
-  if(turbulence_model == 'K_EPS_VV' .or.  &
-     turbulence_model == 'ZETA'     .or.  &
-     turbulence_model == 'HYB_ZETA') then
-    write(9) (v_2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (v_2 % o(c),    c = 1, grid % n_cells)
-    write(9) (v_2 % a(c),    c = 1, grid % n_cells)
-    write(9) (v_2 % a_o(c),  c = 1, grid % n_cells)
-    write(9) (v_2 % d_o(c),  c = 1, grid % n_cells)
-    write(9) (v_2 % c(c),    c = 1, grid % n_cells)
-    write(9) (v_2 % c_o(c),  c = 1, grid % n_cells)
+  if(turbulence_model == K_EPS_V2 .or.  &
+     turbulence_model == K_EPS_ZETA_F     .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
+    write(9) (v2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (v2 % o(c),    c = 1, grid % n_cells)
+    write(9) (v2 % a(c),    c = 1, grid % n_cells)
+    write(9) (v2 % a_o(c),  c = 1, grid % n_cells)
+    write(9) (v2 % d_o(c),  c = 1, grid % n_cells)
+    write(9) (v2 % c(c),    c = 1, grid % n_cells)
+    write(9) (v2 % c_o(c),  c = 1, grid % n_cells)
 
     write(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (f22 % o(c),    c = 1, grid % n_cells)
@@ -187,8 +180,8 @@
     write(9) (Lsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if 
 
-  if(turbulence_model == 'EBM' .or.  &
-     turbulence_model == 'HJ') then
+  if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+     turbulence_model == HANJALIC_JAKIRLIC) then
     write(9) (uu % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (uu % o(c),    c = 1, grid % n_cells)
     write(9) (uu % a(c),    c = 1, grid % n_cells)
@@ -249,7 +242,7 @@
     write(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (vis_t(c),      c = -grid % n_bnd_cells,grid % n_cells)
 
-    if(turbulence_model == 'EBM') then
+    if(turbulence_model == REYNOLDS_STRESS_MODEL) then
       write(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
       write(9) (f22 % o(c),    c = 1, grid % n_cells)
       write(9) (f22 % d_o(c),  c = 1, grid % n_cells)
@@ -257,7 +250,7 @@
       write(9) (f22 % c_o(c),  c = 1, grid % n_cells)
     end if
 
-    if(turbulence_model_variant == 'URANS') then
+    if(turbulence_model_variant == URANS) then
 !     write(9) (VAR10x(c),  c = -grid % n_bnd_cells,grid % n_cells)
 !     write(9) (VAR10y(c),  c = -grid % n_bnd_cells,grid % n_cells)
 !     write(9) (VAR10z(c),  c = -grid % n_bnd_cells,grid % n_cells)
@@ -267,8 +260,8 @@
     end if  
   end if
 
-  if(turbulence_model == 'SPA_ALL' .or.  &
-     turbulence_model == 'DES_SPA') then
+  if(turbulence_model == SPALART_ALLMARAS .or.  &
+     turbulence_model == DES_SPALART) then
     write(9) (vis % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (vis % o(c),    c = 1, grid % n_cells)
     write(9) (vis % a(c),    c = 1, grid % n_cells)
@@ -280,15 +273,15 @@
     write(9) (Vort(c),       c = -grid % n_bnd_cells,grid % n_cells)
   end if
 
-  if(turbulence_model/='DNS')  &
+  if(turbulence_model /= DNS)  &
     write(9) (vis_t(c), c = -grid % n_bnd_cells,grid % n_cells)
 
-  if(turbulence_model         == 'DNS'      .or.  &
-     turbulence_model         == 'LES'      .or.  &
-     turbulence_model         == 'HYB_ZETA' .or.  &
-     turbulence_model         == 'HYB_PITM' .or.  &
-     turbulence_model         == 'DES_SPA'  .or.  &
-     turbulence_model_variant == 'URANS') then
+  if(turbulence_model         == DNS                 .or.  &
+     turbulence_model         == LES                 .or.  &
+     turbulence_model         == HYBRID_K_EPS_ZETA_F .or.  &
+     turbulence_model         == HYBRID_PITM         .or.  &
+     turbulence_model         == DES_SPALART         .or.  &
+     turbulence_model_variant == URANS) then
     write(9) (U % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (V % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (W % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
@@ -300,28 +293,28 @@
     write(9) (vw % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (P % mean(c),  c = 1, grid % n_cells)
 
-    if(heat_transfer == 'YES') then
-      write(9) (T % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (TT % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (uT % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (vT % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
-      write(9) (wT % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
+    if(heat_transfer == YES) then
+      write(9) (t % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
+      write(9) (tt % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
+      write(9) (ut % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
+      write(9) (vt % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
+      write(9) (wt % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
     end if
   end if
 
-  if(turbulence_model == 'LES') then
-    write(9) (vis_t_mean(c), c = 1, grid % n_cells)
-    write(9) (near(c),   c = -grid % n_bnd_cells,grid % n_cells)
-    if(turbulence_model_variant == 'DYNAMIC')  &
-      write(9) (Cdyn_mean(c), c = 1, grid % n_cells)
+  if(turbulence_model == LES) then
+    write(9) (vis_t_mean(c),        c = 1, grid % n_cells)
+    write(9) (nearest_wall_cell(c), c = 1, grid % n_cells)
+    if(turbulence_model_variant == DYNAMIC)  &
+      write(9) (c_dyn_mean(c), c = 1, grid % n_cells)
   end if
  
-  if(turbulence_model == 'HYB_PITM' .or.  &
-     turbulence_model == 'DES_SPA') then
+  if(turbulence_model == HYBRID_PITM .or.  &
+     turbulence_model == DES_SPALART) then
     write(9) (vis_t_mean(c), c = 1, grid % n_cells)
   end if
 
-  if(turbulence_model == 'HYB_ZETA') then
+  if(turbulence_model == HYBRID_K_EPS_ZETA_F) then
     write(9) (vis_t_mean(c), c = 1, grid % n_cells)
     write(9) (vis_t_sgs(c),  c = 1, grid % n_cells)
     write(9) (vis_t_eff(c),  c = 1, grid % n_cells)

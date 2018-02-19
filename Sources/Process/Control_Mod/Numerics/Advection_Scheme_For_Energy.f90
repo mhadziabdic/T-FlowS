@@ -1,32 +1,50 @@
 !==============================================================================!
-  subroutine Control_Mod_Advection_Scheme_For_Energy(val, verbose)
+  subroutine Control_Mod_Advection_Scheme_For_Energy(scheme, verbose)
+!------------------------------------------------------------------------------!
+!   Reading turbulence model from the control file.                            !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
+  use Numerics_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  character(len=80) :: val
+  integer           :: scheme
   logical, optional :: verbose
+!-----------------------------------[Locals]-----------------------------------!
+  character(len=80) :: val
 !==============================================================================!
 
   call Control_Mod_Read_Char_Item('ADVECTION_SCHEME_FOR_ENERGY', 'upwind',  &
                                    val, verbose)
   call To_Upper_Case(val)
 
-  if(val .ne. 'YES'       .and.  &
-     val .ne. 'NO'        .and.  &
-     val .ne. 'UDS'       .and.  &
-     val .ne. 'CDS'       .and.  &
-     val .ne. 'LUDS'      .and.  &
-     val .ne. 'QUICK'     .and.  &
-     val .ne. 'SMART'     .and.  &
-     val .ne. 'GAMMA'     .and.  &
-     val .ne. 'MINMOD'    .and.  &
-     val .ne. 'SUPERBEE'  .and.  &
-     val .ne. 'AVL_SMART') then
+  select case(val)
 
-    print *, '# Unknown advection scheme for energy: ', trim(val)
-    print *, '# Exiting!'
-    stop 
+    case('UPWIND')                 
+      scheme = UPWIND
+    case('CENTRAL')              
+      scheme = CENTRAL
+    case('LUDS')          
+      scheme = LUDS
+    case('QUICK')   
+      scheme = QUICK
+    case('SMART')           
+      scheme = SMART
+    case('GAMMA')                   
+      scheme = GAMMA
+    case('MINMOD')                   
+      scheme = MINMOD
+    case('BLENDED')           
+      scheme = BLENDED
+    case('SUPERBEE')     
+      scheme = SUPERBEE
+    case('AVL_SMART')     
+      scheme = AVL_SMART
 
-  end if
+    case default
+      print *, '# Exiting!'
+      stop 
+
+  end select
 
   end subroutine

@@ -209,13 +209,13 @@ if [ $CGNS_TOOLS == true ]; then
 
 	# make links to TCL and TK where cgns searches for them
 	cd $INSTALL_DIR
-	rm -rf TCL/unix TCL/generic TK/unix TK/generic
+	rm -rf TCL/unix TCL/generic TK/unix TK/generic TK/library
 
-	ln -s -r -f TCL/lib     TCL/tmp; mv TCL/tmp TCL/unix
-	ln -s -r -f TCL/include TCL/tmp; mv TCL/tmp TCL/generic
-
-	ln -s -r -f TK/lib      TK/tmp;  mv TK/tmp  TK/unix
-	ln -s -r -f TK/include  TK/tmp;  mv TK/tmp  TK/generic
+	ln -s -r -f TCL/lib        TCL/tmp; mv TCL/tmp TCL/unix
+	ln -s -r -f TCL/include    TCL/tmp; mv TCL/tmp TCL/generic
+	ln -s -r -f TK/lib         TK/tmp;  mv TK/tmp  TK/unix
+	ln -s -r -f TK/include     TK/tmp;  mv TK/tmp  TK/generic
+    ln -s -r -f TK/lib/tk8.6/  TK/tmp;  mv TK/tmp  TK/library
 
 	# configure
 	cd $SRC_DIR/CGNS/; rm -rf .git; cd src/
@@ -323,7 +323,8 @@ function build_cgns_lib_3.2.1 {
 	--disable-shared \
 	--disable-debug \
 	--with-zlib \
-	--enable-parallel
+	--enable-parallel \
+	--with-mpi=$INSTALL_DIR/MPICH/bin/
 
 	# build
 	make
@@ -339,13 +340,13 @@ if [ $CGNS_TOOLS == true ]; then
 
 	# make links to TCL and TK where cgns searches for them
 	cd $INSTALL_DIR
-	rm -rf TCL/unix TCL/generic TK/unix TK/generic
+	rm -rf TCL/unix TCL/generic TK/unix TK/generic TK/library
 
-	ln -s -r -f TCL/lib     TCL/tmp; mv TCL/tmp TCL/unix
-	ln -s -r -f TCL/include TCL/tmp; mv TCL/tmp TCL/generic
-
-	ln -s -r -f TK/lib      TK/tmp;  mv TK/tmp  TK/unix
-	ln -s -r -f TK/include  TK/tmp;  mv TK/tmp  TK/generic
+	ln -s -r -f TCL/lib        TCL/tmp; mv TCL/tmp TCL/unix
+	ln -s -r -f TCL/include    TCL/tmp; mv TCL/tmp TCL/generic
+	ln -s -r -f TK/lib         TK/tmp;  mv TK/tmp  TK/unix
+	ln -s -r -f TK/include     TK/tmp;  mv TK/tmp  TK/generic
+    ln -s -r -f TK/lib/tk8.6/  TK/tmp;  mv TK/tmp  TK/library
 
 	# configure
 	cd $SRC_DIR/CGNS/; rm -rf .git; cd src/

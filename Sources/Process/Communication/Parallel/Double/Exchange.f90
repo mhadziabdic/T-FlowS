@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine Exchange(grid, phi) 
+  subroutine Exchange(grid, phi)
 !----------------------------------------------------------------------!
 !   Exchanges the values between the processors.                       !
 !----------------------------------------------------------------------!
@@ -21,38 +21,38 @@
 
 !///// fill the buffers with new values
   do sub=1,n_proc
-    if( NBBe(sub)  <=  NBBs(sub) ) then  
+    if( NBBe(sub)  <=  NBBs(sub) ) then
       do c2=NBBs(sub),NBBe(sub),-1
         c1 = BufInd(c2)
         phi(c2) = phi(c1)
       end do
     end if
-  end do   
+  end do
 
 !///// exchange the values
   do sub=1,n_proc
-    if( NBBe(sub)  <=  NBBs(sub) ) then  
+    if( NBBe(sub)  <=  NBBs(sub) ) then
 
       length = NBBs(sub) - NBBe(sub) + 1
       stag = (n_proc)*this_proc + sub    ! tag for sending
       rtag = (n_proc)*sub + this_proc    ! tag for receivinging
 
 !===============================================
-      call MPI_SENDRECV_REPLACE & 
+      call MPI_SENDRECV_REPLACE &
 !-------------------------------------+---------
-             (phi(NBBe(sub)),   & ! buffer  
-              length,           & ! length   
-              MPI_DOUBLE_PRECISION,       & ! datatype  
+             (phi(NBBe(sub)),   & ! buffer
+              length,           & ! length
+              MPI_DOUBLE_PRECISION,       & ! datatype
 !-------------------------------------+---------
-              (sub-1),          & ! dest,      
-              stag,             & ! sendtag,    
+              (sub-1),          & ! dest,
+              stag,             & ! sendtag,
 !-------------------------------------+---------
-              (sub-1),          & ! source,      
-              rtag,             & ! recvtag,      
+              (sub-1),          & ! source,
+              rtag,             & ! recvtag,
 !-------------------------------------+---------
               MPI_COMM_WORLD,   &
               status,           &
-              error) 
+              error)
 !===============================================
 
     end if  !  NBBe(sub)  /=  NBBs(sub)

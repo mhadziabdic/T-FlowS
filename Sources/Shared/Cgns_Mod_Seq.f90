@@ -47,18 +47,10 @@
   integer           :: file_mode
   logical           :: verbose = .true.
 
-  ! Field section
-  !type Cgns_Field_Type
-  !  !character(len=80) :: name
-  !  !integer           :: field_type ! RealDouble & LongInt?
-  !end type
-
   ! Solution section
   type Cgns_Solution_Type
     character(len=80)                  :: name
     integer                            :: sol_type
-    !integer                            :: n_fields
-    !type(Cgns_Field_Type), allocatable :: field(:)
   end type
 
   ! Element section
@@ -127,7 +119,6 @@
 
   contains
 
-  ! Common
   include 'Cgns_Mod/Initialize_Counters.f90'
 
   ! Seq only
@@ -145,40 +136,13 @@
   include 'Cgns_Mod/Read_Coordinate_Array.f90'
   include 'Cgns_Mod/Read_Section_Connections.f90'
   include 'Cgns_Mod/Merge_Nodes.f90'
-
-  ! Par only
-  include 'Cgns_Mod/Get_Arrays_Dimensions_Par.f90'
-
-  ! Par & Seq pairs
-
   include 'Cgns_Mod/Open_File_Seq.f90'
-  include 'Cgns_Mod/Open_File_Par.f90'
-
   include 'Cgns_Mod/Close_File_Seq.f90'
-  include 'Cgns_Mod/Close_File_Par.f90'
-
   include 'Cgns_Mod/Write_Base_Info_Seq.f90'
-  include 'Cgns_Mod/Write_Base_Info_Par.f90'
-
   include 'Cgns_Mod/Write_Block_Info_Seq.f90'
-  include 'Cgns_Mod/Write_Block_Info_Par.f90'
-
   include 'Cgns_Mod/Write_Coordinate_Array_Seq.f90'
-  include 'Cgns_Mod/Write_Coordinate_Array_Par.f90'
-
   include 'Cgns_Mod/Write_Section_Connections_Seq.f90'
-  include 'Cgns_Mod/Write_Section_Connections_Par.f90'
-
   include 'Cgns_Mod/Write_Solution_Info_Seq.f90'
-  include 'Cgns_Mod/Write_Solution_Info_Par.f90'
-
   include 'Cgns_Mod/Write_Field_Seq.f90'
-  include 'Cgns_Mod/Write_Field_Par.f90'
 
-
-  ! move this two from Processor to Shared?
-  !include 'Cgns_Mod/Save_Grid_Seq.f90'
-  !include 'Cgns_Mod/Save_Grid_Par.f90'
-  !include 'Cgns_Mod/Add_Fields_To_Grid_Seq.f90'
-  !include 'Cgns_Mod/Add_Fields_To_Grid_Par.f90'
   end module

@@ -83,35 +83,33 @@ ifeq ($(MPI), yes)
 endif
 
 # If compiling with CGNS, add path to include directory
-# (One day, when you want to work with compressed 
-#  files, the following line might still be needed:
-#  CGNS_LIB   += -Wl,--no-as-needed -ldl -lz
 ifeq ($(CGNS_ADF5), yes)
   DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Adf5_Seq/Include
   CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Adf5_Seq/Lib/libcgns.a
-  OPT_COMP   += $(addprefix -I, $(DIR_CGNS_H))
 endif
 
 ifeq ($(CGNS_HDF5), yes)
-  DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Include
-  CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Lib/libcgns.a \
-                ../Libraries/Hdf5_Par/Lib/libhdf5.a                        \
-                -Wl,--no-as-needed -ldl -lz
+  ifeq ($(MPI), yes)
+    DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Include
+    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Lib/libcgns.a \
+                  ../Libraries/Hdf5_Par/Lib/libhdf5.a                        \
+                  -Wl,--no-as-needed -ldl -lz
+  else
+    DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Include
+    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a \
+                  ../Libraries/Hdf5_Seq/Lib/libhdf5.a                        \
+                  -Wl,--no-as-needed -ldl -lz
 
-  #DIR_CGNS_H  = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/cgnslib_3.2.1_linux_64_hdf5_par/include
-  #CGNS_LIB    = /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/cgnslib_3.2.1_linux_64_hdf5_par/lib/libcgns.a \
-                /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/HDF5_par/lib/libhdf5.a                    \
-                /home/l_palkin_e/eclipse/T-FlowS-Egor/Library/CGNS/install_dir/HDF5_par/lib/libhdf5_fortran.a                    \
-                -Wl,--no-as-needed -ldl -lz
-  OPT_COMP   += $(addprefix -I, $(DIR_CGNS_H))
+  endif
 endif
+OPT_COMP   += $(addprefix -I, $(DIR_CGNS_H))
 
 $(info #=================================================================)
 $(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)              )
 $(info #-----------------------------------------------------------------)
 $(info # Usage:                                                          )
 $(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <MPI=yes/no> )
-$(info #        <CGNS_ADF=yes/no> <CGNS_HDF5=yes/no>                     )
+$(info #        <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no>                    )
 $(info #-----------------------------------------------------------------)
 
 #------------------------------------------------------
@@ -124,35 +122,43 @@ $(info #-----------------------------------------------------------------)
 #------------------------------------------------------
 
 # Sources for modules in shared directory
-SRC_MOD =  allp_mod.f90			\
-           all_mod.f90			\
-           par_mod.f90			\
-           Grid_Mod.f90			\
-           Work_Mod.f90			\
-           Tokenizer_Mod.f90    \
+SRC_MOD =  allp_mod.f90      \
+           all_mod.f90       \
+           par_mod.f90       \
+           Grid_Mod.f90      \
+           Work_Mod.f90      \
+           Tokenizer_Mod.f90 \
            Material_Mod.f90
 
 # Sources for modules in the local directory
 SRC_MOD += Constants_Pro_Mod.f90\
-           Info_Mod.f90 		\
-           Bulk_Mod.f90 		\
-           Var_Mod.f90			\
-           Matrix_Mod.f90		\
-           Solvers_Mod.f90		\
-           pro_mod.f90			\
+           Info_Mod.f90         \
+           Bulk_Mod.f90         \
+           Var_Mod.f90          \
+           Matrix_Mod.f90       \
+           Solvers_Mod.f90      \
+           pro_mod.f90          \
            User_Mod.f90
 
 # Sources for modules in sub-directories
-SRC_MOD += Turbulence_Mod.f90	\
-           les_mod.f90			\
-           rans_mod.f90			\
+SRC_MOD += Turbulence_Mod.f90 \
+           les_mod.f90        \
+           rans_mod.f90       \
 
 # Sources for modules in the local directory
-SRC_MOD += Cgns_Mod.f90
-
-# If CGNS is supported, add the right module
 ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
+  # If CGNS is supported, add the right module
   SRC_MOD += Cgns_Mod_Void.f90
+else
+  ifeq ($(MPI), yes)
+    SRC_MOD += Cgns_Mod_Par.f90                    \
+               Cgns_Mod_Save_Grid_Par.f90          \
+               Cgns_Mod_Add_Fields_To_Grid_Par.f90
+  else
+    SRC_MOD += Cgns_Mod_Seq.f90                    \
+               Cgns_Mod_Save_Grid_Seq.f90          \
+               Cgns_Mod_Add_Fields_To_Grid_Seq.f90
+  endif
 endif
 
 # Sources for all functions are obtained by a shell command
@@ -166,13 +172,13 @@ STEP_B  = $(subst $(DIR_COMMUN),,$(STEP_A))  # remove directory name
 SRC_FUN = $(subst /,,$(STEP_B))              # remove last slash 
 
 # Add files from "Shared" directory, but one by one, to avoid clutter 
-SRC_FUN += Distance.f90			 \
-           Load_Geo.f90			 \
-           Name_File.f90		 \
-           Sort_Int_Carry_Int.f90\
-           Sort_Real_Carry_Int.f90\
-           Approx.f90\
-           Swap_Int.f90\
+SRC_FUN += Distance.f90            \
+           Load_Geo.f90            \
+           Name_File.f90           \
+           Sort_Int_Carry_Int.f90  \
+           Sort_Real_Carry_Int.f90 \
+           Approx.f90              \
+           Swap_Int.f90            \
            To_Upper_Case.f90
 
 # ... to allow conditional inclusion of CGNS support
@@ -227,14 +233,14 @@ $(PROGRAM_FILE): $(OBJ)
 #   These should be inserted by 
 #   hand for tuning of dependencies.
 #---------------------------------------
-$(DIR_OBJECT)/all_mod.o:	$(DIR_OBJECT)/allp_mod.o
-$(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Bnd_Cond_Mod.o\
-				$(DIR_OBJECT)/Material_Mod.o
-$(DIR_OBJECT)/Domain_Mod.o:	$(DIR_OBJECT)/Point_Mod.o	\
-  				$(DIR_OBJECT)/Line_Mod.o	            \
-  				$(DIR_OBJECT)/Block_Mod.o	            \
-  				$(DIR_OBJECT)/Region_Mod.o
-$(DIR_OBJECT)/Cgns_Mod.o:	$(DIR_OBJECT)/Grid_Mod.o
+$(DIR_OBJECT)/all_mod.o:    $(DIR_OBJECT)/allp_mod.o
+$(DIR_OBJECT)/Grid_Mod.o:   $(DIR_OBJECT)/Bnd_Cond_Mod.o \
+                            $(DIR_OBJECT)/Material_Mod.o
+$(DIR_OBJECT)/Domain_Mod.o: $(DIR_OBJECT)/Point_Mod.o \
+                            $(DIR_OBJECT)/Line_Mod.o  \
+                            $(DIR_OBJECT)/Block_Mod.o \
+                            $(DIR_OBJECT)/Region_Mod.o
+$(DIR_OBJECT)/Cgns_Mod.o:   $(DIR_OBJECT)/Grid_Mod.o
 
 #---------------------
 #   Explicit target.

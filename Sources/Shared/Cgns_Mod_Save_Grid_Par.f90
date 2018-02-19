@@ -1,4 +1,4 @@
-subroutine Save_Grid_Par(grid, name_save)                                        !
+subroutine Cgns_Mod_Save_Grid_Par(grid, name_save)                                        !
 !   Writes in sequentialy 3-D unstructured grid to files '????????'            !
 !------------------------------------------------------------------------------!
 !   All conventions for this lib are here:                                     !
@@ -10,7 +10,6 @@ subroutine Save_Grid_Par(grid, name_save)                                       
   use Cgns_Mod
 !------------------------------------------------------------------------------!
   implicit none
-  include 'mpif.h'
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type)  :: grid
   character(len=*) :: name_save

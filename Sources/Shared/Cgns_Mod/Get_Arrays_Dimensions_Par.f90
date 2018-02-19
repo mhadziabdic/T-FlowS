@@ -4,7 +4,9 @@ subroutine Cgns_Mod_Get_Arrays_Dimensions_Par(idx, NN_or_NC)
 !   Arrays structure in CGNS parallel functions are strictly followings:       !
 !   Processor:    |        P_1        |               P_2               | ...  !
 !   x,y,z:        |      (1 : NN_1)   |       NN_1 + 1 : NN_1 + NN_2    | ...  !
-!   Connections:  |   (8, 1 : NC_1)   |   (8, NC_1 + 1 : NC_1 + NC_2)   | ...  !
+!------------------------------------------------------------------------------!
+!   Cell type:    |      HEXA_8      |     PENTA_6      |       PYRA_5     |...!
+!   Connections:  |-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|...!
 !----------------------------------[Modules]-----------------------------------!
   use par_mod
 !------------------------------------------------------------------------------!

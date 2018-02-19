@@ -167,18 +167,6 @@
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
     call Info_Mod_Time_Print()
 
-    !if (n == 2) then
-    !  call Save_Grid_Seq(grid,"test_seq")
-    !  call Add_Fields_To_Grid_Seq(grid,"test_seq")
-    !  stop
-    !end if
-
-    if (n == 21) then
-      call Save_Grid_Par(grid,"test_par")
-      call Add_Fields_To_Grid_Par(grid,"test_par")
-      stop
-    end if
-
     if(SIMULA==DES_SPA) then
       call Compute_Shear_And_Vorticity(grid)
       call CalcVort (grid, U % n, V % n, W % n, vort)

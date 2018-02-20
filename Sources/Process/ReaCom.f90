@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine ReaCom(grid, restar) 
+  subroutine ReaCom(grid, restar)
 !------------------------------------------------------------------------------!
 !   Reads second part of T-FlowS.cmn file.                                     ! 
 !------------------------------------------------------------------------------!
@@ -21,13 +21,12 @@
   real      :: Distance
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: i, j, l, m
-  real              :: MresT, dummy
-  character(len=80) :: answer, nammon
+  real              :: MresT
+  character(len=80) :: nammon
   real, allocatable :: mres(:), xm(:), ym(:), zm(:)
-  character(len=80) :: coupling
 !==============================================================================!
 
-  call Wait   
+  call Wait
 
   ! Retreive monitoring points
   call Control_Mod_Monitoring_Points(Nmon, xm, ym, zm)
@@ -35,9 +34,9 @@
   allocate(Mres(Nmon))
 
   ! Find the monitoring cells
-  nammon=problem_name 
+  nammon=problem_name
   nammon(len_trim(problem_name)+1:len_trim(problem_name)+10)='-monit.000'
-  l=len_trim(nammon) 
+  l=len_trim(nammon)
   do j = 1, Nmon
     Mres(j)=HUGE
     do i = 1, grid % n_cells
@@ -50,8 +49,8 @@
     MresT=Mres(j)
     call GloMin(MresT)
     if(MresT /= Mres(j)) then ! there is a cell which is nearer
-      Cm(j) = 0               ! so erase this_proc monitoring point     
-    end if 
+      Cm(j) = 0               ! so erase this_proc monitoring point
+    end if
   end do
 
   do j = 1, Nmon
@@ -93,7 +92,7 @@
     Ce2 = 1.92
     Cmu = 0.09
     Cmu25 = sqrt(sqrt(Cmu))
-    Cmu75 = Cmu25**3 
+    Cmu75 = Cmu25**3
     kappa = 0.41
     Elog  = 8.342
     Kin % Sigma = 1.0
@@ -103,7 +102,7 @@
 !      Ce2 = 2.0
 !    end if
   endif
- 
+
   if(turbulence_model == K_EPS_V2) then
     Ce1   = 1.4
     Ce2   = 1.9
@@ -118,8 +117,8 @@
     Cni   = 85.0
     alpha = 0.045
     cf1   = 0.697
-    cf2   = 4.4  
-    cf3   = 1.6 
+    cf2   = 4.4
+    cf3   = 1.6
     Cf_1  = 1.4
     Cf_2  = 0.3
     Lim   = 11.0
@@ -186,7 +185,7 @@
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
     Ce1   = 1.4
     Ce2   = 1.9
-    Cmu   = 0.09 
+    Cmu   = 0.09
     CmuD  = 0.22
     Cmu25 = sqrt(sqrt(Cmu))
     Cmu75 = Cmu25**3
@@ -220,17 +219,17 @@
     SIGMAv = 2.0/3.0
   end if
 
-  ! Wall velocity 
-  if(.not. restar) then 
+  ! Wall velocity
+  if(.not. restar) then
     do m=1,grid % n_materials
       call Control_Mod_Mass_Flow_Rates(bulk(m) % p_drop_x,  &
                                        bulk(m) % p_drop_y,  &
                                        bulk(m) % p_drop_z)
     end do
-  end if     
+  end if
 
   ! Mass fluxes
-  if(.not. restar) then 
+  if(.not. restar) then
     do m=1,grid % n_materials
       call Control_Mod_Mass_Flow_Rates(bulk(m) % flux_x_o,  &
                                        bulk(m) % flux_y_o,  &
@@ -238,6 +237,6 @@
     end do
   end if
 
-  call Wait   
+  call Wait
 
   end subroutine

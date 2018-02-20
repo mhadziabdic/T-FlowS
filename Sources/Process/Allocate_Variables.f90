@@ -31,7 +31,7 @@
   call Var_Mod_Allocate_New_Only('P',  p,  grid)
   call Var_Mod_Allocate_New_Only('PP', pp, grid)
 
-  ! Pressure gradients are needed too 
+  ! Pressure gradients are needed too
   call Var_Mod_Allocate_Gradients(p)
 
   ! It is always calling this - probably not needed
@@ -54,8 +54,8 @@
   allocate(Wtau(grid % n_materials));   Wtau=0.0
 
   allocate(BadForG(grid % n_cells));  BadForG = .false.
-  allocate(NumGood(grid % n_cells));  NumGood = 0          
-  allocate(NumNeig(grid % n_cells));  NumNeig = 0         
+  allocate(NumGood(grid % n_cells));  NumGood = 0
+  allocate(NumNeig(grid % n_cells));  NumNeig = 0
 
   allocate(nearest_wall_cell(-grid % n_bnd_cells:grid % n_cells))
   nearest_wall_cell  = 0.
@@ -68,6 +68,7 @@
     call Var_Mod_Allocate_Solution('T', t, grid)
     allocate(CONwall(-grid % n_bnd_cells:grid % n_cells)); CONwall =0.0
   end if
+
   call Control_Mod_Buoyancy(verbose = .true.)
 
   call Control_Mod_Turbulence_Model(verbose = .true.)
@@ -78,14 +79,14 @@
   !----------------------------!
   if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
      turbulence_model == HANJALIC_JAKIRLIC) then
-    if(turbulence_model_variant == URANS) then    
+    if(turbulence_model_variant == URANS) then
 !
 !     Should something be done here?
 !
     end if
     if(turbulence_model == HANJALIC_JAKIRLIC) then
       allocate(Eps_tot(-grid % n_bnd_cells:grid % n_cells)); Eps_tot=0.
-    end if 
+    end if
 
     ! Reynolds stresses
     call Var_Mod_Allocate_Solution('UU', uu, grid)
@@ -109,7 +110,7 @@
       call Var_Mod_Allocate_New_Only('F22', f22, grid)
     end if
 
-    if(turbulence_model_variant == URANS) then    
+    if(turbulence_model_variant == URANS) then
       call Var_Mod_Allocate_Statistics(uu)
       call Var_Mod_Allocate_Statistics(vv)
       call Var_Mod_Allocate_Statistics(ww)
@@ -149,8 +150,8 @@
     allocate(Tsc(-grid % n_bnd_cells:grid % n_cells));     Tsc    = 0.0
     allocate(Lsc(-grid % n_bnd_cells:grid % n_cells));     Lsc    = 0.0
     allocate(Uf(-grid % n_bnd_cells:grid % n_cells));      Uf     = 0.0
-    allocate(Ufmean(-grid % n_bnd_cells:grid % n_cells));  Ufmean = 0.0  
-    allocate(p_kin(-grid % n_bnd_cells:grid % n_cells));   p_kin  = 0.0  
+    allocate(Ufmean(-grid % n_bnd_cells:grid % n_cells));  Ufmean = 0.0
+    allocate(p_kin(-grid % n_bnd_cells:grid % n_cells));   p_kin  = 0.0
     allocate(Ynd(-grid % n_bnd_cells:grid % n_cells));     Ynd    = 0.0
 
     if(turbulence_model_variant == URANS) then
@@ -170,7 +171,7 @@
       allocate(eps%mean(-grid % n_bnd_cells:grid % n_cells));  eps%mean=0.  ! XXXXX 5 Jul 2014
       allocate(Ptt(-grid % n_bnd_cells:grid % n_cells));       Ptt     =0.
     end if
-  end if                    
+  end if
 
   if(turbulence_model == HYBRID_K_EPS_ZETA_F) then
     allocate(vis_t_sgs(-grid % n_bnd_cells:grid % n_cells));  vis_t_sgs=0.
@@ -193,14 +194,14 @@
   ! Variables defined in les_mod.h90:
   if(turbulence_model == LES .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
-    if(turbulence_model_variant == WALE) then 
+    if(turbulence_model_variant == WALE) then
       allocate(wale_v(-grid % n_bnd_cells:grid % n_cells));  wale_v =0.
     end if
-    if(turbulence_model_variant == DYNAMIC) then 
+    if(turbulence_model_variant == DYNAMIC) then
       allocate(u % filt(-grid % n_bnd_cells:grid % n_cells));  u % filt =0.
       allocate(v % filt(-grid % n_bnd_cells:grid % n_cells));  v % filt =0.
       allocate(w % filt(-grid % n_bnd_cells:grid % n_cells));  w % filt =0.
-   
+
       allocate(c_dyn(-grid % n_bnd_cells:grid % n_cells)); c_dyn = 0
       allocate(UUf(grid % n_cells));   UUf = 0.0
       allocate(VVf(grid % n_cells));   VVf = 0.0
@@ -215,7 +216,7 @@
       allocate(M12f(grid % n_cells));   M12f = 0.0
       allocate(M13f(grid % n_cells));   M13f = 0.0
       allocate(M23f(grid % n_cells));   M23f = 0.0
-    end if 
+    end if
     allocate(shear_test(-grid % n_bnd_cells:grid % n_cells)); shear_test = 0.0
     allocate(kin_sgs   (-grid % n_bnd_cells:grid % n_cells)); kin_sgs=0.
     allocate(c_dyn_mean(-grid % n_bnd_cells:grid % n_cells)); c_dyn_mean = 0
@@ -376,7 +377,7 @@
       allocate(wt % mean(-grid % n_bnd_cells:grid % n_cells)); wt % mean=0.
     end if
   end if
- 
+
   allocate(vis_t   (-grid % n_bnd_cells:grid % n_cells));  vis_t    = 0.
   allocate(vort    (-grid % n_bnd_cells:grid % n_cells));  vort     = 0.
   allocate(shear   (-grid % n_bnd_cells:grid % n_cells));  shear    = 0.
@@ -385,6 +386,6 @@
 !??????????????????????????????????????????!
 !     Is there enough allocated memory     !
 !??????????????????????????????????????????!
-! Do something !  
+! Do something !
 
   end subroutine

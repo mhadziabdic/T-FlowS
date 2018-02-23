@@ -30,6 +30,8 @@
     real              :: pro(1024)             ! inlfow profile
     real              :: sigma                 ! sigma
     real              :: res                   ! residual after linear solution
+    real              :: units(1:4)            ! mass, length, time, temperature
+    
   end type
 
   contains 

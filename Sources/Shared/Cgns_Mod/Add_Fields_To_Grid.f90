@@ -1,8 +1,9 @@
 !==============================================================================!
   subroutine Add_Fields_To_Grid(grid, name_save)
 !------------------------------------------------------------------------------!
-!   Adds fields to existing grid cgns file [Parallel vesion]                                      !
+!   Adds fields to existing grid cgns file.                                    !
 !------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
   use allp_mod
   use all_mod
   use Flow_Mod
@@ -35,7 +36,7 @@
   integer           :: c
 !==============================================================================!
 
-  if (this_proc .eq. 1) print *, "# subroutine Save_Grid"
+  if (this_proc .lt. 2) print *, "# subroutine Save_Grid"
 
   ! Store the name
   store_name = problem_name
@@ -270,7 +271,7 @@
   ! Close DB
   call Close_File
 
-  if (this_proc.eq.1) &
+  if (this_proc .lt. 2) &
     print *, 'Successfully added fields to ', trim(problem_name)
 
   deallocate(cgns_base)

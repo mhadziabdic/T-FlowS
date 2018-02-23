@@ -23,7 +23,7 @@
   character(len=80)    :: field_name  ! name of the FlowSolution_t node
   integer              :: cell_type
   integer              :: cnt            ! cells of cell_type
-  real, allocatable    :: field_array(:) ! field array
+  real                 :: field_array(1:grid % n_cells) ! field array
   integer              :: i, j, k, c
   integer              :: error
 !==============================================================================!
@@ -53,15 +53,8 @@
 
     if (cnt.ne.0) then
 
-      allocate(field_array(i:j), stat = error); field_array = 0
-
-      if (error .ne. 0) then
-         print*, '*FAILED* to allocate ', "field_array"
-         call Cg_Error_Exit_F()
-      endif
-
       ! copy input array to field_array
-      k = i
+      k = 1
       do c = 1, grid % n_cells
         if     (cell_type.eq.1 .and. grid % cells_n_nodes(c).eq.8) then
           field_array(k) = input_array(c)
@@ -92,7 +85,7 @@
         field_name,                  & !(in )
         i,                           & !(in )
         j,                           & !(in )
-        field_array,                 & !(in )
+        field_array(1:cnt),          & !(in )
         field_id,                    & !(out)
         error)                         !(out)
 
@@ -100,8 +93,6 @@
         print *, "# Failed to write field", trim(field_name)
         call Cg_Error_Exit_F()
       endif
-
-      deallocate(field_array)
 
       cnt_cells = cnt_cells + cnt
 

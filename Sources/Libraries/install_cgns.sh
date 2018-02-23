@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # it is an useful script to automatically build cgns lib in several releases:
-# 1) with adf5 and sequential access + compression + cgnstools (optional)
-# 2) with hdf5 and parallel   access + compression
-# 3) with hdf5 and sequential access + compression + cgnstools (optional)
+# 1) with adf5 and sequential access + cgnstools (optional)
+# 2) with hdf5 and parallel   access
+# 3) with hdf5 and sequential access + cgnstools (optional)
 # (parallel cgns lib can only be based on hdf5, not adf5)
 
 # some grid meshing software(like pointwise) use hdf5, therefore it is not possible
@@ -20,6 +20,9 @@
 # since 3.3 version fortran 77 and 90 support was dropped, moreover user is forced
 # to use cgsize_t type instead of integer in cgns API
 
+# CGNS lib does not use compression:
+# https://cgns.github.io/FAQs.html
+
 # build mpich? [-> hdf5_par]
 BUILD_MPI=true
 
@@ -31,12 +34,18 @@ BUILD_LATEST_CGNS=false
 
 # folder structure
 CGNS_DIR=$PWD                     # this is top dir for this lib
-INSTALL_DIR=$CGNS_DIR/install_dir # this dir contains CNGS/ HDF5/ ZLIB/ SZIP/ MPICH/
+INSTALL_DIR=$CGNS_DIR/install_dir # this dir contains CNGS/ HDF5/ MPICH/
 SRC_DIR=$CGNS_DIR/src_dir         # this dir contains downloaded and built sources
 
 # put your compilers here (gcc, gfortran are allowed if BUILD_MPI=true)
-CCOMP="gcc -O3";
-FCOMP="gfortran -O3"; # or ifort/gfortran/mpif90/mpifort/mpiifort
+CCOMP="gcc";
+FCOMP="gfortran"; # or ifort/gfortran/mpif90/mpifort/mpiifort
+
+# optimization flags
+export CCLAGS="-O3"
+export FFLAGS="-O3"
+export FCFLAGS="-O3"
+export CFLAGS="-O3"
 
 #-------------------------------------------------#
 #---------   READ ABOVE UP TO THIS ROW   ---------#
@@ -55,71 +64,6 @@ trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
 
 #--------- functions definitions
-
-#------ ZLIB 1.2.11
-function build_zlib_lib {
-
-	# download sources
-	cd $SRC_DIR/
-	wget -N http://www.zlib.net/zlib-1.2.11.tar.gz
-	tar -zxvf zlib-1.2.11.tar.gz
-	mkdir -p $SRC_DIR/ZLIB/
-	rsync -azvh zlib-1.2.11/* $SRC_DIR/ZLIB
-	rm -r zlib-1.2.11/
-		
-	# compilers
-	export CC=$CCOMP
-	export FC=$FCOMP
-
-	# configure
-	cd $SRC_DIR/ZLIB
-	./configure \
-	--prefix=$INSTALL_DIR/ZLIB \
-	--64 \
-	--static
-
-	# build
-	make
-	# install
-	make install
-
-	# return
-	cd $CGNS_DIR
-}
-#------------------------------------------
-
-#------ SZIP 2.1.1
-function build_szip_lib {
-
-	# download sources
-	cd $SRC_DIR/
-	wget -N https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz
-	tar -zxvf szip-2.1.1.tar.gz
-	mkdir -p $SRC_DIR/SZIP
-	rsync -azvh szip-2.1.1/* $SRC_DIR/SZIP
-	rm -r szip-2.1.1/
-		
-	# compilers
-	export CC=$CCOMP
-	export FC=$FCOMP
-
-	# configure
-	cd $SRC_DIR/SZIP
-	./configure \
-	--prefix=$INSTALL_DIR/SZIP/ \
-	--enable-static \
-	--disable-shared \
-	--enable-production
-
-	# build
-	make
-	# install
-	make install
-
-	# return
-	cd $CGNS_DIR
-}
-#------------------------------------------
 
 #------ MPICH 3.2.1
 function build_mpi_lib {
@@ -168,8 +112,8 @@ function build_hdf5_lib {
 	rm -rf hdf5
 
 	# compilers
-	export CC=$INSTALL_DIR/MPICH/bin/mpicc -O3
-	export FC=$INSTALL_DIR/MPICH/bin/mpif90 -O3
+	export CC=$INSTALL_DIR/MPICH/bin/mpicc
+	export FC=$INSTALL_DIR/MPICH/bin/mpif90
 
 	# configure
 	cd $SRC_DIR/HDF5/; rm -rf .git
@@ -178,9 +122,7 @@ function build_hdf5_lib {
 	--enable-fortran \
 	--enable-parallel \
 	--disable-shared \
-	--enable-production \
-	--with-zlib=$INSTALL_DIR/ZLIB \
-	--with-szlib=$INSTALL_DIR/SZIP
+	--enable-production
 
 	# build
 	make
@@ -198,9 +140,7 @@ function build_hdf5_lib {
 	--prefix=$INSTALL_DIR/HDF5_Seq \
 	--enable-fortran \
 	--disable-shared \
-	--enable-production \
-	--with-zlib=$INSTALL_DIR/ZLIB \
-	--with-szlib=$INSTALL_DIR/SZIP
+	--enable-production
 
 	# build
 	make
@@ -289,8 +229,8 @@ function build_cgns_lib_latest {
 	cd $SRC_DIR/CGNS/; rm -rf .git; cd src/
 
 	# compilers
-	export CC=$INSTALL_DIR/MPICH/bin/mpicc -O3
-	export FC=$INSTALL_DIR/MPICH/bin/mpif90 -O3
+	export CC=$INSTALL_DIR/MPICH/bin/mpicc
+	export FC=$INSTALL_DIR/MPICH/bin/mpif90
 
 	FLIBS=-Wl,--no-as-needed\ -ldl\ -lz \
 	LIBS=-Wl,--no-as-needed\ -ldl\ -lz \
@@ -301,9 +241,7 @@ function build_cgns_lib_latest {
 	--enable-lfs \
 	--enable-64bit \
 	--disable-shared \
-	--disable-debug \
-	--with-zlib=$INSTALL_DIR/ZLIB \
-	--with-szip=$INSTALL_DIR/SZIP/lib/libsz.a
+	--disable-debug
 
 	# build
 	make
@@ -340,9 +278,7 @@ if [ $CGNS_TOOLS == true ]; then
 	--enable-lfs \
 	--enable-64bit \
 	--disable-shared \
-	--disable-debug \
-	--with-zlib=$INSTALL_DIR/ZLIB \
-	--with-szip=$INSTALL_DIR/SZIP/lib/libsz.a
+	--disable-debug
 	--enable-cgnstools \
 	--with-tcl=$INSTALL_DIR/TCL \
 	--with-tk=$INSTALL_DIR/TK \
@@ -363,9 +299,7 @@ else # no cgns GUI tools
 	--enable-lfs \
 	--enable-64bit \
 	--disable-shared \
-	--disable-debug \
-	--with-zlib=$INSTALL_DIR/ZLIB \
-	--with-szip=$INSTALL_DIR/SZIP/lib/libsz.a
+	--disable-debug
 fi
 
 # build
@@ -386,9 +320,7 @@ LIBS=-Wl,--no-as-needed\ -ldl\ -lz \
 --enable-lfs \
 --enable-64bit \
 --disable-shared \
---disable-debug \
---with-zlib=$INSTALL_DIR/ZLIB \
---with-szip=$INSTALL_DIR/SZIP/lib/libsz.a
+--disable-debug
 
 # build
 make
@@ -420,21 +352,14 @@ function build_cgns_lib_3.2.1 {
 	rsync -azvh CGNS-3.2.1/* $SRC_DIR/CGNS/
 	rm -r CGNS-3.2.1/
 
-	# make links to ZLIB where cgns searches for them
-	cd $INSTALL_DIR
-	rm -rf ZLIB/zlib.h ZLIB/libz.a
-
-	ln -s -r -f ZLIB/include/zlib.h ZLIB/zlib.h
-	ln -s -r -f ZLIB/lib/libz.a     ZLIB/libz.a
-
 #------ parallel CGNS with HDF5
 	
 	# configure
 	cd $SRC_DIR/CGNS/; rm -rf .git; cd src/
 
 	# compilers
-	export CC=$INSTALL_DIR/MPICH/bin/mpicc -O3
-	export FC=$INSTALL_DIR/MPICH/bin/mpif90 -O3
+	export CC=$INSTALL_DIR/MPICH/bin/mpicc
+	export FC=$INSTALL_DIR/MPICH/bin/mpif90
 
 	FLIBS=-Wl,--no-as-needed\ -ldl\ -lz \
 	LIBS=-Wl,--no-as-needed\ -ldl\ -lz \
@@ -447,9 +372,7 @@ function build_cgns_lib_3.2.1 {
 	--disable-shared \
 	--disable-debug \
 	--enable-parallel \
-	--with-mpi=$INSTALL_DIR/MPICH/bin/ \
-	--with-zlib=$INSTALL_DIR/ZLIB/ \
-	--with-szip=$INSTALL_DIR/SZIP/lib/libsz.a
+	--with-mpi=$INSTALL_DIR/MPICH/bin/
     
     # fix a bug in 3.2.1 makefile
 	sed -i -e "s%-L$INSTALL_DIR/MPICH/lib\ -l%-L$INSTALL_DIR/MPICH/lib\ -l mpi%g" make.defs
@@ -493,9 +416,7 @@ if [ $CGNS_TOOLS == true ]; then
 	--disable-debug \
 	--enable-cgnstools \
 	--with-tcl=$INSTALL_DIR/TCL \
-	--with-tk=$INSTALL_DIR/TK \
-	--with-zlib=$INSTALL_DIR/ZLIB \
-	--with-szip=$INSTALL_DIR/SZIP/lib/libsz.a
+	--with-tk=$INSTALL_DIR/TK
 
 else # no cgns GUI tools
 	
@@ -512,9 +433,7 @@ else # no cgns GUI tools
 	--enable-lfs \
 	--enable-64bit \
 	--disable-shared \
-	--disable-debug \
-	--with-zlib=$INSTALL_DIR/ZLIB \
-	--with-szip=$INSTALL_DIR/SZIP/lib/libsz.a
+	--disable-debug
 fi
 
 # build
@@ -535,9 +454,7 @@ LIBS=-Wl,--no-as-needed\ -ldl\ -lz \
 --enable-lfs \
 --enable-64bit \
 --disable-shared \
---disable-debug \
---with-zlib=$INSTALL_DIR/ZLIB \
---with-szip=$INSTALL_DIR/SZIP/lib/libsz.a
+--disable-debug
 # build
 make
 # install
@@ -558,9 +475,6 @@ echo ---------------------------------------------------------------------------
 }
 
 #--------- script with functions defined above
-
-build_zlib_lib
-build_szip_lib
 
 if [ $BUILD_MPI == true ]; then
 	build_mpi_lib

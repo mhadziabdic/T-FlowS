@@ -1,7 +1,7 @@
 #===============================================================================
-# 
-#   Process Makefile   
-#   
+#
+#   Process Makefile
+#
 #-------------------------------------------------------------------------------
 
 #--------------------------
@@ -50,12 +50,12 @@ PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
 ifeq ($(FORTRAN), gnu)
   FC = gfortran
   ifeq ($(DEBUG),yes)
-    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g -Wall -fcheck=all
+    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g -Wall -fcheck=all -ffixed-line-length-80
   else
     OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O3
-  endif 
+  endif
   OPT_LINK = $(OPT_COMP)
-endif 
+endif
 
 # Fortran == intel
 ifeq ($(FORTRAN), intel)
@@ -66,7 +66,7 @@ ifeq ($(FORTRAN), intel)
     OPT_COMP = -module $(DIR_MODULE) -r8 -O3
   endif
   OPT_LINK = $(OPT_COMP)
-endif 
+endif
 
 # Fortran == portland
 ifeq ($(FORTRAN), portland)
@@ -77,9 +77,9 @@ ifeq ($(FORTRAN), portland)
     OPT_COMP = -module $(DIR_MODULE) -r8 -O3
   endif
   OPT_LINK = $(OPT_COMP)
-endif 
+endif
 
-# It seems that for all supported compilers ("gnu", "intel" 
+# It seems that for all supported compilers ("gnu", "intel"
 # or "portland") command to compile in parallel is "mpif90"
 ifeq ($(MPI), yes)
   FC = mpif90
@@ -96,16 +96,12 @@ ifeq ($(CGNS_HDF5), yes)
     DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Include
     CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Lib/libcgns.a \
                   ../Libraries/Hdf5_Par/Lib/libhdf5.a                        \
-                  ../Libraries/Zlib/Lib/libz.a                               \
-                  ../Libraries/Szip/Lib/libsz.a                              \
-                  -Wl,--no-as-needed -ldl
+                  -Wl,--no-as-needed -ldl -lz
   else
     DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Include
     CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a \
                   ../Libraries/Hdf5_Seq/Lib/libhdf5.a                        \
-                  ../Libraries/Zlib/Lib/libz.a                               \
-                  ../Libraries/Szip/Lib/libsz.a                              \
-                  -Wl,--no-as-needed -ldl
+                  -Wl,--no-as-needed -ldl -lz
 
   endif
 endif
@@ -122,9 +118,9 @@ $(info #-----------------------------------------------------------------)
 #------------------------------------------------------
 #   List of sources for modules and functions
 #------------------------------------------------------
-#   Modules' order must obey their dependency 
+#   Modules' order must obey their dependency
 #   This list should therefore be written "by hand".
-#   Note: Modules written in lower case 
+#   Note: Modules written in lower case
 #         letters are candidates for deletion.
 #------------------------------------------------------
 
@@ -175,19 +171,19 @@ SRC_RAW += $(shell ls -1 $(DIR_COMMUN)/*.f90 | grep -v -i _Mod)
 # Remove directory names
 STEP_A  = $(subst $(DIR_MODELS),,$(SRC_RAW)) # remove directory name
 STEP_B  = $(subst $(DIR_COMMUN),,$(STEP_A))  # remove directory name
-SRC_FUN = $(subst /,,$(STEP_B))              # remove last slash 
+SRC_FUN = $(subst /,,$(STEP_B))              # remove last slash
 
-# Add files from "Shared" directory, but one by one, to avoid clutter 
-SRC_FUN += Distance.f90            \
-           Load_Geo.f90            \
-           Name_File.f90           \
-           Sort_Int_Carry_Int.f90  \
-           Sort_Real_Carry_Int.f90 \
-           Approx.f90              \
-           Swap_Int.f90            \
-           To_Upper_Case.f90       \
-           Save_Grid.f90           \
-           Add_Fields_To_Grid.f90
+# Add files from "Shared" directory, but one by one, to avoid clutter
+SRC_FUN += Distance.f90              \
+           Load_Geo.f90              \
+           Name_File.f90             \
+           Sort_Int_Carry_Int.f90    \
+           Sort_Real_Carry_Int.f90   \
+           Approx.f90                \
+           Swap_Int.f90              \
+           To_Upper_Case.f90         \
+           ../Save_Grid.f90          \
+           ../Add_Fields_To_Grid.f90
 
 # ... to allow conditional inclusion of CGNS support
 #ifeq ($(CGNS_ADF5), $(CGNS_HDF5))
@@ -197,7 +193,7 @@ SRC_FUN += Distance.f90            \
 #endif
 
 #----------------------------------------------------------------------
-#   List of objects generated from the list of modules and functions  
+#   List of objects generated from the list of modules and functions
 #----------------------------------------------------------------------
 #   Note: This doesn't need editing.
 #----------------------------------------------------------------------
@@ -206,7 +202,7 @@ OBJ_FUN = $(SRC_FUN:%.f90=$(DIR_OBJECT)/%.o)
 OBJ = $(OBJ_MOD) $(OBJ_FUN)
 
 #-------------------------------------------------------
-#   List of modules currently used for target "clean" 
+#   List of modules currently used for target "clean"
 #-------------------------------------------------------
 #   Note: This doesn't need editing.
 #-------------------------------------------------------
@@ -232,13 +228,13 @@ $(DIR_OBJECT)/%.o: %.f90
 #-----------------------------------
 #   Note: Should not be modified.
 #-----------------------------------
-$(PROGRAM_FILE): $(OBJ) 
+$(PROGRAM_FILE): $(OBJ)
 	$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ) $(CGNS_LIB)
 
 #---------------------------------------
 #   Explicit dependencies for modules
 #---------------------------------------
-#   These should be inserted by 
+#   These should be inserted by
 #   hand for tuning of dependencies.
 #---------------------------------------
 $(DIR_OBJECT)/all_mod.o:    $(DIR_OBJECT)/allp_mod.o

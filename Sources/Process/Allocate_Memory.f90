@@ -29,6 +29,7 @@
   ! Working arrays
   call Work_Mod_Allocate_Real_Cells(grid, 20)
   call Work_Mod_Allocate_Real_Faces(grid,  1)
+  call Work_Mod_Allocate_Real_Nodes(grid,  1)
 
   ! This array should be handled in a more elegant way
   allocate (f_coef(grid % n_faces)); f_coef=0.
@@ -36,4 +37,6 @@
   ! Variables defined in par_mod.h90:
   allocate (BufInd(-grid % n_bnd_cells:-1)); BufInd=0
 
+  ! Variables actively used in Cgns_Mod
+ 
   end subroutine

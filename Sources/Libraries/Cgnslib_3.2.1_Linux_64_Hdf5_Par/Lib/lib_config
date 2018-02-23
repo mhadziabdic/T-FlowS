@@ -36,7 +36,7 @@ CGNS_INCLUDEDIR = $INSTALL_DIR/cgnslib_3.2.1_linux_64_hdf5_par/include
 #-----------------------------------------------------------------------
 
 CGNS_CC      = $INSTALL_DIR/MPICH/bin/mpicc
-CGNS_CFLAGS  = -g -O2   
+CGNS_CFLAGS  = -O3   
 CGNS_LDFLAGS = 
 
 #-----------------------------------------------------------------------
@@ -54,16 +54,16 @@ CGNS_LIB = $(CGNS_LIBDIR)/libcgns.a
 
 CGNS_HDF5INC = $INSTALL_DIR/HDF5_Par/include
 CGNS_HDF5LIB = $INSTALL_DIR/HDF5_Par/lib/libhdf5.a
-CGNS_SZIPLIB = $INSTALL_DIR/SZIP/lib/libsz.a
-CGNS_ZLIBLIB = $INSTALL_DIR/ZLIB//libz.a
+CGNS_SZIPLIB = 
+CGNS_ZLIBLIB = 
 
 #-----------------------------------------------------------------------
 # CGNS_MPIINC  - path to MPI header files
 # CGNS_MPILIBS - MPI libraries
 #-----------------------------------------------------------------------
 
-CGNS_MPIINC  = $INSTALL_DIRMPICH/include
-CGNS_MPILIBS = -L$INSTALL_DIRMPICH/lib -l 
+CGNS_MPIINC  = $INSTALL_DIR/MPICH/include
+CGNS_MPILIBS = -L$INSTALL_DIR/MPICH/lib -l mpi
 
 #-----------------------------------------------------------------------
 # CGNS_LINKLIBS contains the list of libraries

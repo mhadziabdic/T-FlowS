@@ -185,12 +185,6 @@
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
     call Info_Mod_Time_Print()
 
-    !if (n == 2) then
-    !  call Save_Grid_Seq(grid,"test_seq")
-    !  call Add_Fields_To_Grid_Seq(grid,"test_seq")
-    !  stop
-    !end if
-
     if (n == 3) then
       call Save_Grid(grid,"test_par")
       call Add_Fields_To_Grid(grid,"test_par")

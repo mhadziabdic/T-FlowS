@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine IGlSumArray(phi, n) 
+  subroutine IGlSumArray(phi, n)
 !----------------------------------------------------------------------!
 !   Estimates global summ among all processors.                        !
 !----------------------------------------------------------------------!
@@ -15,15 +15,15 @@
 !======================================================================!
 
 !================================================
-      call MPI_ALLREDUCE      &               
+      call MPI_ALLREDUCE      &
 !-----------------------------------+------------
              (phi,            & ! send buffer
-              phi_new,        & ! recv buffer 
-              n,              & ! length     
-              MPI_INTEGER8,   & ! datatype  
-              MPI_SUM,        & ! operation 
-              MPI_COMM_WORLD, &             
-              error) 
+              phi_new,        & ! recv buffer
+              n,              & ! length
+              MPI_INTEGER8,   & ! datatype
+              MPI_SUM,        & ! operation
+              MPI_COMM_WORLD, &
+              error)
 !================================================
 
   phi = phi_new

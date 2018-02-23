@@ -137,14 +137,14 @@
   include 'Cgns_Mod/Merge_Nodes.f90'
 
   ! Par only
-  include 'Cgns_Mod/Get_Arrays_Dimensions_Par.f90'
-  include 'Cgns_Mod/Open_File_Par.f90'
-  include 'Cgns_Mod/Close_File_Par.f90'
-  include 'Cgns_Mod/Write_Base_Info_Par.f90'
-  include 'Cgns_Mod/Write_Block_Info_Par.f90'
-  include 'Cgns_Mod/Write_Coordinate_Array_Par.f90'
-  include 'Cgns_Mod/Write_Section_Connections_Par.f90'
-  include 'Cgns_Mod/Write_Solution_Info_Par.f90'
-  include 'Cgns_Mod/Write_Field_Par.f90'
+  include 'Cgns_Mod/Parallel/Get_Arrays_Dimensions.f90'
+  include 'Cgns_Mod/Parallel/Open_File.f90'
+  include 'Cgns_Mod/Parallel/Close_File.f90'
+  include 'Cgns_Mod/Parallel/Write_Base_Info.f90'
+  include 'Cgns_Mod/Parallel/Write_Block_Info.f90'
+  include 'Cgns_Mod/Parallel/Write_Coordinate_Array.f90'
+  include 'Cgns_Mod/Parallel/Write_Section_Connections.f90'
+  include 'Cgns_Mod/Parallel/Write_Solution_Info.f90'
+  include 'Cgns_Mod/Parallel/Write_Field.f90'
 
   end module

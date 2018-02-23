@@ -25,7 +25,7 @@
   else
     print *, '# Unknown state for buoyancy: ', trim(val)
     print *, '# Exiting!'
-    stop 
+    stop
 
   end if
 

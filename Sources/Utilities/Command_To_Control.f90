@@ -18,20 +18,20 @@ include 'Tokenizer.f90'
   logical           :: HOT, SIMPLE
 !==============================================================================!
 
-  HOT    = .false. 
+  HOT    = .false.
   SIMPLE = .false.
 
   !---------------------------!
   !   Open the command file   !
   !---------------------------!
-  open(CMN_FILE, file='T-FlowS.cmn')    
+  open(CMN_FILE, file='T-FlowS.cmn')
   cmn_line_count = 0
 
   !-----------------------!
   !   Read answer name   !
   !-----------------------!
   print *, '# Input answer name:'
-  call Tokenizer_Mod_Read_Line(CMN_FILE)  
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
 
   ! Print entry for the control file
   print *, 'PROBLEM_NAME    ', trim(line % tokens(1))
@@ -50,11 +50,11 @@ include 'Tokenizer.f90'
   print *, '# HOT              -> Problems with temperature'
   print *, '# XHOM, YHOM, ZHOM -> Homogeneous directions'
   print *, '# TGV -> Taylor-Green Vortex test case'
-  print *, '# BUOY -> Buoyancy flows (Automatically turns HOT on)' 
+  print *, '# BUOY -> Buoyancy flows (Automatically turns HOT on)'
   print *, '# RB_CONV          -> Rayleigh-Barnard convection'
   print *, '# URANS            -> Unsteady RANS'
   print *, '# BACKSTEP         -> Backstep flow'
-  call Tokenizer_Mod_Read_Line(CMN_FILE)  
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
 
   do it = 1, line % n_tokens
     read(line % tokens(it),'(A8)')  answer
@@ -91,7 +91,7 @@ include 'Tokenizer.f90'
 
       ! Print entry for the control file
       print *, 'GRAVITATIONAL_VECTOR    ',  trim(line % tokens(1)), '  ', &
-                                            trim(line % tokens(2)), '  ',  &
+                                            trim(line % tokens(2)), '  ', &
                                             trim(line % tokens(3))
       print *, 'REFERENCE_TEMPERATURE    ', trim(line % tokens(4))
 
@@ -103,7 +103,7 @@ include 'Tokenizer.f90'
 
       ! Print entry for the control file
       print *, 'GRAVITATIONAL_VECTOR    ',  trim(line % tokens(1)), '  ', &
-                                            trim(line % tokens(2)), '  ',  &
+                                            trim(line % tokens(2)), '  ', &
                                             trim(line % tokens(3))
       print *, 'REFERENCE_TEMPERATURE    ', trim(line % tokens(4))
 
@@ -128,7 +128,7 @@ include 'Tokenizer.f90'
   print *, '# Input restart file name [skip cancels]:'
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1), '(A80)') answer
-  call To_Upper_Case(answer) 
+  call To_Upper_Case(answer)
 
   ! Print entry for the control file
   if(answer .ne. 'SKIP') then
@@ -149,9 +149,9 @@ include 'Tokenizer.f90'
   ! Print entry for the control file
   print *, 'NUMBER_OF_TIME_STEPS    ', trim(line % tokens(1))
 
-  ! Starting time step for statistics 
+  ! Starting time step for statistics
   print *, '# Starting time step for statistics '
-  call Tokenizer_Mod_Read_Line(CMN_FILE)  
+  call Tokenizer_Mod_Read_Line(CMN_FILE)
 
   ! Print entry for the control file
   print *, 'STARTING_TIME_STEP_FOR_STATISTICS    ', trim(line % tokens(1))
@@ -196,10 +196,10 @@ include 'Tokenizer.f90'
   print *, '# Type of simulation: '
   print *, '# DNS      -> Direct Numerical Simulation'
   print *, '# LES      -> Large Eddy Simulation'
-  print *, '# K_EPS    -> High Reynolds k-eps model.' 
-  print *, '# K_EPS_VV -> Durbin`s model.' 
-  print *, '# SPA_ALL  -> Spalart-Allmaras model.' 
-  print *, '# ZETA  -> k-eps-zeta-f model.' 
+  print *, '# K_EPS    -> High Reynolds k-eps model.'
+  print *, '# K_EPS_VV -> Durbin`s model.'
+  print *, '# SPA_ALL  -> Spalart-Allmaras model.'
+  print *, '# ZETA  -> k-eps-zeta-f model.'
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   read(line % tokens(1),'(A)')  model
 
@@ -280,7 +280,7 @@ include 'Tokenizer.f90'
      model == 'HYB_ZETA') then
      print *, '# Do you want to shake the velocity field ?'
      print *, '# YES -> shake'
-     print *, '# NO  -> don''t shake'
+     print *, '# NO  -> do not shake'
      call Tokenizer_Mod_Read_Line(CMN_FILE)
      call To_Upper_Case(line % tokens(1))
 
@@ -307,8 +307,8 @@ include 'Tokenizer.f90'
   if(line % tokens(1) == 'FRACTION') then
     print *, 'PRESSURE_MOMENTUM_COUPLING    projection'
   else if(line % tokens(1) == 'SIMPLE') then
- 
-    SIMPLE = .true. 
+
+    SIMPLE = .true.
 
     print *, 'PRESSURE_MOMENTUM_COUPLING    simple'
     if(line % n_tokens == 2) then
@@ -345,7 +345,7 @@ include 'Tokenizer.f90'
   else if(answer == 'PAR') then
     print *, 'TIME_INTEGRATION_FOR_INERTIA    parabolic'
   endif
-  
+
   print *, '# Integration of advection terms: '
   print *, '# AB -> Adams-Bashforth'
   print *, '# CN -> Crank-Nicholson'
@@ -360,7 +360,7 @@ include 'Tokenizer.f90'
   else if(answer == 'FI') then
     print *, 'TIME_INTEGRATION_FOR_ADVECTION    fully_implicit'
   endif
-  
+
   print *, '# Integration of diffusion terms: '
   print *, '# AB -> Adams-Bashforth'
   print *, '# CN -> Crank-Nicholson'
@@ -390,12 +390,12 @@ include 'Tokenizer.f90'
   else if(answer == 'FI') then
     print *, 'TIME_INTEGRATION_FOR_CROSS_DIFFUSION    fully_implicit'
   endif
-  
+
   ! Upwind blending for momentum
   print *, '# Convetive schemes for momentum equation:'
   print *, '# Do you want to use upwind blending: '
   print *, '# YES       -> use blening'
-  print *, '# NO        -> don''t use blending'
+  print *, '# NO        -> do not use blending'
   print *, '# CDS       -> central differencing'
   print *, '# LUDS      -> linear upwind'
   print *, '# QUICK     -> self descriptive'
@@ -439,7 +439,7 @@ include 'Tokenizer.f90'
     print *, '# Convetive schemes for energy equation:'
     print *, '# Do you want to use upwind blending: '
     print *, '# YES       -> use blening'
-    print *, '# NO        -> don''t use blending'
+    print *, '# NO        -> do not use blending'
     print *, '# CDS       -> central differencing'
     print *, '# LUDS      -> linear upwind'
     print *, '# QUICK     -> self descriptive'
@@ -478,13 +478,13 @@ include 'Tokenizer.f90'
     else if(answer == 'GAMMA') then
       print *, 'ADVECTION_SCHEME_FOR_ENERGY    gamma'
     end if
-  end if 
+  end if
 
   if(model .ne. 'LES' .and. model .ne. 'DNS') then
     print *, '# Convetive schemes for turbulence equation:'
     print *, '# Do you want to use upwind blending: '
     print *, '# YES       -> use blening'
-    print *, '# NO        -> don''t use blending'
+    print *, '# NO        -> do not use blending'
     print *, '# CDS       -> central differencing'
     print *, '# LUDS      -> linear upwind'
     print *, '# QUICK     -> self descriptive'
@@ -557,22 +557,22 @@ include 'Tokenizer.f90'
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     print *, 'TOLERANCE_FOR_ENERGY_SOLVER    ', trim(line % tokens(1))
   end if
- 
+
   if(SIMPLE) then
     print *, '# Tolerance for SIMPLE: '
     call Tokenizer_Mod_Read_Line(CMN_FILE)
     print *, 'TOLERANCE_FOR_SIMPLE_ALGORITHM    ', trim(line % tokens(1))
-  endif     
+  endif
 
   ! Time step
   print *, '# Time step: '
   call Tokenizer_Mod_Read_Line(CMN_FILE)
   print *, 'TIME_STEP    ', trim(line % tokens(1))
 
-  ! Wall velocity 
+  ! Wall velocity
 !@do m=1,grid % n_materials
     print *, '# Enter Pdrop (x, y, z) '
-    call Tokenizer_Mod_Read_Line(CMN_FILE) 
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
     print *, 'PRESSURE_DROPS    ', trim(line % tokens(1)), '  ',  &
                                    trim(line % tokens(2)), '  ',  &
                                    trim(line % tokens(3))
@@ -581,7 +581,7 @@ include 'Tokenizer.f90'
   ! Mass fluxes
 !@do m=1,grid % n_materials
     print *, '# Enter mass flow rates (x, y, z) '
-    call Tokenizer_Mod_Read_Line(CMN_FILE) 
+    call Tokenizer_Mod_Read_Line(CMN_FILE)
     print *, 'MASS_FLOW_RATES    ', trim(line % tokens(1)), '  ',  &
                                     trim(line % tokens(2)), '  ',  &
                                     trim(line % tokens(3))
@@ -600,6 +600,6 @@ include 'Tokenizer.f90'
   !----------------------------!
   !   Close the command file   !
   !----------------------------!
-  close(CMN_FILE)                
+  close(CMN_FILE)
 
   end program

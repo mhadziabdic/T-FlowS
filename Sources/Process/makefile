@@ -28,10 +28,13 @@ DIR_MODULE = ../.Modules
 DIR_OBJECT = .Objects
 DIR_MODELS = Turbulence
 DIR_COMMUN = Communication/Sequential
+DIR_CGNS   = $(DIR_SHARED)/Cgns_Mod/Sequential
+DIR_CGNS_MV= $(DIR_SHARED)/Cgns_Mod
 ifeq ($(MPI), yes)
   DIR_COMMUN = Communication/Parallel/Double
+  DIR_CGNS   = $(DIR_SHARED)/Cgns_Mod/Parallel
 endif
-VPATH = $(DIR_SHARED):$(DIR_MODELS):$(DIR_COMMUN):.
+VPATH = $(DIR_SHARED):$(DIR_MODELS):$(DIR_COMMUN):$(DIR_CGNS):.
 
 # Program name (This should hardly change)
 PROGRAM_NAME = Process
@@ -93,12 +96,16 @@ ifeq ($(CGNS_HDF5), yes)
     DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Include
     CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Lib/libcgns.a \
                   ../Libraries/Hdf5_Par/Lib/libhdf5.a                        \
-                  -Wl,--no-as-needed -ldl -lz
+                  ../Libraries/Zlib/Lib/libz.a                               \
+                  ../Libraries/Szip/Lib/libsz.a                              \
+                  -Wl,--no-as-needed -ldl
   else
     DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Include
     CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a \
                   ../Libraries/Hdf5_Seq/Lib/libhdf5.a                        \
-                  -Wl,--no-as-needed -ldl -lz
+                  ../Libraries/Zlib/Lib/libz.a                               \
+                  ../Libraries/Szip/Lib/libsz.a                              \
+                  -Wl,--no-as-needed -ldl
 
   endif
 endif
@@ -131,13 +138,13 @@ SRC_MOD =  allp_mod.f90      \
            Material_Mod.f90
 
 # Sources for modules in the local directory
-SRC_MOD += Info_Mod.f90 		\
-           Bulk_Mod.f90 		\
-           Var_Mod.f90			\
-           Matrix_Mod.f90		\
+SRC_MOD += Info_Mod.f90     \
+           Bulk_Mod.f90     \
+           Var_Mod.f90      \
+           Matrix_Mod.f90   \
            Numerics_Mod.f90 \
            Solvers_Mod.f90  \
-           Flow_Mod.f90			\
+           Flow_Mod.f90     \
            User_Mod.f90
 
 # Sources for modules in sub-directories
@@ -151,13 +158,9 @@ ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
   SRC_MOD += Cgns_Mod_Void.f90
 else
   ifeq ($(MPI), yes)
-    SRC_MOD += Cgns_Mod_Par.f90                    \
-               Cgns_Mod_Save_Grid_Par.f90          \
-               Cgns_Mod_Add_Fields_To_Grid_Par.f90
+    SRC_MOD += Cgns_Mod_Par.f90
   else
-    SRC_MOD += Cgns_Mod_Seq.f90                    \
-               Cgns_Mod_Save_Grid_Seq.f90          \
-               Cgns_Mod_Add_Fields_To_Grid_Seq.f90
+    SRC_MOD += Cgns_Mod_Seq.f90
   endif
 endif
 
@@ -182,7 +185,9 @@ SRC_FUN += Distance.f90            \
            Sort_Real_Carry_Int.f90 \
            Approx.f90              \
            Swap_Int.f90            \
-           To_Upper_Case.f90
+           To_Upper_Case.f90       \
+           Save_Grid.f90           \
+           Add_Fields_To_Grid.f90
 
 # ... to allow conditional inclusion of CGNS support
 #ifeq ($(CGNS_ADF5), $(CGNS_HDF5))

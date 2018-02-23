@@ -2,8 +2,10 @@
   subroutine Write_Coordinate_Array(base, block, coord, grid)
 !------------------------------------------------------------------------------!
 !   Writes grid coordinates (RealDouble) [sequential vesion]                   !
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
+  use Work_Mod, only: coordinates => r_node_01
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -16,7 +18,6 @@
   character(len=80) :: coord_name
   integer           :: i               ! lower range index
   integer           :: j               ! upper range index
-  real, allocatable :: coordinates(:)  ! array of coordinate values
   integer           :: error           ! error status
 !==============================================================================!
 
@@ -28,16 +29,15 @@
 
   i = 1
   j = cgns_base(base_id) % block(block_id) % mesh_info(1)
-  allocate(coordinates(i:j))
 
   ! Fetch received parameters
   select case (coord_id)
     case (1)
-      coordinates(i:j) = grid % xn(i:j)
+      coordinates = grid % xn
     case (2)
-      coordinates(i:j) = grid % yn(i:j)
+      coordinates = grid % yn
     case (3)
-      coordinates(i:j) = grid % zn(i:j)
+      coordinates = grid % zn
   end select
 
   ! Write grid coordinates
@@ -55,8 +55,6 @@
          print *, "# Failed to write: ", trim(coord_name)
      call cg_error_exit_f()
   endif
-
-  deallocate(coordinates)
 
   ! Print some info
   if(verbose) then

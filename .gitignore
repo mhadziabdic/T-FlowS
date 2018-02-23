@@ -1,6 +1,4 @@
 *.o
-**/Process/Communication/*.f90
-**/Makefile
 **/Makefile.in
 *.cas
 *.cns

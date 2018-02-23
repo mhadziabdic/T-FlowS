@@ -1,8 +1,8 @@
-subroutine Save_Grid(grid, name_save)                                        !
-!   Writes in parallely 3-D unstructured grid to files '????????'            !
+!==============================================================================!
+  subroutine Save_Grid(grid, name_save)                                        !
+!   Writes in 3-D unstructured grid to files 'name_save.cgns'                  !
+!   Valid for both parallel and seqential access                               !
 !------------------------------------------------------------------------------!
-!   All conventions for this lib are here:                                     !
-!   https://cgns.github.io/CGNS_docs_current/sids/conv.html                    !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use par_mod, only: this_proc
@@ -18,8 +18,7 @@ subroutine Save_Grid(grid, name_save)                                        !
   integer           :: c, base, block, sect, coord
 !==============================================================================!
 
-  ! Set the parallel IO mode for CGNS
-  if (this_proc == 1) print *, "# subroutine Save_Grid"
+  if (this_proc .lt. 1) print *, "# subroutine Save_Grid"
 
   ! Store the name
   store_name = problem_name
@@ -140,7 +139,7 @@ subroutine Save_Grid(grid, name_save)                                        !
   ! Close DB
   call Close_File
 
-  if (this_proc.eq.1) &
+  if (this_proc .lt. 2) &
     print *, 'Successfully wrote unstructured grid to file ',trim(problem_name)
 
   deallocate(cgns_base)
@@ -148,4 +147,4 @@ subroutine Save_Grid(grid, name_save)                                        !
   ! Restore the name
   problem_name = store_name
 
-end subroutine
+  end subroutine

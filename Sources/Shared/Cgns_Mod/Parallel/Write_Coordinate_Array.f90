@@ -6,9 +6,11 @@
 !   Array structures in current function are strictly followings:              !
 !   Processor:    |        P_1        |               P_2               | ...  !
 !   x,y,z:        |      (1 : NN_1)   |       NN_1 + 1 : NN_1 + NN_2    | ...  !
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use par_mod, only: this_proc
   use Grid_Mod
+  use Work_Mod, only: coordinates => r_node_01
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -21,7 +23,6 @@
   character(len=80) :: coord_name
   integer           :: i               ! lower range index
   integer           :: j               ! upper range index
-  real, allocatable :: coordinates(:)  ! array of coordinate values
   integer           :: error           ! error status
   integer           :: first_node      ! look at array structure at the header
 !==============================================================================!
@@ -43,20 +44,14 @@
   i = first_node
   j = first_node + grid % n_nodes - 1
 
-  allocate(coordinates(i:j), stat = error); coordinates = 0
-  if (error .ne. 0) then
-     print*, '*FAILED* to allocate ', "coordinates"
-     call Cgp_Error_Exit_F()
-  endif
-
   ! Fetch received parameters
   select case (coord_id)
     case (1)
-      coordinates(i:j) = grid % xn(:)
+      coordinates = grid % xn
     case (2)
-      coordinates(i:j) = grid % yn(:)
+      coordinates = grid % yn
     case (3)
-      coordinates(i:j) = grid % zn(:)
+      coordinates = grid % zn
   end select
 
   call Cgp_Coord_Write_F( & !(in )
@@ -69,7 +64,7 @@
     error)                  !(out)
 
   if (error.ne.CG_OK) then
-    print*,'*FAILED* to create empty: ', trim(coord_name)
+    print *, '*FAILED* to create empty: ', trim(coord_name)
     call Cgp_Error_Exit_F()
   endif
 
@@ -79,21 +74,19 @@
 
   ! Fill coord_id node with grid coordinates
   call Cgp_Coord_Write_Data_F( & !(in )
-     file_id,                  & !(in )
-     base_id,                  & !(in )
-     block_id,                 & !(in )
-     coord_id,                 & !(in )
-     i,                        & !(in )
-     j,                        & !(in )
-     coordinates(i:j),         & !(in )
-     error)                      !(out)
+    file_id,                   & !(in )
+    base_id,                   & !(in )
+    block_id,                  & !(in )
+    coord_id,                  & !(in )
+    i,                         & !(in )
+    j,                         & !(in )
+    coordinates,               & !(in )
+    error)                       !(out)
 
   if (error .ne. 0) then
-         print *, "# Failed to fill: ", trim(coord_name)
-     call Cgp_Error_Exit_F()
+    print *, "# Failed to fill: ", trim(coord_name)
+    call Cgp_Error_Exit_F()
   endif
-
-  deallocate(coordinates)
 
   ! Print some info
   if(verbose .and. this_proc.eq.1) then

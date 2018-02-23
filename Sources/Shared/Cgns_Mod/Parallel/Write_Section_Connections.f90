@@ -9,6 +9,7 @@
 !   Array structures in current function are strictly followings:              !
 !   Cell type:    |      HEXA_8      |     PENTA_6      |       PYRA_5     |...!
 !   Connections:  |-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|...!
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
   use par_mod, only: this_proc
@@ -26,9 +27,9 @@
   integer              :: n_bnd         ! index of last boundary element
   integer              :: error
   integer              :: n_nodes, c, cnt, i, j
-  integer, allocatable :: cell_n(:,:)
   integer              :: first_cell    ! look at array structure at the header
   integer              :: last_cell     ! look at array structure at the header
+  integer              :: cell_n(1:8,1:grid % n_nodes)
 !==============================================================================!
 
   ! Set input parameters
@@ -67,8 +68,8 @@
       sect_id,                & !(out)
       error)                    !(out)
     if (error .ne. 0) then
-       print*, '*FAILED* to create empty ', trim(sect_name)
-       call Cgp_Error_Exit_F()
+      print*, '*FAILED* to create empty ', trim(sect_name)
+      call Cgp_Error_Exit_F()
     endif
 
     ! Print some info
@@ -82,29 +83,24 @@
       print *, '#         Cell section last cell:   ',  c + cnt_cells
     end if
 
-    !--------------------------------------!
-    !   Fill empty sect_name in DB block   !
-    !--------------------------------------!
+
+  !------------------------------------------------!
+  !   Mapping 1:NC -> Connection structure above   !
+  !------------------------------------------------!
+
     i = cnt ! cnt_hex/pyr/wed/tet on this_proc
     call Get_Arrays_Dimensions(j, i)
 
     first_cell = j + cnt_cells
     last_cell  = first_cell - 1 + cnt
 
-    ! Allocate memory
     if ( ElementTypeName(cell_type) .eq. 'HEXA_8' ) n_nodes = 8
     if ( ElementTypeName(cell_type) .eq. 'PENTA_6') n_nodes = 6
     if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) n_nodes = 5
     if ( ElementTypeName(cell_type) .eq. 'TETRA_4') n_nodes = 4
-    allocate(cell_n(1:n_nodes, first_cell:last_cell), stat = error)
-
-    if (error .ne. 0) then
-       print*, '*FAILED* to allocate ', trim(sect_name)
-       call Cgp_Error_Exit_F()
-    endif
 
     ! Convert T-FlowS -> CGNS [same as VTK]
-    i = first_cell
+    i = 1
     do c = 1, grid % n_cells
       if (grid % cells_n_nodes(c).eq.8 .and. n_nodes.eq.8 ) then ! hex
         cell_n (1, i) = grid % cells_n(1, c)
@@ -137,6 +133,10 @@
     call Get_Arrays_Dimensions(j, i)
     cell_n = cell_n + j - 1
 
+    !--------------------------------------!
+    !   Fill empty sect_name in DB block   !
+    !--------------------------------------!
+
     ! Fill that node with grid coordinates
     call Cgp_Elements_Write_Data_F( & !(in )
       file_id,                      & !(in )
@@ -145,20 +145,18 @@
       sect_id,                      & !(in )
       first_cell,                   & !(in )
       last_cell,                    & !(in )
-      cell_n,                       & !(in )
+      cell_n(1:n_nodes, 1:cnt),     & !(in )
       error)                          !(out)
 
     if (error .ne. 0) then
-       print*, '*FAILED* to fill ', sect_id
-       call Cgp_Error_Exit_F()
+      print*, '*FAILED* to fill ', sect_id
+      call Cgp_Error_Exit_F()
     endif
-
-    deallocate(cell_n)
 
     ! Print some info
     if(verbose) then
       print *, '#         First cell:', first_cell, " (P:",this_proc,")"
-      print *, '#         Last cell: ', last_cell, " (P:",this_proc,")"
+      print *, '#         Last cell: ', last_cell,  " (P:",this_proc,")"
     end if
 
     c = cnt

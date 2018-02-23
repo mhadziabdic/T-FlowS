@@ -4,8 +4,8 @@
 General Information:
 -------------------
 		   HDF5 Version: 1.8.21-snap8
-		  Configured on: Tue Feb 20 11:26:57 CET 2018
-		  Configured by: l_palkin_e@pc9603
+		  Configured on: Fri Feb 23 11:23:27 CET 2018
+		  Configured by: $user
 		 Configure mode: production
 		    Host system: x86_64-unknown-linux-gnu
 	      Uname information: Linux pc9603 4.4.0-108-generic #131-Ubuntu SMP Sun Jan 7 14:34:49 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
@@ -17,19 +17,19 @@ Compiling Options:
 ------------------
                Compilation Mode: production
                      C Compiler: /usr/bin/gcc
-                         CFLAGS: 
+                         CFLAGS: -O3
                       H5_CFLAGS: -std=c99 -pedantic -Wall -Wextra -Wundef -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wfloat-equal -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wdisabled-optimization -Wformat=2 -Wunreachable-code -Wendif-labels -Wdeclaration-after-statement -Wold-style-definition -Winvalid-pch -Wvariadic-macros -Winit-self -Wmissing-include-dirs -Wswitch-default -Wswitch-enum -Wunused-macros -Wunsafe-loop-optimizations -Wc++-compat -Wstrict-overflow -Wlogical-op -Wlarger-than=2048 -Wvla -Wsync-nand -Wframe-larger-than=16384 -Wpacked-bitfield-compat -Wstrict-overflow=5 -Wjump-misses-init -Wunsuffixed-float-constants -Wdouble-promotion -Wsuggest-attribute=const -Wtrampolines -Wstack-usage=8192 -Wvector-operation-performance -Wsuggest-attribute=pure -Wsuggest-attribute=noreturn -Wsuggest-attribute=format -Wdate-time -Wopenmp-simd -Warray-bounds=2 -Wc99-c11-compat -O3 -fstdarg-opt
                       AM_CFLAGS: 
                        CPPFLAGS: 
                     H5_CPPFLAGS: -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L   -DNDEBUG -UH5_DEBUG_API
-                    AM_CPPFLAGS:  -I$INSTALL_DIR/ZLIB/include -I$INSTALL_DIR/SZIP/include
+                    AM_CPPFLAGS: 
                Shared C Library: no
                Static C Library: yes
   Statically Linked Executables: no
                         LDFLAGS: 
                      H5_LDFLAGS: 
-                     AM_LDFLAGS:  -L$INSTALL_DIR/ZLIB/lib -L$INSTALL_DIR/SZIP/lib
- 	 	Extra libraries: -lsz -lz -ldl -lm 
+                     AM_LDFLAGS: 
+ 	 	Extra libraries: -lz -ldl -lm 
  		       Archiver: ar
  		 	 Ranlib: ranlib
  	      Debugged Packages: 
@@ -40,7 +40,7 @@ Languages:
                         Fortran: yes
                Fortran Compiler: /usr/bin/gfortran
           Fortran 2003 Compiler: 
-                  Fortran Flags: 
+                  Fortran Flags: -O3
                H5 Fortran Flags:  
                AM Fortran Flags: 
          Shared Fortran Library: no
@@ -55,7 +55,7 @@ Features:
                    Threadsafety: no
             Default API Mapping: v18
  With Deprecated Public Symbols: yes
-         I/O filters (external): deflate(zlib),szip(encoder)
+         I/O filters (external): deflate(zlib)
                             MPE: no
                      Direct VFD: no
                         dmalloc: no

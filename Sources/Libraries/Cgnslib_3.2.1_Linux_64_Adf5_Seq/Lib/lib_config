@@ -36,7 +36,7 @@ CGNS_INCLUDEDIR = $INSTALL_DIR/cgnslib_3.2.1_linux_64_adf5_seq/include
 #-----------------------------------------------------------------------
 
 CGNS_CC      = gcc
-CGNS_CFLAGS  = -g -O2   
+CGNS_CFLAGS  = -O3   
 CGNS_LDFLAGS = 
 
 #-----------------------------------------------------------------------

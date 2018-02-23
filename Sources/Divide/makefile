@@ -93,9 +93,37 @@ SRC_MOD =  allp_mod.f90			\
            Bnd_Cond_Mod.f90		\
            Grid_Mod.f90
 
-# Sources for all functions are obtained by a shell command
-SRC_FUN_WITH_DIR = $(shell ls -1 $(DIR_SHARED)/*.f90 *.f90 | grep -v -i _Mod)
-SRC_FUN = $(subst $(DIR_SHARED)/, ,$(SRC_FUN_WITH_DIR))
+# Sources for all shared functions
+SRC_FUN = Approx.f90			\
+          Distance.f90			\
+          Distance_Squared.f90		\
+          Name_File.f90			\
+          Load_Geo.f90			\
+          Save_Cns_Geo.f90		\
+          Save_Vtu_Cells.f90		\
+          Save_Vtu_Faces.f90		\
+          Save_Vtu_Links.f90		\
+          Save_Shadows.f90		\
+          Sort_Real_Carry_Int.f90	\
+          Sort_Int_By_Index.f90		\
+          Sort_Real_By_Index.f90	\
+          Sort2.f90			\
+          Swap_Int.f90			\
+          To_Upper_Case.f90
+
+# Local functions are added one by one ...
+SRC_FUN += Allocate_Additional.f90	\
+           Compute_Eigenvalues.f90	\
+           Create_Buffers_And_Save.f90	\
+           Factorize_Number.f90		\
+           Inertia.f90			\
+           Load_Cns.f90			\
+           Load_Shadow_Faces.f90	\
+           Logo_Div.f90			\
+           Main_Div.f90			\
+           Save_Com.f90			\
+           Save_Scripts.f90		\
+           Split_Subdomain.f90
 
 #----------------------------------------------------------------------
 #   List of objects generated from the list of modules and functions  

@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Write_Solution_Info(base, block, solution)
+  subroutine Cgns_Mod_Write_Solution_Info(base, block, solution)
 !------------------------------------------------------------------------------!
 !   Writes main info to solution node and sets its sol_id  [parallel vesion]   !
 !------------------------------------------------------------------------------!

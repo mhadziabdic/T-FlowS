@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Write_Block_Info(base, block)
+  subroutine Cgns_Mod_Write_Block_Info(base, block)
 !------------------------------------------------------------------------------!
 !   Writes zone/block info in base node [sequential vesion]                    !
 !------------------------------------------------------------------------------!

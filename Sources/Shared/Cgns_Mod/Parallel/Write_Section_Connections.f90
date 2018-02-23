@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Write_Section_Connections(base, block, sect, grid)
+  subroutine Cgns_Mod_Write_Section_Connections(base, block, sect, grid)
 !------------------------------------------------------------------------------!
 !   Writes elements connection for sect_id [parallel version]                  !
 !------------------------------------------------------------------------------!
@@ -89,7 +89,7 @@
   !------------------------------------------------!
 
     i = cnt ! cnt_hex/pyr/wed/tet on this_proc
-    call Get_Arrays_Dimensions(j, i)
+    call Cgns_Mod_Get_Arrays_Dimensions(j, i)
 
     first_cell = j + cnt_cells
     last_cell  = first_cell - 1 + cnt
@@ -130,7 +130,7 @@
 
     ! Shift cell_n value according to a number of nodes in coord array
     i = grid % n_nodes
-    call Get_Arrays_Dimensions(j, i)
+    call Cgns_Mod_Get_Arrays_Dimensions(j, i)
     cell_n = cell_n + j - 1
 
     !--------------------------------------!

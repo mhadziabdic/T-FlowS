@@ -164,7 +164,7 @@ endif
 SRC_MOD += Control_Mod.f90
 
 # Sources for all functions are obtained by a shell command
-SRC_RAW =  $(shell ls -1 *.f90               | grep -v -i _Mod)
+SRC_RAW =  $(shell ls -1 *.f90 | grep -v -i _Mod | grep -v -i Save_Cgns)
 SRC_RAW += $(shell ls -1 $(DIR_MODELS)/*.f90 | grep -v -i _Mod)
 SRC_RAW += $(shell ls -1 $(DIR_COMMUN)/*.f90 | grep -v -i _Mod)
 
@@ -172,6 +172,15 @@ SRC_RAW += $(shell ls -1 $(DIR_COMMUN)/*.f90 | grep -v -i _Mod)
 STEP_A  = $(subst $(DIR_MODELS),,$(SRC_RAW)) # remove directory name
 STEP_B  = $(subst $(DIR_COMMUN),,$(STEP_A))  # remove directory name
 SRC_FUN = $(subst /,,$(STEP_B))              # remove last slash
+
+# ... to allow conditional inclusion of CGNS support
+ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
+  SRC_FUN += Save_Cgns_Results_Void.f90	\
+             Save_Cgns_Cells_Void.f90
+else
+  SRC_FUN += Save_Cgns_Results.f90	\
+             Save_Cgns_Cells.f90
+endif
 
 # Add files from "Shared" directory, but one by one, to avoid clutter
 SRC_FUN += Distance.f90              \
@@ -181,16 +190,7 @@ SRC_FUN += Distance.f90              \
            Sort_Real_Carry_Int.f90   \
            Approx.f90                \
            Swap_Int.f90              \
-           To_Upper_Case.f90         \
-           ../Save_Grid.f90          \
-           ../Add_Fields_To_Grid.f90
-
-# ... to allow conditional inclusion of CGNS support
-#ifeq ($(CGNS_ADF5), $(CGNS_HDF5))
-#  SRC_FUN += Save_Cgns_Results_Void.f90
-#else
-#  SRC_FUN += Save_Cgns_Results.f90
-#endif
+           To_Upper_Case.f90
 
 #----------------------------------------------------------------------
 #   List of objects generated from the list of modules and functions

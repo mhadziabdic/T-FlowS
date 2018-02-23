@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Write_Field(base, block, solution, field, grid, &
+  subroutine Cgns_Mod_Write_Field(base, block, solution, field, grid, &
     input_array, input_name)
 !------------------------------------------------------------------------------!
 !   Writes field to solution node and sets its field_id  [parallel vesion]     !
@@ -15,7 +15,7 @@
 !---------------------------------[Arguments]----------------------------------!
   integer              :: base, block, solution, field
   type(Grid_Type)      :: grid
-  real                 :: input_array(1:grid % n_cells)
+  real                 :: input_array(grid % n_cells)
   character(len=*)     :: input_name
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: base_id        ! base index number
@@ -25,7 +25,7 @@
   character(len=80)    :: field_name     ! name of the FlowSolution_t node
   integer              :: cell_type
   integer              :: cnt            ! cells of cell_type
-  real                 :: field_array(1:grid % n_cells) ! field array
+  real                 :: field_array(grid % n_cells) ! field array
   integer              :: i, j, k, c
   integer              :: error
 !==============================================================================!
@@ -70,7 +70,7 @@
     if (cell_type.eq.4) cnt = cnt_tet
 
     i = cnt ! cnt_hex/pyr/wed/tet on this_proc
-    call Get_Arrays_Dimensions(j, i)
+    call Cgns_Mod_Get_Arrays_Dimensions(j, i)
 
     i = j + cnt_cells
     j = i + cnt - 1

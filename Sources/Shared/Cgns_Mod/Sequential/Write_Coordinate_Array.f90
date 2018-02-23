@@ -1,11 +1,11 @@
 !==============================================================================!
-  subroutine Write_Coordinate_Array(base, block, coord, grid)
+  subroutine Cgns_Mod_Write_Coordinate_Array(base, block, coord, grid)
 !------------------------------------------------------------------------------!
 !   Writes grid coordinates (RealDouble) [sequential vesion]                   !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
-  use Work_Mod, only: coordinates => r_node_01
+!  use Work_Mod, only: coordinates => r_node_01
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -19,6 +19,7 @@
   integer           :: i               ! lower range index
   integer           :: j               ! upper range index
   integer           :: error           ! error status
+  real              :: coordinates(grid % n_nodes)
 !==============================================================================!
 
   ! Set input parameters

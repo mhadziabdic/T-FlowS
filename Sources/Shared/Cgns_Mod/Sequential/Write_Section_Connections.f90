@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Write_Section_Connections(base, block, sect, grid)
+  subroutine Cgns_Mod_Write_Section_Connections(base, block, sect, grid)
 !------------------------------------------------------------------------------!
 !   Writes elements connection for sect_id [sequential version]                !
 !------------------------------------------------------------------------------!

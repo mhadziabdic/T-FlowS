@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Write_Coordinate_Array(base, block, coord, grid)
+  subroutine Cgns_Mod_Write_Coordinate_Array(base, block, coord, grid)
 !------------------------------------------------------------------------------!
 !   Writes grid coordinates (RealDouble) [parallel vesion]                     !
 !------------------------------------------------------------------------------!
@@ -39,7 +39,7 @@
 
   ! Fetch coordinates array dimensions
   i = grid % n_nodes
-  call Get_Arrays_Dimensions(first_node, i)
+  call Cgns_Mod_Get_Arrays_Dimensions(first_node, i)
 
   i = first_node
   j = first_node + grid % n_nodes - 1

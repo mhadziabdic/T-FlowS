@@ -86,8 +86,8 @@
  
   include 'Work_Mod/Allocate_Real_Cells.f90'
   include 'Work_Mod/Allocate_Real_Faces.f90'
+  include 'Work_Mod/Allocate_Real_Nodes.f90'
   include 'Work_Mod/Allocate_Integer_Cells.f90'
   include 'Work_Mod/Allocate_Integer_Faces.f90'
-  include 'Work_Mod/Allocate_Real_Nodes.f90'
 
   end module

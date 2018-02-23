@@ -34,7 +34,7 @@
   !                                       !
   !                                       !
   !---------------------------------------!
-  call Initialize_Counters
+  call Cgns_Mod_Initialize_Counters
 
   ! Open a CGNS file (->file_id)
   mode = CG_MODE_READ
@@ -140,7 +140,7 @@
   !                                     !
   !                                     !
   !-------------------------------------!
-  call Initialize_Counters
+  call Cgns_Mod_Initialize_Counters
 
   print *, '# Filling arrays..'
 
@@ -208,7 +208,7 @@
   !   Merge the nodes   !
   !---------------------!
   if(cnt_blocks .gt. 1) then
-    call Merge_Nodes(grid)
+    call Cgns_Mod_Merge_Nodes(grid)
   end if
 
   !---------------------------------!

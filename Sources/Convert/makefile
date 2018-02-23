@@ -23,7 +23,7 @@ DIR_BINARY = ../../Binaries
 DIR_SHARED = ../Shared
 DIR_MODULE = ../.Modules
 DIR_OBJECT = .Objects
-VPATH = $(DIR_SHARED):.
+VPATH = $(DIR_SHARED):../Process/Communication/Sequential:.
 
 # Program name (This should hardly change)
 PROGRAM_NAME = Convert
@@ -91,7 +91,7 @@ $(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN) )
 $(info #----------------------------------------------------)
 $(info # Usage:                                             )
 $(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> )
-$(info #        <CGNS_ADF=yes/no> <CGNS_HDF5=yes/no>        )
+$(info #        <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no>       )
 $(info #----------------------------------------------------)
 
 #------------------------------------------------------
@@ -104,7 +104,7 @@ $(info #----------------------------------------------------)
 #------------------------------------------------------
 
 # Sources for modules in the local directory
-SRC_MOD = Cgns_Mod.f90
+SRC_MOD = Cgns_Mod_Seq.f90
 
 # If CGNS is supported, add the right module
 ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
@@ -121,9 +121,22 @@ SRC_MOD += allp_mod.f90		\
            Bnd_Cond_Mod.f90	\
            Grid_Mod.f90
 
-# Sources for all shared functions are obtained by a shell command
-SRC_FUN_WITH_DIR =  $(shell ls -1 $(DIR_SHARED)/*.f90 | grep -v -i _Mod)
-SRC_FUN = $(subst $(DIR_SHARED)/, ,$(SRC_FUN_WITH_DIR))
+# Sources for all shared functions
+SRC_FUN = Approx.f90			\
+          Distance.f90			\
+          Distance_Squared.f90		\
+          Name_File.f90			\
+          Probe_1d_Nodes.f90		\
+          Save_Cns_Geo.f90		\
+          Save_Vtu_Cells.f90		\
+          Save_Vtu_Faces.f90		\
+          Save_Vtu_Links.f90		\
+          Save_Shadows.f90		\
+          Sort_Real_Carry_Int.f90	\
+          Sort2.f90			\
+          Swap_Int.f90			\
+          To_Upper_Case.f90		\
+          IGlSum.f90
 
 # Local functions are added one by one ...
 SRC_FUN += Allocate_Memory.f90	\
@@ -137,10 +150,12 @@ SRC_FUN += Allocate_Memory.f90	\
            Read_Line.f90
 
 # ... to allow conditional inclusion of CGNS support
-ifeq ($(CGNS_ADF5), $(CGNS_HDF5))
-  SRC_FUN += Load_Cgns_Void.f90
+ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
+  SRC_FUN += Load_Cgns_Void.f90		\
+             Save_Cgns_Cells_Void.f90
 else
-  SRC_FUN += Load_Cgns.f90
+  SRC_FUN += Load_Cgns.f90		\
+             Save_Cgns_Cells.f90
 endif
 
 #----------------------------------------------------------------------
@@ -191,7 +206,8 @@ $(PROGRAM_FILE): $(OBJ)
 $(DIR_OBJECT)/all_mod.o:	$(DIR_OBJECT)/allp_mod.o
 $(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Bnd_Cond_Mod.o	\
 				$(DIR_OBJECT)/Material_Mod.o
-$(DIR_OBJECT)/Cgns_Mod.o:	$(DIR_OBJECT)/Grid_Mod.o
+$(DIR_OBJECT)/Cgns_Mod_Seq.o:	$(DIR_OBJECT)/Grid_Mod.o	\
+				$(DIR_OBJECT)/Work_Mod.o
 
 #---------------------
 #   Explicit target.

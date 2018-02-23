@@ -185,13 +185,6 @@
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
     call Info_Mod_Time_Print()
 
-    if (n == 3) then
-      call Save_Grid(grid,"test_par")
-      call Add_Fields_To_Grid(grid,"test_par")
-      stop
-    end if
-
-
     if(turbulence_model == DES_SPALART) then
       call Calculate_Shear_And_Vorticity(grid)
       call Calculate_Vorticity (grid, u % n, v % n, w % n, vort)

@@ -23,7 +23,7 @@
   call Matrix_Mod_Allocate(grid, D)
 
   ! Variables defined in Flow_Mod.h90:
-  call Matrix_Mod_Allocate(grid, A)
+  call Matrix_Mod_Allocate(grid, a)
   allocate (b(grid % n_cells));  b=0
 
   ! Working arrays
@@ -31,12 +31,12 @@
   call Work_Mod_Allocate_Real_Faces(grid,  1)
   call Work_Mod_Allocate_Real_Nodes(grid,  1)
 
+  call Work_Mod_Allocate_Integer_Cells(grid, 4)
+
+  ! Variables defined in Comm_Mod.h90:
+  call Comm_Mod_Allocate_Memory(grid)
+
   ! This array should be handled in a more elegant way
   allocate (f_coef(grid % n_faces)); f_coef=0.
 
-  ! Variables defined in Comm_Mod.h90:
-  allocate (BufInd(-grid % n_bnd_cells:-1)); BufInd=0
-
-  ! Variables actively used in Cgns_Mod
- 
   end subroutine

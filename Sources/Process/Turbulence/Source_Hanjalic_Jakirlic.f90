@@ -10,6 +10,7 @@
   use Flow_Mod
   use rans_mod
   use Grid_Mod
+  use Grad_Mod
   use Work_Mod, only: l_sc_x => r_cell_01,  &
                       l_sc_y => r_cell_02,  &
                       l_sc_z => r_cell_03,  &
@@ -69,13 +70,13 @@
     Tsc(c)=  kin % n(c)/eps % n(c)
   end do
 
-  call GraPhi(grid, kin % n, 1, kin_x, .true.)  ! dK/dx
-  call GraPhi(grid, kin % n, 2, kin_y, .true.)  ! dK/dy
-  call GraPhi(grid, kin % n, 3, kin_z, .true.)  ! dK/dz
+  call Grad_Mod_For_Phi(grid, kin % n, 1, kin_x, .true.)  ! dK/dx
+  call Grad_Mod_For_Phi(grid, kin % n, 2, kin_y, .true.)  ! dK/dy
+  call Grad_Mod_For_Phi(grid, kin % n, 3, kin_z, .true.)  ! dK/dz
 
-  call GraPhi(grid, kin_x, 1, kin_xx, .true.)  ! d^2 K / dx^2
-  call GraPhi(grid, kin_y, 2, kin_yy, .true.)  ! d^2 K / dy^2
-  call GraPhi(grid, kin_z, 3, kin_zz, .true.)  ! d^2 K / dz^2
+  call Grad_Mod_For_Phi(grid, kin_x, 1, kin_xx, .true.)  ! d^2 K / dx^2
+  call Grad_Mod_For_Phi(grid, kin_y, 2, kin_yy, .true.)  ! d^2 K / dy^2
+  call Grad_Mod_For_Phi(grid, kin_z, 3, kin_zz, .true.)  ! d^2 K / dz^2
 
   do c = 1, grid % n_cells
     Eps_tot(c) = eps % n(c) + 0.5 * viscosity * (kin_xx(c) + kin_yy(c) + kin_zz(c))
@@ -86,50 +87,50 @@
 ! !      model that required much more memory         !
 ! !---------------------------------------------------!
 ! if(name_phi == "23") then
-!   call GraPhi(grid, uu % n, 1, VAR3x, .true.) ! duu/dx  
-!   call GraPhi(grid, uu % n, 2, VAR3y, .true.) ! duu/dy  
-!   call GraPhi(grid, uu % n, 3, VAR3z, .true.) ! duu/dz  
+!   call Grad_Mod_For_Phi(grid, uu % n, 1, VAR3x, .true.) ! duu/dx  
+!   call Grad_Mod_For_Phi(grid, uu % n, 2, VAR3y, .true.) ! duu/dy  
+!   call Grad_Mod_For_Phi(grid, uu % n, 3, VAR3z, .true.) ! duu/dz  
 !
-!   call GraPhi(grid, vv % n, 1, VAR4x, .true.) ! duw/dx  
-!   call GraPhi(grid, vv % n, 2, VAR4y, .true.) ! duw/dy  
-!   call GraPhi(grid, vv % n, 3, VAR4z, .true.) ! duw/dz  
+!   call Grad_Mod_For_Phi(grid, vv % n, 1, VAR4x, .true.) ! duw/dx  
+!   call Grad_Mod_For_Phi(grid, vv % n, 2, VAR4y, .true.) ! duw/dy  
+!   call Grad_Mod_For_Phi(grid, vv % n, 3, VAR4z, .true.) ! duw/dz  
 !
-!   call GraPhi(grid, ww % n, 1, VAR5x, .true.) ! duw/dx  
-!   call GraPhi(grid, ww % n, 2, VAR5y, .true.) ! duw/dy  
-!   call GraPhi(grid, ww % n, 3, VAR5z, .true.) ! duw/dz  
+!   call Grad_Mod_For_Phi(grid, ww % n, 1, VAR5x, .true.) ! duw/dx  
+!   call Grad_Mod_For_Phi(grid, ww % n, 2, VAR5y, .true.) ! duw/dy  
+!   call Grad_Mod_For_Phi(grid, ww % n, 3, VAR5z, .true.) ! duw/dz  
 !
-!   call GraPhi(grid, uv % n, 1, VAR6x, .true.) ! duv/dx  
-!   call GraPhi(grid, uv % n, 2, VAR6y, .true.) ! duv/dy  
-!   call GraPhi(grid, uv % n, 3, VAR6z, .true.) ! duv/dz  
+!   call Grad_Mod_For_Phi(grid, uv % n, 1, VAR6x, .true.) ! duv/dx  
+!   call Grad_Mod_For_Phi(grid, uv % n, 2, VAR6y, .true.) ! duv/dy  
+!   call Grad_Mod_For_Phi(grid, uv % n, 3, VAR6z, .true.) ! duv/dz  
 !
-!   call GraPhi(grid, uw % n, 1, kin_x, .true.) ! duw/dx  
-!   call GraPhi(grid, uw % n, 2, kin_y, .true.) ! duw/dy  
-!   call GraPhi(grid, uw % n, 3, kin_z, .true.) ! duw/dz  
+!   call Grad_Mod_For_Phi(grid, uw % n, 1, kin_x, .true.) ! duw/dx  
+!   call Grad_Mod_For_Phi(grid, uw % n, 2, kin_y, .true.) ! duw/dy  
+!   call Grad_Mod_For_Phi(grid, uw % n, 3, kin_z, .true.) ! duw/dz  
 !
-!   call GraPhi(grid, vw % n, 1, VAR8x, .true.) ! duw/dx  
-!   call GraPhi(grid, vw % n, 2, VAR8y, .true.) ! duw/dy  
-!   call GraPhi(grid, vw % n, 3, VAR8z, .true.) ! duw/dz  
+!   call Grad_Mod_For_Phi(grid, vw % n, 1, VAR8x, .true.) ! duw/dx  
+!   call Grad_Mod_For_Phi(grid, vw % n, 2, VAR8y, .true.) ! duw/dy  
+!   call Grad_Mod_For_Phi(grid, vw % n, 3, VAR8z, .true.) ! duw/dz  
 !
-!   call GraPhi(grid, u % x, 1, VAR1x, .true.)  ! d2U/dxdx
-!   call GraPhi(grid, u % y, 2, VAR1y, .true.)  ! d2U/dydy
-!   call GraPhi(grid, u % z, 3, VAR1z, .true.)  ! d2U/dzdz
-!   call GraPhi(grid, u % x, 2, VAR2x, .true.)  ! d2U/dxdy
-!   call GraPhi(grid, u % x, 3, VAR2y, .true.)  ! d2U/dxdz
-!   call GraPhi(grid, u % y, 3, VAR2z, .true.)  ! d2U/dydz
+!   call Grad_Mod_For_Phi(grid, u % x, 1, VAR1x, .true.)  ! d2U/dxdx
+!   call Grad_Mod_For_Phi(grid, u % y, 2, VAR1y, .true.)  ! d2U/dydy
+!   call Grad_Mod_For_Phi(grid, u % z, 3, VAR1z, .true.)  ! d2U/dzdz
+!   call Grad_Mod_For_Phi(grid, u % x, 2, VAR2x, .true.)  ! d2U/dxdy
+!   call Grad_Mod_For_Phi(grid, u % x, 3, VAR2y, .true.)  ! d2U/dxdz
+!   call Grad_Mod_For_Phi(grid, u % y, 3, VAR2z, .true.)  ! d2U/dydz
 !
-!   call GraPhi(grid, v % x, 1, VAR9x, .true.)  ! d2V/dxdx
-!   call GraPhi(grid, v % y, 2, VAR9y, .true.)  ! d2V/dydy
-!   call GraPhi(grid, v % z, 3, VAR9z, .true.)  ! d2V/dzdz
-!   call GraPhi(grid, v % x, 2, VAR10x, .true.)  ! d2V/dxdy
-!   call GraPhi(grid, v % x, 3, VAR10y, .true.)  ! d2V/dxdz
-!   call GraPhi(grid, v % y, 3, VAR10z, .true.)  ! d2V/dydz
+!   call Grad_Mod_For_Phi(grid, v % x, 1, VAR9x, .true.)  ! d2V/dxdx
+!   call Grad_Mod_For_Phi(grid, v % y, 2, VAR9y, .true.)  ! d2V/dydy
+!   call Grad_Mod_For_Phi(grid, v % z, 3, VAR9z, .true.)  ! d2V/dzdz
+!   call Grad_Mod_For_Phi(grid, v % x, 2, VAR10x, .true.)  ! d2V/dxdy
+!   call Grad_Mod_For_Phi(grid, v % x, 3, VAR10y, .true.)  ! d2V/dxdz
+!   call Grad_Mod_For_Phi(grid, v % y, 3, VAR10z, .true.)  ! d2V/dydz
 !
-!   call GraPhi(grid, w % x, 1, VAR11x, .true.)  ! d2W/dxdx
-!   call GraPhi(grid, w % y, 2, VAR11y, .true.)  ! d2W/dydy
-!   call GraPhi(grid, w % z, 3, VAR11z, .true.)  ! d2W/dzdz
-!   call GraPhi(grid, w % x, 2, VAR12x, .true.)  ! d2W/dxdy
-!   call GraPhi(grid, w % x, 3, VAR12y, .true.)  ! d2W/dxdz
-!   call GraPhi(grid, w % y, 3, VAR12z, .true.)  ! d2W/dydz
+!   call Grad_Mod_For_Phi(grid, w % x, 1, VAR11x, .true.)  ! d2W/dxdx
+!   call Grad_Mod_For_Phi(grid, w % y, 2, VAR11y, .true.)  ! d2W/dydy
+!   call Grad_Mod_For_Phi(grid, w % z, 3, VAR11z, .true.)  ! d2W/dzdz
+!   call Grad_Mod_For_Phi(grid, w % x, 2, VAR12x, .true.)  ! d2W/dxdy
+!   call Grad_Mod_For_Phi(grid, w % x, 3, VAR12y, .true.)  ! d2W/dxdz
+!   call Grad_Mod_For_Phi(grid, w % y, 3, VAR12z, .true.)  ! d2W/dydz
 !
 !   do c = 1, grid % n_cells
 !     Uxx = VAR1x(c)
@@ -225,28 +226,28 @@
   if(name_phi == 'EPS') then
   do i=1,3
     if(i == 1) then
-      call GraPhi(grid, U % x, 1, ui_xx, .true.)  ! d2U/dxdx
-      call GraPhi(grid, U % x, 2, ui_xy, .true.)  ! d2U/dxdy
-      call GraPhi(grid, U % x, 3, ui_xz, .true.)  ! d2U/dxdz
-      call GraPhi(grid, U % y, 2, ui_yy, .true.)  ! d2U/dydy
-      call GraPhi(grid, U % y, 3, ui_yz, .true.)  ! d2U/dydz
-      call GraPhi(grid, U % z, 3, ui_zz, .true.)  ! d2U/dzdz
+      call Grad_Mod_For_Phi(grid, U % x, 1, ui_xx, .true.)  ! d2U/dxdx
+      call Grad_Mod_For_Phi(grid, U % x, 2, ui_xy, .true.)  ! d2U/dxdy
+      call Grad_Mod_For_Phi(grid, U % x, 3, ui_xz, .true.)  ! d2U/dxdz
+      call Grad_Mod_For_Phi(grid, U % y, 2, ui_yy, .true.)  ! d2U/dydy
+      call Grad_Mod_For_Phi(grid, U % y, 3, ui_yz, .true.)  ! d2U/dydz
+      call Grad_Mod_For_Phi(grid, U % z, 3, ui_zz, .true.)  ! d2U/dzdz
     end if
     if(i == 2) then
-      call GraPhi(grid, V % x, 1, ui_xx, .true.)  ! d2V/dxdx
-      call GraPhi(grid, V % x, 2, ui_xy, .true.)  ! d2V/dxdy
-      call GraPhi(grid, V % x, 3, ui_xz, .true.)  ! d2V/dxdz
-      call GraPhi(grid, V % y, 2, ui_yy, .true.)  ! d2V/dydy
-      call GraPhi(grid, V % y, 3, ui_yz, .true.)  ! d2V/dydz
-      call GraPhi(grid, V % z, 3, ui_zz, .true.)  ! d2V/dzdz
+      call Grad_Mod_For_Phi(grid, V % x, 1, ui_xx, .true.)  ! d2V/dxdx
+      call Grad_Mod_For_Phi(grid, V % x, 2, ui_xy, .true.)  ! d2V/dxdy
+      call Grad_Mod_For_Phi(grid, V % x, 3, ui_xz, .true.)  ! d2V/dxdz
+      call Grad_Mod_For_Phi(grid, V % y, 2, ui_yy, .true.)  ! d2V/dydy
+      call Grad_Mod_For_Phi(grid, V % y, 3, ui_yz, .true.)  ! d2V/dydz
+      call Grad_Mod_For_Phi(grid, V % z, 3, ui_zz, .true.)  ! d2V/dzdz
     end if
     if(i == 3) then
-      call GraPhi(grid, W % x, 1, ui_xx, .true.)  ! d2W/dxdx
-      call GraPhi(grid, W % x, 2, ui_xy, .true.)  ! d2W/dxdy
-      call GraPhi(grid, W % x, 3, ui_xz, .true.)  ! d2W/dxdz
-      call GraPhi(grid, W % y, 2, ui_yy, .true.)  ! d2W/dydy
-      call GraPhi(grid, W % y, 3, ui_yz, .true.)  ! d2W/dydz
-      call GraPhi(grid, W % z, 3, ui_zz, .true.)  ! d2W/dzdz
+      call Grad_Mod_For_Phi(grid, W % x, 1, ui_xx, .true.)  ! d2W/dxdx
+      call Grad_Mod_For_Phi(grid, W % x, 2, ui_xy, .true.)  ! d2W/dxdy
+      call Grad_Mod_For_Phi(grid, W % x, 3, ui_xz, .true.)  ! d2W/dxdz
+      call Grad_Mod_For_Phi(grid, W % y, 2, ui_yy, .true.)  ! d2W/dydy
+      call Grad_Mod_For_Phi(grid, W % y, 3, ui_yz, .true.)  ! d2W/dydz
+      call Grad_Mod_For_Phi(grid, W % z, 3, ui_zz, .true.)  ! d2W/dzdz
     end if
 
     do c = 1, grid % n_cells
@@ -320,9 +321,9 @@
   end do  ! i
   end if                               
 
-  call GraPhi(grid, Lsc, 1, l_sc_x,.true.) 
-  call GraPhi(grid, Lsc, 2, l_sc_y,.true.) 
-  call GraPhi(grid, Lsc, 3, l_sc_z,.true.) 
+  call Grad_Mod_For_Phi(grid, Lsc, 1, l_sc_x,.true.) 
+  call Grad_Mod_For_Phi(grid, Lsc, 2, l_sc_y,.true.) 
+  call Grad_Mod_For_Phi(grid, Lsc, 3, l_sc_z,.true.) 
 
   r13 = ONE_THIRD
   r23 = TWO_THIRDS
@@ -583,9 +584,9 @@
   end do 
 
   if(name_phi == 'EPS') then
-    call GraPhi(grid, kin_e, 1, kin_x, .true.)             ! dK/dx
-    call GraPhi(grid, kin_e, 2, kin_y, .true.)             ! dK/dy
-    call GraPhi(grid, kin_e, 3, kin_z, .true.)             ! dK/dz
+    call Grad_Mod_For_Phi(grid, kin_e, 1, kin_x, .true.)             ! dK/dx
+    call Grad_Mod_For_Phi(grid, kin_e, 2, kin_y, .true.)             ! dK/dy
+    call Grad_Mod_For_Phi(grid, kin_e, 3, kin_z, .true.)             ! dK/dz
     do c = 1, grid % n_cells
       Ret  = (kin % n(c)**2) / (viscosity*eps % n(c) + TINY)
       Feps = 1.0 - ((Ce2-1.4)/Ce2) * exp(-(Ret/6.0)**2)

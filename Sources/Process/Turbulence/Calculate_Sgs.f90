@@ -11,6 +11,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Grad_Mod
   use Control_Mod
   use Work_Mod, only: t_x => r_cell_01,  &
                       t_y => r_cell_02,  &
@@ -26,7 +27,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, s, c1, c2 
   real    :: nx, ny, nz
-  real    :: Cs
+  real    :: cs
   real    :: s_tot, lf, u_tau_l, Uff 
   real    :: u_tot, u_nor, u_tan, a_pow, b_pow, nu, dely, y_plus 
   real    :: nc2
@@ -38,9 +39,9 @@
   !               !
   !---------------!
   if(buoyancy == YES) then
-    call GraPhi(grid, t % n, 1, t_x, .true.)  ! dT/dx
-    call GraPhi(grid, t % n, 2, t_y, .true.)  ! dT/dy
-    call GraPhi(grid, t % n, 3, t_z, .true.)  ! dT/dz
+    call Grad_Mod_For_Phi(grid, t % n, 1, t_x, .true.)  ! dT/dx
+    call Grad_Mod_For_Phi(grid, t % n, 2, t_y, .true.)  ! dT/dy
+    call Grad_Mod_For_Phi(grid, t % n, 3, t_z, .true.)  ! dT/dz
   end if 
  
   if(turbulence_model_variant == SMAGORINSKY) then
@@ -57,13 +58,13 @@
                            + w % n(nearest_wall_cell(c)) ** 2)  &
                    / (grid % wall_dist(nearest_wall_cell(c))+TINY) )
         y_plus = grid % wall_dist(c) * Uff / viscosity
-        Cs = Cs0 * (1.0-exp(-y_plus/25.0))
+        cs = cs0 * (1.0-exp(-y_plus/25.0))
       else  
-        Cs = Cs0
+        cs = cs0
       end if
       vis_t(c) = density &
               * (lf*lf)           &          ! delta^2 
-              * (Cs*Cs)           &          ! Cs^2   
+              * (cs*cs)           &          ! cs^2   
               * shear(c) 
     end do
 
@@ -91,7 +92,7 @@
       lf = grid % vol(c)**ONE_THIRD    
       vis_t(c) = density           &
               * (lf*lf)            &          ! delta^2 
-              * (0.5*0.5)          &          ! Cs^2   
+              * (0.5*0.5)          &          ! cs^2   
               * wale_v(c) 
     end do
   end if

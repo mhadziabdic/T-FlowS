@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine GraPhi(grid, phi, i, phii, boundary)
+  subroutine Grad_Mod_For_Phi(grid, phi, i, phii, boundary)
 !------------------------------------------------------------------------------!
 !   Calculates gradient of generic variable phi by a least squares method.     !
 !------------------------------------------------------------------------------!
@@ -129,6 +129,6 @@
 
   call Comm_Mod_Exchange(grid, phii)
 
-  if(.not. boundary) call Correct_Bad(grid, phii)
+  if(.not. boundary) call Grad_Mod_Correct_Bad_Cells(grid, phii)
 
   end subroutine

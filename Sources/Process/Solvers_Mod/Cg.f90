@@ -1,7 +1,5 @@
 !==============================================================================!
-  subroutine Cg(A, x, r1,        &
-                prec,niter,tol,  &
-                ini_res,fin_res)
+  subroutine Cg(mat_a, x, r1, prec, niter, tol, ini_res, fin_res)
 !------------------------------------------------------------------------------!
 !   Solves the linear systems of equations by a precond. CG Method.            !
 !------------------------------------------------------------------------------!
@@ -21,26 +19,26 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Matrix_Type) :: A           
-  real              :: x(-A % pnt_grid % n_bnd_cells : A % pnt_grid % n_cells)
-  real              :: r1(A % pnt_grid % n_cells)    !  [A]{x}={r1}
+  type(Matrix_Type) :: mat_a           
+  real    :: x(-mat_a % pnt_grid % n_bnd_cells : mat_a % pnt_grid % n_cells)
+  real    :: r1(mat_a % pnt_grid % n_cells)    !  [A]{x}={r1}
+  integer :: niter              ! number of iterations
+  real    :: tol                ! tolerance
+  real    :: ini_res, fin_res   ! residual
   character(len=80) :: prec               ! preconditioner
-  integer           :: niter              ! number of iterations
-  real              :: tol                ! tolerance
-  real              :: ini_res, fin_res   ! residual
 !-----------------------------------[Locals]-----------------------------------!
   integer :: n, nb
   real    :: alfa, beta, rho, rhoold, bnrm2, error
   integer :: i, j, k, iter, sub
 !==============================================================================!
            
-  n  = A % pnt_grid % n_cells
-  nb = A % pnt_grid % n_bnd_cells
+  n  = mat_a % pnt_grid % n_cells
+  nb = mat_a % pnt_grid % n_bnd_cells
 
   !---------------------!
   !   Preconditioning   !
   !---------------------!
-  call Prec_Form(A, prec)
+  call Prec_Form(mat_a, prec)
 
   !???????????????????????????????????!
   !    This is quite tricky point.    !
@@ -61,7 +59,7 @@
   !----------------!
   !   r = b - Ax   !
   !----------------!
-  call Residual(n, nb, A, x, r1) 
+  call Residual(n, nb, mat_a, x, r1) 
 
   !-----------!
   !   p = r   !
@@ -83,7 +81,7 @@
   !---------------------------------------------------------------!
   !   Residual after the correction and before the new solution   !
   !---------------------------------------------------------------!
-  ini_res=error
+  ini_res = error
 
   if(error < tol) then
     iter=0
@@ -101,7 +99,7 @@
     !     solve Mz = r     !
     !   (q instead of z)   !
     !----------------------!
-    call Prec_Solve(A, q1, r1, prec) 
+    call Prec_Solve(mat_a, q1, r1, prec) 
 
     !-----------------!
     !   rho = (r,z)   !
@@ -123,22 +121,22 @@
       end do
     end if
 
-    !---------------!
-    !   q    = Ap   !     
-    !---------------!
+    !------------!
+    !   q = Ap   !     
+    !------------!
     do i=1,n
       q1(i) = 0.0                    
-      do j=A % row(i), A % row(i+1)-1  
-        k=A % col(j)                
-        q1(i) = q1(i) + A % val(j) * p1(k) 
+      do j=mat_a % row(i), mat_a % row(i+1)-1  
+        k=mat_a % col(j)                
+        q1(i) = q1(i) + mat_a % val(j) * p1(k) 
       end do
     end do
-    call Comm_Mod_Exchange(A % pnt_grid, p1)
+    call Comm_Mod_Exchange(mat_a % pnt_grid, p1)
     do sub=1,n_proc
       if(nbb_e(sub)  <=  nbb_s(sub)) then
         do k=nbb_s(sub),nbb_e(sub),-1
-          i=BufInd(k)
-          q1(i) = q1(i) + A % bou(k)*p1(k)
+          i=buffer_index(k)
+          q1(i) = q1(i) + mat_a % bou(k)*p1(k)
         end do
       end if
     end do

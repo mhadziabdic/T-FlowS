@@ -33,7 +33,4 @@
   integer, parameter :: LINEAR          = 50047
   integer, parameter :: PARABOLIC       = 50051
 
-  ! Mass correction error
-  real :: errmax
-
   end module

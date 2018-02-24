@@ -2,7 +2,7 @@
   subroutine Compute_Stresses(grid, dt, ini, phi)
 !------------------------------------------------------------------------------!
 !   Discretizes and solves transport equation for Re stresses for RSM.         !
-!   'EBM' and 'HJ' are calling this subroutine.                                    !
+!   'EBM' and 'HJ' are calling this subroutine.                                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
@@ -12,6 +12,7 @@
   use Comm_Mod
   use Var_Mod
   use Grid_Mod
+  use Grad_Mod
   use Info_Mod
   use Numerics_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
@@ -33,11 +34,11 @@
   integer         :: ini
   type(Var_Type)  :: phi
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: s, c, c1, c2, niter, miter, mat
+  integer           :: s, c, c1, c2, niter, mat
   real              :: Fex, Fim
   real              :: phis
   real              :: A0, A12, A21
-  real              :: error, tol
+  real              :: ini_res, tol
   real              :: vis_eff
   real              :: phix_f, phiy_f, phiz_f
   real              :: vis_tS
@@ -95,9 +96,9 @@
   end if
 
   ! Gradients
-  call GraPhi(grid, phi % n, 1, phi_x, .true.)
-  call GraPhi(grid, phi % n, 2, phi_y, .true.)
-  call GraPhi(grid, phi % n, 3, phi_z, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 1, phi_x, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 2, phi_y, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 3, phi_z, .true.)
 
   !---------------!
   !               !
@@ -382,9 +383,9 @@
                         + ww % n(c) * phi_z(c)) 
       end do
     end if
-    call GraPhi(grid, u1uj_phij, 1, u1uj_phij_x, .true.)
-    call GraPhi(grid, u2uj_phij, 2, u2uj_phij_y, .true.)
-    call GraPhi(grid, u3uj_phij, 3, u3uj_phij_z, .true.)
+    call Grad_Mod_For_Phi(grid, u1uj_phij, 1, u1uj_phij_x, .true.)
+    call Grad_Mod_For_Phi(grid, u2uj_phij, 2, u2uj_phij_y, .true.)
+    call Grad_Mod_For_Phi(grid, u3uj_phij, 3, u3uj_phij_z, .true.)
 
     do c = 1, grid % n_cells
       b(c) = b(c) + (  u1uj_phij_x(c)  &
@@ -525,11 +526,10 @@
   call Control_Mod_Preconditioner_For_System_Matrix(precond)
 
   ! Set number of iterations based on coupling method
-  if(coupling == 'PROJECTION') miter = 30
-  if(coupling == 'SIMPLE')     miter =  5
+  if(coupling == 'PROJECTION') niter = 30
+  if(coupling == 'SIMPLE')     niter =  5
 
-  niter=miter
-  call cg(A, phi % n, b, precond, niter, tol, phi % res, error)
+  call cg(A, phi % n, b, precond, niter, tol, ini_res, phi % res)
 
   if( phi % name == 'UU' )   &
     call Info_Mod_Iter_Fill_At(3, 1, phi % name, niter, phi % res)

@@ -9,7 +9,6 @@
   use Comm_Mod
   use Grid_Mod,     only: Grid_Type
   use Info_Mod
-  use Numerics_Mod, only: errmax
   use Solvers_Mod,  only: Bicg, Cg, Cgs
   use Control_Mod
 !------------------------------------------------------------------------------!
@@ -20,7 +19,7 @@
   integer           :: s, c, c1, c2, niter
   real              :: Us, Vs, Ws, A12, fs
   real              :: p_max, p_min
-  real              :: error, tol
+  real              :: ini_res, tol, mass_err
   real              :: smdpn
   real              :: dPxi, dPyi, dPzi
   character(len=80) :: precond
@@ -163,9 +162,9 @@
 
 1 end do
 
-  errmax=0.0
-  do c=1,grid % n_cells
-    errmax=max(errmax, abs(b(c)))
+  mass_err = 0.0
+  do c = 1, grid % n_cells
+    mass_err = max(mass_err, abs(b(c)))
   end do
 
   ! Don't solve the pressure corection too accurate.
@@ -176,9 +175,10 @@
   ! Get matrix precondioner
   call Control_Mod_Preconditioner_For_System_Matrix(precond)
 
-  niter=40
-  call bicg(A, pp % n, b, precond, niter, tol, pp % res, error) 
-  call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, pp % res)
+  niter = 80
+  call bicg(A, pp % n, b, precond, niter, tol, ini_res, pp % res)
+
+  call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, pp % res)   
 
   !-------------------------------!
   !   Update the pressure field   !

@@ -12,10 +12,11 @@
   ! These names are ugly but mean number of buffer boundaries start and end
   integer, allocatable :: nbb_s(:), nbb_e(:)
 
-  integer, allocatable :: BufInd(:)
+  integer, allocatable :: buffer_index(:)
 
   contains
 
+  include 'Comm_Mod/Parallel/Allocate_Memory.f90'
   include 'Comm_Mod/Sequential/End.f90'
   include 'Comm_Mod/Sequential/Exchange.f90'
   include 'Comm_Mod/Sequential/Global_Max_Real.f90'

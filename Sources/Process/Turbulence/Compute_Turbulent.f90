@@ -12,6 +12,7 @@
   use Comm_Mod
   use Var_Mod
   use Grid_Mod
+  use Grad_Mod
   use Info_Mod
   use Numerics_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
@@ -32,7 +33,7 @@
   real              :: Fex, Fim 
   real              :: phis
   real              :: A0, A12, A21
-  real              :: error, tol
+  real              :: ini_res, tol
   real              :: vis_eff
   real              :: phi_x_f, phi_y_f, phi_z_f
   character(len=80) :: coupling
@@ -89,9 +90,9 @@
   end if
 
   ! Gradients
-  call GraPhi(grid, phi % n, 1, phi_x, .true.)
-  call GraPhi(grid, phi % n, 2, phi_y, .true.)
-  call GraPhi(grid, phi % n, 3, phi_z, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 1, phi_x, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 2, phi_y, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 3, phi_z, .true.)
 
   !---------------!
   !               !
@@ -455,7 +456,7 @@
   if(coupling == 'PROJECTION') niter = 10 
   if(coupling == 'SIMPLE')     niter =  5
 
-  call cg(A, phi % n, b, precond, niter, tol, phi % res, error)
+  call cg(A, phi % n, b, precond, niter, tol, ini_res, phi % res)
 
   do c = 1, grid % n_cells
     if( phi%n(c)<0.0)then

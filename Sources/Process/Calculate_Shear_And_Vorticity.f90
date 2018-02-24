@@ -12,6 +12,7 @@
   use Comm_Mod
   use les_mod
   use rans_mod
+  use Grad_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -28,15 +29,15 @@
   !---------------!
   !   SGS terms   !
   !---------------!
-  call GraPhi(grid, u % n, 1, u % x, .true.)  ! dU/dx
-  call GraPhi(grid, u % n, 2, u % y, .true.)  ! dU/dy
-  call GraPhi(grid, u % n, 3, u % z, .true.)  ! dU/dz
-  call GraPhi(grid, v % n, 1, v % x, .true.)  ! dV/dx
-  call GraPhi(grid, v % n, 2, v % y, .true.)  ! dV/dy
-  call GraPhi(grid, v % n, 3, v % z, .true.)  ! dV/dz
-  call GraPhi(grid, w % n, 1, w % x, .true.)  ! dW/dx
-  call GraPhi(grid, w % n, 2, w % y, .true.)  ! dW/dy
-  call GraPhi(grid, w % n, 3, w % z, .true.)  ! dW/dz
+  call Grad_Mod_For_Phi(grid, u % n, 1, u % x, .true.)  ! du/dx
+  call Grad_Mod_For_Phi(grid, u % n, 2, u % y, .true.)  ! du/dy
+  call Grad_Mod_For_Phi(grid, u % n, 3, u % z, .true.)  ! du/dz
+  call Grad_Mod_For_Phi(grid, v % n, 1, v % x, .true.)  ! dv/dx
+  call Grad_Mod_For_Phi(grid, v % n, 2, v % y, .true.)  ! dv/dy
+  call Grad_Mod_For_Phi(grid, v % n, 3, v % z, .true.)  ! dv/dz
+  call Grad_Mod_For_Phi(grid, w % n, 1, w % x, .true.)  ! dw/dx
+  call Grad_Mod_For_Phi(grid, w % n, 2, w % y, .true.)  ! dw/dy
+  call Grad_Mod_For_Phi(grid, w % n, 3, w % z, .true.)  ! dw/dz
 
   do c = 1, grid % n_cells
     shear(c) = u % x(c)**2                     &

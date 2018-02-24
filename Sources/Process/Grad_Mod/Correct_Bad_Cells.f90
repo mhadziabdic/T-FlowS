@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Correct_Bad(grid, phii)
+  subroutine Grad_Mod_Correct_Bad_Cells(grid, phii)
 !------------------------------------------------------------------------------!
 !   Corrects the pressure gradients in the cells where they cannot             !
 !   be computed, the so called "bad" cells.                                    !
@@ -19,7 +19,7 @@
 !==============================================================================!
 
   do c = 1, grid % n_cells
-    if(BadForG(c)) then
+    if(bad_cells(c)) then
       phii(c) = 0.0
     end if
   end do 
@@ -30,8 +30,8 @@
      
     if(c2 > 0 .or.  &
        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
-      if(BadForG(c1)) phii(c1) = phii(c1) + 0.5*phii(c2) 
-      if(BadForG(c2)) phii(c2) = phii(c2) + 0.5*phii(c1) 
+      if(bad_cells(c1)) phii(c1) = phii(c1) + 0.5*phii(c2) 
+      if(bad_cells(c2)) phii(c2) = phii(c2) + 0.5*phii(c1) 
     end if
   end do
 

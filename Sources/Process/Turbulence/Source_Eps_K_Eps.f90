@@ -21,6 +21,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Grad_Mod
   use Control_Mod
   use Work_Mod, only: shear_x => r_cell_01,  &
                       shear_y => r_cell_02,  &
@@ -82,9 +83,9 @@
   if(turbulence_model_variant == LOW_RE) then
 
    call Calculate_Shear_And_Vorticity(grid)
-   call GraPhi(shear, 1, shear_x, .true.)  ! dU/dx
-   call GraPhi(shear, 2, shear_y, .true.)  ! dW/dy
-   call GraPhi(shear, 3, shear_z, .true.)  ! dV/dz
+   call Grad_Mod_For_Phi(grid, shear, 1, shear_x, .true.)  ! dU/dx
+   call Grad_Mod_For_Phi(grid, shear, 2, shear_y, .true.)  ! dW/dy
+   call Grad_Mod_For_Phi(grid, shear, 3, shear_z, .true.)  ! dV/dz
 
     do c = 1, grid % n_cells
 

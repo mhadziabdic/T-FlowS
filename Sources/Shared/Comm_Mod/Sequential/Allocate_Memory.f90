@@ -1,19 +1,14 @@
 !==============================================================================!
-  subroutine Save_Cgns_Cells(grid, sub, name_save)     
-!------------------------------------------------------------------------------!
-!   Writes in 3-D unstructured grid to files 'name_save.cgns'                  !
-!   Valid for both parallel and seqential access                               !
+  subroutine Comm_Mod_Allocate_Memory(grid)
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type)  :: grid
-  integer          :: sub
-  character(len=*) :: name_save
+  type(Grid_Type) :: grid
 !==============================================================================!
 
-  if (sub < 2) print *, "# Saving in CGNS format is not supported"
-
+  allocate (buffer_index(-grid % n_bnd_cells:-1)); buffer_index=0
+ 
   end subroutine

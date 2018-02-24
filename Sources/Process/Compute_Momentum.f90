@@ -47,7 +47,7 @@
   real              :: Fex, Fim 
   real              :: uis
   real              :: A0, A12, A21
-  real              :: error, tol
+  real              :: ini_res, tol
   real              :: VISeff, vis_tS, Fstress 
   real              :: ui_iS,ui_jS,ui_kS,uj_iS,uk_iS
   character(len=80) :: coupling
@@ -596,16 +596,16 @@
   if(coupling == 'PROJECTION') niter = 10
   if(coupling == 'SIMPLE')     niter =  5
 
-  call cg(A, ui % n, b, precond, niter, tol, ui % res, error)
+  call cg(A, ui % n, b, precond, niter, tol, ini_res, ui % res)
 
   if(ui % name == 'U') then
-    call Info_Mod_Iter_Fill_At(2, 1, ui % name, niter, ui % res)
+    call Info_Mod_Iter_Fill_At(2, 1, ui % name, niter, ui % res)   
   end if
   if(ui % name == 'V') then
-    call Info_Mod_Iter_Fill_At(2, 2, ui % name, niter, ui % res)
+    call Info_Mod_Iter_Fill_At(2, 2, ui % name, niter, ui % res)   
   end if
   if(ui % name == 'W') then
-    call Info_Mod_Iter_Fill_At(2, 3, ui % name, niter, ui % res)
+    call Info_Mod_Iter_Fill_At(2, 3, ui % name, niter, ui % res)   
   end if
 
   call Comm_Mod_Exchange(grid, ui % n)

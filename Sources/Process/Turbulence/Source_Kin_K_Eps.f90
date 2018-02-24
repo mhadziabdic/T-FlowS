@@ -11,6 +11,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Grad_Mod
   use Control_Mod
   use Work_Mod, only: kin_x => r_cell_01,  &
                       kin_y => r_cell_02,  &
@@ -121,9 +122,9 @@
       kin % n(c) = sqrt(kin % n(c))
     end do
 
-    call GraPhi(kin % n, 1, kin_x, .true.)  ! dK/dx
-    call GraPhi(kin % n, 2, kin_y, .true.)  ! dK/dy
-    call GraPhi(kin % n, 3, kin_z, .true.)  ! dK/dz
+    call Grad_Mod_For_Phi(grid, kin % n, 1, kin_x, .true.)  ! dk/dx
+    call Grad_Mod_For_Phi(grid, kin % n, 2, kin_y, .true.)  ! dk/dy
+    call Grad_Mod_For_Phi(grid, kin % n, 3, kin_z, .true.)  ! dk/dz
 
     do c = 1, grid % n_cells
 

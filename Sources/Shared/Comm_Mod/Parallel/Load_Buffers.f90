@@ -19,11 +19,11 @@
 !   They won't even "know" that they use values from other processors.
 !   On the other hand, a sending buffer has to be allocated in a new 
 !   separate array called simply buffer(). An additional array is needed 
-!   to keep track of all the indexes. That one is called BufInd().
-!   BufInd() has stored cell numbers from it's own subdomain so that
+!   to keep track of all the indexes. That one is called buffer_index().
+!   buffer_index() has stored cell numbers from it's own subdomain so that
 !   later they can be copied with (well, something like that):
 !   do i=1,BUFFSIZ
-!     buffer(i) = U(BufInd(i))
+!     buffer(i) = U(buffer_index(i))
 !   end do
 !------------------------------------------------------------------------------!
 
@@ -63,7 +63,7 @@
 
       do c=nbb_s(sub),nbb_e(sub),-1
         call Tokenizer_Mod_Read_Line(9)
-        read(line % whole,*) dummy, BufInd(c) 
+        read(line % whole,*) dummy, buffer_index(c) 
       end do 
     else
       nbb_s(sub) = nbb_e(sub-1)-1  ! just to become "sloppy" 

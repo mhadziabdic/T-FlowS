@@ -142,6 +142,7 @@ SRC_MOD += Info_Mod.f90     \
            Numerics_Mod.f90 \
            Solvers_Mod.f90  \
            Flow_Mod.f90     \
+           Grad_Mod.f90      \
            User_Mod.f90
 
 # Sources for modules in sub-directories

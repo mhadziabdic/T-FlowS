@@ -1,5 +1,5 @@
 !======================================================================!
-  subroutine GradP(grid, phi, phi_x, phi_y, phi_z)
+  subroutine Grad_Mod_For_P(grid, phi, phi_x, phi_y, phi_z)
 !----------------------------------------------------------------------!
 ! Calculates gradient of generic variable phi. phi may stand either    !
 ! for pressure (P) or pressure corrections (PP). This procedure also   !
@@ -39,12 +39,12 @@
     end if  
   end do
 
-  call GraPhi(grid, phi, 1, phi_x, .true.)  ! dP/dx
-  call GraPhi(grid, phi, 2, phi_y, .true.)  ! dP/dy
-  call GraPhi(grid, phi, 3, phi_z, .true.)  ! dP/dz    
+  call Grad_Mod_For_Phi(grid, phi, 1, phi_x, .true.)  ! dp/dx
+  call Grad_Mod_For_Phi(grid, phi, 2, phi_y, .true.)  ! dp/dy
+  call Grad_Mod_For_Phi(grid, phi, 3, phi_z, .true.)  ! dp/dz    
 
   do iter=1,1 
-
+ 
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
@@ -56,11 +56,11 @@
         end if  
       end if  
     end do
-
-    call GraPhi(grid, phi, 1, phi_x, .true.)  ! dP/dx
-    call GraPhi(grid, phi, 2, phi_y, .true.)  ! dP/dy
-    call GraPhi(grid, phi, 3, phi_z, .true.)  ! dP/dz 
-
+ 
+    call Grad_Mod_For_Phi(grid, phi, 1, phi_x, .true.)  ! dp/dx
+    call Grad_Mod_For_Phi(grid, phi, 2, phi_y, .true.)  ! dp/dy
+    call Grad_Mod_For_Phi(grid, phi, 3, phi_z, .true.)  ! dp/dz 
+ 
   end do
 
   end subroutine

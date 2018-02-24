@@ -11,6 +11,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Grad_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -144,15 +145,15 @@
     M23f(c) = m_23_a / vol_e 
   end do
 
-  call GraPhi(grid, u % filt, 1, u % x, .true.)  ! dU/dx
-  call GraPhi(grid, u % filt, 2, u % y, .true.)  ! dU/dy
-  call GraPhi(grid, u % filt, 3, u % z, .true.)  ! dU/dz
-  call GraPhi(grid, v % filt, 1, v % x, .true.)  ! dV/dx
-  call GraPhi(grid, v % filt, 2, v % y, .true.)  ! dV/dy
-  call GraPhi(grid, v % filt, 3, v % z, .true.)  ! dV/dz
-  call GraPhi(grid, w % filt, 1, w % x, .true.)  ! dW/dx
-  call GraPhi(grid, w % filt, 2, w % y, .true.)  ! dW/dy
-  call GraPhi(grid, w % filt, 3, w % z, .true.)  ! dW/dz
+  call Grad_Mod_For_Phi(grid, u % filt, 1, u % x, .true.)  ! dU/dx
+  call Grad_Mod_For_Phi(grid, u % filt, 2, u % y, .true.)  ! dU/dy
+  call Grad_Mod_For_Phi(grid, u % filt, 3, u % z, .true.)  ! dU/dz
+  call Grad_Mod_For_Phi(grid, v % filt, 1, v % x, .true.)  ! dV/dx
+  call Grad_Mod_For_Phi(grid, v % filt, 2, v % y, .true.)  ! dV/dy
+  call Grad_Mod_For_Phi(grid, v % filt, 3, v % z, .true.)  ! dV/dz
+  call Grad_Mod_For_Phi(grid, w % filt, 1, w % x, .true.)  ! dW/dx
+  call Grad_Mod_For_Phi(grid, w % filt, 2, w % y, .true.)  ! dW/dy
+  call Grad_Mod_For_Phi(grid, w % filt, 3, w % z, .true.)  ! dW/dz
 
   do c = 1, grid % n_cells
     l_g  = grid % vol(c)**ONE_THIRD

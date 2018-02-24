@@ -11,6 +11,7 @@
   use Comm_Mod
   use Var_Mod
   use Grid_Mod
+  use Grad_Mod
   use Info_Mod
   use Numerics_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
@@ -25,10 +26,10 @@
   integer         :: ini
   type(Var_Type)  :: phi
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: s, c, c1, c2, niter, miter
+  integer           :: s, c, c1, c2, niter
   real              :: Fex, Fim 
   real              :: A0, A12, A21
-  real              :: error, tol
+  real              :: ini_res, tol
   real              :: phi_x_f, phi_y_f, phi_z_f
   character(len=80) :: coupling
   character(len=80) :: precond
@@ -94,9 +95,9 @@
   end do
 
   ! Gradients
-  call GraPhi(grid, phi % n, 1, phi_x, .true.)
-  call GraPhi(grid, phi % n, 2, phi_y, .true.)
-  call GraPhi(grid, phi % n, 3, phi_z, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 1, phi_x, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 2, phi_y, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 3, phi_z, .true.)
 
   !------------------!
   !                  !
@@ -278,13 +279,12 @@
   call Control_Mod_Preconditioner_For_System_Matrix(precond)
 
   ! Set number of solver iterations on coupling method
-  if(coupling == 'PROJECTION') miter = 300
-  if(coupling == 'SIMPLE')     miter =   5
+  if(coupling == 'PROJECTION') niter = 300
+  if(coupling == 'SIMPLE')     niter =   5
 
-  niter=miter
-  call cg(A, phi % n, b, precond, niter, tol, phi % res, error)
+  call cg(A, phi % n, b, precond, niter, tol, ini_res, phi % res)
   
-  call Info_Mod_Iter_Fill_At(3, 4, phi % name, niter, phi % res)
+  call Info_Mod_Iter_Fill_At(3, 4, phi % name, niter, phi % res)    
 
   call Comm_Mod_Exchange(grid, phi % n)
 

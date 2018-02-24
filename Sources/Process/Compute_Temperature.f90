@@ -10,6 +10,7 @@
   use Comm_Mod
   use Var_Mod
   use Grid_Mod
+  use Grad_Mod
   use Info_Mod
   use Numerics_Mod
   use Solvers_Mod, only: Bicg, Cg, Cgs
@@ -34,8 +35,9 @@
 !----------------------------------[Calling]-----------------------------------!
   include "../Shared/Approx.int"
 !-----------------------------------[Locals]-----------------------------------! 
-  integer           :: n, c, s, c1, c2, niter, miter, mat
-  real              :: A0, A12, A21, error, tol
+  integer           :: n, c, s, c1, c2, niter, mat
+  real              :: A0, A12, A21
+  real              :: ini_res, tol
   real              :: CONeff1, FUex1, FUim1, phixS1, phiyS1, phizS1
   real              :: CONeff2, FUex2, FUim2, phixS2, phiyS2, phizS2
   real              :: Stot, phis, Prt, Prt1, Prt2
@@ -124,9 +126,9 @@
   end if
 
   ! Gradients
-  call GraPhi(grid, phi % n, 1, phi_x, .true.)
-  call GraPhi(grid, phi % n, 2, phi_y, .true.)
-  call GraPhi(grid, phi % n, 3, phi_z, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 1, phi_x, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 2, phi_y, .true.)
+  call Grad_Mod_For_Phi(grid, phi % n, 3, phi_z, .true.)
 
   !---------------!
   !               !
@@ -530,9 +532,9 @@
         u3uj_phij(c) = -0.22*Tsc(c)*&
                    (uw%n(c)*phi_x(c)+vw%n(c)*phi_y(c)+ww%n(c)*phi_z(c))
       end do
-      call GraPhi(grid, u1uj_phij, 1, u1uj_phij_x, .true.)
-      call GraPhi(grid, u2uj_phij, 2, u2uj_phij_y, .true.)
-      call GraPhi(grid, u3uj_phij, 3, u3uj_phij_z, .true.)
+      call Grad_Mod_For_Phi(grid, u1uj_phij, 1, u1uj_phij_x, .true.)
+      call Grad_Mod_For_Phi(grid, u2uj_phij, 2, u2uj_phij_y, .true.)
+      call Grad_Mod_For_Phi(grid, u3uj_phij, 3, u3uj_phij_z, .true.)
       do c = 1, grid % n_cells
         b(c) = b(c) - (  u1uj_phij_x(c)  &
                        + u2uj_phij_y(c)  &
@@ -630,11 +632,10 @@
   call Control_Mod_Preconditioner_For_System_Matrix(precond)
 
   ! Set number of iterations based on coupling scheme
-  if(coupling == 'PROJECTION') miter = 10
-  if(coupling == 'SIMPLE')     miter =  5
+  if(coupling == 'PROJECTION') niter = 10
+  if(coupling == 'SIMPLE')     niter =  5
 
-  niter=miter
-  call bicg(A, phi % n, b, precond, niter, tol, phi % res, error)
+  call bicg(A, phi % n, b, precond, niter, tol, ini_res, phi % res)
 
   call Info_Mod_Iter_Fill_At(2, 4, phi % name, niter, phi % res)
 

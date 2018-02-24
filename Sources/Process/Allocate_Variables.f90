@@ -9,6 +9,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Grad_Mod
   use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -44,17 +45,13 @@
   allocate(phi_max(-grid % n_bnd_cells:grid % n_cells)); phi_max=0.
   allocate(phi_min(-grid % n_bnd_cells:grid % n_cells)); phi_min=0.
 
-  allocate(G(6,grid % n_cells)); G=0
-
   allocate(flux(grid % n_faces));     Flux=0.
 
   allocate(Utau(grid % n_materials));   Utau=0.0
   allocate(Vtau(grid % n_materials));   Vtau=0.0
   allocate(Wtau(grid % n_materials));   Wtau=0.0
 
-  allocate(BadForG(grid % n_cells));  BadForG = .false.
-  allocate(NumGood(grid % n_cells));  NumGood = 0
-  allocate(NumNeig(grid % n_cells));  NumNeig = 0
+  call Grad_Mod_Allocate_Memory(grid)
 
   allocate(nearest_wall_cell(-grid % n_bnd_cells:grid % n_cells))
   nearest_wall_cell  = 0.

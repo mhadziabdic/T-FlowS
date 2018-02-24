@@ -9,7 +9,6 @@
   use Grid_Mod,     only: Grid_Type  
   use Comm_Mod
   use Info_Mod
-  use Numerics_Mod, only: errmax
   use Solvers_Mod,  only: Bicg, Cg, Cgs
   use Control_Mod
 !------------------------------------------------------------------------------!
@@ -19,7 +18,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, niter
   real              :: p_max, p_min
-  real              :: error, tol
+  real              :: ini_res, tol, mass_err
   real              :: Us, Vs, Ws, fs
   real              :: A12
   character(len=80) :: coupling
@@ -124,11 +123,11 @@
   !----------------------------------------!
   pp % n = 0.0 
 
-  errmax=0.0
+  mass_err = 0.0
   do c = 1, grid % n_cells
-    errmax=errmax + abs(b(c))
+    mass_err = mass_err + abs(b(c))
   end do
-  call Comm_Mod_Global_Sum_Real(errmax)                       
+  call Comm_Mod_Global_Sum_Real(mass_err)                       
 
   !--------------------------------------------!
   !   Solve the pressure correction equation   !
@@ -146,9 +145,9 @@
   if(coupling == 'PROJECTION') niter = 200
   if(coupling == 'SIMPLE')     niter =  15
 
-  call Cg(A, pp % n, b, precond, niter, tol, pp % res, error) 
+  call Cg(A, pp % n, b, precond, niter, tol, ini_res, pp % res)
 
-  call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, pp % res)
+  call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, pp % res)   
 
   !-------------------------------!
   !   Update the pressure field   !

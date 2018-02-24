@@ -13,6 +13,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
+  use Grad_Mod
   use Work_Mod, only: u_x => r_cell_01,  &
                       u_y => r_cell_02,  &
                       u_z => r_cell_03,  &
@@ -34,17 +35,17 @@
   call Comm_Mod_Exchange(grid, v % n)
   call Comm_Mod_Exchange(grid, w % n)
 
-  call GraPhi(grid, u % n, 1, u_x, .true.)  ! du/dx
-  call GraPhi(grid, u % n, 2, u_y, .true.)  ! du/dy
-  call GraPhi(grid, u % n, 3, u_z, .true.)  ! du/dz
+  call Grad_Mod_For_Phi(grid, u % n, 1, u_x, .true.)  ! du/dx
+  call Grad_Mod_For_Phi(grid, u % n, 2, u_y, .true.)  ! du/dy
+  call Grad_Mod_For_Phi(grid, u % n, 3, u_z, .true.)  ! du/dz
 
-  call GraPhi(grid, v % n, 1, v_x, .true.)  ! dv/dx
-  call GraPhi(grid, v % n, 2, v_y, .true.)  ! dv/dy
-  call GraPhi(grid, v % n, 3, v_z, .true.)  ! dv/dz
+  call Grad_Mod_For_Phi(grid, v % n, 1, v_x, .true.)  ! dv/dx
+  call Grad_Mod_For_Phi(grid, v % n, 2, v_y, .true.)  ! dv/dy
+  call Grad_Mod_For_Phi(grid, v % n, 3, v_z, .true.)  ! dv/dz
 
-  call GraPhi(grid, w % n, 1, w_x, .true.)  ! dw/dx
-  call GraPhi(grid, w % n, 2, w_y, .true.)  ! dw/dy
-  call GraPhi(grid, w % n, 3, w_z, .true.)  ! dw/dz
+  call Grad_Mod_For_Phi(grid, w % n, 1, w_x, .true.)  ! dw/dx
+  call Grad_Mod_For_Phi(grid, w % n, 2, w_y, .true.)  ! dw/dy
+  call Grad_Mod_For_Phi(grid, w % n, 3, w_z, .true.)  ! dw/dz
 
   do c = 1, grid % n_cells
     vort(c) = 2.0 * (0.5 * (w_y(c) - v_z(c)))**2  &

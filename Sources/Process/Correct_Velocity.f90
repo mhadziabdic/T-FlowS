@@ -12,7 +12,6 @@
   use Grid_Mod,     only: Grid_Type
   use Bulk_Mod
   use Info_Mod
-  use Numerics_Mod, only: errmax
   use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -22,7 +21,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, c1, c2, s, m
   real              :: cfl_max(256), pe_max(256)
-  real              :: cfl_t, pe_t
+  real              :: cfl_t, pe_t, mass_err
   real              :: Pdrop, FluxM
   character(len=80) :: coupling
 !==============================================================================!
@@ -40,15 +39,15 @@
   !-----------------------------------------!
   if(coupling == 'PROJECTION') then
     do c = 1, grid % n_cells
-      U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
-      V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
-      W % n(c) = W % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
+      u % n(c) = u % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
+      v % n(c) = v % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
+      w % n(c) = w % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
     end do 
   else ! coupling is 'SIMPLE'
     do c = 1, grid % n_cells
-      U % n(c) = U % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
-      V % n(c) = V % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
-      W % n(c) = W % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
+      u % n(c) = u % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
+      v % n(c) = v % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
+      w % n(c) = w % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
     end do 
   end if
 
@@ -58,9 +57,9 @@
 
     if(c2  < 0) then
       if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) ) then
-        U % n(c2) = U % n(c1) 
-        V % n(c2) = V % n(c1) 
-        W % n(c2) = W % n(c1) 
+        u % n(c2) = u % n(c1) 
+        v % n(c2) = v % n(c1) 
+        w % n(c2) = w % n(c1) 
       end if
     end if
   end do 
@@ -82,9 +81,9 @@
     if(c2 > 0 .or.  &
        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       if(c2  > 0) then
-        flux(s)=flux(s)+(PP % n(c2) - PP % n(c1))*A % val(A % pos(1,s))
+        flux(s)=flux(s)+(pp % n(c2) - pp % n(c1))*A % val(A % pos(1,s))
       else 
-        flux(s)=flux(s)+(PP % n(c2) - PP % n(c1))*A % bou(c2)
+        flux(s)=flux(s)+(pp % n(c2) - pp % n(c1))*A % bou(c2)
       endif
     end if             !                                          !
   end do               !<---------- this is correction ---------->!
@@ -113,11 +112,11 @@
     b(c) = b(c) / (grid % vol(c) * density)
   end do
 
-  errmax=0.0
+  mass_err=0.0
   do c = 1, grid % n_cells
-    errmax=max(errmax, abs(b(c)))
+    mass_err=max(mass_err, abs(b(c)))
   end do
-  call Comm_Mod_Global_Max_Real(errmax)
+  call Comm_Mod_Global_Max_Real(mass_err)
 
   !------------------------------!
   !   Calculate the CFL number   !
@@ -146,7 +145,7 @@
   call Comm_Mod_Global_Max_Real(cfl_max(m))
   call Comm_Mod_Global_Max_Real(pe_max(m))
 
-  call Info_Mod_Iter_Fill_At(1, 2, 'dum', -1, errmax)
+  call Info_Mod_Iter_Fill_At(1, 2, 'dum', -1, mass_err)
   call Info_Mod_Bulk_Fill(cfl_max(m),          &
                           pe_max(m),           &                            
                           bulk(m) % flux_x,    &
@@ -156,6 +155,6 @@
                           bulk(m) % p_drop_y,  &
                           bulk(m) % p_drop_z)
 
-  Correct_Velocity = errmax ! /(velmax+TINY)
+  Correct_Velocity = mass_err ! /(velmax+TINY)
 
   end function

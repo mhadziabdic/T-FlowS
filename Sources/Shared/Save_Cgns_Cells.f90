@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Cgns_Cells(grid, sub, name_save)     
+  subroutine Save_Cgns_Cells(grid, sub)     
 !------------------------------------------------------------------------------!
 !   Writes in 3-D unstructured grid to files 'name_save.cgns'                  !
 !   Valid for both parallel and seqential access                               !
@@ -12,24 +12,19 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type)  :: grid
-  integer          :: sub
-  character(len=*) :: name_save
+  type(Grid_Type) :: grid
+  integer         :: sub
 !-----------------------------------[Locals]-----------------------------------!
-  character(len=80) :: store_name
-  integer           :: c, base, block, sect, coord
+  integer :: c, base, block, sect, coord
 !==============================================================================!
 
-  if (sub .lt. 1) print *, "# subroutine Save_Grid"
-
-  ! Store the name
-  store_name = problem_name
-  problem_name = name_save
-
-  !-------------------------!
-  !   Open file for write   !
-  !-------------------------!
-  call Name_File(0, file_name, '.cgns')
+  !-----------------------!
+  !                       !
+  !   Create .cgns file   !
+  !                       !
+  !-----------------------!
+  call Name_File(sub, file_name, '.cgns')  ! file_name is from Cgns_Mod
+  print *, '# Creating the file: ', trim(file_name)
 
   file_mode = CG_MODE_WRITE
   call Cgns_Mod_Open_File(file_mode)
@@ -143,8 +138,5 @@
     print *, 'Successfully wrote unstructured grid to file ',trim(problem_name)
 
   deallocate(cgns_base)
-
-  ! Restore the name
-  problem_name = store_name
 
   end subroutine

@@ -38,7 +38,6 @@
 
   ! Geometrical staff 
   real,allocatable :: f_coef(:)  ! face coefficient
-  real,allocatable :: g(:,:)     ! gradient matrices for each cell
   real,allocatable :: fw(:)      ! weight factors for the fluid phase
 
   ! Right hand side for velocity and pressure equations 
@@ -49,11 +48,6 @@
 
   ! For advection schemes
   real, allocatable :: phi_max(:), phi_min(:) 
-
-  ! Cells which are bad for calculation of gradients
-  logical, allocatable :: BadForG(:)
-  integer, allocatable :: NumGood(:),   & 
-                          NumNeig(:)
 
   ! Mass fluxes, bulk velocities and pressure drops for each material
   type(Bulk_Type) :: bulk(100)

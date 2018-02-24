@@ -77,6 +77,9 @@
   call Save_Shadows(grid, 0,         &
                     grid % n_cells)
 
+  ! Try to save in CGNS format, it might work
+  call Save_Cgns_Cells(grid, 0) 
+
   ! Save the 1D probe (good for the channel flow)
   call Probe_1D_Nodes_Gen(grid)
 

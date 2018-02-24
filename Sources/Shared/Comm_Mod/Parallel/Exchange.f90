@@ -19,7 +19,7 @@
   do sub=1,n_proc
     if( nbb_e(sub)  <=  nbb_s(sub) ) then
       do c2=nbb_s(sub),nbb_e(sub),-1
-        c1 = BufInd(c2)
+        c1 = buffer_index(c2)
         phi(c2) = phi(c1)
       end do
     end if

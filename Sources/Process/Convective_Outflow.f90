@@ -9,6 +9,7 @@
   use Flow_Mod
   use rans_mod
   use Grid_Mod
+  use Grad_Mod
   use Bulk_Mod
   use Control_Mod
   use Work_Mod, only: t_x => r_cell_01,  &
@@ -32,13 +33,13 @@
     ! On the boundary perform the extrapolation
     if(c2  < 0) then
       if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT) ) then
-        U % n(c2) = U % n(c2) - ( bulk(material(c1)) % u * u % x(c1)         & 
+        u % n(c2) = u % n(c2) - ( bulk(material(c1)) % u * u % x(c1)         & 
                                 + bulk(material(c1)) % v * u % y(c1)         &
                                 + bulk(material(c1)) % w * u % z(c1) ) * dt
-        V % n(c2) = V % n(c2) - ( bulk(material(c1)) % u * v % x(c1)         & 
+        v % n(c2) = v % n(c2) - ( bulk(material(c1)) % u * v % x(c1)         & 
                                 + bulk(material(c1)) % v * v % y(c1)         &
                                 + bulk(material(c1)) % w * v % z(c1) ) * dt
-        W % n(c2) = W % n(c2) - ( bulk(material(c1)) % u * w % x(c1)         & 
+        w % n(c2) = w % n(c2) - ( bulk(material(c1)) % u * w % x(c1)         & 
                                 + bulk(material(c1)) % v * w % y(c1)         &
                                 + bulk(material(c1)) % w * w % z(c1) ) * dt
       end if
@@ -46,10 +47,9 @@
   end do
 
   if(heat_transfer == YES) then
-    call GraPhi(grid, t % n, 1, t_x, .true.)     ! dT/dx
-    call GraPhi(grid, t % n, 2, t_y, .true.)     ! dT/dy
-    call GraPhi(grid, t % n, 3, t_z, .true.)     ! dT/dz
-    call GraCorNew(grid, T % n, t_x, t_y, t_z) ! needed ?
+    call Grad_Mod_For_Phi(grid, t % n, 1, t_x, .true.)     ! dT/dx
+    call Grad_Mod_For_Phi(grid, t % n, 2, t_y, .true.)     ! dT/dy
+    call Grad_Mod_For_Phi(grid, t % n, 3, t_z, .true.)     ! dT/dz
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
@@ -57,7 +57,7 @@
       ! On the boundary perform the extrapolation
       if(c2  < 0) then
         if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT) ) then
-          T % n(c2) = T % n(c2) - ( bulk(material(c1)) % u * t_x(c1)        & 
+          t % n(c2) = t % n(c2) - ( bulk(material(c1)) % u * t_x(c1)        & 
                                   + bulk(material(c1)) % v * t_y(c1)        &
                                   + bulk(material(c1)) % w * t_z(c1) ) * dt
         end if

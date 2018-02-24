@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Cgs(A, x, r1,        &
+  subroutine Cgs(mat_a, x, r1,        &
                  prec,niter,tol,  &
                  ini_res,fin_res)
 !------------------------------------------------------------------------------!
@@ -28,26 +28,26 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Matrix_Type) :: A           
-  real              :: x(-A % pnt_grid % n_bnd_cells : A % pnt_grid % n_cells)
-  real              :: r1(A % pnt_grid % n_cells)    !  [A]{x}={r1}
-  character(len=80) :: prec               ! preconditioner
-  integer           :: niter              ! number of iterations
-  real              :: tol                ! tolerance
-  real              :: ini_res, fin_res   ! residual
+  type(Matrix_Type) :: mat_a           
+  real    :: x(-mat_a % pnt_grid % n_bnd_cells : mat_a % pnt_grid % n_cells)
+  real    :: r1(mat_a % pnt_grid % n_cells)    !  [A]{x}={r1}
+  integer :: niter              ! number of iterations
+  real    :: tol                ! tolerance
+  real    :: ini_res, fin_res   ! residual
+  character(len=80) :: prec     ! preconditioner
 !-----------------------------------[Locals]-----------------------------------!
   integer :: n, nb
   real    :: alfa, beta, rho, rhoold, bnrm2, error
   integer :: i, j, k, iter, sub
 !==============================================================================!
            
-  n  = A % pnt_grid % n_cells
-  nb = A % pnt_grid % n_bnd_cells
+  n  = mat_a % pnt_grid % n_cells
+  nb = mat_a % pnt_grid % n_bnd_cells
 
   !---------------------!
   !   Preconditioning   !
   !---------------------!
-  call Prec_Form(A, prec)    
+  call Prec_Form(mat_a, prec)    
 
   !???????????????????????????????????!
   !    This is quite tricky point.    !
@@ -68,7 +68,7 @@
   !-----------------!
   !   r1 = b - Ax   !
   !-----------------!
-  call Residual(n, nb, A, x, r1) 
+  call Residual(n, nb, mat_a, x, r1) 
 
   !-------------!
   !   r2 = r1   !
@@ -90,7 +90,7 @@
   !---------------------------------------------------------------!
   !   Residual after the correction and before the new solution   !
   !---------------------------------------------------------------!
-  ini_res=error  
+  ini_res = error  
 
   if(error < tol) then
     iter=0
@@ -129,25 +129,25 @@
     !---------------------!
     !   Solve M p2 = u2   !
     !---------------------!
-    call Prec_Solve(A, p2, u2(1), prec) 
+    call Prec_Solve(mat_a, p2, u2(1), prec) 
 
     !--------------!
     !   v2 = Ap2   !  
     !--------------!
     do i=1,n
       v2(i) = 0.0                    
-      do j=A % row(i), A % row(i+1)-1   
-        k=A % col(j)                  
-        v2(i) = v2(i) + A % val(j) * p2(k)   
+      do j=mat_a % row(i), mat_a % row(i+1)-1   
+        k=mat_a % col(j)                  
+        v2(i) = v2(i) + mat_a % val(j) * p2(k)   
       end do
       alfa=alfa+r2(i)*v2(i)
     end do
-    call Comm_Mod_Exchange(A % pnt_grid, p2)
+    call Comm_Mod_Exchange(mat_a % pnt_grid, p2)
     do sub=1,n_proc
       if(nbb_e(sub)  <=  nbb_s(sub)) then
         do k=nbb_s(sub),nbb_e(sub),-1
-          i=BufInd(k)
-          v2(i) = v2(i) + A % bou(k)*p2(k)
+          i=buffer_index(k)
+          v2(i) = v2(i) + mat_a % bou(k)*p2(k)
         end do
       end if
     end do
@@ -175,7 +175,7 @@
     do i=1,n
       u1_plus_q1(i) = u1(i) + q1(i)
     end do
-    call Prec_Solve(A, p1, u1_plus_q1(1), prec) 
+    call Prec_Solve(mat_a, p1, u1_plus_q1(1), prec) 
 
     !---------------------!
     !   x = x + alfa p1   !
@@ -189,17 +189,17 @@
     !---------------!
     do i=1,n
       q2(i) = 0.0
-      do j=A % row(i), A % row(i+1)-1
-        k=A % col(j)
-        q2(i) = q2(i) + A % val(j) * p1(k)
+      do j=mat_a % row(i), mat_a % row(i+1)-1
+        k=mat_a % col(j)
+        q2(i) = q2(i) + mat_a % val(j) * p1(k)
       end do
     end do
-    call Comm_Mod_Exchange(A % pnt_grid, p1)
+    call Comm_Mod_Exchange(mat_a % pnt_grid, p1)
     do sub=1,n_proc
       if(nbb_e(sub)  <=  nbb_s(sub)) then
         do k=nbb_s(sub),nbb_e(sub),-1
-          i=BufInd(k)
-          q2(i) = q2(i) + A % bou(k)*p1(k)
+          i=buffer_index(k)
+          q2(i) = q2(i) + mat_a % bou(k)*p1(k)
         end do
       end if
     end do

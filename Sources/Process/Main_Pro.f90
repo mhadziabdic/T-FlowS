@@ -12,6 +12,7 @@
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
+  use Grad_Mod
   use Bulk_Mod
   use Var_Mod
   use Solvers_Mod, only: D
@@ -24,11 +25,10 @@
   real :: Correct_Velocity
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: i, m, n
-  real              :: mres, wall_time_start, wall_time_current
+  real              :: mass_res, wall_time_start, wall_time_current
   character(len=80) :: name_save
   logical           :: restar, multiple, save_now, exit_now
   real, allocatable :: dum_x(:), dum_y(:), dum_z(:)
-
   type(Grid_Type)   :: grid        ! grid used in computations
   real              :: time        ! physical time
   real              :: dt          ! time step
@@ -138,7 +138,7 @@
   ! Prepare ...
   call Calculate_Face_Geometry(grid)
   call Bulk_Mod_Monitoring_Planes_Areas(grid, bulk)
-  call Find_Bad        (grid)
+  call Grad_Mod_Find_Bad_Cells         (grid)
   if(turbulence_model == LES                 .and.  &
      turbulence_model_variant == SMAGORINSKY .and.  &
      .not. restar)                                  &
@@ -219,22 +219,18 @@
 
       call Info_Mod_Iter_Fill(ini)
 
-      if(.NOT. multiple) then
-        call GradP(grid, P % n, p % x, p % y, p % z)
-      else
-        call GradP3(grid, P % n, p % x, p % y, p % z)
-      end if
+      call Grad_Mod_For_P(grid, p % n, p % x, p % y, p % z)
 
       ! Compute velocity gradients
-      call GraPhi(grid, u % n, 1, u % x, .true.)
-      call GraPhi(grid, u % n, 2, u % y, .true.)
-      call GraPhi(grid, u % n, 3, u % z, .true.)
-      call GraPhi(grid, v % n, 1, v % x, .true.)
-      call GraPhi(grid, v % n, 2, v % y, .true.)
-      call GraPhi(grid, v % n, 3, v % z, .true.)
-      call GraPhi(grid, w % n, 1, w % x, .true.)
-      call GraPhi(grid, w % n, 2, w % y, .true.)
-      call GraPhi(grid, w % n, 3, w % z, .true.)
+      call Grad_Mod_For_Phi(grid, u % n, 1, u % x, .true.)
+      call Grad_Mod_For_Phi(grid, u % n, 2, u % y, .true.)
+      call Grad_Mod_For_Phi(grid, u % n, 3, u % z, .true.)
+      call Grad_Mod_For_Phi(grid, v % n, 1, v % x, .true.)
+      call Grad_Mod_For_Phi(grid, v % n, 2, v % y, .true.)
+      call Grad_Mod_For_Phi(grid, v % n, 3, v % z, .true.)
+      call Grad_Mod_For_Phi(grid, w % n, 1, w % x, .true.)
+      call Grad_Mod_For_Phi(grid, w % n, 2, w % y, .true.)
+      call Grad_Mod_For_Phi(grid, w % n, 3, w % z, .true.)
 
       ! u velocity component
       call Compute_Momentum(grid, dt, ini, u,          &
@@ -268,14 +264,10 @@
         call Compute_Pressure_Simple(grid)
       end if
 
-      if(.NOT. multiple) then
-        call GradP(grid,  PP % n, p % x, p % y, p % z)
-      else
-        call GradP3(grid, PP % n, p % x, p % y, p % z)
-      end if
+      call Grad_Mod_For_P(grid,  pp % n, p % x, p % y, p % z)
 
       call Bulk_Mod_Compute_Fluxes(grid, bulk, flux)
-      Mres = Correct_Velocity(grid, dt) !  project the velocities
+      mass_res = Correct_Velocity(grid, dt) !  project the velocities
 
       ! Temperature
       if(heat_transfer == YES) then
@@ -322,17 +314,17 @@
           call Time_And_Length_Scale(grid)
         end if
 
-        call GraPhi(grid, u % n, 1, u % x,.true.)    ! dU/dx
-        call GraPhi(grid, u % n, 2, u % y,.true.)    ! dU/dy
-        call GraPhi(grid, u % n, 3, u % z,.true.)    ! dU/dz
+        call Grad_Mod_For_Phi(grid, u % n, 1, u % x,.true.)    ! dU/dx
+        call Grad_Mod_For_Phi(grid, u % n, 2, u % y,.true.)    ! dU/dy
+        call Grad_Mod_For_Phi(grid, u % n, 3, u % z,.true.)    ! dU/dz
 
-        call GraPhi(grid, v % n, 1, v % x,.true.)    ! dV/dx
-        call GraPhi(grid, v % n, 2, v % y,.true.)    ! dV/dy
-        call GraPhi(grid, v % n, 3, v % z,.true.)    ! dV/dz
+        call Grad_Mod_For_Phi(grid, v % n, 1, v % x,.true.)    ! dV/dx
+        call Grad_Mod_For_Phi(grid, v % n, 2, v % y,.true.)    ! dV/dy
+        call Grad_Mod_For_Phi(grid, v % n, 3, v % z,.true.)    ! dV/dz
 
-        call GraPhi(grid, w % n, 1, w % x,.true.)    ! dW/dx
-        call GraPhi(grid, w % n, 2, w % y,.true.)    ! dW/dy
-        call GraPhi(grid, w % n, 3, w % z,.true.)    ! dW/dz
+        call Grad_Mod_For_Phi(grid, w % n, 1, w % x,.true.)    ! dW/dx
+        call Grad_Mod_For_Phi(grid, w % n, 2, w % y,.true.)    ! dW/dy
+        call Grad_Mod_For_Phi(grid, w % n, 3, w % z,.true.)    ! dW/dz
 
         call Compute_Stresses(grid, dt, ini, uu)
         call Compute_Stresses(grid, dt, ini, vv)
@@ -371,8 +363,11 @@
 
       if(coupling == 'SIMPLE') then
         call Control_Mod_Tolerance_For_Simple_Algorithm(simple_tol)
-        if( u % res <= simple_tol .and. v % res  <= simple_tol .and. &
-            w % res <= simple_tol .and. pp % res <= simple_tol ) goto 4
+        if( u  % res <= simple_tol .and.  &
+            v  % res <= simple_tol .and.  &
+            w  % res <= simple_tol .and.  &
+            pp % res <= simple_tol .and.  &
+            mass_res <= simple_tol ) goto 4
       endif
     end do
 
@@ -395,7 +390,7 @@
    if(PIPE==YES.or.JET==YES) then
      call CalcMn_Cylind(grid, n_stat, n)  !  calculate mean values
    else
-     call Compute_Mean(grid, n_stat, n)  !  calculate mean values
+     call Calculate_Mean(grid, n_stat, n)  !  calculate mean values
    end if
 
     !-----------------------------------------------------!

@@ -17,7 +17,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, niter
-  real              :: Us, Vs, Ws, A12, fs
+  real              :: u_f, v_f, w_f, A12, fs
   real              :: p_max, p_min
   real              :: ini_res, tol, mass_err
   real              :: smdpn
@@ -75,9 +75,9 @@
                + grid % sz(s)*grid % dz(s) )  
 
       ! Interpolate velocity 
-      Us = fs * U % n(c1) + (1.0-fs) * U % n(c2)
-      Vs = fs * V % n(c1) + (1.0-fs) * V % n(c2)
-      Ws = fs * W % n(c1) + (1.0-fs) * W % n(c2)
+      u_f = fs * u % n(c1) + (1.0-fs) * u % n(c2)
+      v_f = fs * v % n(c1) + (1.0-fs) * v % n(c2)
+      w_f = fs * w % n(c1) + (1.0-fs) * w % n(c2)
 
       ! Calculate coeficients for the system matrix
       if(c2  > 0) then 
@@ -102,9 +102,9 @@
       dPzi=.5*( p % z(c1) + p % z(c2) )*grid % dz(s)
 
       ! Calculate flux through cell face
-      flux(s) = density * (  Us*grid % sx(s)       &
-                           + Vs*grid % sy(s)       &
-                           + Ws*grid % sz(s) )     &
+      flux(s) = density * (  u_f*grid % sx(s)       &
+                           + v_f*grid % sy(s)       &
+                           + w_f*grid % sz(s) )     &
               + A12 * (p % n(c1) - p % n(c2))   &
               + A12 * (dPxi + dPyi + dPzi)                            
 
@@ -115,21 +115,21 @@
     else ! (c2 < 0)
 
       if(Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW) then 
-        Us = U % n(c2)
-        Vs = V % n(c2)
-        Ws = W % n(c2)
-        flux(s) = density * (  Us * grid % sx(s)  &
-                             + Vs * grid % sy(s)  &
-                             + Ws * grid % sz(s) )
+        u_f = u % n(c2)
+        v_f = v % n(c2)
+        w_f = w % n(c2)
+        flux(s) = density * (  u_f * grid % sx(s)  &
+                             + v_f * grid % sy(s)  &
+                             + w_f * grid % sz(s) )
         b(c1) = b(c1)-flux(s)
       else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.   &
               Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT) then 
-        Us = U % n(c2)
-        Vs = V % n(c2)
-        Ws = W % n(c2)
-        flux(s) = density * (  Us*grid % sx(s)  &
-                             + Vs*grid % sy(s)  &
-                             + Ws*grid % sz(s) )
+        u_f = u % n(c2)
+        v_f = v % n(c2)
+        w_f = w % n(c2)
+        flux(s) = density * (  u_f*grid % sx(s)  &
+                             + v_f*grid % sy(s)  &
+                             + w_f*grid % sz(s) )
         b(c1) = b(c1)-flux(s)
         smdpn = (  grid % sx(s) * grid % sx(s)   &
                  + grid % sy(s) * grid % sy(s)   &
@@ -140,12 +140,12 @@
         A12 = density * smdpn * grid % vol(c1) / A % sav(c1)
         A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
       else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) then
-        Us = U % n(c1)
-        Vs = V % n(c1)
-        Ws = W % n(c1)
-        flux(s) = density * (  Us * grid % sx(s)  &
-                             + Vs * grid % sy(s)  &
-                             + Ws * grid % sz(s) )
+        u_f = u % n(c1)
+        v_f = v % n(c1)
+        w_f = w % n(c1)
+        flux(s) = density * (  u_f * grid % sx(s)  &
+                             + v_f * grid % sy(s)  &
+                             + w_f * grid % sz(s) )
         b(c1) = b(c1)-flux(s)
         smdpn = ( grid % sx(s) * grid % sx(s)   &
                 + grid % sy(s) * grid % sy(s)   &

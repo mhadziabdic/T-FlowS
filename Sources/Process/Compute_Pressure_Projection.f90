@@ -19,7 +19,7 @@
   integer           :: s, c, c1, c2, niter
   real              :: p_max, p_min
   real              :: ini_res, tol, mass_err
-  real              :: Us, Vs, Ws, fs
+  real              :: u_f, v_f, w_f, fs
   real              :: A12
   character(len=80) :: coupling
   character(len=80) :: precond
@@ -60,35 +60,36 @@
     fs = grid % f(s)
 
     ! Face is inside the domain
-    if( c2  > 0 .or. c2  < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then 
+    if( c2 > 0 .or.  &
+        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then 
 
       ! Extract the "centred" pressure terms from cell velocities
-      Us = fs*      (U % n(c1) + p % x(c1)*grid % vol(c1)/A % sav(c1))       &
-         + (1.0-fs)*(U % n(c2) + p % x(c2)*grid % vol(c2)/A % sav(c2))
+      u_f = fs*      (u % n(c1) + p % x(c1)*grid % vol(c1)/A % sav(c1))       &
+          + (1.0-fs)*(u % n(c2) + p % x(c2)*grid % vol(c2)/A % sav(c2))
 
-      Vs = fs*      (V % n(c1) + p % y(c1)*grid % vol(c1)/A % sav(c1))       &
-         + (1.0-fs)*(V % n(c2) + p % y(c2)*grid % vol(c2)/A % sav(c2))
+      v_f = fs*      (v % n(c1) + p % y(c1)*grid % vol(c1)/A % sav(c1))       &
+          + (1.0-fs)*(v % n(c2) + p % y(c2)*grid % vol(c2)/A % sav(c2))
 
-      Ws = fs*      (W % n(c1) + p % z(c1)*grid % vol(c1)/A % sav(c1))       &
-         + (1.0-fs)*(W % n(c2) + p % z(c2)*grid % vol(c2)/A % sav(c2))
+      w_f = fs*      (w % n(c1) + p % z(c1)*grid % vol(c1)/A % sav(c1))       &
+          + (1.0-fs)*(w % n(c2) + p % z(c2)*grid % vol(c2)/A % sav(c2))
 
       ! Add the "staggered" pressure terms to face velocities
-      Us= Us + (p % n(c1)-p % n(c2))*grid % sx(s)*                         &
-         ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
-      Vs=Vs+(p % n(c1)-p % n(c2))*grid % sy(s)*                            &
-         ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
-      Ws=Ws+(p % n(c1)-p % n(c2))*grid % sz(s)*                            &
-         ( fs/A % sav(c1) + (1.0-fs)/A % sav(c2) )
+      u_f = u_f + (p % n(c1) - p % n(c2))  &
+                * grid % sx(s) * ( fs / A % sav(c1) + (1.0-fs) / A % sav(c2) )
+      v_f = v_f + (p % n(c1) - p % n(c2))  &
+                * grid % sy(s) * ( fs / A % sav(c1) + (1.0-fs) / A % sav(c2) )
+      w_f = w_f + (p % n(c1) - p % n(c2))  &
+                * grid % sz(s) * ( fs / A % sav(c1) + (1.0-fs) / A % sav(c2) )
 
       ! Now calculate the flux through cell face
-      flux(s) = density * ( Us * grid % sx(s) +  &
-                            Vs * grid % sy(s) +  &
-                            Ws * grid % sz(s) )
+      flux(s) = density * ( u_f * grid % sx(s) +  &
+                            v_f * grid % sy(s) +  &
+                            w_f * grid % sz(s) )
 
-      A12=density*(  grid % sx(s)*grid % sx(s)  &
-                + grid % sy(s)*grid % sy(s)  &
-                + grid % sz(s)*grid % sz(s))
-      A12=A12*(fs/A % sav(c1)+(1.-fs)/A % sav(c2))
+      A12 = density * (  grid % sx(s) * grid % sx(s)  &
+                       + grid % sy(s) * grid % sy(s)  &
+                       + grid % sz(s) * grid % sz(s))
+      A12 = A12 * (fs/A % sav(c1) + (1.-fs)/A % sav(c2))
 
       if(c2  > 0) then 
         A % val(A % pos(1,s)) = -A12
@@ -105,13 +106,13 @@
 
     ! Face is on the boundary
     else
-      Us = U % n(c2)
-      Vs = V % n(c2)
-      Ws = W % n(c2)
+      u_f = u % n(c2)
+      v_f = v % n(c2)
+      w_f = w % n(c2)
 
-      flux(s) = density * (  Us * grid % sx(s)  &
-                           + Vs * grid % sy(s)  &
-                           + Ws * grid % sz(s) )
+      flux(s) = density * (  u_f * grid % sx(s)  &
+                           + v_f * grid % sy(s)  &
+                           + w_f * grid % sz(s) )
 
       b(c1) = b(c1)-flux(s)
     end if

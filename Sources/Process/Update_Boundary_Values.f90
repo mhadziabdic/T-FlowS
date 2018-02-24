@@ -5,6 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
   use rans_mod
   use Grid_Mod
@@ -231,19 +232,5 @@
       end if
     end if
   end do
-
-  !  if(heat_transfer == YES) then 
-  !    call GloSum(Tflux)
-  !    call GloSum(area)
-  !    call wait
-  !   
-  !    Tflux  = Tflux/(area+TINY)
-  !    Qflux  = Tflux * area/(4.0*areaZ(1))
-  !  end if 
-  !  print *, Tflux
-  !  This is done for pipe flow
-  !  In order to be consistent we did not use ideal d*pi but area/L where
-  !  area is total wall surface of pipe and L is lenght of pipe
-  !  areaZ(1) is surface in direction of to the flow stream
 
   end subroutine

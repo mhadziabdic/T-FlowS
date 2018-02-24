@@ -5,7 +5,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Grid_Mod
+  use Comm_Mod
   use Bnd_Cond_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -87,9 +89,9 @@
       end if   ! c2 > 0
     end do
 
-    call glosum(bulk(m) % flux_x)
-    call glosum(bulk(m) % flux_y)
-    call glosum(bulk(m) % flux_z)
+    call Comm_Mod_Global_Sum_Real(bulk(m) % flux_x)
+    call Comm_Mod_Global_Sum_Real(bulk(m) % flux_y)
+    call Comm_Mod_Global_Sum_Real(bulk(m) % flux_z)
 
     bulk(m) % u = bulk(m) % flux_x / (bulk(m) % area_x + TINY)
     bulk(m) % v = bulk(m) % flux_y / (bulk(m) % area_y + TINY)

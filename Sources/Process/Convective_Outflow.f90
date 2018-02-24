@@ -4,6 +4,7 @@
 !   Extrapoloate variables on the boundaries where needed.                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
+  use allp_mod
   use all_mod
   use Flow_Mod
   use rans_mod

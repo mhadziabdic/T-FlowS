@@ -6,7 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use Flow_Mod
-  use par_mod
+  use Comm_Mod
   use Grid_Mod,     only: Grid_Type
   use Info_Mod
   use Numerics_Mod, only: errmax
@@ -194,11 +194,11 @@
   ! p_max  = maxval(p % n(1:grid % n_cells))
   ! p_min  = minval(p % n(1:grid % n_cells))
  
-  ! call glomax(p_max)
-  ! call glomin(p_min)
+  ! call Comm_Mod_Global_Max_Real(p_max)
+  ! call Comm_Mod_Global_Min_Real(p_min)
  
   ! p % n = p % n - 0.5*(p_max+p_min)
  
-  call Exchange(grid, pp % n)
+  call Comm_Mod_Exchange(grid, pp % n)
 
   end subroutine

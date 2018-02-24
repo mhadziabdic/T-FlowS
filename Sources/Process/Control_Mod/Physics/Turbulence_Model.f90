@@ -54,6 +54,7 @@
       turbulence_model = REYNOLDS_STRESS_MODEL
 
     case default
+      print *, '# Unknown turbulence model :', trim(val)
       print *, '# Exiting!'
       stop 
 

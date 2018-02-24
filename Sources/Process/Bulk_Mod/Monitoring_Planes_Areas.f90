@@ -6,6 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use Grid_Mod
+  use Comm_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -88,9 +89,9 @@
       end if  ! (c2 > 0 .and. ... )
     end do
 
-    call glosum(bulk(m) % area_x)
-    call glosum(bulk(m) % area_y)
-    call glosum(bulk(m) % area_z)
+    call Comm_Mod_Global_Sum_Real(bulk(m) % area_x)
+    call Comm_Mod_Global_Sum_Real(bulk(m) % area_y)
+    call Comm_Mod_Global_Sum_Real(bulk(m) % area_z)
 
   end do ! m
 

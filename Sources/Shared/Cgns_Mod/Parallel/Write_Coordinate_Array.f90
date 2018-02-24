@@ -4,11 +4,13 @@
 !   Writes grid coordinates (RealDouble) [parallel vesion]                     !
 !------------------------------------------------------------------------------!
 !   Array structures in current function are strictly followings:              !
+!                                                                              !
 !   Processor:    |        P_1        |               P_2               | ...  !
 !   x,y,z:        |      (1 : NN_1)   |       NN_1 + 1 : NN_1 + NN_2    | ...  !
+!                                                                              !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use par_mod, only: this_proc
+  use Comm_Mod, only: this_proc
   use Grid_Mod
   use Work_Mod, only: coordinates => r_node_01
 !------------------------------------------------------------------------------!
@@ -54,14 +56,13 @@
       coordinates = grid % zn
   end select
 
-  call Cgp_Coord_Write_F( & !(in )
-    file_id,              & !(in )
-    base_id,              & !(in )
-    block_id,             & !(in )
-    RealDouble,           & !(in )
-    coord_name,           & !(in )
-    coord_id,             & !(out)
-    error)                  !(out)
+  call Cgp_Coord_Write_F(file_id,     & !(in )
+                         base_id,     & !(in )
+                         block_id,    & !(in )
+                         RealDouble,  & !(in )
+                         coord_name,  & !(in )
+                         coord_id,    & !(out)
+                         error)         !(out)
 
   if (error.ne.CG_OK) then
     print *, '*FAILED* to create empty: ', trim(coord_name)
@@ -73,15 +74,14 @@
   !------------------------------------------!
 
   ! Fill coord_id node with grid coordinates
-  call Cgp_Coord_Write_Data_F( & !(in )
-    file_id,                   & !(in )
-    base_id,                   & !(in )
-    block_id,                  & !(in )
-    coord_id,                  & !(in )
-    i,                         & !(in )
-    j,                         & !(in )
-    coordinates,               & !(in )
-    error)                       !(out)
+  call Cgp_Coord_Write_Data_F(file_id,      & !(in )
+                              base_id,      & !(in )
+                              block_id,     & !(in )
+                              coord_id,     & !(in )
+                              i,            & !(in )
+                              j,            & !(in )
+                              coordinates,  & !(in )
+                              error)          !(out)
 
   if (error .ne. 0) then
     print *, "# Failed to fill: ", trim(coord_name)

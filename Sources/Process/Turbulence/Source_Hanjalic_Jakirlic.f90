@@ -6,6 +6,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
   use rans_mod
   use Grid_Mod
@@ -45,7 +46,7 @@
   real    :: Wxx, Wyy, Wzz, Wxy, Wxz, Wyz
   real    :: r13, r23
   real    :: S11, S22, S33, S12, S13, S21, S31, S23, S32
-  real    :: V11, V22, V33, V12, V13, V21, V31, V23, V32
+  real    :: v11, v22, v33, v12, v13, v21, v31, v23, v32
   real    :: a_lk_s_lk, a_mn_a_mn
   real    :: VAR1w_11, VAR1w_22, VAR1w_33, VAR1w_12, VAR1w_13, VAR1w_23
   real    :: VAR2w_11, VAR2w_22, VAR2w_33, VAR2w_12, VAR2w_13, VAR2w_23
@@ -358,15 +359,15 @@
     S23 = 0.5*(v % z(c)+w % y(c))
     S32 = S23
 
-    V11 = 0.0
-    V22 = 0.0
-    V33 = 0.0
-    V12 = 0.5*(u % y(c)-v % x(c)) - omega_z
-    V21 = -V12 + omega_z
-    V13 = 0.5*(u % z(c)-w % x(c)) + omega_y
-    V31 = -V13 - omega_y
-    V23 = 0.5*(v % z(c)-w % y(c)) - omega_x
-    V32 = -V23 + omega_x
+    v11 = 0.0
+    v22 = 0.0
+    v33 = 0.0
+    v12 = 0.5*(u % y(c)-v % x(c)) - omega_z
+    v21 = -v12 + omega_z
+    v13 = 0.5*(u % z(c)-w % x(c)) + omega_y
+    v31 = -v13 - omega_y
+    v23 = 0.5*(v % z(c)-w % y(c)) - omega_x
+    v32 = -v23 + omega_x
 
     AA2 = (a11**2)+(a22**2)+(a33**2)+2*((a12**2)+(a13**2)+(a23**2))
 

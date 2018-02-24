@@ -4,6 +4,13 @@
 #   
 #-------------------------------------------------------------------------------
 
+$(info #====================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN) )
+$(info #----------------------------------------------------)
+$(info # Usage:                                             )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> )
+$(info #----------------------------------------------------)
+
 #--------------------------
 #   Variable definitions
 #--------------------------
@@ -64,13 +71,6 @@ ifeq ($(FORTRAN), portland)
   OPT_LINK = $(OPT_COMP)
 endif 
 
-$(info #====================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN) )
-$(info #----------------------------------------------------)
-$(info # Usage:                                             )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> )
-$(info #----------------------------------------------------)
-
 #------------------------------------------------------
 #   List of sources for modules and functions
 #------------------------------------------------------
@@ -80,18 +80,24 @@ $(info #----------------------------------------------------)
 #         letters are candidates for deletion.
 #------------------------------------------------------
 
-# Sources for modules in the local directory (there are none)
+#-------------
+#   Modules
+#-------------
 
-# Sources for modules in other directories
+# Modules in shared directories
 SRC_MOD =  allp_mod.f90			\
            all_mod.f90			\
-           par_mod.f90			\
            gen_mod.f90			\
            div_mod.f90			\
            Tokenizer_Mod.f90		\
            Material_Mod.f90		\
            Bnd_Cond_Mod.f90		\
-           Grid_Mod.f90
+           Grid_Mod.f90			\
+           Comm_Mod_Seq.f90
+
+#---------------
+#   Functions   
+#---------------
 
 # Sources for all shared functions
 SRC_FUN = Approx.f90			\

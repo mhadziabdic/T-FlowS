@@ -5,7 +5,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
+  use Comm_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -16,9 +18,7 @@
 !------------------------------------------------------------------------------!
 !   Near(c) is the number of corresponding cell on the nearest wall.           !
 !   In case that, in parallel executions, the subdomain does not have          !
-!   any nearwall cells, the nearest_wall_cell(c) is zero.                                   !
-!   nearest_wall_cell(c) is calculated in NearWallCells.f90, only ones in the beginig       !
-!   of a simulation.                                                           !
+!   any nearwall cells, the nearest_wall_cell(c) is zero.                      !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -27,9 +27,9 @@
   integer :: c, s, c1, c2 
   real    :: nx, ny, nz
   real    :: Cs
-  real    :: s_tot, lf, UtauL, Uff 
+  real    :: s_tot, lf, u_tau_l, Uff 
   real    :: u_tot, u_nor, u_tan, a_pow, b_pow, nu, dely, y_plus 
-  real    :: Nc2
+  real    :: nc2
 !==============================================================================!
   
   !---------------!
@@ -98,12 +98,12 @@
 
   if(buoyancy == YES) then
     do c = 1, grid % n_cells
-      Nc2 = -(  grav_x * t_x(c)   &
+      nc2 = -(  grav_x * t_x(c)   &
               + grav_y * t_y(c)   &
               + grav_z * t_z(c))  &
           / Tref
-      Nc2 = max(0.0, Nc2) 
-      vis_t(c) = vis_t(c) * sqrt(1.0 - min(2.5*Nc2/(shear(c)**2), 1.0))
+      nc2 = max(0.0, nc2) 
+      vis_t(c) = vis_t(c) * sqrt(1.0 - min(2.5*nc2/(shear(c)**2), 1.0))
     end do
   end if
 
@@ -160,18 +160,18 @@
         nu = viscosity/density
         dely = grid % wall_dist(c1)
 
-        ! Calculate UtauL
-        UtauL = ( u_tan/a_pow * (nu/dely)**b_pow )                     &
+        ! Calculate u_tau_l
+        u_tau_l = ( u_tan/a_pow * (nu/dely)**b_pow )                     &
           ** (1.0/(1.0+b_pow))
 
         ! Calculate tau_wall 
         tau_wall(c1) = viscosity * u_tan / dely 
  
         ! Calculate y+
-        y_plus  = dely*UtauL/nu
+        y_plus  = dely*u_tau_l/nu
         if(y_plus  >=  11.81) then
           ! This one is effective viscosity
-          VISwall(c1) = density*UtauL*UtauL*dely/abs(u_tan) 
+          VISwall(c1) = density*u_tau_l*u_tau_l*dely/abs(u_tan) 
         else 
           VISwall(c1) = viscosity + fw(s)*vis_t(c1)+(1.0-fw(s))*vis_t(c2)
         endif
@@ -179,7 +179,7 @@
     end if    ! c2 < 0
   end do
 
-  call Exchange(grid, vis_t)
-  call Exchange(grid, VISwall)
+  call Comm_Mod_Exchange(grid, vis_t)
+  call Comm_Mod_Exchange(grid, VISwall)
 
   end subroutine

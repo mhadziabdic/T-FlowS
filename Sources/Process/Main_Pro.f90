@@ -5,9 +5,10 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
   use les_mod
-  use par_mod
+  use Comm_Mod
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
@@ -57,7 +58,7 @@
   !------------------------------!
   !   Start parallel execution   !
   !------------------------------!
-  call StaPar()
+  call Comm_Mod_Start
 
   !--------------------------------!
   !   Splash out the logo screen   !
@@ -83,15 +84,13 @@
 
   call Allocate_Memory(grid)
   call Load_Geo       (grid, this_proc)
-  call BufLoa
-  call Exchange(grid, grid % vol(-grid % n_bnd_cells))
-
-  call wait
+  call Comm_Mod_Load_Buffers
+  call Comm_Mod_Exchange(grid, grid % vol(-grid % n_bnd_cells))
 
   call Matrix_Mod_Topology(grid, A)
   call Matrix_Mod_Topology(grid, D)
 
-  call Wait
+  call Comm_Mod_Wait
 
   !---------------!
   !               !
@@ -118,7 +117,7 @@
   if(.not. restar) then
     call Load_Boundary_Conditions(grid, .true.)
     call Initialize_Variables(grid)
-    call Wait
+    call Comm_Mod_Wait
   end if
 
   ! Interpolate between diff. meshes
@@ -259,12 +258,12 @@
                   p % z,   u % z,   v % z)      ! dP/dz, dU/dz, dV/dz
 
       if(coupling == 'PROJECTION') then
-        call Exchange(grid, A % sav)
+        call Comm_Mod_Exchange(grid, A % sav)
         call Balance_Mass(grid)
         call Compute_Pressure_Fractional(grid, dt)
       endif
       if(coupling == 'SIMPLE') then
-        call Exchange(grid, A % sav)
+        call Comm_Mod_Exchange(grid, A % sav)
         call Balance_Mass(grid)
         call Compute_Pressure_Simple(grid)
       end if
@@ -451,13 +450,13 @@
 
     ! Is it time to save the restart file?
     if(save_now .or. exit_now .or. mod(n,1000) == 0) then
-      call Wait
+      call Comm_Mod_Wait
       call Save_Restart(grid, n, name_save)
     end if
 
     ! Is it time to save results for post-processing
     if(save_now .or. exit_now .or. mod(n,50) == 0) then
-      call Wait
+      call Comm_Mod_Wait
       call Save_Vtu_Results(grid, name_save)
       call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
     end if
@@ -491,6 +490,6 @@
   !----------------------------!
   !   End parallel execution   !
   !----------------------------!
-  call EndPar
+  call Comm_Mod_End
 
   end program

@@ -13,11 +13,10 @@
   print *, "# Reading the file:", trim(file_name)
 
   ! Open a CGNS file
-  call Cg_Open_F( &
-    file_name,    & !(in )
-    mode,         & !(in )
-    file_id,      & !(out)
-    error)          !(out)
+  call Cg_Open_F(file_name,  & !(in )
+                 mode,       & !(in )
+                 file_id,    & !(out)
+                 error)        !(out)
 
   if (error .ne. 0) then
     print *, "# Failed to open the file: ", trim(file_name)

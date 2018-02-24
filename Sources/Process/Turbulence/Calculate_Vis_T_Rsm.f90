@@ -9,6 +9,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use Flow_Mod
+  use Comm_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -56,6 +57,6 @@
     end do
   end if
 
-  call Exchange(grid, vis_t)  
+  call Comm_Mod_Exchange(grid, vis_t)  
 
   end subroutine

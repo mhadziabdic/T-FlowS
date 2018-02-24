@@ -5,7 +5,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
+  use Comm_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -19,7 +21,7 @@
   real    :: m_11_a, m_22_a, m_33_a, m_12_a, m_13_a, m_23_a      
   real    :: l_11, l_22, l_33, l_12, l_13, l_23      
   real    :: m_11, m_22, m_33, m_12, m_13, m_23      
-  real    :: m_dot_m, l_dot_m, Lg, Lf 
+  real    :: m_dot_m, l_dot_m, l_g, l_f 
 !==============================================================================!
 !                                                                              !
 !   C is derived from:    Lij_res = Lij_mod                                    !
@@ -43,10 +45,10 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-  call Exchange(grid, u % n)
-  call Exchange(grid, v % n)
-  call Exchange(grid, w % n)
-  call Exchange(grid, shear)
+  call Comm_Mod_Exchange(grid, u % n)
+  call Comm_Mod_Exchange(grid, v % n)
+  call Comm_Mod_Exchange(grid, w % n)
+  call Comm_Mod_Exchange(grid, shear)
 
   do c =1, grid % n_cells
     u_a   = 0.0
@@ -153,8 +155,8 @@
   call GraPhi(grid, w % filt, 3, w % z, .true.)  ! dW/dz
 
   do c = 1, grid % n_cells
-    Lg  = grid % vol(c)**ONE_THIRD
-    Lf  = 2.0 * Lg
+    l_g  = grid % vol(c)**ONE_THIRD
+    l_f  = 2.0 * l_g
 
     shear_test(c) = sqrt(2.0*(  u % x(c)*u % x(c)                            &
                               + v % y(c)*v % y(c)                            &
@@ -170,21 +172,21 @@
     l_13 = UWf(c) - u % filt(c) * w % filt(c) 
     l_23 = VWf(c) - v % filt(c) * w % filt(c) 
 
-    m_11 = Lf * Lf * shear_test(c) * u % x(c)       &
-         - Lg * Lg * M11f(c) 
-    m_22 = Lf * Lf * shear_test(c) * v % y(c)       &
-         - Lg * Lg * M22f(c) 
-    m_33 = Lf * Lf * shear_test(c) * w % z(c)       &
-         - Lg * Lg * M33f(c) 
+    m_11 = l_f * l_f * shear_test(c) * u % x(c)       &
+         - l_g * l_g * M11f(c) 
+    m_22 = l_f * l_f * shear_test(c) * v % y(c)       &
+         - l_g * l_g * M22f(c) 
+    m_33 = l_f * l_f * shear_test(c) * w % z(c)       &
+         - l_g * l_g * M33f(c) 
 
-    m_12 = Lf * Lf * shear_test(c)                &
-         * 0.5 * (u % y(c) + v % x(c)) - Lg * Lg * M12f(c)
+    m_12 = l_f * l_f * shear_test(c)                &
+         * 0.5 * (u % y(c) + v % x(c)) - l_g * l_g * M12f(c)
 
-    m_13 = Lf * Lf * shear_test(c)                &
-         * 0.5 * (u % z(c) + w % x(c)) - Lg * Lg * M13f(c) 
+    m_13 = l_f * l_f * shear_test(c)                &
+         * 0.5 * (u % z(c) + w % x(c)) - l_g * l_g * M13f(c) 
 
-    m_23 = Lf * Lf * shear_test(c)                &
-         * 0.5 * (v % z(c) + w % y(c)) - Lg * Lg * M23f(c)  
+    m_23 = l_f * l_f * shear_test(c)                &
+         * 0.5 * (v % z(c) + w % y(c)) - l_g * l_g * M23f(c)  
 
     m_dot_m = m_11 * m_11 + m_22 * m_22 + m_33 * m_33   & 
             + 2.0 * m_12 * m_12                         &

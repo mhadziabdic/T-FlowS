@@ -5,7 +5,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use Flow_Mod
-  use par_mod
+  use Comm_Mod
   use Grid_Mod
   use Work_Mod
   use Matrix_Mod
@@ -34,7 +34,7 @@
   ! This array should be handled in a more elegant way
   allocate (f_coef(grid % n_faces)); f_coef=0.
 
-  ! Variables defined in par_mod.h90:
+  ! Variables defined in Comm_Mod.h90:
   allocate (BufInd(-grid % n_bnd_cells:-1)); BufInd=0
 
   ! Variables actively used in Cgns_Mod

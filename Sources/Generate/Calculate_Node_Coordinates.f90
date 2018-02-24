@@ -1,10 +1,10 @@
 !==============================================================================!
-  subroutine Compute_Node_Coordinates(dom, grid)
+  subroutine Calculate_Node_Coordinates(dom, grid)
 !------------------------------------------------------------------------------!
 !   Calculate node coordinates inside the domain, block by block.              !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use allp_mod
   use gen_mod
   use Domain_Mod
   use Grid_Mod

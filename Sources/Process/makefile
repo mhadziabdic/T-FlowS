@@ -1,8 +1,15 @@
-#===============================================================================
+#===============================================================================================================
 #
 #   Process Makefile
 #
-#-------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------
+
+$(info #=======================================================================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                                    )
+$(info #-------------------------------------------------------------------------------------------------------)
+$(info # Usage:                                                                                                )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <MPI=yes/no> <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no> )
+$(info #-------------------------------------------------------------------------------------------------------)
 
 #--------------------------
 #   Variable definitions
@@ -27,14 +34,7 @@ DIR_SHARED = ../Shared
 DIR_MODULE = ../.Modules
 DIR_OBJECT = .Objects
 DIR_MODELS = Turbulence
-DIR_COMMUN = Communication/Sequential
-DIR_CGNS   = $(DIR_SHARED)/Cgns_Mod/Sequential
-DIR_CGNS_MV= $(DIR_SHARED)/Cgns_Mod
-ifeq ($(MPI), yes)
-  DIR_COMMUN = Communication/Parallel/Double
-  DIR_CGNS   = $(DIR_SHARED)/Cgns_Mod/Parallel
-endif
-VPATH = $(DIR_SHARED):$(DIR_MODELS):$(DIR_COMMUN):$(DIR_CGNS):.
+VPATH = $(DIR_SHARED):$(DIR_MODELS):.
 
 # Program name (This should hardly change)
 PROGRAM_NAME = Process
@@ -102,18 +102,9 @@ ifeq ($(CGNS_HDF5), yes)
     CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a \
                   ../Libraries/Hdf5_Seq/Lib/libhdf5.a                        \
                   -Wl,--no-as-needed -ldl -lz
-
   endif
 endif
-OPT_COMP   += $(addprefix -I, $(DIR_CGNS_H))
-
-$(info #=================================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)              )
-$(info #-----------------------------------------------------------------)
-$(info # Usage:                                                          )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <MPI=yes/no> )
-$(info #        <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no>                    )
-$(info #-----------------------------------------------------------------)
+OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
 
 #------------------------------------------------------
 #   List of sources for modules and functions
@@ -124,14 +115,24 @@ $(info #-----------------------------------------------------------------)
 #         letters are candidates for deletion.
 #------------------------------------------------------
 
-# Sources for modules in shared directory
-SRC_MOD =  allp_mod.f90      \
-           all_mod.f90       \
-           par_mod.f90       \
-           Grid_Mod.f90      \
-           Work_Mod.f90      \
-           Tokenizer_Mod.f90 \
-           Material_Mod.f90
+#-------------
+#   Modules
+#-------------
+
+# Modules in shared directory
+SRC_MOD = allp_mod.f90      \
+          all_mod.f90       \
+          Grid_Mod.f90      \
+          Work_Mod.f90      \
+          Tokenizer_Mod.f90 \
+          Material_Mod.f90
+
+# Conditional support for MPI communication
+ifeq ($(MPI), yes) 
+  SRC_MOD += Comm_Mod_Par.f90
+else
+  SRC_MOD += Comm_Mod_Seq.f90
+endif
 
 # Sources for modules in the local directory
 SRC_MOD += Info_Mod.f90     \
@@ -148,39 +149,20 @@ SRC_MOD += Turbulence_Mod.f90 \
            les_mod.f90        \
            rans_mod.f90       \
 
-# Sources for modules in the local directory
-ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
-  # If CGNS is supported, add the right module
-  SRC_MOD += Cgns_Mod_Void.f90
-else
-  ifeq ($(MPI), yes)
-    SRC_MOD += Cgns_Mod_Par.f90
-  else
-    SRC_MOD += Cgns_Mod_Seq.f90
-  endif
-endif
-
 # Control_Mod should be last since it reads for other modules
 SRC_MOD += Control_Mod.f90
+
+#---------------
+#   Functions   
+#---------------
 
 # Sources for all functions are obtained by a shell command
 SRC_RAW =  $(shell ls -1 *.f90 | grep -v -i _Mod | grep -v -i Save_Cgns)
 SRC_RAW += $(shell ls -1 $(DIR_MODELS)/*.f90 | grep -v -i _Mod)
-SRC_RAW += $(shell ls -1 $(DIR_COMMUN)/*.f90 | grep -v -i _Mod)
 
 # Remove directory names
 STEP_A  = $(subst $(DIR_MODELS),,$(SRC_RAW)) # remove directory name
-STEP_B  = $(subst $(DIR_COMMUN),,$(STEP_A))  # remove directory name
-SRC_FUN = $(subst /,,$(STEP_B))              # remove last slash
-
-# ... to allow conditional inclusion of CGNS support
-ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
-  SRC_FUN += Save_Cgns_Results_Void.f90	\
-             Save_Cgns_Cells_Void.f90
-else
-  SRC_FUN += Save_Cgns_Results.f90	\
-             Save_Cgns_Cells.f90
-endif
+SRC_FUN = $(subst /,,$(STEP_A))              # remove last slash
 
 # Add files from "Shared" directory, but one by one, to avoid clutter
 SRC_FUN += Distance.f90              \
@@ -191,6 +173,23 @@ SRC_FUN += Distance.f90              \
            Approx.f90                \
            Swap_Int.f90              \
            To_Upper_Case.f90
+
+#-------------------------------------------
+#   Conditional inclusion of CGNS support 
+#-------------------------------------------
+ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
+  SRC_MOD += Cgns_Mod_Void.f90
+  SRC_FUN += Save_Cgns_Results_Void.f90	\
+             Save_Cgns_Cells_Void.f90
+else
+  ifeq ($(MPI), yes)
+    SRC_MOD += Cgns_Mod_Par.f90
+  else
+    SRC_MOD += Cgns_Mod_Seq.f90
+  endif
+  SRC_FUN += Save_Cgns_Results.f90	\
+             Save_Cgns_Cells.f90
+endif
 
 #----------------------------------------------------------------------
 #   List of objects generated from the list of modules and functions

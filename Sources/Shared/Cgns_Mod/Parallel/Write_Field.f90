@@ -1,33 +1,35 @@
 !==============================================================================!
   subroutine Cgns_Mod_Write_Field(base, block, solution, field, grid, &
-    input_array, input_name)
+                                  input_array, input_name)
 !------------------------------------------------------------------------------!
 !   Writes field to solution node and sets its field_id  [parallel vesion]     !
 !------------------------------------------------------------------------------!
 !   Array structures in current function are strictly followings:              !
+!                                                                              !
 !   Cell type:    |      HEXA_8      |     PENTA_6      |       PYRA_5     |...!
 !   Connections:  |-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|...!
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use par_mod, only: this_proc
+  use Comm_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer              :: base, block, solution, field
-  type(Grid_Type)      :: grid
-  real                 :: input_array(grid % n_cells)
-  character(len=*)     :: input_name
+  integer          :: base, block, solution, field
+  type(Grid_Type)  :: grid
+  real             :: input_array(grid % n_cells)
+  character(len=*) :: input_name
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: base_id        ! base index number
-  integer              :: block_id       ! block index number
-  integer              :: solution_id    ! solution index
-  integer              :: field_id       ! field index
-  character(len=80)    :: field_name     ! name of the FlowSolution_t node
-  integer              :: cell_type
-  integer              :: cnt            ! cells of cell_type
-  real                 :: field_array(grid % n_cells) ! field array
-  integer              :: i, j, k, c
-  integer              :: error
+  integer           :: base_id        ! base index number
+  integer           :: block_id       ! block index number
+  integer           :: solution_id    ! solution index
+  integer           :: field_id       ! field index
+  character(len=80) :: field_name     ! name of the FlowSolution_t node
+  integer           :: cell_type
+  integer           :: cnt            ! cells of cell_type
+  real              :: field_array(grid % n_cells) ! field array
+  integer           :: i, j, k, c
+  integer           :: error
 !==============================================================================!
 
   ! Set input parameters
@@ -42,15 +44,14 @@
   !   Add an empty field node to FlowSolution_t node   !
   !----------------------------------------------------!
 
-  call Cgp_Field_Write_F( & !(in )
-    file_id,              & !(in )
-    base_id,              & !(in )
-    block_id,             & !(in )
-    solution_id,          & !(in )
-    RealDouble,           & !(in )
-    field_name,           & !(in )
-    field_id,             & !(out)
-    error)                  !(out)
+  call Cgp_Field_Write_F(file_id,      & !(in )
+                         base_id,      & !(in )
+                         block_id,     & !(in )
+                         solution_id,  & !(in )
+                         RealDouble,   & !(in )
+                         field_name,   & !(in )
+                         field_id,     & !(out)
+                         error)          !(out)
 
   if (error .ne. 0) then
     print *, "# Failed to create empty ", trim(field_name)
@@ -58,7 +59,7 @@
   endif
 
   !------------------------------------------------!
-  !   Mapping 1:NC -> Connection structure above   !
+  !   Mapping 1:nc -> Connection structure above   !
   !------------------------------------------------!
 
   ! Find first and last cells of cell_type
@@ -104,16 +105,15 @@
       !   Fill empty field_name in DB block   !
       !---------------------------------------!
 
-      call Cgp_Field_Write_Data_F( & !(in )
-        file_id,                   & !(in )
-        base_id,                   & !(in )
-        block_id,                  & !(in )
-        solution_id,               & !(in )
-        field_id,                  & !(in )
-        i,                         & !(in )
-        j,                         & !(in )
-        field_array(1:cnt),        & !(in )
-        error)                       !(out)
+      call Cgp_Field_Write_Data_F(file_id,      & !(in )
+                                  base_id,      & !(in )
+                                  block_id,     & !(in )
+                                  solution_id,  & !(in )
+                                  field_id,     & !(in )
+                                  i,            & !(in )
+                                  j,            & !(in )
+                                  field_array,  & !(in )
+                                  error)          !(out)
 
       if (error .ne. 0) then
         print *, "# Failed to fill ", trim(field_name)
@@ -121,8 +121,7 @@
       endif
 
       c = cnt
-      call wait
-      call IglSum(c)
+      call Comm_Mod_Global_Sum_Int(c)
       cnt_cells = cnt_cells + c
 
       ! Print some info

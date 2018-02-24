@@ -9,6 +9,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use Flow_Mod
+  use Comm_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -29,21 +30,21 @@
   integer :: c
 !==============================================================================!
 
-  call Exchange(grid, u % n)
-  call Exchange(grid, v % n)
-  call Exchange(grid, w % n)
+  call Comm_Mod_Exchange(grid, u % n)
+  call Comm_Mod_Exchange(grid, v % n)
+  call Comm_Mod_Exchange(grid, w % n)
 
-  call GraPhi(grid, u % n, 1, u_x, .TRUE.)  ! du/dx
-  call GraPhi(grid, u % n, 2, u_y, .TRUE.)  ! du/dy
-  call GraPhi(grid, u % n, 3, u_z, .TRUE.)  ! du/dz
+  call GraPhi(grid, u % n, 1, u_x, .true.)  ! du/dx
+  call GraPhi(grid, u % n, 2, u_y, .true.)  ! du/dy
+  call GraPhi(grid, u % n, 3, u_z, .true.)  ! du/dz
 
-  call GraPhi(grid, v % n, 1, v_x, .TRUE.)  ! dv/dx
-  call GraPhi(grid, v % n, 2, v_y, .TRUE.)  ! dv/dy
-  call GraPhi(grid, v % n, 3, v_z, .TRUE.)  ! dv/dz
+  call GraPhi(grid, v % n, 1, v_x, .true.)  ! dv/dx
+  call GraPhi(grid, v % n, 2, v_y, .true.)  ! dv/dy
+  call GraPhi(grid, v % n, 3, v_z, .true.)  ! dv/dz
 
-  call GraPhi(grid, w % n, 1, w_x, .TRUE.)  ! dw/dx
-  call GraPhi(grid, w % n, 2, w_y, .TRUE.)  ! dw/dy
-  call GraPhi(grid, w % n, 3, w_z, .TRUE.)  ! dw/dz
+  call GraPhi(grid, w % n, 1, w_x, .true.)  ! dw/dx
+  call GraPhi(grid, w % n, 2, w_y, .true.)  ! dw/dy
+  call GraPhi(grid, w % n, 3, w_z, .true.)  ! dw/dz
 
   do c = 1, grid % n_cells
     vort(c) = 2.0 * (0.5 * (w_y(c) - v_z(c)))**2  &

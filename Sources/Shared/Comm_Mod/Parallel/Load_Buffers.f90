@@ -1,22 +1,20 @@
 !==============================================================================!
-  subroutine BufLoa 
+  subroutine Comm_Mod_Load_Buffers
 !------------------------------------------------------------------------------!
-! Reads: NAME.buf                                                              !
+!   Reads: name.buf                                                            !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
-  use par_mod
   use Tokenizer_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, dummy 
-  integer           :: sub, subo, NBCsub
+  integer           :: sub, subo, n_bnd_cells_sub
   character(len=80) :: name_in
 !==============================================================================!
 !   Each subdomain needs two buffers: a send buffer and a receive buffer.
 !   A receive buffer will be stored as aditional boundary cells for each
 !   subdomain. So each subdomain will have NBC physical boundary faces
-!   and NBBC-NBC buffer bounndary cells. It is handy to do it that way,
+!   and nbb_C-NBC buffer bounndary cells. It is handy to do it that way,
 !   because most of the algorythms can remain the same as they are now.
 !   They won't even "know" that they use values from other processors.
 !   On the other hand, a sending buffer has to be allocated in a new 
@@ -35,65 +33,54 @@
   open(9, file=name_in)
   if(this_proc < 2) print *, '# Now reading the file:', name_in
 
-  allocate (NBBs(0:n_proc))
-  allocate (NBBe(0:n_proc))
+  allocate (nbb_s(0:n_proc))
+  allocate (nbb_e(0:n_proc))
 
-!///// number of physical boundary cells
+  ! Number of physical boundary cells
   call Tokenizer_Mod_Read_Line(9)
-  read(line % whole,*) NBCsub
+  read(line % whole,*) n_bnd_cells_sub
 
-print *, 'NBCsub = ', NBCsub
-
-!///// initialize 
+  ! Initialize 
   do sub=0,n_proc
-    NBBs(sub) = -(NBCsub) 
-    NBBe(sub) = -(NBCsub)
+    nbb_s(sub) = -(n_bnd_cells_sub) 
+    nbb_e(sub) = -(n_bnd_cells_sub)
   end do
 
-!///// fill the indexes and the buffers
+  ! Fill the indexes and the buffers
   do sub=1,n_proc
     if(sub  /=  this_proc) then
 
-!----- connections with subdomain          
+      ! Connections with subdomain          
       call Tokenizer_Mod_Read_Line(9)
       read(line % whole,*) subo 
 
-print *, 'subo = ', subo
-
-!----- number of local connections with subdomain sub 
+      ! Number of local connections with subdomain sub 
       call Tokenizer_Mod_Read_Line(9)
-      read(line % whole,*) NBBe(sub)
+      read(line % whole,*) nbb_e(sub)
 
-      NBBs(sub) = NBBe(sub-1) - 1  
-      NBBe(sub) = NBBs(sub) - NBBe(sub) + 1
+      nbb_s(sub) = nbb_e(sub-1) - 1  
+      nbb_e(sub) = nbb_s(sub) - nbb_e(sub) + 1
 
-      do c=NBBs(sub),NBBe(sub),-1
+      do c=nbb_s(sub),nbb_e(sub),-1
         call Tokenizer_Mod_Read_Line(9)
         read(line % whole,*) dummy, BufInd(c) 
       end do 
     else
-      NBBs(sub) = NBBe(sub-1)-1  ! just to become "sloppy" 
-      NBBe(sub) = NBBe(sub-1)    ! this_proc will be needed for next 
+      nbb_s(sub) = nbb_e(sub-1)-1  ! just to become "sloppy" 
+      nbb_e(sub) = nbb_e(sub-1)    ! this_proc will be needed for next 
     end if
   end do   ! through subdomains
 
   close(9)
 
-!///// correct the "sloppy" indexes
+  ! Correct the "sloppy" indexes
   do sub=1,n_proc
-    if(NBBe(sub)  > NBBs(sub)) then  
-      NBBs(sub) = -1 
-      NBBe(sub) = 0 
+    if(nbb_e(sub)  > nbb_s(sub)) then  
+      nbb_s(sub) = -1 
+      nbb_e(sub) = 0 
     end if
   end do 
 
-  call wait
-
-!->>>  print *, 'PE',this_proc, '#===================#' 
-!->>>  print *, 'PE',this_proc, '# Check connections #' 
-!->>>  print *, 'PE',this_proc, '#-------------------#' 
-!->>>  do sub=1,n_proc
-!->>>    write(*,'(A2,I2,3I7)') 'PE',this_proc, sub, NBBs(sub), NBBe(sub)
-!->>>  end do   ! through subdomains
+  call Comm_Mod_Wait
 
   end subroutine

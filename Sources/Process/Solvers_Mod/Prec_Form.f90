@@ -4,7 +4,7 @@
 !   Forms preconditioning matrix "D" from provided matrix "A".                 !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use par_mod
+  use Comm_Mod
   use Matrix_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -13,16 +13,16 @@
   character(len=80) :: prec  ! preconditioner
 !-----------------------------------[Locals]-----------------------------------!
   real     :: sum1
-  integer  :: i, j, k, N
+  integer  :: i, j, k, n
 !==============================================================================!
                  
-  N = A % pnt_grid % n_cells
+  n = A % pnt_grid % n_cells
 
   !---------------------------------! 
   !   1) diagonal preconditioning   !
   !---------------------------------!
   if(prec == 'DIAGONAL') then        
-    do i=1,N                     
+    do i=1,n                     
       D % val(D % dia(i)) = A % val(A % dia(i))           
     end do                      
 
@@ -30,7 +30,7 @@
   !   2) incomplete cholesky preconditioning   !
   !--------------------------------------------!
   else if(prec == 'INCOMPLETE_CHOLESKY') then   
-    do i = 1,N
+    do i = 1,n
       sum1 = A % val(A % dia(i))       ! take diaginal entry   
       do j = A % row(i), A % dia(i)-1  ! only lower traingular
         k = A % col(j)                    
@@ -43,7 +43,7 @@
   !   .) no preconditioning   !
   !---------------------------!
   else                          
-    do i=1,N
+    do i=1,n
       D % val(D % dia(i)) = 1.0
     end do
   end if 

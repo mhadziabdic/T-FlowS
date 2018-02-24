@@ -5,7 +5,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
+  use Comm_Mod
   use les_mod
   use Grid_Mod,     only: Grid_Type
   use Bulk_Mod
@@ -115,7 +117,7 @@
   do c = 1, grid % n_cells
     errmax=max(errmax, abs(b(c)))
   end do
-  call glomax(errmax)
+  call Comm_Mod_Global_Max_Real(errmax)
 
   !------------------------------!
   !   Calculate the CFL number   !
@@ -141,8 +143,8 @@
       end if
     end if
   end do
-  call glomax(cfl_max(m))
-  call glomax(pe_max(m))
+  call Comm_Mod_Global_Max_Real(cfl_max(m))
+  call Comm_Mod_Global_Max_Real(pe_max(m))
 
   call Info_Mod_Iter_Fill_At(1, 2, 'dum', -1, errmax)
   call Info_Mod_Bulk_Fill(cfl_max(m),          &

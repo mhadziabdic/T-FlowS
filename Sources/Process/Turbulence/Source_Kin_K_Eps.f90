@@ -5,7 +5,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
+  use Comm_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -150,6 +152,6 @@
     end do
   end if
 
-  call Exchange(grid, kin % n)
+  call Comm_Mod_Exchange(grid, kin % n)
 
   end subroutine

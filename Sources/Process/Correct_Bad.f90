@@ -7,7 +7,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use Flow_Mod
-  use les_mod
+  use Comm_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -35,6 +35,6 @@
     end if
   end do
 
-  call Exchange(grid, phii)
+  call Comm_Mod_Exchange(grid, phii)
 
   end subroutine

@@ -4,10 +4,9 @@
 !   Allocates memory for variables. It is called either from LoaRes            !
 !   or from Processor.                                                         !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use allp_mod
   use Flow_Mod
   use les_mod
-  use par_mod
   use rans_mod
   use Grid_Mod
   use Control_Mod

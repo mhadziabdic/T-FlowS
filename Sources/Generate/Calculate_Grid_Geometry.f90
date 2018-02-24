@@ -1,12 +1,13 @@
 !==============================================================================!
-  subroutine Compute_Grid_Geometry(grid, rrun)
+  subroutine Calculate_Grid_Geometry(grid, rrun)
 !------------------------------------------------------------------------------!
 !   Calculates geometrical quantities of the grid.                             !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use allp_mod
   use gen_mod
   use Grid_Mod
+  use Tokenizer_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -17,17 +18,18 @@
   real :: Distance       
   real :: Distance_Squared       
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, c1, c2, m, n, s, c_1, c_2, new_face_1, new_face_2
-  integer :: wall_color
-  real    :: local_x_node(4), local_y_node(4), local_z_node(4)
-  real    :: x_cell_tmp, y_cell_tmp, z_cell_tmp    
-  real    :: xs2, ys2, zs2
-  real    :: dsc1, dsc2          !  for the interpolation factors
-  real    :: t, tot_surf 
-  real    :: xc1, yc1, zc1, xc2, yc2, zc2 
-  real    :: x_min, x_max, y_min, y_max, z_min, z_max
-  integer :: f4n(6,4)
-  integer :: f3n(4,3)
+  integer              :: c, c1, c2, m, n, s, new_face_1, new_face_2
+  integer              :: b, n_wall_colors
+  real                 :: local_x_node(4), local_y_node(4), local_z_node(4)
+  real                 :: x_cell_tmp, y_cell_tmp, z_cell_tmp    
+  real                 :: xs2, ys2, zs2
+  real                 :: dsc1, dsc2          !  for the interpolation factors
+  real                 :: t, tot_surf 
+  real                 :: xc1, yc1, zc1, xc2, yc2, zc2 
+  real                 :: x_min, x_max, y_min, y_max, z_min, z_max
+  integer              :: f4n(6,4)
+  integer              :: f3n(4,3)
+  integer, allocatable :: wall_colors(:)
 !==============================================================================!
 !
 !                                n3 
@@ -514,38 +516,44 @@
   !----------------------------------------------------------!
   grid % wall_dist = HUGE 
 
-  print *,   '#======================================================='
+  call Grid_Mod_Print_Bnd_Cond_List(grid)
+  print *, '#================================================================'
   if(rrun) then
     print *, '# Computing the distance to the walls (2/2)'           
   else            
     print *, '# Computing the distance to the walls (1/2)'           
   end if 
-  print *,   '#-------------------------------------------------------'
-  print *,   '# Insert the highest BC color which represents the wall'
-  print *,   '# for computing the distance to the wall (0 to skip)'
-  print *,   '# If you skip this, smoothing will not work properly'
-  print *,   '#-------------------------------------------------------'
-  read(*,*) wall_color   
-
-  if(wall_color == 0) then
+  print *, '# Type the list of boundary colors which represent walls,        '
+  print *, '# separated by spaces.  These will be used for computation       '
+  print *, '# of distance to the wall needed by some turbulence models.      '
+  print *, '#----------------------------------------------------------------'
+  call Tokenizer_Mod_Read_Line(5)
+  n_wall_colors = line % n_tokens
+  allocate(wall_colors(n_wall_colors))
+  do b = 1, n_wall_colors
+    read(line % tokens(b), *) wall_colors(b)
+  end do
+ 
+  if( (n_wall_colors.eq.1) .and. (wall_colors(1)==0) ) then
     grid % wall_dist = 1.0
-    print *, '# Distance to the wall set to 1 everywhere !'            
+    print *, '# Distance to the wall set to 1.0 everywhere !'
   else 
-    do c1=1, grid % n_cells 
-      do s = WallFacFst, WallFacLst      ! 1, grid % n_faces
-        c_1 = grid % faces_c(1,s)
-        c_2 = grid % faces_c(2,s)
-        if(c_2 < 0) then
-          if(grid % bnd_cond % color(c_2) <= wall_color) then
-            grid % wall_dist(c1)=min(grid % wall_dist(c1), &
-            Distance_Squared(grid % xc(c1),  &
-                             grid % yc(c1),  &
-                             grid % zc(c1),  &
-                             grid % xf(s),   &
-                             grid % yf(s),   &
-                             grid % zf(s)))
-          end if
-        end if 
+    do b = 1, n_wall_colors
+      do c1=1, grid % n_cells 
+        do s = WallFacFst, WallFacLst      ! 1, grid % n_faces
+          c2 = grid % faces_c(2,s)
+          if(c2 < 0) then
+            if(grid % bnd_cond % color(c2) .eq. wall_colors(b)) then
+              grid % wall_dist(c1)=min(grid % wall_dist(c1), &
+              Distance_Squared(grid % xc(c1),  &
+                               grid % yc(c1),  &
+                               grid % zc(c1),  &
+                               grid % xf(s),   &
+                               grid % yf(s),   &
+                               grid % zf(s)))
+            end if
+          end if 
+        end do
       end do
     end do
 

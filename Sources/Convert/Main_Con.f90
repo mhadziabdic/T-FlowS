@@ -45,14 +45,15 @@
   !   Read the file and start conversion   !
   !----------------------------------------!
   if (extension == 'NEU') then
-    call Load_Neu      (grid)
+    call Load_Neu (grid)
   end if
   if (extension == 'CGNS') then
-    call Load_Cgns     (grid)
+    call Load_Cgns(grid)
   end if
-  call Grid_Topology   (grid)
-  call Find_Faces      (grid)
-  call Compute_Geometry(grid)
+
+  call Grid_Topology     (grid)
+  call Find_Faces        (grid)
+  call Calculate_Geometry(grid)
   call Connect_Domains (grid)
 
   ! Prepare for saving

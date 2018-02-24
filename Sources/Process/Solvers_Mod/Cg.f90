@@ -14,7 +14,7 @@
 !   incomplete Cholesky preconditioning)                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use par_mod
+  use Comm_Mod
   use Matrix_Mod
   use Work_Mod, only: p1 => r_cell_01,  &
                       q1 => r_cell_02
@@ -29,13 +29,13 @@
   real              :: tol                ! tolerance
   real              :: ini_res, fin_res   ! residual
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: N, NB
+  integer :: n, nb
   real    :: alfa, beta, rho, rhoold, bnrm2, error
   integer :: i, j, k, iter, sub
 !==============================================================================!
            
-  N  = A % pnt_grid % n_cells
-  NB = A % pnt_grid % n_bnd_cells
+  n  = A % pnt_grid % n_cells
+  nb = A % pnt_grid % n_bnd_cells
 
   !---------------------!
   !   Preconditioning   !
@@ -47,10 +47,10 @@
   !   What if bnrm2 is very small ?   !
   !???????????????????????????????????!
   bnrm2=0.0
-  do i=1,N
+  do i=1,n
     bnrm2=bnrm2+r1(i)*r1(i)
   end do  
-  call glosum(bnrm2) 
+  call Comm_Mod_Global_Sum_Real(bnrm2) 
   bnrm2=sqrt(bnrm2)
 
   if(bnrm2 < tol) then 
@@ -61,12 +61,12 @@
   !----------------!
   !   r = b - Ax   !
   !----------------!
-  call Residual(N, NB, A, x, r1) 
+  call Residual(n, nb, A, x, r1) 
 
   !-----------!
   !   p = r   !
   !-----------!
-  do i=1,N
+  do i=1,n
     p1(i)=r1(i) 
   end do
 
@@ -74,10 +74,10 @@
   !   Calculate initial residual   !
   !--------------------------------!
   error=0.0
-  do i=1,N
+  do i=1,n
     error=error + r1(i)*r1(i)
   end do
-  call glosum(error) 
+  call Comm_Mod_Global_Sum_Real(error) 
   error  = sqrt(error)  
 
   !---------------------------------------------------------------!
@@ -107,18 +107,18 @@
     !   rho = (r,z)   !
     !-----------------!
     rho=0.0
-    do i=1,N
+    do i=1,n
       rho=rho+r1(i)*q1(i)
     end do
-    call glosum(rho)
+    call Comm_Mod_Global_Sum_Real(rho)
 
     if(iter == 1) then
-      do i=1,N
+      do i=1,n
         p1(i)=q1(i)
       end do        
     else
       beta=rho/rhoold
-      do i=1,N
+      do i=1,n
         p1(i) = q1(i) + beta*p1(i)
       end do
     end if
@@ -126,17 +126,17 @@
     !---------------!
     !   q    = Ap   !     
     !---------------!
-    do i=1,N
+    do i=1,n
       q1(i) = 0.0                    
       do j=A % row(i), A % row(i+1)-1  
         k=A % col(j)                
         q1(i) = q1(i) + A % val(j) * p1(k) 
       end do
     end do
-    call Exchange(A % pnt_grid, p1)
+    call Comm_Mod_Exchange(A % pnt_grid, p1)
     do sub=1,n_proc
-      if(NBBe(sub)  <=  NBBs(sub)) then
-        do k=NBBs(sub),NBBe(sub),-1
+      if(nbb_e(sub)  <=  nbb_s(sub)) then
+        do k=nbb_s(sub),nbb_e(sub),-1
           i=BufInd(k)
           q1(i) = q1(i) + A % bou(k)*p1(k)
         end do
@@ -147,17 +147,17 @@
     !   alfa = (r,z)/(p,q)   !
     !------------------------!
     alfa=0.0
-    do i=1,N
+    do i=1,n
       alfa=alfa+p1(i)*q1(i)
     end do
-    call glosum(alfa)       
+    call Comm_Mod_Global_Sum_Real(alfa)       
     alfa=rho/alfa
 
     !---------------------!
     !   x = x + alfa p    !
     !   r = r - alfa Ap   !
     !---------------------!
-    do i=1,N
+    do i=1,n
       x(i)=x(i)   + alfa*p1(i)
       r1(i)=r1(i) - alfa*q1(i)
     end do
@@ -166,10 +166,10 @@
     !   Check convergence   !
     !???????????????????????!
     error=0.0
-    do i=1,N
+    do i=1,n
       error=error+r1(i)*r1(i)
     end do  
-    call glosum(error)       
+    call Comm_Mod_Global_Sum_Real(error)       
     error=sqrt(error)  
 
     if(error < tol) goto 1

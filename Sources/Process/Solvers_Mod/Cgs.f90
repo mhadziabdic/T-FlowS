@@ -14,7 +14,7 @@
 !   incomplete Cholesky preconditioning)                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use par_mod
+  use Comm_Mod
   use Matrix_Mod
   use Work_Mod, only: p1         => r_cell_01,  &
                       p2         => r_cell_02,  &
@@ -36,13 +36,13 @@
   real              :: tol                ! tolerance
   real              :: ini_res, fin_res   ! residual
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: N, NB
+  integer :: n, nb
   real    :: alfa, beta, rho, rhoold, bnrm2, error
   integer :: i, j, k, iter, sub
 !==============================================================================!
            
-  N  = A % pnt_grid % n_cells
-  NB = A % pnt_grid % n_bnd_cells
+  n  = A % pnt_grid % n_cells
+  nb = A % pnt_grid % n_bnd_cells
 
   !---------------------!
   !   Preconditioning   !
@@ -54,10 +54,10 @@
   !   What if bnrm2 is very small ?   !
   !???????????????????????????????????!
   bnrm2=0.0
-  do i=1,N
+  do i=1,n
     bnrm2=bnrm2+r1(i)*r1(i)
   end do  
-  call glosum(bnrm2)
+  call Comm_Mod_Global_Sum_Real(bnrm2)
   bnrm2=sqrt(bnrm2)
 
   if(bnrm2 < tol) then 
@@ -68,12 +68,12 @@
   !-----------------!
   !   r1 = b - Ax   !
   !-----------------!
-  call Residual(N, NB, A, x, r1) 
+  call Residual(n, nb, A, x, r1) 
 
   !-------------!
   !   r2 = r1   !
   !-------------!
-  do i=1,N
+  do i=1,n
     r2(i)=r1(i) 
   end do
 
@@ -81,10 +81,10 @@
   !   Calculate initial residual   !
   !--------------------------------!
   error=0.0
-  do i=1,N
+  do i=1,n
     error=error + r1(i)*r1(i)
   end do
-  call glosum(error)
+  call Comm_Mod_Global_Sum_Real(error)
   error  = sqrt(error)  
 
   !---------------------------------------------------------------!
@@ -108,19 +108,19 @@
     !   rho = (r2,z1)   !
     !-------------------!
     rho=0.0
-    do i=1,N
+    do i=1,n
       rho=rho+r1(i)*r2(i)
     end do
-    call glosum(rho)
+    call Comm_Mod_Global_Sum_Real(rho)
 
     if(iter == 1) then
-      do i=1,N
+      do i=1,n
         u1(i) = r1(i)
         u2(i) = u1(i)
       end do        
     else
       beta=rho/rhoold
-      do i=1,N
+      do i=1,n
         u1(i) = r1(i) + beta*q1(i) 
         u2(i) = u1(i) + beta*(q1(i) + beta*u2(i)) 
       end do
@@ -134,7 +134,7 @@
     !--------------!
     !   v2 = Ap2   !  
     !--------------!
-    do i=1,N
+    do i=1,n
       v2(i) = 0.0                    
       do j=A % row(i), A % row(i+1)-1   
         k=A % col(j)                  
@@ -142,10 +142,10 @@
       end do
       alfa=alfa+r2(i)*v2(i)
     end do
-    call Exchange(A % pnt_grid, p2)
+    call Comm_Mod_Exchange(A % pnt_grid, p2)
     do sub=1,n_proc
-      if(NBBe(sub)  <=  NBBs(sub)) then
-        do k=NBBs(sub),NBBe(sub),-1
+      if(nbb_e(sub)  <=  nbb_s(sub)) then
+        do k=nbb_s(sub),nbb_e(sub),-1
           i=BufInd(k)
           v2(i) = v2(i) + A % bou(k)*p2(k)
         end do
@@ -156,23 +156,23 @@
     !   alfa = rho/(r2,v2)   !
     !------------------------!
     alfa=0.0
-    do i=1,N
+    do i=1,n
       alfa=alfa+r2(i)*v2(i)
     end do
-    call glosum(alfa) 
+    call Comm_Mod_Global_Sum_Real(alfa) 
     alfa=rho/alfa
 
     !-------------------------!
     !   q1 = u1 - alfa * v2   !
     !-------------------------!
-    do i=1,N
+    do i=1,n
       q1(i) = u1(i) - alfa*v2(i)
     end do
            
     !-------------------------------!
     !   solve Mp1 = u1(i) + q1(i)   !
     !-------------------------------!
-    do i=1,N
+    do i=1,n
       u1_plus_q1(i) = u1(i) + q1(i)
     end do
     call Prec_Solve(A, p1, u1_plus_q1(1), prec) 
@@ -180,24 +180,24 @@
     !---------------------!
     !   x = x + alfa p1   !
     !---------------------!
-    do i=1,N
+    do i=1,n
       x(i)=x(i) + alfa*p1(i)
     end do
 
     !---------------!
     !   q2 = A p1   !     
     !---------------!
-    do i=1,N
+    do i=1,n
       q2(i) = 0.0
       do j=A % row(i), A % row(i+1)-1
         k=A % col(j)
         q2(i) = q2(i) + A % val(j) * p1(k)
       end do
     end do
-    call Exchange(A % pnt_grid, p1)
+    call Comm_Mod_Exchange(A % pnt_grid, p1)
     do sub=1,n_proc
-      if(NBBe(sub)  <=  NBBs(sub)) then
-        do k=NBBs(sub),NBBe(sub),-1
+      if(nbb_e(sub)  <=  nbb_s(sub)) then
+        do k=nbb_s(sub),nbb_e(sub),-1
           i=BufInd(k)
           q2(i) = q2(i) + A % bou(k)*p1(k)
         end do
@@ -207,7 +207,7 @@
     !---------------------!
     !   r = r - alfa q2   !
     !---------------------!
-    do i=1,N
+    do i=1,n
       r1(i)=r1(i) - alfa*q2(i)
     end do
 
@@ -215,10 +215,10 @@
     !   Check convergence   !
     !???????????????????????!
     error=0.0
-    do i=1,N
+    do i=1,n
       error=error+r1(i)*r1(i)
     end do 
-    call glosum(error) 
+    call Comm_Mod_Global_Sum_Real(error) 
     error=sqrt(error)  
 
     if(error < tol) goto 1

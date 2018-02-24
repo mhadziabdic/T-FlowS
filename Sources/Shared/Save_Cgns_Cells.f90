@@ -7,6 +7,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use Grid_Mod
+  use Comm_Mod
   use Cgns_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -70,10 +71,10 @@
   block = 1
   cgns_base(base) % block(block) % name = "Zone 1"
   c = grid % n_nodes
-  call IglSum(c)
+  call Comm_Mod_Global_Sum_Int(c)
   cgns_base(base) % block(block) % mesh_info(1) = c
   c = grid % n_cells
-  call IglSum(c)
+  call Comm_Mod_Global_Sum_Int(c)
   cgns_base(base) % block(block) % mesh_info(2) = c
   cgns_base(base) % block(block) % mesh_info(3) = 0
 

@@ -5,9 +5,10 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
   use les_mod
-  use par_mod
+  use Comm_Mod
   use rans_mod
   use Tokenizer_Mod
   use Grid_Mod
@@ -26,7 +27,7 @@
   real, allocatable :: mres(:), xm(:), ym(:), zm(:)
 !==============================================================================!
 
-  call Wait
+  call Comm_Mod_Wait
 
   ! Retreive monitoring points
   call Control_Mod_Monitoring_Points(Nmon, xm, ym, zm)
@@ -47,7 +48,7 @@
       end if
     end do
     MresT=Mres(j)
-    call GloMin(MresT)
+    call Comm_Mod_Global_Min_Real(MresT)
     if(MresT /= Mres(j)) then ! there is a cell which is nearer
       Cm(j) = 0               ! so erase this_proc monitoring point
     end if
@@ -80,10 +81,12 @@
                                                 bulk(m) % zp)
   end do
 
+print *, 'Calling for gravitationa vector'
   call Control_Mod_Gravitational_Vector(grav_x, grav_y, grav_z)
 
   if(.not. restar) call Allocate_Variables(grid)
 
+print *, 'Calling for turbulence model'
   call Control_Mod_Turbulence_Model(.true.)
 
   if(turbulence_model == K_EPS .or.  &
@@ -237,6 +240,6 @@
     end do
   end if
 
-  call Wait
+  call Comm_Mod_Wait
 
   end subroutine

@@ -19,20 +19,20 @@
   ! Open with a logo
   call Logo_Gen
 
-  call Load_Domain             (dom, grid)
-  call Compute_Node_Coordinates(dom, grid)
-  call Distribute_Regions      (dom, grid)
-  call Connect_Blocks          (dom, grid)
-  call Connect_Periodicity     (dom, grid)
-  call Connect_Copy            (dom, grid)
+  call Load_Domain               (dom, grid)
+  call Calculate_Node_Coordinates(dom, grid)
+  call Distribute_Regions        (dom, grid)
+  call Connect_Blocks            (dom, grid)
+  call Connect_Periodicity       (dom, grid)
+  call Connect_Copy              (dom, grid)
 
   ! From this point on, domain is not used anymore
   call Determine_Grid_Connectivity(grid, .false.)  ! trial run 
-  call Compute_Grid_Geometry      (grid, .false.)
+  call Calculate_Grid_Geometry    (grid, .false.)
   call Smooth_Grid                (grid)
   call Refine_Grid                (grid)
   call Determine_Grid_Connectivity(grid, .true.) ! real run
-  call Compute_Grid_Geometry      (grid, .true.)
+  call Calculate_Grid_Geometry    (grid, .true.)
 
   ! Prepare for saving
   do n = 1,grid % n_nodes

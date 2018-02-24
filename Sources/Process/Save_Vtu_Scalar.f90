@@ -4,7 +4,7 @@
 !   Writes one real scalar defined over cells.                                 !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use par_mod, only: this_proc, n_proc
+  use Comm_Mod, only: this_proc, n_proc
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none

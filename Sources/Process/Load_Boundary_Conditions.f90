@@ -4,9 +4,10 @@
 !   Reads: .bnd file                                                           !
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
   use rans_mod
-  use par_mod
+  use Comm_Mod, only: this_proc
   use Tokenizer_Mod
   use Grid_Mod
   use Control_Mod

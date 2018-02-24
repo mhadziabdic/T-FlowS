@@ -5,7 +5,10 @@
 !   Writes field to solution node and sets its field_id  [sequential vesion]   !
 !------------------------------------------------------------------------------!
 !   Array structures in current function are strictly followings:              !
+!                                                                              !
 !   Cell type:    |      HEXA_8      |     PENTA_6      |       PYRA_5     |...!
+!                                                                              !
+!------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -13,7 +16,7 @@
 !---------------------------------[Arguments]----------------------------------!
   integer              :: base, block, solution, field
   type(Grid_Type)      :: grid
-  real                 :: input_array(1:grid % n_cells)
+  real                 :: input_array(grid % n_cells)
   character(len=*)     :: input_name
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: base_id     ! base index number
@@ -23,7 +26,7 @@
   character(len=80)    :: field_name  ! name of the FlowSolution_t node
   integer              :: cell_type
   integer              :: cnt            ! cells of cell_type
-  real                 :: field_array(1:grid % n_cells) ! field array
+  real                 :: field_array(grid % n_cells) ! field array
   integer              :: i, j, k, c
   integer              :: error
 !==============================================================================!
@@ -37,7 +40,7 @@
   field_name = trim(input_name)
 
   !------------------------------------------------!
-  !   Mapping 1:NC -> Connection structure above   !
+  !   Mapping 1:nc -> Connection structure above   !
   !------------------------------------------------!
 
   ! Find first and last cells of cell_type
@@ -76,18 +79,17 @@
       !----------------------------------------------!
 
       ! Add field to FlowSolution_t node for cell_type
-      call Cg_Field_Partial_Write_F( &
-        file_id,                     & !(in )
-        base_id,                     & !(in )
-        block_id,                    & !(in )
-        solution_id,                 & !(in )
-        RealDouble,                  & !(in )
-        field_name,                  & !(in )
-        i,                           & !(in )
-        j,                           & !(in )
-        field_array(1:cnt),          & !(in )
-        field_id,                    & !(out)
-        error)                         !(out)
+      call Cg_Field_Partial_Write_F(file_id,      & !(in )
+                                    base_id,      & !(in )
+                                    block_id,     & !(in )
+                                    solution_id,  & !(in )
+                                    RealDouble,   & !(in )
+                                    field_name,   & !(in )
+                                    i,            & !(in )
+                                    j,            & !(in )
+                                    field_array,  & !(in )
+                                    field_id,     & !(out)
+                                    error)          !(out)
 
       if (error .ne. 0) then
         print *, "# Failed to write field", trim(field_name)

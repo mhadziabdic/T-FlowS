@@ -25,7 +25,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
+  use Comm_Mod
   use Grid_Mod
   use Work_Mod, only: p1 => r_cell_01,  &
                       p2 => r_cell_02
@@ -77,7 +79,7 @@
     end if    
   end do
  
-  call Exchange(grid, p2)
+  call Comm_Mod_Exchange(grid, p2)
 
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
@@ -127,8 +129,8 @@
     end if    
   end do
 
-  call Exchange(grid, phi_x)
-  call Exchange(grid, phi_y)
-  call Exchange(grid, phi_z)
+  call Comm_Mod_Exchange(grid, phi_x)
+  call Comm_Mod_Exchange(grid, phi_y)
+  call Comm_Mod_Exchange(grid, phi_z)
 
   end subroutine

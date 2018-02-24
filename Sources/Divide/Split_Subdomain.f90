@@ -4,7 +4,7 @@
 !   Splits a (sub) domain by a selected technique.                             !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use allp_mod
   use gen_mod 
   use div_mod
   use Grid_Mod

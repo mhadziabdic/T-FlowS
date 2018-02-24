@@ -1,8 +1,15 @@
-#===============================================================================
+#==================================================================================================
 # 
 #   Convert Makefile   
 #   
-#-------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+
+$(info #==========================================================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                       )  
+$(info #------------------------------------------------------------------------------------------)
+$(info # Usage:                                                                                   )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no> )
+$(info #------------------------------------------------------------------------------------------)
 
 #--------------------------
 #   Variable definitions
@@ -23,7 +30,7 @@ DIR_BINARY = ../../Binaries
 DIR_SHARED = ../Shared
 DIR_MODULE = ../.Modules
 DIR_OBJECT = .Objects
-VPATH = $(DIR_SHARED):../Process/Communication/Sequential:.
+VPATH = $(DIR_SHARED):.
 
 # Program name (This should hardly change)
 PROGRAM_NAME = Convert
@@ -35,7 +42,7 @@ PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
 #   Note: Changes only when support to a new Fortran compiler is added.
 #-------------------------------------------------------------------------
 
-# Fortran = gnu
+# Fortran == gnu
 ifeq ($(FORTRAN), gnu)
   FC = gfortran
   ifeq ($(DEBUG), yes)
@@ -75,7 +82,6 @@ endif
 ifeq ($(CGNS_ADF5), yes)
   DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Adf5_Seq/Include
   CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Adf5_Seq/Lib/libcgns.a
-  OPT_COMP   += $(addprefix -I, $(DIR_CGNS_H))
 endif
 
 ifeq ($(CGNS_HDF5), yes)
@@ -83,16 +89,8 @@ ifeq ($(CGNS_HDF5), yes)
   CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a \
                 ../Libraries/Hdf5_Seq/Lib/libhdf5.a                        \
                 -Wl,--no-as-needed -ldl -lz
-  OPT_COMP   += $(addprefix -I, $(DIR_CGNS_H))
 endif
-
-$(info #====================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN) )  
-$(info #----------------------------------------------------)
-$(info # Usage:                                             )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> )
-$(info #        <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no>       )
-$(info #----------------------------------------------------)
+OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
 
 #------------------------------------------------------
 #   List of sources for modules and functions
@@ -103,23 +101,24 @@ $(info #----------------------------------------------------)
 #         letters are candidates for deletion.
 #------------------------------------------------------
 
-# Sources for modules in the local directory
-SRC_MOD = Cgns_Mod_Seq.f90
+#-------------
+#   Modules
+#-------------
 
-# If CGNS is supported, add the right module
-ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
-  SRC_MOD = Cgns_Mod_Void.f90
-endif
+# Modules in shared directories
+SRC_MOD = allp_mod.f90		\
+          all_mod.f90		\
+          gen_mod.f90		\
+          div_mod.f90		\
+          Tokenizer_Mod.f90	\
+          Material_Mod.f90	\
+          Bnd_Cond_Mod.f90	\
+          Grid_Mod.f90		\
+          Comm_Mod_Seq.f90
 
-# Sources for modules in other directories
-SRC_MOD += allp_mod.f90		\
-           all_mod.f90		\
-           gen_mod.f90		\
-           div_mod.f90		\
-           Tokenizer_Mod.f90	\
-           Material_Mod.f90	\
-           Bnd_Cond_Mod.f90	\
-           Grid_Mod.f90
+#---------------
+#   Functions   
+#---------------
 
 # Sources for all shared functions
 SRC_FUN = Approx.f90			\
@@ -135,25 +134,28 @@ SRC_FUN = Approx.f90			\
           Sort_Real_Carry_Int.f90	\
           Sort2.f90			\
           Swap_Int.f90			\
-          To_Upper_Case.f90		\
-          IGlSum.f90
+          To_Upper_Case.f90
 
 # Local functions are added one by one ...
-SRC_FUN += Allocate_Memory.f90	\
-           Compute_Geometry.f90	\
-           Connect_Domains.f90	\
-           Find_Faces.f90	\
-           Grid_Topology.f90	\
-           Load_Neu.f90		\
-           Logo_Con.f90		\
-           Main_Con.f90		\
+SRC_FUN += Allocate_Memory.f90		\
+           Calculate_Geometry.f90	\
+           Connect_Domains.f90		\
+           Find_Faces.f90		\
+           Grid_Topology.f90		\
+           Load_Neu.f90			\
+           Logo_Con.f90			\
+           Main_Con.f90			\
            Read_Line.f90
 
-# ... to allow conditional inclusion of CGNS support
+#-------------------------------------------
+#   Conditional inclusion of CGNS support 
+#-------------------------------------------
 ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
+  SRC_MOD += Cgns_Mod_Void.f90
   SRC_FUN += Load_Cgns_Void.f90		\
              Save_Cgns_Cells_Void.f90
 else
+  SRC_MOD += Cgns_Mod_Seq.f90
   SRC_FUN += Load_Cgns.f90		\
              Save_Cgns_Cells.f90
 endif

@@ -8,7 +8,7 @@
   use Flow_Mod
   use les_mod
   use rans_mod
-  use par_mod
+  use Comm_Mod
   use Var_Mod
   use Grid_Mod
   use Info_Mod
@@ -286,6 +286,6 @@
   
   call Info_Mod_Iter_Fill_At(3, 4, phi % name, niter, phi % res)
 
-  call Exchange(grid, phi % n)
+  call Comm_Mod_Exchange(grid, phi % n)
 
   end subroutine

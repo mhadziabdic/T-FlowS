@@ -6,8 +6,8 @@
 ! handles different materials.                                         ! 
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  use all_mod
   use Flow_Mod
+  use Comm_Mod
   use Grid_Mod
 !----------------------------------------------------------------------!
   implicit none
@@ -21,7 +21,7 @@
   integer :: s, c, c1, c2, iter
 !======================================================================!
  
-  call Exchange(grid, phi)
+  call Comm_Mod_Exchange(grid, phi)
 
   do c = 1, grid % n_cells
     phi_x(c)=0.0

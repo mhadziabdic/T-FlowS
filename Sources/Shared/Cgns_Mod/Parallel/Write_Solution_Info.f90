@@ -3,18 +3,19 @@
 !------------------------------------------------------------------------------!
 !   Writes main info to solution node and sets its sol_id  [parallel vesion]   !
 !------------------------------------------------------------------------------!
-  use par_mod, only: this_proc
+!----------------------------------[Modules]-----------------------------------!
+  use Comm_Mod, only: this_proc
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer              :: base, block, solution
+  integer :: base, block, solution
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: base_id       ! base index number
-  integer              :: block_id      ! block index number
-  integer              :: sol_id       ! element section index
-  character(len=80)    :: sol_name     ! name of the Elements_t node
-  integer              :: sol_type     ! types of elements in the section
-  integer              :: error
+  integer           :: base_id   ! base index number
+  integer           :: block_id  ! block index number
+  integer           :: sol_id    ! element section index
+  character(len=80) :: sol_name  ! name of the Elements_t node
+  integer           :: sol_type  ! types of elements in the section
+  integer           :: error
 !==============================================================================!
 
   ! Set input parameters
@@ -26,14 +27,13 @@
   sol_type = cgns_base(base_id)%block(block_id)%solution(sol_id)%sol_type
 
   ! Create a FlowSolution_t node 
-  call Cg_Sol_Write_F( &
-     file_id,          & !(in )
-     base_id,          & !(in )
-     block_id,         & !(in )
-     sol_name,         & !(in )
-     sol_type,         & !(in )
-     sol_id,           & !(out)
-     error)              !(out)
+  call Cg_Sol_Write_F(file_id,   & !(in )
+                      base_id,   & !(in )
+                      block_id,  & !(in )
+                      sol_name,  & !(in )
+                      sol_type,  & !(in )
+                      sol_id,    & !(out)
+                      error)       !(out)
 
   if (error .ne. 0) then
     print *, "# Failed to write solution info"

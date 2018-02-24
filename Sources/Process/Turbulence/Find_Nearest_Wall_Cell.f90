@@ -1,14 +1,17 @@
 !==============================================================================!
   subroutine Find_Nearest_Wall_Cell(grid)
 !------------------------------------------------------------------------------!
-! The subroutine links interior cells to the closes wall cell. This is         !
-! needed for Standard Smagorinsky SGS model used in 'LES'.                       !
+!   The subroutine links interior cells to the closes wall cell. This is       !
+!   needed for Standard Smagorinsky SGS model used in 'LES'.                   !
+!                                                                              !
+!   What if the nearest wall cell is in another processor?                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
   use les_mod
-  use par_mod
+  use Comm_Mod
   use rans_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -21,8 +24,8 @@
   real             :: Distance
 !==============================================================================!  
 
-  if(this_proc  < 2)                                                     &
-  print *, '# Searching for corresponding wall cells!'
+  if(this_proc  < 2)  &
+    print *, '# Searching for corresponding wall cells!'
 
   nearest_cell = 0
   nearest_wall_cell = 0

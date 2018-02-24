@@ -9,7 +9,7 @@
   use Flow_Mod
   use les_mod
   use rans_mod
-  use par_mod
+  use Comm_Mod
   use Var_Mod
   use Grid_Mod
   use Info_Mod
@@ -106,7 +106,7 @@
   ! Compute phimax and phimin
   do mat = 1, grid % n_materials
     if(adv_scheme .ne. CENTRAL) then
-      call Compute_Minimum_Maximum(grid, phi % n)  ! or phi % o ???
+      call Calculate_Minimum_Maximum(grid, phi % n)  ! or phi % o ???
       goto 1
     end if
   end do
@@ -475,6 +475,6 @@
       call Info_Mod_Iter_Fill_At(3, 3, phi % name, niter, phi % res)
   end if
 
-  call Exchange(grid, phi % n)
+  call Comm_Mod_Exchange(grid, phi % n)
 
   end subroutine

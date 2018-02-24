@@ -4,21 +4,25 @@
 !   Fetches correct dimensions for arrays in CGNS lib dependent functions      !
 !------------------------------------------------------------------------------!
 !   Arrays structure in CGNS parallel functions are strictly followings:       !
-!   Processor:    |        P_1        |               P_2               | ...  !
-!   x,y,z:        |      (1 : NN_1)   |       NN_1 + 1 : NN_1 + NN_2    | ...  !
+!                                                                              !
+!   Processor:    |        p_1        |               p_2               | ...  !
+!   x,y,z:        |      (1 : nn_1)   |       nn_1 + 1 : nn_1 + nn_2    | ...  !
+!                                                                              !
 !------------------------------------------------------------------------------!
+!                                                                              !
 !   Cell type:    |      HEXA_8      |     PENTA_6      |       PYRA_5     |...!
 !   Connections:  |-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|...!
+!                                                                              !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use par_mod
+  use Comm_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer :: idx      !(out)
   integer :: nn_or_nc !(in )
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: tmp(1:n_proc)
+  integer :: tmp(n_proc)
 !------------------------------------------------------------------------------!
 
   ! single-processor case
@@ -29,10 +33,9 @@
 
   ! multi-processor case
   tmp = 0
-  call wait
   tmp(this_proc) = nn_or_nc
 
-  call IglSumArray(tmp, n_proc)
+  call Comm_Mod_Global_Sum_Int_Array(tmp, n_proc)
 
   idx = 1
 

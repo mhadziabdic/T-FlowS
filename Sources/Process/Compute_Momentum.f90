@@ -8,11 +8,12 @@
 !   Discretizes and solves momentum conservation equations                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
+  use allp_mod
   use all_mod
   use Flow_Mod
   use les_mod
   use rans_mod
-  use par_mod
+  use Comm_Mod
   use Var_Mod
   use Grid_Mod
   use Bulk_Mod
@@ -160,7 +161,7 @@
   ! Compute phimax and phimin
   do mat=1,grid % n_materials
     if(adv_scheme .ne. CENTRAL) then
-      call Compute_Minimum_Maximum(grid, ui % n)  ! or ui % o ???
+      call Calculate_Minimum_Maximum(grid, ui % n)  ! or ui % o ???
       goto 1  ! why on Earth this?
     end if
   end do
@@ -607,6 +608,6 @@
     call Info_Mod_Iter_Fill_At(2, 3, ui % name, niter, ui % res)
   end if
 
-  call Exchange(grid, ui % n)
+  call Comm_Mod_Exchange(grid, ui % n)
 
   end subroutine

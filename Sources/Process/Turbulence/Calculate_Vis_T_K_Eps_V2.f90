@@ -5,7 +5,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
+  use Comm_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -17,7 +19,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, s
   real    :: u_nor_sq, u_nor, u_tot_sq, Cmu1, beta, pr_mol, pr_turb
-  real    :: lf, Gblend, Ustar, Ck, y_plus, u_plus, ebf
+  real    :: lf, g_blend, u_star, c_k, y_plus, u_plus, ebf
 !==============================================================================!
 
   call Time_And_Length_Scale(grid)
@@ -35,7 +37,7 @@
       vis_t(c) = CmuD*v2%n(c)*kin % n(c)*Tsc(c)
       vis_t_eff(c) = max(vis_t(c),vis_t_sgs(c))
     end do
-    call Exchange(grid, vis_t_eff)  
+    call Comm_Mod_Exchange(grid, vis_t_eff)  
   end if
 
   do s = 1, grid % n_faces
@@ -56,7 +58,7 @@
 
         Uf(c1)  = Cmu**0.25*kin%n(c1)**0.5
         Ynd(c1) = grid % wall_dist(c1)*Uf(c1)/viscosity 
-        Gblend  = 0.01*Ynd(c1)**4.0/(1.0+5.0*Ynd(c1))
+        g_blend  = 0.01*Ynd(c1)**4.0/(1.0+5.0*Ynd(c1))
 
         y_plus = max(Ynd(c1),0.13)  
         u_plus = log(y_plus*Elog)/(kappa)
@@ -64,8 +66,8 @@
         if(y_plus< 3.0) then
           VISwall(c1) = vis_t(c1) + viscosity  
         else
-          VISwall(c1) = Ynd(c1)*viscosity/(y_plus*exp(-1.0*Gblend) &
-                        +u_plus*exp(-1.0/Gblend) + TINY)
+          VISwall(c1) = Ynd(c1)*viscosity/(y_plus*exp(-1.0*g_blend) &
+                        +u_plus*exp(-1.0/g_blend) + TINY)
         end if
 
         if(ROUGH == YES) then
@@ -87,7 +89,7 @@
     end if    ! c2 < 0
   end do
  
-  call Exchange(grid, vis_t)  
-  call Exchange(grid, VISwall)  
+  call Comm_Mod_Exchange(grid, vis_t)  
+  call Comm_Mod_Exchange(grid, VISwall)  
 
   end subroutine

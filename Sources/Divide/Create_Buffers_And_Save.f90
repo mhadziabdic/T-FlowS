@@ -4,10 +4,11 @@
 !   Number the cells in each subdomain for subsequent separate saving.         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
+  use allp_mod
   use all_mod
   use gen_mod 
   use div_mod
-  use par_mod, only: NBBs, NBBe
+  use Comm_Mod, only: nbb_s, nbb_e
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -23,7 +24,7 @@
 !   Each subdomain needs two buffers: a send buffer and a receive buffer.      !
 !   A receive buffer will be stored as aditional boundary cells for each       !
 !   subdomain. So each subdomain will have grid % n_bnd_cells physical         !
-!   boundary faces and NBBC-grid % n_bnd_cells buffer bounndary cells.         !
+!   boundary faces and nbb_C-grid % n_bnd_cells buffer bounndary cells.         !
 !   It is handy to do it that way, because most of the algorythms can remain   !
 !   the same as they are now.  They won't even "know" that they use values     !
 !   from other processors.  On the other hand, a sending buffer has to be      !
@@ -37,8 +38,8 @@
 !   end do                                                                     !
 !------------------------------------------------------------------------------!
 
-  allocate (NBBs(0:n_sub))
-  allocate (NBBe(0:n_sub))
+  allocate (nbb_s(0:n_sub))
+  allocate (nbb_e(0:n_sub))
 
   !-------------------------------!
   !                               !
@@ -139,7 +140,7 @@
     write(9,'(I8)')  n_bnd_cells_sub   
     do subo=1,n_sub
       if(subo /= sub) then
-        NBBs(subo)=n_buff_sub+1
+        nbb_s(subo)=n_buff_sub+1
 
         ! Faces inside the domain
         do s = 1, grid % n_faces
@@ -184,7 +185,7 @@
             BufPos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
         end do    ! through sides
-        NBBe(subo)=n_buff_sub
+        nbb_e(subo)=n_buff_sub
 
         ! Write to buffer file
         write(9,'(A33)') '#-------------------------------#' 
@@ -192,10 +193,10 @@
         write(9,'(A33)') '#-------------------------------#' 
         write(9,'(I8)')  subo 
         write(9,'(A30)') '# Number of local connections:'
-        write(9,'(I8)')  NBBe(subo)-NBBs(subo)+1 
+        write(9,'(I8)')  nbb_e(subo)-nbb_s(subo)+1 
         write(9,'(A37)') '# Local number in a buffer and index:'
-        do b=NBBs(subo),NBBe(subo)
-          write(9,'(2I8)') b-NBBs(subo)+1, BuSeIn(b) 
+        do b=nbb_s(subo),nbb_e(subo)
+          write(9,'(2I8)') b-nbb_s(subo)+1, BuSeIn(b) 
         end do
       end if 
 
@@ -239,9 +240,9 @@
     do subo=1,n_sub
       if(subo /= sub) then
         print '(a,i9,a,3i9)', ' # Connections with ', subo ,' : ',  &
-          NBBe(subo)-NBBs(subo)+1,                      &
-          n_bnd_cells_sub+NBBs(subo),                   &
-          n_bnd_cells_sub+NBBe(subo) 
+          nbb_e(subo)-nbb_s(subo)+1,                      &
+          n_bnd_cells_sub+nbb_s(subo),                   &
+          n_bnd_cells_sub+nbb_e(subo) 
       end if 
     end do ! for subo
     print *, '#-----------------------------------' 

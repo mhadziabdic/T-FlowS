@@ -5,27 +5,29 @@
 !------------------------------------------------------------------------------!
 !   Each node in zone/block must have unique id                                !
 !   https://cgns.github.io/CGNS_docs_current/midlevel/grid.html                !
+!                                                                              !
 !   Connections:  | HEXA_8 | PENTA_6 | PYRA_5 | TETRA_4 |                      !
+!                                                                              !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  integer              :: base, block, sect
-  type(Grid_Type)      :: grid
+  integer         :: base, block, sect
+  type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: base_id       ! base index number
-  integer              :: block_id      ! block index number
-  integer              :: sect_id       ! element section index
-  character(len=80)    :: sect_name     ! name of the Elements_t node
-  integer              :: cell_type     ! types of elements in the section
-  integer              :: first_cell    ! index of first element
-  integer              :: last_cell     ! index of last element
-  integer              :: n_bnd         ! index of last boundary element
-  integer              :: error
-  integer              :: n_nodes, c, cnt, i, j
-  integer              :: cell_n(1:8,1:grid % n_nodes)
+  integer           :: base_id       ! base index number
+  integer           :: block_id      ! block index number
+  integer           :: sect_id       ! element section index
+  character(len=80) :: sect_name     ! name of the Elements_t node
+  integer           :: cell_type     ! types of elements in the section
+  integer           :: first_cell    ! index of first element
+  integer           :: last_cell     ! index of last element
+  integer           :: n_bnd         ! index of last boundary element
+  integer           :: error
+  integer           :: n_nodes, c, cnt, i, j
+  integer           :: cell_n(8, grid % n_nodes)
 !==============================================================================!
 
   ! Set input parameters
@@ -84,18 +86,17 @@
     end do
 
     ! Write element data
-    call Cg_Section_Write_F(        &
-      file_id,                      & !(in )
-      base_id,                      & !(in )
-      block_id,                     & !(in )
-      sect_name,                    & !(in )
-      cell_type,                    & !(in )
-      first_cell,                   & !(in )
-      last_cell,                    & !(in )
-      n_bnd,                        & !(in )
-      cell_n(1:n_nodes, 1:cnt),     & !(in )
-      sect_id,                      & !(out)
-      error)                          !(out)
+    call Cg_Section_Write_F(file_id,                   & !(in )
+                            base_id,                   & !(in )
+                            block_id,                  & !(in )
+                            sect_name,                 & !(in )
+                            cell_type,                 & !(in )
+                            first_cell,                & !(in )
+                            last_cell,                 & !(in )
+                            n_bnd,                     & !(in )
+                            cell_n(1:n_nodes, 1:cnt),  & !(in )
+                            sect_id,                   & !(out)
+                            error)                       !(out)
 
     if (error .ne. 0) then
        print*, '*FAILED* to write ', trim(sect_name), ' connections'

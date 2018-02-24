@@ -8,7 +8,7 @@
   use all_mod
   use Flow_Mod
   use rans_mod
-  use par_mod, only: this_proc, n_proc
+  use Comm_Mod, only: this_proc, n_proc
   use Tokenizer_Mod
   use Grid_Mod
   use Cgns_Mod

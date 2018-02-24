@@ -5,7 +5,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
+  use Comm_Mod
   use Grid_Mod
   use Bulk_Mod
 !------------------------------------------------------------------------------!
@@ -46,7 +48,7 @@
         end if
       end if
     end do
-    call glosum(bulk(m) % mass_in)
+    call Comm_Mod_Global_Sum_Real(bulk(m) % mass_in)
   end do                    
 
   !---------------------------------------!
@@ -91,7 +93,7 @@
 
       endif
     end do
-    call glosum(bulk(m) % mass_out)  ! not checked
+    call Comm_Mod_Global_Sum_Real(bulk(m) % mass_out)  ! not checked
   end do
 
   do m = 1, grid % n_materials

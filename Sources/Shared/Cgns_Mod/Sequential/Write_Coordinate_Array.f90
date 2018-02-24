@@ -5,7 +5,6 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
-!  use Work_Mod, only: coordinates => r_node_01
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -42,15 +41,14 @@
   end select
 
   ! Write grid coordinates
-  call Cg_Coord_Write_F( & !(in )
-    file_id,             & !(in )
-    base_id,             & !(in )
-    block_id,            & !(in )
-    RealDouble,          & !(in )
-    coord_name,          & !(in )
-    coordinates,         & !(in )
-    coord_id,            & !(out)
-    error)                 !(out)
+  call Cg_Coord_Write_F(file_id,      & !(in )
+                        base_id,      & !(in )
+                        block_id,     & !(in )
+                        RealDouble,   & !(in )
+                        coord_name,   & !(in )
+                        coordinates,  & !(in )
+                        coord_id,     & !(out)
+                        error)          !(out)
 
   if (error .ne. 0) then
          print *, "# Failed to write: ", trim(coord_name)

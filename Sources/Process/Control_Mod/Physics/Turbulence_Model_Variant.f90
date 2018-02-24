@@ -45,6 +45,7 @@
   else if(val .eq. 'SMAGORINSKY') then
     turbulence_model_variant = SMAGORINSKY
   else
+    print *, '# Unknown turbulence model variant: ', trim(val)
     print *, '# Exiting!'
     stop 
   end if

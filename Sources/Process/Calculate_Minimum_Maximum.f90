@@ -1,11 +1,11 @@
 !==============================================================================!
-  subroutine Compute_Minimum_Maximum(grid, phi)
+  subroutine Calculate_Minimum_Maximum(grid, phi)
 !------------------------------------------------------------------------------!
 !                                                                              !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
+  use Comm_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -33,7 +33,7 @@
 
   end do
 
-  call Exchange(grid, phi_max)
-  call Exchange(grid, phi_min)
+  call Comm_Mod_Exchange(grid, phi_max)
+  call Comm_Mod_Exchange(grid, phi_min)
 
   end subroutine

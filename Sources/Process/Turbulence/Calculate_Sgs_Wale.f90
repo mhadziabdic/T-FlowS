@@ -4,7 +4,7 @@
 !  Compute SGS viscosity for 'LES' by using WALE model.  
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod, only: ONE_THIRD
+  use allp_mod, only: ONE_THIRD, TINY
   use all_mod
   use Flow_Mod
   use les_mod

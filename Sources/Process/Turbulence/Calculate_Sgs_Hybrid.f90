@@ -5,7 +5,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
+  use Comm_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -36,6 +38,6 @@
                  * shear(c)      
   end do
 
-  call Exchange(grid, vis_t_sgs)
+  call Comm_Mod_Exchange(grid, vis_t_sgs)
 
   end subroutine

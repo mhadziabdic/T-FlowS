@@ -7,7 +7,9 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
+  use Comm_Mod
   use Grid_Mod
   use Work_Mod, only: phi_f => r_face_01
 !------------------------------------------------------------------------------!
@@ -23,7 +25,7 @@
   real    :: phi_s, xs, ys, zs 
 !==============================================================================!
  
-  call Exchange(grid, phi)
+  call Comm_Mod_Exchange(grid, phi)
 
   phi_f = 0.0
 
@@ -149,8 +151,8 @@
     end if  ! c2 < 0
   end do
 
-  call Exchange(grid, phi_x)
-  call Exchange(grid, phi_y)
-  call Exchange(grid, phi_z)
+  call Comm_Mod_Exchange(grid, phi_x)
+  call Comm_Mod_Exchange(grid, phi_y)
+  call Comm_Mod_Exchange(grid, phi_z)
 
   end subroutine

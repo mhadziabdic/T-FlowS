@@ -5,9 +5,10 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
+  use allp_mod
   use Flow_Mod
   use les_mod
-  use par_mod
+  use Comm_Mod
   use rans_mod
   use Grid_Mod
   use Bulk_Mod
@@ -155,14 +156,14 @@
         flux(s) = 0.0 
       end if
     end do
-    call iglsum(n_wall)
-    call iglsum(n_inflow)
-    call iglsum(n_outflow)
-    call iglsum(n_symmetry)
-    call iglsum(n_heated_wall)
-    call iglsum(n_convect)
-    call glosum(bulk(m) % mass_in)
-    call glosum(area)
+    call Comm_Mod_Global_Sum_Int(n_wall)
+    call Comm_Mod_Global_Sum_Int(n_inflow)
+    call Comm_Mod_Global_Sum_Int(n_outflow)
+    call Comm_Mod_Global_Sum_Int(n_symmetry)
+    call Comm_Mod_Global_Sum_Int(n_heated_wall)
+    call Comm_Mod_Global_Sum_Int(n_convect)
+    call Comm_Mod_Global_Sum_Real(bulk(m) % mass_in)
+    call Comm_Mod_Global_Sum_Real(area)
   end do                  
 
   !----------------------!

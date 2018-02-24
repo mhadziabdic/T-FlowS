@@ -9,6 +9,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use all_mod
   use Flow_Mod
+  use Comm_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
@@ -20,9 +21,9 @@
   integer :: c
 !==============================================================================!
   
-  call Exchange(grid, u % n)
-  call Exchange(grid, v % n)
-  call Exchange(grid, w % n)
+  call Comm_Mod_Exchange(grid, u % n)
+  call Comm_Mod_Exchange(grid, v % n)
+  call Comm_Mod_Exchange(grid, w % n)
 
   !---------------!
   !   SGS terms   !

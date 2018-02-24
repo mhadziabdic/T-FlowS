@@ -22,7 +22,7 @@
 !   First domain must be the channel-like, periodic in streamwise direction.   !
 !                                                                              !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use allp_mod
   use gen_mod 
   use Tokenizer_Mod
   use Grid_Mod

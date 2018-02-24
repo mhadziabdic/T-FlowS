@@ -5,7 +5,7 @@
 !   It relies only on SideC structure. Try to keep it that way.                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use par_mod, only: this_proc
+  use Comm_Mod, only: this_proc
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none

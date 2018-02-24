@@ -1,8 +1,15 @@
-#===============================================================================
+#==================================================================================================
 # 
 #   Generate Makefile   
 #   
-#-------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+
+$(info #==========================================================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                       )
+$(info #------------------------------------------------------------------------------------------)
+$(info # Usage:                                                                                   )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no> )
+$(info #------------------------------------------------------------------------------------------)
 
 #--------------------------
 #   Variable definitions
@@ -13,6 +20,10 @@ FORTRAN = gnu
 
 # Debugging ("yes" or "no")
 DEBUG = no
+
+# Link with CGNS ("yes" or "no")
+CGNS_ADF5 = no
+CGNS_HDF5 = no
 
 # Directories for objects and modules. (No need to change.)
 DIR_BINARY = ../../Binaries
@@ -64,12 +75,19 @@ ifeq ($(FORTRAN), portland)
   OPT_LINK = $(OPT_COMP)
 endif 
 
-$(info #====================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN) )
-$(info #----------------------------------------------------)
-$(info # Usage:                                             )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> )
-$(info #----------------------------------------------------)
+# If compiling with CGNS, add path to include directory
+ifeq ($(CGNS_ADF5), yes)
+  DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Adf5_Seq/Include
+  CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Adf5_Seq/Lib/libcgns.a
+endif
+
+ifeq ($(CGNS_HDF5), yes)
+  DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Include
+  CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a \
+                ../Libraries/Hdf5_Seq/Lib/libhdf5.a                        \
+                -Wl,--no-as-needed -ldl -lz
+endif
+OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
 
 #------------------------------------------------------
 #   List of sources for modules and functions
@@ -80,26 +98,46 @@ $(info #----------------------------------------------------)
 #         letters are candidates for deletion.
 #------------------------------------------------------
 
-# Sources for modules in the local directory
-SRC_MOD =  Point_Mod.f90		\
+#-------------
+#   Modules
+#-------------
+
+# Modules in shared directories
+SRC_MOD = allp_mod.f90			\
+          all_mod.f90			\
+          gen_mod.f90			\
+          div_mod.f90			\
+          Tokenizer_Mod.f90		\
+          Material_Mod.f90		\
+          Bnd_Cond_Mod.f90		\
+          Grid_Mod.f90			\
+          Comm_Mod_Seq.f90
+
+# Modules in the local directory
+SRC_MOD += Point_Mod.f90		\
            Line_Mod.f90			\
            Block_Mod.f90		\
            Region_Mod.f90		\
            Domain_Mod.f90
 
-# Sources for modules in other directories
-SRC_MOD += allp_mod.f90			\
-           all_mod.f90			\
-           gen_mod.f90			\
-           div_mod.f90			\
-           Tokenizer_Mod.f90		\
-           Material_Mod.f90		\
-           Bnd_Cond_Mod.f90	\
-           Grid_Mod.f90
+#---------------
+#   Functions   
+#---------------
 
 # Sources for all functions are obtained by a shell command
-SRC_FUN_WITH_DIR = $(shell ls -1 $(DIR_SHARED)/*.f90 *.f90 | grep -v -i _Mod)
+SRC_FUN_WITH_DIR = $(shell ls -1 $(DIR_SHARED)/*.f90 *.f90 | grep -v -i _Mod | grep -v -i Save_Cgns)
 SRC_FUN = $(subst $(DIR_SHARED)/, ,$(SRC_FUN_WITH_DIR))
+
+#-------------------------------------------
+#   Conditional inclusion of CGNS support 
+#-------------------------------------------
+ifeq ($(CGNS_ADF5), $(CGNS_HDF5))  # meaning both are "no"
+  SRC_MOD += Cgns_Mod_Void.f90
+  SRC_FUN += Save_Cgns_Cells_Void.f90
+else
+  SRC_MOD += Cgns_Mod_Seq.f90
+  SRC_FUN += Save_Cgns_Cells.f90
+endif
 
 #----------------------------------------------------------------------
 #   List of objects generated from the list of modules and functions  
@@ -138,7 +176,7 @@ $(DIR_OBJECT)/%.o: %.f90
 #   Note: Should not be modified.
 #-----------------------------------
 $(PROGRAM_FILE): $(OBJ) 
-	$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ)
+	$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ) $(CGNS_LIB)
 
 #---------------------------------------
 #   Explicit dependencies for modules

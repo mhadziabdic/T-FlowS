@@ -7,29 +7,30 @@
 !   https://cgns.github.io/CGNS_docs_current/midlevel/grid.html                !
 !------------------------------------------------------------------------------!
 !   Array structures in current function are strictly followings:              !
+!                                                                              !
 !   Cell type:    |      HEXA_8      |     PENTA_6      |       PYRA_5     |...!
 !   Connections:  |-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|-p1-|-p2-|...|-pN-|...!
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
-  use par_mod, only: this_proc
+  use Comm_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer         :: base, block, sect
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer              :: base_id       ! base index number
-  integer              :: block_id      ! block index number
-  integer              :: sect_id       ! element section index
-  character(len=80)    :: sect_name     ! name of the Elements_t node
-  integer              :: cell_type     ! types of elements in the section
-  integer              :: n_bnd         ! index of last boundary element
-  integer              :: error
-  integer              :: n_nodes, c, cnt, i, j
-  integer              :: first_cell    ! look at array structure at the header
-  integer              :: last_cell     ! look at array structure at the header
-  integer              :: cell_n(1:8,1:grid % n_nodes)
+  integer           :: base_id       ! base index number
+  integer           :: block_id      ! block index number
+  integer           :: sect_id       ! element section index
+  character(len=80) :: sect_name     ! name of the Elements_t node
+  integer           :: cell_type     ! types of elements in the section
+  integer           :: n_bnd         ! index of last boundary element
+  integer           :: error
+  integer           :: n_nodes, c, cnt, i, j
+  integer           :: first_cell    ! look at array structure at the header
+  integer           :: last_cell     ! look at array structure at the header
+  integer           :: cell_n(8, grid % n_nodes)
 !==============================================================================!
 
   ! Set input parameters
@@ -51,22 +52,20 @@
 
     ! total cells of cell_type
     c = cnt
-    call wait
-    call IglSum(c)
+    call Comm_Mod_Global_Sum_Int(c)
     n_bnd = 0 ! unsorted boundary elements
 
-    !---------- Create empty elem node in DB
-    call Cgp_Section_Write_F( & !(in )
-      file_id,                & !(in )
-      base_id,                & !(in )
-      block_id,               & !(in )
-      sect_name,              & !(in )
-      cell_type,              & !(in )
-      1 + cnt_cells,          & !(in )
-      c + cnt_cells,          & !(in )
-      n_bnd,                  & !(in )
-      sect_id,                & !(out)
-      error)                    !(out)
+    ! Create empty elem node in DB
+    call Cgp_Section_Write_F(file_id,        & !(in )
+                             base_id,        & !(in )
+                             block_id,       & !(in )
+                             sect_name,      & !(in )
+                             cell_type,      & !(in )
+                             1 + cnt_cells,  & !(in )
+                             c + cnt_cells,  & !(in )
+                             n_bnd,          & !(in )
+                             sect_id,        & !(out)
+                             error)            !(out)
     if (error .ne. 0) then
       print*, '*FAILED* to create empty ', trim(sect_name)
       call Cgp_Error_Exit_F()
@@ -85,7 +84,7 @@
 
 
   !------------------------------------------------!
-  !   Mapping 1:NC -> Connection structure above   !
+  !   Mapping 1:nc -> Connection structure above   !
   !------------------------------------------------!
 
     i = cnt ! cnt_hex/pyr/wed/tet on this_proc
@@ -138,15 +137,14 @@
     !--------------------------------------!
 
     ! Fill that node with grid coordinates
-    call Cgp_Elements_Write_Data_F( & !(in )
-      file_id,                      & !(in )
-      base_id,                      & !(in )
-      block_id,                     & !(in )
-      sect_id,                      & !(in )
-      first_cell,                   & !(in )
-      last_cell,                    & !(in )
-      cell_n(1:n_nodes, 1:cnt),     & !(in )
-      error)                          !(out)
+    call Cgp_Elements_Write_Data_F(file_id,                   & !(in )
+                                   base_id,                   & !(in )
+                                   block_id,                  & !(in )
+                                   sect_id,                   & !(in )
+                                   first_cell,                & !(in )
+                                   last_cell,                 & !(in )
+                                   cell_n(1:n_nodes, 1:cnt),  & !(in )
+                                   error)                       !(out)
 
     if (error .ne. 0) then
       print*, '*FAILED* to fill ', sect_id
@@ -160,8 +158,7 @@
     end if
 
     c = cnt
-    call wait
-    call IglSum(c)
+    call Comm_Mod_Global_Sum_Int(c)
     cnt_cells = cnt_cells + c
 
   end if

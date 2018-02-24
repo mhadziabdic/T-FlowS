@@ -73,7 +73,7 @@
       ! Allocate memory
       if ( ElementTypeName(cell_type) .eq. 'QUAD_4') n_nodes = 4
       if ( ElementTypeName(cell_type) .eq. 'TRI_3' ) n_nodes = 3
-      allocate(face_n(1:n_nodes, cnt))
+      allocate(face_n(n_nodes, cnt))
 
       call Cg_Elements_Read_F(file_id,       & 
                               base_id,       &
@@ -140,7 +140,7 @@
     if ( ElementTypeName(cell_type) .eq. 'PYRA_5' ) n_nodes = 5
     if ( ElementTypeName(cell_type) .eq. 'PENTA_6') n_nodes = 6
     if ( ElementTypeName(cell_type) .eq. 'TETRA_4') n_nodes = 4
-    allocate(cell_n(1:n_nodes, cnt))
+    allocate(cell_n(n_nodes, cnt))
 
     call Cg_Elements_Read_F(file_id,       & 
                             base_id,       &

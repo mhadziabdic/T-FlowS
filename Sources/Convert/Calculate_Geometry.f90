@@ -4,7 +4,7 @@
 !   Calculates geometrical quantities of the grid.                             !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod 
+  use Const_Mod
   use gen_mod 
   use Grid_Mod
   use Tokenizer_Mod
@@ -793,9 +793,9 @@
     c2 = grid % faces_c(2,s)
     if(c1 > 0) then
       number_sides = number_sides  + 1
-      NewS(s) = number_sides 
+      new_f(s) = number_sides 
     else
-      NewS(s) = -1
+      new_f(s) = -1
     end if
   end do
   write(*,'(A22,I9,Z9)') ' # Old number of sides: ', &
@@ -809,23 +809,23 @@
   !                                      !
   !--------------------------------------!
   do s = 1, grid % n_faces+grid % n_sh
-    if(NewS(s) > 0) then
-      grid % faces_c(1,NewS(s)) = grid % faces_c(1,s) 
-      grid % faces_c(2,NewS(s)) = grid % faces_c(2,s)
-      grid % faces_n_nodes(NewS(s)) = grid % faces_n_nodes(s)
-      grid % faces_n(1,NewS(s)) = grid % faces_n(1,s)
-      grid % faces_n(2,NewS(s)) = grid % faces_n(2,s)
-      grid % faces_n(3,NewS(s)) = grid % faces_n(3,s)
-      grid % faces_n(4,NewS(s)) = grid % faces_n(4,s)
-      grid % xf(NewS(s)) = grid % xf(s)
-      grid % yf(NewS(s)) = grid % yf(s)
-      grid % zf(NewS(s)) = grid % zf(s)
-      grid % sx(NewS(s)) = grid % sx(s)
-      grid % sy(NewS(s)) = grid % sy(s)
-      grid % sz(NewS(s)) = grid % sz(s)
-      grid % dx(NewS(s)) = grid % dx(s)
-      grid % dy(NewS(s)) = grid % dy(s)
-      grid % dz(NewS(s)) = grid % dz(s)
+    if(new_f(s) > 0) then
+      grid % faces_c(1,new_f(s)) = grid % faces_c(1,s) 
+      grid % faces_c(2,new_f(s)) = grid % faces_c(2,s)
+      grid % faces_n_nodes(new_f(s)) = grid % faces_n_nodes(s)
+      grid % faces_n(1,new_f(s)) = grid % faces_n(1,s)
+      grid % faces_n(2,new_f(s)) = grid % faces_n(2,s)
+      grid % faces_n(3,new_f(s)) = grid % faces_n(3,s)
+      grid % faces_n(4,new_f(s)) = grid % faces_n(4,s)
+      grid % xf(new_f(s)) = grid % xf(s)
+      grid % yf(new_f(s)) = grid % yf(s)
+      grid % zf(new_f(s)) = grid % zf(s)
+      grid % sx(new_f(s)) = grid % sx(s)
+      grid % sy(new_f(s)) = grid % sy(s)
+      grid % sz(new_f(s)) = grid % sz(s)
+      grid % dx(new_f(s)) = grid % dx(s)
+      grid % dy(new_f(s)) = grid % dy(s)
+      grid % dz(new_f(s)) = grid % dz(s)
     end if
   end do 
   grid % n_faces = number_sides-grid % n_sh

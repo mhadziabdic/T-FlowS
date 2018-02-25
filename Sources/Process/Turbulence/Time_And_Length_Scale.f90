@@ -1,24 +1,23 @@
-!======================================================================!
+!==============================================================================!
   subroutine Time_And_Length_Scale(grid)
-!----------------------------------------------------------------------!
-!  Purpose:                                                            !
-!  Calculates time scale and leght scale in manner to avoid singularity!
-!  in eps equation.                                                     !
-!----------------------------------------------------------------------!
-!------------------------------[Modules]-------------------------------!
-  use allp_mod
+!------------------------------------------------------------------------------!
+!   Calculates time scale and leght scale in manner to avoid singularity       !
+!   in eps equation.                                                           !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
+  use Const_Mod
   use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
   use Control_Mod
-!----------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
   implicit none
   type(Grid_Type) :: grid
-!-------------------------------[Locals]-------------------------------!
+!-----------------------------------[Locals]-----------------------------------!
   integer :: c 
   real    :: t1, t2, t3, l1, l2, l3
-!======================================================================!
+!==============================================================================!
 
   if(turbulence_model == K_EPS_V2) then
     do c = 1, grid % n_cells 
@@ -33,6 +32,7 @@
       Tsc(c) = max(min(t1,t3),t2)
       Lsc(c) = Cl*max(min(l1,l3),l2)
     end do
+
   else if(turbulence_model == K_EPS_ZETA_F .or.  &
           turbulence_model == HYBRID_K_EPS_ZETA_F) then
     if(ROUGH == YES) then
@@ -60,6 +60,7 @@
         Lsc(c) = Cl*max(min(l1,l3),l2)
       end do
     end if 
+!  Purpose:                                                            !
   else if(turbulence_model == REYNOLDS_STRESS_MODEL) then
     do c = 1, grid % n_cells
       kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)),1.0e-12)

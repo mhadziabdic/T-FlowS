@@ -4,7 +4,7 @@
 !   Smooths the grid lines by a Laplacian-like algorythm.                      !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
+  use Const_Mod
   use gen_mod
   use Grid_Mod
 !------------------------------------------------------------------------------! 
@@ -27,7 +27,7 @@
   allocate(y_node_new(grid % max_n_nodes));         y_node_new    = 0
   allocate(z_node_new(grid % max_n_nodes));         z_node_new    = 0
   allocate(node_to_nodes(grid % max_n_nodes,0:40)); node_to_nodes = 0
-  allocate (walln(grid % max_n_nodes));             walln         = 0
+  allocate(walln(grid % max_n_nodes));              walln         = 0
 
   print *, '# Now smoothing the cells. This may take a while !' 
 

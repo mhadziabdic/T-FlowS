@@ -30,9 +30,9 @@
   end do     
 
   ! If it failed try his twins also
-  do j=1,TwinN(n,0)
+  do j=1,twin_n(n,0)
     do i=1,8
-      if( grid % cells_n(i,c)  ==  TwinN(n,j)) then
+      if( grid % cells_n(i,c)  ==  twin_n(n,j)) then
         goto 1
       end if 
     end do     

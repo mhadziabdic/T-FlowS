@@ -2,7 +2,7 @@
   module Grid_Mod
 !------------------------------------------------------------------------------!
 !   Grids module is used throughout all programs                               !
-!   (that means in "Generate", "Divide", "Neu2TflowS", "Process".              !
+!   (that means in "Generate", "Divide", "Convert", "Process".                 !
 !------------------------------------------------------------------------------!
   use Material_Mod
   use Bnd_Cond_Mod

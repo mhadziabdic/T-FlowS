@@ -18,7 +18,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: b, i, l, s, fc, n, n1,n2,n3,n4
   integer           :: n_faces_check, n_nodes_check
-  integer           :: ni, nj, nk, npnt
+  integer           :: ni, nj, nk, npnt, nsurf
   character(len=12) :: dum
   character(len=80) :: domain_name
   character(len=12) :: answer
@@ -79,21 +79,21 @@
                                0)                      ! no shadow faces
 
   ! Variables declared in gen_mod.h90:
-  allocate (SideCc(grid % max_n_faces,2))
-  SideCc=0 
+  allocate (face_c_to_c(grid % max_n_faces,2))
+  face_c_to_c=0 
 
   ! Variables for renumbering
-  allocate (NewN(-grid % max_n_bnd_cells:grid % max_n_nodes))
-  NewN=0
-  allocate (NewC(-grid % max_n_bnd_cells:grid % max_n_nodes))
-  NewC=0
-  allocate (NewS( grid % max_n_faces))
-  NewS=0
-  allocate (CelMar(-grid % max_n_bnd_cells:grid % max_n_nodes))
-  CelMar=0
+  allocate (new_n(-grid % max_n_bnd_cells:grid % max_n_nodes))
+  new_n=0
+  allocate (new_c(-grid % max_n_bnd_cells:grid % max_n_nodes))
+  new_c=0
+  allocate (new_f( grid % max_n_faces))
+  new_f=0
+  allocate (cell_marked(-grid % max_n_bnd_cells:grid % max_n_nodes))
+  cell_marked = .false.
 
-  allocate (TwinN(grid % max_n_nodes,0:8))
-  TwinN=0
+  allocate (twin_n(grid % max_n_nodes,0:8))
+  twin_n=0
 
   allocate (level(grid % max_n_nodes))
   level=0
@@ -250,9 +250,9 @@
   !   Surfaces   !
   !--------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(line % tokens(1), *) Nsurf     ! number of defined surfaces
+  read(line % tokens(1), *) nsurf     ! number of defined surfaces
 
-  do s=1,Nsurf
+  do s = 1, nsurf
     call Tokenizer_Mod_Read_Line(9)
     read(line % whole,*) dum, n1, n2, n3, n4
     call Find_Surface(dom, n1, n2, n3, n4, b, fc)

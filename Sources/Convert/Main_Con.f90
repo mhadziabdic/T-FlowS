@@ -58,13 +58,13 @@
 
   ! Prepare for saving
   do n=1,grid % n_nodes
-    NewN(n) = n 
+    new_n(n) = n 
   end do  
   do c=-grid % n_bnd_cells,grid % n_cells
-    NewC(c) = c 
+    new_c(c) = c 
   end do  
   do s=1,grid % n_faces 
-    NewS(s) = s
+    new_f(s) = s
   end do  
 
   !-------------------------------!

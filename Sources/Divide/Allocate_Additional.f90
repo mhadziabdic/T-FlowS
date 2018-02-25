@@ -17,9 +17,9 @@
 !==============================================================================!
 
   ! Variables declared in gen_mod.h90:
-  allocate (NewC(-grid % n_bnd_cells-1:grid % n_cells)); NewC = 0 
-  allocate (NewS( grid % n_faces));                      NewS = 0
-  allocate (NewN( grid % n_nodes));                      NewN = 0 
+  allocate (new_c(-grid % n_bnd_cells-1:grid % n_cells)); new_c = 0 
+  allocate (new_f( grid % n_faces));                      new_f = 0
+  allocate (new_n( grid % n_nodes));                      new_n = 0 
 
   ! Variables declared in div.h90:
   allocate (ix(-grid % n_bnd_cells:grid % n_cells));  ix=0

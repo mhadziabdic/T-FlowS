@@ -4,7 +4,7 @@
 !   Calculate node coordinates inside the domain, block by block.              !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
+  use Const_Mod
   use gen_mod
   use Domain_Mod
   use Grid_Mod
@@ -409,9 +409,10 @@
         do j=1,nj
           do k=1,nk
             n = grid % n_nodes+(k-1)*ni*nj + (j-1)*ni + i
-            call Laplac(dom, grid, b, i, j, k, ONE_THIRD, ONE_THIRD, ONE_THIRD,  &
-                                               ONE_THIRD, ONE_THIRD, ONE_THIRD,  &
-                                               ONE_THIRD, ONE_THIRD, ONE_THIRD)
+            call Laplace(dom, grid, b, i, j, k,            &
+                         ONE_THIRD, ONE_THIRD, ONE_THIRD,  &
+                         ONE_THIRD, ONE_THIRD, ONE_THIRD,  &
+                         ONE_THIRD, ONE_THIRD, ONE_THIRD)
           end do
         end do
       end do

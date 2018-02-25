@@ -4,7 +4,7 @@
 !  Compute SGS viscosity for 'LES' by using WALE model.  
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod, only: ONE_THIRD, TINY
+  use Const_Mod, only: ONE_THIRD, TINY
   use Flow_Mod
   use les_mod
   use rans_mod
@@ -18,9 +18,9 @@
              She     (-grid % n_bnd_cells:grid % n_cells),  &
              Vor     (-grid % n_bnd_cells:grid % n_cells)
   integer :: c
-  real    :: S11,  S22,  S33,  S12,  S13,  S23,  S21,  S31,  S32
-  real    :: S11d, S22d, S33d, S12d, S13d, S23d, S21d, S31d, S32d
-  real    :: V11,  V22,  V33,  V12,  V13,  V23,  V21,  V31,  V32
+  real    :: s11,  s22,  s33,  s12,  s13,  s23,  s21,  s31,  s32
+  real    :: s11d, s22d, s33d, s12d, s13d, s23d, s21d, s31d, s32d
+  real    :: v11,  v22,  v33,  v12,  v13,  v23,  v21,  v31,  v32
 !==============================================================================!
 
   ! print *, '# I think there is a bug in this function (Bojan)'
@@ -31,51 +31,51 @@
   !               !
   !---------------!
   do c = 1, grid % n_cells
-    S11 = u % x(c)
-    S22 = v % y(c)
-    S33 = w % z(c)
-    S12 = 0.5*(v % x(c) + u % y(c))
-    S13 = 0.5*(u % z(c) + w % x(c))
-    S23 = 0.5*(v % y(c) + w % y(c))
-    S21 = S12
-    S31 = S13
-    S32 = S23
+    s11 = u % x(c)
+    s22 = v % y(c)
+    s33 = w % z(c)
+    s12 = 0.5*(v % x(c) + u % y(c))
+    s13 = 0.5*(u % z(c) + w % x(c))
+    s23 = 0.5*(v % y(c) + w % y(c))
+    s21 = s12
+    s31 = s13
+    s32 = s23
 
-    V11 = 0.0   
-    V22 = 0.0  
-    V33 = 0.0  
-    V12 = 0.5*(v % x(c) - u % y(c))
-    V13 = 0.5*(u % z(c) - w % x(c))
-    V23 = 0.5*(v % y(c) - w % y(c))
-    V21 = -V12
-    V31 = -V13
-    V32 = -V23
+    v11 = 0.0   
+    v22 = 0.0  
+    v33 = 0.0  
+    v12 = 0.5*(v % x(c) - u % y(c))
+    v13 = 0.5*(u % z(c) - w % x(c))
+    v23 = 0.5*(v % y(c) - w % y(c))
+    v21 = -v12
+    v31 = -v13
+    v32 = -v23
 
     She(c) = 0.5 * shear(c) * shear(c)
     Vor(c) = 0.5 * vort(c) * vort(c)
 
-    S11d =  S11*S11 + S12*S12 + S13*S13   &
-         - (V11*V11 + V12*V12 + V13*V13)  &
+    s11d =  s11*s11 + s12*s12 + s13*s13   &
+         - (v11*v11 + v12*v12 + v13*v13)  &
          - ONE_THIRD * (She(c) - Vor(c))
 
-    S22d =  S12*S12 + S22*S22 + S23*S23   &
-         - (V12*V12 + V22*V22 + V23*V23)  &
+    s22d =  s12*s12 + s22*s22 + s23*s23   &
+         - (v12*v12 + v22*v22 + v23*v23)  &
          - ONE_THIRD * (She(c) - Vor(c))
 
-    S33d =  S13*S13 + S23*S23 + S33*S33   &
-         - (V13*V13 + V23*V23 + V33*V33)  &
+    s33d =  s13*s13 + s23*s23 + s33*s33   &
+         - (v13*v13 + v23*v23 + v33*v33)  &
          - ONE_THIRD * (She(c) - Vor(c))
 
-    S12d = S11*S12 + S12*S22 + S13*S32 + (V11*V12 + V12*V22 + V13*V32) 
-    S13d = S11*S13 + S12*S23 + S13*S33 + (V11*V13 + V12*V23 + V13*V33) 
-    S23d = S21*S13 + S22*S23 + S23*S33 + (V21*V13 + V22*V23 + V23*V33) 
+    s12d = s11*s12 + s12*s22 + s13*s32 + (v11*v12 + v12*v22 + v13*v32) 
+    s13d = s11*s13 + s12*s23 + s13*s33 + (v11*v13 + v12*v23 + v13*v33) 
+    s23d = s21*s13 + s22*s23 + s23*s33 + (v21*v13 + v22*v23 + v23*v33) 
 
-    S21d = S12d
-    S31d = S13d
-    S32d = S23d
+    s21d = s12d
+    s31d = s13d
+    s32d = s23d
 
-    SijdSijd(c) = S11d*S11d + S22d*S22d + S33d*S33d  &
-                + S12d*S12d + S13d*S13d + S23d*S23d
+    SijdSijd(c) = s11d*s11d + s22d*s22d + s33d*s33d  &
+                + s12d*s12d + s13d*s13d + s23d*s23d
     
     wale_v(c) =  sqrt( abs (SijdSijd(c)**3) )          &
               / (sqrt( abs (She(c)     **5) ) +        &

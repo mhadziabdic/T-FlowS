@@ -31,9 +31,9 @@
   integer :: trans1(3,3), trans2(3,3)
 !==============================================================================!
 
-  ! Initialise TwinN.
+  ! Initialise twin_n.
   do n = 1, grid % max_n_nodes
-    TwinN(n,0) = 0
+    twin_n(n,0) = 0
   end do
 
   !-----------------------------------------------------!
@@ -258,19 +258,19 @@
                      + (k1-1)*ni1*nj1 + (j1-1)*ni1 + i1
                   n2 = dom % blocks(b2) % n_nodes  &
                      + (k2-1)*ni2*nj2 + (j2-1)*ni2 + i2
-                  n1 = NewN(n1)
-                  n2 = NewN(n2)
+                  n1 = new_n(n1)
+                  n2 = new_n(n2)
 
                   ! Check if they are already connected
-                  do n=1, TwinN(n1,0)
+                  do n=1, twin_n(n1,0)
                     if(Are_Nodes_Twins(n1,n2)) goto 10
                   end do
 
                   ! If they were not, connect them
-                  TwinN(n1,0)=TwinN(n1,0)+1
-                  TwinN(n1,TwinN(n1,0))=n2
-                  TwinN(n2,0)=TwinN(n2,0)+1
-                  TwinN(n2,TwinN(n2,0))=n1
+                  twin_n(n1,0)=twin_n(n1,0)+1
+                  twin_n(n1,twin_n(n1,0))=n2
+                  twin_n(n2,0)=twin_n(n2,0)+1
+                  twin_n(n2,twin_n(n2,0))=n1
 
 10                end do       ! jg
               end do    ! ig
@@ -288,17 +288,17 @@
   !   is also my twin   !
   !---------------------!
   do n1=1,grid % n_nodes
-    do i1=1,TwinN(n1,0)
-      n2=TwinN(n1,i1) 
-      do i2=1,TwinN(n2,0)
-        n3=TwinN(n2,i2)   ! blizanci od n2
+    do i1=1,twin_n(n1,0)
+      n2=twin_n(n1,i1) 
+      do i2=1,twin_n(n2,0)
+        n3=twin_n(n2,i2)   ! blizanci od n2
         new=n3
-        do i3=1,TwinN(n1,0)  
-          if( (TwinN(n1,i3) == n3) .or. (n3 == n1) ) new=0 
+        do i3=1,twin_n(n1,0)  
+          if( (twin_n(n1,i3) == n3) .or. (n3 == n1) ) new=0 
         end do
         if(new == n3) then 
-          TwinN(n1,0)=TwinN(n1,0)+1
-          TwinN(n1,TwinN(n1,0))=n3
+          twin_n(n1,0)=twin_n(n1,0)+1
+          twin_n(n1,twin_n(n1,0))=n3
         end if 
       end do
     end do

@@ -4,13 +4,6 @@
 #
 #---------------------------------------------------------------------------------------------------------------
 
-$(info #=======================================================================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                                    )
-$(info #-------------------------------------------------------------------------------------------------------)
-$(info # Usage:                                                                                                )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <MPI=yes/no> <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no> )
-$(info #-------------------------------------------------------------------------------------------------------)
-
 #--------------------------
 #   Variable definitions
 #--------------------------
@@ -39,6 +32,13 @@ VPATH = $(DIR_SHARED):$(DIR_MODELS):.
 # Program name (This should hardly change)
 PROGRAM_NAME = Process
 PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
+
+$(info #=======================================================================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                                    )
+$(info #-------------------------------------------------------------------------------------------------------)
+$(info # Usage:                                                                                                )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <MPI=yes/no> <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no> )
+$(info #-------------------------------------------------------------------------------------------------------)
 
 #-------------------------------------------------------------------------
 #   Compiler and linker options
@@ -120,7 +120,7 @@ OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
 #-------------
 
 # Modules in shared directory
-SRC_MOD = allp_mod.f90      \
+SRC_MOD = Const_Mod.f90     \
           Grid_Mod.f90      \
           Work_Mod.f90      \
           Name_Mod.f90      \

@@ -1,12 +1,12 @@
 !==============================================================================!
-  subroutine Laplac(dom, grid, b,i,j,k, wx16,wx24,wx35,  &
-                                        wy16,wy24,wy35,  &
-                                        wz16,wz24,wz35)
+  subroutine Laplace(dom, grid, b,i,j,k, wx16,wx24,wx35,  &
+                                         wy16,wy24,wy35,  &
+                                         wz16,wz24,wz35)
 !------------------------------------------------------------------------------!
 !   Places the nodes inside the block using Laplace-like function              !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
+  use Const_Mod
   use gen_mod
   use Domain_Mod
   use Grid_Mod

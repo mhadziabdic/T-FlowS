@@ -4,7 +4,6 @@
 !   Number the cells in each subdomain for subsequent separate saving.         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
   use gen_mod 
   use div_mod
   use Comm_Mod, only: nbb_s, nbb_e
@@ -60,31 +59,31 @@
     ! Cells
     n_cells_sub = 0     ! number of cells in subdomain
     do c = 1, grid % n_cells
-      NewC(c)=0
+      new_c(c)=0
     end do
     do c = 1, grid % n_cells
       if(proces(c) == sub) then
         n_cells_sub=n_cells_sub+1
-        NewC(c)=n_cells_sub
+        new_c(c)=n_cells_sub
       end if
     end do
 
     ! Nodes
     n_nodes_sub = 0     ! number of cells in subdomain
     do n = 1, grid % n_nodes
-      NewN(n)=0
+      new_n(n)=0
     end do
     do c = 1, grid % n_cells
       if(proces(c) == sub) then
         do ln = 1, grid % cells_n_nodes(c)
-          NewN(grid % cells_n(ln,c))=-1
+          new_n(grid % cells_n(ln,c))=-1
         end do
       end if
     end do
     do n = 1, grid % n_nodes
-      if(NewN(n) == -1) then
+      if(new_n(n) == -1) then
         n_nodes_sub=n_nodes_sub+1
-        NewN(n)=n_nodes_sub
+        new_n(n)=n_nodes_sub
       end if
     end do
 
@@ -93,10 +92,10 @@
     n_bnd_cells_sub = 0  ! number of real boundary cells in subdomain
     NCSsub = 0
     do s = 1, grid % n_faces
-      NewS(s)=0
+      new_f(s)=0
     end do
     do c=-grid % n_bnd_cells,-1
-      NewC(c)=0
+      new_c(c)=0
     end do
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)  
@@ -104,14 +103,14 @@
       if(c2  > 0) then
         if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
           n_faces_sub=n_faces_sub+1
-          NewS(s)=n_faces_sub
+          new_f(s)=n_faces_sub
         end if
       else ! c2 < 0
         if( proces(c1) == sub ) then
           n_faces_sub =n_faces_sub+1
-          NewS(s)=n_faces_sub        ! new number for the side
+          new_f(s)=n_faces_sub        ! new number for the side
           n_bnd_cells_sub=n_bnd_cells_sub+1
-          NewC(c2)=-n_bnd_cells_sub  ! new number for the boundary cell
+          new_c(c2)=-n_bnd_cells_sub  ! new number for the boundary cell
         end if
       end if 
     end do
@@ -148,19 +147,19 @@
           if(c2  > 0) then
             if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
               n_buff_sub = n_buff_sub+1
-              BuSeIn(n_buff_sub)=NewC(c1)  ! buffer send index 
+              BuSeIn(n_buff_sub)=new_c(c1)  ! buffer send index 
               BuReIn(n_buff_sub)=c2        ! important for coordinate
               BufPos(n_buff_sub)=-n_bnd_cells_sub-n_buff_sub
 
-              NewS(s)=n_faces_sub+n_buff_sub
+              new_f(s)=n_faces_sub+n_buff_sub
             end if
             if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
               n_buff_sub = n_buff_sub+1
-              BuSeIn(n_buff_sub)=NewC(c2)  ! buffer send index
+              BuSeIn(n_buff_sub)=new_c(c2)  ! buffer send index
               BuReIn(n_buff_sub)=c1        ! important for coordinate
               BufPos(n_buff_sub)=-n_bnd_cells_sub-n_buff_sub
 
-              NewS(s)=n_faces_sub+n_buff_sub
+              new_f(s)=n_faces_sub+n_buff_sub
             end if
           end if  ! c2 > 0
         end do    ! through sides
@@ -172,14 +171,14 @@
           if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
             n_buff_sub = n_buff_sub+1
             NCFsub = NCFsub+1
-            BuSeIn(n_buff_sub)=NewC(c1) ! buffer send index 
+            BuSeIn(n_buff_sub)=new_c(c1) ! buffer send index 
             BuReIn(n_buff_sub)=c2 
             BufPos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
           if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
             n_buff_sub = n_buff_sub+1
             NCFsub = NCFsub+1
-            BuSeIn(n_buff_sub)=NewC(c2) ! buffer send index
+            BuSeIn(n_buff_sub)=new_c(c2) ! buffer send index
             BuReIn(n_buff_sub)=c1 
             BufPos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
@@ -256,13 +255,13 @@
   !                                                  !
   !--------------------------------------------------!
   do n = 1, grid % n_nodes
-    NewN(n)=n
+    new_n(n)=n
   end do
   do c = 1, grid % n_cells
-    NewC(c)=0
+    new_c(c)=0
   end do
   do s = 1, grid % n_faces
-    NewS(s)=0
+    new_f(s)=0
   end do
 
   n_cells_sub = 0     ! number of cells renumbered
@@ -270,7 +269,7 @@
     do c = 1, grid % n_cells
       if(proces(c) == sub) then
         n_cells_sub=n_cells_sub+1
-        NewC(c)=n_cells_sub
+        new_c(c)=n_cells_sub
       end if
     end do
   end do
@@ -282,31 +281,31 @@
       c2 = grid % faces_c(2,s)
       if(proces(c1) == sub) then
         n_faces_sub=n_faces_sub+1
-        NewS(s)=n_faces_sub
+        new_f(s)=n_faces_sub
       end if
     end do
   end do
   print *, '# Number of faces: ', grid % n_faces, n_faces_sub
 
   ! It is not sorting nodes ... is it good?  I doubt
-  call Grid_Mod_Sort_Cells_By_Index(grid, NewC(1), grid % n_cells)
-  call Grid_Mod_Sort_Faces_By_Index(grid, NewS(1), grid % n_faces)
+  call Grid_Mod_Sort_Cells_By_Index(grid, new_c(1), grid % n_cells)
+  call Grid_Mod_Sort_Faces_By_Index(grid, new_f(1), grid % n_faces)
 
-  call Sort_Int_By_Index(proces(1),  NewC(1), grid % n_cells)
-  call Sort_Int_By_Index(grid % material(1),NewC(1), grid % n_cells)
+  call Sort_Int_By_Index(proces(1),  new_c(1), grid % n_cells)
+  call Sort_Int_By_Index(grid % material(1),new_c(1), grid % n_cells)
 
   ! This is important for plotting the grid with EpsPar()
-  call Sort_Real_By_Index(grid % dx(1), NewS(1), grid % n_faces)
-  call Sort_Real_By_Index(grid % dy(1), NewS(1), grid % n_faces)
-  call Sort_Real_By_Index(grid % dz(1), NewS(1), grid % n_faces)
+  call Sort_Real_By_Index(grid % dx(1), new_f(1), grid % n_faces)
+  call Sort_Real_By_Index(grid % dy(1), new_f(1), grid % n_faces)
+  call Sort_Real_By_Index(grid % dz(1), new_f(1), grid % n_faces)
 
   allocate(side_cell(grid % n_faces, 2))
   do s = 1, grid % n_faces
     side_cell(s,1) = grid % faces_c(1,s)
     side_cell(s,2) = grid % faces_c(2,s)
   end do
-  call Sort_Int_By_Index(side_cell(1,1), NewS(1), grid % n_faces)
-  call Sort_Int_By_Index(side_cell(1,2), NewS(1), grid % n_faces)
+  call Sort_Int_By_Index(side_cell(1,1), new_f(1), grid % n_faces)
+  call Sort_Int_By_Index(side_cell(1,2), new_f(1), grid % n_faces)
   do s = 1, grid % n_faces
     grid % faces_c(1,s) = side_cell(s,1)
     grid % faces_c(2,s) = side_cell(s,2)

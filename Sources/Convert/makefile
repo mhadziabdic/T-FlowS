@@ -1,15 +1,8 @@
-#==================================================================================================
+#===================================================================================================
 # 
 #   Convert Makefile   
 #   
-#--------------------------------------------------------------------------------------------------
-
-$(info #==========================================================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                       )  
-$(info #------------------------------------------------------------------------------------------)
-$(info # Usage:                                                                                   )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no> )
-$(info #------------------------------------------------------------------------------------------)
+#---------------------------------------------------------------------------------------------------
 
 #--------------------------
 #   Variable definitions
@@ -35,6 +28,13 @@ VPATH = $(DIR_SHARED):.
 # Program name (This should hardly change)
 PROGRAM_NAME = Convert
 PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
+
+$(info #==========================================================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                       )  
+$(info #------------------------------------------------------------------------------------------)
+$(info # Usage:                                                                                   )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no> )
+$(info #------------------------------------------------------------------------------------------)
 
 #-------------------------------------------------------------------------
 #   Compiler and linker options
@@ -106,7 +106,7 @@ OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
 #-------------
 
 # Modules in shared directories
-SRC_MOD = allp_mod.f90		\
+SRC_MOD = Const_Mod.f90		\
           gen_mod.f90		\
           div_mod.f90		\
           Tokenizer_Mod.f90	\
@@ -205,7 +205,6 @@ $(PROGRAM_FILE): $(OBJ)
 #   These should be inserted by 
 #   hand for tuning of dependencies.
 #---------------------------------------
-$(DIR_OBJECT)/all_mod.o:	$(DIR_OBJECT)/allp_mod.o
 $(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Bnd_Cond_Mod.o	\
 				$(DIR_OBJECT)/Material_Mod.o
 $(DIR_OBJECT)/Cgns_Mod_Seq.o:	$(DIR_OBJECT)/Grid_Mod.o	\

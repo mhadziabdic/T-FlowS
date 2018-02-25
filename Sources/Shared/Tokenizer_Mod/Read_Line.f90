@@ -3,9 +3,6 @@
 !------------------------------------------------------------------------------!
 !  Reads a line from a file (unit 9) and discards if it is comment.            !
 !------------------------------------------------------------------------------!
-!----------------------------------[Modules]-----------------------------------!
-  use allp_mod, only: CMN_FILE
-!------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer           :: un  ! unit
@@ -29,14 +26,6 @@
 
   ! Shift the whole line to the left (remove leading spaces)
   line % whole = adjustl(line % whole)
-
-  !------------------------------------------!
-  !  If you are reading from command file    !
-  !  (T-FlowS.cmn), increase the line count  !
-  !------------------------------------------!
-  if( un == CMN_FILE ) then
-    cmn_line_count = cmn_line_count + 1
-  end if
 
   !--------------------!
   !  Skip empty lines  !

@@ -4,13 +4,6 @@
 #   
 #-------------------------------------------------------------------------------
 
-$(info #====================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN) )
-$(info #----------------------------------------------------)
-$(info # Usage:                                             )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> )
-$(info #----------------------------------------------------)
-
 #--------------------------
 #   Variable definitions
 #--------------------------
@@ -31,6 +24,13 @@ VPATH = $(DIR_SHARED):.
 # Program name (This should hardly change)
 PROGRAM_NAME = Divide
 PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
+
+$(info #====================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN) )
+$(info #----------------------------------------------------)
+$(info # Usage:                                             )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> )
+$(info #----------------------------------------------------)
 
 #-------------------------------------------------------------------------
 #   Compiler and linker options
@@ -85,7 +85,7 @@ endif
 #-------------
 
 # Modules in shared directories
-SRC_MOD =  allp_mod.f90			\
+SRC_MOD =  Const_Mod.f90		\
            gen_mod.f90			\
            div_mod.f90			\
            Tokenizer_Mod.f90		\

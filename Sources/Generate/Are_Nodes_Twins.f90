@@ -4,7 +4,7 @@
 !   Checks if the nodes are twins, i.e. are they shared on periodicity         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use gen_mod, only: TwinN
+  use gen_mod, only: twin_n
 !------------------------------------------------------------------------------! 
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -15,12 +15,12 @@
 
   check=0
 
-  do n=1,TwinN(n1,0)
-    if(TwinN(n1,n) == n2) check=check+1
+  do n=1,twin_n(n1,0)
+    if(twin_n(n1,n) == n2) check=check+1
   end do
 
-  do n=1,TwinN(n2,0)
-    if(TwinN(n2,n) == n1) check=check+1
+  do n=1,twin_n(n2,0)
+    if(twin_n(n2,n) == n1) check=check+1
   end do
 
   if(check == 2) then

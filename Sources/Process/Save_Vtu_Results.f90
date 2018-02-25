@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Name_Mod, only: problem_name
-  use allp_mod
+  use Const_Mod
   use Flow_Mod
   use rans_mod
   use Comm_Mod

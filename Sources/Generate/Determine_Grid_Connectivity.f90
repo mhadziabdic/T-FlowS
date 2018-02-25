@@ -50,7 +50,7 @@
 
   !---------------------------!
   !   Create the array with   ! 
-  !   information on  sides   !
+  !   information on faces    !
   !---------------------------!
   grid % n_faces = 0     ! initialize the number of sides
   do pass = 1,3
@@ -77,12 +77,12 @@
         ! Which is c2 neighbour of c1 and vice versa
         do c = 1,24
           if(grid % cells_c(c,c1) == c2) then 
-            SideCc(grid % n_faces,1)=c
+            face_c_to_c(grid % n_faces,1) = c
           end if
 
           if(c2 > 0) then
             if(grid % cells_c(c,c2) == c1) then 
-              SideCc(grid % n_faces,2)=c
+              face_c_to_c(grid % n_faces,2) = c
             end if 
           end if
         end do
@@ -91,13 +91,13 @@
         if(c2  > 0) then
           if(level(c2)  > level(c1)) then
             grid % faces_n(1,grid % n_faces) =  &
-              grid % cells_n( lfn(SideCc(grid % n_faces,2),4), c2 )
+              grid % cells_n( lfn(face_c_to_c(grid % n_faces,2),4), c2 )
             grid % faces_n(2,grid % n_faces) =  &
-              grid % cells_n( lfn(SideCc(grid % n_faces,2),3), c2 )
+              grid % cells_n( lfn(face_c_to_c(grid % n_faces,2),3), c2 )
             grid % faces_n(3,grid % n_faces) =  &
-              grid % cells_n( lfn(SideCc(grid % n_faces,2),2), c2 )
+              grid % cells_n( lfn(face_c_to_c(grid % n_faces,2),2), c2 )
             grid % faces_n(4,grid % n_faces) =  &
-              grid % cells_n( lfn(SideCc(grid % n_faces,2),1), c2 )
+              grid % cells_n( lfn(face_c_to_c(grid % n_faces,2),1), c2 )
           else
             grid % faces_n(1,grid % n_faces) = grid % cells_n( lfn(m,1), c1 )
             grid % faces_n(2,grid % n_faces) = grid % cells_n( lfn(m,2), c1 )
@@ -120,7 +120,7 @@
   print *, '# Wall and interface faces start at: ', WallFacFst 
   print *, '# Wall and interface faces end at  : ', WallFacLst
 
-  if(.NOT. rrun) then
+  if(.not. rrun) then
   grid % n_bnd_cells = 0
   do c = 1, grid % n_cells
     do m = 1, 24   ! neighbour cells

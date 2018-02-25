@@ -4,7 +4,7 @@
 !   Calculates Smagorinsky constant with dynamic procedure                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
+  use Const_Mod
   use Flow_Mod
   use Comm_Mod
   use les_mod
@@ -70,8 +70,8 @@
     m_13_a = 0.0
     m_23_a = 0.0
   
-    do j = A % row(c), A % row(c + 1) - 1
-      cj = A % col(j) 
+    do j = a % row(c), a % row(c + 1) - 1
+      cj = a % col(j) 
       if(cj /= c) then
 
         ! Test velocities

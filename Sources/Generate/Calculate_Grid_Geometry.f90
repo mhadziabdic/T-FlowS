@@ -4,7 +4,7 @@
 !   Calculates geometrical quantities of the grid.                             !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
+  use Const_Mod
   use gen_mod
   use Grid_Mod
   use Tokenizer_Mod
@@ -304,7 +304,7 @@
           grid % n_sh = grid % n_sh + 2
  
           ! Find the coordinates of ...
-          m=SideCc(s,2)
+          m = face_c_to_c(s,2)
 
           if(grid % faces_n_nodes(s) == 4) then   
 

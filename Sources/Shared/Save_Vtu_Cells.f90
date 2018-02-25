@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 ! Writes: name.vtu, name.faces.vtu, name.shadow.vtu                            !
 !----------------------------------[Modules]-----------------------------------!
-  use gen_mod, only: NewN, NewC
+  use gen_mod, only: new_n, new_c
   use div_mod, only: n_sub
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -54,7 +54,7 @@
   write(9,'(a,a)') IN_4, '<DataArray type="Float32" NumberOfComponents' //  &
                          '="3" format="ascii">'
   do n = 1, grid % n_nodes
-    if(NewN(n) /= 0) write(9, '(a,1pe15.7,1pe15.7,1pe15.7)')                &
+    if(new_n(n) /= 0) write(9, '(a,1pe15.7,1pe15.7,1pe15.7)')                &
                                 IN_5, grid % xn(n), grid % yn(n), grid % zn(n)
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'
@@ -70,39 +70,39 @@
                          ' format="ascii">'
 
   do c = 1, grid % n_cells
-    if(NewC(c) /= 0) then
+    if(new_c(c) /= 0) then
 
       ! Hexahedral
       if(grid % cells_n_nodes(c) == 8) then
         write(9,'(a,8i9)')                                           &
           IN_5,                                                      &
-          NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
-          NewN(grid % cells_n(4,c))-1, NewN(grid % cells_n(3,c))-1,  &
-          NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(6,c))-1,  &
-          NewN(grid % cells_n(8,c))-1, NewN(grid % cells_n(7,c))-1
+          new_n(grid % cells_n(1,c))-1, new_n(grid % cells_n(2,c))-1,  &
+          new_n(grid % cells_n(4,c))-1, new_n(grid % cells_n(3,c))-1,  &
+          new_n(grid % cells_n(5,c))-1, new_n(grid % cells_n(6,c))-1,  &
+          new_n(grid % cells_n(8,c))-1, new_n(grid % cells_n(7,c))-1
 
       ! Wedge       
       else if(grid % cells_n_nodes(c) == 6) then
         write(9,'(a,6i9)')                                           &
           IN_5,                                                      &
-          NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
-          NewN(grid % cells_n(3,c))-1, NewN(grid % cells_n(4,c))-1,  &
-          NewN(grid % cells_n(5,c))-1, NewN(grid % cells_n(6,c))-1
+          new_n(grid % cells_n(1,c))-1, new_n(grid % cells_n(2,c))-1,  &
+          new_n(grid % cells_n(3,c))-1, new_n(grid % cells_n(4,c))-1,  &
+          new_n(grid % cells_n(5,c))-1, new_n(grid % cells_n(6,c))-1
 
       ! Tetrahedra  
       else if(grid % cells_n_nodes(c) == 4) then
         write(9,'(a,4i9)')                                           &
           IN_5,                                                      &
-          NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
-          NewN(grid % cells_n(3,c))-1, NewN(grid % cells_n(4,c))-1
+          new_n(grid % cells_n(1,c))-1, new_n(grid % cells_n(2,c))-1,  &
+          new_n(grid % cells_n(3,c))-1, new_n(grid % cells_n(4,c))-1
 
       ! Pyramid     
       else if(grid % cells_n_nodes(c) == 5) then
         write(9,'(a,5i9)')                                           &
           IN_5,                                                      &
-          NewN(grid % cells_n(1,c))-1, NewN(grid % cells_n(2,c))-1,  &
-          NewN(grid % cells_n(4,c))-1, NewN(grid % cells_n(3,c))-1,  &
-          NewN(grid % cells_n(5,c))-1
+          new_n(grid % cells_n(1,c))-1, new_n(grid % cells_n(2,c))-1,  &
+          new_n(grid % cells_n(4,c))-1, new_n(grid % cells_n(3,c))-1,  &
+          new_n(grid % cells_n(5,c))-1
       else
         print *, '# Unsupported cell type with ',  &
                     grid % cells_n_nodes(c), ' nodes.'
@@ -117,7 +117,7 @@
   write(9,'(a,a)') IN_4, '<DataArray type="Int32" Name="offsets" format="ascii">'
   offset = 0
   do c = 1, grid % n_cells
-    if(NewC(c) /= 0) then
+    if(new_c(c) /= 0) then
       offset = offset + grid % cells_n_nodes(c)
       write(9,'(a,i9)') IN_5, offset
     end if
@@ -127,7 +127,7 @@
   ! Now write all cells' types
   write(9,'(a,a)') IN_4, '<DataArray type="UInt8" Name="types" format="ascii">'
   do c = 1, grid % n_cells
-    if(NewC(c) /= 0) then
+    if(new_c(c) /= 0) then
       if(grid % cells_n_nodes(c) == 4) write(9,'(a,i9)') IN_5, VTK_TETRA
       if(grid % cells_n_nodes(c) == 8) write(9,'(a,i9)') IN_5, VTK_HEXAHEDRON
       if(grid % cells_n_nodes(c) == 6) write(9,'(a,i9)') IN_5, VTK_WEDGE
@@ -145,7 +145,7 @@
   ! Materials
   write(9,'(a,a)') IN_4, '<DataArray type="UInt8" Name="materials" format="ascii">'
   do c = 1, grid % n_cells
-    if(NewC(c) /= 0) then
+    if(new_c(c) /= 0) then
       write(9,'(a,i9)') IN_5, grid % material(c)
     end if
   end do
@@ -154,7 +154,7 @@
   ! Wall distance
   write(9,'(a,a)') IN_4, '<DataArray type="Float32" Name="wall distance" format="ascii">'
   do c = 1, grid % n_cells
-    if(NewC(c) /= 0) then
+    if(new_c(c) /= 0) then
       write(9,'(a,1pe15.7)') IN_5, grid % wall_dist(c)
     end if
   end do

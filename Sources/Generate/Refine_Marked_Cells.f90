@@ -26,6 +26,7 @@
   integer, allocatable :: node_n2(:,:)    
   integer, allocatable :: node_n4(:,:)  
   integer, allocatable :: node_n8(:,:)    
+  integer, allocatable :: cell_points_to(:)    
 !==============================================================================!
 !                                                                              !
 !                               c6      c3                                     !
@@ -59,9 +60,11 @@
   nn_4 = 0
   nn_8 = 0
 
-  allocate (node_n2(grid % max_n_nodes,0:2));   node_n2=0 
-  allocate (node_n4(grid % max_n_nodes,0:4));   node_n4=0
-  allocate (node_n8(grid % max_n_nodes,0:8));   node_n8=0
+  ! Allocate local memory
+  allocate (node_n2(grid % max_n_nodes,0:2));     node_n2        = 0 
+  allocate (node_n4(grid % max_n_nodes,0:4));     node_n4        = 0
+  allocate (node_n8(grid % max_n_nodes,0:8));     node_n8        = 0
+  allocate (cell_points_to(grid % max_n_nodes));  cell_points_to = 0
 
   !---------------------!
   !                     !
@@ -69,9 +72,9 @@
   !                     !
   !---------------------!
   do c = 1, n_cells_old
-    if(CelMar(c) == -1) then 
+    if(cell_marked(c)) then 
       grid % n_cells = grid % n_cells + 8
-      CelMar(c) = grid % n_cells   ! now points to cr8
+      cell_points_to(c) = grid % n_cells   ! now points to cr8
     end if
   end do
 
@@ -98,19 +101,19 @@
     !   Refined cells   !
     !                   !
     !-------------------!
-    if( CelMar(c) > 0 ) then  ! only refined
+    if( cell_marked(c) ) then  ! only refined
 
       !------------------------------------!
       !   Take care of neighboring cells   !
       !------------------------------------!
-      cr1=CelMar(c)-7
-      cr2=CelMar(c)-6
-      cr3=CelMar(c)-5
-      cr4=CelMar(c)-4
-      cr5=CelMar(c)-3
-      cr6=CelMar(c)-2
-      cr7=CelMar(c)-1
-      cr8=CelMar(c)
+      cr1 = cell_points_to(c) - 7
+      cr2 = cell_points_to(c) - 6
+      cr3 = cell_points_to(c) - 5
+      cr4 = cell_points_to(c) - 4
+      cr5 = cell_points_to(c) - 3
+      cr6 = cell_points_to(c) - 2
+      cr7 = cell_points_to(c) - 1
+      cr8 = cell_points_to(c)
 
       grid % material(cr1) = grid % material(c) 
       grid % material(cr2) = grid % material(c) 
@@ -176,76 +179,76 @@
       !----------------------------------------!         
       !   External links depend on neighbors   !
       !----------------------------------------!
-      if(CelMar(c1) == 0) then  ! neighbor 1 not refined
+      if(.not. cell_marked(c1)) then  ! neighbor 1 not refined
         grid % cells_c(1,cr1) = c1
         grid % cells_c(1,cr2) = c1
         grid % cells_c(1,cr3) = c1
         grid % cells_c(1,cr4) = c1
       else                        ! neighbor 1 refined
-        grid % cells_c(1,cr1) = CelMar(c1) - 8 + Which_Node(grid, c1,n1)
-        grid % cells_c(1,cr2) = CelMar(c1) - 8 + Which_Node(grid, c1,n2)
-        grid % cells_c(1,cr3) = CelMar(c1) - 8 + Which_Node(grid, c1,n3)
-        grid % cells_c(1,cr4) = CelMar(c1) - 8 + Which_Node(grid, c1,n4)
+        grid % cells_c(1,cr1) = cell_points_to(c1) - 8 + Which_Node(grid, c1,n1)
+        grid % cells_c(1,cr2) = cell_points_to(c1) - 8 + Which_Node(grid, c1,n2)
+        grid % cells_c(1,cr3) = cell_points_to(c1) - 8 + Which_Node(grid, c1,n3)
+        grid % cells_c(1,cr4) = cell_points_to(c1) - 8 + Which_Node(grid, c1,n4)
       endif           
 
-      if(CelMar(c2) == 0) then  ! neighbor 2 not refined
+      if(.not. cell_marked(c2)) then  ! neighbor 2 not refined
         grid % cells_c(2,cr1) = c2
         grid % cells_c(2,cr2) = c2
         grid % cells_c(2,cr5) = c2
         grid % cells_c(2,cr6) = c2
       else                        ! neighbor 2 refined
-        grid % cells_c(2,cr1) = CelMar(c2) - 8 + Which_Node(grid, c2, n1)
-        grid % cells_c(2,cr2) = CelMar(c2) - 8 + Which_Node(grid, c2, n2)
-        grid % cells_c(2,cr5) = CelMar(c2) - 8 + Which_Node(grid, c2, n5)
-        grid % cells_c(2,cr6) = CelMar(c2) - 8 + Which_Node(grid, c2, n6)
+        grid % cells_c(2,cr1) = cell_points_to(c2) - 8 + Which_Node(grid, c2, n1)
+        grid % cells_c(2,cr2) = cell_points_to(c2) - 8 + Which_Node(grid, c2, n2)
+        grid % cells_c(2,cr5) = cell_points_to(c2) - 8 + Which_Node(grid, c2, n5)
+        grid % cells_c(2,cr6) = cell_points_to(c2) - 8 + Which_Node(grid, c2, n6)
       endif           
 
-      if(CelMar(c3) == 0) then  ! neighbor 3 not refined
+      if(.not. cell_marked(c3)) then  ! neighbor 3 not refined
         grid % cells_c(3,cr2) = c3
         grid % cells_c(3,cr4) = c3
         grid % cells_c(3,cr6) = c3
         grid % cells_c(3,cr8) = c3
       else                        ! neighbor 3 refined
-        grid % cells_c(3,cr2) = CelMar(c3) - 8 + Which_Node(grid, c3, n2)
-        grid % cells_c(3,cr4) = CelMar(c3) - 8 + Which_Node(grid, c3, n4)
-        grid % cells_c(3,cr6) = CelMar(c3) - 8 + Which_Node(grid, c3, n6)
-        grid % cells_c(3,cr8) = CelMar(c3) - 8 + Which_Node(grid, c3, n8)
+        grid % cells_c(3,cr2) = cell_points_to(c3) - 8 + Which_Node(grid, c3, n2)
+        grid % cells_c(3,cr4) = cell_points_to(c3) - 8 + Which_Node(grid, c3, n4)
+        grid % cells_c(3,cr6) = cell_points_to(c3) - 8 + Which_Node(grid, c3, n6)
+        grid % cells_c(3,cr8) = cell_points_to(c3) - 8 + Which_Node(grid, c3, n8)
       endif           
 
-      if(CelMar(c4) == 0) then  ! neighbor 4 not refine
+      if(.not. cell_marked(c4)) then  ! neighbor 4 not refine
         grid % cells_c(4,cr3) = c4
         grid % cells_c(4,cr4) = c4
         grid % cells_c(4,cr7) = c4
         grid % cells_c(4,cr8) = c4
       else                        ! neighbor 4 refine
-        grid % cells_c(4,cr3) = CelMar(c4) - 8 + Which_Node(grid, c4, n3)
-        grid % cells_c(4,cr4) = CelMar(c4) - 8 + Which_Node(grid, c4, n4)
-        grid % cells_c(4,cr7) = CelMar(c4) - 8 + Which_Node(grid, c4, n7)
-        grid % cells_c(4,cr8) = CelMar(c4) - 8 + Which_Node(grid, c4, n8)
+        grid % cells_c(4,cr3) = cell_points_to(c4) - 8 + Which_Node(grid, c4, n3)
+        grid % cells_c(4,cr4) = cell_points_to(c4) - 8 + Which_Node(grid, c4, n4)
+        grid % cells_c(4,cr7) = cell_points_to(c4) - 8 + Which_Node(grid, c4, n7)
+        grid % cells_c(4,cr8) = cell_points_to(c4) - 8 + Which_Node(grid, c4, n8)
       endif           
 
-      if(CelMar(c5) == 0) then  ! neighbor 5 not refined
+      if(.not. cell_marked(c5)) then  ! neighbor 5 not refined
         grid % cells_c(5,cr1) = c5
         grid % cells_c(5,cr3) = c5
         grid % cells_c(5,cr5) = c5
         grid % cells_c(5,cr7) = c5
       else                        ! neighbor 5 refined
-        grid % cells_c(5,cr1) = CelMar(c5) - 8 + Which_Node(grid, c5, n1)
-        grid % cells_c(5,cr3) = CelMar(c5) - 8 + Which_Node(grid, c5, n3)
-        grid % cells_c(5,cr5) = CelMar(c5) - 8 + Which_Node(grid, c5, n5)
-        grid % cells_c(5,cr7) = CelMar(c5) - 8 + Which_Node(grid, c5, n7)
+        grid % cells_c(5,cr1) = cell_points_to(c5) - 8 + Which_Node(grid, c5, n1)
+        grid % cells_c(5,cr3) = cell_points_to(c5) - 8 + Which_Node(grid, c5, n3)
+        grid % cells_c(5,cr5) = cell_points_to(c5) - 8 + Which_Node(grid, c5, n5)
+        grid % cells_c(5,cr7) = cell_points_to(c5) - 8 + Which_Node(grid, c5, n7)
       endif
 
-      if(CelMar(c6) == 0) then  ! neighbor 6 not refined
+      if(.not. cell_marked(c6)) then  ! neighbor 6 not refined
         grid % cells_c(6,cr5) = c6
         grid % cells_c(6,cr6) = c6
         grid % cells_c(6,cr7) = c6
         grid % cells_c(6,cr8) = c6
       else                        ! neighbor 6 refined
-        grid % cells_c(6,cr5) = CelMar(c6) - 8 + Which_Node(grid, c6, n5)
-        grid % cells_c(6,cr6) = CelMar(c6) - 8 + Which_Node(grid, c6, n6)
-        grid % cells_c(6,cr7) = CelMar(c6) - 8 + Which_Node(grid, c6, n7)
-        grid % cells_c(6,cr8) = CelMar(c6) - 8 + Which_Node(grid, c6, n8)
+        grid % cells_c(6,cr5) = cell_points_to(c6) - 8 + Which_Node(grid, c6, n5)
+        grid % cells_c(6,cr6) = cell_points_to(c6) - 8 + Which_Node(grid, c6, n6)
+        grid % cells_c(6,cr7) = cell_points_to(c6) - 8 + Which_Node(grid, c6, n7)
+        grid % cells_c(6,cr8) = cell_points_to(c6) - 8 + Which_Node(grid, c6, n8)
       endif           
 
     !------------------------!
@@ -781,46 +784,46 @@
     !-----------------------!
     else
 
-      if(CelMar(c1) > 0) then  ! neighbor 1 refined
-        grid % cells_c( 1,c) = CelMar(c1) - 8 + Which_Node(grid, c1,n1)
-        grid % cells_c( 7,c) = CelMar(c1) - 8 + Which_Node(grid, c1,n2)
-        grid % cells_c(13,c) = CelMar(c1) - 8 + Which_Node(grid, c1,n3)
-        grid % cells_c(19,c) = CelMar(c1) - 8 + Which_Node(grid, c1,n4)
+      if(cell_marked(c1)) then  ! neighbor 1 refined
+        grid % cells_c( 1,c) = cell_points_to(c1) - 8 + Which_Node(grid, c1,n1)
+        grid % cells_c( 7,c) = cell_points_to(c1) - 8 + Which_Node(grid, c1,n2)
+        grid % cells_c(13,c) = cell_points_to(c1) - 8 + Which_Node(grid, c1,n3)
+        grid % cells_c(19,c) = cell_points_to(c1) - 8 + Which_Node(grid, c1,n4)
       endif         
 
-      if(CelMar(c2) > 0) then  ! neighbor 2 refined
-        grid % cells_c( 2,c) = CelMar(c2) - 8 + Which_Node(grid, c2, n1)
-        grid % cells_c( 8,c) = CelMar(c2) - 8 + Which_Node(grid, c2, n2)
-        grid % cells_c(14,c) = CelMar(c2) - 8 + Which_Node(grid, c2, n5)
-        grid % cells_c(20,c) = CelMar(c2) - 8 + Which_Node(grid, c2, n6)
+      if(cell_marked(c2)) then  ! neighbor 2 refined
+        grid % cells_c( 2,c) = cell_points_to(c2) - 8 + Which_Node(grid, c2, n1)
+        grid % cells_c( 8,c) = cell_points_to(c2) - 8 + Which_Node(grid, c2, n2)
+        grid % cells_c(14,c) = cell_points_to(c2) - 8 + Which_Node(grid, c2, n5)
+        grid % cells_c(20,c) = cell_points_to(c2) - 8 + Which_Node(grid, c2, n6)
       endif           
 
-      if(CelMar(c3) > 0) then  ! neighbor 3 refined
-        grid % cells_c( 3,c) = CelMar(c3) - 8 + Which_Node(grid, c3, n2)
-        grid % cells_c( 9,c) = CelMar(c3) - 8 + Which_Node(grid, c3, n4)
-        grid % cells_c(15,c) = CelMar(c3) - 8 + Which_Node(grid, c3, n6)
-        grid % cells_c(21,c) = CelMar(c3) - 8 + Which_Node(grid, c3, n8)
+      if(cell_marked(c3)) then  ! neighbor 3 refined
+        grid % cells_c( 3,c) = cell_points_to(c3) - 8 + Which_Node(grid, c3, n2)
+        grid % cells_c( 9,c) = cell_points_to(c3) - 8 + Which_Node(grid, c3, n4)
+        grid % cells_c(15,c) = cell_points_to(c3) - 8 + Which_Node(grid, c3, n6)
+        grid % cells_c(21,c) = cell_points_to(c3) - 8 + Which_Node(grid, c3, n8)
       endif           
 
-      if(CelMar(c4) > 0) then  ! neighbor 4 refined
-        grid % cells_c( 4,c) = CelMar(c4) - 8 + Which_Node(grid, c4, n3)
-        grid % cells_c(10,c) = CelMar(c4) - 8 + Which_Node(grid, c4, n4)
-        grid % cells_c(16,c) = CelMar(c4) - 8 + Which_Node(grid, c4, n7)
-        grid % cells_c(22,c) = CelMar(c4) - 8 + Which_Node(grid, c4, n8)
+      if(cell_marked(c4)) then  ! neighbor 4 refined
+        grid % cells_c( 4,c) = cell_points_to(c4) - 8 + Which_Node(grid, c4, n3)
+        grid % cells_c(10,c) = cell_points_to(c4) - 8 + Which_Node(grid, c4, n4)
+        grid % cells_c(16,c) = cell_points_to(c4) - 8 + Which_Node(grid, c4, n7)
+        grid % cells_c(22,c) = cell_points_to(c4) - 8 + Which_Node(grid, c4, n8)
       endif           
 
-      if(CelMar(c5) > 0) then  ! neighbor 5 refined
-        grid % cells_c( 5,c) = CelMar(c5) - 8 + Which_Node(grid, c5, n1)
-        grid % cells_c(11,c) = CelMar(c5) - 8 + Which_Node(grid, c5, n3)
-        grid % cells_c(17,c) = CelMar(c5) - 8 + Which_Node(grid, c5, n5)
-        grid % cells_c(23,c) = CelMar(c5) - 8 + Which_Node(grid, c5, n7)
+      if(cell_marked(c5)) then  ! neighbor 5 refined
+        grid % cells_c( 5,c) = cell_points_to(c5) - 8 + Which_Node(grid, c5, n1)
+        grid % cells_c(11,c) = cell_points_to(c5) - 8 + Which_Node(grid, c5, n3)
+        grid % cells_c(17,c) = cell_points_to(c5) - 8 + Which_Node(grid, c5, n5)
+        grid % cells_c(23,c) = cell_points_to(c5) - 8 + Which_Node(grid, c5, n7)
       endif
 
-      if(CelMar(c6) > 0) then  ! neighbor 6 refined
-        grid % cells_c( 6,c) = CelMar(c6) - 8 + Which_Node(grid, c6, n5)
-        grid % cells_c(12,c) = CelMar(c6) - 8 + Which_Node(grid, c6, n6)
-        grid % cells_c(18,c) = CelMar(c6) - 8 + Which_Node(grid, c6, n7)
-        grid % cells_c(24,c) = CelMar(c6) - 8 + Which_Node(grid, c6, n8)
+      if(cell_marked(c6)) then  ! neighbor 6 refined
+        grid % cells_c( 6,c) = cell_points_to(c6) - 8 + Which_Node(grid, c6, n5)
+        grid % cells_c(12,c) = cell_points_to(c6) - 8 + Which_Node(grid, c6, n6)
+        grid % cells_c(18,c) = cell_points_to(c6) - 8 + Which_Node(grid, c6, n7)
+        grid % cells_c(24,c) = cell_points_to(c6) - 8 + Which_Node(grid, c6, n8)
       endif           
 
     end if   
@@ -840,24 +843,24 @@
     nA1=node_n2(nA,1)
     nA2=node_n2(nA,2)
 
-    if( (TwinN(nA1,0) /= 0).and.(TwinN(nA2,0) /= 0) ) then
+    if( (twin_n(nA1,0) /= 0).and.(twin_n(nA2,0) /= 0) ) then
 
       do nB=nA+1,nn_2
         nB0=node_n2(nB,0)
         nB1=node_n2(nB,1)
         nB2=node_n2(nB,2)
 
-        if( (TwinN(nB1,0) /= 0).and.(TwinN(nB2,0) /= 0) ) then
+        if( (twin_n(nB1,0) /= 0).and.(twin_n(nB2,0) /= 0) ) then
 
           if( (Are_Nodes_Twins(nA1,nB1) .and.   &
                Are_Nodes_Twins(nA2,nB2)) .or.   &
               (Are_Nodes_Twins(nA1,nB2) .and.   &
                Are_Nodes_Twins(nA2,nB1))  ) then
             if (.not. Are_Nodes_Twins(nA0,nB0)) then
-              TwinN(nA0,0)=TwinN(nA0,0)+1
-              TwinN(nA0,TwinN(nA0,0))=nB0
-              TwinN(nB0,0)=TwinN(nB0,0)+1
-              TwinN(nB0,TwinN(nB0,0))=nA0
+              twin_n(nA0,0)=twin_n(nA0,0)+1
+              twin_n(nA0,twin_n(nA0,0))=nB0
+              twin_n(nB0,0)=twin_n(nB0,0)+1
+              twin_n(nB0,twin_n(nB0,0))=nA0
             end if
           end if
         end if
@@ -870,22 +873,22 @@
     nA1=node_n4(nA,1)
     nA2=node_n4(nA,4) ! diagonal
 
-    if( (TwinN(nA1,0) /= 0).and.(TwinN(nA2,0) /= 0) ) then
+    if( (twin_n(nA1,0) /= 0).and.(twin_n(nA2,0) /= 0) ) then
 
       do nB=nA+1,nn_4
         nB0=node_n4(nB,0)
         nB1=node_n4(nB,1)
         nB2=node_n4(nB,4) ! diagonal
 
-        if( (TwinN(nB1,0) /= 0).and.(TwinN(nB2,0) /= 0) ) then
+        if( (twin_n(nB1,0) /= 0).and.(twin_n(nB2,0) /= 0) ) then
 
           if( (Are_Nodes_Twins(nA1,nB1) .and. Are_Nodes_Twins(nA2,nB2)) .or.          &
               (Are_Nodes_Twins(nA1,nB2) .and. Are_Nodes_Twins(nA2,nB1))  ) then
             if (.not. Are_Nodes_Twins(nA0,nB0)) then
-              TwinN(nA0,0)=TwinN(nA0,0)+1
-              TwinN(nA0,TwinN(nA0,0))=nB0
-              TwinN(nB0,0)=TwinN(nB0,0)+1
-              TwinN(nB0,TwinN(nB0,0))=nA0
+              twin_n(nA0,0)=twin_n(nA0,0)+1
+              twin_n(nA0,twin_n(nA0,0))=nB0
+              twin_n(nB0,0)=twin_n(nB0,0)+1
+              twin_n(nB0,twin_n(nB0,0))=nA0
             end if
           end if
         end if
@@ -901,36 +904,36 @@
 
   ! Initialize the new numbers for the cells
   do c = -grid % n_bnd_cells, grid % n_cells
-    NewN(c)=c
+    new_n(c)=c
   end do
 
   del = 0 
   do c = 1, grid % n_cells
-    if(CelMar(c) /= 0) then
-      NewN(c) = -1
+    if(cell_marked(c)) then
+      new_n(c) = -1
       del = del+1
     else
-      NewN(c) = c - del 
+      new_n(c) = c - del 
     endif 
   end do
   print *, '# Deleted cells:', del
 
   do c = 1, grid % n_cells
-    if(NewN(c) /= -1) then
+    if(new_n(c) /= -1) then
 
       ! Update the cell numbers. Watch out ! The numbers you are
       ! updating are old, so double indexing is needed
       do n = 1, 24  ! n is neighbour now
-        grid % cells_c( n, NewN(c) ) = NewN( grid % cells_c( n, c ) )
+        grid % cells_c( n, new_n(c) ) = new_n( grid % cells_c( n, c ) )
       end do
 
       ! Update the node numbers
       do n = 1, 8   ! n is node now
-        grid % cells_n( n, NewN(c) ) = grid % cells_n( n, c )
+        grid % cells_n( n, new_n(c) ) = grid % cells_n( n, c )
       end do
 
-      grid % material( NewN(c) ) = grid % material( c )  ! -> never checked !
-      level( NewN(c) )    = level( c )     ! -> never checked !
+      grid % material( new_n(c) ) = grid % material( c )  ! -> never checked !
+      level( new_n(c) )    = level( c )     ! -> never checked !
     end if
   end do
 
@@ -947,5 +950,6 @@
   deallocate(node_n2)
   deallocate(node_n4)
   deallocate(node_n8)
+  deallocate(cell_points_to)
 
   end subroutine

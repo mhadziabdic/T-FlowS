@@ -27,8 +27,8 @@
   allocate(grid % bnd_cond % copy_s(2,grid % n_copy))
   grid % bnd_cond % copy_s=0
 
-  allocate(NewN( grid % n_nodes));                      NewN=0  
-  allocate(NewC(-grid % n_bnd_cells-1:grid % n_cells)); NewC=0  
-  allocate(NewS( grid % n_cells*5));                    NewS=0  
+  allocate(new_n( grid % n_nodes));                      new_n=0  
+  allocate(new_c(-grid % n_bnd_cells-1:grid % n_cells)); new_c=0  
+  allocate(new_f( grid % n_cells*5));                    new_f=0  
 
   end subroutine

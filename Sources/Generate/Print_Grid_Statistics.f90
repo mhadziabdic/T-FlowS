@@ -63,7 +63,7 @@
   do j = 1, 8
     numb = 0
     do i = 1, grid % n_nodes
-      if(TwinN(i,0)  ==  j) numb=numb+1
+      if(twin_n(i,0)  ==  j) numb=numb+1
     end do
     if(numb /= 0) then
       print 6, '# Number of nodes with ', j, ' twins     : ', numb

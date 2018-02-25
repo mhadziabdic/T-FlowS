@@ -4,7 +4,7 @@
 !   Modifies the fluxes at outflow boundaries to conserve the mass.            ! 
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
+  use Const_Mod
   use Flow_Mod
   use Comm_Mod
   use Grid_Mod

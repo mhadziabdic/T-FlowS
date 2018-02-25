@@ -5,7 +5,7 @@
 !   this separate from reading the rest of command file.)                      !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
+  use Const_Mod
   use Flow_Mod
   use Comm_Mod, only: this_proc
   use rans_mod, only: grav_x, grav_y, grav_z, Zo

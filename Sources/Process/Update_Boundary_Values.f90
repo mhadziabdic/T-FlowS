@@ -4,7 +4,7 @@
 !   Update variables on the boundaries (boundary cells) where needed.          !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
+  use Const_Mod
   use Flow_Mod
   use rans_mod
   use Grid_Mod

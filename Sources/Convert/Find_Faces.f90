@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 !  Creates the "SideC structure"                                               !
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod 
+  use Const_Mod
   use gen_mod 
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -15,7 +15,7 @@
   include "Cell_Numbering_Neu.f90"
 !-----------------------------------[Locals]-----------------------------------!
   integer             :: c, c1, c2, n1, n2, n3, f_nod(4), n_f_nod
-  integer             :: Nmatch, j, MatchNodes(-1:8) 
+  integer             :: n_match, j, match_nodes(-1:8) 
   integer             :: i1, i2, k, Nuber
   integer             :: fn(6,4)
   real   ,allocatable :: face_coor(:) 
@@ -29,7 +29,6 @@
   allocate(face_cell(grid % n_cells*6)); face_cell = 0    
   allocate(starts(grid % n_cells*6)); starts = 0    
   allocate(ends(grid % n_cells*6));   ends = 0    
-! allocate(CellC(grid % n_cells,6));  CellC = 0
 
   !---------------------------------------------------!
   !   Fill the generic coordinates with some values   !
@@ -103,13 +102,13 @@
             !------------------------------!
             !   Number of matching nodes   !
             !------------------------------!
-            Nmatch     = 0
-            MatchNodes = 0 
+            n_match     = 0
+            match_nodes = 0 
             do n1 = 1, grid % cells_n_nodes(c1)
               do n2 = 1, grid % cells_n_nodes(c2)
                 if(grid % cells_n(n1,c1)==grid % cells_n(n2,c2)) then
-                  Nmatch = Nmatch + 1 
-                  MatchNodes(n1) = 1
+                  n_match = n_match + 1 
+                  match_nodes(n1) = 1
                 end if
               end do
             end do
@@ -118,21 +117,21 @@
             !   general + general   ! 
             !     c1        c2      !
             !-----------------------!
-            if(Nmatch > 2) then 
+            if(n_match > 2) then 
               if(grid % cells_n_nodes(c1) == 4) fn = neu_tet
               if(grid % cells_n_nodes(c1) == 5) fn = neu_pyr
               if(grid % cells_n_nodes(c1) == 6) fn = neu_wed
               if(grid % cells_n_nodes(c1) == 8) fn = neu_hex
               do j = 1, 6
                 if(grid % cells_c(j, c1) == 0  .and.   & ! not set yet
-                    ( max( MatchNodes(fn(j,1)),0 ) + &
-                      max( MatchNodes(fn(j,2)),0 ) + &
-                      max( MatchNodes(fn(j,3)),0 ) + &
-                      max( MatchNodes(fn(j,4)),0 ) == Nmatch ) ) then
+                    ( max( match_nodes(fn(j,1)),0 ) + &
+                      max( match_nodes(fn(j,2)),0 ) + &
+                      max( match_nodes(fn(j,3)),0 ) + &
+                      max( match_nodes(fn(j,4)),0 ) == n_match ) ) then
                   grid % n_faces = grid % n_faces + 1 
                   grid % faces_c(1,grid % n_faces) = c1
                   grid % faces_c(2,grid % n_faces) = c2
-                  grid % faces_n_nodes(grid % n_faces) = Nmatch 
+                  grid % faces_n_nodes(grid % n_faces) = n_match 
                   do k = 1, 4
                     if(fn(j,k) > 0) then
                       grid % faces_n(k,grid % n_faces) = grid % cells_n(fn(j,k), c1)                
@@ -141,7 +140,7 @@
                   grid % cells_c(j, c1) = 1 !  -> means: set
                 end if
               end do
-            end if   ! Nmatch /= 2
+            end if   ! n_match /= 2
           end if   ! c1 /= c2
         end do   ! i2
       end do   ! i1

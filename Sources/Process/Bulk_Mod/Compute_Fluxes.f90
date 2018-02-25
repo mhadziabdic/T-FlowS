@@ -4,7 +4,7 @@
 !   Compute mass fluxes through whole domain.                                  !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use allp_mod
+  use Const_Mod
   use Grid_Mod
   use Comm_Mod
   use Bnd_Cond_Mod

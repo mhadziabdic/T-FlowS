@@ -4,7 +4,7 @@
 !   Reads second part of T-FlowS.cmn file.                                     ! 
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use allp_mod
   use Flow_Mod
   use les_mod

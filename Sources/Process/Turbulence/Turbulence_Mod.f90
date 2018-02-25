@@ -63,4 +63,8 @@
   real, allocatable :: shear(:)
   real, allocatable :: tau_wall(:)
 
+  ! Wall viscosity (wall function approuch)
+  real, allocatable :: vis_wall(:)
+  real, allocatable :: con_wall(:)
+
   end module 

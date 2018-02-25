@@ -4,7 +4,6 @@
 !   Corrects the velocities, and mass fluxes on the cell faces.                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use Comm_Mod
@@ -39,15 +38,15 @@
   !-----------------------------------------!
   if(coupling == 'PROJECTION') then
     do c = 1, grid % n_cells
-      u % n(c) = u % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
-      v % n(c) = v % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
-      w % n(c) = w % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
+      u % n(c) = u % n(c) - p % x(c) * grid % vol(c) / a % sav(c)
+      v % n(c) = v % n(c) - p % y(c) * grid % vol(c) / a % sav(c)
+      w % n(c) = w % n(c) - p % z(c) * grid % vol(c) / a % sav(c)
     end do 
   else ! coupling is 'SIMPLE'
     do c = 1, grid % n_cells
-      u % n(c) = u % n(c) - p % x(c) * grid % vol(c) / A % sav(c)
-      v % n(c) = v % n(c) - p % y(c) * grid % vol(c) / A % sav(c)
-      w % n(c) = w % n(c) - p % z(c) * grid % vol(c) / A % sav(c)
+      u % n(c) = u % n(c) - p % x(c) * grid % vol(c) / a % sav(c)
+      v % n(c) = v % n(c) - p % y(c) * grid % vol(c) / a % sav(c)
+      w % n(c) = w % n(c) - p % z(c) * grid % vol(c) / a % sav(c)
     end do 
   end if
 
@@ -72,7 +71,7 @@
   !   matrix must be formed from underrelaxed velocity coefficients   !
   !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  !
   !   Note that for FLUID-SOLID interaction, FLUX correctin is zero   !
-  !   because A % val(A % pos(1,s)) is also zero.                     !  
+  !   because a % val(a % pos(1,s)) is also zero.                     !  
   !   What will happen with parallel version ... only god knows.      !
   !-------------------------------------------------------------------!
   do s = 1, grid % n_faces
@@ -81,9 +80,9 @@
     if(c2 > 0 .or.  &
        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
       if(c2  > 0) then
-        flux(s)=flux(s)+(pp % n(c2) - pp % n(c1))*A % val(A % pos(1,s))
+        flux(s)=flux(s)+(pp % n(c2) - pp % n(c1))*a % val(a % pos(1,s))
       else 
-        flux(s)=flux(s)+(pp % n(c2) - pp % n(c1))*A % bou(c2)
+        flux(s)=flux(s)+(pp % n(c2) - pp % n(c1))*a % bou(c2)
       endif
     end if             !                                          !
   end do               !<---------- this is correction ---------->!
@@ -128,7 +127,8 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if( (material(c1) .eq. m) .or. (material(c2) .eq. m) ) then
+    if( (grid % material(c1) .eq. m) .or.  &
+        (grid % material(c2) .eq. m) ) then
       if(c2 > 0 .or.   &
          c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
         cfl_t = abs( dt * flux(s) /                &

@@ -1,12 +1,10 @@
 !==============================================================================!
   subroutine Load_Cgns(grid)
 !------------------------------------------------------------------------------!
-!   Reads the Fluents (Gambits) neutral file format.                           !
-!------------------------------------------------------------------------------!
-!   https://cgns.github.io/CGNS_docs_current/midlevel/structural.html
-!   |-> mesh_info          !
+!   https://cgns.github.io/CGNS_docs_current/midlevel/structural.html          !
+!   |-> mesh_info                                                              !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use gen_mod
   use Grid_Mod
   use Tokenizer_Mod
@@ -217,7 +215,7 @@
   grid % n_materials = 1
   allocate(grid % materials(grid % n_materials))
   grid % materials(1) % name = "AIR"
-  material = 1
+  grid % material = 1
 
   !-----------------------------------------------------------------!
   !   Correct boundary conditions directions for hexahedral cells   !

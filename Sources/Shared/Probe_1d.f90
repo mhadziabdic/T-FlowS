@@ -4,7 +4,7 @@
 !   This subroutine finds the coordinate of cell-centers in non-homogeneous    !
 !   direction and write them in file called "name.1D"                          !
 !------------------------------------------------------------------------------!
-  use all_mod, only: problem_name
+  use Name_Mod, only: problem_name
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none

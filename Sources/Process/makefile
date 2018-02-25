@@ -121,9 +121,9 @@ OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
 
 # Modules in shared directory
 SRC_MOD = allp_mod.f90      \
-          all_mod.f90       \
           Grid_Mod.f90      \
           Work_Mod.f90      \
+          Name_Mod.f90      \
           Tokenizer_Mod.f90 \
           Material_Mod.f90
 

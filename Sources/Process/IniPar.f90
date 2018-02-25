@@ -4,7 +4,6 @@
 !   Initialize various solver parameters.                              !
 !----------------------------------------------------------------------!
 !------------------------------[Modules]-------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use rans_mod

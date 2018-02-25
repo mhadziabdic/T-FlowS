@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 !   Reads: .bnd file                                                           !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use allp_mod
   use Flow_Mod
   use rans_mod

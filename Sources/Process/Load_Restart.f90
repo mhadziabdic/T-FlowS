@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 ! Reads restart files name.restart                                             !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use allp_mod
   use Flow_Mod
   use les_mod
@@ -151,11 +151,11 @@
     read(9) (eps % c(c),    c = 1, grid % n_cells)
     read(9) (eps % c_o(c),  c = 1, grid % n_cells)
 
-    read(9) (p_kin(c),       c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (p_kin(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (Uf(c),       c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (Ynd(c),      c = -grid % n_bnd_cells,grid % n_cells) 
-    read(9) (VISwall(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (tau_wall(c),  c= 1,grid % n_cells)
+    read(9) (vis_wall(c), c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (tau_wall(c), c= 1,grid % n_cells)
   end if
 
   if(turbulence_model == K_EPS_V2 .or.  &
@@ -169,8 +169,8 @@
     read(9) (v2 % c(c),    c = 1, grid % n_cells)
     read(9) (v2 % c_o(c),  c = 1, grid % n_cells)
 
-    read(9) (f22 % n(c),     c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (f22 % o(c),     c = 1, grid % n_cells)
+    read(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (f22 % o(c),    c = 1, grid % n_cells)
     read(9) (f22 % d_o(c),  c = 1, grid % n_cells)
     read(9) (f22 % c(c),    c = 1, grid % n_cells)
     read(9) (f22 % c_o(c),  c = 1, grid % n_cells)

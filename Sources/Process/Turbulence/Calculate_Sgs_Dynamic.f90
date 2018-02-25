@@ -4,7 +4,6 @@
 !   Calculates Smagorinsky constant with dynamic procedure                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use Comm_Mod

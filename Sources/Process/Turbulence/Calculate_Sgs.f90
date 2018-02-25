@@ -4,7 +4,6 @@
 !   Calculates SGS stresses and turbulent viscosity for 'LES'.                 !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use Comm_Mod
@@ -139,8 +138,8 @@
       ny = grid % sy(s) / s_tot 
       nz = grid % sz(s) / s_tot 
 
-      if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-         Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
 
         u_tot = sqrt(  u % n(c1) * u % n(c1)     &
                      + v % n(c1) * v % n(c1)     & 
@@ -172,15 +171,15 @@
         y_plus  = dely*u_tau_l/nu
         if(y_plus  >=  11.81) then
           ! This one is effective viscosity
-          VISwall(c1) = density*u_tau_l*u_tau_l*dely/abs(u_tan) 
+          vis_wall(c1) = density*u_tau_l*u_tau_l*dely/abs(u_tan) 
         else 
-          VISwall(c1) = viscosity + fw(s)*vis_t(c1)+(1.0-fw(s))*vis_t(c2)
+          vis_wall(c1) = viscosity + fw(s)*vis_t(c1)+(1.0-fw(s))*vis_t(c2)
         endif
       end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
     end if    ! c2 < 0
   end do
 
   call Comm_Mod_Exchange(grid, vis_t)
-  call Comm_Mod_Exchange(grid, VISwall)
+  call Comm_Mod_Exchange(grid, vis_wall)
 
   end subroutine

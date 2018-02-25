@@ -4,7 +4,6 @@
 !   Calculates SGS stresses and turbulent viscosity for 'LES'.                   !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use Comm_Mod

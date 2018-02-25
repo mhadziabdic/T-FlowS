@@ -57,6 +57,9 @@
     ! For each cell; type of the boundary condition in a given direction
     integer, allocatable :: cells_bnd_color(:,:)
 
+    ! Material for each cell 
+    integer, allocatable :: material(:)
+
     !-------------------------!
     !  Face-based variables   !
     !-------------------------!

@@ -1,13 +1,12 @@
 !==============================================================================!
   subroutine Calculate_Vis_T_Rsm(grid) 
 !------------------------------------------------------------------------------!
-!   Computes the turbulent viscosity for RSM models ('EBM' and 'HJ').              !
-!   If hybrid option is used turbulent diffusivity is modeled by vis_t.         !
-!   Otherwise, vis_t is used as false diffusion in order to increase            !
+!   Computes the turbulent viscosity for RSM models ('EBM' and 'HJ').          !
+!   If hybrid option is used turbulent diffusivity is modeled by vis_t.        !
+!   Otherwise, vis_t is used as false diffusion in order to increase           !
 !   stability of computation.                                                  !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use Comm_Mod
   use les_mod

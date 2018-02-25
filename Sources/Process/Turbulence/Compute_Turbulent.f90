@@ -5,7 +5,6 @@
 !   variables.                                                                 !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use les_mod
   use rans_mod
@@ -32,7 +31,7 @@
   integer           :: s, c, c1, c2, niter, mat
   real              :: Fex, Fim 
   real              :: phis
-  real              :: A0, A12, A21
+  real              :: a0, a12, a21
   real              :: ini_res, tol
   real              :: vis_eff
   real              :: phi_x_f, phi_y_f, phi_z_f
@@ -57,13 +56,13 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-  A % val = 0.0
+  a % val = 0.0
 
   b=0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
   do c=-grid % n_bnd_cells,-1
-    A % bou(c)=0.0
+    a % bou(c)=0.0
   end do
 
   !-------------------------------------! 
@@ -143,30 +142,30 @@
       ! Compute advection term
       if(ini == 1) then 
         if(c2  > 0) then
-          phi % a_o(c1)=phi % a_o(c1) - Flux(s) * phis
-          phi % a_o(c2)=phi % a_o(c2) + Flux(s) * phis
+          phi % a_o(c1)=phi % a_o(c1) - flux(s) * phis
+          phi % a_o(c2)=phi % a_o(c2) + flux(s) * phis
         else
-          phi % a_o(c1)=phi % a_o(c1) - Flux(s) * phis
+          phi % a_o(c1)=phi % a_o(c1) - flux(s) * phis
         endif 
       end if
       if(c2  > 0) then
-        phi % a(c1)=phi % a(c1)-Flux(s) * phis
-        phi % a(c2)=phi % a(c2)+Flux(s) * phis
+        phi % a(c1)=phi % a(c1)-flux(s) * phis
+        phi % a(c2)=phi % a(c2)+flux(s) * phis
       else
-        phi % a(c1)=phi % a(c1)-Flux(s) * phis
+        phi % a(c1)=phi % a(c1)-flux(s) * phis
       endif 
 
       ! Store upwinded part of the advection term in "c"
       if(coupling .ne. 'PROJECTION') then
-        if(Flux(s)  < 0) then   ! from c2 to c1
-        phi % c(c1) = phi % c(c1) - Flux(s) * phi % n(c2)
+        if(flux(s)  < 0) then   ! from c2 to c1
+        phi % c(c1) = phi % c(c1) - flux(s) * phi % n(c2)
           if(c2  > 0) then
-            phi % c(c2) = phi % c(c2) + Flux(s) * phi % n(c2)
+            phi % c(c2) = phi % c(c2) + flux(s) * phi % n(c2)
           endif
         else 
-          phi % c(c1) = phi % c(c1) - Flux(s) * phi % n(c1)
+          phi % c(c1) = phi % c(c1) - flux(s) * phi % n(c1)
           if(c2  > 0) then
-            phi % c(c2) = phi % c(c2) + Flux(s) * phi % n(c1)
+            phi % c(c2) = phi % c(c2) + flux(s) * phi % n(c1)
           endif
         end if
       end if   
@@ -267,23 +266,23 @@
                      + phi_y_f * grid % sy(s)  &
                      + phi_z_f * grid % sz(s) )
 
-    A0 = vis_eff * f_coef(s) 
+    a0 = vis_eff * f_coef(s) 
 
     ! Implicit diffusive flux
     ! (this is a very crude approximation: f_coef is
     !  not corrected at interface between materials)
     Fim = (  phi_x_f * grid % dx(s)                      &
            + phi_y_f * grid % dy(s)                      &
-           + phi_z_f * grid % dz(s) ) * A0
+           + phi_z_f * grid % dz(s) ) * a0
 
     ! Straight diffusion part 
     if(ini == 1) then
       if(c2  > 0) then
-        phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
-        phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*A0    
+        phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*a0   
+        phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*a0    
       else
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) /= SYMMETRY) then
-          phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
+          phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*a0   
         end if 
       end if 
     end if
@@ -299,26 +298,26 @@
         (td_diffusion == FULLY_IMPLICIT) ) then  
 
       if(td_diffusion == CRANK_NICOLSON) then  
-        A12 = 0.5 * A0 
-        A21 = 0.5 * A0 
+        a12 = 0.5 * a0 
+        a21 = 0.5 * a0 
       end if
 
       if(td_diffusion == FULLY_IMPLICIT) then 
-        A12 = A0 
-        A21 = A0
+        a12 = a0 
+        a21 = a0
       end if
 
       if(coupling .ne. 'PROJECTION') then
-        A12 = A12  - min(Flux(s), real(0.0)) 
-        A21 = A21  + max(Flux(s), real(0.0))
+        a12 = a12  - min(flux(s), real(0.0)) 
+        a21 = a21  + max(flux(s), real(0.0))
       endif
 
       ! Fill the system matrix
       if(c2  > 0) then
-        A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - A12
-        A % val(A % dia(c1))  = A % val(A % dia(c1))  + A12
-        A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - A21
-        A % val(A % dia(c2))  = A % val(A % dia(c2))  + A21
+        a % val(a % pos(1,s)) = a % val(a % pos(1,s)) - a12
+        a % val(a % dia(c1))  = a % val(a % dia(c1))  + a12
+        a % val(a % pos(2,s)) = a % val(a % pos(2,s)) - a21
+        a % val(a % dia(c2))  = a % val(a % dia(c2))  + a21
       else if(c2  < 0) then
 
         ! Outflow is not included because it was causing problems     
@@ -327,11 +326,11 @@
            (Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE).or.                 &
            (Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT) .or.                 &
            (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) ) then                               
-          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
-          b(c1) = b(c1) + A12 * phi % n(c2)
+          a % val(a % dia(c1)) = a % val(a % dia(c1)) + a12
+          b(c1) = b(c1) + a12 * phi % n(c2)
         else if( Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER ) then  
-          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
-          A % bou(c2) = - A12  ! cool parallel stuff
+          a % val(a % dia(c1)) = a % val(a % dia(c1)) + a12
+          a % bou(c2) = - a12  ! cool parallel stuff
         endif
       end if     
     end if
@@ -388,18 +387,18 @@
   ! Two time levels; linear interpolation
   if(td_inertia == LINEAR) then
     do c = 1, grid % n_cells
-      A0 = density*grid % vol(c)/dt
-      A % val(A % dia(c)) = A % val(A % dia(c)) + A0
-      b(c) = b(c) + A0 * phi % o(c)
+      a0 = density*grid % vol(c)/dt
+      a % val(a % dia(c)) = a % val(a % dia(c)) + a0
+      b(c) = b(c) + a0 * phi % o(c)
     end do
   end if
 
   ! Three time levels; parabolic interpolation
   if(td_inertia == PARABOLIC) then
     do c = 1, grid % n_cells
-      A0 = density*grid % vol(c)/dt
-      A % val(A % dia(c)) = A % val(A % dia(c)) + 1.5 * A0
-      b(c) = b(c) + 2.0*A0 * phi % o(c) - 0.5*A0 * phi % oo(c)
+      a0 = density*grid % vol(c)/dt
+      a % val(a % dia(c)) = a % val(a % dia(c)) + 1.5 * a0
+      b(c) = b(c) + 2.0*a0 * phi % o(c) - 0.5*a0 * phi % oo(c)
     end do
   end if
 
@@ -443,8 +442,8 @@
     call Control_Mod_Simple_Underrelaxation_For_Turbulence(urf)
 
   do c = 1, grid % n_cells
-    b(c) = b(c) + A % val(A % dia(c)) * (1.0 - urf) * phi % n(c) / urf
-    A % val(A % dia(c)) = A % val(A % dia(c)) / urf
+    b(c) = b(c) + a % val(a % dia(c)) * (1.0 - urf) * phi % n(c) / urf
+    a % val(a % dia(c)) = a % val(a % dia(c)) / urf
   end do
 
   ! Get tolerance for linear solvers
@@ -456,7 +455,7 @@
   if(coupling == 'PROJECTION') niter = 10 
   if(coupling == 'SIMPLE')     niter =  5
 
-  call cg(A, phi % n, b, precond, niter, tol, ini_res, phi % res)
+  call cg(a, phi % n, b, precond, niter, tol, ini_res, phi % res)
 
   do c = 1, grid % n_cells
     if( phi%n(c)<0.0)then

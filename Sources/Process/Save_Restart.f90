@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 !   Writes restart files. name.restart                                         !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use allp_mod
   use Flow_Mod
   use les_mod
@@ -153,11 +153,11 @@
     write(9) (eps % c(c),    c = 1, grid % n_cells)
     write(9) (eps % c_o(c),  c = 1, grid % n_cells)
 
-    write(9) (p_kin(c),       c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (p_kin(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (Uf(c),       c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (Ynd(c),      c = -grid % n_bnd_cells,grid % n_cells) 
-    write(9) (viswall(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (tau_wall(c),  c= 1,grid % n_cells)
+    write(9) (vis_wall(c), c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (tau_wall(c), c = 1, grid % n_cells)
   end if
 
   if(turbulence_model == K_EPS_V2 .or.  &

@@ -4,7 +4,6 @@
 !   Compute mass fluxes through whole domain.                                  !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Grid_Mod
   use Comm_Mod
@@ -30,8 +29,8 @@
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
       if(c2 > 0) then
-        if( (material(c1) == m) .and.  &
-            (material(c1) == material(c2)) ) then
+        if( (grid % material(c1) == m) .and.  &
+            (grid % material(c1) == grid % material(c2)) ) then
           xc1=grid % xc(c1) 
           yc1=grid % yc(c1) 
           zc1=grid % zc(c1) 
@@ -57,9 +56,10 @@
           if((zc2 < bulk(m) % zp).and.(zc1 >= bulk(m) % zp))  &
             bulk(m) % flux_z = bulk(m) % flux_z - Flux(s)
 
-        end if ! material 1&2
+        end if 
       else if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid, c2) == BUFFER) then
-        if( (material(c1)==m) .and. (material(c1) == material(c2)) ) then
+        if( (grid % material(c1) == m) .and.  &
+            (grid % material(c1) == grid % material(c2)) ) then
           xc1=grid % xc(c1) 
           yc1=grid % yc(c1) 
           zc1=grid % zc(c1) 
@@ -85,7 +85,7 @@
           if((zc2 < bulk(m) % zp).and.(zc1 >= bulk(m) % zp))  &
             bulk(m) % flux_z = bulk(m) % flux_z - .5*Flux(s)
 
-        end if ! material 1&2
+        end if 
       end if   ! c2 > 0
     end do
 

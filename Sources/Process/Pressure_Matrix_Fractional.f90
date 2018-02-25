@@ -4,7 +4,6 @@
 !   Forms the pressure system matrix for the fractional step method.           !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -13,12 +12,12 @@
   type(Grid_Type) :: grid
   real            :: dt
 !-----------------------------------[Locals]-----------------------------------!
-  real    :: A12
+  real    :: a12
   integer :: c, c1, c2, s 
 !==============================================================================!
 
-  do c = 1, A % row(grid % n_cells+1)  ! this is number of nozero entries + 1
-    A % val(c) = 0.0
+  do c = 1, a % row(grid % n_cells+1)  ! this is number of nozero entries + 1
+    a % val(c) = 0.0
   end do
 
   !-----------------------------!
@@ -30,19 +29,19 @@
     c2 = grid % faces_c(2,s)
 
     if(c2  > 0) then
-      A12 = dt * f_coef(s) 
-      A % val(A % pos(1,s)) = -A12
-      A % val(A % pos(2,s)) = -A12
-      A % val(A % dia(c1)) =                                            &
-      A % val(A % dia(c1)) +  A12
-      A % val(A % dia(c2)) =                                            &
-      A % val(A % dia(c2)) +  A12
+      a12 = dt * f_coef(s) 
+      a % val(a % pos(1,s)) = -a12
+      a % val(a % pos(2,s)) = -a12
+      a % val(a % dia(c1)) =                                            &
+      a % val(a % dia(c1)) +  a12
+      a % val(a % dia(c2)) =                                            &
+      a % val(a % dia(c2)) +  a12
     else
       if(Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
-        A12 = dt * f_coef(s)
-        A % val(A % dia(c1)) =                                          &
-        A % val(A % dia(c1)) +  A12
-        A % bou(c2) = -A12
+        a12 = dt * f_coef(s)
+        a % val(a % dia(c1)) =                                          &
+        a % val(a % dia(c1)) +  a12
+        a % bou(c2) = -a12
       end if
     end if 
 

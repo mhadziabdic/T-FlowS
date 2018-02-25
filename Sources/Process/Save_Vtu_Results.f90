@@ -4,7 +4,7 @@
 !   Writes results in VTU file format (for VisIt and Paraview)                 !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use allp_mod
   use Flow_Mod
   use rans_mod
@@ -206,7 +206,7 @@
   write(9,'(a,a)') IN_4, '<DataArray type="UInt8" Name="materials"' //  &
                          ' format="ascii">'
   do c = 1, grid % n_cells
-    write(9,'(a,i9)') IN_5, material(c)
+    write(9,'(a,i9)') IN_5, grid % material(c)
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'
 

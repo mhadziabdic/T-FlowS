@@ -4,7 +4,6 @@
 !   Modifies the fluxes at outflow boundaries to conserve the mass.            ! 
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use Comm_Mod
@@ -32,17 +31,17 @@
                             v % n(c2)*grid % sy(s) + &
                             w % n(c2)*grid % sz(s) )
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW) then
-          if(material(c1) == m) then 
+          if(grid % material(c1) == m) then 
             bulk(m) % mass_in = bulk(m) % mass_in - flux(s)
           end if
         endif
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE .and. flux(s) < 0.0) then
-          if(material(c1) == m) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE .and. flux(s) < 0.) then
+          if(grid % material(c1) == m) then
             bulk(m) % mass_in = bulk(m) % mass_in - flux(s)
           end if
         end if
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .and. flux(s) < 0.0) then
-          if(material(c1) == m) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .and. flux(s) < 0.) then
+          if(grid % material(c1) == m) then
             bulk(m) % mass_in = bulk(m) % mass_in - flux(s)
           end if
         end if
@@ -69,15 +68,15 @@
           flux(s) = density * ( u % n(c2)*grid % sx(s) +  & 
                                 v % n(c2)*grid % sy(s) +  &
                                 w % n(c2)*grid % sz(s) )
-          if(material(c1) == m) then
+          if(grid % material(c1) == m) then
             bulk(m) % mass_out = bulk(m) % mass_out + flux(s)
           end if
         end if
-        if(Grid_Mod_Bnd_Cond_Type(grid, c2) == CONVECT .and. flux(s) > 0.0) then
+        if(Grid_Mod_Bnd_Cond_Type(grid, c2) == CONVECT .and. flux(s) > 0.) then
           flux(s) = density * ( u % n(c2)*grid % sx(s) +  & 
                                 v % n(c2)*grid % sy(s) +  &
                                 w % n(c2)*grid % sz(s) )
-          if(material(c1) == m) then
+          if(grid % material(c1) == m) then
             bulk(m) % mass_out = bulk(m) % mass_out + flux(s)
           end if
         end if
@@ -85,8 +84,8 @@
         flux(s) = density * ( u % n(c2)*grid % sx(s) +  & 
                               v % n(c2)*grid % sy(s) +  &
                               w % n(c2)*grid % sz(s) )
-        if(Grid_Mod_Bnd_Cond_Type(grid, c2) == PRESSURE .and. flux(s) > 0.0) then
-          if(material(c1) == m) then
+        if(Grid_Mod_Bnd_Cond_Type(grid, c2) == PRESSURE .and. flux(s) > 0.) then
+          if(grid % material(c1) == m) then
             bulk(m) % mass_out = bulk(m) % mass_out + flux(s)
           end if
         endif
@@ -108,7 +107,7 @@
         if(Grid_Mod_Bnd_Cond_Type(grid, c2) == OUTFLOW  .or.  &
            Grid_Mod_Bnd_Cond_Type(grid, c2) == CONVECT  .or.  &
            Grid_Mod_Bnd_Cond_Type(grid, c2) == PRESSURE) then
-          if(material(c1) == m) then
+          if(grid % material(c1) == m) then
             u % n(c2) = u % n(c2) * fac(m)
             v % n(c2) = v % n(c2) * fac(m)
             w % n(c2) = w % n(c2) * fac(m)

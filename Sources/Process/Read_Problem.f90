@@ -5,7 +5,6 @@
 !   this separate from reading the rest of command file.)                      !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use Comm_Mod, only: this_proc

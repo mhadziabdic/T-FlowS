@@ -4,7 +4,6 @@
 !   Calculate total surface of the monitoring plane                            !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Grid_Mod
   use Comm_Mod
 !------------------------------------------------------------------------------!
@@ -31,7 +30,8 @@
       c2 = grid % faces_c(2,s)
       if(c2 > 0 .or.  &
          c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid, c2) == BUFFER) then
-        if( (material(c1) == m) .and. (material(c1) == material(c2)) ) then
+        if( (grid % material(c1) == m) .and.  &
+            (grid % material(c1) == grid % material(c2)) ) then
           xc1=grid % xc(c1)
           yc1=grid % yc(c1)
           zc1=grid % zc(c1)
@@ -85,7 +85,7 @@
             end if
           end if
 
-        end if  ! material 1&2
+        end if  
       end if  ! (c2 > 0 .and. ... )
     end do
 

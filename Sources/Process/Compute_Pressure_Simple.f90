@@ -4,7 +4,6 @@
 !   Forms and solves pressure equation for the S.I.M.p.L.E. method.            !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use Comm_Mod
   use Grid_Mod,     only: Grid_Type
@@ -17,7 +16,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, niter
-  real              :: u_f, v_f, w_f, A12, fs
+  real              :: u_f, v_f, w_f, a12, fs
   real              :: p_max, p_min
   real              :: ini_res, tol, mass_err
   real              :: smdpn
@@ -40,15 +39,15 @@
 !   
 !   Dimensions of certain variables
 !
-!     APP            [ms]
+!     app            [ms]
 !     pp             [kg/ms^2]
 !     b              [kg/s]
-!     Flux           [kg/s]
+!     flux           [kg/s]
 !   
 !------------------------------------------------------------------------------!
 
   ! Initialize matrix and right hand side
-  A % val = 0.0
+  a % val = 0.0
   b = 0.0 
 
   !-----------------------------------------!
@@ -81,19 +80,19 @@
 
       ! Calculate coeficients for the system matrix
       if(c2  > 0) then 
-        A12 = 0.5 * density * smdpn *           &
-           (  grid % vol(c1) / A % sav(c1)       &
-            + grid % vol(c2) / A % sav(c2) )  
-        A % val(A % pos(1,s))  = -A12
-        A % val(A % pos(2,s))  = -A12
-        A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
-        A % val(A % dia(c2)) = A % val(A % dia(c2)) +  A12
+        a12 = 0.5 * density * smdpn *           &
+           (  grid % vol(c1) / a % sav(c1)       &
+            + grid % vol(c2) / a % sav(c2) )  
+        a % val(a % pos(1,s))  = -a12
+        a % val(a % pos(2,s))  = -a12
+        a % val(a % dia(c1)) = a % val(a % dia(c1)) +  a12
+        a % val(a % dia(c2)) = a % val(a % dia(c2)) +  a12
       else 
-        A12 = 0.5 * density * smdpn *           &
-             (  grid % vol(c1) / A % sav(c1)     &
-              + grid % vol(c2) / A % sav(c2) )  
-        A % bou(c2)  = -A12
-        A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
+        a12 = 0.5 * density * smdpn *           &
+             (  grid % vol(c1) / a % sav(c1)     &
+              + grid % vol(c2) / a % sav(c2) )  
+        a % bou(c2)  = -a12
+        a % val(a % dia(c1)) = a % val(a % dia(c1)) +  a12
       end if 
 
       ! Interpolate pressure gradients
@@ -105,8 +104,8 @@
       flux(s) = density * (  u_f*grid % sx(s)       &
                            + v_f*grid % sy(s)       &
                            + w_f*grid % sz(s) )     &
-              + A12 * (p % n(c1) - p % n(c2))   &
-              + A12 * (dPxi + dPyi + dPzi)                            
+              + a12 * (p % n(c1) - p % n(c2))   &
+              + a12 * (dPxi + dPyi + dPzi)                            
 
       b(c1)=b(c1)-flux(s)
       if(c2  > 0) b(c2)=b(c2)+flux(s)
@@ -137,8 +136,8 @@
               / (  grid % sx(s) * grid % dx(s)   &
                  + grid % sy(s) * grid % dy(s)   &
                  + grid % sz(s) * grid % dz(s) )  
-        A12 = density * smdpn * grid % vol(c1) / A % sav(c1)
-        A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
+        a12 = density * smdpn * grid % vol(c1) / a % sav(c1)
+        a % val(a % dia(c1)) = a % val(a % dia(c1)) +  a12
       else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) then
         u_f = u % n(c1)
         v_f = v % n(c1)
@@ -153,8 +152,8 @@
               / ( grid % sx(s) * grid % dx(s)   &
                 + grid % sy(s) * grid % dy(s)   &
                 + grid % sz(s) * grid % dz(s) )
-        A12 = density * smdpn * grid % vol(c1) / A % sav(c1)
-        A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
+        a12 = density * smdpn * grid % vol(c1) / a % sav(c1)
+        a % val(a % dia(c1)) = a % val(a % dia(c1)) +  a12
       else  ! it is SYMMETRY
         flux(s) = 0.0
       end if
@@ -176,7 +175,7 @@
   call Control_Mod_Preconditioner_For_System_Matrix(precond)
 
   niter = 40
-  call bicg(A, pp % n, b, precond, niter, tol, ini_res, pp % res)
+  call bicg(a, pp % n, b, precond, niter, tol, ini_res, pp % res)
 
   call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, pp % res)   
 

@@ -5,7 +5,6 @@
 !   boundary conditions.                                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod
   use Domain_Mod
   use Grid_Mod
@@ -31,7 +30,7 @@
 
   ! Initialize all the material markers to 1 
   do c = 1, grid % n_cells
-    material(c) = 1
+    grid % material(c) = 1
   end do
 
   ! This is too much memory but that's OK 
@@ -138,7 +137,7 @@
         do j=js,je
           do k=ks,ke
             c = dom % blocks(b) % n_cells + (k-1)*ci*cj + (j-1)*ci + i   
-            material(c) = n_mat
+            grid % material(c) = n_mat
           end do
         end do
       end do

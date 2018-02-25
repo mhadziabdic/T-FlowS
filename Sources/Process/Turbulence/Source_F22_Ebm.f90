@@ -5,7 +5,6 @@
 !   and imposing  boundary condition forf22                                    !
 !------------------------------------------------------------------------------!
 !----------------------------------[Moules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use rans_mod
   use Grid_Mod

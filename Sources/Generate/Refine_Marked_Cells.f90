@@ -4,7 +4,6 @@
 !   Refine the marked cells.                                                   !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -113,14 +112,14 @@
       cr7=CelMar(c)-1
       cr8=CelMar(c)
 
-      material(cr1) = material(c) 
-      material(cr2) = material(c) 
-      material(cr3) = material(c) 
-      material(cr4) = material(c) 
-      material(cr5) = material(c) 
-      material(cr6) = material(c) 
-      material(cr7) = material(c) 
-      material(cr8) = material(c) 
+      grid % material(cr1) = grid % material(c) 
+      grid % material(cr2) = grid % material(c) 
+      grid % material(cr3) = grid % material(c) 
+      grid % material(cr4) = grid % material(c) 
+      grid % material(cr5) = grid % material(c) 
+      grid % material(cr6) = grid % material(c) 
+      grid % material(cr7) = grid % material(c) 
+      grid % material(cr8) = grid % material(c) 
 
       !-----------------------------------------------!
       !   Internal links do not depend on neighbors   !
@@ -930,7 +929,7 @@
         grid % cells_n( n, NewN(c) ) = grid % cells_n( n, c )
       end do
 
-      material( NewN(c) ) = material( c )  ! -> never checked !
+      grid % material( NewN(c) ) = grid % material( c )  ! -> never checked !
       level( NewN(c) )    = level( c )     ! -> never checked !
     end if
   end do

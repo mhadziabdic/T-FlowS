@@ -4,7 +4,7 @@
 !   Reads the Fluents (Gambits) neutral file format.                           !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod 
+  use Name_Mod, only: problem_name
   use gen_mod 
   use Grid_Mod
   use Tokenizer_Mod
@@ -129,7 +129,7 @@
     call Tokenizer_Mod_Read_Line(9)        ! 0
     read(9,'(10I8)') (temp(i), i = 1, dum1)
     do i = 1, dum1
-      material(temp(i)) = j
+      grid % material(temp(i)) = j
     end do
     call Tokenizer_Mod_Read_Line(9)        ! ENDOFSECTION
   end do

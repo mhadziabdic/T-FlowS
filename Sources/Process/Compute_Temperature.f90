@@ -4,7 +4,6 @@
 !   Purpose: Solve transport equation for scalar (such as temperature)         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use rans_mod
   use Comm_Mod
@@ -267,7 +266,7 @@
     ! Gradients on the cell face 
     if(c2 > 0 .or.  &
        c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
-      if(material(c1) == material(c2)) then
+      if(grid % material(c1) == grid % material(c2)) then
         phixS1 = fw(s)*phi_x(c1) + (1.0-fw(s))*phi_x(c2) 
         phiyS1 = fw(s)*phi_y(c1) + (1.0-fw(s))*phi_y(c2)
         phizS1 = fw(s)*phi_z(c1) + (1.0-fw(s))*phi_z(c2)
@@ -311,7 +310,7 @@
       if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
-          CONeff1 = CONwall(c1)
+          CONeff1 = con_wall(c1)
           CONeff2 = CONeff1
         end if
       end if
@@ -338,7 +337,7 @@
     ! Straight diffusion part 
     if(ini.lt.2) then
       if(c2.gt.0) then
-        if(material(c1) == material(c2)) then
+        if(grid % material(c1) == grid % material(c2)) then
           phi % d_o(c1) = phi % d_o(c1)  &
                        + CONeff1*f_coef(s)*(phi % n(c2) - phi % n(c1)) 
           phi % d_o(c2) = phi % d_o(c2)  &
@@ -353,7 +352,7 @@
         end if
       else
         if(Grid_Mod_Bnd_Cond_Type(grid,c2).ne.SYMMETRY) then 
-          if(material(c1) == material(c2)) then
+          if(grid % material(c1) == grid % material(c2)) then
             phi % d_o(c1) = phi % d_o(c1)  &
                 + CONeff1*f_coef(s)*(phi % n(c2) - phi % n(c1))   
           else
@@ -375,7 +374,7 @@
         (td_diffusion == FULLY_IMPLICIT) ) then
 
       if(td_diffusion == CRANK_NICOLSON) then 
-        if(material(c1) == material(c2)) then
+        if(grid % material(c1) == grid % material(c2)) then
           A12 = .5*CONeff1*f_coef(s)  
           A21 = .5*CONeff2*f_coef(s)  
         else
@@ -385,7 +384,7 @@
       end if
 
       if(td_diffusion == FULLY_IMPLICIT) then 
-        if(material(c1) == material(c2)) then
+        if(grid % material(c1) == grid % material(c2)) then
           A12 = CONeff1*f_coef(s)  
           A21 = CONeff2*f_coef(s)  
         else
@@ -403,7 +402,7 @@
       if(c2.gt.0) then
         A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
         A % val(A % dia(c2)) = A % val(A % dia(c2)) + A21
-        if(material(c1) == material(c2)) then
+        if(grid % material(c1) == grid % material(c2)) then
           A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - A12
           A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - A21
         else
@@ -424,7 +423,7 @@
         ! to other subdomains are filled here.
         else if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. BUFFER) then
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
-          if(material(c1) == material(c2)) then
+          if(grid % material(c1) == grid % material(c2)) then
             A % bou(c2) = -A12  ! cool parallel stuff
           else
             b(c1) = b(c1) + A12*phi_face(s)

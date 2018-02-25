@@ -4,7 +4,6 @@
 !   Computes the turbulent viscosity for RANS models.                          !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use Comm_Mod
@@ -64,15 +63,15 @@
         u_plus = log(y_plus*Elog)/(kappa)
    
         if(y_plus< 3.0) then
-          VISwall(c1) = vis_t(c1) + viscosity  
+          vis_wall(c1) = vis_t(c1) + viscosity  
         else
-          VISwall(c1) = Ynd(c1)*viscosity/(y_plus*exp(-1.0*g_blend) &
+          vis_wall(c1) = Ynd(c1)*viscosity/(y_plus*exp(-1.0*g_blend) &
                         +u_plus*exp(-1.0/g_blend) + TINY)
         end if
 
         if(ROUGH == YES) then
           u_plus = log((grid % wall_dist(c1)+Zo)/Zo)/(kappa + TINY) + TINY
-          VISwall(c1) = min(y_plus*viscosity*kappa/LOG((grid % wall_dist(c1)+Zo)/Zo),1.0e+6*viscosity)
+          vis_wall(c1) = min(y_plus*viscosity*kappa/LOG((grid % wall_dist(c1)+Zo)/Zo),1.0e+6*viscosity)
        end if
 
         if(heat_transfer == YES) then
@@ -82,7 +81,7 @@
           pr_mol = viscosity * capacity / conductivity
           beta = 9.24 * ((pr_mol/pr_turb)**0.75 - 1.0) * (1.0 + 0.28 * exp(-0.007*pr_mol/pr_turb))
           ebf = 0.01 * (pr_mol*y_plus)**4.0 / (1.0 + 5.0 * pr_mol**3.0 * y_plus) + TINY
-          CONwall(c1) = y_plus*viscosity*capacity/(y_plus*pr_mol*exp(-1.0 * ebf) &
+          con_wall(c1) = y_plus*viscosity*capacity/(y_plus*pr_mol*exp(-1.0 * ebf) &
                       + (u_plus + beta)*pr_turb*exp(-1.0/ebf) + TINY)
         end if
       end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
@@ -90,6 +89,6 @@
   end do
  
   call Comm_Mod_Exchange(grid, vis_t)  
-  call Comm_Mod_Exchange(grid, VISwall)  
+  call Comm_Mod_Exchange(grid, vis_wall)  
 
   end subroutine

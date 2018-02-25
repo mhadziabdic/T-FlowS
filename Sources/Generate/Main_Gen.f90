@@ -4,7 +4,6 @@
 !   Block structured mesh generation and unstructured cell refinement.         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod
   use Domain_Mod  ! domain as defined in ".dom" file.
   use Grid_Mod

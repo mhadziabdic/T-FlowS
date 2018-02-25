@@ -20,7 +20,6 @@
 !    vis_t = CmuD * rho * Tsc  * vv                                            !
 !                                                                              !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use Comm_Mod
@@ -58,7 +57,7 @@
              Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
             Ck = sqrt(tau_wall(c1))
             y_plus = density*Ck*grid % wall_dist(c1)/viscosity 
-            VISwall(c1) = y_plus*viscosity*kappa/log(Elog*y_plus)
+            vis_wall(c1) = y_plus*viscosity*kappa/log(Elog*y_plus)
           end if
         end if
       end do
@@ -71,7 +70,7 @@
              Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
             Ck = sqrt(tau_wall(c1))
             y_plus = density*Ck*(grid % wall_dist(c1)+Zo)/viscosity
-            VISwall(c1) = min(y_plus*viscosity*kappa/log((grid % wall_dist(c1)+Zo)/Zo),1.0e+6*viscosity)
+            vis_wall(c1) = min(y_plus*viscosity*kappa/log((grid % wall_dist(c1)+Zo)/Zo),1.0e+6*viscosity)
           end if
         end if
       end do
@@ -94,7 +93,7 @@
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
           pr_mol = viscosity * capacity / conductivity
-          CONwall(c1) = viscosity * capacity / pr_mol   
+          con_wall(c1) = viscosity * capacity / pr_mol   
         end if
       end if
     end do

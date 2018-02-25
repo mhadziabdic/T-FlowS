@@ -10,7 +10,6 @@
 !------------------------------------------------------------------------------!
 !   Writes: name.cns, name.geo                                                 !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod
   use div_mod
   use Grid_Mod
@@ -109,7 +108,7 @@
   do c = 1, grid % n_cells
     if(NewC(c) /= 0) then
       count=count+1
-      iwork(count,1) = material(c)
+      iwork(count,1) = grid % material(c)
     end if
   end do 
   write(9) (iwork(c,1), c=1,count)
@@ -119,14 +118,14 @@
   do c = -1,-grid % n_bnd_cells, -1
     if(NewC(c) /= 0) then
       count=count+1
-      iwork(count,1) = material(c)
+      iwork(count,1) = grid % material(c)
     end if
   end do
 
   ! Buffer boundary cell centers
   do s = 1, n_buf_cells_sub
     count=count+1
-    iwork(count,1) = material(BuReIn(s))
+    iwork(count,1) = grid % material(BuReIn(s))
   end do
   write(9) (iwork(c,1), c=1,count)
                       

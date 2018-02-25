@@ -4,7 +4,6 @@
 !   Computes the source terms in kin transport equation for k-epsilon model    !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use Comm_Mod

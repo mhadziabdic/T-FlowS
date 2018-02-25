@@ -4,7 +4,6 @@
 !   Update variables on the boundaries (boundary cells) where needed.          !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use rans_mod
@@ -16,7 +15,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c1, c2, s
-  real              :: qx, qy, qz, Nx, Ny, Nz, Stot, CONeff, ebf, y_plus
+  real              :: qx, qy, qz, nx, ny, nz, Stot, CONeff, ebf, y_plus
   real              :: Prmol, beta, u_plus, Prt
 !==============================================================================!
 
@@ -39,16 +38,16 @@
       ! be sure that is handled only via graPHI and NewUVW functions)
       if( Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  &
           Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE ) then
-        U % n(c2) = U % n(c1)
-        V % n(c2) = V % n(c1)
-        W % n(c2) = W % n(c1)
+        u % n(c2) = u % n(c1)
+        v % n(c2) = v % n(c1)
+        w % n(c2) = w % n(c1)
         if(heat_transfer == YES) t % n(c2) = t % n(c1)
       end if
 
       if( Grid_Mod_Bnd_Cond_Type(grid,c2) == SYMMETRY ) then
-        U % n(c2) = U % n(c1)
-        V % n(c2) = V % n(c1)
-        W % n(c2) = W % n(c1)
+        u % n(c2) = u % n(c1)
+        v % n(c2) = v % n(c1)
+        w % n(c2) = w % n(c1)
         if(heat_transfer == YES) t % n(c2) = t % n(c1)
       end if
 
@@ -58,7 +57,7 @@
         if ( Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  & 
              Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .or.  &
              Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE ) then
-          VIS % n(c2) = VIS % n(c1) 
+          vis % n(c2) = vis % n(c1) 
         end if
       end if
 
@@ -137,12 +136,12 @@
         Stot = sqrt(  grid % sx(s)*grid % sx(s)  &
                     + grid % sy(s)*grid % sy(s)  &
                     + grid % sz(s)*grid % sz(s))
-        Nx = grid % sx(s)/Stot
-        Ny = grid % sy(s)/Stot
-        Nz = grid % sz(s)/Stot
-        qx = t % q(c2) * Nx 
-        qy = t % q(c2) * Ny
-        qz = t % q(c2) * Nz
+        nx = grid % sx(s)/Stot
+        ny = grid % sy(s)/Stot
+        nz = grid % sz(s)/Stot
+        qx = t % q(c2) * nx 
+        qy = t % q(c2) * ny
+        qz = t % q(c2) * nz
         CONeff = conductivity                 &
                + capacity*vis_t(c1)/Prt
         if(turbulence_model == K_EPS_ZETA_F .or.  &
@@ -154,7 +153,7 @@
                      * (1.0 + 0.28 * exp(-0.007*Prmol/Prt))
           ebf = 0.01 * (Prmol*y_plus)**4.0          &
                      / (1.0 + 5.0 * Prmol**3 * y_plus) + TINY
-          CONwall(c1) = y_plus * viscosity * capacity   &
+          con_wall(c1) = y_plus * viscosity * capacity   &
                       / (y_plus * Prmol * exp(-1.0 * ebf)    &
                       + (u_plus + beta) * Prt * exp(-1.0 / ebf) + TINY)
           if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
@@ -162,13 +161,13 @@
                      * (  qx * grid % dx(s)                  &
                         + qy * grid % dy(s)                  &
                         + qz * grid % dz(s))                 &
-                     / CONwall(c1)
+                     / con_wall(c1)
             Tflux = t % q(c2)
           else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL) then
             t % q(c2) = ( t % n(c2) - t % n(c1) ) * CONeff  &
-                      / (  Nx * grid % dx(s)                &
-                         + Ny * grid % dy(s)                &
-                         + Nz * grid % dz(s) )
+                      / (  nx * grid % dx(s)                &
+                         + ny * grid % dy(s)                &
+                         + nz * grid % dz(s) )
             Tflux = t % q(c2)
           end if
         else
@@ -180,9 +179,9 @@
             Tflux = t % q(c2) 
           else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL) then
             t % q(c2) = ( t % n(c2) - t % n(c1) ) * CONeff  &
-                      / (  Nx * grid % dx(s)                &
-                         + Ny * grid % dy(s)                &
-                         + Nz * grid % dz(s) )
+                      / (  nx * grid % dx(s)                &
+                         + ny * grid % dy(s)                &
+                         + nz * grid % dz(s) )
             Tflux = t % q(c2) 
           end if
         end if
@@ -192,16 +191,16 @@
       !   Copy boundaries   !
       !---------------------!
       if(grid % bnd_cond % copy_c(c2) /= 0) then
-        U % n(c2) = U % n(grid % bnd_cond % copy_c(c2))
-        V % n(c2) = V % n(grid % bnd_cond % copy_c(c2))
-        W % n(c2) = W % n(grid % bnd_cond % copy_c(c2))
+        u % n(c2) = u % n(grid % bnd_cond % copy_c(c2))
+        v % n(c2) = v % n(grid % bnd_cond % copy_c(c2))
+        w % n(c2) = w % n(grid % bnd_cond % copy_c(c2))
 
         if(heat_transfer == YES)  &
           t % n(c2) = t % n(grid % bnd_cond % copy_c(c2))
 
         if(turbulence_model == SPALART_ALLMARAS .or.   &
            turbulence_model == DES_SPALART) &
-          VIS % n(c2) = VIS % n(grid % bnd_cond % copy_c(c2)) 
+          vis % n(c2) = vis % n(grid % bnd_cond % copy_c(c2)) 
 
         if(turbulence_model == K_EPS_V2 .or.  &
            turbulence_model == K_EPS_ZETA_F     .or.  &

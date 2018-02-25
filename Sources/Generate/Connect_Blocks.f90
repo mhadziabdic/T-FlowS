@@ -4,7 +4,6 @@
 !   Solve the cell connectivity after block by block grid generation           !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod
   use Domain_Mod
   use Grid_Mod

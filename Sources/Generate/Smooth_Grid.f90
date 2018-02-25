@@ -4,7 +4,6 @@
 !   Smooths the grid lines by a Laplacian-like algorythm.                      !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use gen_mod
   use Grid_Mod
@@ -47,7 +46,7 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if(c2 < 0 .or. material(c1) /= material(c2)) then 
+    if(c2 < 0 .or. grid % material(c1) /= grid % material(c2)) then 
       do n = 1, grid % faces_n_nodes(s)  ! for quadrilateral an triangular faces
         walln(grid % faces_n(n,s)) = 0.0
       end do

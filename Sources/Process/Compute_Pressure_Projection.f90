@@ -4,7 +4,6 @@
 !   Forms and solves pressure equation for the fractional step method.         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use Grid_Mod,     only: Grid_Type  
   use Comm_Mod
@@ -20,7 +19,7 @@
   real              :: p_max, p_min
   real              :: ini_res, tol, mass_err
   real              :: u_f, v_f, w_f, fs
-  real              :: A12
+  real              :: a12
   character(len=80) :: coupling
   character(len=80) :: precond
   real              :: urf           ! under-relaxation factor                 
@@ -40,15 +39,15 @@
 !   
 !   Dimensions of certain variables
 !
-!     APP            [ms]
+!     app            [ms]
 !     pp,            [kg/ms^2]
 !     b              [kg/s]
-!     Flux           [kg/s]
+!     flux           [kg/s]
 !   
 !------------------------------------------------------------------------------!
 
   ! Initialize matrix and source term
-  A % val = 0.0
+  a % val = 0.0
   b = 0.0 
 
   !-------------------------------------------------!
@@ -64,41 +63,41 @@
         c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then 
 
       ! Extract the "centred" pressure terms from cell velocities
-      u_f = fs*      (u % n(c1) + p % x(c1)*grid % vol(c1)/A % sav(c1))       &
-          + (1.0-fs)*(u % n(c2) + p % x(c2)*grid % vol(c2)/A % sav(c2))
+      u_f = fs*      (u % n(c1) + p % x(c1)*grid % vol(c1)/a % sav(c1))       &
+          + (1.0-fs)*(u % n(c2) + p % x(c2)*grid % vol(c2)/a % sav(c2))
 
-      v_f = fs*      (v % n(c1) + p % y(c1)*grid % vol(c1)/A % sav(c1))       &
-          + (1.0-fs)*(v % n(c2) + p % y(c2)*grid % vol(c2)/A % sav(c2))
+      v_f = fs*      (v % n(c1) + p % y(c1)*grid % vol(c1)/a % sav(c1))       &
+          + (1.0-fs)*(v % n(c2) + p % y(c2)*grid % vol(c2)/a % sav(c2))
 
-      w_f = fs*      (w % n(c1) + p % z(c1)*grid % vol(c1)/A % sav(c1))       &
-          + (1.0-fs)*(w % n(c2) + p % z(c2)*grid % vol(c2)/A % sav(c2))
+      w_f = fs*      (w % n(c1) + p % z(c1)*grid % vol(c1)/a % sav(c1))       &
+          + (1.0-fs)*(w % n(c2) + p % z(c2)*grid % vol(c2)/a % sav(c2))
 
       ! Add the "staggered" pressure terms to face velocities
       u_f = u_f + (p % n(c1) - p % n(c2))  &
-                * grid % sx(s) * ( fs / A % sav(c1) + (1.0-fs) / A % sav(c2) )
+                * grid % sx(s) * ( fs / a % sav(c1) + (1.0-fs) / a % sav(c2) )
       v_f = v_f + (p % n(c1) - p % n(c2))  &
-                * grid % sy(s) * ( fs / A % sav(c1) + (1.0-fs) / A % sav(c2) )
+                * grid % sy(s) * ( fs / a % sav(c1) + (1.0-fs) / a % sav(c2) )
       w_f = w_f + (p % n(c1) - p % n(c2))  &
-                * grid % sz(s) * ( fs / A % sav(c1) + (1.0-fs) / A % sav(c2) )
+                * grid % sz(s) * ( fs / a % sav(c1) + (1.0-fs) / a % sav(c2) )
 
       ! Now calculate the flux through cell face
       flux(s) = density * ( u_f * grid % sx(s) +  &
                             v_f * grid % sy(s) +  &
                             w_f * grid % sz(s) )
 
-      A12 = density * (  grid % sx(s) * grid % sx(s)  &
+      a12 = density * (  grid % sx(s) * grid % sx(s)  &
                        + grid % sy(s) * grid % sy(s)  &
                        + grid % sz(s) * grid % sz(s))
-      A12 = A12 * (fs/A % sav(c1) + (1.-fs)/A % sav(c2))
+      a12 = a12 * (fs/a % sav(c1) + (1.-fs)/a % sav(c2))
 
       if(c2  > 0) then 
-        A % val(A % pos(1,s)) = -A12
-        A % val(A % pos(2,s)) = -A12
-        A % val(A % dia(c1))  = A % val(A % dia(c1)) +  A12
-        A % val(A % dia(c2))  = A % val(A % dia(c2)) +  A12
+        a % val(a % pos(1,s)) = -a12
+        a % val(a % pos(2,s)) = -a12
+        a % val(a % dia(c1))  = a % val(a % dia(c1)) +  a12
+        a % val(a % dia(c2))  = a % val(a % dia(c2)) +  a12
       else
-        A % bou(c2) = -A12
-        A % val(A % dia(c1)) = A % val(A % dia(c1)) +  A12
+        a % bou(c2) = -a12
+        a % val(a % dia(c1)) = a % val(a % dia(c1)) +  a12
       endif
 
       b(c1)=b(c1)-flux(s)
@@ -146,7 +145,7 @@
   if(coupling == 'PROJECTION') niter = 200
   if(coupling == 'SIMPLE')     niter =  15
 
-  call Cg(A, pp % n, b, precond, niter, tol, ini_res, pp % res)
+  call Cg(a, pp % n, b, precond, niter, tol, ini_res, pp % res)
 
   call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, pp % res)   
 

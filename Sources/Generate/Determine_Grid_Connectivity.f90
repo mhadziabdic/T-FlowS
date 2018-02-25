@@ -4,7 +4,6 @@
 !   Determines the topology of the cells, faces and boundary cells.            !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -43,7 +42,7 @@
         grid % cells_c(m,c)  = -grid % n_bnd_cells
 
         ! Material color
-        material(-grid % n_bnd_cells) = material(c)
+        grid % material(-grid % n_bnd_cells) = grid % material(c)
 
       end if 
     end do
@@ -59,9 +58,16 @@
   do c1=1, grid % n_cells
     do m = 1, 24 ! through all the neighbouring cells
       c2=grid % cells_c(m,c1)
-      if( (pass==1).and.(c2>c1).and.(material(c1)==material(c2)) .or. &
-          (pass==2).and.(c2>c1).and.(material(c1)/=material(c2)) .or. &
-          (pass==3).and.(c2<0) ) then
+      if( (pass == 1) .and.                             &
+          (c2>c1)     .and.                             &
+          (grid % material(c1) == grid % material(c2))  &
+          .or.                                          &
+          (pass == 2) .and.                             &
+          (c2>c1)     .and.                             &
+          (grid % material(c1) /= grid % material(c2))  &
+          .or.                                          &
+          (pass==3) .and.                               &
+          (c2<0) ) then
         grid % n_faces=grid % n_faces+1
 
         ! Which volumes are connected with side grid % n_faces
@@ -99,7 +105,7 @@
             grid % faces_n(4,grid % n_faces) = grid % cells_n( lfn(m,4), c1 )
           end if
         else
-          grid % faces_n(1, grid % n_faces) = grid % cells_n( lfn(m,1), c1 )
+          grid % faces_n(1,grid % n_faces) = grid % cells_n( lfn(m,1), c1 )
           grid % faces_n(2,grid % n_faces) = grid % cells_n( lfn(m,2), c1 )
           grid % faces_n(3,grid % n_faces) = grid % cells_n( lfn(m,3), c1 )
           grid % faces_n(4,grid % n_faces) = grid % cells_n( lfn(m,4), c1 )

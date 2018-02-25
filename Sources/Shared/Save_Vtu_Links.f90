@@ -9,9 +9,9 @@
 !   can be visualised  more easily in GMV.                                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod, only: problem_name
-  use div_mod, only: BuSeIn, BuReIn
-  use gen_mod, only: NewN, NewC, NewS
+  use Name_Mod, only: problem_name
+  use div_mod,  only: BuSeIn, BuReIn
+  use gen_mod,  only: NewN, NewC, NewS
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -34,9 +34,6 @@
   character(len= 6), parameter :: IN_3 = '      '
   character(len= 8), parameter :: IN_4 = '        '
   character(len=10), parameter :: IN_5 = '          '
-! character(len=12), parameter :: IN_6 = '            '
-! character(len=14), parameter :: IN_7 = '              '
-! character(len=16), parameter :: IN_8 = '                '
 !==============================================================================!
 
   !----------------------!

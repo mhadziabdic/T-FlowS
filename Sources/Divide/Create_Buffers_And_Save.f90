@@ -5,7 +5,6 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use allp_mod
-  use all_mod
   use gen_mod 
   use div_mod
   use Comm_Mod, only: nbb_s, nbb_e
@@ -294,7 +293,7 @@
   call Grid_Mod_Sort_Faces_By_Index(grid, NewS(1), grid % n_faces)
 
   call Sort_Int_By_Index(proces(1),  NewC(1), grid % n_cells)
-  call Sort_Int_By_Index(material(1),NewC(1), grid % n_cells)
+  call Sort_Int_By_Index(grid % material(1),NewC(1), grid % n_cells)
 
   ! This is important for plotting the grid with EpsPar()
   call Sort_Real_By_Index(grid % dx(1), NewS(1), grid % n_faces)

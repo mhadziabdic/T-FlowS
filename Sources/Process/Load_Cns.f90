@@ -4,7 +4,6 @@
 !   Reads: .cns file.                                                          !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -60,9 +59,8 @@
             c = 1, grid % n_cells)
 
   ! Cells' materials
-  allocate (material(-grid % n_bnd_cells:grid % n_cells))
-  read(9) (material(c), c =  1, grid % n_cells)
-  read(9) (material(c), c = -1,-grid % n_bnd_cells,-1)
+  read(9) (grid % material(c), c =  1, grid % n_cells)
+  read(9) (grid % material(c), c = -1,-grid % n_bnd_cells,-1)
 
   ! Faces
   read(9) (grid % faces_n_nodes(s), s = 1, grid % n_faces)

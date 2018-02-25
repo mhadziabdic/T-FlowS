@@ -4,7 +4,6 @@
 !   Calculates time averaged velocity and velocity fluctuations.               !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use les_mod

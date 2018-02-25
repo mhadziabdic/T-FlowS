@@ -4,7 +4,6 @@
 !   Returns the local number (1-8) of node n in cell c.                        !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod
   use Grid_Mod
 !------------------------------------------------------------------------------! 
@@ -42,8 +41,8 @@
   Which_Node = 0
   print *, '# Which node: Trouble, node not found !'
   print *, '# x, y, z = ', grid % xn(n),  &
-                             grid % yn(n),  &
-                             grid % zn(n)
+                           grid % yn(n),  &
+                           grid % zn(n)
   print *, '# cell    = ', c, level(c)
   return
 

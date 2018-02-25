@@ -4,7 +4,7 @@
 ! Finds coordinates of all the planes for the channel flow.                    !
 ! It assumes that homogeneous directions of the flow are x and y.              !
 !------------------------------------------------------------------------------!
-  use all_mod, only: problem_name
+  use Name_Mod, only: problem_name
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none

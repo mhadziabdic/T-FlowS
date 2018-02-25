@@ -4,7 +4,7 @@
 !   Unstructured Finite Volume 'LES'/RANS solver.                                !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use allp_mod
   use Flow_Mod
   use les_mod
@@ -44,7 +44,7 @@
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine UserProbe2D(namAut)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-      use all_mod
+      use Name_Mod
       use Flow_Mod
       implicit none
       character, optional :: namAut*(*)

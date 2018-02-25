@@ -4,7 +4,6 @@
 !   Allocates additional memory for Divisor                                    !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod 
   use div_mod
   use Grid_Mod

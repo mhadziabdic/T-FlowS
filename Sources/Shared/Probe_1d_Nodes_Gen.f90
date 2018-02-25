@@ -4,7 +4,7 @@
 !   This subroutine finds the coordinate of nodes in non-homogeneous           !
 !   direction and write them in file name.1D                                   !
 !------------------------------------------------------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use gen_mod
   use Grid_Mod
 !------------------------------------------------------------------------------!

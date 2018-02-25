@@ -89,6 +89,6 @@
 
   integer,parameter :: MAXM=100 
   integer :: Cm(MAXM), Nmon
-  real    :: NOM(MAXM), DEN(MAXM), R11(MAXM), U_f(MAXM)
+  real    :: NOM(MAXM), DEN(MAXM), R11(MAXM)
 
   end module

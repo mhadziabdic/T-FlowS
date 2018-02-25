@@ -4,7 +4,6 @@
 !   Discretizes and solves eliptic relaxation equations for f22.               !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use les_mod
   use rans_mod
@@ -28,7 +27,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, niter
   real              :: Fex, Fim 
-  real              :: A0, A12, A21
+  real              :: a0, a12, a21
   real              :: ini_res, tol
   real              :: phi_x_f, phi_y_f, phi_z_f
   character(len=80) :: coupling
@@ -123,23 +122,23 @@
            + phi_y_f * grid % sy(s)   &
            + phi_z_f * grid % sz(s) )
 
-    A0 = f_coef(s)
+    a0 = f_coef(s)
 
     ! Implicit diffusive flux
     ! (this is a very crude approximation: f_coef is
     !  not corrected at interface between materials)
     Fim=(   phi_x_f * grid % dx(s)        &
           + phi_y_f * grid % dy(s)        &
-          + phi_z_f * grid % dz(s)) * A0
+          + phi_z_f * grid % dz(s)) * a0
 
     ! Straight diffusion part 
     if(ini == 1) then
       if(c2  > 0) then
-        phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
-        phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*A0    
+        phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*a0   
+        phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*a0    
       else
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) /= SYMMETRY) then
-          phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*A0   
+          phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*a0   
         end if 
       end if 
     end if
@@ -155,41 +154,41 @@
         (td_diffusion == FULLY_IMPLICIT) ) then  
 
       if(td_diffusion == CRANK_NICOLSON) then 
-        A12 = 0.5 * A0 
-        A21 = 0.5 * A0 
+        a12 = 0.5 * a0 
+        a21 = 0.5 * a0 
       end if
 
       if(td_diffusion == FULLY_IMPLICIT) then
-        A12 = A0 
-        A21 = A0
+        a12 = a0 
+        a21 = a0
       end if
 
       ! Fill the system matrix
       if(c2  > 0) then
-        A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - A12
-        A % val(A % dia(c1))  = A % val(A % dia(c1))  + A12
-        A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - A21
-        A % val(A % dia(c2))  = A % val(A % dia(c2))  + A21
+        A % val(A % pos(1,s)) = A % val(A % pos(1,s)) - a12
+        A % val(A % dia(c1))  = A % val(A % dia(c1))  + a12
+        A % val(A % pos(2,s)) = A % val(A % pos(2,s)) - a21
+        A % val(A % dia(c2))  = A % val(A % dia(c2))  + a21
       else if(c2  < 0) then
         ! Outflow is not included because it was causing problems  
         if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW)) then                    
-          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
-          b(c1) = b(c1) + A12 * phi % n(c2)
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + a12
+          b(c1) = b(c1) + a12 * phi % n(c2)
 
         else
 
         if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL).or.                          &
             (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) ) then
-          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + a12
           !---------------------------------------------------------------!
           !   Source coefficient is filled in SourceF22.f90 in order to   !
           !   get updated values of f22 on the wall.  Otherwise f22       !
           !   equation does not converge very well                        !
-          !   b(c1) = b(c1) + A12 * phi % n(c2)                           !
+          !   b(c1) = b(c1) + a12 * phi % n(c2)                           !
           !---------------------------------------------------------------!
         else if( Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER ) then  
-          A % val(A % dia(c1)) = A % val(A % dia(c1)) + A12
-          A % bou(c2) = - A12  ! cool parallel stuff
+          A % val(A % dia(c1)) = A % val(A % dia(c1)) + a12
+          A % bou(c2) = - a12  ! cool parallel stuff
         endif
       end if     
      end if

@@ -10,9 +10,9 @@
 !   Przulj's AIAA paper.                                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use Flow_Mod,  only: flux, phi_min, phi_max
+  use Flow_Mod,    only: flux, phi_min, phi_max
   use Numerics_Mod
-  use Grid_Mod
+  use Grid_Mod,    only: Grid_Type
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!

@@ -5,7 +5,6 @@
 !   Valid for both parallel and seqential access                               !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Grid_Mod
   use Comm_Mod
   use Cgns_Mod
@@ -135,7 +134,7 @@
   call Cgns_Mod_Close_File
 
   if (sub .lt. 2) &
-    print *, 'Successfully wrote unstructured grid to file ',trim(problem_name)
+    print *, 'Successfully wrote unstructured grid to file ',trim(file_name)
 
   deallocate(cgns_base)
 

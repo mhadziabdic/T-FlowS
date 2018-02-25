@@ -56,13 +56,13 @@
   allocate(nearest_wall_cell(-grid % n_bnd_cells:grid % n_cells))
   nearest_wall_cell  = 0.
 
-  allocate(VISwall(-grid % n_bnd_cells:grid % n_cells)); VISwall =0.0
+  allocate(vis_wall(-grid % n_bnd_cells:grid % n_cells)); vis_wall = 0.0
 
   ! For solution of temperature
   call Control_Mod_Heat_Transfer(verbose = .true.)
   if(heat_transfer == YES) then
     call Var_Mod_Allocate_Solution('T', t, grid)
-    allocate(CONwall(-grid % n_bnd_cells:grid % n_cells)); CONwall =0.0
+    allocate(con_wall(-grid % n_bnd_cells:grid % n_cells)); con_wall = 0.0
   end if
 
   call Control_Mod_Buoyancy(verbose = .true.)

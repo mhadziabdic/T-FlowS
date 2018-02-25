@@ -4,7 +4,6 @@
 !   Solve the cell connectivity for copy boundary conditions.                  !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use gen_mod
   use Domain_Mod
   use Grid_Mod

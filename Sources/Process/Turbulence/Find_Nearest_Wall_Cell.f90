@@ -7,7 +7,6 @@
 !   What if the nearest wall cell is in another processor?                     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use les_mod

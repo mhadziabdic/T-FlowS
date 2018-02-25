@@ -4,8 +4,8 @@
 !   Adds fields to existing grid cgns file.                                    !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
+  use Name_Mod, only: problem_name
   use allp_mod
-  use all_mod
   use Flow_Mod
   use rans_mod
   use Comm_Mod, only: this_proc, n_proc

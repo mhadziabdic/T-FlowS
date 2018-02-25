@@ -4,7 +4,6 @@
 !   Computes the source terms in vis transport equation.                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use les_mod
   use rans_mod

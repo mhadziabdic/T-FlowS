@@ -5,7 +5,6 @@
 !   for vi2 and imposing  boundary condition for f22                           !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use rans_mod

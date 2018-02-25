@@ -20,9 +20,6 @@
   character(len= 6), parameter :: IN_3 = '      '
   character(len= 8), parameter :: IN_4 = '        '
   character(len=10), parameter :: IN_5 = '          '
-! character(len=12), parameter :: IN_6 = '            '
-! character(len=14), parameter :: IN_7 = '              '
-! character(len=16), parameter :: IN_8 = '                '
 !==============================================================================!
 
   !-----------------------------------------!

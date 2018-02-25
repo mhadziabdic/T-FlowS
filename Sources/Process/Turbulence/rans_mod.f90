@@ -66,10 +66,6 @@
   ! Gravity
   real :: grav_x, grav_y, grav_z
 
-  ! Wall viscosity (wall function approuch)
-  real,allocatable :: VISwall(:)
-  real,allocatable :: CONwall(:)
-
   real,allocatable :: Fs(:)
 
   end module 

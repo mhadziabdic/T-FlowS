@@ -5,7 +5,6 @@
 !   dissipation for Hanjalic-Jakirlic model.                                   !  
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use rans_mod

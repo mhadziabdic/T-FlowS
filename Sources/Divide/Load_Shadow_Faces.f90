@@ -4,7 +4,7 @@
 ! Reads:  name.shadow                                                          !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use gen_mod 
   use div_mod
   use Grid_Mod

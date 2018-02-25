@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 !   Reads: .dom file                                                           !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use gen_mod
   use Tokenizer_Mod
   use Domain_Mod
@@ -57,10 +57,6 @@
   print *, '#', grid % max_n_nodes,     ' nodes and cells' 
   print *, '#', grid % max_n_bnd_cells, ' boundary cells'         
   print *, '#', grid % max_n_faces,     ' cell faces' 
-
-  ! Variables declared in all_mod.h90:
-  allocate (material(-grid % max_n_bnd_cells:grid % max_n_nodes)) 
-  material=0
 
   allocate (grid % bnd_cond % copy_c(-grid % max_n_bnd_cells:grid % max_n_nodes))
   grid % bnd_cond % copy_c = 0

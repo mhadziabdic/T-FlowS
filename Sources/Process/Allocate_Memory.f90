@@ -3,7 +3,6 @@
 !------------------------------------------------------------------------------!
 ! Alocates memory for geometrical quantities.                                  !
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use Flow_Mod
   use Comm_Mod
   use Grid_Mod

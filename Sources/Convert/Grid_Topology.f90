@@ -4,7 +4,6 @@
 !   Determines the topology of the grid.                                       !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod 
   use gen_mod 
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -33,7 +32,7 @@
                                                     grid % cells_bnd_color(j,i)
 
         ! Material:
-        material(-grid % n_bnd_cells) = material(i)
+        grid % material(-grid % n_bnd_cells) = grid % material(i)
 
         ! Faces
         grid % n_faces = grid % n_faces  + 1

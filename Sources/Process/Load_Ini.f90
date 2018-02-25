@@ -5,7 +5,7 @@
 ! Program SUB_INI needs to be used to create files needed by this_proc
 ! subroutine 
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
+  use Name_Mod, only: problem_name
   use allp_mod
   use Flow_Mod
   use les_mod

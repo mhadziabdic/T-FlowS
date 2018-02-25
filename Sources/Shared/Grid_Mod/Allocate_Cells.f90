@@ -32,5 +32,8 @@
 
   ! Boundary condition color in a given direction
   allocate(grid % cells_bnd_color(6, -nb:nc))
+ 
+  ! Allocate material markers for all cells
+  allocate(grid % material(-nb:nc))
 
   end subroutine

@@ -4,7 +4,6 @@
 !   Initialize dependent variables.                                            !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use all_mod
   use allp_mod
   use Flow_Mod
   use les_mod
@@ -31,68 +30,68 @@
       u % mean(c) = 0.0
       v % mean(c) = 0.0
       w % mean(c) = 0.0
-      u % n(c)    = u % init(material(c))
-      u % o(c)    = u % init(material(c)) 
-      u % oo(c)   = u % init(material(c))
-      v % n(c)    = v % init(material(c)) 
-      v % o(c)    = v % init(material(c))
-      v % oo(c)   = v % init(material(c))
-      w % n(c)    = w % init(material(c)) 
-      w % o(c)    = w % init(material(c))
-      w % oo(c)   = w % init(material(c))
+      u % n(c)    = u % init(grid % material(c))
+      u % o(c)    = u % init(grid % material(c)) 
+      u % oo(c)   = u % init(grid % material(c))
+      v % n(c)    = v % init(grid % material(c)) 
+      v % o(c)    = v % init(grid % material(c))
+      v % oo(c)   = v % init(grid % material(c))
+      w % n(c)    = w % init(grid % material(c)) 
+      w % o(c)    = w % init(grid % material(c))
+      w % oo(c)   = w % init(grid % material(c))
       if(heat_transfer == YES) then
-        t % n(c)  = t % init(material(c)) 
-        t % o(c)  = t % init(material(c)) 
-        t % oo(c) = t % init(material(c)) 
-        Tinf      = t % init(material(c))
+        t % n(c)  = t % init(grid % material(c)) 
+        t % o(c)  = t % init(grid % material(c)) 
+        t % oo(c) = t % init(grid % material(c)) 
+        Tinf      = t % init(grid % material(c))
       end if 
       if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
          turbulence_model == HANJALIC_JAKIRLIC) then
-        uu % n(c)  = uu % init(material(c))
-        vv % n(c)  = vv % init(material(c))
-        ww % n(c)  = ww % init(material(c))
-        uv % n(c)  = uv % init(material(c))
-        uw % n(c)  = uw % init(material(c))
-        vw % n(c)  = vw % init(material(c))
-        eps % n(c) = eps % init(material(c))
+        uu % n(c)  = uu  % init(grid % material(c))
+        vv % n(c)  = vv  % init(grid % material(c))
+        ww % n(c)  = ww  % init(grid % material(c))
+        uv % n(c)  = uv  % init(grid % material(c))
+        uw % n(c)  = uw  % init(grid % material(c))
+        vw % n(c)  = vw  % init(grid % material(c))
+        eps % n(c) = eps % init(grid % material(c))
         if(turbulence_model == REYNOLDS_STRESS_MODEL) then
-          f22 % n(c) = f22 % init(material(c))
+          f22 % n(c) = f22 % init(grid % material(c))
         end if
       end if
       if(turbulence_model == K_EPS .or.  &
          turbulence_model == HYBRID_PITM) then
-        kin % n(c)  = kin % init(material(c))
-        kin % o(c)  = kin % init(material(c))
-        kin % oo(c) = kin % init(material(c))
-        eps % n(c)  = eps % init(material(c))
-        eps % o(c)  = eps % init(material(c))
-        eps % oo(c) = eps % init(material(c))
+        kin % n(c)  = kin % init(grid % material(c))
+        kin % o(c)  = kin % init(grid % material(c))
+        kin % oo(c) = kin % init(grid % material(c))
+        eps % n(c)  = eps % init(grid % material(c))
+        eps % o(c)  = eps % init(grid % material(c))
+        eps % oo(c) = eps % init(grid % material(c))
         Uf(c)       = 0.047
         Ynd(c)      = 30.0
       end if
       if(turbulence_model == K_EPS_V2      .or.  &
          turbulence_model == K_EPS_ZETA_F  .or.  & 
          turbulence_model == HYBRID_K_EPS_ZETA_F) then
-        kin % n(c)  = kin % init(material(c))
-        kin % o(c)  = kin % init(material(c))
-        kin % oo(c) = kin % init(material(c))
-        eps % n(c)  = eps % init(material(c))
-        eps % o(c)  = eps % init(material(c))
-        eps % oo(c) = eps % init(material(c))
-        f22 % n(c)  = f22 % init(material(c))
-        f22 % o(c)  = f22 % init(material(c))
-        f22 % oo(c) = f22 % init(material(c))
-        v2  % n(c)  = v2  % init(material(c))
-        v2  % o(c)  = v2  % init(material(c))
-        v2  % oo(c) = v2  % init(material(c))
+        kin % n(c)  = kin % init(grid % material(c))
+        kin % o(c)  = kin % init(grid % material(c))
+        kin % oo(c) = kin % init(grid % material(c))
+        eps % n(c)  = eps % init(grid % material(c))
+        eps % o(c)  = eps % init(grid % material(c))
+        eps % oo(c) = eps % init(grid % material(c))
+        f22 % n(c)  = f22 % init(grid % material(c))
+        f22 % o(c)  = f22 % init(grid % material(c))
+        f22 % oo(c) = f22 % init(grid % material(c))
+        v2  % n(c)  = v2  % init(grid % material(c))
+        v2  % o(c)  = v2  % init(grid % material(c))
+        v2  % oo(c) = v2  % init(grid % material(c))
         Uf(c)       = 0.047
         Ynd(c)      = 30.0
       end if
       if(turbulence_model == SPALART_ALLMARAS .or.  &
          turbulence_model == DES_SPALART) then      
-        VIS % n(c)  = VIS % init(material(c))
-        VIS % o(c)  = VIS % init(material(c))
-        VIS % oo(c) = VIS % init(material(c))
+        VIS % n(c)  = VIS % init(grid % material(c))
+        VIS % o(c)  = VIS % init(grid % material(c))
+        VIS % oo(c) = VIS % init(grid % material(c))
       end if
     end do 
   end do   !end do n=1,grid % n_materials
@@ -134,7 +133,9 @@
                             w % n(c2) * grid % sz(s) )
                                        
         if(Grid_Mod_Bnd_Cond_Type(grid,c2)  ==  InFLOW) then
-          if(material(c1) == m) bulk(m) % mass_in = bulk(m) % mass_in - flux(s) 
+          if(grid % material(c1) == m) then
+            bulk(m) % mass_in = bulk(m) % mass_in - flux(s) 
+          end if
           Stot  = sqrt(  grid % sx(s)**2  &
                        + grid % sy(s)**2  &
                        + grid % sz(s)**2)

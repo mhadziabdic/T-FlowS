@@ -17,9 +17,14 @@
     ! Basic functionality
     include 'Control_Mod/Input_Output/Open_File.f90'
     include 'Control_Mod/Input_Output/Read_Char_Item.f90'
+    include 'Control_Mod/Input_Output/Read_Char_Item_On.f90'
+    include 'Control_Mod/Input_Output/Read_Strings_On.f90'
     include 'Control_Mod/Input_Output/Read_Int_Item.f90'
     include 'Control_Mod/Input_Output/Read_Real_Item.f90'
     include 'Control_Mod/Input_Output/Read_Real_Array.f90'
+    include 'Control_Mod/Input_Output/Read_Real_Array_On.f90'
+    include 'Control_Mod/Input_Output/Position_At_One_Key.f90'
+    include 'Control_Mod/Input_Output/Position_At_Two_Keys.f90'
     include 'Control_Mod/Input_Output/Write_File.f90'
 
     ! Load

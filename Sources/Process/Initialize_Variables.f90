@@ -17,7 +17,7 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------!
-  real    :: Stot
+  real    :: s_tot
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, m, s, n
   integer :: n_wall, n_inflow, n_outflow, n_symmetry, n_heated_wall, n_convect
@@ -136,10 +136,10 @@
           if(grid % material(c1) == m) then
             bulk(m) % mass_in = bulk(m) % mass_in - flux(s) 
           end if
-          Stot  = sqrt(  grid % sx(s)**2  &
+          s_tot = sqrt(  grid % sx(s)**2  &
                        + grid % sy(s)**2  &
                        + grid % sz(s)**2)
-          area  = area  + Stot
+          area = area  + s_tot
         endif
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL)      &
           n_wall        = n_wall        + 1 

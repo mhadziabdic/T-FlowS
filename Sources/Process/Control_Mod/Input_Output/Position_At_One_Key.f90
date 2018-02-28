@@ -23,8 +23,6 @@
     call Tokenizer_Mod_Read_Line(CONTROL_FILE_UNIT, reached_end)
     if(reached_end) goto 1
 
-    call To_Upper_Case(line % tokens(1))
-
     if(line % tokens(1) == trim(keyword)) then
       found = YES
       return 

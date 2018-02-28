@@ -13,7 +13,7 @@
   real              :: val(n)   ! spefified value, if found
   logical, optional :: verbose
 !-----------------------------------[Locals]-----------------------------------!
-  logical :: found, reached_end
+  logical :: reached_end
   integer :: i
 !==============================================================================!
 
@@ -23,7 +23,6 @@
   val = def
 
   ! Browse through command file to see if user specificed it
-  found = .false.
   do
     call Tokenizer_Mod_Read_Line(CONTROL_FILE_UNIT, reached_end)
     if(reached_end) goto 1
@@ -31,17 +30,15 @@
       do i = 1, n
         read(line % tokens(i+1), *) val(i)
       end do
-      found = .true.
+      return          
     end if
   end do
 
-1 if( .not. found) then
-    if(present(verbose)) then
-      if(verbose) then
-        print '(a,a,a)', '# Couldn''t find keyword: ', keyword, '.'
-        print '(a,1pe12.5)', '# Using the default values ', def
-      end if
+1 if(present(verbose)) then
+    if(verbose) then
+      print '(a,a,a)', '# Couldn''t find keyword: ', keyword, '.'
+      print '(a,1pe12.5)', '# Using the default values ', def
     end if
-  end if 
+  end if
 
   end subroutine

@@ -15,7 +15,7 @@
   logical :: reached_end
 !==============================================================================!
 
-  ! Set default number of time steps
+  ! Set default value
   val = def
 
   ! Read one line only to see if you get expected output

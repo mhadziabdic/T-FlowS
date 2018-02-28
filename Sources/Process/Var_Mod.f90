@@ -25,12 +25,9 @@
     real, allocatable :: fluc(:)               ! fluctuating value
     real, allocatable :: x(:), y(:), z(:)      ! gradient components
     real, allocatable :: q(:)                  ! flux of a variable
-    real              :: bound(1024)           ! boundary values
-    real              :: init(1024)            ! initial values
-    real              :: pro(1024)             ! inlfow profile
     real              :: sigma                 ! sigma
     real              :: res                   ! residual after linear solution
-    real              :: units(1:4)            ! mass, length, time, temperature
+    real              :: units(4)              ! mass, length, time, temperature
     
   end type
 

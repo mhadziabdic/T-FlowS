@@ -11,105 +11,174 @@
   use rans_mod
   use Grid_Mod
   use Bulk_Mod
+  use User_Mod
   use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !----------------------------------[Calling]-----------------------------------!
-  real    :: s_tot
+  integer :: Key_Ind
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, c1, c2, m, s, n
+  integer           :: i, c, c1, c2, m, s, n, found, nks, nvs
   integer :: n_wall, n_inflow, n_outflow, n_symmetry, n_heated_wall, n_convect
+  character(len=80) :: keys(128)
+  real              :: vals(0:128) ! Note that they start from zero!
+  real              :: s_tot
+
+  ! Default values for initial conditions 
+  real, parameter   :: u_def   = 0.0,  v_def   = 0.0,  w_def   = 0.0
+  real, parameter   :: p_def   = 0.0,  t_def   = 0.0,  q_def   = 0.0
+  real, parameter   :: kin_def = 0.0,  eps_def = 0.0,  f22_def = 0.0
+  real, parameter   :: vis_def = 0.0,  v2_def  = 0.0
+  real, parameter   :: uu_def  = 0.0,  vv_def  = 0.0,  ww_def  = 0.0
+  real, parameter   :: uv_def  = 0.0,  uw_def  = 0.0,  vw_def  = 0.0
 !==============================================================================!
 
   area  = 0.0
   print *, 'grid % n_materials: ', grid % n_materials
-  do n = 1, grid % n_materials
-    do c = 1, grid % n_cells
-      u % mean(c) = 0.0
-      v % mean(c) = 0.0
-      w % mean(c) = 0.0
-      u % n(c)    = u % init(grid % material(c))
-      u % o(c)    = u % init(grid % material(c)) 
-      u % oo(c)   = u % init(grid % material(c))
-      v % n(c)    = v % init(grid % material(c)) 
-      v % o(c)    = v % init(grid % material(c))
-      v % oo(c)   = v % init(grid % material(c))
-      w % n(c)    = w % init(grid % material(c)) 
-      w % o(c)    = w % init(grid % material(c))
-      w % oo(c)   = w % init(grid % material(c))
-      if(heat_transfer == YES) then
-        t % n(c)  = t % init(grid % material(c)) 
-        t % o(c)  = t % init(grid % material(c)) 
-        t % oo(c) = t % init(grid % material(c)) 
-        Tinf      = t % init(grid % material(c))
-      end if 
-      if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
-         turbulence_model == HANJALIC_JAKIRLIC) then
-        uu % n(c)  = uu  % init(grid % material(c))
-        vv % n(c)  = vv  % init(grid % material(c))
-        ww % n(c)  = ww  % init(grid % material(c))
-        uv % n(c)  = uv  % init(grid % material(c))
-        uw % n(c)  = uw  % init(grid % material(c))
-        vw % n(c)  = vw  % init(grid % material(c))
-        eps % n(c) = eps % init(grid % material(c))
-        if(turbulence_model == REYNOLDS_STRESS_MODEL) then
-          f22 % n(c) = f22 % init(grid % material(c))
-        end if
-      end if
-      if(turbulence_model == K_EPS .or.  &
-         turbulence_model == HYBRID_PITM) then
-        kin % n(c)  = kin % init(grid % material(c))
-        kin % o(c)  = kin % init(grid % material(c))
-        kin % oo(c) = kin % init(grid % material(c))
-        eps % n(c)  = eps % init(grid % material(c))
-        eps % o(c)  = eps % init(grid % material(c))
-        eps % oo(c) = eps % init(grid % material(c))
-        Uf(c)       = 0.047
-        Ynd(c)      = 30.0
-      end if
-      if(turbulence_model == K_EPS_V2      .or.  &
-         turbulence_model == K_EPS_ZETA_F  .or.  & 
-         turbulence_model == HYBRID_K_EPS_ZETA_F) then
-        kin % n(c)  = kin % init(grid % material(c))
-        kin % o(c)  = kin % init(grid % material(c))
-        kin % oo(c) = kin % init(grid % material(c))
-        eps % n(c)  = eps % init(grid % material(c))
-        eps % o(c)  = eps % init(grid % material(c))
-        eps % oo(c) = eps % init(grid % material(c))
-        f22 % n(c)  = f22 % init(grid % material(c))
-        f22 % o(c)  = f22 % init(grid % material(c))
-        f22 % oo(c) = f22 % init(grid % material(c))
-        v2  % n(c)  = v2  % init(grid % material(c))
-        v2  % o(c)  = v2  % init(grid % material(c))
-        v2  % oo(c) = v2  % init(grid % material(c))
-        Uf(c)       = 0.047
-        Ynd(c)      = 30.0
-      end if
-      if(turbulence_model == SPALART_ALLMARAS .or.  &
-         turbulence_model == DES_SPALART) then      
-        VIS % n(c)  = VIS % init(grid % material(c))
-        VIS % o(c)  = VIS % init(grid % material(c))
-        VIS % oo(c) = VIS % init(grid % material(c))
-      end if
-    end do 
-  end do   !end do n=1,grid % n_materials
 
-  if(TGV == YES) then
-    do c = 1, grid % n_cells
-      u % n(c)  = -sin(grid % xc(c))*cos(grid % yc(c))
-      u % o(c)  = -sin(grid % xc(c))*cos(grid % yc(c))
-      u % oo(c) = -sin(grid % xc(c))*cos(grid % yc(c))
-      v % n(c)  =  cos(grid % xc(c))*sin(grid % yc(c))
-      v % o(c)  =  cos(grid % xc(c))*sin(grid % yc(c))
-      v % oo(c) =  cos(grid % xc(c))*sin(grid % yc(c))
-      w % n(c)  = 0.0
-      w % o(c)  = 0.0
-      w % oo(c) = 0.0
-      P % n(c)  = 0.25*(cos(2*grid % xc(c)) + cos(2*grid % yc(c)))
+  ! Found the line where boundary condition defintion is defined
+  call Control_Mod_Position_At_One_Key('INITIAL_CONDITION',       &
+                                       found,                     &
+                                       .true.)
+
+  ! Found the section with intial condions
+  if(found == YES) then
+
+print *, 'FOUND INITIAL CONDITIONS'
+    call Control_Mod_Read_Strings_On('VARIABLES', keys,    nks, .true.)
+    call Control_Mod_Read_Real_Array_On('VALUES', vals(1), nvs, .true.)
+
+    ! Check validity of the input
+    if(nks .eq. 0 .or. nvs .eq. 0) then
+      print '(2a)', '# Critical, for initial condition: ',        &
+                    ' no values or variables have been provided' 
+      stop
+    end if
+    if(nks .ne. nvs) then
+      print '(2a)', '# Critical for initial conditions, number of values ',  &
+                    ' is not the same as number of provided variable names' 
+      stop
+    end if
+ 
+    ! Input is valid, turn keys to upper case
+    do i = 1, nks
+      call To_Upper_Case(keys(i))
     end do
+
+    do n = 1, grid % n_materials
+      do c = 1, grid % n_cells
+
+        u % mean(c) = 0.0
+        v % mean(c) = 0.0
+        w % mean(c) = 0.0
+
+        vals(0) = u_def;  u % n(c) = vals(Key_Ind('U', keys, nks))
+        vals(0) = v_def;  v % n(c) = vals(Key_Ind('V', keys, nks))
+        vals(0) = w_def;  w % n(c) = vals(Key_Ind('W', keys, nks))
+
+        u % o(c)  = u % n(c)
+        u % oo(c) = u % n(c)
+        v % o(c)  = v % n(c)
+        v % oo(c) = v % n(c)
+        w % o(c)  = w % n(c)
+        w % oo(c) = w % n(c)
+
+        if(heat_transfer == YES) then
+          vals(0) = t_def;  t % n(c) = vals(Key_Ind('T', keys, nks))
+          t % o(c)  = t % n(c)
+          t % oo(c) = t % n(c)
+          Tinf      = t % n(c)
+        end if 
+
+        if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+           turbulence_model == HANJALIC_JAKIRLIC) then
+          vals(0) = uu_def;  uu  % n(c) = vals(Key_Ind('UU',  keys, nks))
+          vals(0) = vv_def;  vv  % n(c) = vals(Key_Ind('VV',  keys, nks))
+          vals(0) = ww_def;  ww  % n(c) = vals(Key_Ind('WW',  keys, nks))
+          vals(0) = uv_def;  uv  % n(c) = vals(Key_Ind('UV',  keys, nks))
+          vals(0) = uw_def;  uw  % n(c) = vals(Key_Ind('UW',  keys, nks))
+          vals(0) = vw_def;  vw  % n(c) = vals(Key_Ind('VW',  keys, nks))
+          vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
+          uu % o(c)  = uu % n(c)
+          uu % oo(c) = uu % n(c)
+          vv % o(c)  = vv % n(c)
+          vv % oo(c) = vv % n(c)
+          ww % o(c)  = ww % n(c)
+          ww % oo(c) = ww % n(c)
+          uv % o(c)  = uv % n(c)
+          uv % oo(c) = uv % n(c)
+          uw % o(c)  = uw % n(c)
+          uw % oo(c) = uw % n(c)
+          vw % o(c)  = vw % n(c)
+          vw % oo(c) = vw % n(c)
+          if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+            vals(0) = f22_def; f22 % n(c) = vals(Key_Ind('F22', keys, nks))
+            f22 % o(c)  = f22 % n(c)
+            f22 % oo(c) = f22 % n(c)
+          end if
+        end if
+  
+        if(turbulence_model == K_EPS .or.  &
+           turbulence_model == HYBRID_PITM) then
+          vals(0) = kin_def; kin % n(c) = vals(Key_Ind('KIN', keys, nks))
+          vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
+          kin % o(c)  = kin % n(c)
+          kin % oo(c) = kin % n(c)
+          eps % o(c)  = eps % n(c)
+          eps % oo(c) = eps % n(c)
+          Uf(c)       = 0.047
+          Ynd(c)      = 30.0
+        end if
+  
+        if(turbulence_model == K_EPS_V2      .or.  &
+           turbulence_model == K_EPS_ZETA_F  .or.  & 
+           turbulence_model == HYBRID_K_EPS_ZETA_F) then
+          vals(0) = kin_def; kin % n(c) = vals(Key_Ind('KIN', keys, nks))
+          vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
+          vals(0) = f22_def; f22 % n(c) = vals(Key_Ind('F22', keys, nks))
+          vals(0) = v2_def;  v2  % n(c) = vals(Key_Ind('V2',  keys, nks))
+          kin % o(c)  = kin % n(c)
+          kin % oo(c) = kin % n(c)
+          eps % o(c)  = eps % n(c)
+          eps % oo(c) = eps % n(c)
+          f22 % o(c)  = f22 % n(c)
+          f22 % oo(c) = f22 % n(c)
+          v2  % o(c)  = v2  % n(c)
+          v2  % oo(c) = v2  % n(c)
+          Uf(c)       = 0.047
+          Ynd(c)      = 30.0
+        end if
+  
+        if(turbulence_model == SPALART_ALLMARAS .or.  &
+           turbulence_model == DES_SPALART) then      
+          vals(0) = vis_def; vis % n(c) = vals(Key_Ind('VIS', keys, nks))
+          vis % o(c)  = vis % n(c)
+          vis % oo(c) = vis % n(c)
+        end if
+
+      end do   ! through cells
+    end do   !end do n=1,grid % n_materials
+
   end if
+
+  call User_Mod_Initialize(grid)
+
+!@if(TGV == YES) then
+!@  do c = 1, grid % n_cells
+!@    u % n(c)  = -sin(grid % xc(c))*cos(grid % yc(c))
+!@    u % o(c)  = -sin(grid % xc(c))*cos(grid % yc(c))
+!@    u % oo(c) = -sin(grid % xc(c))*cos(grid % yc(c))
+!@    v % n(c)  =  cos(grid % xc(c))*sin(grid % yc(c))
+!@    v % o(c)  =  cos(grid % xc(c))*sin(grid % yc(c))
+!@    v % oo(c) =  cos(grid % xc(c))*sin(grid % yc(c))
+!@    w % n(c)  = 0.0
+!@    w % o(c)  = 0.0
+!@    w % oo(c) = 0.0
+!@    P % n(c)  = 0.25*(cos(2*grid % xc(c)) + cos(2*grid % yc(c)))
+!@  end do
+!@end if
 
   !---------------------------------!
   !      Calculate the inflow       !

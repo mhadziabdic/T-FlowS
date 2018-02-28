@@ -108,6 +108,7 @@
 
   if(restar) then
     call Load_Boundary_Conditions(grid, .false.)
+    call Load_Physical_Properties(grid)
   end if
 
   ! Read command file (T-FlowS.cmn)
@@ -116,6 +117,7 @@
   ! Initialize variables
   if(.not. restar) then
     call Load_Boundary_Conditions(grid, .true.)
+    call Load_Physical_Properties(grid)
     call Initialize_Variables(grid)
     call Comm_Mod_Wait
   end if

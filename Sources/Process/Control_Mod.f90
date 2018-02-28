@@ -43,6 +43,12 @@
   !   Physics   !
   !-------------!
 
+    ! Physical properties
+    include 'Control_Mod/Physics/Dynamic_Viscosity.f90'
+    include 'Control_Mod/Physics/Heat_Capacity.f90'
+    include 'Control_Mod/Physics/Mass_Density.f90'
+    include 'Control_Mod/Physics/Thermal_Conductivity.f90'
+
     ! Heat transfer
     include 'Control_Mod/Physics/Heat_Transfer.f90'
     include 'Control_Mod/Physics/Buoyancy.f90'

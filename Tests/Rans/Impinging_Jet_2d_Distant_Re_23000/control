@@ -1,39 +1,105 @@
  PROBLEM_NAME    jet
  PROBLEM_TYPE    jet
  HEAT_TRANSFER    yes
- NUMBER_OF_TIME_STEPS    6000
+ NUMBER_OF_TIME_STEPS    200
  STARTING_TIME_STEP_FOR_STATISTICS    1000000000
+
+#-------------------
+# Monitoring points 
+#-------------------
  NUMBER_OF_MONITORING_POINTS              10
- MONITORING_POINT_001  0.1  0.017  0.0
- MONITORING_POINT_002  0.0  0.0  0.0
- MONITORING_POINT_003  0.98  0.17  0.0
- MONITORING_POINT_004  1.97  0.347  1.0
- MONITORING_POINT_005  4.9  0.8  0.0
- MONITORING_POINT_006  5.9  0.7  0.0
- MONITORING_POINT_007  0.98  0.17  0.6
- MONITORING_POINT_008  1.95  0.3  0.6
- MONITORING_POINT_009  4.9  0.8  0.6
- MONITORING_POINT_010  0.0  0.0  0.0
+   MONITORING_POINT_001  0.1  0.017  0.0
+   MONITORING_POINT_002  0.0  0.0  0.0
+   MONITORING_POINT_003  0.98  0.17  0.0
+   MONITORING_POINT_004  1.97  0.347  1.0
+   MONITORING_POINT_005  4.9  0.8  0.0
+   MONITORING_POINT_006  5.9  0.7  0.0
+   MONITORING_POINT_007  0.98  0.17  0.6
+   MONITORING_POINT_008  1.95  0.3  0.6
+   MONITORING_POINT_009  4.9  0.8  0.6
+   MONITORING_POINT_010  0.0  0.0  0.0
+
  POINT_FOR_MONITORING_PLANES    1.0  0.17  3.51
+
+#-----------------
+# Physical models
+#-----------------
+
+ MASS_DENSITY           1.0
+ THERMAL_CONDUCTIVITY   1.40e-4
+ DYNAMIC_VISCOSITY      1.0e-4
+ HEAT_CAPACITY          1.0
+
  TURBULENCE_MODEL    k_eps_zeta_f
+
+#----------------------
+# Numerical parameters
+#----------------------
  PRESSURE_MOMENTUM_COUPLING    simple
- SIMPLE_UNDERRELAXATION_FOR_MOMENTUM    0.4
- SIMPLE_UNDERRELAXATION_FOR_PRESSURE    0.4
- SIMPLE_UNDERRELAXATION_FOR_ENERGY    0.3
+
+ SIMPLE_UNDERRELAXATION_FOR_MOMENTUM      0.4
+ SIMPLE_UNDERRELAXATION_FOR_PRESSURE      0.4
+ SIMPLE_UNDERRELAXATION_FOR_ENERGY        0.3
  SIMPLE_UNDERRELAXATION_FOR_TURBULENCE    0.3
- TIME_INTEGRATION_FOR_INERTIA    linear
- TIME_INTEGRATION_FOR_ADVECTION    fully_implicit
- TIME_INTEGRATION_FOR_DIFFUSION    fully_implicit
+
+ TIME_INTEGRATION_FOR_INERTIA            linear
+ TIME_INTEGRATION_FOR_ADVECTION          fully_implicit
+ TIME_INTEGRATION_FOR_DIFFUSION          fully_implicit
  TIME_INTEGRATION_FOR_CROSS_DIFFUSION    fully_implicit
- ADVECTION_SCHEME_FOR_MOMENTUM    smart
- ADVECTION_SCHEME_FOR_ENERGY    smart
+
+ ADVECTION_SCHEME_FOR_MOMENTUM      smart
+ ADVECTION_SCHEME_FOR_ENERGY        smart
  ADVECTION_SCHEME_FOR_TURBULENCE    smart
+
+#------------------------
+# Linear solver settings
+#------------------------
  PRECONDITIONER_FOR_SYSTEM_MATRIX    incomplete_cholesky
- TOLERANCE_FOR_MOMENTUM_SOLVER    1.e-7
- TOLERANCE_FOR_PRESSURE_SOLVER    1.e-7
+ TOLERANCE_FOR_MOMENTUM_SOLVER      1.e-7
+ TOLERANCE_FOR_PRESSURE_SOLVER      1.e-7
  TOLERANCE_FOR_TURBULENCE_SOLVER    1.e-7
- TOLERANCE_FOR_ENERGY_SOLVER    1.e-7
- TOLERANCE_FOR_SIMPLE_ALGORITHM    1.e-6
+ TOLERANCE_FOR_ENERGY_SOLVER        1.e-7
+ TOLERANCE_FOR_SIMPLE_ALGORITHM     1.e-6
  TIME_STEP    0.1
  PRESSURE_DROPS    0.0  0.0  0.0
  MASS_FLOW_RATES    0.0  0.0  0.0
+
+#--------------------
+# Initial conditions
+#--------------------
+  INITIAL_CONDITION
+    VARIABLES           u     v     w     t      kin      eps      v2       f22
+    VALUES             -0.1   0.0   0.0   20.0   1.0e-3   1.0e-4   6.6e-4   1.0e-4
+
+#---------------------
+# Boundary conditions
+#---------------------
+  BOUNDARY_CONDITION    pipe_wall
+    TYPE                heat_flux
+    VARIABLES           u     v     w     t     kin   eps      v2    f22
+    VALUES              0.0   0.0   0.0   0.0   0.0   1.0e-3   0.0   0.0
+
+  BOUNDARY_CONDITION    symmetry_plane
+    TYPE                symmetry
+    VARIABLES           u     v     w     t      kin      eps      v2       f22
+    VALUES              0.0   0.0   0.0   20.0   1.0E-2   1.0E-3   6.6E-2   1.0e-3
+
+  BOUNDARY_CONDITION    top_plane
+    TYPE                pressure  
+    VARIABLES           u     v     w     t     kin      eps      v2       f22
+    VALUES              0.0   0.0   0.0   0.0   1.0E-2   1.0E-3   6.6E-2   1.0e-3
+
+  BOUNDARY_CONDITION    lower_wall
+    TYPE                heat_flux
+    VARIABLES           u     v     w     t     kin   eps      v2    f22
+    VALUES              0.0   0.0   0.0   0.1   0.0   1.0e-3   0.0   0.0
+
+  BOUNDARY_CONDITION    pipe_inlet
+    TYPE                inflow
+    VARIABLES           rz   u   v   w   t   kin   eps   v2   f22
+    FILE                inlet_profile_zeta_re_23000.dat
+
+  BOUNDARY_CONDITION    cyl_outlet
+    TYPE                pressure   
+    VARIABLES           u     v     w     t     kin      eps      v2       f22
+    VALUES              0.0   0.0   0.0   0.0   1.0E-2   1.0E-3   6.6E-2   1.0e-3

@@ -89,16 +89,16 @@
                                              .true.)
         call Control_Mod_Read_Char_Item_On('TYPE', 'WALL', bc_type, .true.)
         call To_Upper_Case(bc_type)
-        call Control_Mod_Read_Strings_On('VARIABLES', keys,    nks, .true.)
-        call Control_Mod_Read_Real_Array_On('VALUES', vals(1), nvs, .true.)
+        call Control_Mod_Read_Strings_On('VARIABLES', keys,    nks, .false.)
+        call Control_Mod_Read_Real_Array_On('VALUES', vals(1), nvs, .false.)
 
         ! Check validity of the input
-        if(nks .eq. 0 .or. nvs .eq. 0) then
-          print '(3a)', '# Critical, for boundary condition ',        &
-                        trim(grid % bnd_cond % name(n)),              &
-                        ' no values or variables have been provided' 
-          stop
-        end if
+        ! if(nks .eq. 0 .or. nvs .eq. 0) then
+        !   print '(3a)', '# Critical, for boundary condition ',        &
+        !                 trim(grid % bnd_cond % name(n)),              &
+        !                 ' no values or variables have been provided' 
+        !   stop
+        ! end if
         if(nks .ne. nvs) then
           print '(3a)', '# Critical, number of values for boundary condition ',  &
                         trim(grid % bnd_cond % name(n)),                         &

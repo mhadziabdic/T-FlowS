@@ -165,7 +165,7 @@
 
             if(heat_transfer == YES) then
               if(grid % bnd_cond % type(n) .eq. WALLFL) then
-                vals(0) = q_def;  t % q(c) = vals(Key_Ind('T', keys, nks))
+                vals(0) = q_def;  t % q(c) = vals(Key_Ind('Q', keys, nks))
               else
                 vals(0) = t_def;  t % n(c) = vals(Key_Ind('T', keys, nks))
               endif

@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Cgns_Cells(grid, sub)     
+  subroutine Save_Cgns_Cells(grid, sub)
 !------------------------------------------------------------------------------!
 !   Writes in 3-D unstructured grid to files 'name_save.cgns'                  !
 !   Valid for both parallel and seqential access                               !
@@ -22,8 +22,8 @@
   !   Create .cgns file   !
   !                       !
   !-----------------------!
-  call Name_File(sub, file_name, '.cgns')  ! file_name is from Cgns_Mod
-  print *, '# Creating the file: ', trim(file_name)
+  call Name_File(0, file_name, '.cgns')  ! file_name is from Cgns_Mod
+  if (sub .lt. 2) print *, '# Creating the file: ', trim(file_name)
 
   file_mode = CG_MODE_WRITE
   call Cgns_Mod_Open_File(file_mode)

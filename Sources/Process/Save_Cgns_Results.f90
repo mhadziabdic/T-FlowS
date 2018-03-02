@@ -36,6 +36,11 @@
   integer           :: c
 !==============================================================================!
 
+  !-----------------------------------!
+  !   Warning: at the moment          !
+  !   argument name_save is ignored   !
+  !-----------------------------------!
+
   if (this_proc .lt. 2) print *, "# subroutine Save_Grid"
 
   ! Store the name
@@ -46,7 +51,7 @@
   !--------------------------!
   !   Open file for modify   !
   !--------------------------!
-  call Name_File(0, file_name, '.cgns')
+  call Name_File(0, store_name, '.cgns')
 
   file_mode = CG_MODE_MODIFY
   call Cgns_Mod_Open_File(file_mode)
@@ -278,7 +283,7 @@
   call Cgns_Mod_Close_File
 
   if (this_proc .lt. 2) &
-    print *, 'Successfully added fields to ', trim(problem_name)
+    print *, 'Successfully added fields to ', trim(store_name)
 
   deallocate(cgns_base)
 

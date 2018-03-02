@@ -7,7 +7,7 @@
   logical, optional :: verbose
 !==============================================================================!
 
-  call Control_Mod_Read_Char_Item('PRESSURE_MOMENTUM_COUPLING', 'projection',  &
+  call Control_Mod_Read_Char_Item('PRESSURE_MOMENTUM_COUPLING', 'simple',  &
                                    val, verbose)
   call To_Upper_Case(val)
 

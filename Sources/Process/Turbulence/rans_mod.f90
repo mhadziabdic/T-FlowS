@@ -56,13 +56,6 @@
   real,allocatable :: buoyBeta(:)
   real,allocatable :: Pbuoy(:)
  
-  ! Non-dimensional distance
-  real,allocatable :: Ynd(:)
- 
-  ! Friction velocity
-  real,allocatable :: Uf(:)
-  real,allocatable :: Ufmean(:)
-
   ! Gravity
   real :: grav_x, grav_y, grav_z
 

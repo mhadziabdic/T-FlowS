@@ -128,8 +128,8 @@ print *, 'FOUND INITIAL CONDITIONS'
           kin % oo(c) = kin % n(c)
           eps % o(c)  = eps % n(c)
           eps % oo(c) = eps % n(c)
-          Uf(c)       = 0.047
-          Ynd(c)      = 30.0
+          u_tau(c)  = 0.047
+          y_plus(c) = 30.0
         end if
   
         if(turbulence_model == K_EPS_V2      .or.  &
@@ -147,8 +147,8 @@ print *, 'FOUND INITIAL CONDITIONS'
           f22 % oo(c) = f22 % n(c)
           v2  % o(c)  = v2  % n(c)
           v2  % oo(c) = v2  % n(c)
-          Uf(c)       = 0.047
-          Ynd(c)      = 30.0
+          u_tau(c)  = 0.047
+          y_plus(c) = 30.0
         end if
   
         if(turbulence_model == SPALART_ALLMARAS .or.  &
@@ -201,7 +201,7 @@ print *, 'FOUND INITIAL CONDITIONS'
                             v % n(c2) * grid % sy(s) + &
                             w % n(c2) * grid % sz(s) )
                                        
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2)  ==  InFLOW) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW) then
           if(grid % material(c1) == m) then
             bulk(m) % mass_in = bulk(m) % mass_in - flux(s) 
           end if
@@ -240,8 +240,10 @@ print *, 'FOUND INITIAL CONDITIONS'
   !   Initializes time   ! 
   !----------------------!
   if(this_proc  < 2) then
-    print *, '# MassIn=', bulk(1) % mass_in
-    print *, '# Average inflow velocity =', bulk(1) % mass_in / area
+    if(n_inflow .gt. 0) then
+      print *, '# Mass inflow =', bulk(1) % mass_in
+      print *, '# Average inflow velocity =', bulk(1) % mass_in / area
+    end if
     print *, '# number of faces on the wall        : ', n_wall
     print *, '# number of inflow faces             : ', n_inflow
     print *, '# number of outflow faces            : ', n_outflow

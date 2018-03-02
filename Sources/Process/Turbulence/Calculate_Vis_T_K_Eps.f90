@@ -7,13 +7,13 @@
 !   ~~~~~~~~~~~~~~                                                             !
 !   For k-eps model :                                                          !
 !                        2                                                     !
-!   vis_t = Cmu * rho * K  * eps                                               ! 
+!   vis_t = Cmu * rho * k  * eps                                               ! 
 !                                                                              !
 !   On the boundary (wall viscosity):                                          !
 !   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                           !
-!            +          kappa                                                  !
+!            +            kappa                                                !
 !   vis_tw = y  * vis_t ----------                                             ! 
-!                     E * ln(y+)                                               !
+!                       E * ln(y+)                                             !
 !                                                                              !
 !    For k-eps-v2f model :                                                     !
 !                                                                              !
@@ -31,60 +31,64 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, c1, c2, s
-  real              :: CK, y_plus, Fmu, re_t, y_star, Prturb, ebf, pr_mol, beta                                        
+  integer :: c, c1, c2, s
+  real    :: ck, f_mu, re_t, y_star, pr_turb, ebf, pr_mol, beta                                        
 !==============================================================================!
 
   !---------------------!
   !   k-epsilon model   !
   !---------------------!
-  re_t   = 0.0
-  Fmu   = 0.0 
-  y_plus = 0.0 
-  Prturb = 0.9
+  re_t    = 0.0
+  f_mu    = 0.0 
+  y_plus  = 0.0 
+  pr_turb = 0.9
+
+  ! Low-Re varaint
+  if(turbulence_model_variant == LOW_RE) then
+    do c = 1, grid % n_cells 
+      re_t = kin % n(c)**2 / (viscosity * eps % n(c))
+      f_mu = exp(-3.4/(1.0 + 0.02*re_t)**2) 
+      vis_t(c) = f_mu * Cmu * density * kin % n(c)**2 / eps % n(c)
+    end do
 
   ! High-Re varaint
-  if(turbulence_model_variant == HIGH_RE) then
+  else
     do c = 1, grid % n_cells
-      vis_t(c) = Cmu * density * kin%n(c) * kin%n(c) / (eps % n(c)+1.0e-14)
+      vis_t(c) = Cmu * density * kin % n(c)**2 / (eps % n(c) + TINY)
     end do
-    if(ROUGH==NO) then
+    if(ROUGH == NO) then
       do s = 1, grid % n_faces
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
         if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then  
-          if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-             Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
-            Ck = sqrt(tau_wall(c1))
-            y_plus = density*Ck*grid % wall_dist(c1)/viscosity 
-            vis_wall(c1) = y_plus*viscosity*kappa/log(Elog*y_plus)
+          if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+             Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
+            ck = sqrt(tau_wall(c1))
+            y_plus(c1) = density * ck * grid % wall_dist(c1) / viscosity 
+            vis_wall(c1) = y_plus(c1) * viscosity *kappa  &
+                         / log(Elog * y_plus(c1))
           end if
         end if
       end do
-    else if(ROUGH==YES) then
+    else if(ROUGH == YES) then
       do s = 1, grid % n_faces
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
         if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
           if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
              Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
-            Ck = sqrt(tau_wall(c1))
-            y_plus = density*Ck*(grid % wall_dist(c1)+Zo)/viscosity
-            vis_wall(c1) = min(y_plus*viscosity*kappa/log((grid % wall_dist(c1)+Zo)/Zo),1.0e+6*viscosity)
+            ck = sqrt(tau_wall(c1))
+            y_plus(c1) = density*ck*(grid % wall_dist(c1)+Zo)/viscosity
+            vis_wall(c1) = min(y_plus(c1) * viscosity * kappa                  &
+                                      / log((grid % wall_dist(c1) + Zo) / Zo), &
+                               1.0e+6 * viscosity)
           end if
         end if
       end do
     end if   
   end if
-  
-  ! Low-Re varaint
-  if(turbulence_model_variant == LOW_RE) then
-    do c = 1, grid % n_cells 
-      re_t = kin % n(c)*kin % n(c)/(viscosity*eps % n(c))
-      Fmu = exp(-3.4/(1.0 + 0.02*re_t)**2.0) 
-      vis_t(c) = Fmu * Cmu * density * kin%n(c) * kin%n(c) / eps % n(c)
-    end do
-  end if
+
+  ! Effective condctivity
   if(heat_transfer == YES) then
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
@@ -97,8 +101,8 @@
         end if
       end if
     end do
-  end if   
-
+  end if
+  
   !-----------------------!
   !   Hybrid PTIM model   !
   !-----------------------!
@@ -108,14 +112,14 @@
 
       y_star = (viscosity * eps % n(c))**0.25 * grid % wall_dist(c)/viscosity
 
-      Fmu = (1.0 - exp(-y_star/14.0))**2.0*(1.0                              &
+      f_mu = (1.0 - exp(-y_star/14.0))**2.0*(1.0                              &
            + 5.0*exp(-(re_t/200.0)*(re_t/200.0))/re_t**0.75)
 
 
-      Fmu = Fmu / ( 1.0 + exp(-y_star/5.0)**1.5/0.06 )
-      Fmu = min(1.0,Fmu)
+      f_mu = f_mu / ( 1.0 + exp(-y_star/5.0)**1.5/0.06 )
+      f_mu = min(1.0,f_mu)
 
-      vis_t(c) = Fmu * Cmu * density * kin%n(c) * kin%n(c) / eps % n(c)
+      vis_t(c) = f_mu * Cmu * density * kin%n(c) * kin%n(c) / eps % n(c)
     end do
   end if
 

@@ -187,10 +187,10 @@
 
             if(turbulence_model == K_EPS .or.  &
                turbulence_model == HYBRID_PITM) then
-              vals(0) = kin_def; kin % n(c) = vals(Key_Ind('KIN', keys, nks))
-              vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
-              Uf(c)   = 0.047
-              Ynd(c)  = 30.0
+              vals(0)   = kin_def; kin % n(c) = vals(Key_Ind('KIN', keys, nks))
+              vals(0)   = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
+              u_tau(c)  = 0.047
+              y_plus(c) = 30.0
             end if
 
             if(turbulence_model == K_EPS_V2 .or.  &

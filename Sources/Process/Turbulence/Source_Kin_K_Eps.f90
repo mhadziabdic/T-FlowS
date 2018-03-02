@@ -56,18 +56,18 @@
 
           ! Compute nondimensional wall distance and wall-shear stress
           if(ROUGH == NO) then
-            Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * grid % wall_dist(c1)  &
+            y_plus(c1) = sqrt(kin % n(c1)) * Cmu25 * grid % wall_dist(c1)  &
                     / viscosity
             tau_wall(c1) = abs(density                   &
                         * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan &
-                        / (log(Elog*Ynd(c1))))  
+                        / (log(Elog*y_plus(c1))))  
 
             ! Compute production in the first wall cell 
             p_kin(c1) = tau_wall(c1) * Cmu25 * sqrt(kin % n(c1)) &
                    / (kappa*grid % wall_dist(c1))
 
           else if(ROUGH==YES) then
-            Ynd(c1) = sqrt(kin % n(c1)) * Cmu25 * (grid % wall_dist(c1)+Zo)  &
+            y_plus(c1) = sqrt(kin % n(c1)) * Cmu25 * (grid % wall_dist(c1)+Zo)  &
                     / viscosity
             tau_wall(c1) = abs(density                     &
                         * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan   &

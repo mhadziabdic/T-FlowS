@@ -28,7 +28,7 @@
   real    :: nx, ny, nz
   real    :: cs
   real    :: s_tot, lf, u_tau_l, Uff 
-  real    :: u_tot, u_nor, u_tan, a_pow, b_pow, nu, dely, y_plus 
+  real    :: u_tot, u_nor, u_tan, a_pow, b_pow, nu, dely
   real    :: nc2
 !==============================================================================!
   
@@ -56,8 +56,8 @@
                            + v % n(nearest_wall_cell(c)) ** 2   &
                            + w % n(nearest_wall_cell(c)) ** 2)  &
                    / (grid % wall_dist(nearest_wall_cell(c))+TINY) )
-        y_plus = grid % wall_dist(c) * Uff / viscosity
-        cs = cs0 * (1.0-exp(-y_plus/25.0))
+        y_plus(c) = grid % wall_dist(c) * Uff / viscosity
+        cs = cs0 * (1.0 - exp(-y_plus(c) / 25.0))
       else  
         cs = cs0
       end if
@@ -168,8 +168,8 @@
         tau_wall(c1) = viscosity * u_tan / dely 
  
         ! Calculate y+
-        y_plus  = dely*u_tau_l/nu
-        if(y_plus  >=  11.81) then
+        y_plus(c1)  = dely*u_tau_l/nu
+        if(y_plus(c1)  >=  11.81) then
           ! This one is effective viscosity
           vis_wall(c1) = density*u_tau_l*u_tau_l*dely/abs(u_tan) 
         else 

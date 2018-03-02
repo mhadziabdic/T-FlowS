@@ -67,4 +67,11 @@
   real, allocatable :: vis_wall(:)
   real, allocatable :: con_wall(:)
 
+  ! Non-dimensional distance
+  real, allocatable :: y_plus(:)
+ 
+  ! Friction velocity and its time-average
+  real,allocatable :: u_tau(:)
+  real,allocatable :: u_tau_mean(:)
+
   end module 

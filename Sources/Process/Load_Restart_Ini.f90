@@ -145,8 +145,8 @@
     read(9) (eps % c_o(c),  c = 1, grid % n_cells)
 
     read(9) (p_kin(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (Uf(c),       c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (Ynd(c),      c = -grid % n_bnd_cells,grid % n_cells) 
+    read(9) (u_tau(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (y_plus(c),   c = -grid % n_bnd_cells,grid % n_cells) 
     read(9) (vis_wall(c), c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (tau_wall(c), c = -grid % n_bnd_cells,grid % n_cells)
   end if

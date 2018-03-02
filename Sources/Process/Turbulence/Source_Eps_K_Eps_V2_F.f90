@@ -19,7 +19,7 @@
   integer :: c, s, c1, c2,j 
   real    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret, Ck, EBF
   real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, EpsWall, EpsHom
-  real    :: BL_EPS, Pro, p_kin_turb, p_kin_vis, y_plus
+  real    :: BL_EPS, Pro, p_kin_turb, p_kin_vis, y_pl
 !==============================================================================!
 !   In dissipation of turbulent kinetic energy equation exist two              !
 !   source terms which have form:                                              !
@@ -78,18 +78,18 @@
 
         EpsWall = 2.0 * viscosity * kin%n(c1) / grid % wall_dist(c1)**2
         EpsHom = Cmu75 * kin%n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
-        Uf(c1) = Cmu25 * kin%n(c1)**0.5
+        u_tau(c1) = Cmu25 * kin%n(c1)**0.5
 
         p_kin_turb = Cmu75 * kin%n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
         p_kin_vis = vis_t(c1)*Shear(c1)*Shear(c1)  ! standard
 
         ! Kader
-        ! EBF = 0.01 * y_plus**4.0 / (1.0 + 5.0*y_plus) + TINY           !original
+        ! EBF = 0.01 * y_pl**4.0 / (1.0 + 5.0*y_pl) + TINY           !original
         ! Pro = p_kin_vis * exp(-1.0 * EBF) + p_kin_turb * exp(-1.0 / EBF) 
         ! BL_EPS = min((p_kin_turb * exp(-1.0 / EBF))/Pro,1.0)
 
-        y_plus = Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1) / viscosity + TINY     !standard
-        EBF  = 0.001*y_plus**4.0/(1.0+y_plus)
+        y_pl = Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1) / viscosity + TINY     !standard
+        EBF  = 0.001*y_pl**4.0/(1.0+y_pl)
         eps%n (c1) = EpsWall * exp(-1.0 * EBF) + EpsHom * exp(-1.0 / EBF) 
         
         if(ROUGH == YES) then

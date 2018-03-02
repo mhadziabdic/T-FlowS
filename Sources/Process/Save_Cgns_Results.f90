@@ -250,6 +250,11 @@
     end if
   end if
 
+  ! Save y+ for all turbulence models
+  if(turbulence_model .ne. NONE) then
+    call Save_Vtu_Scalar(grid, IN_4, IN_5, "TurbulentVariableYPlus", y_plus)
+  end if
+
   ! Wall distance and delta
   call Cgns_Mod_Write_Field(base, block, solution, field, grid, &
     grid % wall_dist(1:grid % n_cells),'TurbulentDistance')

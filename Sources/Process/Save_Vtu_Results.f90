@@ -310,6 +310,11 @@
     end if
   end if
 
+  ! Save y+ for all turbulence models
+  if(turbulence_model .ne. NONE) then
+    call Save_Vtu_Scalar(grid, IN_4, IN_5, "Y_PLUS", y_plus(1))
+  end if
+
   ! Wall distance and delta, important for all models   
   call Save_Vtu_Scalar(grid, IN_4, IN_5, "WALL_DIST",  grid % wall_dist(1))
   call Save_Vtu_Scalar(grid, IN_4, IN_5, "CELL_DELTA", grid % delta(1))

@@ -17,7 +17,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, c1, c2, s
   real              :: u_tan, u_nor_sq, u_nor, u_tot_sq, dely, Stot
-  real              :: lf, Gblend, Ustar, Ck, y_plus, u_plus
+  real              :: lf, Gblend, Ustar, Ck, u_plus
   real              :: EBF, EBF1
   real              :: alpha1, l_rans, l_sgs
 !==============================================================================! 
@@ -112,15 +112,15 @@
           u_tan = TINY
         end if
     
-        if(Ynd(c1) > 3.0) then 
+        if(y_plus(c1) > 3.0) then 
           if(ROUGH==NO) then
-            tau_wall(c1) = density*kappa*Uf(c1)*u_tan    &   
-                         /(log(Elog*Ynd(c1)))    
-            p_kin(c1) = tau_wall(c1)*Uf(c1)/(kappa*grid % wall_dist(c1))
+            tau_wall(c1) = density*kappa*u_tau(c1)*u_tan    &   
+                         /(log(Elog*y_plus(c1)))    
+            p_kin(c1) = tau_wall(c1)*u_tau(c1)/(kappa*grid % wall_dist(c1))
           else if(ROUGH==YES) then
-            tau_wall(c1) = density*kappa*Uf(c1)*u_tan    &   
+            tau_wall(c1) = density*kappa*u_tau(c1)*u_tan    &   
                            /(log((grid % wall_dist(c1)+Zo)/Zo))    
-            p_kin(c1) = tau_wall(c1)*Uf(c1) / (kappa*(grid % wall_dist(c1)+Zo))
+            p_kin(c1) = tau_wall(c1)*u_tau(c1) / (kappa*(grid % wall_dist(c1)+Zo))
             kin % n(c2) = tau_wall(c1) / 0.09**0.5
           end if
           b(c1) = b(c1) + p_kin(c1) * grid % vol(c1)

@@ -5,6 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Turbulence_Mod, only: turbulence_model,      &
+                            NONE,                  &
                             K_EPS,                 &
                             K_EPS_V2,              &
                             K_EPS_ZETA_F,          &
@@ -30,6 +31,8 @@
 
   select case(val)
 
+    case('NONE')
+      turbulence_model = NONE
     case('K_EPS')                 
       turbulence_model = K_EPS
     case('K_EPS_V2')              

@@ -22,7 +22,7 @@
   character(len=80) :: val
 !==============================================================================!
 
-  call Control_Mod_Read_Char_Item('TURBULENCE_MODEL_VARIANT', 'none',  &
+  call Control_Mod_Read_Char_Item('TURBULENCE_MODEL_VARIANT', 'high_re',  &
                                    val, verbose)
   call To_Upper_Case(val)
 

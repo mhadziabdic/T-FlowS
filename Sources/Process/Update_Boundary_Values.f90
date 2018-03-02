@@ -15,7 +15,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c1, c2, s
-  real              :: qx, qy, qz, nx, ny, nz, Stot, CONeff, ebf, y_plus
+  real              :: qx, qy, qz, nx, ny, nz, Stot, CONeff, ebf, y_pl
   real              :: Prmol, beta, u_plus, Prt
 !==============================================================================!
 
@@ -146,15 +146,15 @@
                + capacity*vis_t(c1)/Prt
         if(turbulence_model == K_EPS_ZETA_F .or.  &
            turbulence_model == K_EPS) then
-          y_plus = max(Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1)/viscosity,0.12)
-          u_plus = log(y_plus*Elog) / (kappa + TINY) + TINY
+          y_pl = max(Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1)/viscosity,0.12)
+          u_plus = log(y_pl*Elog) / (kappa + TINY) + TINY
           Prmol = viscosity / conductivity
           beta = 9.24 * ((Prmol/Prt)**0.75 - 1.0)  &
                      * (1.0 + 0.28 * exp(-0.007*Prmol/Prt))
-          ebf = 0.01 * (Prmol*y_plus)**4.0          &
-                     / (1.0 + 5.0 * Prmol**3 * y_plus) + TINY
-          con_wall(c1) = y_plus * viscosity * capacity   &
-                      / (y_plus * Prmol * exp(-1.0 * ebf)    &
+          ebf = 0.01 * (Prmol*y_pl)**4.0          &
+                     / (1.0 + 5.0 * Prmol**3 * y_pl) + TINY
+          con_wall(c1) = y_pl * viscosity * capacity   &
+                      / (y_pl * Prmol * exp(-1.0 * ebf)    &
                       + (u_plus + beta) * Prt * exp(-1.0 / ebf) + TINY)
           if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
             t% n(c2) = t % n(c1) + Prt / capacity  &

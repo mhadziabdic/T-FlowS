@@ -37,6 +37,7 @@
   integer           :: n_ini       ! number of inner iterations
   integer           :: n_stat      ! starting time step for statistic
   integer           :: ini         ! inner iteration counter
+  integer           :: bsi, rsi    ! backup and results save interval
   real              :: simple_tol  ! tolerance for SIMPLE algorithm
   character(len=80) :: coupling    ! pressure velocity coupling
 !---------------------------------[Interfaces]---------------------------------!
@@ -171,6 +172,8 @@
   !---------------!
 
   call Control_Mod_Time_Step(dt, verbose=.true.)
+  call Control_Mod_Backup_Save_Interval(bsi, verbose=.true.)
+  call Control_Mod_Results_Save_Interval(rsi, verbose=.true.)
 
   do n = first_dt + 1, last_dt
 
@@ -446,13 +449,13 @@
                     len_trim(problem_name)+9), '(i6.6)'), n
 
     ! Is it time to save the restart file?
-    if(save_now .or. exit_now .or. mod(n,1000) == 0) then
+    if(save_now .or. exit_now .or. mod(n,bsi) == 0) then
       call Comm_Mod_Wait
       call Save_Restart(grid, n, name_save)
     end if
 
     ! Is it time to save results for post-processing
-    if(save_now .or. exit_now .or. mod(n,50) == 0) then
+    if(save_now .or. exit_now .or. mod(n,rsi) == 0) then
       call Comm_Mod_Wait
       call Save_Vtu_Results(grid, name_save)
       call User_Mod_Save_Results(grid, n)  ! write results in user-customized format

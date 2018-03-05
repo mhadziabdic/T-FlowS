@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Cgns_Results(grid)
+  subroutine Save_Cgns_Results(grid, name_save)
 !------------------------------------------------------------------------------!
 !   Adds fields to existing grid cgns file.                                    !
 !------------------------------------------------------------------------------!
@@ -26,8 +26,9 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type)  :: grid
+  character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
-  character(len=80) :: store_name
+  character(len=80) :: store_name, name_out
   integer           :: base
   integer           :: block
   integer           :: solution
@@ -35,27 +36,29 @@
   integer           :: c
 !==============================================================================!
 
+  ! Store the name
+  store_name = problem_name
+
+  problem_name = name_save
+
   !-------------------------------------------!
   !   Write a mesh (if not already written)   !
   !-------------------------------------------!
 
   if (.not. mesh_was_written) then
     call Save_Cgns_Cells(grid, this_proc)
-    mesh_was_written = .true.
+    !mesh_was_written = .true. ! TO DO
   end if
 
   if (this_proc .lt. 2) print *, "# subroutine Save_Grid"
 
-  ! Store the name
-  store_name = problem_name
-
   !--------------------------!
   !   Open file for modify   !
   !--------------------------!
-  call Name_File(0, store_name, '.cgns')
+  call Name_File(0, name_out, '.cgns')
 
   file_mode = CG_MODE_MODIFY
-  call Cgns_Mod_Open_File(file_mode)
+  call Cgns_Mod_Open_File(name_out, file_mode)
 
   call Cgns_Mod_Initialize_Counters
 
@@ -284,8 +287,11 @@
   call Cgns_Mod_Close_File
 
   if (this_proc .lt. 2) &
-    print *, 'Successfully added fields to ', trim(store_name)
+    print *, 'Successfully added fields to ', trim(name_out)
 
   deallocate(cgns_base)
+
+  ! Restore the name
+  problem_name = store_name
 
   end subroutine

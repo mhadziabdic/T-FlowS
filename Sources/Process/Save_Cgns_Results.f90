@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Save_Cgns_Results(grid, name_save)
+  subroutine Save_Cgns_Results(grid)
 !------------------------------------------------------------------------------!
 !   Adds fields to existing grid cgns file.                                    !
 !------------------------------------------------------------------------------!
@@ -8,7 +8,7 @@
   use Const_Mod
   use Flow_Mod
   use rans_mod
-  use Comm_Mod, only: this_proc, n_proc
+  use Comm_Mod, only: this_proc
   use Tokenizer_Mod
   use Grid_Mod
   use Cgns_Mod
@@ -26,7 +26,6 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type)  :: grid
-  character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: store_name
   integer           :: base
@@ -36,17 +35,19 @@
   integer           :: c
 !==============================================================================!
 
-  !-----------------------------------!
-  !   Warning: at the moment          !
-  !   argument name_save is ignored   !
-  !-----------------------------------!
+  !-------------------------------------------!
+  !   Write a mesh (if not already written)   !
+  !-------------------------------------------!
+
+  if (.not. mesh_was_written) then
+    call Save_Cgns_Cells(grid, this_proc)
+    mesh_was_written = .true.
+  end if
 
   if (this_proc .lt. 2) print *, "# subroutine Save_Grid"
 
   ! Store the name
   store_name = problem_name
-
-  problem_name = name_save
 
   !--------------------------!
   !   Open file for modify   !
@@ -286,8 +287,5 @@
     print *, 'Successfully added fields to ', trim(store_name)
 
   deallocate(cgns_base)
-
-  ! Restore the name
-  problem_name = store_name
 
   end subroutine

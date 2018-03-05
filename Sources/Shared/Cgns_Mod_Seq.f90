@@ -45,12 +45,12 @@
   integer           :: file_id
   character(len=80) :: file_name
   integer           :: file_mode
-  logical           :: verbose = .true.
+  logical           :: verbose = .false.
 
   ! Solution section
   type Cgns_Solution_Type
-    character(len=80)                  :: name
-    integer                            :: sol_type
+    character(len=80) :: name
+    integer           :: sol_type
   end type
 
   ! Element section
@@ -116,6 +116,8 @@
   integer :: cnt_block_bnd_cells  ! probably not needed
   integer :: cnt_bnd_conds
   character(len=80) :: bnd_cond_names(1024)
+
+  logical           :: mesh_was_written = .false.
 
   contains
 

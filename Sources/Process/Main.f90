@@ -513,9 +513,9 @@
       name_save = 'savexxxxxx'
       write(name_save(5:10),'(I6.6)') n
       call Save_Restart    (grid, name_save)                          
-      call Save_Gmv_Results(grid, name_save)
-      call Save_Dat_Results(grid, name_save)
-      call User_Save_Results(grid, n)  ! write results in user-customized format
+!      call Save_Gmv_Results(grid, name_save)
+!      call Save_Dat_Results(grid, name_save)
+!      call User_Save_Results(grid, n)  ! write results in user-customized format
       call SavParView(this_proc,grid % n_cells,name_save, Nstat, n)
       Ndtt = Ndtt_temp
 8   continue 
@@ -542,7 +542,11 @@
   call SavParView(this_proc, grid % n_cells, name_save, Nstat, n)
   call Wait
 
-  if(CHANNEL==YES) call UserCutLines_channel(grid, grid % zc)
+  if(CHANNEL==YES)  call User_Channel_profiles(grid, grid % zc)
+  if(BACKSTEP==YES) call User_Backstep_profiles(grid)
+  if(BACKSTEP==YES) call User_Backstep_Cf_St(grid)
+  if(JET==YES) call User_Impinging_jet_profiles(grid, grid % zc) 
+  if(JET==YES) call User_Impinging_jet_Nu(grid) 
 
   if(this_proc  < 2) write(*,*) '# Exiting !'
 

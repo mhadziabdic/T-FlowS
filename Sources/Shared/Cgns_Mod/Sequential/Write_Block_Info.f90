@@ -45,7 +45,7 @@
     print *, '#     =========================================='
   end if
 
-  if (cgns_base(base) % block(block) % mesh_info(3) .ne. 0) then
+  if (block_mesh_info(3) .ne. 0) then
     print *, "# Boundary condition nodes != 0 -> Unsupported"
     stop
   endif

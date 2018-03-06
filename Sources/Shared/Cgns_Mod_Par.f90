@@ -117,11 +117,16 @@
   integer :: cnt_bnd_conds
   character(len=80) :: bnd_cond_names(1024)
 
+  ! if an actual grid was written, futher saves have just a link to that grid
   logical           :: mesh_was_written = .false.
+  character(len=80) :: file_with_mesh
+
 
   contains
 
   include 'Cgns_Mod/Initialize_Counters.f90'
+
+  include 'Cgns_Mod/Write_Link_To_Mesh_In_File.f90'
 
   include 'Cgns_Mod/Read_Base_Info.f90'
   include 'Cgns_Mod/Read_Number_Of_Bases_In_File.f90'

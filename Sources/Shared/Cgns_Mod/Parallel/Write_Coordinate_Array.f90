@@ -26,7 +26,6 @@
   integer           :: i               ! lower range index
   integer           :: j               ! upper range index
   integer           :: error           ! error status
-  integer           :: first_node      ! look at array structure at the header
 !==============================================================================!
 
   ! Set input parameters
@@ -41,10 +40,10 @@
 
   ! Fetch coordinates array dimensions
   i = grid % n_nodes
-  call Cgns_Mod_Get_Arrays_Dimensions(first_node, i)
+  call Cgns_Mod_Get_Arrays_Dimensions(j, i)
 
-  i = first_node
-  j = first_node + grid % n_nodes - 1
+  i = j
+  j = i - 1 + grid % n_nodes
 
   ! Fetch received parameters
   select case (coord_id)
@@ -65,7 +64,7 @@
                          error)         !(out)
 
   if (error.ne.CG_OK) then
-    print *, '*FAILED* to create empty: ', trim(coord_name)
+    print *, "#         to create empty: ", trim(coord_name)
     call Cgp_Error_Exit_F()
   endif
 
@@ -84,18 +83,18 @@
                               error)          !(out)
 
   if (error .ne. 0) then
-    print *, "# Failed to fill: ", trim(coord_name)
+    print *, "#         Failed to fill: ", trim(coord_name)
     call Cgp_Error_Exit_F()
   endif
 
   ! Print some info
-  if(verbose .and. this_proc.eq.1) then
-    print *, '#         Coord array: ', coord_name
+  if(verbose .and. this_proc.lt.2) then
+    print *, "#         Coord array: ", coord_name
   end if
-  if(verbose.and.coord_id.eq.1) then
-    print *, '#         Number of nodes: ', j - i + 1, " (P:",this_proc,")"
-    print *, '#         First node:', i,               " (P:",this_proc,")"
-    print *, '#         Last node: ', j,               " (P:",this_proc,")"
+  if(verbose .and. coord_id.eq.1) then
+    print *, "#         Number of nodes: ", j - i + 1, " (P:",this_proc,")"
+    print *, "#         First node:", i,               " (P:",this_proc,")"
+    print *, "#         Last node: ", j,               " (P:",this_proc,")"
   end if
 
   end subroutine

@@ -41,24 +41,22 @@
 
   problem_name = name_save
 
+  call Name_File(0, name_out, '.cgns')
+
+  if (this_proc .lt. 2) print *, "# subroutine Save_Cgns_Results"
+
   !-------------------------------------------!
   !   Write a mesh (if not already written)   !
   !-------------------------------------------!
-
-  if (.not. mesh_was_written) then
-    call Save_Cgns_Cells(grid, this_proc)
-    !mesh_was_written = .true. ! TO DO
-  end if
-
-  if (this_proc .lt. 2) print *, "# subroutine Save_Grid"
+  
+  call Save_Cgns_Cells(grid, this_proc)
 
   !--------------------------!
   !   Open file for modify   !
   !--------------------------!
-  call Name_File(0, name_out, '.cgns')
-
   file_mode = CG_MODE_MODIFY
   call Cgns_Mod_Open_File(name_out, file_mode)
+
 
   call Cgns_Mod_Initialize_Counters
 
@@ -121,9 +119,9 @@
   !                 !
   !-----------------!
 
-  !-------------------------------------------!
-  !   Copy code below from Save_Vtu_Results   !
-  !-------------------------------------------!
+  !---------------------------------------------!
+  !   Copied code below from Save_Vtu_Results   !
+  !---------------------------------------------!
 
   !--------------!
   !   Velocity   !
@@ -282,6 +280,22 @@
 !      text2='M=4.6, Re=6 million'
 !      textstring=text1//char(10)//text2
 !      call cg_descriptor_write_f('Information',textstring,ier)
+
+  !call Cg_Goto_F(file_id,   & !(in )
+  !               base,      & !(in )
+  !               error,     & !(out)
+  !               "Zone_t",  & !(in )
+  !               block,     & !(in )
+  !               "end")
+
+  !if (error .ne. 0) then
+  !  print *, "# Failed to navigate to: ", "Zone_t"
+  !  call Cg_Error_Exit_F()
+  !endif
+
+  !call cg_exponents_write_f(RealSingle,(/1, 1, 1, 1, 1/),error)
+  !call cg_dataclass_write_f(Dimensional,error)
+  !call cg_units_write_f(Kilogram,Meter,Second,Kelvin,Degree,error)
 
   ! Close DB
   call Cgns_Mod_Close_File

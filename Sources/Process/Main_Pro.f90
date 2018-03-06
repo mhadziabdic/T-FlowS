@@ -189,16 +189,6 @@
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
     call Info_Mod_Time_Print()
 
-    if (n==3 .or. n==5) then
-        ! Form the file name
-      name_save = problem_name
-      write(name_save(len_trim(problem_name)+1:                    &
-                      len_trim(problem_name)+3), '(a3)'),   '-ts'
-      write(name_save(len_trim(problem_name)+4:                    &
-                      len_trim(problem_name)+9), '(i6.6)'), n
-      call Save_Cgns_Results(grid, name_save)
-    end if
-
     if(turbulence_model == DES_SPALART) then
       call Calculate_Shear_And_Vorticity(grid)
       call Calculate_Vorticity (grid, u % n, v % n, w % n, vort)

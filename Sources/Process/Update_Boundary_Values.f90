@@ -81,10 +81,6 @@
           v_2 % n(c2) = v_2 % n(c1)
           f22 % n(c2) = f22 % n(c1)
         end if
-
-        !  if (TypeBC(c2) == INFLOW) then
-        !    f22 % n(c2) = f22 % n(c1)
-        !  end if
       end if 
 
       ! k-epsilon
@@ -121,17 +117,22 @@
               * (VISt(c1)/(VISc+1.0e-12))**2  &
               * (1.0 - exp(-5.165*( VISc/(VISt(c1)+1.0e-12) ))))
         end if
+
         Stot = sqrt(  grid % sx(s)*grid % sx(s)  &
                     + grid % sy(s)*grid % sy(s)  &
                     + grid % sz(s)*grid % sz(s))
+
         Nx = grid % sx(s)/Stot
         Ny = grid % sy(s)/Stot
         Nz = grid % sz(s)/Stot
+
         qx = T % q(c2) * Nx 
         qy = T % q(c2) * Ny
         qz = T % q(c2) * Nz
+
         CONeff = CONc(material(c1))                 &
                 + CAPc(material(c1))*VISt(c1)/Prt
+
         if(SIMULA==ZETA.or.SIMULA==K_EPS) then
           Yplus = max(Cmu25 * sqrt(Kin%n(c1)) * WallDs(c1)/VISc,0.12)
           Uplus = log(Yplus*Elog) / (kappa + TINY) + TINY
@@ -145,25 +146,20 @@
                       + (Uplus + beta) * Prt * exp(-1.0 / EBF) + TINY)
           if(TypeBC(c2) == WALLFL) then
             T% n(c2) = T % n(c1) + Prt / CAPc(material(c1))    &
-                     * (  qx * grid % dx(s)   &
-                        + qy * grid % dy(s)   &
-                        + qz * grid % dz(s))  &
+                     * WallDs(c1)                              &
                      / CONwall(c1)
-            Qflux = T % q(c2)
-            Area  = Area  + Stot
+            Qflux = Qflux + T % q(c2)*Stot
+            if(abs(T % q(c2)) > 1.0e-8) Area  = Area  + Stot
           else if(TypeBC(c2) == WALL) then
             T % q(c2) = Stot * (T % n(c2) - T % n(c1)) * CONeff     &
                         / WallDs(c1)
             Qflux = Qflux + T % q(c2)
-            Area  = Area  + Stot
-            wall_tem  = .true. 
+            if(abs(T % q(c2)) > 1.0e-8) Area  = Area  + Stot
           end if
         else
           if(TypeBC(c2) == WALLFL) then
             T% n(c2) = T % n(c1) + Prt / (CONeff + TINY)      &
-                    * (  qx * grid % dx(s)  &
-                       + qy * grid % dy(s)  &
-                       + qz * grid % dz(s) ) 
+                    * WallDs(c1)  
             Qflux = T % q(c2) 
             Area  = Area  + Stot
           else if(TypeBC(c2) == WALL) then
@@ -171,30 +167,9 @@
                       / WallDs(c1)
             Qflux = Qflux + T % q(c2) 
             Area  = Area  + Stot
-            wall_tem  = .true. 
           end if
         end if
       end if
-
-      ! Below part is coded for pipe flow with constant wall temperature    
-      !
-      !      if( (HOT==YES) .and. (TypeBC(c2) == WALL .or.  &
-      !           TypeBC(c2) == WALLFL) ) then
-      !        WallDs(c1) = (  grid % dx(s)**2  &
-      !                      + grid % dy(s)**2  &
-      !                      + grid % dz(s)**2)**0.5
-      !        Stot = sqrt(  grid % sx(s)*grid % sx(s)  &
-      !                    + grid % sy(s)*grid % sy(s)  &
-      !                    + grid % sz(s)*grid % sz(s))
-      !        if(Ynd(c1) < 3) then
-      !          Qflux = Qflux + CONc(material(c1))*abs(PHIz(c1)) * Stot
-      !        else 
-      !          Qflux = Qflux + CONeff*(T % n(c1))  &
-      !                / WallDs(c1) * Stot
-      !        end if
-      !        write(*,*) (T % n(c2) - T % n(c1))/WallDs(c1), PHIz(c1)
-      !        Area  = Area  + Stot
-      !      end if
 
       !---------------------!
       !   Copy boundaries   !
@@ -235,9 +210,7 @@
     call GloSum(Qflux)
     call GloSum(Area)
     call wait
-    if(wall_tem) then
-      Qflux = Qflux/Area
-    end if
+    Qflux = Qflux/Area
     Heat = Qflux * Area 
   end if   
 

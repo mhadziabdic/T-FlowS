@@ -416,9 +416,9 @@
       end if
     end if
     if(SIMULA == K_EPS.or.SIMULA==ZETA) then
+      write(112,*) '        <PDataArray type="Float32" Name="VISt/VISc"/>'
       write(112,*) '        <PDataArray type="Float32" Name="TKE"/>'
       write(112,*) '        <PDataArray type="Float32" Name="EPS"/>'
-      write(112,*) '        <PDataArray type="Float32" Name="uw"/>'
     end if 
     if(SIMULA == EBM.or.SIMULA==HJ) then
       write(112,*) '        <PDataArray type="Float32" Name="TKE"/>'

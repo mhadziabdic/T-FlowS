@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Cgns_Mod_Open_File(mode)
+  subroutine Cgns_Mod_Open_File(file, mode)
 !------------------------------------------------------------------------------!
 !   Opens name_in file and set its file_id [parallel vesion]                   !
 !------------------------------------------------------------------------------!
@@ -11,15 +11,18 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
+  character(len=*) :: file
   integer :: mode ! CG_MODE_READ, CG_MODE_WRITE or CG_MODE_MODIFY
 !-----------------------------------[Locals]-----------------------------------!
   integer :: error
 !==============================================================================!
 
-  if (this_proc < 2) print *, "# Opening file:", trim(file_name)
+  file_name = file
+
+  if (this_proc .lt. 2) print *, "# Opening file:", trim(file_name)
 
   ! Set the parallel IO mode for CGNS
-  call Cgp_Pio_Mode_F(CGP_INDEPENDENT,   &
+  call Cgp_Pio_Mode_F(CGP_INDEPENDENT,  &
                       error)
 
   ! Open a CGNS file

@@ -233,6 +233,7 @@ include 'Tokenizer.f90'
   ! K_EPS, LES, DES
   else
     print *, 'TURBULENCE_MODEL    ', trim(model)
+  end if
 
   call To_Upper_Case(model)
 

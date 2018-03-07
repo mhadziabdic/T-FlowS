@@ -37,7 +37,7 @@
   endif
 
   ! Print some info
-  if(verbose .and. this_proc.eq.1) then
+  if(verbose .and. this_proc.lt.2) then
     print *, '#   ============================'
     print *, '#   Base name: ',      base_name
     print *, '#   Base id: ',        base_id

@@ -45,12 +45,12 @@
   integer           :: file_id
   character(len=80) :: file_name
   integer           :: file_mode
-  logical           :: verbose = .true.
+  logical           :: verbose = .false.
 
   ! Solution section
   type Cgns_Solution_Type
-    character(len=80)                  :: name
-    integer                            :: sol_type
+    character(len=80) :: name
+    integer           :: sol_type
   end type
 
   ! Element section
@@ -117,9 +117,15 @@
   integer :: cnt_bnd_conds
   character(len=80) :: bnd_cond_names(1024)
 
+  ! if an actual grid was written, futher saves have just a link to that grid
+  logical           :: mesh_was_written = .false.
+  character(len=80) :: file_with_mesh
+
   contains
 
   include 'Cgns_Mod/Initialize_Counters.f90'
+
+  include 'Cgns_Mod/Write_Link_To_Mesh_In_File.f90'
 
   ! Seq only
   include 'Cgns_Mod/Read_Base_Info.f90'

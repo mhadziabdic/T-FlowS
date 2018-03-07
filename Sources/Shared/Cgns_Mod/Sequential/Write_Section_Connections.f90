@@ -99,7 +99,7 @@
                             error)                       !(out)
 
     if (error .ne. 0) then
-       print*, '*FAILED* to write ', trim(sect_name), ' connections'
+       print*, ' #         Failed to write ', trim(sect_name), ' connections'
        call Cg_Error_Exit_F()
     endif
 

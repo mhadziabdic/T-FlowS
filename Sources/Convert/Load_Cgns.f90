@@ -36,7 +36,7 @@
 
   ! Open a CGNS file (->file_id)
   mode = CG_MODE_READ
-  call Cgns_Mod_Open_File(mode)
+  call Cgns_Mod_Open_File(file_name, mode)
 
   ! Read number of CGNS bases in file_id (->n_bases)
   call Cgns_Mod_Read_Number_Of_Bases_In_File

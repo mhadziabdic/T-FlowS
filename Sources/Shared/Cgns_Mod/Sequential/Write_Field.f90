@@ -24,8 +24,8 @@
   integer              :: solution_id ! solution index
   integer              :: field_id    ! field index
   character(len=80)    :: field_name  ! name of the FlowSolution_t node
-  integer              :: cell_type
-  integer              :: cnt            ! cells of cell_type
+  integer              :: sect_id
+  integer              :: cnt            ! cells of sect_id
   real                 :: field_array(grid % n_cells) ! field array
   integer              :: i, j, k, c
   integer              :: error
@@ -43,42 +43,42 @@
   !   Mapping 1:nc -> Connection structure above   !
   !------------------------------------------------!
 
-  ! Find first and last cells of cell_type
-  do cell_type = 1, 4
-    ! cells of cell_type
-    if (cell_type.eq.1) cnt = cnt_hex
-    if (cell_type.eq.2) cnt = cnt_wed
-    if (cell_type.eq.3) cnt = cnt_pyr
-    if (cell_type.eq.4) cnt = cnt_tet
-
-    i = 1 + cnt_cells
-    j = i + cnt - 1
+  ! Find first and last cells of sect_id
+  do sect_id = 1, 4
+    ! cells of sect_id
+    if (sect_id.eq.1) cnt = cnt_hex
+    if (sect_id.eq.2) cnt = cnt_wed
+    if (sect_id.eq.3) cnt = cnt_pyr
+    if (sect_id.eq.4) cnt = cnt_tet
 
     if (cnt.ne.0) then
+
+      i = 1 + cnt_cells
+      j = i + cnt - 1
 
       ! copy input array to field_array
       k = 1
       do c = 1, grid % n_cells
-        if     (cell_type.eq.1 .and. grid % cells_n_nodes(c).eq.8) then
+        if     (sect_id.eq.1 .and. grid % cells_n_nodes(c).eq.8) then
           field_array(k) = input_array(c)
           k = k + 1
-        elseif (cell_type.eq.2 .and. grid % cells_n_nodes(c).eq.6) then
+        elseif (sect_id.eq.2 .and. grid % cells_n_nodes(c).eq.6) then
           field_array(k) = input_array(c)
           k = k + 1
-        elseif (cell_type.eq.3 .and. grid % cells_n_nodes(c).eq.5) then
+        elseif (sect_id.eq.3 .and. grid % cells_n_nodes(c).eq.5) then
           field_array(k) = input_array(c)
           k = k + 1
-        elseif (cell_type.eq.4 .and. grid % cells_n_nodes(c).eq.4) then
+        elseif (sect_id.eq.4 .and. grid % cells_n_nodes(c).eq.4) then
           field_array(k) = input_array(c)
           k = k + 1
         end if
       end do
 
       !----------------------------------------------!
-      !   Writing cells assocciated with cell_type   !
+      !   Writing cells assocciated with sect_id   !
       !----------------------------------------------!
 
-      ! Add field to FlowSolution_t node for cell_type
+      ! Add field to FlowSolution_t node for sect_id
       call Cg_Field_Partial_Write_F(file_id,      & !(in )
                                     base_id,      & !(in )
                                     block_id,     & !(in )

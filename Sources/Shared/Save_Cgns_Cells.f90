@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine Save_Cgns_Cells(grid, sub)     
+  subroutine Save_Cgns_Cells(grid, sub)
 !------------------------------------------------------------------------------!
-!   Writes in 3-D unstructured grid to files 'name_save.cgns'                  !
+!   Writes in 3-D unstructured grid to files 'file_name.cgns'                  !
 !   Valid for both parallel and seqential access                               !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
@@ -14,6 +14,7 @@
   type(Grid_Type) :: grid
   integer         :: sub
 !-----------------------------------[Locals]-----------------------------------!
+  character(len=80) :: problem_name, store_name, name_out
   integer :: c, base, block, sect, coord
 !==============================================================================!
 
@@ -22,11 +23,17 @@
   !   Create .cgns file   !
   !                       !
   !-----------------------!
-  call Name_File(sub, file_name, '.cgns')  ! file_name is from Cgns_Mod
-  print *, '# Creating the file: ', trim(file_name)
+
+  ! Store the name
+  store_name = problem_name
+
+  problem_name = file_name  ! file_name is from Cgns_Mod
+
+  call Name_File(0, name_out, '.cgns')
+  if (sub .lt. 2) print *, '# Creating the file: ', trim(name_out)
 
   file_mode = CG_MODE_WRITE
-  call Cgns_Mod_Open_File(file_mode)
+  call Cgns_Mod_Open_File(name_out, file_mode)
 
   call Cgns_Mod_Initialize_Counters
 
@@ -74,6 +81,7 @@
 
   call Cgns_Mod_Write_Block_Info(base, block)
 
+
   !-----------------------!
   !                       !
   !   Coordinates block   !
@@ -81,16 +89,20 @@
   !-----------------------!
 
   coord = 1
-  cgns_base(base) % block(block) % coord_name(coord) = 'CoordinateX'
-  call Cgns_Mod_Write_Coordinate_Array(base, block, coord, grid)
+  cgns_base(base) % block(block) % coord_name(coord) = "CoordinateX"
 
   coord = 2
-  cgns_base(base) % block(block) % coord_name(coord) = 'CoordinateY'
-  call Cgns_Mod_Write_Coordinate_Array(base, block, coord, grid)
+  cgns_base(base) % block(block) % coord_name(coord) = "CoordinateY"
 
   coord = 3
-  cgns_base(base) % block(block) % coord_name(coord) = 'CoordinateZ'
-  call Cgns_Mod_Write_Coordinate_Array(base, block, coord, grid)
+  cgns_base(base) % block(block) % coord_name(coord) = "CoordinateZ"
+
+  ! actually write grid coordinates in DB
+  if (.not. mesh_was_written) then
+    do coord = 1, cgns_base(base) % cell_dim
+      call Cgns_Mod_Write_Coordinate_Array(base, block, coord, grid)
+    end do
+  end if
 
   !-----------------------------!
   !                             !
@@ -103,39 +115,54 @@
     cgns_base(base) % block(block) % n_sects))
 
   sect = 1
-  cgns_base(base) % block(block) % section(sect) % name = 'Hexagons'
+  cgns_base(base) % block(block) % section(sect) % name = "Hexagons"
   cgns_base(base) % block(block) % section(sect) % cell_type = HEXA_8
   cgns_base(base) % block(block) % section(sect) % first_cell = 1
   cgns_base(base) % block(block) % section(sect) % last_cell = cnt_hex
-  call Cgns_Mod_Write_Section_Connections(base, block, sect, grid)
 
   sect = 2
-  cgns_base(base) % block(block) % section(sect) % name = 'Pyramids'
-  cgns_base(base) % block(block) % section(sect) % cell_type = PYRA_5
-  cgns_base(base) % block(block) % section(sect) % first_cell = 1
-  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_pyr
-  call Cgns_Mod_Write_Section_Connections(base, block, sect, grid)
-
-  sect = 3
-  cgns_base(base) % block(block) % section(sect) % name = 'Wedges'
+  cgns_base(base) % block(block) % section(sect) % name = "Wedges"
   cgns_base(base) % block(block) % section(sect) % cell_type = PENTA_6
   cgns_base(base) % block(block) % section(sect) % first_cell = 1
   cgns_base(base) % block(block) % section(sect) % last_cell = cnt_wed
-  call Cgns_Mod_Write_Section_Connections(base, block, sect, grid)
+
+  sect = 3
+  cgns_base(base) % block(block) % section(sect) % name = "Pyramids"
+  cgns_base(base) % block(block) % section(sect) % cell_type = PYRA_5
+  cgns_base(base) % block(block) % section(sect) % first_cell = 1
+  cgns_base(base) % block(block) % section(sect) % last_cell = cnt_pyr
 
   sect = 4
-  cgns_base(base) % block(block) % section(sect) % name = 'Tetrahedrons'
+  cgns_base(base) % block(block) % section(sect) % name = "Tetrahedrons"
   cgns_base(base) % block(block) % section(sect) % cell_type = TETRA_4
   cgns_base(base) % block(block) % section(sect) % first_cell = 1
   cgns_base(base) % block(block) % section(sect) % last_cell = cnt_tet
-  call Cgns_Mod_Write_Section_Connections(base, block, sect, grid)
+  
+  ! actually write grid connections in DB
+  if (.not. mesh_was_written) then 
+
+    do sect = 1, cgns_base(base) % block(block) % n_sects
+      call Cgns_Mod_Write_Section_Connections(base, block, sect, grid)
+    end do
+
+    ! at this moment mesh is considered to be written successfully
+    mesh_was_written = .true.
+    file_with_mesh = trim(name_out)
+
+  else ! write an link to actual mesh inside a different DB file
+    call Write_Link_To_Mesh_In_File(file_with_mesh, base, block)
+  end if
 
   ! Close DB
   call Cgns_Mod_Close_File
 
   if (sub .lt. 2) &
-    print *, 'Successfully wrote unstructured grid to file ',trim(file_name)
+    print *, 'Successfully wrote unstructured grid to file ',trim(name_out)
 
   deallocate(cgns_base)
+
+  ! Restore the name
+  problem_name = store_name
+
 
   end subroutine

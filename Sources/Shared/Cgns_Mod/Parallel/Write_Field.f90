@@ -25,20 +25,20 @@
   integer           :: solution_id    ! solution index
   integer           :: field_id       ! field index
   character(len=80) :: field_name     ! name of the FlowSolution_t node
-  integer           :: cell_type
-  integer           :: cnt            ! cells of cell_type
+  integer           :: sect_id
+  integer           :: cnt            ! cells of sect_id
   real              :: field_array(grid % n_cells) ! field array
   integer           :: i, j, k, c
   integer           :: error
 !==============================================================================!
 
   ! Set input parameters
-  base_id       = base
-  block_id      = block
-  solution_id   = solution
-  field_id      = field
+  base_id     = base
+  block_id    = block
+  solution_id = solution
+  field_id    = field
 
-  field_name = trim(input_name)
+  field_name  = trim(input_name)
 
   !----------------------------------------------------!
   !   Add an empty field node to FlowSolution_t node   !
@@ -54,7 +54,7 @@
                          error)          !(out)
 
   if (error .ne. 0) then
-    print *, "# Failed to create empty ", trim(field_name)
+    print *, "#           Failed to create empty ", trim(field_name)
     call Cgp_Error_Exit_F()
   endif
 
@@ -62,40 +62,35 @@
   !   Mapping 1:nc -> Connection structure above   !
   !------------------------------------------------!
 
-  ! Find first and last cells of cell_type
-  do cell_type = 1, 4
-    ! cells of cell_type
-    if (cell_type.eq.1) cnt = cnt_hex
-    if (cell_type.eq.2) cnt = cnt_wed
-    if (cell_type.eq.3) cnt = cnt_pyr
-    if (cell_type.eq.4) cnt = cnt_tet
+  ! Find first and last cells of sect_id
+  do sect_id = 1, 4
+    ! cells of sect_id
+    if (sect_id.eq.1) cnt = cnt_hex
+    if (sect_id.eq.2) cnt = cnt_wed
+    if (sect_id.eq.3) cnt = cnt_pyr
+    if (sect_id.eq.4) cnt = cnt_tet
 
-    i = cnt ! cnt_hex/pyr/wed/tet on this_proc
-    call Cgns_Mod_Get_Arrays_Dimensions(j, i)
-
-    i = j + cnt_cells
-    j = i + cnt - 1
-
+    ! if section is not empty
     if (cnt.ne.0) then
+      i = cnt ! cnt_hex/pyr/wed/tet on this_proc
+      call Cgns_Mod_Get_Arrays_Dimensions(j, i)
 
-      if (error .ne. 0) then
-         print*, '*FAILED* to allocate ', "field_array"
-         call Cg_Error_Exit_F()
-      endif
+      i = j + cnt_cells
+      j = i + cnt - 1
 
       ! copy input array to field_array
       k = 1
       do c = 1, grid % n_cells
-        if     (cell_type.eq.1 .and. grid % cells_n_nodes(c).eq.8) then
+        if     (sect_id.eq.1 .and. grid % cells_n_nodes(c).eq.8) then
           field_array(k) = input_array(c)
           k = k + 1
-        elseif (cell_type.eq.2 .and. grid % cells_n_nodes(c).eq.6) then
+        elseif (sect_id.eq.2 .and. grid % cells_n_nodes(c).eq.6) then
           field_array(k) = input_array(c)
           k = k + 1
-        elseif (cell_type.eq.3 .and. grid % cells_n_nodes(c).eq.5) then
+        elseif (sect_id.eq.3 .and. grid % cells_n_nodes(c).eq.5) then
           field_array(k) = input_array(c)
           k = k + 1
-        elseif (cell_type.eq.4 .and. grid % cells_n_nodes(c).eq.4) then
+        elseif (sect_id.eq.4 .and. grid % cells_n_nodes(c).eq.4) then
           field_array(k) = input_array(c)
           k = k + 1
         end if
@@ -116,7 +111,7 @@
                                   error)          !(out)
 
       if (error .ne. 0) then
-        print *, "# Failed to fill ", trim(field_name)
+        print *, "#           Failed to fill ", trim(field_name)
         call Cgp_Error_Exit_F()
       endif
 
@@ -125,7 +120,7 @@
       cnt_cells = cnt_cells + c
 
       ! Print some info
-      if(verbose .and. this_proc.eq.1) then
+      if(verbose .and. this_proc .lt. 2) then
         print *, '#           ---------------------------------'
         print *, '#           Field name: ',  field_name
         print *, '#           Field idx:    ', field_id

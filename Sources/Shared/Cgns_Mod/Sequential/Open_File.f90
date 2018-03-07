@@ -1,14 +1,17 @@
 !==============================================================================!
-  subroutine Cgns_Mod_Open_File(mode)
+  subroutine Cgns_Mod_Open_File(file, mode)
 !------------------------------------------------------------------------------!
 !   Opens name_in file and set its file_id [sequential vesion]                 !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
+  character(len=*) :: file
   integer :: mode ! CG_MODE_READ, CG_MODE_WRITE or CG_MODE_MODIFY
 !-----------------------------------[Locals]-----------------------------------!
   integer :: error
 !==============================================================================!
+
+  file_name = file
 
   print *, "# Opening file:", trim(file_name)
 

@@ -32,10 +32,10 @@
   character(len=80) :: name_out_8, name_out_9, store_name
 !------------------------------[Local parameters]------------------------------!
   integer, parameter :: VTK_TETRA      = 10  ! cell shapes in VTK format
-  integer, parameter :: VTK_HEXAHEDRON = 12  
+  integer, parameter :: VTK_HEXAHEDRON = 12
   integer, parameter :: VTK_WEDGE      = 13
   integer, parameter :: VTK_PYRAMID    = 14
-  character(len= 0)  :: IN_0 = ''           ! indentation levels 
+  character(len= 0)  :: IN_0 = ''           ! indentation levels
   character(len= 2)  :: IN_1 = '  '
   character(len= 4)  :: IN_2 = '    '
   character(len= 6)  :: IN_3 = '      '
@@ -47,11 +47,11 @@
 !==============================================================================!
 
   ! Store the name
-  store_name = problem_name     
+  store_name = problem_name
 
-  problem_name = name_save  
+  problem_name = name_save
 
-  call Comm_Mod_Wait 
+  call Comm_Mod_Wait
 
   !--------------------------------------!
   !                                      !
@@ -151,9 +151,9 @@
       print *, '# Unsupported cell type with ',  &
                   grid % cells_n_nodes(c), ' nodes.'
       print *, '# Exiting'
-      stop 
+      stop
     end if
-  end do  
+  end do
   write(9,'(a,a)') IN_4, '</DataArray>'
 
   ! Now write all cells' offsets
@@ -164,7 +164,7 @@
     write(9,'(a,i9)') IN_5, offset
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'
- 
+
   ! Now write all cells' types
   write(9,'(a,a)') IN_4, '<DataArray type="UInt8" Name="types" format="ascii">'
   do c = 1, grid % n_cells
@@ -180,7 +180,7 @@
       print *, '# Unsupported cell type with ',  &
                   grid % cells_n_nodes(c), ' nodes.'
       print *, '# Exiting'
-      stop 
+      stop
     end if
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'
@@ -200,7 +200,7 @@
   !   Materials   !
   !---------------!
   if(n_proc > 1 .and. this_proc == 1)  then
-    write(8,'(a,a)') IN_3, '<PDataArray type="UInt8" Name="materials"' //  & 
+    write(8,'(a,a)') IN_3, '<PDataArray type="UInt8" Name="materials"' //  &
                            ' format="ascii"/>'
   end if
   write(9,'(a,a)') IN_4, '<DataArray type="UInt8" Name="materials"' //  &
@@ -225,12 +225,12 @@
   !-----------------!
   if(heat_transfer == YES) then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, t % name, t % n(1))
-  end if 
+  end if
 
   !--------------------------!
   !   Turbulent quantities   !
   !--------------------------!
-  
+
   ! Save kin and eps
   if(turbulence_model == K_EPS                  .or.  &
      turbulence_model == K_EPS_V2               .or.  &
@@ -259,7 +259,7 @@
   end if
   if(turbulence_model == K_EPS                  .or.  &
      turbulence_model == K_EPS_V2               .or.  &
-     turbulence_model == K_EPS_ZETA_F           .or.  & 
+     turbulence_model == K_EPS_ZETA_F           .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F    .or.  &
      turbulence_model == REYNOLDS_STRESS_MODEL  .or.  &
      turbulence_model == HANJALIC_JAKIRLIC      .or.  &
@@ -315,7 +315,7 @@
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "Y_PLUS", y_plus(1))
   end if
 
-  ! Wall distance and delta, important for all models   
+  ! Wall distance and delta, important for all models
   call Save_Vtu_Scalar(grid, IN_4, IN_5, "WALL_DIST",  grid % wall_dist(1))
   call Save_Vtu_Scalar(grid, IN_4, IN_5, "CELL_DELTA", grid % delta(1))
 

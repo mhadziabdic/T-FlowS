@@ -35,14 +35,14 @@
   call Var_Mod_Allocate_Gradients(p)
 
   ! Mean velocity and fluctuating velocities for DNS and LES
-  if(SIMULA==LES) then
+  if(SIMULA==LES.or.SIMULA==HYB_ZETA) then
     call Var_Mod_Allocate_Statistics(u)
     call Var_Mod_Allocate_Statistics(v)
     call Var_Mod_Allocate_Statistics(w)
     call Var_Mod_Allocate_Statistics(p)
   end if
 
-  if(SIMULA==HYB_ZETA.or.SIMULA==DES_SPA.or.&
+  if(SIMULA==DES_SPA.or.&
      SIMULA==DNS.or.SIMULA==HYB_PITM.or.URANS==YES) then
     allocate (U % mean(grid % n_cells));   U % mean=0.
     allocate (V % mean(grid % n_cells));   V % mean=0.

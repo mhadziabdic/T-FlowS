@@ -207,8 +207,6 @@
 !///// cell materials
     allocate (material(-NbC:NC))
     allocate (SideC(0:2,NS))
-    read(9) (material(c), c=1,NC)
-    read(9) (material(c), c=-1,-NBC,-1)
 
     close(9)
 
@@ -233,10 +231,10 @@
     allocate (Dx(NS))
     allocate (Dy(NS))
     allocate (Dz(NS))
-    allocate (f(NS))
     allocate (xsp(NS))
     allocate (ysp(NS))
     allocate (zsp(NS))
+    allocate (f(NS))
 
     read(9) (xc(c), c=1,NC)
     read(9) (yc(c), c=1,NC)

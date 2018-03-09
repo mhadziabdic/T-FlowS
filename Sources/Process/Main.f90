@@ -259,6 +259,7 @@
     end if  
 
     If(SIMULA==HYB_ZETA) then  
+      call Compute_Shear_And_Vorticity(grid)
       call Compute_Sgs_Dynamic(grid)      
       call Compute_Sgs_Hybrid(grid)
     end if
@@ -352,7 +353,8 @@
          SIMULA == ZETA     .or.  &
          SIMULA == HYB_ZETA) then
         call Compute_Shear_And_Vorticity(grid)
-
+        call Time_And_Length_Scale(grid) 
+ 
         call Compute_Turbulent(grid, 6, Kin, n)
         call Compute_Turbulent(grid, 7, Eps, n)
          

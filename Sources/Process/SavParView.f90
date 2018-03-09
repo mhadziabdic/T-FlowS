@@ -156,7 +156,7 @@
     write(9,'(A20)') '        </DataArray>'
   end if 
 
-  if(SIMULA == LES.or.SIMULA==K_EPS.or.SIMULA==ZETA) then
+  if(SIMULA == LES.or.SIMULA==K_EPS.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
     write(9,'(A99)') '        <DataArray type="Float32" Name="viscosity ratio" format="ascii">'
     do c=1,NCsub
       write(9,*) VISt(c)/VISc
@@ -299,7 +299,7 @@
     end do  
     write(9,'(A20)') '        </DataArray>'
   end if    
-  if(SIMULA == K_EPS.or.SIMULA==ZETA) then
+  if(SIMULA == K_EPS.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
     write(9,'(A99)') '        <DataArray type="Float32" Name="TKE" format="ascii">'
     do c=1,NCsub
       write(9,*) Kin%n(c) 
@@ -309,6 +309,12 @@
     write(9,'(A99)') '        <DataArray type="Float32" Name="EPS" format="ascii">'
     do c=1,NCsub
       write(9,*) Eps%n(c) 
+    end do  
+    write(9,'(A20)') '        </DataArray>'
+
+    write(9,'(A99)') '        <DataArray type="Float32" Name="WallDs" format="ascii">'
+    do c=1,NCsub
+      write(9,*) WallDs(c) 
     end do  
     write(9,'(A20)') '        </DataArray>'
   end if
@@ -415,10 +421,11 @@
         end if
       end if
     end if
-    if(SIMULA == K_EPS.or.SIMULA==ZETA) then
+    if(SIMULA == K_EPS.or.SIMULA==ZETA.or.SIMULA==HYB_ZETA) then
       write(112,*) '        <PDataArray type="Float32" Name="VISt/VISc"/>'
       write(112,*) '        <PDataArray type="Float32" Name="TKE"/>'
       write(112,*) '        <PDataArray type="Float32" Name="EPS"/>'
+      write(112,*) '        <PDataArray type="Float32" Name="WallDs"/>'
     end if 
     if(SIMULA == EBM.or.SIMULA==HJ) then
       write(112,*) '        <PDataArray type="Float32" Name="TKE"/>'

@@ -27,7 +27,7 @@
     real, allocatable :: q(:)                  ! flux of a variable
     real              :: sigma                 ! sigma
     real              :: res                   ! residual after linear solution
-    real              :: units(4)              ! mass, length, time, temperature
+    real              :: units(5)              ! mass, length, time, temperature, angle
     
   end type
 

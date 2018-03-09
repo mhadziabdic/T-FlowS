@@ -58,7 +58,7 @@
     //trim(block_name)//"/"//trim(nodename)
 
   ! Create a link in 'file' to 'name_in_file' and name it 'nodename'
-  call Cg_Link_Write_F(trim(nodename),          & ! (in )
+  call Cg_Link_Write_F(trim(nodename),      & ! (in )
                        trim(file),          & ! (in )
                        trim(name_in_file),  & ! (in )
                        error)                 ! (out)
@@ -93,7 +93,7 @@
         //trim(block_name)//"/"//trim(nodename)
 
       ! Create a link in 'file' to 'name_in_file' and name it 'nodename'
-      call Cg_Link_Write_F(trim(nodename),          & ! (in )
+      call Cg_Link_Write_F(trim(nodename),      & ! (in )
                            trim(file),          & ! (in )
                            trim(name_in_file),  & ! (in )
                            error)                 ! (out)

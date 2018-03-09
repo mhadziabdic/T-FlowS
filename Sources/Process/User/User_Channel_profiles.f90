@@ -135,7 +135,7 @@
           Vmp(i)   = Vmp(i) + V % n(c)
           Wmp(i)   = Wmp(i) + W % n(c)
         end if
-        if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==K_EPS.or.SIMULA==HYB_ZETA) then
+        if(SIMULA==K_EPS_VV.or.SIMULA==ZETA.or.SIMULA==K_EPS) then
           if(IsNearWall(c)) then
             if(Ynd(c) > 5.0) then        
               Ufric_p(i) = Ufric_p(i) + &
@@ -183,7 +183,7 @@
             V % n(c)**2 + W % n(c)**2)/WallDs(c))/DENc(material(c)))
           end if 
         end if
-        if(SIMULA==LES.or.SIMULA==DES_SPA.or.SIMULA == DNS.or.SIMULA==HYB_ZETA) then
+        if(SIMULA==LES.or.SIMULA==DES_SPA.or.SIMULA == DNS) then
           uup(i)   = uup(i) + (uu % mean(c)- U % mean(c) * U % mean(c))
           vvp(i)   = vvp(i) + (vv % mean(c)- V % mean(c) * V % mean(c))
           wwp(i)   = wwp(i) + (ww % mean(c)- W % mean(c) * W % mean(c))
@@ -197,8 +197,8 @@
         end if
         if(SIMULA==HYB_ZETA) then
           var_1(i) = var_1(i) + Kin % n(c) 
-          var_2(i) = var_2(i) + VISt(c)/VISc 
-          var_3(i) = var_3(i) + VISt_sgs(c)/VISc 
+          var_2(i) = var_2(i) + Eps % n(c) !VISt(c)/VISc 
+          var_3(i) = var_3(i) + VISt_eff(c)/VISc 
           if(IsNearWall(c)) then
             Ufric_p(i) = Ufric_p(i) + sqrt((VISc*sqrt(U % mean(c)**2 +&
             V % mean(c)**2 + W % mean(c)**2)/WallDs(c))/DENc(material(c)))

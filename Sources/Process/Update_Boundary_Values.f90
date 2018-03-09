@@ -150,7 +150,7 @@
                         + qy * grid % dy(s)   &   
                         + qz * grid % dz(s))  &
                      / CONwall(c1)
-            Qflux = Qflux + T % q(c2)*Stot
+            Qflux = Qflux + T % q(c2) * Stot
             if(abs(T % q(c2)) > 1.0e-8) Area  = Area  + Stot
           else if(TypeBC(c2) == WALL) then
             T % q(c2) = Stot * (T % n(c2) - T % n(c1)) * CONeff     &
@@ -160,12 +160,12 @@
           end if
         else
           if(TypeBC(c2) == WALLFL) then
-            T% n(c2) = T % n(c1) + Prt / (CONeff + TINY)      &
+            T% n(c2) = T % n(c1) + Prt / (CAPc(material(c1)) + TINY)      &
                        * (  qx * grid % dx(s)  &
                           + qy * grid % dy(s)  &
                           + qz * grid % dz(s) )
-            Qflux = T % q(c2) 
-            Area  = Area  + Stot
+            Qflux = Qflux + T % q(c2) * Stot
+            if(abs(T % q(c2)) > 1.0e-8) Area  = Area  + Stot 
           else if(TypeBC(c2) == WALL) then
             T % q(c2) = Stot * ( T % n(c2) - T % n(c1) ) * CONeff     &
                       / WallDs(c1)

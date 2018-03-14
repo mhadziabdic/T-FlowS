@@ -52,7 +52,7 @@
 
   if (error .ne. 0) then
          print *, "#         Failed to write: ", trim(coord_name)
-     call cg_error_exit_f()
+     call Cg_Error_Exit_F()
   endif
 
   ! Print some info

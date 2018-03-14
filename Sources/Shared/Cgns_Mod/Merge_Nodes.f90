@@ -18,7 +18,7 @@
   integer, allocatable :: new_number(:)
   integer, allocatable :: compressed(:)
   real,    parameter   :: BIG   = 1.0e+4  ! 1.0e+4, 1.0e+5, 1.0e+6 was OK
-  real,    parameter   :: SMALL = 1.0e-6
+  real,    parameter   :: SMALL = 1.0e-8  
 !==============================================================================!
 
   print *, '# Old number of nodes: ', grid % n_nodes

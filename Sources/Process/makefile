@@ -94,13 +94,13 @@ endif
 ifeq ($(CGNS_HDF5), yes)
   ifeq ($(MPI), yes)
     DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Include
-    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Lib/libcgns.a \
-                  ../Libraries/Hdf5_Par/Lib/libhdf5.a                        \
+    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Lib/libcgns.a	\
+                  ../Libraries/Hdf5_Par/Lib/libhdf5.a				\
                   -Wl,--no-as-needed -ldl -lz
   else
     DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Include
-    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a \
-                  ../Libraries/Hdf5_Seq/Lib/libhdf5.a                        \
+    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a	\
+                  ../Libraries/Hdf5_Seq/Lib/libhdf5.a				\
                   -Wl,--no-as-needed -ldl -lz
   endif
 endif
@@ -120,11 +120,11 @@ OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
 #-------------
 
 # Modules in shared directory
-SRC_MOD = Const_Mod.f90     \
-          Grid_Mod.f90      \
-          Work_Mod.f90      \
-          Name_Mod.f90      \
-          Tokenizer_Mod.f90 \
+SRC_MOD = Const_Mod.f90		\
+          Grid_Mod.f90		\
+          Work_Mod.f90		\
+          Name_Mod.f90		\
+          Tokenizer_Mod.f90	\
           Material_Mod.f90
 
 # Conditional support for MPI communication
@@ -135,20 +135,20 @@ else
 endif
 
 # Sources for modules in the local directory
-SRC_MOD += Info_Mod.f90     \
-           Bulk_Mod.f90     \
-           Var_Mod.f90      \
-           Matrix_Mod.f90   \
-           Numerics_Mod.f90 \
-           Solvers_Mod.f90  \
-           Flow_Mod.f90     \
-           Grad_Mod.f90      \
+SRC_MOD += Info_Mod.f90		\
+           Bulk_Mod.f90		\
+           Var_Mod.f90		\
+           Matrix_Mod.f90	\
+           Numerics_Mod.f90	\
+           Solvers_Mod.f90	\
+           Flow_Mod.f90		\
+           Grad_Mod.f90		\
            User_Mod.f90
 
 # Sources for modules in sub-directories
-SRC_MOD += Turbulence_Mod.f90 \
-           les_mod.f90        \
-           rans_mod.f90       \
+SRC_MOD += Turbulence_Mod.f90	\
+           les_mod.f90		\
+           rans_mod.f90		\
 
 # Control_Mod should be last since it reads for other modules
 SRC_MOD += Control_Mod.f90
@@ -166,13 +166,13 @@ STEP_A  = $(subst $(DIR_MODELS),,$(SRC_RAW)) # remove directory name
 SRC_FUN = $(subst /,,$(STEP_A))              # remove last slash
 
 # Add files from "Shared" directory, but one by one, to avoid clutter
-SRC_FUN += Distance.f90              \
-           Load_Geo.f90              \
-           Name_File.f90             \
-           Sort_Int_Carry_Int.f90    \
-           Sort_Real_Carry_Int.f90   \
-           Approx.f90                \
-           Swap_Int.f90              \
+SRC_FUN += Distance.f90 		\
+           Load_Geo.f90 		\
+           Name_File.f90		\
+           Sort_Int_Carry_Int.f90	\
+           Sort_Real_Carry_Int.f90	\
+           Approx.f90	 		\
+           Swap_Int.f90			\
            To_Upper_Case.f90
 
 #-------------------------------------------
@@ -238,11 +238,11 @@ $(PROGRAM_FILE): $(OBJ)
 #   hand for tuning of dependencies.
 #---------------------------------------
 $(DIR_OBJECT)/all_mod.o:    $(DIR_OBJECT)/allp_mod.o
-$(DIR_OBJECT)/Grid_Mod.o:   $(DIR_OBJECT)/Bnd_Cond_Mod.o \
+$(DIR_OBJECT)/Grid_Mod.o:   $(DIR_OBJECT)/Bnd_Cond_Mod.o	\
                             $(DIR_OBJECT)/Material_Mod.o
-$(DIR_OBJECT)/Domain_Mod.o: $(DIR_OBJECT)/Point_Mod.o \
-                            $(DIR_OBJECT)/Line_Mod.o  \
-                            $(DIR_OBJECT)/Block_Mod.o \
+$(DIR_OBJECT)/Domain_Mod.o: $(DIR_OBJECT)/Point_Mod.o		\
+                            $(DIR_OBJECT)/Line_Mod.o		\
+                            $(DIR_OBJECT)/Block_Mod.o		\
                             $(DIR_OBJECT)/Region_Mod.o
 $(DIR_OBJECT)/Cgns_Mod.o:   $(DIR_OBJECT)/Grid_Mod.o
 

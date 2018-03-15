@@ -1,9 +1,0 @@
-#===========================================================================
-# This is a sample of model constant definition file, and is model-specific. 
-#
-# Undoubtebly, it is an expert options, and user must have a pretty good 
-# understanding of the model and the flow physics to tune these numbers.
-#
-# For this particular case, LES_SMAG, only Smagorinsky constant is given.
-#---------------------------------------------------------------------------
-0.1    Cs

@@ -1,8 +1,0 @@
-#===========================================================
-# Could be "YES" or "NO" following a very simple principle: 
-#
-# - for cases with heat transfer uncomment "YES", 
-# - for cases without heat transfer uncomment "NO"
-#-----------------------------------------------------------
-YES
-# NO

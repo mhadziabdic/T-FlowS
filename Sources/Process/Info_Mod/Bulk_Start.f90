@@ -36,15 +36,15 @@
     bulk_info % lines(1) (L_LINE/2+1:L_LINE/2+1) = '|'
     bulk_info % line_sep (L_LINE/2+1:L_LINE/2+1) = '+'
 
-    bulk_info % line_sep  (27:27) = '+'
-    bulk_info % lines(2)  (27:27) = '|'
-    bulk_info % lines(3)  (27:27) = '|'
-    bulk_info % line_trail(27:27) = '+'
+    bulk_info % line_sep  (29:29) = '+'
+    bulk_info % lines(2)  (29:29) = '|'
+    bulk_info % lines(3)  (29:29) = '|'
+    bulk_info % line_trail(29:29) = '+'
 
-    bulk_info % line_sep  (54:54) = '+'
-    bulk_info % lines(2)  (54:54) = '|'
-    bulk_info % lines(3)  (54:54) = '|'
-    bulk_info % line_trail(54:54) = '+'
+    bulk_info % line_sep  (57:57) = '+'
+    bulk_info % lines(2)  (57:57) = '|'
+    bulk_info % lines(3)  (57:57) = '|'
+    bulk_info % line_trail(57:57) = '+'
 
   end if
 

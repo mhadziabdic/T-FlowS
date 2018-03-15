@@ -30,12 +30,12 @@
       iter_info % line_trail(i:i) = '-'
     end do
 
-    ! Create separators
+    ! Create separators (character must be length of L_BOX)
     do i = 2, L_LINE-L_BOX, L_BOX
-      write(iter_info % lines(1) (i:i+L_BOX-1), '(a20)') '|'
-      write(iter_info % lines(2) (i:i+L_BOX-1), '(a20)') '|'
-      write(iter_info % lines(3) (i:i+L_BOX-1), '(a20)') '|'
-      write(iter_info % lines(4) (i:i+L_BOX-1), '(a20)') '|'
+      write(iter_info % lines(1) (i:i+L_BOX-1), '(a21)') '|'
+      write(iter_info % lines(2) (i:i+L_BOX-1), '(a21)') '|'
+      write(iter_info % lines(3) (i:i+L_BOX-1), '(a21)') '|'
+      write(iter_info % lines(4) (i:i+L_BOX-1), '(a21)') '|'
       write(iter_info % line_lead (i+L_BOX-1 :  &
                                    i+L_BOX-1),   '(a1)') '+'
       write(iter_info % line_trail(i+L_BOX-1 :  &

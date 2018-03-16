@@ -50,7 +50,8 @@
            bulk(m) % flux_y_o > 1.0e-8.or.&
            bulk(m) % flux_z_o > 1.0e-8) then
           do c = 1, grid % n_cells 
-            b(c) = b(c) - Heat * grid % vol(c) 
+            b(c)=b(c) - 1.0*Qflux * U % n(c)/bulk(1) % flux_x_o * grid % vol(c)
+!            b(c)=b(c) -   2.0*3.14*Qflux * U % n(c)/bulk(1) % flux_x_o * grid % vol(c)
           end do
         end if
       end do

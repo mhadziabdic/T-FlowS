@@ -22,29 +22,29 @@ Physics
 
 Initial values
   INITIAL_CONDITION
-    VARIABLES     u     v     w     t      kin    eps     f22    v2 
+    VARIABLES     u     v     w     t      kin    eps     f22    zeta 
     VALUES        8.0   0.0   0.0   20.0   0.01   0.001   0.08   0.01
 
 Boundary conditions
   BOUNDARY_CONDITION    lower_wall
     TYPE                heat_flux
-    VARIABLES           u     v     w     q     kin   eps      v2    f22
+    VARIABLES           u     v     w     q     kin   eps      zeta    f22
     VALUES              0.0   0.0   0.0   0.1   0.0   0.0004   0.0   0.0
 
   BOUNDARY_CONDITION    upper_wall
     TYPE                heat_flux
-    VARIABLES           u     v     w     q     kin   eps      v2    f22
+    VARIABLES           u     v     w     q     kin   eps      zeta    f22
     VALUES              0.0   0.0   0.0   0.1   0.0   0.0004   0.0   0.0
 
 
   BOUNDARY_CONDITION    outlet_face
     TYPE                outflow
-    VARIABLES           u     v     w     t     kin   eps      v2       f22
+    VARIABLES           u     v     w     t     kin   eps      zeta       f22
     VALUES              0.0   0.0   0.0   0.0   0.6   0.0822   1.0004   0.00001
 
   BOUNDARY_CONDITION    inlet_face
     TYPE                inflow
-    VARIABLES           z   u   v   w   t   kin   eps   v2   f22
+    VARIABLES           z   u   v   w   t   kin   eps   zeta   f22
     FILE                dns_inflow.dat
 
 These two can probably be omitted

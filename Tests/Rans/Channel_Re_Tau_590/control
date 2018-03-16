@@ -1,8 +1,8 @@
  PROBLEM_NAME    chan
  PROBLEM_TYPE    channel
  HEAT_TRANSFER    yes
- NUMBER_OF_TIME_STEPS    2000
- RESULTS_SAVE_INTERVAL   20
+ NUMBER_OF_TIME_STEPS    4000
+ RESULTS_SAVE_INTERVAL   500
  STARTING_TIME_STEP_FOR_STATISTICS    2000000
 
 #-------------------
@@ -67,7 +67,7 @@
 # Initial conditions
 #--------------------
   INITIAL_CONDITION
-    VARIABLES           u     v     w     t      kin      eps      v2       f22
+    VARIABLES           u     v     w     t      kin      eps      zeta     f22
     VALUES              1.0   0.0   0.0   20.0   1.0e-2   1.0e-3   1.0e-1   6.6e-3
 
 #---------------------
@@ -75,11 +75,11 @@
 #---------------------
   BOUNDARY_CONDITION    ONE
     TYPE                heat_flux
-    VARIABLES           u     v     w     t     kin   eps      v2    f22
-    VALUES              0.0   0.0   0.0   0.0   0.0   1.0e-3   0.0   0.0
+    VARIABLES           u     v     w     q     kin   eps      zeta  f22
+    VALUES              0.0   0.0   0.0   0.1   0.0   1.0e-3   0.0   0.0
 
   BOUNDARY_CONDITION    TWO
     TYPE                symmetry
-    VARIABLES           u     v     w     t      kin      eps      v2       f22
+    VARIABLES           u     v     w     t      kin      eps      zeta     f22
     VALUES              0.0   0.0   0.0   20.0   1.0E-2   1.0E-3   6.6E-2   1.0e-3
 

@@ -1,7 +1,7 @@
  PROBLEM_NAME    jet
  PROBLEM_TYPE    jet
  HEAT_TRANSFER    yes
- NUMBER_OF_TIME_STEPS    200
+ NUMBER_OF_TIME_STEPS    4000
  STARTING_TIME_STEP_FOR_STATISTICS    1000000000
 
 #-------------------
@@ -68,7 +68,7 @@
 # Initial conditions
 #--------------------
   INITIAL_CONDITION
-    VARIABLES           u     v     w     t      kin      eps      v2       f22
+    VARIABLES           u     v     w     t      kin      eps      zeta       f22
     VALUES             -0.1   0.0   0.0   20.0   1.0e-3   1.0e-4   6.6e-4   1.0e-4
 
 #---------------------
@@ -76,30 +76,30 @@
 #---------------------
   BOUNDARY_CONDITION    pipe_wall
     TYPE                heat_flux
-    VARIABLES           u     v     w     t     kin   eps      v2    f22
+    VARIABLES           u     v     w     t     kin   eps      zeta    f22
     VALUES              0.0   0.0   0.0   0.0   0.0   1.0e-3   0.0   0.0
 
   BOUNDARY_CONDITION    symmetry_plane
     TYPE                symmetry
-    VARIABLES           u     v     w     t      kin      eps      v2       f22
+    VARIABLES           u     v     w     t      kin      eps      zeta       f22
     VALUES              0.0   0.0   0.0   20.0   1.0E-2   1.0E-3   6.6E-2   1.0e-3
 
   BOUNDARY_CONDITION    top_plane
     TYPE                pressure  
-    VARIABLES           u     v     w     t     kin      eps      v2       f22
+    VARIABLES           u     v     w     t     kin      eps      zeta       f22
     VALUES              0.0   0.0   0.0   0.0   1.0E-2   1.0E-3   6.6E-2   1.0e-3
 
   BOUNDARY_CONDITION    lower_wall
     TYPE                heat_flux
-    VARIABLES           u     v     w     t     kin   eps      v2    f22
+    VARIABLES           u     v     w     t     kin   eps      zeta    f22
     VALUES              0.0   0.0   0.0   0.1   0.0   1.0e-3   0.0   0.0
 
   BOUNDARY_CONDITION    pipe_inlet
     TYPE                inflow
-    VARIABLES           rz   u   v   w   t   kin   eps   v2   f22
+    VARIABLES           rz   u   v   w   t   kin   eps   zeta   f22
     FILE                inlet_profile_zeta_re_23000.dat
 
   BOUNDARY_CONDITION    cyl_outlet
     TYPE                pressure   
-    VARIABLES           u     v     w     t     kin      eps      v2       f22
+    VARIABLES           u     v     w     t     kin      eps      zeta       f22
     VALUES              0.0   0.0   0.0   0.0   1.0E-2   1.0E-3   6.6E-2   1.0e-3

@@ -304,7 +304,6 @@
 
 
     if(turbulence_model == K_EPS_ZETA_F  .or.  &
-       turbulence_model == K_EPS_V2      .or.  &
        turbulence_model == K_EPS         .or.  &
        turbulence_model == HYBRID_K_EPS_ZETA_F) then
       if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then

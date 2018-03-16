@@ -12,16 +12,17 @@
   use Tokenizer_Mod
   use Grid_Mod
   use Cgns_Mod
-  use Work_Mod, only: uu_mean => r_cell_01,  &
-                      vv_mean => r_cell_02,  &
-                      ww_mean => r_cell_03,  &
-                      uv_mean => r_cell_04,  &
-                      uw_mean => r_cell_05,  &
-                      vw_mean => r_cell_06,  &
-                      tt_mean => r_cell_07,  &
-                      ut_mean => r_cell_08,  &
-                      vt_mean => r_cell_09,  &
-                      wt_mean => r_cell_10
+  use Work_Mod, only: v2_calc => r_cell_01,  &
+                      uu_mean => r_cell_02,  &
+                      vv_mean => r_cell_03,  &
+                      ww_mean => r_cell_04,  &
+                      uv_mean => r_cell_05,  &
+                      uw_mean => r_cell_06,  &
+                      vw_mean => r_cell_07,  &
+                      tt_mean => r_cell_08,  &
+                      ut_mean => r_cell_09,  &
+                      vt_mean => r_cell_10,  &
+                      wt_mean => r_cell_11
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -165,13 +166,26 @@
   end if
 
   ! v2 and f22
-  if(turbulence_model == K_EPS_V2       .or.  &
-     turbulence_model == K_EPS_ZETA_F   .or.  &
-     turbulence_model == HYBRID_K_EPS_ZETA_F) then
+  if(turbulence_model == K_EPS_V2_F) then
     call Cgns_Mod_Write_Field(base, block, solution, field, grid, &
                               v2 % n(1),  "TurbulentQuantityV2")
     call Cgns_Mod_Write_Field(base, block, solution, field, grid, &
                               f22 % n(1), "TurbulentQuantityF22")
+  end if
+
+  ! zeta, v2 and f22
+  if(turbulence_model == K_EPS_V2       .or.  &
+     turbulence_model == K_EPS_ZETA_F   .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
+    do c = 1, grid % n_cells
+      v2_calc(c) = kin % n(c) * zeta % n(c)
+    end do
+    call Cgns_Mod_Write_Field(base, block, solution, field, grid, &
+                              v2_calc(1),  "TurbulentQuantityV2")
+    call Cgns_Mod_Write_Field(base, block, solution, field, grid, &
+                              zeta % n(1), "TurbulentQuantityZeta")
+    call Cgns_Mod_Write_Field(base, block, solution, field, grid, &
+                              f22 % n(1),  "TurbulentQuantityF22")
   end if
 
   ! Vis and Turbulent Vicosity_t

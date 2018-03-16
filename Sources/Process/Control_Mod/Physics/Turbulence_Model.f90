@@ -7,7 +7,6 @@
   use Turbulence_Mod, only: turbulence_model,      &
                             NONE,                  &
                             K_EPS,                 &
-                            K_EPS_V2,              &
                             K_EPS_ZETA_F,          &
                             HYBRID_K_EPS_ZETA_F,   &
                             HYBRID_PITM,           &
@@ -35,8 +34,6 @@
       turbulence_model = NONE
     case('K_EPS')                 
       turbulence_model = K_EPS
-    case('K_EPS_V2')              
-      turbulence_model = K_EPS_V2
     case('K_EPS_ZETA_F')          
       turbulence_model = K_EPS_ZETA_F
     case('HYBRID_K_EPS_ZETA_F')   

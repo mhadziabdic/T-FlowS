@@ -98,36 +98,12 @@ print *, 'Calling for turbulence model'
     Cmu75 = Cmu25**3
     kappa = 0.41
     Elog  = 8.342
-    Kin % Sigma = 1.0
-    Eps % Sigma = 1.3
+    Kin % sigma = 1.0
+    Eps % sigma = 1.3
 !    if(MODE == LRe) then
 !      Ce1 = 1.55
 !      Ce2 = 2.0
 !    end if
-  endif
-
-  if(turbulence_model == K_EPS_V2) then
-    Ce1   = 1.4
-    Ce2   = 1.9
-    Cmu   = 0.09
-    CmuD  = 0.22
-    Cmu25 = sqrt(sqrt(Cmu))
-    Cmu75 = Cmu25**3
-    kappa = 0.41
-    Elog  = 8.342
-    Cl    = 0.22
-    Ct    = 6.0
-    Cni   = 85.0
-    alpha = 0.045
-    cf1   = 0.697
-    cf2   = 4.4
-    cf3   = 1.6
-    Cf_1  = 1.4
-    Cf_2  = 0.3
-    Lim   = 11.0
-    Kin % Sigma = 1.0
-    Eps % Sigma = 1.3
-    v2  % Sigma = 1.0
   endif
 
   if(turbulence_model == REYNOLDS_STRESS_MODEL) then
@@ -140,14 +116,14 @@ print *, 'Calling for turbulence model'
     Cl    = 0.161
     Ct    = 6.0
     Cni   = 80.0
-    Kin % Sigma = 1.0
-    Eps % Sigma = 1.15
-    uu % Sigma = 1.0
-    vv % Sigma = 1.0
-    ww % Sigma = 1.0
-    uv % Sigma = 1.0
-    uw % Sigma = 1.0
-    vw % Sigma = 1.0
+    kin % sigma = 1.0
+    eps % sigma = 1.15
+    uu % sigma = 1.0
+    vv % sigma = 1.0
+    ww % sigma = 1.0
+    uv % sigma = 1.0
+    uw % sigma = 1.0
+    vw % sigma = 1.0
     g1    = 3.4
     g1_star = 1.8
     g2    = 4.2
@@ -167,14 +143,14 @@ print *, 'Calling for turbulence model'
     Cl    = 0.161
     Ct    = 6.0
     Cni   = 80.0
-    Kin % Sigma = 1.0
-    Eps % Sigma = 1.0 !1.15
-    uu % Sigma = 1.0
-    vv % Sigma = 1.0
-    ww % Sigma = 1.0
-    uv % Sigma = 1.0
-    uw % Sigma = 1.0
-    vw % Sigma = 1.0
+    kin % sigma = 1.0
+    eps % sigma = 1.0 !1.15
+    uu % sigma = 1.0
+    vv % sigma = 1.0
+    ww % sigma = 1.0
+    uv % sigma = 1.0
+    uw % sigma = 1.0
+    vw % sigma = 1.0
     g1    = 3.4
     g1_star = 1.8
     g2    = 4.2
@@ -204,9 +180,9 @@ print *, 'Calling for turbulence model'
     Cf_1  = 1.4
     Cf_2  = 0.3
     Lim   = 11.0
-    Kin % Sigma = 1.0
-    Eps % Sigma = 1.3
-    v2  % Sigma = 1.2
+    kin  % sigma = 1.0
+    eps  % sigma = 1.3
+    zeta % sigma = 1.2
   endif
 
   if(turbulence_model == SPALART_ALLMARAS .or.  &
@@ -217,8 +193,8 @@ print *, 'Calling for turbulence model'
     Cvis1  = 7.1
     Cw2    = 0.3
     Cw3    = 2.0
-    VIS % Sigma = 2.0/3.0
-    Cw1    = Cb1/kappa**2.0 + (1+Cb2)/VIS % Sigma
+    VIS % sigma = 2.0/3.0
+    Cw1    = Cb1/kappa**2.0 + (1+Cb2)/VIS % sigma
     SIGMAv = 2.0/3.0
   end if
 

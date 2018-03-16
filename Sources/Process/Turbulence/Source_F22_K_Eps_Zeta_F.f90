@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Source_F22_K_Eps_V2_F(grid)
+  subroutine Source_F22_K_Eps_Zeta_F(grid)
 !------------------------------------------------------------------------------!
 !   Calculate source terms in eliptic relaxation  equation                     !
 !   for vi2 and imposing  boundary condition for f22                           !
@@ -54,10 +54,10 @@
  if(turbulence_model == K_EPS_ZETA_F .or.  &
     turbulence_model == HYBRID_K_EPS_ZETA_F) then 
    do c = 1, grid % n_cells
-     f22hg = (1.0 - Cf_1 - 0.65*p_kin(c)   &
-           / (eps % n(c) + TINY))       &
-           * (v2 % n(c) - 2.0 / 3.0)   &
-           / (Tsc(c) + TINY)            &
+     f22hg = (1.0 - Cf_1 - 0.65 * p_kin(c)  &
+           / (eps  % n(c) + TINY))          &
+           * (zeta % n(c) - TWO_THIRDS)     &
+           / (Tsc(c) + TINY)                &
            + 0.0085 * p_kin(c) / (kin % n(c) + TINY)
      b(c) = b(c) + f22hg * grid % vol(c) / (Lsc(c)**2 + TINY) 
    end do
@@ -76,36 +76,8 @@
        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
-         f22 % n(c2) = -2.0 * viscosity * v2 % n(c1)     &
+         f22 % n(c2) = -2.0 * viscosity * zeta % n(c1)     &
                      / grid % wall_dist(c1)**2
-
-        ! Fill in a source coefficients
-
-        ! Linearization of the near wall terms helps to get more  
-         ! stable solution, especially for small wall distance.
-         A0 = f_coef(s)
-         b(c1) = b(c1) + A0 * f22 % n(c2)
-       end if   ! end if of BC=wall
-     end if    ! end if of c2<0
-   end do
- else if(turbulence_model == K_EPS_V2) then
-   do c = 1, grid % n_cells
-     f22hg = (1.0 - Cf_1)*(v2 % n(c)/(kin % n(c)+TINY) - TWO_THIRDS)/(Tsc(c)+TINY)   &
-                + Cf_2*p_kin(c)/(kin % n(c)+TINY)
-     b(c) = b(c) + f22hg*grid % vol(c)/(Lsc(c)+TINY)**2
-     sor_11 = grid % vol(c)/Lsc(c)**2
-     A % val(A % dia(c)) = A % val(A % dia(c)) + sor_11
-   end do
-
-   ! Imposing boundary condition for f22 on the wall
-   do s = 1, grid % n_faces
-     c1=grid % faces_c(1,s)
-     c2=grid % faces_c(2,s)
-     if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
-       if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-          Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
-         f22 % n(c2) = -20.0*viscosity**2*v2 % n(c1)/                     &
-                       (grid % wall_dist(c1)**4*eps % n(c2))
 
         ! Fill in a source coefficients
 

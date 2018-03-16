@@ -249,7 +249,7 @@
   if(turbulence_model == REYNOLDS_STRESS_MODEL) then
     call Source_F22_Ebm(grid)
   else
-    call Source_F22_K_Eps_V2_F(grid)
+    call Source_F22_K_Eps_Zeta_F(grid)
   end if
 
   !---------------------------------!

@@ -134,7 +134,6 @@
 
   if(turbulence_model == K_EPS    .or.  &
      turbulence_model == K_EPS_ZETA_F     .or.  &
-     turbulence_model == K_EPS_V2 .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_PITM) then 
     write(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
@@ -160,16 +159,15 @@
     write(9) (tau_wall(c), c = 1, grid % n_cells)
   end if
 
-  if(turbulence_model == K_EPS_V2 .or.  &
-     turbulence_model == K_EPS_ZETA_F     .or.  &
+  if(turbulence_model == K_EPS_ZETA_F     .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
-    write(9) (v2 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (v2 % o(c),    c = 1, grid % n_cells)
-    write(9) (v2 % a(c),    c = 1, grid % n_cells)
-    write(9) (v2 % a_o(c),  c = 1, grid % n_cells)
-    write(9) (v2 % d_o(c),  c = 1, grid % n_cells)
-    write(9) (v2 % c(c),    c = 1, grid % n_cells)
-    write(9) (v2 % c_o(c),  c = 1, grid % n_cells)
+    write(9) (zeta % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (zeta % o(c),    c = 1, grid % n_cells)
+    write(9) (zeta % a(c),    c = 1, grid % n_cells)
+    write(9) (zeta % a_o(c),  c = 1, grid % n_cells)
+    write(9) (zeta % d_o(c),  c = 1, grid % n_cells)
+    write(9) (zeta % c(c),    c = 1, grid % n_cells)
+    write(9) (zeta % c_o(c),  c = 1, grid % n_cells)
 
     write(9) (f22 % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (f22 % o(c),    c = 1, grid % n_cells)

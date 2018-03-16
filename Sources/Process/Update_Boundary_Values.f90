@@ -76,17 +76,16 @@
         end if
       end if
 
-      ! k-epsilon-v^2
-      if(turbulence_model == K_EPS_V2 .or.  &
-         turbulence_model == K_EPS_ZETA_F     .or.  &
+      ! k-epsilon-zeta-f
+      if(turbulence_model == K_EPS_ZETA_F     .or.  &
          turbulence_model == HYBRID_K_EPS_ZETA_F) then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == OUTFLOW .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == PRESSURE) then
-          kin % n(c2) = kin % n(c1)
-          eps % n(c2) = eps % n(c1)
-          v2  % n(c2) = v2  % n(c1)
-          f22 % n(c2) = f22 % n(c1)
+          kin  % n(c2) = kin  % n(c1)
+          eps  % n(c2) = eps  % n(c1)
+          zeta % n(c2) = zeta % n(c1)
+          f22  % n(c2) = f22  % n(c1)
         end if
 
         !  if (Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW) then
@@ -202,13 +201,12 @@
            turbulence_model == DES_SPALART) &
           vis % n(c2) = vis % n(grid % bnd_cond % copy_c(c2)) 
 
-        if(turbulence_model == K_EPS_V2 .or.  &
-           turbulence_model == K_EPS_ZETA_F     .or.  &
+        if(turbulence_model == K_EPS_ZETA_F     .or.  &
            turbulence_model == HYBRID_K_EPS_ZETA_F) then
-          kin % n(c2) = kin % n(grid % bnd_cond % copy_c(c2))
-          eps % n(c2) = eps % n(grid % bnd_cond % copy_c(c2))
-          v2  % n(c2) = v2  % n(grid % bnd_cond % copy_c(c2))
-          f22 % n(c2) = f22 % n(grid % bnd_cond % copy_c(c2))
+          kin  % n(c2) = kin  % n(grid % bnd_cond % copy_c(c2))
+          eps  % n(c2) = eps  % n(grid % bnd_cond % copy_c(c2))
+          zeta % n(c2) = zeta % n(grid % bnd_cond % copy_c(c2))
+          f22  % n(c2) = f22  % n(grid % bnd_cond % copy_c(c2))
         end if 
 
         if(turbulence_model == K_EPS) then

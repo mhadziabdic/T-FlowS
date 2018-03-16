@@ -29,12 +29,12 @@
   real              :: vals(0:128)     ! Note that they start from zero!
 
   ! Default values for boundary conditions
-  real, parameter   :: u_def   = 0.0,  v_def   = 0.0,  w_def   = 0.0
-  real, parameter   :: p_def   = 0.0,  t_def   = 0.0,  q_def   = 0.0
-  real, parameter   :: kin_def = 0.0,  eps_def = 0.0,  f22_def = 0.0
-  real, parameter   :: vis_def = 0.0,  v2_def  = 0.0
-  real, parameter   :: uu_def  = 0.0,  vv_def  = 0.0,  ww_def  = 0.0
-  real, parameter   :: uv_def  = 0.0,  uw_def  = 0.0,  vw_def  = 0.0
+  real, parameter   :: u_def   = 0.0,  v_def   = 0.0,  w_def    = 0.0
+  real, parameter   :: p_def   = 0.0,  t_def   = 0.0,  q_def    = 0.0
+  real, parameter   :: kin_def = 0.0,  eps_def = 0.0,  f22_def  = 0.0
+  real, parameter   :: vis_def = 0.0,  v2_def  = 0.0,  zeta_def = 0.0
+  real, parameter   :: uu_def  = 0.0,  vv_def  = 0.0,  ww_def   = 0.0
+  real, parameter   :: uv_def  = 0.0,  uw_def  = 0.0,  vw_def   = 0.0
 !==============================================================================!
 
   !-----------------------------------!
@@ -193,13 +193,12 @@
               y_plus(c) = 30.0
             end if
 
-            if(turbulence_model == K_EPS_V2 .or.  &
-               turbulence_model == K_EPS_ZETA_F     .or.  &
+            if(turbulence_model == K_EPS_ZETA_F     .or.  &
                turbulence_model == HYBRID_K_EPS_ZETA_F) then
-              vals(0) = kin_def; kin % n(c) = vals(Key_Ind('KIN', keys, nks))
-              vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
-              vals(0) = f22_def; f22 % n(c) = vals(Key_Ind('F22', keys, nks))
-              vals(0) = v2_def;  v2  % n(c) = vals(Key_Ind('V2',  keys, nks))
+              vals(0) = kin_def;  kin  % n(c) = vals(Key_Ind('KIN',  keys, nks))
+              vals(0) = eps_def;  eps  % n(c) = vals(Key_Ind('EPS',  keys, nks))
+              vals(0) = zeta_def; zeta % n(c) = vals(Key_Ind('ZETA', keys, nks))
+              vals(0) = f22_def;  f22  % n(c) = vals(Key_Ind('F22',  keys, nks))
             end if
 
             if(turbulence_model == SPALART_ALLMARAS .or.  &
@@ -284,12 +283,11 @@
                 i=Key_Ind('EPS',keys,nks); prof(k,0)=eps_def; eps%n(c)=prof(k,i)
               end if
 
-              if(turbulence_model == K_EPS_V2 .or.  &
-                 turbulence_model == K_EPS_ZETA_F) then
-                i=Key_Ind('KIN',keys,nks); prof(k,0)=kin_def; kin%n(c)=prof(k,i)
-                i=Key_Ind('EPS',keys,nks); prof(k,0)=eps_def; eps%n(c)=prof(k,i)
-                i=Key_Ind('V2', keys,nks); prof(k,0)=v2_def;  v2 %n(c)=prof(k,i)
-                i=Key_Ind('F22',keys,nks); prof(k,0)=f22_def; f22%n(c)=prof(k,i)
+              if(turbulence_model == K_EPS_ZETA_F) then
+                i=Key_Ind('KIN',  keys, nks); prof(k,0) = kin_def;  kin  % n(c) = prof(k,i)
+                i=Key_Ind('EPS',  keys, nks); prof(k,0) = eps_def;  eps  % n(c) = prof(k,i)
+                i=Key_Ind('ZETA', keys, nks); prof(k,0) = zeta_def; zeta % n(c) = prof(k,i)
+                i=Key_Ind('F22',  keys, nks); prof(k,0) = f22_def;  f22  % n(c) = prof(k,i)
               end if
 
               if(turbulence_model == DES_SPALART) then
@@ -387,8 +385,7 @@
                     eps % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
                   end if
 
-                  if(turbulence_model == K_EPS_V2      .or.  &
-                     turbulence_model == K_EPS_ZETA_F  .or.  &
+                  if(turbulence_model == K_EPS_ZETA_F  .or.  &
                      turbulence_model == HYBRID_K_EPS_ZETA_F) then
                     prof(m,   0) = kin_def 
                     prof(m+1, 0) = kin_def
@@ -398,10 +395,10 @@
                     prof(m+1, 0) = eps_def
                     i = Key_Ind('EPS',keys,nks); 
                     eps % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
-                    prof(m,   0) = v2_def 
-                    prof(m+1, 0) = v2_def
-                    i = Key_Ind('V2',keys,nks); 
-                    v2 % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+                    prof(m,   0) = zeta_def 
+                    prof(m+1, 0) = zeta_def
+                    i = Key_Ind('ZETA',keys,nks); 
+                    zeta % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
                     prof(m,   0) = f22_def 
                     prof(m+1, 0) = f22_def
                     i = Key_Ind('F22',keys,nks); 

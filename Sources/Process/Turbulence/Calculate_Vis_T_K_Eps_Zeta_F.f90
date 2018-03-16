@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Calculate_Vis_T_K_Eps_V2(grid) 
+  subroutine Calculate_Vis_T_K_Eps_Zeta_F(grid) 
 !------------------------------------------------------------------------------!
 !   Computes the turbulent viscosity for RANS models.                          !
 !------------------------------------------------------------------------------!
@@ -23,18 +23,14 @@
 
   call Time_And_Length_Scale(grid)
 
-  if(turbulence_model == K_EPS_V2) then
+  if(turbulence_model == K_EPS_ZETA_F) then
     do c = 1, grid % n_cells
-      vis_t(c) = CmuD*v2%n(c)*Tsc(c)
-    end do
-  else if(turbulence_model == K_EPS_ZETA_F) then
-    do c = 1, grid % n_cells
-      vis_t(c) = CmuD*v2%n(c)*kin % n(c)*Tsc(c)
+      vis_t(c) = CmuD * zeta % n(c) * kin % n(c) * Tsc(c)
     end do
   else if(turbulence_model == HYBRID_K_EPS_ZETA_F) then
     do c = 1, grid % n_cells
-      vis_t(c) = CmuD*v2%n(c)*kin % n(c)*Tsc(c)
-      vis_t_eff(c) = max(vis_t(c),vis_t_sgs(c))
+      vis_t(c) = CmuD * zeta % n(c) * kin % n(c) * Tsc(c)
+      vis_t_eff(c) = max(vis_t(c), vis_t_sgs(c))
     end do
     call Comm_Mod_Exchange(grid, vis_t_eff)  
   end if

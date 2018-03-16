@@ -19,7 +19,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, nn
   character(len=80) :: name_out, answer
-  character(len=4)  :: ext
+  character(len=5)  :: ext
 !==============================================================================!
 
   call Control_Mod_Save_Initial_Solution_Name(name_out)
@@ -91,8 +91,7 @@
     close(9)
   end if 
  
-  if(turbulence_model == K_EPS_ZETA_F .or.  &
-     turbulence_model == K_EPS_V2) then
+  if(turbulence_model == K_EPS_ZETA_F) then
     ext(2:4) = kin % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
@@ -111,12 +110,12 @@
     end do    ! through centers 
     close(9)
 
-    ext(2:4) = v2  % name
+    ext(2:5) = zeta % name
     call Name_File(this_proc, name_out, ext)
     open(9,file=name_out)
     do c= 1, grid % n_cells
-      write(9,'(7E18.8)') v2 % n(c), v2 % o(c), v2 % a(c), v2 % a_o(c),  &
-                          v2 % d_o(c), v2 % c(c), v2 % c_o(c)
+      write(9,'(7E18.8)') zeta % n(c), zeta % o(c), zeta % a(c), zeta % a_o(c),  &
+                          zeta % d_o(c), zeta % c(c), zeta % c_o(c)
     end do    ! through centers 
     close(9)
 

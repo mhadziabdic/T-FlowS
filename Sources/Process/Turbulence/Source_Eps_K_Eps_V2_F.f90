@@ -43,7 +43,7 @@
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
     do c = 1, grid % n_cells 
       Esor = grid % vol(c)/(Tsc(c)+TINY)
-      Ce_11 = Ce1*(1.0 + alpha*(1.0/(v2%n(c)+TINY) ))    
+      Ce_11 = Ce1*(1.0 + alpha * ( 1.0/(zeta % n(c)+TINY) ))    
       b(c) = b(c) + Ce_11*p_kin(c)*Esor
  
       ! Fill in a diagonal of coefficient matrix
@@ -106,15 +106,15 @@
     end if
   end do  
 
-  if(turbulence_model == K_EPS_V2) then
-    do c = 1, grid % n_cells
-      Esor = grid % vol(c)/Tsc(c)
-      Ce_11 = Ce1*(1.0 + alpha*(kin%n(c)/(v2%n(c)) + TINY)**0.5)
-      b(c) = b(c) + Ce_11*p_kin(c)*Esor
-
-      ! Fill in a diagonal of coefficient matrix
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*density
-    end do
-  end if 
+!@if(turbulence_model == K_EPS_V2_F) then
+!@  do c = 1, grid % n_cells
+!@    Esor = grid % vol(c)/Tsc(c)
+!@    Ce_11 = Ce1 * (1.0 + alpha * sqrt(kin % n(c) / (v2 % n(c)) + TINY))
+!@    b(c) = b(c) + Ce_11 * p_kin(c) * Esor
+!@
+!@    ! Fill in a diagonal of coefficient matrix
+!@    A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2 * Esor * density
+!@  end do
+!@end if 
 
   end subroutine

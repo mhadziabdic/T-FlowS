@@ -139,13 +139,12 @@
     end if
   end if
 
-  if(turbulence_model == K_EPS_V2     .or.  &
-     turbulence_model == K_EPS_ZETA_F .or.  &
+  if(turbulence_model == K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
-    call Var_Mod_Allocate_Solution('KIN', kin, grid)
-    call Var_Mod_Allocate_Solution('EPS', eps, grid)
-    call Var_Mod_Allocate_Solution('V^2', v2,  grid)
-    call Var_Mod_Allocate_Solution('F22', f22, grid)
+    call Var_Mod_Allocate_Solution('KIN',  kin,  grid)
+    call Var_Mod_Allocate_Solution('EPS',  eps,  grid)
+    call Var_Mod_Allocate_Solution('ZETA', zeta, grid)
+    call Var_Mod_Allocate_Solution('F22',  f22,  grid)
 
     allocate(Tsc       (-grid % n_bnd_cells:grid % n_cells));  Tsc        = 0.0
     allocate(Lsc       (-grid % n_bnd_cells:grid % n_cells));  Lsc        = 0.0
@@ -154,10 +153,10 @@
     allocate(p_kin     (-grid % n_bnd_cells:grid % n_cells));  p_kin      = 0.0
 
     if(turbulence_model_variant == URANS) then
-      allocate(kin % mean(grid % n_cells));   kin % mean = 0.
-      allocate(eps % mean(grid % n_cells));   eps % mean = 0.
-      allocate(f22 % mean(grid % n_cells));   f22 % mean = 0.
-      allocate(v2  % mean(grid % n_cells));   v2  % mean = 0.
+      allocate(kin  % mean(grid % n_cells));  kin  % mean = 0.
+      allocate(eps  % mean(grid % n_cells));  eps  % mean = 0.
+      allocate(zeta % mean(grid % n_cells));  zeta % mean = 0.
+      allocate(f22  % mean(grid % n_cells));  f22  % mean = 0.
     end if
 
     if(buoyancy == YES) then

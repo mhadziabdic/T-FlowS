@@ -27,12 +27,12 @@
   real              :: s_tot
 
   ! Default values for initial conditions 
-  real, parameter   :: u_def   = 0.0,  v_def   = 0.0,  w_def   = 0.0
-  real, parameter   :: p_def   = 0.0,  t_def   = 0.0,  q_def   = 0.0
-  real, parameter   :: kin_def = 0.0,  eps_def = 0.0,  f22_def = 0.0
-  real, parameter   :: vis_def = 0.0,  v2_def  = 0.0
-  real, parameter   :: uu_def  = 0.0,  vv_def  = 0.0,  ww_def  = 0.0
-  real, parameter   :: uv_def  = 0.0,  uw_def  = 0.0,  vw_def  = 0.0
+  real, parameter   :: u_def   = 0.0,  v_def   = 0.0,  w_def    = 0.0
+  real, parameter   :: p_def   = 0.0,  t_def   = 0.0,  q_def    = 0.0
+  real, parameter   :: kin_def = 0.0,  eps_def = 0.0,  f22_def  = 0.0
+  real, parameter   :: vis_def = 0.0,  v2_def  = 0.0,  zeta_def = 0.0
+  real, parameter   :: uu_def  = 0.0,  vv_def  = 0.0,  ww_def   = 0.0
+  real, parameter   :: uv_def  = 0.0,  uw_def  = 0.0,  vw_def   = 0.0
 !==============================================================================!
 
   area  = 0.0
@@ -132,21 +132,20 @@ print *, 'FOUND INITIAL CONDITIONS'
           y_plus(c) = 30.0
         end if
   
-        if(turbulence_model == K_EPS_V2      .or.  &
-           turbulence_model == K_EPS_ZETA_F  .or.  & 
+        if(turbulence_model == K_EPS_ZETA_F  .or.  & 
            turbulence_model == HYBRID_K_EPS_ZETA_F) then
-          vals(0) = kin_def; kin % n(c) = vals(Key_Ind('KIN', keys, nks))
-          vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
-          vals(0) = f22_def; f22 % n(c) = vals(Key_Ind('F22', keys, nks))
-          vals(0) = v2_def;  v2  % n(c) = vals(Key_Ind('V2',  keys, nks))
-          kin % o(c)  = kin % n(c)
-          kin % oo(c) = kin % n(c)
-          eps % o(c)  = eps % n(c)
-          eps % oo(c) = eps % n(c)
-          f22 % o(c)  = f22 % n(c)
-          f22 % oo(c) = f22 % n(c)
-          v2  % o(c)  = v2  % n(c)
-          v2  % oo(c) = v2  % n(c)
+          vals(0) = kin_def;  kin  % n(c) = vals(Key_Ind('KIN',  keys, nks))
+          vals(0) = eps_def;  eps  % n(c) = vals(Key_Ind('EPS',  keys, nks))
+          vals(0) = zeta_def; zeta % n(c) = vals(Key_Ind('ZETA', keys, nks))
+          vals(0) = f22_def;  f22  % n(c) = vals(Key_Ind('F22',  keys, nks))
+          kin  % o(c)  = kin  % n(c)
+          kin  % oo(c) = kin  % n(c)
+          eps  % o(c)  = eps  % n(c)
+          eps  % oo(c) = eps  % n(c)
+          zeta % o(c)  = zeta % n(c)
+          zeta % oo(c) = zeta % n(c)
+          f22  % o(c)  = f22  % n(c)
+          f22  % oo(c) = f22  % n(c)
           u_tau(c)  = 0.047
           y_plus(c) = 30.0
         end if

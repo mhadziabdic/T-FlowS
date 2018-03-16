@@ -23,13 +23,13 @@
   integer          :: j, k,  c, nearest_cell, c1, c2, s 
   integer          :: NCold  
   real,allocatable :: Xold(:),Yold(:),Zold(:)
-  real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v2old(:), f22old(:)
-  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v2Cold(:), f22Cold(:)
-  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v2Coold(:), f22Coold(:)
-  real,allocatable :: Uoold(:),Voold(:),Woold(:),Toold(:), Koold(:), Eoold(:), v2oold(:), f22oold(:)
-  real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v2Doold(:), f22Doold(:)
-  real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v2Xold(:), f22Xold(:)
-  real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v2Xoold(:), f22Xoold(:)
+  real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v2old(:), zetaold(:), f22old(:)
+  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v2Cold(:), zetaCold(:), f22Cold(:)
+  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v2Coold(:), zetaCoold(:), f22Coold(:)
+  real,allocatable :: Uoold(:),Voold(:),Woold(:),Toold(:), Koold(:), Eoold(:), v2oold(:), zetaoold(:), f22oold(:)
+  real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v2Doold(:), zetaDoold(:), f22Doold(:)
+  real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v2Xold(:), zetaXold(:), f22Xold(:)
+  real,allocatable :: UXoold(:),VXoold(:),WXoold(:),TXoold(:), KXoold(:), EXoold(:), v2Xoold(:), zetaXoold(:), f22Xoold(:)
   real             :: Us, Ws, Vs
   real             :: old_distance
 
@@ -114,6 +114,14 @@
   allocate (v2Xold(NCold)); v2Xold = 0.0
   allocate (v2Xoold(NCold)); v2Xoold = 0.0
 
+  allocate (zetaold(NCold)); zetaold = 0.0
+  allocate (zetaoold(NCold)); zetaoold = 0.0
+  allocate (zetaDoold(NCold)); zetaDoold = 0.0
+  allocate (zetaCold(NCold)); zetaCold = 0.0
+  allocate (zetaCoold(NCold)); zetaCoold = 0.0
+  allocate (zetaXold(NCold)); zetaXold = 0.0
+  allocate (zetaXoold(NCold)); zetaXoold = 0.0
+
   allocate (F22old(NCold)); F22old = 0.0
   allocate (F22oold(NCold)); F22oold = 0.0
   allocate (F22Doold(NCold)); F22Doold = 0.0
@@ -139,8 +147,7 @@
                   Wold(k), Woold(k), WCold(k), WCoold(k), WDoold(k), WXold(k), WXoold(k)
       end if
     end if 
-    if(turbulence_model == K_EPS_ZETA_F .or.  &
-       turbulence_model == K_EPS_V2) then 
+    if(turbulence_model == K_EPS_ZETA_F) then
       if(HOTini==YES) then
         read(5,*) Xold(k), Yold(k), Zold(k), &
                   Uold(k), Uoold(k), UCold(k), UCoold(k), UDoold(k), UXold(k), UXoold(k), &
@@ -218,8 +225,7 @@
       W % d_o(c) = WDoold(nearest_cell) 
       W % c(c)   = WXold(nearest_cell) 
       W % c_o(c) = WXoold(nearest_cell) 
-      if(turbulence_model == K_EPS_V2 .or.  &
-         turbulence_model == K_EPS_ZETA_F     .or.  &
+      if(turbulence_model == K_EPS_ZETA_F .or.  &
          turbulence_model == K_EPS) then
         Kin % n(c)   = Kold(nearest_cell) 
         Kin % o(c)   = Koold(nearest_cell) 
@@ -237,21 +243,20 @@
         Eps % c(c)   = EXold(nearest_cell) 
         Eps % c_o(c) = EXoold(nearest_cell) 
       end if
-      if(turbulence_model == K_EPS_V2 .or.  &
-         turbulence_model == K_EPS_ZETA_F) then
-        v2 % n(c)   = v2old(nearest_cell) 
-        v2 % o(c)   = v2oold(nearest_cell) 
-        v2 % a(c)   = v2Cold(nearest_cell) 
-        v2 % a_o(c) = v2Coold(nearest_cell) 
-        v2 % d_o(c) = v2Doold(nearest_cell) 
-        v2 % c(c)   = v2Xold(nearest_cell) 
-        v2 % c_o(c) = v2Xoold(nearest_cell) 
+      if(turbulence_model == K_EPS_ZETA_F) then
+        zeta % n(c)   = zetaold(nearest_cell) 
+        zeta % o(c)   = zetaoold(nearest_cell) 
+        zeta % a(c)   = zetaCold(nearest_cell) 
+        zeta % a_o(c) = zetaCoold(nearest_cell) 
+        zeta % d_o(c) = zetaDoold(nearest_cell) 
+        zeta % c(c)   = zetaXold(nearest_cell) 
+        zeta % c_o(c) = zetaXoold(nearest_cell) 
 
-        F22 % n(c)   = F22old(nearest_cell) 
-        F22 % o(c)   = F22oold(nearest_cell) 
-        F22 % d_o(c) = F22Doold(nearest_cell) 
-        F22 % c(c)   = F22Xold(nearest_cell) 
-        F22 % c_o(c) = F22Xoold(nearest_cell) 
+        f22 % n(c)   = F22old(nearest_cell) 
+        f22 % o(c)   = F22oold(nearest_cell) 
+        f22 % d_o(c) = F22Doold(nearest_cell) 
+        f22 % c(c)   = F22Xold(nearest_cell) 
+        f22 % c_o(c) = F22Xoold(nearest_cell) 
       end if
     end do
   do s = 1, grid % n_faces
@@ -278,6 +283,7 @@
   deallocate(Kold)
   deallocate(Eold)
   deallocate(v2old)
+  deallocate(zetaold)
   deallocate(F22old)
   deallocate(Uoold)
   deallocate(Voold)
@@ -285,6 +291,7 @@
   deallocate(Koold)
   deallocate(Eoold)
   deallocate(v2oold)
+  deallocate(zetaoold)
   deallocate(F22oold)
   deallocate(UDoold)
   deallocate(VDoold)
@@ -292,6 +299,7 @@
   deallocate(KDoold)
   deallocate(EDoold)
   deallocate(v2Doold)
+  deallocate(zetaDoold)
   deallocate(F22Doold)
   deallocate(UCold)
   deallocate(VCold)
@@ -299,18 +307,21 @@
   deallocate(KCold)
   deallocate(ECold)
   deallocate(v2Cold)
+  deallocate(zetaCold)
   deallocate(UCoold)
   deallocate(VCoold)
   deallocate(WCoold)
   deallocate(KCoold)
   deallocate(ECoold)
   deallocate(v2Coold)
+  deallocate(zetaCoold)
   deallocate(UXold)
   deallocate(VXold)
   deallocate(WXold)
   deallocate(KXold)
   deallocate(EXold)
   deallocate(v2Xold)
+  deallocate(zetaXold)
   deallocate(F22Xold)
   deallocate(UXoold)
   deallocate(VXoold)
@@ -318,6 +329,7 @@
   deallocate(KXoold)
   deallocate(EXoold)
   deallocate(v2Xoold)
+  deallocate(zetaXoold)
   deallocate(F22Xoold)
 !  deallocate(Pold)
 !  deallocate(PPold)

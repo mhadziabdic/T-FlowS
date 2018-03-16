@@ -19,22 +19,8 @@
   real    :: t1, t2, t3, l1, l2, l3
 !==============================================================================!
 
-  if(turbulence_model == K_EPS_V2) then
-    do c = 1, grid % n_cells 
-      t1 = kin%n(c)/(eps%n(c) )
-      t2 = Ct*(abs(viscosity/(eps%n(c) )))**0.5
-      t3 = 0.6*kin % n(c) / ( CmuD * v2 % n(c) * Shear(c) *&
-           sqrt(3.0))
-      l1 = kin%n(c)**1.5/(eps%n(c))
-      l2 = Cni*(viscosity**3/(eps%n(c)))**0.25
-      l3 = kin % n(c)**1.5 / ( CmuD * v2 % n(c) *&
-           Shear(c) * sqrt(3.0))
-      Tsc(c) = max(min(t1,t3),t2)
-      Lsc(c) = Cl*max(min(l1,l3),l2)
-    end do
-
-  else if(turbulence_model == K_EPS_ZETA_F .or.  &
-          turbulence_model == HYBRID_K_EPS_ZETA_F) then
+  if(turbulence_model == K_EPS_ZETA_F .or.  &
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
     if(ROUGH == YES) then
       do c = 1, grid % n_cells 
         t1 = kin%n(c)/(eps%n(c))
@@ -50,11 +36,11 @@
       do c = 1, grid % n_cells
         t1 = kin%n(c)/(eps%n(c) + tiny)
         t2 = Ct*sqrt(viscosity/eps%n(c))
-        t3 = 0.6/(sqrt(3.0)*CmuD * v2 % n(c) * Shear(c))
+        t3 = 0.6/(sqrt(3.0)*CmuD * zeta % n(c) * Shear(c))
 
         l1 = kin%n(c)**1.5/eps%n(c)
         l2 = Cni*(viscosity**3/eps%n(c))**0.25
-        l3 = sqrt(kin % n(c)/3.0)/(CmuD * v2 % n(c) * Shear(c)) 
+        l3 = sqrt(kin % n(c)/3.0)/(CmuD * zeta % n(c) * Shear(c)) 
 
         Tsc(c) = max(min(t1,t3),t2)
         Lsc(c) = Cl*max(min(l1,l3),l2)

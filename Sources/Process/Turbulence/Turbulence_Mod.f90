@@ -14,7 +14,6 @@
 
   ! Parameters describing turbulence model choice
   integer, parameter :: K_EPS                 = 30011
-  integer, parameter :: K_EPS_V2              = 30013
   integer, parameter :: K_EPS_ZETA_F          = 30029
   integer, parameter :: HYBRID_K_EPS_ZETA_F   = 30047
   integer, parameter :: HYBRID_PITM           = 30059

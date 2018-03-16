@@ -12,16 +12,17 @@
   use Tokenizer_Mod
   use Grid_Mod
   use Control_Mod
-  use Work_Mod, only: uu_mean => r_cell_01,  &
-                      vv_mean => r_cell_02,  &
-                      ww_mean => r_cell_03,  &
-                      uv_mean => r_cell_04,  &
-                      uw_mean => r_cell_05,  &
-                      vw_mean => r_cell_06,  &
-                      tt_mean => r_cell_07,  &
-                      ut_mean => r_cell_08,  &
-                      vt_mean => r_cell_09,  &
-                      wt_mean => r_cell_10
+  use Work_Mod, only: v2_calc => r_cell_01,  &
+                      uu_mean => r_cell_02,  &
+                      vv_mean => r_cell_03,  &
+                      ww_mean => r_cell_04,  &
+                      uv_mean => r_cell_05,  &
+                      uw_mean => r_cell_06,  &
+                      vw_mean => r_cell_07,  &
+                      tt_mean => r_cell_08,  &
+                      ut_mean => r_cell_09,  &
+                      vt_mean => r_cell_10,  &
+                      wt_mean => r_cell_11
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -233,7 +234,6 @@
 
   ! Save kin and eps
   if(turbulence_model == K_EPS                  .or.  &
-     turbulence_model == K_EPS_V2               .or.  &
      turbulence_model == K_EPS_ZETA_F           .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F    .or.  &
      turbulence_model == REYNOLDS_STRESS_MODEL  .or.  &
@@ -243,12 +243,15 @@
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "P_KIN", p_kin(1))
   end if
 
-  ! Save v2 and f22
-  if(turbulence_model == K_EPS_V2      .or.  &
-     turbulence_model == K_EPS_ZETA_F  .or.  &
+  ! Save zeta and f22
+  if(turbulence_model == K_EPS_ZETA_F  .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
-    call Save_Vtu_Scalar(grid, IN_4, IN_5, v2 % name, v2 % n(1))
-    call Save_Vtu_Scalar(grid, IN_4, IN_5, f22 % name, f22 % n(1))
+    do c = 1, grid % n_cells
+      v2_calc(c) = kin % n(c) * zeta % n(c)
+    end do
+    call Save_Vtu_Scalar(grid, IN_4, IN_5, "V^2",       v2_calc (1))
+    call Save_Vtu_Scalar(grid, IN_4, IN_5, zeta % name, zeta % n(1))
+    call Save_Vtu_Scalar(grid, IN_4, IN_5, f22  % name, f22  % n(1))
   end if
 
   ! Save vis and vis_t
@@ -258,7 +261,6 @@
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "VORT", vort(1))
   end if
   if(turbulence_model == K_EPS                  .or.  &
-     turbulence_model == K_EPS_V2               .or.  &
      turbulence_model == K_EPS_ZETA_F           .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F    .or.  &
      turbulence_model == REYNOLDS_STRESS_MODEL  .or.  &

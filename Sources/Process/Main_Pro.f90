@@ -285,28 +285,28 @@
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
+
         call Calculate_Shear_And_Vorticity(grid)
+
         call Compute_Turbulent(grid, dt, ini, kin, n)
         call Compute_Turbulent(grid, dt, ini, eps, n)
+
         call Calculate_Vis_T_K_Eps(grid)
       end if
 
-      if(turbulence_model == K_EPS_V2 .or.  &
-         turbulence_model == K_EPS_ZETA_F     .or.  &
+      if(turbulence_model == K_EPS_ZETA_F     .or.  &
          turbulence_model == HYBRID_K_EPS_ZETA_F) then
         call Calculate_Shear_And_Vorticity(grid)
 
         call Compute_Turbulent(grid, dt, ini, kin, n)
         call Compute_Turbulent(grid, dt, ini, eps, n)
 
-        ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
         call Compute_F22(grid, ini, f22)
+        call Compute_Turbulent(grid, dt, ini, zeta, n)
 
-        call Compute_Turbulent(grid, dt, ini, v2, n)
-
-        call Calculate_Vis_T_K_Eps_V2(grid)
+        call Calculate_Vis_T_K_Eps_Zeta_F(grid)
       end if
 
       if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &

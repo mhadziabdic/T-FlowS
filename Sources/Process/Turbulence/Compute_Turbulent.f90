@@ -246,7 +246,6 @@
     end if
 
     if(turbulence_model == K_EPS_ZETA_F     .or.  &
-       turbulence_model == K_EPS_V2 .or.  &
        turbulence_model == HYBRID_K_EPS_ZETA_F) then
       if(c2 < 0 .and. phi % name == 'KIN') then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
@@ -414,12 +413,11 @@
     if(phi % name == 'EPS') call Source_Eps_K_Eps(grid)
   end if
 
-  if(turbulence_model == K_EPS_V2     .or.  &
-     turbulence_model == K_EPS_ZETA_F .or.  &
+  if(turbulence_model == K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
-    if(phi % name == 'KIN') call Source_Kin_K_Eps_V2_F(grid)
-    if(phi % name == 'EPS') call Source_Eps_K_Eps_V2_F(grid)
-    if(phi % name == 'V^2') call Source_V2_K_Eps_V2_F(grid, n_step)
+    if(phi % name == 'KIN')  call Source_Kin_K_Eps_V2_F(grid)
+    if(phi % name == 'EPS')  call Source_Eps_K_Eps_V2_F(grid)
+    if(phi % name == 'ZETA') call Source_Zeta_K_Eps_Zeta_F(grid, n_step)
   end if
 
   if(turbulence_model == SPALART_ALLMARAS .or.  &
@@ -464,7 +462,6 @@
   end do 
 
   if(turbulence_model == K_EPS        .or.  &
-     turbulence_model == K_EPS_V2     .or.  &
      turbulence_model == K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
     if(phi % name == 'KIN')  &
@@ -472,6 +469,8 @@
     if(phi % name == 'EPS')  &
       call Info_Mod_Iter_Fill_At(3, 2, phi % name, niter, phi % res)
     if(phi % name == 'V^2')  &
+      call Info_Mod_Iter_Fill_At(3, 3, phi % name, niter, phi % res)
+    if(phi % name == 'ZETA')  &
       call Info_Mod_Iter_Fill_At(3, 3, phi % name, niter, phi % res)
   end if
 

@@ -280,7 +280,6 @@
     end if 
   
     if( turbulence_model == K_EPS_ZETA_F     .or.  &
-        turbulence_model == K_EPS_V2         .or.  &
        (turbulence_model == K_EPS .and.            &
         turbulence_model_variant == HIGH_RE) .or.  &
         turbulence_model == HYBRID_K_EPS_ZETA_F) then

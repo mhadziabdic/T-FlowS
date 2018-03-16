@@ -17,7 +17,7 @@
   ! Turbulence models variables
   type(Var_Type) :: kin
   type(Var_Type) :: eps
-  type(Var_Type) :: v2
+  type(Var_Type) :: zeta
   type(Var_Type) :: f22
   type(Var_Type) :: vis
 

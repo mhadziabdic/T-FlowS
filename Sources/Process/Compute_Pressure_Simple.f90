@@ -17,7 +17,6 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, niter
   real              :: u_f, v_f, w_f, a12, fs
-  real              :: p_max, p_min
   real              :: ini_res, tol, mass_err
   real              :: smdpn
   real              :: dPxi, dPyi, dPzi
@@ -159,7 +158,7 @@
       end if
     end if
 
-1 end do
+  end do
 
   mass_err = 0.0
   do c = 1, grid % n_cells

@@ -58,16 +58,16 @@
 
   a % val = 0.0
 
-  b=0.0
+  b = 0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
-  do c=-grid % n_bnd_cells,-1
-    a % bou(c)=0.0
+  do c = -grid % n_bnd_cells, -1
+    a % bou(c) = 0.0
   end do
 
-  !-------------------------------------! 
+  !-------------------------------------!
   !   Initialize variables and fluxes   !
-  !-------------------------------------! 
+  !-------------------------------------!
 
   call Control_Mod_Time_Integration_For_Inertia(td_inertia)
   call Control_Mod_Time_Integration_For_Advection(td_advection)
@@ -419,6 +419,13 @@
     if(phi % name == 'EPS')  call Source_Eps_K_Eps_V2_F(grid)
     if(phi % name == 'ZETA') call Source_Zeta_K_Eps_Zeta_F(grid, n_step)
   end if
+
+  !-------------------------------------!
+  !   DEBUG BLOCK   !
+  !-------------------------------------!
+    call Comm_Mod_Wait
+    call Save_Vtu_Results(grid, "test")
+    stop
 
   if(turbulence_model == SPALART_ALLMARAS .or.  &
      turbulence_model == DES_SPALART) then

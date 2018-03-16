@@ -151,7 +151,6 @@
 
   ! Kin and Eps
   if(turbulence_model == K_EPS                 .or.  &
-     turbulence_model == K_EPS_V2              .or.  &
      turbulence_model == K_EPS_ZETA_F          .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F   .or.  &
      turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
@@ -165,17 +164,8 @@
                               p_kin(1),"TurbulentEnergyKineticProduction")
   end if
 
-  ! v2 and f22
-  if(turbulence_model == K_EPS_V2_F) then
-    call Cgns_Mod_Write_Field(base, block, solution, field, grid, &
-                              v2 % n(1),  "TurbulentQuantityV2")
-    call Cgns_Mod_Write_Field(base, block, solution, field, grid, &
-                              f22 % n(1), "TurbulentQuantityF22")
-  end if
-
   ! zeta, v2 and f22
-  if(turbulence_model == K_EPS_V2       .or.  &
-     turbulence_model == K_EPS_ZETA_F   .or.  &
+  if(turbulence_model == K_EPS_ZETA_F   .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
     do c = 1, grid % n_cells
       v2_calc(c) = kin % n(c) * zeta % n(c)
@@ -197,7 +187,6 @@
                               vort(1),"VorticityMagnitude")
   end if
   if(turbulence_model == K_EPS                 .or.  &
-     turbulence_model == K_EPS_V2              .or.  &
      turbulence_model == K_EPS_ZETA_F          .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F   .or.  &
      turbulence_model == REYNOLDS_STRESS_MODEL .or.  &

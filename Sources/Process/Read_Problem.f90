@@ -8,7 +8,7 @@
   use Const_Mod
   use Flow_Mod
   use Comm_Mod, only: this_proc
-  use rans_mod, only: grav_x, grav_y, grav_z, Zo
+  use rans_mod, only: Zo
   use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!

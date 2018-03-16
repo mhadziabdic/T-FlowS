@@ -14,7 +14,6 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer          :: lext
   character(len=5) :: num_proc  ! processor number as a string
-  character(len=7) :: num_time  ! time step number as a string
 !==============================================================================!
 
   ! Take the extension length

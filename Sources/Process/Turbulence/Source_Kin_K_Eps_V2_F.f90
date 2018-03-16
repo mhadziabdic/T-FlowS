@@ -16,9 +16,8 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, c1, c2, s
-  real              :: u_tan, u_nor_sq, u_nor, u_tot_sq, dely, Stot
-  real              :: lf, Gblend, Ustar, Ck, u_plus
-  real              :: EBF, EBF1
+  real              :: u_tan, u_nor_sq, u_nor, u_tot_sq
+  real              :: lf
   real              :: alpha1, l_rans, l_sgs
 !==============================================================================! 
 !                                                                              !

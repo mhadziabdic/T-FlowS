@@ -17,8 +17,7 @@
   type(Grid_Type) :: grid
   integer         :: n_step
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c
-  integer           :: s, c1, c2,j     
+  integer         :: c
 !==============================================================================!
 !   In transport equation for v2 two source terms exist which have form:       !
 !                                                                              !

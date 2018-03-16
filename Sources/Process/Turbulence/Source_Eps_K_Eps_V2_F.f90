@@ -17,9 +17,9 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, s, c1, c2,j 
-  real    :: Esor, Ce_11, Gblend, fp, fa, Rey, Ret, Ck, EBF
-  real    :: Utan, UnorSq, Unor, UtotSq, dely, Stot, EpsWall, EpsHom
-  real    :: BL_EPS, Pro, p_kin_turb, p_kin_vis, y_pl
+  real    :: Esor, Ce_11, EBF
+  real    :: Utan, UnorSq, Unor, UtotSq, EpsWall, EpsHom
+  real    :: p_kin_turb, p_kin_vis, y_pl
 !==============================================================================!
 !   In dissipation of turbulent kinetic energy equation exist two              !
 !   source terms which have form:                                              !

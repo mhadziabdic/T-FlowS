@@ -24,8 +24,8 @@
   integer          :: NCold  
   real,allocatable :: Xold(:),Yold(:),Zold(:)
   real,allocatable :: Uold(:),Vold(:),Wold(:),Told(:), Kold(:), Eold(:), v2old(:), zetaold(:), f22old(:)
-  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v2Cold(:), zetaCold(:), f22Cold(:)
-  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v2Coold(:), zetaCoold(:), f22Coold(:)
+  real,allocatable :: UCold(:),VCold(:),WCold(:),TCold(:), KCold(:), ECold(:), v2Cold(:), zetaCold(:)
+  real,allocatable :: UCoold(:),VCoold(:),WCoold(:),TCoold(:), KCoold(:), ECoold(:), v2Coold(:), zetaCoold(:)
   real,allocatable :: Uoold(:),Voold(:),Woold(:),Toold(:), Koold(:), Eoold(:), v2oold(:), zetaoold(:), f22oold(:)
   real,allocatable :: UDoold(:),VDoold(:),WDoold(:),TDoold(:), KDoold(:), EDoold(:), v2Doold(:), zetaDoold(:), f22Doold(:)
   real,allocatable :: UXold(:),VXold(:),WXold(:),TXold(:), KXold(:), EXold(:), v2Xold(:), zetaXold(:), f22Xold(:)

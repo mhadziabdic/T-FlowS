@@ -42,9 +42,6 @@
   character(len= 6)  :: IN_3 = '      '
   character(len= 8)  :: IN_4 = '        '
   character(len=10)  :: IN_5 = '          '
-  character(len=12)  :: IN_6 = '            '
-  character(len=14)  :: IN_7 = '              '
-  character(len=16)  :: IN_8 = '                '
 !==============================================================================!
 
   ! Store the name

@@ -28,7 +28,6 @@
   real              :: mass_res, wall_time_start, wall_time_current
   character(len=80) :: name_save
   logical           :: restar, multiple, save_now, exit_now
-  real, allocatable :: dum_x(:), dum_y(:), dum_z(:)
   type(Grid_Type)   :: grid        ! grid used in computations
   real              :: time        ! physical time
   real              :: dt          ! time step
@@ -129,7 +128,7 @@
   ! Check if there are more materials
   multiple = .false.
   i = StateMat(1)
-  do m=1,grid % n_materials
+  do m = 1, grid % n_materials
     if(StateMat(m) /= i) multiple = .true.
   end do
 
@@ -158,7 +157,7 @@
 
   ! Print the areas of monitoring planes
   if(this_proc < 2) then
-    do m=1,grid % n_materials
+    do m = 1, grid % n_materials
       write(*,'(a5,i2,a2,1pe12.3)') '# Ax(',m,')=', bulk(m) % area_x
       write(*,'(a5,i2,a2,1pe12.3)') '# Ay(',m,')=', bulk(m) % area_y
       write(*,'(a5,i2,a2,1pe12.3)') '# Az(',m,')=', bulk(m) % area_z
@@ -220,7 +219,7 @@
       call Control_Mod_Max_Simple_Iterations(n_ini)
     end if
 
-    do ini=1, n_ini  !  PROJECTION & SIMPLE
+    do ini = 1, n_ini  !  PROJECTION & SIMPLE
 
       call Info_Mod_Iter_Fill(ini)
 

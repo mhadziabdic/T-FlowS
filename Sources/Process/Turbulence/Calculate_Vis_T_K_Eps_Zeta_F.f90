@@ -17,8 +17,8 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, s
-  real    :: u_nor_sq, u_nor, u_tot_sq, Cmu1, beta, pr_mol, pr_turb
-  real    :: lf, g_blend, u_star, c_k, y_pl, u_plus, ebf
+  real    :: beta, pr_mol, pr_turb
+  real    :: g_blend, y_pl, u_plus, ebf
 !==============================================================================!
 
   call Time_And_Length_Scale(grid)

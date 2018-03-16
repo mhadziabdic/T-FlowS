@@ -29,6 +29,7 @@
   real                 :: depends_r, on_r, the_r, case_r
   integer              :: depends_i, on_i, the_i, case_i
   integer              :: m, i, c
+  real                 :: width
 !------------------------------------------------------------------------------!
 
   !-----------------------------------------------------! 
@@ -40,23 +41,33 @@
   !---------------------------------------------------------------------!
   !  Correction of temperature equation with periodic boundary condition! 
   !---------------------------------------------------------------------!
+  ! Width of the computational domain
+  width = 1.0
+  !  width = 3.14
+  !  width = 3.14*2.0
+  !  width = 2*3.1415926*Diameter
+
   if( phi % name == 'T' ) then
     if(HOT==YES) then
       do m=1,grid % n_materials
         if(bulk(m) % p_drop_x > 1.0e-8.or.&
-           bulk(m) % p_drop_y > 1.0e-8.or.&
-           bulk(m) % p_drop_z > 1.0e-8.or.&
-           bulk(m) % flux_x_o > 1.0e-8.or.&
-           bulk(m) % flux_y_o > 1.0e-8.or.&
-           bulk(m) % flux_z_o > 1.0e-8) then
-          do c = 1, grid % n_cells 
-            b(c)=b(c) - 1.0*Qflux * U % n(c)/bulk(1) % flux_x_o * grid % vol(c)
-!            b(c)=b(c) -   2.0*3.14*Qflux * U % n(c)/bulk(1) % flux_x_o * grid % vol(c)
+           bulk(m) % flux_x_o > 1.0e-8) then
+          do c = 1, grid % n_cells
+            b(c) = b(c) - U % n(c) * Qflux * width / &
+                  (CAPc(material(c))*bulk(m) % flux_x) * grid % vol(c)
           end do
+        else if( bulk(m) % p_drop_y > 1.0e-8.or.&
+                 bulk(m) % flux_y_o > 1.0e-8) then
+            b(c) = b(c) - V % n(c) * Qflux * width/&
+                  (CAPc(material(c))*bulk(m) % flux_y) * grid % vol(c)
+        else if( bulk(m) % p_drop_z > 1.0e-8.or.&
+                 bulk(m) % flux_z_o > 1.0e-8) then
+            b(c) = b(c) - W % n(c) * Qflux * width/&
+                   (CAPc(material(c))*bulk(m) % flux_z) * grid % vol(c)
         end if
       end do
     end if
-  end if 
+  end if
 
   !-------------------------------!
   !  Set source for temperature   !

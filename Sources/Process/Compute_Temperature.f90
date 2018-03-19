@@ -633,7 +633,10 @@
   if(coupling == 'PROJECTION') niter = 10
   if(coupling == 'SIMPLE')     niter =  5
 
-  call bicg(A, phi % n, b, precond, niter, tol, ini_res, phi % res)
+  ! Over-ride if specified in control file
+  call Control_Mod_Max_Iterations_For_Energy_Solver(niter)
+
+  call Bicg(A, phi % n, b, precond, niter, tol, ini_res, phi % res)
 
   call Info_Mod_Iter_Fill_At(2, 4, phi % name, niter, phi % res)
 

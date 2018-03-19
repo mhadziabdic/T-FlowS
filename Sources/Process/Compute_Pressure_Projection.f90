@@ -20,7 +20,6 @@
   real              :: ini_res, tol, mass_err
   real              :: u_f, v_f, w_f, fs
   real              :: a12
-  character(len=80) :: coupling
   character(len=80) :: precond
   real              :: urf           ! under-relaxation factor                 
 !==============================================================================!
@@ -141,9 +140,11 @@
   ! Get matrix precondioner
   call Control_Mod_Preconditioner_For_System_Matrix(precond)
 
-  call Control_Mod_Pressure_Momentum_Coupling(coupling)
-  if(coupling == 'PROJECTION') niter = 200
-  if(coupling == 'SIMPLE')     niter =  15
+  ! Set the default value for number of iterations
+  niter = 200
+
+  ! Over-ride if specified in control file
+  call Control_Mod_Max_Iterations_For_Pressure_Solver(niter)
 
   call Cg(a, pp % n, b, precond, niter, tol, ini_res, pp % res)
 
@@ -153,8 +154,6 @@
   !   Update the pressure field   !
   !-------------------------------!
   urf = 1.0
-  if(coupling == 'SIMPLE')  &
-    call Control_Mod_Simple_Underrelaxation_For_Pressure(urf)
 
   p % n  =  p % n  +  urf  *  pp % n
 

@@ -174,8 +174,13 @@
   ! Get matrix precondioner
   call Control_Mod_Preconditioner_For_System_Matrix(precond)
 
-  niter = 40
-  call bicg(a, pp % n, b, precond, niter, tol, ini_res, pp % res)
+  ! Set the default value for number of iterations
+  niter =  40
+
+  ! Over-ride if specified in control file
+  call Control_Mod_Max_Iterations_For_Pressure_Solver(niter)
+
+  call Bicg(a, pp % n, b, precond, niter, tol, ini_res, pp % res)
 
   call Info_Mod_Iter_Fill_At(1, 3, pp % name, niter, pp % res)   
 

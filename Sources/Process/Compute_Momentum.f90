@@ -594,7 +594,10 @@
   if(coupling == 'PROJECTION') niter = 10
   if(coupling == 'SIMPLE')     niter =  5
 
-  call cg(a, ui % n, b, precond, niter, tol, ini_res, ui % res)
+  ! Over-ride if specified in control file
+  call Control_Mod_Max_Iterations_For_Momentum_Solver(niter)
+
+  call Cg(a, ui % n, b, precond, niter, tol, ini_res, ui % res)
 
   if(ui % name == 'U') then
     call Info_Mod_Iter_Fill_At(2, 1, ui % name, niter, ui % res)   

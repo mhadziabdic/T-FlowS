@@ -41,7 +41,6 @@
   real              :: vis_eff
   real              :: phix_f, phiy_f, phiz_f
   real              :: vis_tS
-  character(len=80) :: coupling
   character(len=80) :: precond
   integer           :: adv_scheme  ! space discratization advection (scheme)
   real              :: blend         ! blending coeff (1.0 central; 0.0 upwind)
@@ -162,19 +161,17 @@
       endif 
 
       ! Store upwinded part of the advection term in "c"
-      if(coupling .ne. 'PROJECTION') then
-        if(flux(s)  < 0) then   ! from c2 to c1
-          phi % c(c1)=phi % c(c1) - flux(s) * phi % n(c2)
-          if(c2  > 0) then
-            phi % c(c2)=phi % c(c2) + flux(s) * phi % n(c2)
-          endif
-        else 
-          phi % c(c1)=phi % c(c1) - flux(s) * phi % n(c1)
-          if(c2  > 0) then
-            phi % c(c2)=phi % c(c2) + flux(s) * phi % n(c1)
-          endif
-        end if
-      end if   ! BLEND_TUR 
+      if(flux(s)  < 0) then   ! from c2 to c1
+        phi % c(c1)=phi % c(c1) - flux(s) * phi % n(c2)
+        if(c2  > 0) then
+          phi % c(c2)=phi % c(c2) + flux(s) * phi % n(c2)
+        endif
+      else 
+        phi % c(c1)=phi % c(c1) - flux(s) * phi % n(c1)
+        if(c2  > 0) then
+          phi % c(c2)=phi % c(c2) + flux(s) * phi % n(c1)
+        endif
+      end if
     end if     ! c2 > 0 
   end do    ! through sides
 
@@ -303,10 +300,8 @@
         a21 = a0 
       end if
 
-      if(coupling .ne. 'PROJECTION') then
-        a12 = a12  - min(flux(s), real(0.0)) 
-        a21 = a21  + max(flux(s), real(0.0))
-      endif
+      a12 = a12  - min(flux(s), real(0.0)) 
+      a21 = a21  + max(flux(s), real(0.0))
 
       ! Fill the system matrix
       if(c2  > 0) then
@@ -505,13 +500,9 @@
   !                                 !    
   !---------------------------------!
 
-  ! Type of coupling is important
-  call Control_Mod_Pressure_Momentum_Coupling(coupling)
-
   ! Set under-relaxation factor
   urf = 1.0
-  if(coupling == 'SIMPLE')  &
-    call Control_Mod_Simple_Underrelaxation_For_Turbulence(urf)
+  call Control_Mod_Simple_Underrelaxation_For_Turbulence(urf)
 
   do c=1,grid % n_cells
     b(c) = b(c) + a % val(a % dia(c)) * (1.0 - urf)*phi % n(c) / urf
@@ -524,11 +515,13 @@
   ! Get matrix precondioner
   call Control_Mod_Preconditioner_For_System_Matrix(precond)
 
-  ! Set number of iterations based on coupling method
-  if(coupling == 'PROJECTION') niter = 30
-  if(coupling == 'SIMPLE')     niter =  5
+  ! Set the default value for number of iterations
+  niter = 6
 
-  call cg(a, phi % n, b, precond, niter, tol, ini_res, phi % res)
+  ! Over-ride if specified in control file
+  call Control_Mod_Max_Iterations_For_Turbulence_Solver(niter)
+
+  call Cg(a, phi % n, b, precond, niter, tol, ini_res, phi % res)
 
   if( phi % name == 'UU' )   &
     call Info_Mod_Iter_Fill_At(3, 1, phi % name, niter, phi % res)

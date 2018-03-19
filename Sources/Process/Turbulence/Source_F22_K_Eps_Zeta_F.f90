@@ -54,11 +54,11 @@
  if(turbulence_model == K_EPS_ZETA_F .or.  &
     turbulence_model == HYBRID_K_EPS_ZETA_F) then 
    do c = 1, grid % n_cells
-     f22hg = (1.0 - Cf_1 - 0.65 * p_kin(c)/density  &
+     f22hg = (1.0 - Cf_1 - 0.65 * p_kin(c)  &
            / (eps  % n(c) + TINY))          &
            * (zeta % n(c) - TWO_THIRDS)     &
            / (Tsc(c) + TINY)                &
-           + 0.0085 * p_kin(c)/density / (kin % n(c) + TINY)
+           + 0.0085 * p_kin(c) / (kin % n(c) + TINY)
      b(c) = b(c) + f22hg * grid % vol(c) / (Lsc(c)**2 + TINY) 
    end do
 
@@ -70,8 +70,8 @@
 
    ! Imposing boundary condition for f22 on the wall
    do s = 1, grid % n_faces
-     c1=grid % faces_c(1,s)
-     c2=grid % faces_c(2,s)
+     c1 = grid % faces_c(1,s)
+     c2 = grid % faces_c(2,s)
      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then

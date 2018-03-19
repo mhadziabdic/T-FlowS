@@ -53,7 +53,7 @@
 
       ! Dissipation:
       if(alpha1 < 1.05) then
-        A % val(A % dia(c)) = A % val(A % dia(c)) +          &
+        A % val(A % dia(c)) = A % val(A % dia(c)) + &
              density * eps % n(c)/(kin%n(c) + TINY) * grid % vol(c)
       else
         A % val(A % dia(c)) = A % val(A % dia(c)) +                           &
@@ -67,12 +67,12 @@
     do c = 1, grid % n_cells
 
       ! Production:
-      b(c) = b(c) + vis_t(c) * shear(c) * shear(c) * grid % vol(c) * density
+      p_kin(c) =  vis_t(c)/density * shear(c) * shear(c)
+      b(c) = b(c) + density * p_kin(c) * grid % vol(c)
  
       ! Dissipation:
-      A % val(A % dia(c)) = A % val(A % dia(c)) +                             &
-           density * eps % n(c)/(kin % n(c)+TINY) * grid % vol(c)
-      p_kin(c) =  vis_t(c) * shear(c) * shear(c) * density
+      A % val(A % dia(c)) = A % val(A % dia(c)) + &
+           density * eps % n(c)/(kin % n(c) + TINY) * grid % vol(c)
 
       if (buoyancy == YES) then 
         buoyBeta(c) = 1.0
@@ -80,27 +80,27 @@
                                    grav_y * vt % n(c) +  &
                                    grav_z * wt % n(c)) * density
         b(c) = b(c) + max(0.0, Gbuoy(c) * grid % vol(c))
-        A % val(A % dia(c)) = A % val(A % dia(c))                            &
+        A % val(A % dia(c)) = A % val(A % dia(c))  &
                      + max(0.0,-Gbuoy(c)*grid % vol(c) / (kin % n(c) + TINY))
       end if
     end do
   end if
 
   do s = 1, grid % n_faces
-    c1=grid % faces_c(1,s)
-    c2=grid % faces_c(2,s)
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)
     
     if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
-      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or. &
          Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
 
         ! Compute tangential velocity component
         u_tot_sq = u % n(c1) * u % n(c1) &
                  + v % n(c1) * v % n(c1) &
                  + w % n(c1) * w % n(c1)
-        u_nor = ( u % n(c1) * grid % sx(s)     &   
-                + v % n(c1) * grid % sy(s)     &   
-                + w % n(c1) * grid % sz(s) )   &   
+        u_nor = ( u % n(c1) * grid % sx(s)     &
+                + v % n(c1) * grid % sy(s)     &
+                + w % n(c1) * grid % sz(s) )   &
                 / sqrt(  grid % sx(s)*grid % sx(s)  &
                        + grid % sy(s)*grid % sy(s)  &
                        + grid % sz(s)*grid % sz(s))
@@ -113,18 +113,21 @@
         end if
     
         if(y_plus(c1) > 3.0) then 
-          if(ROUGH==NO) then
-            tau_wall(c1) = density * kappa*u_tau(c1)*u_tan    &   
-                         /(log(Elog*y_plus(c1)))    
-            p_kin(c1) = tau_wall(c1)*u_tau(c1)/(kappa*grid % wall_dist(c1))
-          else if(ROUGH==YES) then
-            tau_wall(c1) = density*kappa*u_tau(c1)*u_tan    &   
-                           /(log((grid % wall_dist(c1)+Zo)/Zo))    
-            p_kin(c1) = tau_wall(c1)*u_tau(c1) / (kappa*(grid % wall_dist(c1)+Zo))
+          if (ROUGH.eq.NO) then
+            ! dimesions here are incorrect !!!
+            tau_wall(c1) = density*kappa*u_tau(c1)*u_tan  &
+                         /(log(Elog*y_plus(c1)))
+            p_kin(c1) = tau_wall(c1)*u_tau(c1)/ &
+              (kappa*grid % wall_dist(c1))/density
+          else if (ROUGH.eq.YES) then
+            tau_wall(c1) = density*kappa*u_tau(c1)*u_tan  &
+                           /(log((grid % wall_dist(c1)+Zo)/Zo))
+            p_kin(c1) = tau_wall(c1)*u_tau(c1) / &
+              (kappa*(grid % wall_dist(c1)+Zo))/density
             kin % n(c2) = tau_wall(c1) / 0.09**0.5
           end if
-          b(c1) = b(c1) + p_kin(c1) * grid % vol(c1)
-          b(c1) = b(c1) - vis_t(c1) * shear(c1) * shear(c1) * grid % vol(c1) * density
+          b(c1) = b(c1) + density * p_kin(c1) * grid % vol(c1)
+          b(c1) = b(c1) - vis_t(c1) * shear(c1) * shear(c1) * grid % vol(c1)
         end if  
       end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
     end if    ! c2 < 0 

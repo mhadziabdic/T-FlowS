@@ -216,15 +216,16 @@
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)   
 
-    vis_eff = viscosity + (fw(s)*vis_t(c1) + (1.0-fw(s))*vis_t(c2))/phi % Sigma 
+    vis_eff = viscosity + (fw(s)*vis_t(c1) + &
+      (1.0-fw(s))*vis_t(c2)) / phi % Sigma 
 
-    if(turbulence_model == SPALART_ALLMARAS .or.  &
-       turbulence_model == DES_SPALART)      &
-      vis_eff = viscosity+(fw(s)*VIS % n(c1)+(1.0-fw(s))*VIS % n(c2))  &
+    if(turbulence_model == SPALART_ALLMARAS .or.                      &
+       turbulence_model == DES_SPALART)                               &
+      vis_eff = viscosity+(fw(s)*VIS % n(c1)+(1.0-fw(s))*VIS % n(c2)) &
              / phi % Sigma
 
-    if(turbulence_model == HYBRID_K_EPS_ZETA_F)                                    &
-      vis_eff = viscosity + (fw(s)*vis_t_eff(c1) + (1.0-fw(s))*vis_t_eff(c2))  &
+    if(turbulence_model == HYBRID_K_EPS_ZETA_F)                               &
+      vis_eff = viscosity + (fw(s)*vis_t_eff(c1) + (1.0-fw(s))*vis_t_eff(c2)) &
              / phi % Sigma
 
     phi_x_f = fw(s)*phi_x(c1) + (1.0-fw(s))*phi_x(c2)
@@ -235,12 +236,12 @@
     if(turbulence_model == K_EPS .and.  &
        turbulence_model_variant == HIGH_RE) then
       if(c2 < 0 .and. phi % name == 'KIN') then
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or. &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then  
           phi_x_f = 0.0 
           phi_y_f = 0.0
           phi_z_f = 0.0
-          vis_eff  = 0.0
+          vis_eff = 0.0
         end if 
       end if
     end if
@@ -250,11 +251,14 @@
       if(c2 < 0 .and. phi % name == 'KIN') then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
-          if(sqrt(tau_wall(c1))*grid % wall_dist(c1)/viscosity>2.0) then      
+          if(sqrt(tau_wall(c1))*grid % wall_dist(c1)/ &
+            (viscosity/density) > 2.0) then ! if y+ > 2
+
             phi_x_f = 0.0
             phi_y_f = 0.0
             phi_z_f = 0.0
             vis_eff = 0.0
+
           end if
         end if
       end if

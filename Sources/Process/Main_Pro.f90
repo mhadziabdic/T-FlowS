@@ -298,22 +298,7 @@
         call Calculate_Shear_And_Vorticity(grid)
 
         call Compute_Turbulent(grid, dt, ini, kin, n)
-    !-------------------------------------!
-  !   DEBUG BLOCK   !
-  !-------------------------------------!
-    !if(phi % name == 'ZETA') then
-      call Comm_Mod_Wait
-      call Save_Vtu_Results(grid, "test")
-      print *, "max(k)=", maxval(kin % n)
-      print *, "max(eps)=", maxval(eps % n)
-      print *, "max(vis_t)=", maxval(vis_t)
-      print *, "max(u)=", maxval(u % n)
-      print *, "max(p_kin)=", maxval(p_kin)
-      print *, "visc=", viscosity
-      stop
-    !end if
         call Compute_Turbulent(grid, dt, ini, eps, n)
-
 
 
         call Update_Boundary_Values(grid)
@@ -322,6 +307,23 @@
         call Compute_Turbulent(grid, dt, ini, zeta, n)
 
         call Calculate_Vis_T_K_Eps_Zeta_F(grid)
+  !-----------------!
+  !   DEBUG BLOCK   !
+  !-----------------!
+!    if (n == 1) then
+!      call Comm_Mod_Wait
+!      call Save_Vtu_Results(grid, "test")
+!      print *, "max(k) = ", maxval(kin % n)
+!      print *, "max(eps) = ", maxval(eps % n)
+!      print *, "max(vis_t) = ", maxval(vis_t)
+!      print *, "max(u) = ", maxval(u % n)
+!      print *, "max(p_kin) = ", maxval(p_kin)
+!      print *, "max(f22) = ", maxval(f22 % n)
+!      print *, "max(zeta) = ", maxval(zeta % n)
+!      print *, "visc = ", viscosity
+!      stop
+!    end if
+  !-----------------!
       end if
 
       if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &

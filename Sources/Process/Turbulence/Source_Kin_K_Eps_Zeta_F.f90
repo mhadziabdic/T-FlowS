@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Source_Kin_K_Eps_V2_F(grid)
+  subroutine Source_Kin_K_Eps_Zeta_F(grid)
 !------------------------------------------------------------------------------!
 !   Computes the source terms in kin transport equation.               !
 !------------------------------------------------------------------------------!
@@ -54,10 +54,10 @@
       ! Dissipation:
       if(alpha1 < 1.05) then
         A % val(A % dia(c)) = A % val(A % dia(c)) +          &
-             density*eps % n(c)/(kin%n(c) + TINY) * grid % vol(c)
+             density * eps % n(c)/(kin%n(c) + TINY) * grid % vol(c)
       else
         A % val(A % dia(c)) = A % val(A % dia(c)) +                           &
-                              density   *                           &
+                              density *                                       &
                               min(alpha1**1.45 * eps % n(c), kin % n(c)**1.5  &
                             / (lf*0.01)) / (kin % n(c) + TINY) * grid % vol(c)
       end if
@@ -67,17 +67,18 @@
     do c = 1, grid % n_cells
 
       ! Production:
-      b(c) = b(c) + vis_t(c) * shear(c) * shear(c) * grid % vol(c)
+      b(c) = b(c) + vis_t(c) * shear(c) * shear(c) * grid % vol(c) * density
  
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c)) +                             &
-           density*eps % n(c)/(kin % n(c)+TINY) * grid % vol(c)
-      p_kin(c) =  vis_t(c) * shear(c) * shear(c) 
+           density * eps % n(c)/(kin % n(c)+TINY) * grid % vol(c)
+      p_kin(c) =  vis_t(c) * shear(c) * shear(c) * density
+
       if (buoyancy == YES) then 
         buoyBeta(c) = 1.0
         Gbuoy(c) = -buoyBeta(c) * (grav_x * ut % n(c) +  &
                                    grav_y * vt % n(c) +  &
-                                   grav_z * wt % n(c))
+                                   grav_z * wt % n(c)) * density
         b(c) = b(c) + max(0.0, Gbuoy(c) * grid % vol(c))
         A % val(A % dia(c)) = A % val(A % dia(c))                            &
                      + max(0.0,-Gbuoy(c)*grid % vol(c) / (kin % n(c) + TINY))
@@ -113,7 +114,7 @@
     
         if(y_plus(c1) > 3.0) then 
           if(ROUGH==NO) then
-            tau_wall(c1) = density*kappa*u_tau(c1)*u_tan    &   
+            tau_wall(c1) = density * kappa*u_tau(c1)*u_tan    &   
                          /(log(Elog*y_plus(c1)))    
             p_kin(c1) = tau_wall(c1)*u_tau(c1)/(kappa*grid % wall_dist(c1))
           else if(ROUGH==YES) then
@@ -123,7 +124,7 @@
             kin % n(c2) = tau_wall(c1) / 0.09**0.5
           end if
           b(c1) = b(c1) + p_kin(c1) * grid % vol(c1)
-          b(c1) = b(c1) - vis_t(c1) * shear(c1) * shear(c1) * grid % vol(c1)
+          b(c1) = b(c1) - vis_t(c1) * shear(c1) * shear(c1) * grid % vol(c1) * density
         end if  
       end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
     end if    ! c2 < 0 

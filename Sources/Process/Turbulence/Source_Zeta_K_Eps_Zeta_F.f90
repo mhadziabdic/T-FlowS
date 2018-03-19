@@ -42,15 +42,15 @@
     ! instabilities for some cases such as flow around cylinder. That is why we 
     ! choose this particular way to the add source term. 
     do c = 1, grid % n_cells
-      if(n_step > 500) then
-        b(c) = b(c) + f22 % n(c) * grid % vol(c)
-      else
-        b(c) = b(c) + max(0.0,f22 % n(c)*grid % vol(c))
-        A % val(A % dia(c)) = A % val(A % dia(c))               &
-                            + max(0.0, -f22 % n(c) * grid % vol(c)  &
-                            / (zeta % n(c) + TINY))    
-      end if      
-      A % val(A % dia(c)) =  A % val(A % dia(c))  &
+      !if(n_step > 500) then
+        b(c) = b(c) + f22 % n(c) * grid % vol(c) * density
+      !else
+      !  b(c) = b(c) + max(0.0,f22 % n(c)*grid % vol(c)) * density
+      !  A % val(A % dia(c)) = A % val(A % dia(c))               &
+      !                      + max(0.0, -f22 % n(c) * grid % vol(c)  &
+      !                      / (zeta % n(c) + TINY)) * density
+      !end if      
+      A % val(A % dia(c)) =  A % val(A % dia(c))         &
                           + grid % vol(c) * p_kin(c)     &
                           / (kin % n(c)+TINY) 
     end do

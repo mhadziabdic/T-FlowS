@@ -415,17 +415,10 @@
 
   if(turbulence_model == K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
-    if(phi % name == 'KIN')  call Source_Kin_K_Eps_V2_F(grid)
-    if(phi % name == 'EPS')  call Source_Eps_K_Eps_V2_F(grid)
+    if(phi % name == 'KIN')  call Source_Kin_K_Eps_Zeta_F(grid)
+    if(phi % name == 'EPS')  call Source_Eps_K_Eps_Zeta_F(grid)
     if(phi % name == 'ZETA') call Source_Zeta_K_Eps_Zeta_F(grid, n_step)
   end if
-
-  !-------------------------------------!
-  !   DEBUG BLOCK   !
-  !-------------------------------------!
-    call Comm_Mod_Wait
-    call Save_Vtu_Results(grid, "test")
-    stop
 
   if(turbulence_model == SPALART_ALLMARAS .or.  &
      turbulence_model == DES_SPALART) then
@@ -475,12 +468,12 @@
       call Info_Mod_Iter_Fill_At(3, 1, phi % name, niter, phi % res)
     if(phi % name == 'EPS')  &
       call Info_Mod_Iter_Fill_At(3, 2, phi % name, niter, phi % res)
-    if(phi % name == 'V^2')  &
-      call Info_Mod_Iter_Fill_At(3, 3, phi % name, niter, phi % res)
     if(phi % name == 'ZETA')  &
       call Info_Mod_Iter_Fill_At(3, 3, phi % name, niter, phi % res)
   end if
 
   call Comm_Mod_Exchange(grid, phi % n)
+
+
 
   end subroutine

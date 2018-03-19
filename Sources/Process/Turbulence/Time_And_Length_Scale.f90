@@ -35,11 +35,11 @@
     else
       do c = 1, grid % n_cells
         t1 = kin%n(c)/(eps%n(c) + tiny)
-        t2 = Ct*sqrt(viscosity/eps%n(c))
+        t2 = Ct*sqrt((viscosity/density)/eps%n(c))
         t3 = 0.6/(sqrt(3.0)*CmuD * zeta % n(c) * Shear(c))
 
         l1 = kin%n(c)**1.5/eps%n(c)
-        l2 = Cni*(viscosity**3/eps%n(c))**0.25
+        l2 = Cni*((viscosity/density)**3/eps%n(c))**0.25
         l3 = sqrt(kin % n(c)/3.0)/(CmuD * zeta % n(c) * Shear(c)) 
 
         Tsc(c) = max(min(t1,t3),t2)

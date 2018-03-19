@@ -54,11 +54,11 @@
  if(turbulence_model == K_EPS_ZETA_F .or.  &
     turbulence_model == HYBRID_K_EPS_ZETA_F) then 
    do c = 1, grid % n_cells
-     f22hg = (1.0 - Cf_1 - 0.65 * p_kin(c)  &
+     f22hg = (1.0 - Cf_1 - 0.65 * p_kin(c)/density  &
            / (eps  % n(c) + TINY))          &
            * (zeta % n(c) - TWO_THIRDS)     &
            / (Tsc(c) + TINY)                &
-           + 0.0085 * p_kin(c) / (kin % n(c) + TINY)
+           + 0.0085 * p_kin(c)/density / (kin % n(c) + TINY)
      b(c) = b(c) + f22hg * grid % vol(c) / (Lsc(c)**2 + TINY) 
    end do
 
@@ -76,7 +76,7 @@
        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
 
-         f22 % n(c2) = -2.0 * viscosity * zeta % n(c1)     &
+         f22 % n(c2) = -2.0 * viscosity/density * zeta % n(c1)     &
                      / grid % wall_dist(c1)**2
 
         ! Fill in a source coefficients

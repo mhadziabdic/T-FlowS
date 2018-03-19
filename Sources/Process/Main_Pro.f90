@@ -300,12 +300,23 @@
         call Compute_Turbulent(grid, dt, ini, kin, n)
         call Compute_Turbulent(grid, dt, ini, eps, n)
 
+
+
         call Update_Boundary_Values(grid)
 
         call Compute_F22(grid, ini, f22)
         call Compute_Turbulent(grid, dt, ini, zeta, n)
 
         call Calculate_Vis_T_K_Eps_Zeta_F(grid)
+    !-------------------------------------!
+  !   DEBUG BLOCK   !
+  !-------------------------------------!
+    !if(phi % name == 'ZETA') then
+      call Comm_Mod_Wait
+      call Save_Vtu_Results(grid, "test")
+      print *, "max(k)=", maxval(kin % n),"max(eps)=", maxval(eps % n),"visc=", viscosity, "max(vis_t)=", maxval(vis_t)
+      stop
+    !end if
       end if
 
       if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &

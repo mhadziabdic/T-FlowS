@@ -34,7 +34,8 @@
   real              :: dt          ! time step
   integer           :: first_dt    ! first time step in this run
   integer           :: last_dt     ! number of time steps
-  integer           :: n_ini       ! number of inner iterations
+  integer           :: max_ini     ! max number of inner iterations
+  integer           :: min_ini     ! min number of inner iterations
   integer           :: n_stat      ! starting time step for statistic
   integer           :: ini         ! inner iteration counter
   integer           :: bsi, rsi    ! backup and results save interval
@@ -215,12 +216,13 @@
     !   Inner-iteration loop   !
     !--------------------------!
     if(coupling == 'PROJECTION') then
-      n_ini = 1
+      max_ini = 1
     else
-      call Control_Mod_Max_Simple_Iterations(n_ini)
+      call Control_Mod_Max_Simple_Iterations(max_ini)
+      call Control_Mod_Min_Simple_Iterations(min_ini)
     end if
 
-    do ini=1, n_ini  !  PROJECTION & SIMPLE
+    do ini=1, max_ini  !  PROJECTION & SIMPLE
 
       call Info_Mod_Iter_Fill(ini)
 
@@ -366,13 +368,14 @@
       ! End of the current iteration
       call Info_Mod_Iter_Print()
 
-      if(coupling == 'SIMPLE') then
-        call Control_Mod_Tolerance_For_Simple_Algorithm(simple_tol)
-        if( u  % res <= simple_tol .and.  &
-            v  % res <= simple_tol .and.  &
-            w  % res <= simple_tol .and.  &
-            pp % res <= simple_tol .and.  &
-            mass_res <= simple_tol ) goto 4
+      if(ini >= min_ini) then
+        if(coupling == 'SIMPLE') then
+          call Control_Mod_Tolerance_For_Simple_Algorithm(simple_tol)
+          if( u  % res <= simple_tol .and.  &
+              v  % res <= simple_tol .and.  &
+              w  % res <= simple_tol .and.  &
+              mass_res <= simple_tol ) goto 4
+        endif
       endif
     end do
 

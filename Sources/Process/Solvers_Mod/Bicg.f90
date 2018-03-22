@@ -1,7 +1,5 @@
 !==============================================================================!
-  subroutine Bicg(mat_a, x, r1,        &
-                  prec,niter,tol,  &
-                  ini_res,fin_res)
+  subroutine Bicg(mat_a, x, r1, prec, niter, tol, ini_res, fin_res)
 !------------------------------------------------------------------------------!
 !   Solves the linear systems of equations by a precond. BiCG Method.          !
 !------------------------------------------------------------------------------!
@@ -33,7 +31,7 @@
   character(len=80) :: prec                    ! preconditioner
 !-----------------------------------[Locals]-----------------------------------!
   integer :: n, nb
-  real    :: alfa, beta, rho, rhoold, bnrm2, error
+  real    :: alfa, beta, rho, rho_old, bnrm2, error
   integer :: i, j, k, iter, sub
 !==============================================================================!
 
@@ -49,12 +47,7 @@
   !    This is quite tricky point.    !
   !   What if bnrm2 is very small ?   !
   !???????????????????????????????????!
-  bnrm2=0.0
-  do i=1,n
-    bnrm2=bnrm2+r1(i)*r1(i)
-  end do
-  call Comm_Mod_Global_Sum_Real(bnrm2)  
-  bnrm2=sqrt(bnrm2)
+  bnrm2 = Normalized_Residual(n, nb, mat_a, x, r1)
 
   if(bnrm2 < tol) then 
     iter=0
@@ -64,17 +57,12 @@
   !----------------!
   !   r = b - Ax   !
   !----------------!
-  call Residual(n, nb, mat_a, x, r1) 
+  call Residual_Vector(n, nb, mat_a, x, r1) 
 
   !--------------------------------!
   !   Calculate initial residual   !
   !--------------------------------!
-  error=0.0
-  do i=1,n
-    error=error + r1(i)*r1(i)
-  end do
-  call Comm_Mod_Global_Sum_Real(error)
-  error  = sqrt(error)  
+  error = Normalized_Residual(n, nb, mat_a, x, r1)
 
   !---------------------------------------------------------------!
   !   Residual after the correction and before the new solution   !
@@ -123,7 +111,7 @@
         p2(i) = q2(i)
       end do        
     else
-      beta=rho/rhoold
+      beta=rho/rho_old
       do i=1,n
         p1(i) = q1(i) + beta*p1(i)
         p2(i) = q2(i) + beta*p2(i)
@@ -178,16 +166,11 @@
     !???????????????????????!
     !   Check convergence   !
     !???????????????????????!
-    error=0.0
-    do i=1,n
-      error=error+r1(i)*r1(i)
-    end do  
-    call Comm_Mod_Global_Sum_Real(error)
-    error=sqrt(error)
+    error = Normalized_Residual(n, nb, mat_a, x, r1)
 
     if(error < tol) goto 1
 
-    rhoold=rho
+    rho_old=rho
 
   end do     ! iter
 

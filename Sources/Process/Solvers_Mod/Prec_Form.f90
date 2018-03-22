@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine Prec_Form(A, prec) 
+  subroutine Prec_Form(a, prec) 
 !------------------------------------------------------------------------------!
-!   Forms preconditioning matrix "D" from provided matrix "A".                 !
+!   Forms preconditioning matrix "d" from provided matrix "a".                 !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Comm_Mod
@@ -9,21 +9,21 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Matrix_Type) :: A
+  type(Matrix_Type) :: a
   character(len=80) :: prec  ! preconditioner
 !-----------------------------------[Locals]-----------------------------------!
   real     :: sum1
   integer  :: i, j, k, n
 !==============================================================================!
                  
-  n = A % pnt_grid % n_cells
+  n = a % pnt_grid % n_cells
 
   !---------------------------------! 
   !   1) diagonal preconditioning   !
   !---------------------------------!
   if(prec == 'DIAGONAL') then        
     do i=1,n                     
-      D % val(D % dia(i)) = A % val(A % dia(i))           
+      d % val(d % dia(i)) = a % val(a % dia(i))           
     end do                      
 
   !--------------------------------------------! 
@@ -31,12 +31,12 @@
   !--------------------------------------------!
   else if(prec == 'INCOMPLETE_CHOLESKY') then   
     do i = 1,n
-      sum1 = A % val(A % dia(i))       ! take diaginal entry   
-      do j = A % row(i), A % dia(i)-1  ! only lower traingular
-        k = A % col(j)                    
-        sum1 = sum1 - D % val(D % dia(k)) * A % val(j) * A % val(j)  
+      sum1 = a % val(a % dia(i))       ! take diaginal entry   
+      do j = a % row(i), a % dia(i)-1  ! only lower traingular
+        k = a % col(j)                    
+        sum1 = sum1 - d % val(d % dia(k)) * a % val(j) * a % val(j)  
       end do
-      D % val(D % dia(i)) = 1.0 / sum1
+      d % val(d % dia(i)) = 1.0 / sum1
     end do
 
   !---------------------------!
@@ -44,7 +44,7 @@
   !---------------------------!
   else                          
     do i=1,n
-      D % val(D % dia(i)) = 1.0
+      d % val(d % dia(i)) = 1.0
     end do
   end if 
 

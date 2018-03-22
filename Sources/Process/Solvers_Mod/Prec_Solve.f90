@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine Prec_Solve(A, x, b, prec) 
+  subroutine Prec_Solve(a, x, b, prec) 
 !------------------------------------------------------------------------------!
-! Solves the preconditioning system [D]{x}={b}                                 !
+! Solves the preconditioning system [d]{x}={b}                                 !
 !------------------------------------------------------------------------------!
 !   Allows preconditioning of the system by:                                   !
 !     1. Diagonal preconditioning                                              !
@@ -18,24 +18,24 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Matrix_Type) :: A           
-  real              :: x(-A % pnt_grid % n_bnd_cells : A % pnt_grid % n_cells)
-  real              :: b( A % pnt_grid % n_cells)
+  type(Matrix_Type) :: a           
+  real              :: x(-a % pnt_grid % n_bnd_cells : a % pnt_grid % n_cells)
+  real              :: b( a % pnt_grid % n_cells)
   character(len=80) :: prec  ! preconditioner
 !-----------------------------------[Locals]-----------------------------------!
   integer :: i, j, k, n, nb
   real    :: sum1
 !==============================================================================!
            
-  n  = A % pnt_grid % n_cells
-  nb = A % pnt_grid % n_bnd_cells
+  n  = a % pnt_grid % n_cells
+  nb = a % pnt_grid % n_bnd_cells
 
   !---------------------------------! 
   !   1) diagonal preconditioning   !
   !---------------------------------!
   if(prec == 'DIAGONAL') then        
     do i=1,n
-      x(i)=b(i)/D % val(D % dia(i))
+      x(i)=b(i)/d % val(d % dia(i))
     end do
 
   !--------------------------------------------! 
@@ -46,25 +46,25 @@
     ! Forward substitutionn
     do i=1,n
       sum1=b(i)
-      do j=A % row(i),A % dia(i)-1  ! only the lower triangular
-        k = A % col(j)             
-        sum1 = sum1- A % val(j)*x(k)  
+      do j=a % row(i),a % dia(i)-1  ! only the lower triangular
+        k = a % col(j)             
+        sum1 = sum1- a % val(j)*x(k)  
       end do
-      x(i) = sum1 * D % val(D % dia(i))         ! BUG ?
+      x(i) = sum1 * d % val(d % dia(i))         ! BUG ?
     end do
 
     do i=1,n
-      x(i) = x(i) / ( D % val(D % dia(i)) + TINY )
+      x(i) = x(i) / ( d % val(d % dia(i)) + TINY )
     end do
 
     ! Backward substitution
     do i=n,1,-1
       sum1=x(i)
-      do j = A % dia(i)+1, A % row(i+1)-1 ! upper triangular 
-        k = A % col(j)                  
-        sum1 = sum1 - A % val(j)*x(k)      
+      do j = a % dia(i)+1, a % row(i+1)-1 ! upper triangular 
+        k = a % col(j)                  
+        sum1 = sum1 - a % val(j)*x(k)      
       end do
-      x(i) = sum1* D % val(D % dia(i))               ! BUG ?
+      x(i) = sum1* d % val(d % dia(i))               ! BUG ?
     end do
 
   !---------------------------!

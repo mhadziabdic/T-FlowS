@@ -108,7 +108,7 @@
   end do
 
   do c = 1, grid % n_cells
-    b(c) = b(c) / (grid % vol(c) * density)
+    b(c) = b(c) / (grid % vol(c) * density / dt)
   end do
 
   mass_err=0.0

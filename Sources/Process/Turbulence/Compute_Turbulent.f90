@@ -111,8 +111,8 @@
 
   ! New values
 1 do c = 1, grid % n_cells
-    phi % a(c)    = 0.0
-    phi % c(c)    = 0.0
+    phi % a(c) = 0.0
+    phi % c(c) = 0.0
   end do
 
   !----------------------------!
@@ -470,7 +470,5 @@
   end if
 
   call Comm_Mod_Exchange(grid, phi % n)
-
-
 
   end subroutine

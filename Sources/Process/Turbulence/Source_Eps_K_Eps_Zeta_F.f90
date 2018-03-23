@@ -1,41 +1,37 @@
-!==============================================================================!
+!=============================================================================!
   subroutine Source_Eps_K_Eps_Zeta_F(grid)
-!------------------------------------------------------------------------------!
+!-----------------------------------------------------------------------------!
 !   Calculates source terms in equation of dissipation of turbulent energy     !
 !   and imposes boundary condition                                             ! 
-!------------------------------------------------------------------------------!
-!----------------------------------[Modules]-----------------------------------!
+!-----------------------------------------------------------------------------!
+!---------------------------------[Modules]-----------------------------------!
   use Const_Mod
   use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
   use Control_Mod
-!------------------------------------------------------------------------------!
+!-----------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Arguments]----------------------------------!
+!--------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-!-----------------------------------[Locals]-----------------------------------!
+!----------------------------------[Locals]-----------------------------------!
   integer :: c, s, c1, c2,j 
   real    :: Esor, Ce_11, EBF
   real    :: EpsWall, EpsHom
   real    :: y_pl
-!==============================================================================!
-!   In dissipation of turbulent kinetic energy equation exist two              !
-!   source terms which have form:                                              !
-!                                                                              !
-!     /                                                                        !
-!    |                                                                         !
-!    | ((Cv_e1 * p_kinE - Cv_11 DENc * eps) / Tsc) * dV                        !
-!    |                                                                         !
-!   /                                                                          !
-!                                                                              !
-!   First, positive , source term is solved and added to source  coefficient   !
-!   b(c) on right hand side.  Second, negative, source term is added to main   !
-!   diagonal left hand side coefficient matrix in order to increase stability  !
-!   of solver.  It is nessesary to calculate coefficient Cv_11 using kin,      !
-!   Cv_e2, vi2 and coefficient A1                                              !
-!------------------------------------------------------------------------------!
+!=============================================================================!
+!   In dissipation of turbulent kinetic energy equation exist two             !
+!   source terms which have form:                                             !
+!                                                                             !
+!    int( density ((Cv_e1 * p_kin - Cv_11 eps) / Tsc) * dV                    !
+!                                                                             !
+!   First, positive , source term is solved and added to source  coefficient  !
+!   b(c) on right hand side.  Second, negative, source term is added to main  !
+!   diagonal left hand side coefficient matrix in order to increase stability !
+!   of solver.  It is nessesary to calculate coefficient Cv_11 using kin,     !
+!   Cv_e2, vi2 and coefficient A1                                             !
+!-----------------------------------------------------------------------------!
 
   call Time_And_Length_Scale(grid)
 

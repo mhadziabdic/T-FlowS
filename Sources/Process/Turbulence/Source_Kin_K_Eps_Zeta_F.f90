@@ -1,45 +1,39 @@
-!==============================================================================!
+!=============================================================================!
   subroutine Source_Kin_K_Eps_Zeta_F(grid)
-!------------------------------------------------------------------------------!
-!   Computes the source terms in kin transport equation.                       !
-!------------------------------------------------------------------------------!
-!----------------------------------[Modules]-----------------------------------!
+!-----------------------------------------------------------------------------!
+!   Computes the source terms in kin transport equation.                      !
+!-----------------------------------------------------------------------------!
+!---------------------------------[Modules]-----------------------------------!
   use Const_Mod
   use Flow_Mod
   use les_mod
   use rans_mod
   use Grid_Mod
   use Control_Mod
-!------------------------------------------------------------------------------!
+!-----------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Arguments]----------------------------------!
+!--------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-!-----------------------------------[Locals]-----------------------------------!
+!----------------------------------[Locals]-----------------------------------!
   integer           :: c, c1, c2, s
   real              :: u_tan, u_nor_sq, u_nor, u_tot_sq
   real              :: lf
   real              :: alpha1, l_rans, l_sgs
-!==============================================================================!
-!                                                                              !
-!   p_kin  is a production of turbulent kinematic energy.                      !
-!                                                                              !
-!   The form of p_kin which is solving in this subroutine is :                 !
-!                                                                              !
-!   p_kin = 2 * VISk { [ (dU/dx)**2 + (dV/dy)**2 + (dW/dz)**2 ] +              !
-!                   0.5( dV/dx + dU/dy )**2 +                                  !
-!                   0.5( dW/dy + dV/dz )**2 +                                  !
-!                   0.5( dU/dz + dW/dx )**2 }                                  !
-!                                                                              !
-!   Dimension of the p_kin is [ kg m /s**3 ]                                   !
-!   In kinetic energy equation exist two source terms which have form:         !
-!                                                                              !
-!     /           /                                                            !
-!    |           |                                                             !
-!    | p_kin dV  -  | DENc eps dV                                              !
-!    |           |                                                             !
-!   /           /                                                              !
-!                                                                              !
-!------------------------------------------------------------------------------!
+!=============================================================================!
+!                                                                             !
+!   p_kin  is a production of turbulent kinematic energy.                     !
+!                                                                             !
+!   The form of p_kin which is solving in this subroutine is :                !
+!                                                                             !
+!   p_kin = 2 * VIS_t { [ (dU/dx)**2 + (dV/dy)**2 + (dW/dz)**2 ] +            !
+!                          0.5( dV/dx + dU/dy )**2                            !
+!                          0.5( dW/dy + dV/dz )**2                            !
+!                          0.5( dU/dz + dW/dx )**2                            !
+!                                                                             !
+!   In kinetic energy equation exist two source terms which have form:        !
+!                                                                             !
+!    int( density (p_kin - eps ) )dV                                          !
+!-----------------------------------------------------------------------------!
 
   if(turbulence_model == HYBRID_K_EPS_ZETA_F) then
     do c = 1, grid % n_cells
@@ -48,11 +42,11 @@
       l_rans = 0.41*grid % wall_dist(c)
       alpha1 = max(1.0,l_rans/l_sgs)
 
-      ! Production:
+      ! Production [m^2/s^3]:
       p_kin(c) = vis_t(c)/density * shear(c) * shear(c)
       b(c) = b(c) + density * p_kin(c) * grid % vol(c)
 
-      ! Dissipation:
+      ! Dissipation [m^2/s^3]:
       if(alpha1 < 1.05) then
         A % val(A % dia(c)) = A % val(A % dia(c)) + &
              density * eps % n(c)/(kin%n(c) + TINY) * grid % vol(c)
@@ -66,11 +60,11 @@
   else
     do c = 1, grid % n_cells
 
-      ! Production:
+      ! Production [m^2/s^3]:
       p_kin(c) = vis_t(c)/density * shear(c) * shear(c)
       b(c) = b(c) + density * p_kin(c) * grid % vol(c)
  
-      ! Dissipation:
+      ! Dissipation [m^2/s^3]:
       A % val(A % dia(c)) = A % val(A % dia(c)) + &
            density * eps % n(c)/(kin % n(c) + TINY) * grid % vol(c)
 

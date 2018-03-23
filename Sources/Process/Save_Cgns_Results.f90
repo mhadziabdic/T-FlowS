@@ -195,7 +195,7 @@
      turbulence_model == DES_SPALART           .or.  &
      turbulence_model == SPALART_ALLMARAS) then
     call Cgns_Mod_Write_Field(base, block, solution, field, grid, &
-                              vis_t(:)/viscosity,"VIS_T_to_VIS")
+                              vis_t(1:grid % n_cells)/viscosity,"VIS_T_to_VIS")
   end if
 
   ! Reynolds stress models

@@ -265,7 +265,8 @@
      turbulence_model == LES                    .or.  &
      turbulence_model == DES_SPALART            .or.  &
      turbulence_model == SPALART_ALLMARAS) then
-    call Save_Vtu_Scalar(grid, IN_4, IN_5, "VIS_T_to_VIS", vis_t(1)/viscosity)
+    call Save_Vtu_Scalar(grid, IN_4, IN_5, "VIS_T_to_VIS", &
+      vis_t(1:grid % n_cells)/viscosity)
   end if
 
   ! Reynolds stress models

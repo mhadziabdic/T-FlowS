@@ -16,10 +16,10 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type) :: grid
-  logical         :: restar
+  type(Grid_Type)   :: grid
+  logical           :: restar
 !----------------------------------[Calling]-----------------------------------!
-  real      :: Distance
+  real              :: Distance
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: i, j, l, m
   real              :: MresT
@@ -81,12 +81,14 @@
                                                 bulk(m) % zp)
   end do
 
-print *, 'Calling for gravitationa vector'
+  if(this_proc < 2) &
+    print *, 'Calling for gravitationa vector'
   call Control_Mod_Gravitational_Vector(grav_x, grav_y, grav_z)
 
   if(.not. restar) call Allocate_Variables(grid)
 
-print *, 'Calling for turbulence model'
+  if(this_proc < 2) &
+    print *, 'Calling for turbulence model'
   call Control_Mod_Turbulence_Model(.true.)
 
   if(turbulence_model == K_EPS .or.  &

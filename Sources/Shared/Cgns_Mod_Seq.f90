@@ -56,7 +56,7 @@
   ! Element section
   type Cgns_Section_Type
     character(len=80)    :: name
-    integer, allocatable :: cell_type
+    integer              :: cell_type
     integer              :: first_cell
     integer              :: last_cell
     integer              :: parent_flag
@@ -65,8 +65,8 @@
   ! Boundary conditions   ! -> it is similar to Bnd_Cond in ../Share :-(
   type Cgns_Bnd_Cond_Type
     character(len=80)    :: name
-    integer, allocatable :: color
-    integer, allocatable :: n_nodes
+    integer              :: color
+    integer              :: n_nodes
   end type
 
   ! Blocks

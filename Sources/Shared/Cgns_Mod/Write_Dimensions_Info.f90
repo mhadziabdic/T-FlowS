@@ -174,9 +174,6 @@
       exponents(3)=-1.
     else if (fieldname .eq. "VorticityMagnitude") then
       exponents(3)=-1.
-    else if (fieldname .eq. "EddyViscosity") then
-      exponents(2)=2.
-      exponents(3)=-1.
     else if (fieldname(1:14) .eq. "ReynoldsStress") then
       exponents(2)=2.
       exponents(3)=-2.

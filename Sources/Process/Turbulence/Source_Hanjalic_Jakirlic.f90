@@ -42,8 +42,6 @@
   real    :: Feps, phi2_nn
   real    :: fss,E2,E3,EE,CC1,CC2
   real    :: Uxx, Uyy, Uzz, Uxy, Uxz, Uyz, Uyx, Uzx, Uzy
-  real    :: Vxx, Vyy, Vzz, Vxy, Vxz, Vyz
-  real    :: Wxx, Wyy, Wzz, Wxy, Wxz, Wyz
   real    :: r13, r23
   real    :: S11, S22, S33, S12, S13, S21, S31, S23, S32
   real    :: v11, v22, v33, v12, v13, v21, v31, v23, v32
@@ -53,9 +51,6 @@
   real    :: VAR1_11, VAR1_22, VAR1_33, VAR1_12, VAR1_13, VAR1_23
   real    :: VAR2_11, VAR2_22, VAR2_33, VAR2_12, VAR2_13, VAR2_23
   real    :: P11, P22, P33, P12, P13, P23, Eps1, Eps2
-  real    :: duu_dx,duu_dy,duu_dz,dvv_dx,dvv_dy,dvv_dz,dww_dx,dww_dy,dww_dz
-  real    :: duv_dx,duv_dy,duv_dz,duw_dx,duw_dy,duw_dz,dvw_dx,dvw_dy,dvw_dz
-  real    :: dUdx, dUdy, dUdz, dVdx, dVdy, dVdz, dWdx, dWdy, dWdz 
 !==============================================================================!
 
   diss1 = 0.0

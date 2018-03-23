@@ -42,9 +42,6 @@
   character(len= 6)  :: IN_3 = '      '
   character(len= 8)  :: IN_4 = '        '
   character(len=10)  :: IN_5 = '          '
-  character(len=12)  :: IN_6 = '            '
-  character(len=14)  :: IN_7 = '              '
-  character(len=16)  :: IN_8 = '                '
 !==============================================================================!
 
   ! Store the name
@@ -268,7 +265,7 @@
      turbulence_model == LES                    .or.  &
      turbulence_model == DES_SPALART            .or.  &
      turbulence_model == SPALART_ALLMARAS) then
-    call Save_Vtu_Scalar(grid, IN_4, IN_5, "VIS_T", vis_t(1))
+    call Save_Vtu_Scalar(grid, IN_4, IN_5, "VIS_T_to_VIS", vis_t(1)/viscosity)
   end if
 
   ! Reynolds stress models

@@ -19,15 +19,13 @@
   type(Grid_Type)  :: grid
   character(len=*) :: name_phi
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, s, c1, c2, i
+  integer :: c, s, c1, c2
   real    :: prod, diss, phi_hom, phi_wall, mag, phi_tot, Esor
-  real    :: a11, a22, a33, a12, a13, a21, a31, a23, a32
   real    :: b11, b22, b33, b12, b13, b21, b31, b23, b32
   real    :: s11, s22, s33, s12, s13, s21, s31, s23, s32
   real    :: v11, v22, v33, v12, v13, v21, v31, v23, v32
-  real    :: Uxx, Uyy, Uzz, Uxy, Uxz, Uyz, Uzy, Uzx, Uyx               
-  real    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, uiujn, Ce11, uu_nn 
-  real    :: diss_wall, diss_hom, r13, r23
+  real    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, Ce11, uu_nn
+  real    :: diss_wall, diss_hom, r13
 !==============================================================================!
 
   call Grad_Mod_For_Phi(grid, f22 % n, 1, f22_x, .true.)             ! df22/dx

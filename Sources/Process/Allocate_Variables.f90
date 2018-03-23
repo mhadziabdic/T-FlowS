@@ -54,7 +54,7 @@
   call Grad_Mod_Allocate_Memory(grid)
 
   allocate(nearest_wall_cell(-grid % n_bnd_cells:grid % n_cells))
-  nearest_wall_cell  = 0.
+  nearest_wall_cell  = 0
 
   allocate(vis_wall(-grid % n_bnd_cells:grid % n_cells)); vis_wall = 0.0
 

@@ -21,7 +21,6 @@
   integer           :: c, c1, c2, s, m
   real              :: cfl_max(256), pe_max(256)
   real              :: cfl_t, pe_t, mass_err
-  real              :: Pdrop, FluxM
   character(len=80) :: coupling
 !==============================================================================!
 

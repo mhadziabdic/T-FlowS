@@ -17,12 +17,6 @@
   type(Var_Type)     :: ui        ! velocity component
   type(Matrix_Type)  :: a_matrix  ! system matrix
   real, dimension(:) :: b_vector  ! right hand side vector
-!-----------------------------------[Locals]-----------------------------------!
-  type(Var_Type)       :: might_be_useful_too
-  real,    allocatable :: working_r(:), arrays_r(:), come_r(:), here_r(:)
-  integer, allocatable :: working_i(:), arrays_i(:), come_i(:), here_i(:)
-  real                 :: depends_r, on_r, the_r, case_r
-  integer              :: depends_i, on_i, the_i, case_i
 !------------------------------------------------------------------------------!
 
   !----------------------------------------------------! 

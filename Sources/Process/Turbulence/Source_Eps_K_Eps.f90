@@ -30,8 +30,8 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: s, c, c1, c2, j, i
-  real              :: Ret, Fmu, L1, L2, YAP, T1, yStar, Ce2star, nu_rng, Lf
+  integer           :: s, c, c1, c2, j
+  real              :: Ret, Fmu, L1, L2, YAP, yStar, Lf
 !==============================================================================!
 
   if(turbulence_model_variant == HIGH_RE) then

@@ -15,7 +15,7 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: s, c, c1, c2, j
+  integer           :: s, c, c1, c2
   real              :: sor_11, f22hg
   real              :: A0
 !==============================================================================!
@@ -70,13 +70,13 @@
 
    ! Imposing boundary condition for f22 on the wall
    do s = 1, grid % n_faces
-     c1=grid % faces_c(1,s)
-     c2=grid % faces_c(2,s)
-     if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
-       if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-          Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
+     c1 = grid % faces_c(1,s)
+     c2 = grid % faces_c(2,s)
+     if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER ) then
+       if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
+          Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
 
-         f22 % n(c2) = -2.0 * viscosity * zeta % n(c1)     &
+         f22 % n(c2) = -2.0 * viscosity/density * zeta % n(c1) &
                      / grid % wall_dist(c1)**2
 
         ! Fill in a source coefficients

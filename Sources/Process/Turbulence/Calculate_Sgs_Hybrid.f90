@@ -21,12 +21,8 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c, s, c1, c2 
-  real    :: Nx, Ny, Nz
-  real    :: Cs, R
-  real    :: Stot, lf, UtauL, Uff 
-  real    :: Utot, Unor, Utan, Apow, Bpow, nu, dely, yPlus 
-  real    :: fun
+  integer :: c
+  real    :: lf
 !==============================================================================!
 
   do c = 1, grid % n_cells

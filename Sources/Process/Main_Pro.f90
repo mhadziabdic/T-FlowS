@@ -175,6 +175,11 @@
   call Control_Mod_Backup_Save_Interval(bsi, verbose=.true.)
   call Control_Mod_Results_Save_Interval(rsi, verbose=.true.)
 
+
+  ! new feature: determine if code was compiles with CGNS
+  COMPILED_WITH_CGNS = .true. ! assume it was
+  call Save_Results(grid, "mesh")
+
   do n = first_dt + 1, last_dt
 
     time = time + dt
@@ -458,7 +463,7 @@
     ! Is it time to save results for post-processing
     if(save_now .or. exit_now .or. mod(n,rsi) == 0) then
       call Comm_Mod_Wait
-      call Save_Vtu_Results(grid, name_save)
+      call Save_Results(grid, name_save)
       call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
     end if
 

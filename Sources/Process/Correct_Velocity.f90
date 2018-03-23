@@ -131,12 +131,12 @@
         (grid % material(c2) .eq. m) ) then
       if(c2 > 0 .or.   &
          c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
-        cfl_t = abs( dt * flux(s) /                &
+        cfl_t = abs( dt * flux(s) / density /      &
                      ( f_coef(s) *                 &
                      (  grid % dx(s)*grid % dx(s)  &
                       + grid % dy(s)*grid % dy(s)  &
                       + grid % dz(s)*grid % dz(s)) ) )
-        pe_t  = abs( flux(s) / f_coef(s) / (viscosity+TINY) )
+        pe_t  = abs( flux(s) / f_coef(s) / (viscosity / density + TINY) )
         cfl_max(m) = max( cfl_max(m), cfl_t ) 
         pe_max(m)  = max( pe_max(m),  pe_t  ) 
       end if

@@ -12,9 +12,6 @@
   integer, parameter :: YES =  0
   integer, parameter :: NO  = -1
 
-  integer, parameter :: FLUID = 7  ! material state: fluid
-  integer, parameter :: SOLID = 8  ! material state: solid
-
   !----------------------------------------!
   !   A few handy mathematical constants   !
   !----------------------------------------!

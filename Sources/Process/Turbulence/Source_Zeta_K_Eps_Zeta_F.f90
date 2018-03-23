@@ -31,7 +31,7 @@
 !   sign of term , it is placed on left or right hand side.  Second, negative  !
 !   source term is added to main diagonal left hand side coefficient matrix    !
 !   in order to increase stability of solver                                   !
-!------------------------------------------------------------------------------!      
+!------------------------------------------------------------------------------!
 
   if(turbulence_model == K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
@@ -39,20 +39,20 @@
     ! Positive source term 
     ! The first option in treating the source is making computation very 
     ! sensitive to initial condition while the second one can lead to 
-    ! instabilities for some cases such as flow around cylinder. That is why we 
+    ! instabilities for some cases such as flow around cylinder. That is why we
     ! choose this particular way to the add source term.
     do c = 1, grid % n_cells
       if(n_step > 500) then
         b(c) = b(c) + f22 % n(c) * grid % vol(c) * density
       else
-        b(c) = b(c) + max(0.0,f22 % n(c)*grid % vol(c)) * density
+        b(c) = b(c) + max(0.0, f22 % n(c)*grid % vol(c)) * density
         A % val(A % dia(c)) = A % val(A % dia(c))                   &
                             + max(0.0, -f22 % n(c) * grid % vol(c)  &
                             / (zeta % n(c) + TINY)) * density
       end if      
       A % val(A % dia(c)) =  A % val(A % dia(c))         &
                           + grid % vol(c) * p_kin(c)     &
-                          / (kin % n(c)+TINY) * density
+                          / (kin % n(c) + TINY) * density
     end do
 
   end if

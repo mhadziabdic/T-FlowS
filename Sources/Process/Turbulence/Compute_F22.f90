@@ -30,7 +30,6 @@
   real              :: a0, a12, a21
   real              :: ini_res, tol
   real              :: phi_x_f, phi_y_f, phi_z_f
-  character(len=80) :: coupling
   character(len=80) :: precond
   integer           :: td_inertia    ! time-disretization for inerita  
   integer           :: td_advection  ! time-disretization for advection
@@ -258,13 +257,9 @@
   !                                 !    
   !---------------------------------!
 
-  ! Type of coupling is important
-  call Control_Mod_Pressure_Momentum_Coupling(coupling)
-
   ! Set under-relaxation factor
   urf = 1.0
-  if(coupling == 'SIMPLE')  &
-    call Control_Mod_Simple_Underrelaxation_For_Turbulence(urf)
+  call Control_Mod_Simple_Underrelaxation_For_Turbulence(urf)
 
   do c = 1, grid % n_cells
     b(c) = b(c) + A % val(A % dia(c)) * (1.0 - urf)*phi % n(c) / urf
@@ -277,11 +272,13 @@
   ! Get matrix precondioner
   call Control_Mod_Preconditioner_For_System_Matrix(precond)
 
-  ! Set number of solver iterations on coupling method
-  if(coupling == 'PROJECTION') niter = 300
-  if(coupling == 'SIMPLE')     niter =   5
+  ! Set the default value for number of iterations
+  niter = 6
 
-  call cg(A, phi % n, b, precond, niter, tol, ini_res, phi % res)
+  ! Over-ride if specified in control file
+  !call Control_Mod_Max_Iterations_For_Turbulence_Solver(niter)
+
+  call Cg(A, phi % n, b, precond, niter, tol, ini_res, phi % res)
   
   call Info_Mod_Iter_Fill_At(3, 4, phi % name, niter, phi % res)    
 

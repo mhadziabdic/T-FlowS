@@ -251,7 +251,7 @@
       if(c2 < 0 .and. phi % name == 'KIN') then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
-          if(sqrt(tau_wall(c1))*grid % wall_dist(c1)/ &
+          if(sqrt(tau_wall(c1)/density)*grid % wall_dist(c1)/ &
             (viscosity/density) > 2.0) then ! if y+ > 2
 
             phi_x_f = 0.0

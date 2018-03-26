@@ -97,7 +97,10 @@
     integer :: max_n_bnd_cells
     integer :: max_n_faces
 
+
   end type
+
+  logical :: COMPILED_WITH_CGNS
 
   contains
  

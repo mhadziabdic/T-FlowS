@@ -77,7 +77,8 @@
                 * shear(c) 
       end do
     else
-      do c = 1, grid % n_cells 
+      ! lf IS NOT INITIALIZED HERE
+      do c = 1, grid % n_cells
         vis_t(c) = density                &
                 * (lf*lf)                 &          ! delta^2 
                 * c_dyn(c)                &          ! c_dynamic   

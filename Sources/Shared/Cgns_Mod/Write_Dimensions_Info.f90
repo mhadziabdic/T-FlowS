@@ -4,9 +4,9 @@
 !   Writes info on dimensional data in DB
 !------------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Arguments]----------------------------------!
-  integer          :: base, block!, solution, field
-!-----------------------------------[Locals]-----------------------------------!
+!--------------------------------[Arguments]-----------------------------------!
+  integer           :: base, block ! base, block
+!----------------------------------[Locals]------------------------------------!
   integer           :: base_id     ! base index number
   integer           :: block_id    ! block index number
   integer           :: coord_id    ! coordinate index number
@@ -173,9 +173,6 @@
       exponents(2)=2.
       exponents(3)=-1.
     else if (fieldname .eq. "VorticityMagnitude") then
-      exponents(3)=-1.
-    else if (fieldname .eq. "EddyViscosity") then
-      exponents(2)=2.
       exponents(3)=-1.
     else if (fieldname(1:14) .eq. "ReynoldsStress") then
       exponents(2)=2.

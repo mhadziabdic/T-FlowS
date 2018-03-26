@@ -36,7 +36,7 @@
 !==============================================================================!
 
   area  = 0.0
-  print *, 'grid % n_materials: ', grid % n_materials
+  if(this_proc < 2) print *, 'grid % n_materials: ', grid % n_materials
 
   ! Found the line where boundary condition defintion is defined
   call Control_Mod_Position_At_One_Key('INITIAL_CONDITION',       &
@@ -45,18 +45,17 @@
 
   ! Found the section with intial condions
   if(found == YES) then
-
-print *, 'FOUND INITIAL CONDITIONS'
+    if(this_proc < 2) print *, 'FOUND INITIAL CONDITIONS'
     call Control_Mod_Read_Strings_On('VARIABLES', keys,    nks, .true.)
     call Control_Mod_Read_Real_Array_On('VALUES', vals(1), nvs, .true.)
 
     ! Check validity of the input
-    if(nks .eq. 0 .or. nvs .eq. 0) then
+    if(nks .eq. 0 .or. nvs .eq. 0 .and. this_proc < 2) then
       print '(2a)', '# Critical, for initial condition: ',        &
                     ' no values or variables have been provided' 
       stop
     end if
-    if(nks .ne. nvs) then
+    if(nks .ne. nvs .and. this_proc < 2) then
       print '(2a)', '# Critical for initial conditions, number of values ',  &
                     ' is not the same as number of provided variable names' 
       stop

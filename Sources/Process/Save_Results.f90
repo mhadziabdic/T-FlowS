@@ -1,8 +1,9 @@
 !==============================================================================!
-  subroutine Save_Cgns_Cells(grid, sub, name_save)     
+  subroutine Save_Results(grid, name_save)
 !------------------------------------------------------------------------------!
-!   Writes in 3-D unstructured grid to files 'name_save.cgns'                  !
-!   Valid for both parallel and seqential access                               !
+!   If T-Flows was compiled with CGNS_ADF5=yes or CGNS_HDF5=yes                !
+!   Then use Save_Cgns_Results to save fields                                  !
+!   Otherwise Save_Vtu_Results is used                                         !
 !------------------------------------------------------------------------------!
 !---------------------------------[Modules]------------------------------------!
   use Grid_Mod
@@ -10,10 +11,13 @@
   implicit none
 !--------------------------------[Arguments]-----------------------------------!
   type(Grid_Type)  :: grid
-  integer          :: sub
   character(len=*) :: name_save
 !==============================================================================!
 
-  if (sub < 2) print *, "# Saving in CGNS format is not supported"
+  if (COMPILED_WITH_CGNS) then
+    call Save_Cgns_Results(grid, name_save)
+  else
+    call Save_Vtu_Results (grid, name_save)
+  end if
 
   end subroutine

@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------------!
 !   Discretizes and solves eliptic relaxation equations for f22.               !
 !------------------------------------------------------------------------------!
-!----------------------------------[Modules]-----------------------------------!
+!---------------------------------[Modules]------------------------------------!
   use Flow_Mod
   use les_mod
   use rans_mod
@@ -20,11 +20,11 @@
                          phi_z => r_cell_03           
 !------------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Arguments]----------------------------------!
+!--------------------------------[Arguments]-----------------------------------!
   type(Grid_Type) :: grid
   integer         :: ini
   type(Var_Type)  :: phi
-!-----------------------------------[Locals]-----------------------------------!
+!----------------------------------[Locals]------------------------------------!
   integer           :: s, c, c1, c2, niter
   real              :: Fex, Fim 
   real              :: a0, a12, a21
@@ -36,34 +36,31 @@
   integer           :: td_diffusion  ! time-disretization for diffusion 
   integer           :: td_cross_diff ! time-disretization for cross-difusion
   real              :: urf           ! under-relaxation factor                 
-!==============================================================================! 
-!
-!   The form of equations which are solved:
-!
-!      /           /              /
-!     | df22      | f22 dV       | f22hg dV
-!   - | ---- dS + | ------   =   | --------
-!     |  dy       |  Lsc^2       |  Lsc^2
-!    /           /              /
-!
-!   Dimension of the system under consideration
-!
-!     [A]{f22} = {b}   [kg K/s]
-!
-!   Dimensions of certain variables:
-!
-!     f22            [1/s]
-!     Lsc            [m]
-!
+!==============================================================================!
+!                                                                              !
+!   The form of equations which are solved:                                    !
+!                                                                              !
+!     (   df22      f22 dV     f22hg dV )                                      !
+!  int( - ---- dS + ------  =  -------- )                                      !
+!     (    dy        Lsc^2      Lsc^2   )                                      !
+!                                                                              !
+!   Dimension of the system under consideration                                !
+!                                                                              !
+!     [A]{f22} = {b}   [kg K/s]                                                !
+!                                                                              !
+!   Dimensions of certain variables:                                           !
+!                                                                              !
+!     f22            [1/s]                                                     !
+!     Lsc            [m]                                                       !
 !------------------------------------------------------------------------------!
 
   A % val = 0.0
 
-  b=0.0
+  b = 0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
-  do c=-grid % n_bnd_cells,-1
-    A % bou(c)=0.0
+  do c = -grid % n_bnd_cells, -1
+    A % bou(c) = 0.0
   end do
 
   !-------------------------------------! 
@@ -77,7 +74,7 @@
 
   ! Old values (o) and older than old (oo)
   if(ini == 1) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       phi % oo(c)   = phi % o(c)
       phi % o (c)   = phi % n(c)
       phi % d_oo(c) = phi % d_o(c)
@@ -88,7 +85,7 @@
   end if
 
   ! New values
-  do c=1,grid % n_cells
+  do c = 1, grid % n_cells
     phi % c(c) = 0.0
   end do
 
@@ -201,14 +198,14 @@
 
   ! Adams-Bashfort scheeme for diffusion fluxes
   if(td_diffusion == ADAMS_BASHFORTH) then 
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + 1.5 * phi % d_o(c) - 0.5 * phi % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
   if(td_diffusion == CRANK_NICOLSON) then 
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + 0.5 * phi % d_o(c)
     end do  
   end if
@@ -216,7 +213,7 @@
 
   ! Adams-Bashfort scheeme for cross diffusion 
   if(td_cross_diff == ADAMS_BASHFORTH) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + 1.5 * phi % c_o(c) - 0.5 * phi % c_oo(c)
     end do 
   end if
@@ -226,14 +223,14 @@
 
   ! Crank-Nicholson scheme for cross difusive terms
   if(td_cross_diff == CRANK_NICOLSON) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + 0.5 * phi % c(c) + 0.5 * phi % c_o(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
   if(td_cross_diff == FULLY_IMPLICIT) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + phi % c(c)
     end do 
   end if
@@ -261,7 +258,7 @@
   urf = 1.0
   call Control_Mod_Simple_Underrelaxation_For_Turbulence(urf)
 
-  do c=1,grid % n_cells
+  do c = 1, grid % n_cells
     b(c) = b(c) + A % val(A % dia(c)) * (1.0 - urf)*phi % n(c) / urf
     A % val(A % dia(c)) = A % val(A % dia(c)) / urf
   end do 

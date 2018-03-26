@@ -4,7 +4,7 @@
 !   Calculate source terms in eliptic relaxation  equation                     !
 !   for vi2 and imposing  boundary condition for f22                           !
 !------------------------------------------------------------------------------!
-!----------------------------------[Modules]-----------------------------------!
+!---------------------------------[Modules]------------------------------------!
   use Const_Mod
   use Flow_Mod
   use rans_mod
@@ -12,29 +12,23 @@
   use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
-!---------------------------------[Arguments]----------------------------------!
+!--------------------------------[Arguments]-----------------------------------!
   type(Grid_Type) :: grid
-!-----------------------------------[Locals]-----------------------------------!
-  integer           :: s, c, c1, c2, j
+!----------------------------------[Locals]------------------------------------!
+  integer           :: s, c, c1, c2
   real              :: sor_11, f22hg
   real              :: A0
 !==============================================================================!
 !                                                                              !
 !  The form of source terms are :                                              !
 !                                                                              !
-!     /                                                                        !
-!    |                                                                         !
-!    | f22hg*dV ; f22hg - f22hg homogenious is placed in a source              !
-!    |                     coefficients b(c)                                   !
-!   /                                                                          !
-!      f22hg = (1.0 - Cv_1)*(vi2(c)/kin(c) - 2.0/3.0)/Tsc(c)     &             !
-!              + 2.0*Cv2*p_kin(c)/(3.0*kin(c))                                !
+!      int( f22hg*dV ),                                                        !
+!  where f22hg - f22hg homogenious is placed in a source coefficients b(c)     !
 !                                                                              !
-!     /                                                                        !
-!    |                                                                         !
-!    | f22*dV ;this term is placed in a diagonal of coefficient matrix         !
-!    |                                                                         !
-!   /                                                                          !
+!      f22hg = (1.0 - Cv_1)*(vi2(c)/kin(c) - 2.0/3.0)/Tsc(c)     &             !
+!              + 2.0*Cv2*p_kin(c)/(3.0*kin(c))                                 !
+!                                                                              !
+!    int( f22*dV ); this term is placed in a diagonal of coefficient matrix    !
 !                                                                              !
 !                                                                              !
 !  Dimensions of certain variables                                             !
@@ -45,7 +39,6 @@
 !     vi2            [m^2/s^2]                                                 !
 !     f22            [-]                                                       !
 !     Lsc            [m]                                                       !
-!                                                                              !
 !------------------------------------------------------------------------------!
 
   call Time_And_Length_Scale(grid)
@@ -70,13 +63,13 @@
 
    ! Imposing boundary condition for f22 on the wall
    do s = 1, grid % n_faces
-     c1=grid % faces_c(1,s)
-     c2=grid % faces_c(2,s)
-     if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
-       if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-          Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
+     c1 = grid % faces_c(1,s)
+     c2 = grid % faces_c(2,s)
+     if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER ) then
+       if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
+          Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
 
-         f22 % n(c2) = -2.0 * viscosity * zeta % n(c1)     &
+         f22 % n(c2) = -2.0 * viscosity/density * zeta % n(c1) &
                      / grid % wall_dist(c1)**2
 
         ! Fill in a source coefficients

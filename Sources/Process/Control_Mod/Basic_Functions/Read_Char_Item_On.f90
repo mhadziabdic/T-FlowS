@@ -5,6 +5,9 @@
 !   keyword (argument "keyword") in control file.  If not found, a default     !
 !   vaue specified in argument "def" is used.
 !------------------------------------------------------------------------------!
+!---------------------------------[Modules]------------------------------------!
+  use Comm_Mod, only: this_proc
+!------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   character(len=*)  :: keyword
@@ -28,7 +31,7 @@
   end if
 
 1 if(present(verbose)) then
-    if(verbose) then
+    if(verbose .and. this_proc < 2) then
       print '(a,a,a)', ' # Could not find the keyword: ', keyword, '.'
       print '(a,a)',   ' # Using the default value of: ', def
     end if

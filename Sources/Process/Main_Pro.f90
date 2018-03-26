@@ -1,9 +1,9 @@
 !==============================================================================!
   program Processor
 !------------------------------------------------------------------------------!
-!   Unstructured Finite Volume 'LES'/RANS solver.                                !
+!   Unstructured Finite Volume 'LES'/RANS solver.                              !
 !------------------------------------------------------------------------------!
-!----------------------------------[Modules]-----------------------------------!
+!---------------------------------[Modules]------------------------------------!
   use Name_Mod, only: problem_name
   use Const_Mod
   use Flow_Mod
@@ -21,14 +21,13 @@
   use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
-!----------------------------------[Calling]-----------------------------------!
+!---------------------------------[Calling]------------------------------------!
   real :: Correct_Velocity
-!-----------------------------------[Locals]-----------------------------------!
+!----------------------------------[Locals]------------------------------------!
   integer           :: i, m, n
   real              :: mass_res, wall_time_start, wall_time_current
   character(len=80) :: name_save
   logical           :: restar, multiple, save_now, exit_now
-  real, allocatable :: dum_x(:), dum_y(:), dum_z(:)
   type(Grid_Type)   :: grid        ! grid used in computations
   real              :: time        ! physical time
   real              :: dt          ! time step
@@ -41,11 +40,11 @@
   integer           :: bsi, rsi    ! backup and results save interval
   real              :: simple_tol  ! tolerance for SIMPLE algorithm
   character(len=80) :: coupling    ! pressure velocity coupling
-!---------------------------------[Interfaces]---------------------------------!
+!--------------------------------[Interfaces]----------------------------------!
   interface
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
     subroutine UserProbe2D(namAut)
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
       use Name_Mod
       use Flow_Mod
       implicit none
@@ -130,7 +129,7 @@
   ! Check if there are more materials
   multiple = .false.
   i = StateMat(1)
-  do m=1,grid % n_materials
+  do m = 1, grid % n_materials
     if(StateMat(m) /= i) multiple = .true.
   end do
 
@@ -159,7 +158,7 @@
 
   ! Print the areas of monitoring planes
   if(this_proc < 2) then
-    do m=1,grid % n_materials
+    do m = 1, grid % n_materials
       write(*,'(a5,i2,a2,1pe12.3)') '# Ax(',m,')=', bulk(m) % area_x
       write(*,'(a5,i2,a2,1pe12.3)') '# Ay(',m,')=', bulk(m) % area_y
       write(*,'(a5,i2,a2,1pe12.3)') '# Az(',m,')=', bulk(m) % area_z
@@ -175,6 +174,11 @@
   call Control_Mod_Time_Step(dt, verbose=.true.)
   call Control_Mod_Backup_Save_Interval(bsi, verbose=.true.)
   call Control_Mod_Results_Save_Interval(rsi, verbose=.true.)
+
+
+  ! new feature: determine if code was compiles with CGNS
+  COMPILED_WITH_CGNS = .true. ! assume it was
+  call Save_Results(grid, "mesh")
 
   do n = first_dt + 1, last_dt
 
@@ -222,7 +226,7 @@
       call Control_Mod_Min_Simple_Iterations(min_ini)
     end if
 
-    do ini=1, max_ini  !  PROJECTION & SIMPLE
+    do ini = 1, max_ini  !  PROJECTION & SIMPLE
 
       call Info_Mod_Iter_Fill(ini)
 
@@ -302,7 +306,6 @@
 
         call Compute_Turbulent(grid, dt, ini, kin, n)
         call Compute_Turbulent(grid, dt, ini, eps, n)
-
         call Update_Boundary_Values(grid)
 
         call Compute_F22(grid, ini, f22)
@@ -460,7 +463,7 @@
     ! Is it time to save results for post-processing
     if(save_now .or. exit_now .or. mod(n,rsi) == 0) then
       call Comm_Mod_Wait
-      call Save_Vtu_Results(grid, name_save)
+      call Save_Results(grid, name_save)
       call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
     end if
 

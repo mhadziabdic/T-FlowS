@@ -76,11 +76,13 @@
 
       ! File was specified
       if(nvs == 1) then
-        print *, '# Values specified in the file: ', trim(name_prof(nvs))
+        if(this_proc < 2) &
+          print *, '# Values specified in the file: ', trim(name_prof(nvs))
 
       ! If file was not specified, so must have been the values
       else if(nvs == 0) then 
-        print *, '# Values are not specified in a file'
+        if(this_proc < 2) &
+          print *, '# Values are not specified in a file'
 
         ! Go back to key and read all sections before values
         call Control_Mod_Position_At_Two_Keys('BOUNDARY_CONDITION',       &
@@ -140,7 +142,7 @@
       grid % bnd_cond % type(n) = PRESSURE
     else
       if(this_proc < 2)  &
-        print *, '# Load_Boundary_Conditions: '//        &
+        print *, '# Load_Boundary_Conditions: '//          &
                    '# Unknown boundary condition type: ',  &
                    bc_type
       stop  

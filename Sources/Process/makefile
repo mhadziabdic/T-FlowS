@@ -50,7 +50,7 @@ $(info #------------------------------------------------------------------------
 ifeq ($(FORTRAN), gnu)
   FC = gfortran
   ifeq ($(DEBUG),yes)
-    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g -Wall -fcheck=all -ffixed-line-length-80
+    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g -Wall -Wextra -Wline-truncation -Wcharacter-truncation -Wsurprising  -Waliasing  -Wimplicit-interface  -Wunused-parameter  -fwhole-file -ffpe-trap=invalid,zero,overflow  -fbacktrace -fcheck=all -ffixed-line-length-80
   else
     OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O3
   endif

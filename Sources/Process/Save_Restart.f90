@@ -54,28 +54,28 @@
   write(9) 0.0  ! version
 
   ! 60 integer parameters 
-  write(9) time_step,     grid % n_bnd_cells,       grid % n_cells,       grid % n_faces,     0,    0
-  write(9)       Cm,        0,        0,        0,        0,        0
-  write(9)        0,        0,        0,        0,        0,        0
-  write(9)   POSPRO,  CHANNEL,     TEST,    OTHER,        0,        0
-  write(9)        0,        0,   PER_BC,        0,     PIPE,        0
-  write(9)        0,        0,        0,        0,        0,        0
-  write(9)        0,        0,        0,        0,        0,        0
-  write(9)        0,        0,        0,        0,        0,        0
-  write(9)        0,        0,        0,        0,        0,        0
-  write(9)        0,        0,        0,        0,        0,        0
+  write(9) time_step, grid%n_bnd_cells, grid%n_cells, grid%n_faces,    0, 0
+  write(9)        Cm,                0,            0,            0,    0, 0
+  write(9)         0,                0,            0,            0,    0, 0
+  write(9)    POSPRO,          CHANNEL,         TEST,        OTHER,    0, 0
+  write(9)         0,                0,       PER_BC,            0, PIPE, 0
+  write(9)         0,                0,            0,            0,    0, 0
+  write(9)         0,                0,            0,            0,    0, 0
+  write(9)         0,                0,            0,            0,    0, 0
+  write(9)         0,                0,            0,            0,    0, 0
+  write(9)         0,                0,            0,            0,    0, 0
 
   ! 60 real parameters
-  write(9)     0.0,    0.0,    0.0,   bulk(1) % xp,  bulk(1) % yp,  bulk(1) % zp  
-  write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0     
-  write(9)   ReTau,   Tref,    Cs0,   Tinf,    0.0,    0.0
-  write(9)     0.0,    0.0,  Kflow,    0.0,    0.0,    0.0
-  write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0 
-  write(9)     0.0,    0.0,    0.0,  Tflux,    0.0,    0.0
-  write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
-  write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
-  write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
-  write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
+  write(9)       0.,    0.,    0., bulk(1)%xp, bulk(1)%yp, bulk(1)%zp  
+  write(9)       0.,    0.,    0.,         0.,         0., 0.     
+  write(9)     ReTau, Tref,   Cs0,       Tinf,         0., 0.
+  write(9)       0.,    0., Kflow,         0.,         0., 0.
+  write(9)       0.,    0.,    0.,         0.,         0., 0. 
+  write(9)       0.,    0.,    0.,      Tflux,         0., 0.
+  write(9)       0.,    0.,    0.,         0.,         0., 0.
+  write(9)       0.,    0.,    0.,         0.,         0., 0.
+  write(9)       0.,    0.,    0.,         0.,         0., 0.
+  write(9)       0.,    0.,    0.,         0.,         0., 0.
 
   write(9) (U % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
   write(9) (V % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
@@ -132,8 +132,8 @@
     write(9) (T % c_o(c),  c = 1, grid % n_cells)
   end if
 
-  if(turbulence_model == K_EPS    .or.  &
-     turbulence_model == K_EPS_ZETA_F     .or.  &
+  if(turbulence_model == K_EPS    .or.             &
+     turbulence_model == K_EPS_ZETA_F     .or.     &
      turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_PITM) then 
     write(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)

@@ -50,28 +50,28 @@
   read(9) version ! version
 
   ! 60 integer parameters
-  read(9) time_step,      grid % n_bnd_cells,       grid % n_cells,       grid % n_faces,     i_5,    i_6  
-  read(9)       Cm,      i_2,      i_3,      i_4,      i_5,      i_6
-  read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
-  read(9)   POSPRO,  CHANNEL,     TEST,    OTHER,      i_5,      i_6
-  read(9)      i_1,      i_2,   PER_BC,      i_4,     PIPE,      i_6
-  read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
-  read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
-  read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
-  read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
-  read(9)      i_1,      i_2,      i_3,      i_4,      i_5,      i_6
+  read(9) time_step, grid%n_bnd_cells, grid%n_cells, grid%n_faces,    i_5, i_6
+  read(9)        Cm,              i_2,          i_3,          i_4,    i_5, i_6
+  read(9)       i_1,              i_2,          i_3,          i_4,    i_5, i_6
+  read(9)    POSPRO,          CHANNEL,         TEST,        OTHER,    i_5, i_6
+  read(9)       i_1,              i_2,       PER_BC,          i_4,   PIPE, i_6
+  read(9)       i_1,              i_2,          i_3,          i_4,    i_5, i_6
+  read(9)       i_1,              i_2,          i_3,          i_4,    i_5, i_6
+  read(9)       i_1,              i_2,          i_3,          i_4,    i_5, i_6
+  read(9)       i_1,              i_2,          i_3,          i_4,    i_5, i_6
+  read(9)       i_1,              i_2,          i_3,          i_4,    i_5, i_6
 
   ! 60 real parameters
-  read(9)     r_1,    r_2,    r_3,     bulk(1) % xp, bulk(1) % yp,  bulk(1) % zp  
-  read(9)     r_1,    r_2,    r_3,    r_4,    r_4,    r_6             
-  read(9)   ReTau,   Tref,    Cs0,   Tinf,    r_4,    r_6 
-  read(9)     r_1,    r_2,  Kflow,    r_4,    r_5,    r_6 
-  read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6 
-  read(9)     r_1,    r_2,    r_3,  Tflux,    r_5,    r_6   
-  read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6
-  read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6 
-  read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6   
-  read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6   
+  read(9)       r_1,  r_2,   r_3, bulk(1)%xp, bulk(1)%yp,  bulk(1)%zp  
+  read(9)       r_1,  r_2,   r_3,        r_4,        r_4,         r_6
+  read(9)     ReTau, Tref,   Cs0,       Tinf,        r_4,         r_6
+  read(9)       r_1,  r_2, Kflow,        r_4,        r_5,         r_6
+  read(9)       r_1,  r_2,   r_3,        r_4,        r_5,         r_6
+  read(9)       r_1,  r_2,   r_3,      Tflux,        r_5,         r_6
+  read(9)       r_1,  r_2,   r_3,        r_4,        r_5,         r_6
+  read(9)       r_1,  r_2,   r_3,        r_4,        r_5,         r_6
+  read(9)       r_1,  r_2,   r_3,        r_4,        r_5,         r_6
+  read(9)       r_1,  r_2,   r_3,        r_4,        r_5,         r_6
 
   call Allocate_Variables(grid)
 
@@ -130,8 +130,8 @@
     read(9) (T % c_o(c),  c = 1, grid % n_cells)
   end if
 
-  if(turbulence_model == K_EPS    .or.  &
-     turbulence_model == K_EPS_ZETA_F     .or.  &
+  if(turbulence_model == K_EPS    .or.             &
+     turbulence_model == K_EPS_ZETA_F     .or.     &
      turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_PITM) then 
     read(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)

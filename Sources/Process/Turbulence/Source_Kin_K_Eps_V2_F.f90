@@ -50,6 +50,7 @@
       ALPHA1 = max(1.0,Lrans/Lsgs)
 
       ! Production:
+      if(.NOT.IsNearWall(c)) &
       b(c) = b(c) + VISt(c) * Shear(c) * Shear(c) * grid % vol(c)
 
       ! Dissipation:
@@ -73,6 +74,7 @@
     do c = 1, grid % n_cells
 
       ! Production:
+      if(.NOT.IsNearWall(c)) &
       b(c) = b(c) + VISt(c) * Shear(c) * Shear(c) * grid % vol(c)
  
       ! Dissipation:
@@ -124,7 +126,6 @@
             Kin % n(c2) = TauWall(c1) / 0.09**0.5
           end if
           b(c1) = b(c1) + Pk(c1) * grid % vol(c1)
-          b(c1) = b(c1) - VISt(c1) * Shear(c1) * Shear(c1) * grid % vol(c1)
         end if  
       end if  ! TypeBC(c2)==WALL or WALLFL
     end if    ! c2 < 0 

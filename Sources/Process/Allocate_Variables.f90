@@ -61,7 +61,10 @@
   ! For solution of temperature
   call Control_Mod_Heat_Transfer(verbose = .true.)
   if(heat_transfer == YES) then
-    call Var_Mod_Allocate_Solution('T', t, grid)
+    call Var_Mod_Allocate_Solution('T',  t,  grid)
+    call Var_Mod_Allocate_Solution('UT', ut, grid)
+    call Var_Mod_Allocate_Solution('VT', vt, grid)
+    call Var_Mod_Allocate_Solution('WT', wt, grid)
     allocate(con_wall(-grid % n_bnd_cells:grid % n_cells)); con_wall = 0.0
   end if
 

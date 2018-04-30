@@ -1,8 +1,8 @@
 !==============================================================================!
-  subroutine Probe_1D_Nodes(grid)
+  subroutine Probe_1d_Nodes(grid)
 !------------------------------------------------------------------------------!
 !   This subroutine finds the coordinate of cell-centers in non-homogeneous    !
-!   direction and write them in file called "name.1D"                          !
+!   direction and write them in file called "name.1d"                          !
 !------------------------------------------------------------------------------!
   use Name_Mod, only: problem_name
   use gen_mod
@@ -22,7 +22,7 @@
 !==============================================================================!
 
   print *, '#==========================================='
-  print *, '# Creating 1D file with the node '
+  print *, '# Creating 1d file with the node '
   print *, '# coordinates in non-homogeneous directions '
   print *, '#-------------------------------------------'
   print *, '# Insert non-homogeneous direction '
@@ -78,7 +78,7 @@
                           grid % yn(grid % cells_n(n,c))**2)**0.5
 
       if(n_prob == 10000) then
-        print *, '# Probe 1D: Not a 1D (channel flow) problem.'
+        print *, '# Probe 1d: Not a 1d (channel flow) problem.'
         isit = .false.
         return
       end if
@@ -88,10 +88,10 @@
   isit = .true.
 
   !--------------------!
-  !   Create 1D file   !
+  !   Create 1d file   !
   !--------------------!
   name_prob = problem_name
-  name_prob(len_trim(problem_name)+1:len_trim(problem_name)+3) = '.1D'
+  name_prob(len_trim(problem_name)+1:len_trim(problem_name)+3) = '.1d'
   print *, '# Creating the file: ', trim(name_prob)
   open(9, file=name_prob)
 

@@ -2,7 +2,8 @@
  PROBLEM_TYPE    channel
  HEAT_TRANSFER    yes
  NUMBER_OF_TIME_STEPS    4000
- RESULTS_SAVE_INTERVAL   500
+ RESULTS_SAVE_INTERVAL    500
+ BACKUP_SAVE_INTERVAL    1000
  STARTING_TIME_STEP_FOR_STATISTICS    2000000
 
 #-------------------
@@ -73,12 +74,12 @@
 #---------------------
 # Boundary conditions
 #---------------------
-  BOUNDARY_CONDITION    ONE
+  BOUNDARY_CONDITION    lower_face
     TYPE                heat_flux
     VARIABLES           u     v     w     q     kin   eps      zeta  f22
     VALUES              0.0   0.0   0.0   0.1   0.0   1.0e-3   0.0   0.0
 
-  BOUNDARY_CONDITION    TWO
+  BOUNDARY_CONDITION    upper_face
     TYPE                symmetry
     VARIABLES           u     v     w     t      kin      eps      zeta     f22
     VALUES              0.0   0.0   0.0   20.0   1.0E-2   1.0E-3   6.6E-2   1.0e-3

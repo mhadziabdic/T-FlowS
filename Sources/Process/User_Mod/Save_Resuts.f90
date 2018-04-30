@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine User_Mod_Save_Results(grid, current_time_step)
+  subroutine User_Mod_Save_Results(grid, name_save)
 !------------------------------------------------------------------------------!
 !   This is a prototype of customized saving functions.  All cases which       !
 !   require special procedures when saving results (1d or 2d profiles, non-    !
@@ -11,8 +11,8 @@
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type) :: grid
-  integer         :: current_time_step
+  type(Grid_Type)  :: grid
+  character(len=*) :: name_save
 !==============================================================================!
 
   !--------------------------! 

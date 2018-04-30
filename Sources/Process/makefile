@@ -142,13 +142,15 @@ SRC_MOD += Info_Mod.f90		\
            Numerics_Mod.f90	\
            Solvers_Mod.f90	\
            Flow_Mod.f90		\
-           Grad_Mod.f90		\
-           User_Mod.f90
+           Grad_Mod.f90
 
 # Sources for modules in sub-directories
 SRC_MOD += Turbulence_Mod.f90	\
            les_mod.f90		\
            rans_mod.f90		\
+
+# User_Mod should be here
+SRC_MOD += User_Mod.f90
 
 # Control_Mod should be last since it reads for other modules
 SRC_MOD += Control_Mod.f90

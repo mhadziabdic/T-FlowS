@@ -64,7 +64,7 @@
   ! 60 real parameters
   read(9)     r_1,    r_2,    r_3,     bulk(1) % xp, bulk(1) % yp,  bulk(1) % zp  
   read(9)     r_1,    r_2,    r_3,    r_4,    r_4,    r_6             
-  read(9)   ReTau,   Tref,    Cs0,   Tinf,    r_4,    r_6 
+  read(9)   ReTau,    r_2,    Cs0,    r_4,    r_4,    r_6 
   read(9)     r_1,    r_2,  Kflow,    r_4,    r_5,    r_6 
   read(9)     r_1,    r_2,    r_3,    r_4,    r_5,    r_6 
   read(9)     r_1,    r_2,    r_3,  Tflux,    r_5,    r_6   

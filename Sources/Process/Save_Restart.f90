@@ -68,7 +68,7 @@
   ! 60 real parameters
   write(9)     0.0,    0.0,    0.0,   bulk(1) % xp,  bulk(1) % yp,  bulk(1) % zp  
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0     
-  write(9)   ReTau,   Tref,    Cs0,   Tinf,    0.0,    0.0
+  write(9)   ReTau,    0.0,    Cs0,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,  Kflow,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0 
   write(9)     0.0,    0.0,    0.0,  Tflux,    0.0,    0.0

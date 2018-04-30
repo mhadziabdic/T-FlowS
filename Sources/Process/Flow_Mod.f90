@@ -72,7 +72,8 @@
   !-----------------------------------!
   !     Area of the cross section     !
   !-----------------------------------!
-  real :: Area, Tflux, Qflux, Xmax, Ymax, Zmax, Tref, Tinf           
+  real :: t_ref, t_inf
+  real :: Area, Tflux, Qflux, Xmax, Ymax, Zmax
 
   !------------------------------!
   !     Algorythm parameters     !

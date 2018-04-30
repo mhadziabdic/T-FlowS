@@ -123,7 +123,6 @@
     end do 
   end do
 
-  print *, '# Grid_Topology; number of boundary cells: ', grid % n_bnd_cells    
-  print *, '# Grid_Topology; number of faces:          ', grid % n_faces        
+  print '(a38,i7)', '# Number of boundary cells:          ', grid % n_bnd_cells
 
   end subroutine

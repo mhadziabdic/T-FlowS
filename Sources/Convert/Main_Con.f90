@@ -26,6 +26,8 @@
   call To_Upper_Case(file_name_up)
  
   l = len_trim(file_name)
+  print *, '#==================================' // &
+           '==================================='
   if( file_name_up(l-2:l) == 'NEU' ) then
     print *, '# Based on the extension, you are' // &
              ' reading Gambit''s neutral file format'
@@ -40,6 +42,8 @@
     print *, '# Unrecognized input file format; exiting!'
     stop
   end if
+  print *, '#----------------------------------' // &
+           '-----------------------------------'
 
   !----------------------------------------!
   !   Read the file and start conversion   !

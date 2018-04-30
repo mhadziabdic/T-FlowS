@@ -25,10 +25,10 @@
 
   very_big = max(grid % n_nodes,grid % n_cells)
 
-  allocate(face_coor(grid % n_cells*6)); face_coor = grid % n_nodes*HUGE
-  allocate(face_cell(grid % n_cells*6)); face_cell = 0    
-  allocate(starts(grid % n_cells*6)); starts = 0    
-  allocate(ends(grid % n_cells*6));   ends = 0    
+  allocate(face_coor(grid % n_cells*6));  face_coor = grid % n_nodes * HUGE
+  allocate(face_cell(grid % n_cells*6));  face_cell = 0    
+  allocate(starts   (grid % n_cells*6));  starts    = 0    
+  allocate(ends     (grid % n_cells*6));  ends      = 0    
 
   !---------------------------------------------------!
   !   Fill the generic coordinates with some values   !
@@ -147,6 +147,6 @@
     end if
   end do    ! do n3
 
-  print *, '# Find_Faces: Number of faces: ', grid % n_faces, grid % n_faces
+  print '(a38,i7)', '# Number of faces:                   ', grid % n_faces
 
   end subroutine

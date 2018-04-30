@@ -38,10 +38,10 @@
   read(line % tokens(3),*) n_blocks
   read(line % tokens(4),*) n_bnd_sect
 
-  print *, '# Total number of nodes:  ',            grid % n_nodes
-  print *, '# Total number of cells:  ',            grid % n_cells
-  print *, '# Total number of blocks: ',            n_blocks
-  print *, '# Total number of boundary sections: ', n_bnd_sect
+  print '(a38,i7)', '# Total number of nodes:             ', grid % n_nodes
+  print '(a38,i7)', '# Total number of cells:             ', grid % n_cells
+  print '(a38,i7)', '# Total number of blocks:            ', n_blocks
+  print '(a38,i7)', '# Total number of boundary sections: ', n_bnd_sect
 
   !------------------------------!
   !   Count the boundary cells   !
@@ -60,7 +60,8 @@
         end do
         call Tokenizer_Mod_Read_Line(9)         ! ENDOFSECTION
       end do
-      print *, '# Total number of boundary cells: ', grid % n_bnd_cells
+      print '(a38,i7)', '# Total number of boundary cells:    ',  &
+            grid % n_bnd_cells
       go to 1
     end if
   end do 

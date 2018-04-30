@@ -27,6 +27,7 @@ DIR_SHARED = ../Shared
 DIR_MODULE = ../.Modules
 DIR_OBJECT = .Objects
 DIR_MODELS = Turbulence
+DIR_CASE   = no
 VPATH = $(DIR_SHARED):$(DIR_MODELS):.
 
 # Program name (This should hardly change)
@@ -37,7 +38,14 @@ $(info #========================================================================
 $(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                                    )
 $(info #-------------------------------------------------------------------------------------------------------)
 $(info # Usage:                                                                                                )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <MPI=yes/no> <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no> )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <MPI=yes/no>  <DIR_CASE=relative_path_to_case> ... )
+$(info #        ... <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no>                                                      )   
+$(info #                                                                                                       )
+$(info # Examples:                                                                                             )
+$(info #   make                            for sequential version with gnu compiler                            )
+$(info #   make MPI=yes                    for parallel version with gnu compiler                              )
+$(info #   make FORTRAN=intel MPI=yes      for parallel version with intel compiler                            )
+$(info #   make MPI=yes CGNS_ADF5=yes      for parallel version with CGNS/ADF5 support                         )
 $(info #-------------------------------------------------------------------------------------------------------)
 
 #-------------------------------------------------------------------------
@@ -114,6 +122,31 @@ OPT_COMP += $(addprefix -I, $(DIR_CGNS_H))
 #   Note: Modules written in lower case
 #         letters are candidates for deletion.
 #------------------------------------------------------
+
+#--------------------
+#   User functions
+#--------------------
+ifneq ($(DIR_CASE), no)
+  ifeq ('$(wildcard $(DIR_CASE))','')
+    $(info Case directory $(DIR_CASE) does not exist!)
+  else
+    $(info Compling for the case in $(DIR_CASE))
+    ifeq ('$(wildcard $(DIR_CASE)/User_Mod)','')
+      $(info Directory with user functions $(DIR_CASE)/User_Mod does not exist!)
+    else
+      $(info Linking user functions from directory $(DIR_CASE)/User_Mod)
+
+      # Fetch all user functions from the case directory
+      STEP_A  = $(shell ls -1 $(DIR_CASE)/User_Mod/*.f90)
+
+      # Append "../" to each of the file names
+      SRC_USR = $(patsubst %.f90, ../%.f90, $(STEP_A))
+
+      # Make soft links
+      $(shell ln -f -s $(SRC_USR) User_Mod)
+    endif
+  endif
+endif
 
 #-------------
 #   Modules

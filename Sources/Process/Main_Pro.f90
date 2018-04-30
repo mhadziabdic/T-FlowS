@@ -298,6 +298,10 @@
         call Compute_Turbulent(grid, dt, ini, eps, n)
 
         call Calculate_Vis_T_K_Eps(grid)
+
+        if(heat_transfer == YES) then
+          call Calculate_Heat_Flux(grid)
+        end if
       end if
 
       if(turbulence_model == K_EPS_ZETA_F     .or.  &
@@ -312,6 +316,10 @@
         call Compute_Turbulent(grid, dt, ini, zeta, n)
 
         call Calculate_Vis_T_K_Eps_Zeta_F(grid)
+
+        if(heat_transfer == YES) then
+          call Calculate_Heat_Flux(grid)
+        end if
       end if
 
       if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
@@ -351,6 +359,10 @@
         call Compute_Stresses(grid, dt, ini, eps)
 
         call Calculate_Vis_T_Rsm(grid)
+
+        if(heat_transfer == YES) then
+          call Calculate_Heat_Flux(grid)
+        end if
       end if
 
       if(turbulence_model == SPALART_ALLMARAS .or.  &
@@ -464,7 +476,9 @@
     if(save_now .or. exit_now .or. mod(n,rsi) == 0) then
       call Comm_Mod_Wait
       call Save_Results(grid, name_save)
-      call User_Mod_Save_Results(grid, n)  ! write results in user-customized format
+
+      ! Write results in user-customized format
+      call User_Mod_Save_Results(grid, name_save)
     end if
 
     if(save_now) then

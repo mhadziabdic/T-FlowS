@@ -2,7 +2,7 @@
   subroutine User_Mod_Save_Results(grid, current_time_step)
 !------------------------------------------------------------------------------!
 !   This is a prototype of customized saving functions.  All cases which       !
-!   require special procedures when saving results (1D or 2D profiles, non-    !
+!   require special procedures when saving results (1d or 2d profiles, non-    !
 !   standard save formats, and alike) should be done here, case-based.         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!

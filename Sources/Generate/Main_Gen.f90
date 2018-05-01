@@ -79,11 +79,11 @@
   ! Try to save in CGNS format, it might work
   call Save_Cgns_Cells(grid, 0) 
 
-  ! Save the 1D probe (good for the channel flow)
-  call Probe_1D_Nodes_Gen(grid)
+  ! Save the 1d probe (good for the channel flow)
+  call Probe_1d_Nodes_Gen(grid)
 
-  ! Save the 2D probe (good for the channel flow)
-  call Probe_2D(grid)
+  ! Save the 2d probe
+  call Probe_2d(grid)
 
   ! Write something on the screen
   call Print_Grid_Statistics(grid)

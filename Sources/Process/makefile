@@ -27,6 +27,7 @@ DIR_SHARED = ../Shared
 DIR_MODULE = .Modules
 DIR_OBJECT = .Objects
 DIR_MODELS = Turbulence
+DIR_USER   = User_Mod
 DIR_CASE   = no
 VPATH = $(DIR_SHARED):$(DIR_MODELS):.
 
@@ -131,19 +132,19 @@ ifneq ($(DIR_CASE), no)
     $(info Case directory $(DIR_CASE) does not exist!)
   else
     $(info Compling for the case in $(DIR_CASE))
-    ifeq ('$(wildcard $(DIR_CASE)/User_Mod)','')
-      $(info Directory with user functions $(DIR_CASE)/User_Mod does not exist!)
+    ifeq ('$(wildcard $(DIR_CASE)/$(DIR_USER))','')
+      $(info Directory with user functions $(DIR_CASE)/$(DIR_USER) does not exist!)
     else
-      $(info Linking user functions from directory $(DIR_CASE)/User_Mod)
+      $(info Linking user functions from directory $(DIR_CASE)/$(DIR_USER))
 
       # Fetch all user functions from the case directory
-      STEP_A  = $(shell ls -1 $(DIR_CASE)/User_Mod/*.f90)
+      STEP_A  = $(shell ls -1 $(DIR_CASE)/$(DIR_USER)/*.f90)
 
       # Append "../" to each of the file names
       SRC_USR = $(patsubst %.f90, ../%.f90, $(STEP_A))
 
       # Make soft links
-      $(shell ln -f -s $(SRC_USR) User_Mod)
+      $(shell ln -f -s $(SRC_USR) $(DIR_USER))
     endif
   endif
 endif
@@ -286,3 +287,5 @@ $(DIR_OBJECT)/Cgns_Mod.o:   $(DIR_OBJECT)/Grid_Mod.o
 #---------------------
 clean:
 	rm -f $(DIR_OBJECT)/*.o $(DIR_MODULE)/*.mod $(PROGRAM_FILE)
+	rm -f $(DIR_USER)/*.f90
+	git checkout $(DIR_USER)

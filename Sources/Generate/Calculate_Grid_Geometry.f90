@@ -404,7 +404,7 @@
         endif !  S*(c2-c1) < 0.0
       end if  !  c2 > 0
     end do    !  sides  
-    print *, '# Number of shadow faces: ', grid % n_sh
+    print '(a38,i7)', '# Number of shadow faces:            ', grid % n_sh
     end if
 
   !----------------------------------!

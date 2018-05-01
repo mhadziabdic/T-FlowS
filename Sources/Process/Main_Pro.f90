@@ -159,9 +159,9 @@
   ! Print the areas of monitoring planes
   if(this_proc < 2) then
     do m = 1, grid % n_materials
-      write(*,'(a5,i2,a2,1pe12.3)') '# Ax(',m,')=', bulk(m) % area_x
-      write(*,'(a5,i2,a2,1pe12.3)') '# Ay(',m,')=', bulk(m) % area_y
-      write(*,'(a5,i2,a2,1pe12.3)') '# Az(',m,')=', bulk(m) % area_z
+      write(*,'(a6,i2,a2,1pe12.3)') ' # Ax(',m,')=', bulk(m) % area_x
+      write(*,'(a6,i2,a2,1pe12.3)') ' # Ay(',m,')=', bulk(m) % area_y
+      write(*,'(a6,i2,a2,1pe12.3)') ' # Az(',m,')=', bulk(m) % area_z
     end do
   end if
 

@@ -16,7 +16,7 @@
   character(len=*) :: save_name
 !----------------------------------[Calling]-----------------------------------!
   integer             :: n_prob, pl, c, idumm, i, count, k, c1, c2, s, n_hor, l
-  character(len=80)   :: coord_name, answer, result_name
+  character(len=80)   :: coord_name, result_name
   real, allocatable   :: r1_p(:), r2_p(:), lnum(:), z_p(:), &
                          um_p(:), vm_p(:), wm_p(:), & 
                          uu_p(:), vv_p(:), ww_p(:), &
@@ -179,9 +179,9 @@
       end if
     end do
 
-    result_name = problem_name
+    result_name = save_name ! problem_name
     l = len_trim(result_name)
-    write(result_name(l+1:l+18),'(a9,f4.2,a5)') '-profile-', lnum(k), 'h.dat'
+    write(result_name(l+1:l+14),'(a5,f4.2,a5)') '-prof', lnum(k), 'h.dat'
 
     open(3,file=result_name)
     do i = 1, n_prob

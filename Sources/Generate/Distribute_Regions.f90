@@ -35,7 +35,7 @@
 
   ! This is too much memory but that's OK 
   !  (+1 is to store the default values)
-  allocate(grid % materials          (dom % n_regions + 1))
+  allocate(grid % materials      (dom % n_regions + 1))
   allocate(grid % bnd_cond % name(dom % n_regions + 1))
 
   ! Set the bare bones - one material minimum, and call it "AIR"
@@ -147,8 +147,8 @@
   end do  !  n_regions
 
   ! Store the number of materials and boundary conditions
-  grid % n_materials           = n_mat
-  grid % n_bnd_cond = n_bnd
+  grid % n_materials = n_mat
+  grid % n_bnd_cond  = n_bnd
 
   print *, '#==================================================='
   print *, '# Found following boundary conditions:'

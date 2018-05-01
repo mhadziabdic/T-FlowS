@@ -287,6 +287,4 @@
     end do
   end do
 
-  write(*, '(I8)') del       
-
   end subroutine

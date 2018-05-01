@@ -94,7 +94,7 @@
                 if(dom % blocks(b2) % corners(n) == p24) l24=n
               end do
 
-               write(*, *) '# Periodicity between:', b1, b2
+               print '(a31,2i7)', '# Periodicity between blocks: ', b1, b2
 
               ! Direction ig, block 1
               if((l14-l11) == +1) then

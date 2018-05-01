@@ -348,8 +348,8 @@
   !   Periodic boundaries   !
   !-------------------------!
   call Tokenizer_Mod_Read_Line(9)
-  read(line % tokens(1), *)  n_periodic_cond      ! number of periodic boundaries
-  print *, '# Number of periodic boundaries: ', n_periodic_cond 
+  read(line % tokens(1), *)  n_periodic_cond  ! number of periodic boundaries
+  print '(a38,i7)', '# Number of periodic boundaries:     ', n_periodic_cond 
 
   allocate (periodic_cond(n_periodic_cond,8))
 
@@ -367,7 +367,7 @@
   !---------------------!
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *)  n_copy_cond  ! number of copy boundaries
-  print *, '# Number of copy boundaries: ', n_copy_cond
+  print '(a38,i7)', '# Number of copy boundaries:         ', n_copy_cond
 
   allocate (copy_cond(n_copy_cond,8))
 
@@ -387,8 +387,7 @@
   !-----------------------------------!
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *) n_refine_levels ! number of refinement levels
-
-  print *, '# Number of refinement levels: ', n_refine_levels
+  print '(a38,i7)', '# Number of refinement levels:       ', n_refine_levels
 
   allocate (refined_regions(n_refine_levels, 1024, 0:6))
   allocate (n_refined_regions(n_refine_levels))
@@ -428,7 +427,7 @@
   call Tokenizer_Mod_Read_Line(9)
   read(line % tokens(1), *) n_smoothing_regions  ! number of smoothing regions 
 
-  print *, '# Number of (non)smoothing regions: ', n_smoothing_regions 
+  print '(a38,i7)', '# Number of (non)smoothing regions:  ', n_smoothing_regions
 
   allocate (smooth_in_x   (n_smoothing_regions))
   allocate (smooth_in_y   (n_smoothing_regions))
@@ -438,38 +437,38 @@
   allocate (smooth_regions(n_smoothing_regions, 0:6))
 
   do n=1, n_smoothing_regions
-    smooth_in_x(n) = .FALSE.
-    smooth_in_y(n) = .FALSE.
-    smooth_in_z(n) = .FALSE.
+    smooth_in_x(n) = .false.
+    smooth_in_y(n) = .false.
+    smooth_in_z(n) = .false.
     call Tokenizer_Mod_Read_Line(9)
     read(line % tokens(1), *) smooth_regions(n,0)  
     if(line % n_tokens == 4) then   ! smoothing in three directions
-      smooth_in_x(n) = .TRUE.
-      smooth_in_y(n) = .TRUE.
-      smooth_in_z(n) = .TRUE.
+      smooth_in_x(n) = .true.
+      smooth_in_y(n) = .true.
+      smooth_in_z(n) = .true.
     else if(line % n_tokens == 3) then
       call To_Upper_Case(line % tokens(2))
       call To_Upper_Case(line % tokens(3))
       if( line % tokens(2)  ==  'X' )  &
-          smooth_in_x(n) = .TRUE.
+          smooth_in_x(n) = .true.
       if( line % tokens(3)  ==  'X' )  &
-          smooth_in_x(n) = .TRUE.
+          smooth_in_x(n) = .true.
       if( line % tokens(2)  ==  'Y' )  &
-          smooth_in_y(n) = .TRUE.
+          smooth_in_y(n) = .true.
       if( line % tokens(3)  ==  'Y' )  &
-          smooth_in_y(n) = .TRUE.
+          smooth_in_y(n) = .true.
       if( line % tokens(2)  ==  'Z' )  &
-          smooth_in_z(n) = .TRUE.
+          smooth_in_z(n) = .true.
       if( line % tokens(3)  ==  'Z' )  &
-          smooth_in_z(n) = .TRUE.
+          smooth_in_z(n) = .true.
     else if(line % n_tokens == 2) then
       call To_Upper_Case(line % tokens(2))
       if( line % tokens(2)  ==  'X' )  &
-          smooth_in_x(n) = .TRUE.
+          smooth_in_x(n) = .true.
       if( line % tokens(2)  ==  'Y' )  &
-          smooth_in_y(n) = .TRUE.
+          smooth_in_y(n) = .true.
       if( line % tokens(2)  ==  'Z' )  &
-          smooth_in_z(n) = .TRUE.
+          smooth_in_z(n) = .true.
     end if 
 
     ! Read the coordinates of the (non)smoothed region

@@ -117,8 +117,8 @@
   end do     ! pass
   WallFacLst = grid % n_faces
 
-  print *, '# Wall and interface faces start at: ', WallFacFst 
-  print *, '# Wall and interface faces end at  : ', WallFacLst
+  print '(a38,i7)', '# Wall and interface faces start at: ', WallFacFst 
+  print '(a38,i7)', '# Wall and interface faces end at  : ', WallFacLst
 
   if(.not. rrun) then
   grid % n_bnd_cells = 0

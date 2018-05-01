@@ -38,7 +38,7 @@
 
   do b = 1, size(dom % blocks)
 
-    print *, '# Generating block: ', b
+    print '(a38,i7)', '# Generating block:                  ', b
     ni=dom % blocks(b) % resolutions(1)
     nj=dom % blocks(b) % resolutions(2)
     nk=dom % blocks(b) % resolutions(3)   

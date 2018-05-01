@@ -196,9 +196,9 @@
 
   write(9,'(a,a)') IN_4, '</DataArray>'
 
-  print *, '# Non-periodic links    :', nf_sub_non_per
-  print *, '# Periodic links        :', nf_sub_per
-  print *, '# Inter-processor links :', NBFsub
+  print '(a38,i7)', '# Non-periodic links    :            ', nf_sub_non_per
+  print '(a38,i7)', '# Periodic links        :            ', nf_sub_per
+  print '(a38,i7)', '# Inter-processor links :            ', NBFsub
 
   ! Now write all cells' offsets
   write(9,'(a,a)') IN_4, '<DataArray type="Int32" Name="offsets" format="ascii">'

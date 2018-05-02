@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine User_Backstep_Profiles(grid, save_name) 
+  subroutine User_Mod_Backstep_Profiles(grid, save_name) 
 !------------------------------------------------------------------------------!
 !   Description
 !------------------------------------------------------------------------------!
@@ -15,19 +15,19 @@
   type(Grid_Type)  :: grid
   character(len=*) :: save_name
 !----------------------------------[Calling]-----------------------------------!
-  integer             :: n_prob, pl, c, idumm, i, count, k, c1, c2, s, n_hor, l
-  character(len=80)   :: coord_name, result_name
-  real, allocatable   :: r1_p(:), r2_p(:), lnum(:), z_p(:), &
-                         um_p(:), vm_p(:), wm_p(:), & 
-                         uu_p(:), vv_p(:), ww_p(:), &
-                         uv_p(:), uw_p(:), vw_p(:), &
-                         tm_p(:), tt_p(:),         &
-                         ut_p(:), vt_p(:), wt_p(:), &
-                         v1_p(:), v2_p(:), v3_p(:), &
-                         v4_p(:), v5_p(:)  
+  integer              :: n_prob, pl, c, idumm, i, count, k, c1, c2, s, n_hor, l
+  character(len=80)    :: coord_name, result_name
+  real, allocatable    :: x1_p(:), x2_p(:), lnum(:), z_p(:), &
+                          um_p(:), vm_p(:), wm_p(:), & 
+                          uu_p(:), vv_p(:), ww_p(:), &
+                          uv_p(:), uw_p(:), vw_p(:), &
+                          tm_p(:), tt_p(:),         &
+                          ut_p(:), vt_p(:), wt_p(:), &
+                          v1_p(:), v2_p(:), v3_p(:), &
+                          v4_p(:), v5_p(:)  
   integer, allocatable :: n_p(:), n_count(:)
-  real                :: Rad_2, Ufric 
-  logical             :: there
+  real                 :: z_coor
+  logical              :: there
 !==============================================================================!
 
   ! Set the name for coordinate file
@@ -55,11 +55,11 @@
 
   open(9, file='horizontal_positions.dat ')
   read(9,*) n_hor
-  allocate(r1_p(n_hor))
-  allocate(r2_p(n_hor))
+  allocate(x1_p(n_hor))
+  allocate(x2_p(n_hor))
   allocate(lnum(n_hor))
   do pl=1, n_hor
-    read(9,*) r1_p(pl), r2_p(pl), lnum(pl)
+    read(9,*) x1_p(pl), x2_p(pl), lnum(pl)
   end do
   close(9)
 
@@ -130,9 +130,9 @@
   do k = 1, n_hor
     do i = 1, n_prob-1
       do c = 1, grid % n_cells
-        Rad_2 = grid % zc(c)
-        if(grid % xc(c) < r1_p(k) .and. grid % xc(c) > r2_p(k)) then
-          if(Rad_2 > z_p(i) .and. Rad_2 < z_p(i+1)) then
+        z_coor = grid % zc(c)
+        if(grid % xc(c) < x1_p(k) .and. grid % xc(c) > x2_p(k)) then
+          if(z_coor > z_p(i) .and. z_coor < z_p(i+1)) then
             um_p(i) = um_p(i) + u % n(c)
             vm_p(i) = vm_p(i) + v % n(c)
             wm_p(i) = wm_p(i) + w % n(c)

@@ -778,7 +778,7 @@
       endif !  S*(c2-c1) < 0.0
     end if  !  c2 > 0
   end do    !  sides
-  print *, '# Phase II: number of shadow faces: ', grid % n_sh
+  print '(a38,i7)', ' # Phase II: number of shadow faces:  ', grid % n_sh
 
   deallocate(face_copy)
 
@@ -798,9 +798,9 @@
       new_f(s) = -1
     end if
   end do
-  write(*,'(A22,I9,Z9)') ' # Old number of sides: ', &
+  write(*,'(A27,I9,Z9)') ' # Old number of sides:      ', &
                           grid % n_faces, grid % n_faces
-  write(*,'(A22,I9,Z9)') ' # New number of sides: ', &
+  write(*,'(A27,I9,Z9)') ' # New number of sides:      ', &
                           number_sides-grid % n_sh,number_sides-grid % n_sh
   
   !--------------------------------------!

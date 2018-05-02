@@ -40,7 +40,6 @@
 
   ! Store the name
   store_name = problem_name
-
   problem_name = save_name
 
   call Name_File(0, res_name,      "-res.dat")

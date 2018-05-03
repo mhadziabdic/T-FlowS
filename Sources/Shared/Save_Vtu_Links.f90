@@ -10,7 +10,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Name_Mod, only: problem_name
-  use div_mod,  only: BuSeIn, BuReIn
+  use Div_Mod,  only: buf_send_ind, buf_recv_ind
   use gen_mod,  only: new_n, new_c, new_f
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -78,8 +78,10 @@
                                 IN_5, grid % xc(c), grid % yc(c), grid % zc(c)
   end do
   do c = 1,NBFsub
-    write(9, '(a,1pe15.7,1pe15.7,1pe15.7)') IN_5,                           &
-               grid % xc(BuReIn(c)), grid % yc(BuReIn(c)), grid % zc(BuReIn(c))
+    write(9, '(a,1pe15.7,1pe15.7,1pe15.7)') IN_5,  &
+               grid % xc(buf_recv_ind(c)),         &
+               grid % yc(buf_recv_ind(c)),         &
+               grid % zc(buf_recv_ind(c))
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'
   write(9,'(a,a)') IN_3, '</Points>'
@@ -98,8 +100,8 @@
 
       ! Hexahedral
       if(grid % cells_n_nodes(c) == 8) then
-        write(9,'(a,8i9)')                                           &
-          IN_5,                                                      &
+        write(9,'(a,8i9)')                                             &
+          IN_5,                                                        &
           new_n(grid % cells_n(1,c))-1, new_n(grid % cells_n(2,c))-1,  &
           new_n(grid % cells_n(4,c))-1, new_n(grid % cells_n(3,c))-1,  &
           new_n(grid % cells_n(5,c))-1, new_n(grid % cells_n(6,c))-1,  &
@@ -107,23 +109,23 @@
 
       ! Wedge       
       else if(grid % cells_n_nodes(c) == 6) then
-        write(9,'(a,6i9)')                                           &
-          IN_5,                                                      &
+        write(9,'(a,6i9)')                                             &
+          IN_5,                                                        &
           new_n(grid % cells_n(1,c))-1, new_n(grid % cells_n(2,c))-1,  &
           new_n(grid % cells_n(3,c))-1, new_n(grid % cells_n(4,c))-1,  &
           new_n(grid % cells_n(5,c))-1, new_n(grid % cells_n(6,c))-1
 
       ! Tetrahedra  
       else if(grid % cells_n_nodes(c) == 4) then
-        write(9,'(a,4i9)')                                           &
-          IN_5,                                                      &
+        write(9,'(a,4i9)')                                             &
+          IN_5,                                                        &
           new_n(grid % cells_n(1,c))-1, new_n(grid % cells_n(2,c))-1,  &
           new_n(grid % cells_n(3,c))-1, new_n(grid % cells_n(4,c))-1
 
       ! Pyramid     
       else if(grid % cells_n_nodes(c) == 5) then
-        write(9,'(a,5i9)')                                           &
-          IN_5,                                                      &
+        write(9,'(a,5i9)')                                             &
+          IN_5,                                                        &
           new_n(grid % cells_n(1,c))-1, new_n(grid % cells_n(2,c))-1,  &
           new_n(grid % cells_n(4,c))-1, new_n(grid % cells_n(3,c))-1,  &
           new_n(grid % cells_n(5,c))-1
@@ -190,7 +192,7 @@
 
   ! Interprocessor links
   do c = 1, NBFsub
-    c1 = BuSeIn(c) 
+    c1 = buf_send_ind(c) 
     write(9,'(a,2i9)') IN_5, NNsub+c1-1, NNsub+NCsub+NBCsub+c-1
   end do  
 
@@ -250,7 +252,8 @@
   !   Link types   !
   !----------------!
   write(9,'(a,a)') IN_3, '<CellData Scalars="scalars" vectors="velocity">'
-  write(9,'(a,a)') IN_4, '<DataArray type="UInt8" Name="link type" format="ascii">'
+  write(9,'(a,a)') IN_4, '<DataArray type="UInt8" ' // & '
+                         Name="link type" format="ascii">'
   do c = 1, grid % n_cells
     if(new_c(c) /= 0) then
       write(9,'(a,i9)') IN_5, 0

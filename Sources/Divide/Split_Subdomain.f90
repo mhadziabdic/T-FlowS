@@ -6,7 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use Const_Mod
   use gen_mod 
-  use div_mod
+  use Div_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -73,7 +73,7 @@
           if(proces(ic) == sub) then
             proces(ic) = n_sub+j
             n_filled = n_filled + 1
-            if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
+            if(n_filled >= sub_n_cells(sub)/(n_parts-j+1)) goto 2 
           end if
         end do
       end if
@@ -84,7 +84,7 @@
           if(proces(ic) == sub) then
             proces(ic) = n_sub+j
             n_filled = n_filled + 1
-            if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
+            if(n_filled >= sub_n_cells(sub)/(n_parts-j+1)) goto 2 
           end if
         end do
       end if
@@ -95,7 +95,7 @@
           if(proces(ic) == sub) then
             proces(ic) = n_sub+j
             n_filled = n_filled + 1
-            if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
+            if(n_filled >= sub_n_cells(sub)/(n_parts-j+1)) goto 2 
           end if
         end do
       end if
@@ -107,7 +107,7 @@
         if(proces(ic) == sub) then
           proces(ic) = n_sub+j
           n_filled = n_filled + 1
-          if(n_filled >= subNC(sub)/(n_parts-j+1)) goto 2 
+          if(n_filled >= sub_n_cells(sub)/(n_parts-j+1)) goto 2 
         end if
       end do
     end if
@@ -115,8 +115,8 @@
     !----------------------------! 
     !   Subdomain is filled up   !
     !----------------------------! 
- 2  subNC(n_sub+j) = n_filled
-    subNC(sub) = subNC(sub) - n_filled
+ 2  sub_n_cells(n_sub+j) = n_filled
+    sub_n_cells(sub) = sub_n_cells(sub) - n_filled
 
   end do  ! j
 

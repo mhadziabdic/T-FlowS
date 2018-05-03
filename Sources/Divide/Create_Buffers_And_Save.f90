@@ -5,7 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use gen_mod 
-  use div_mod
+  use Div_Mod
   use Comm_Mod, only: nbb_s, nbb_e
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -22,7 +22,7 @@
 !   Each subdomain needs two buffers: a send buffer and a receive buffer.      !
 !   A receive buffer will be stored as aditional boundary cells for each       !
 !   subdomain. So each subdomain will have grid % n_bnd_cells physical         !
-!   boundary faces and nbb_C-grid % n_bnd_cells buffer bounndary cells.         !
+!   boundary faces and nbb_C-grid % n_bnd_cells buffer bounndary cells.        !
 !   It is handy to do it that way, because most of the algorythms can remain   !
 !   the same as they are now.  They won't even "know" that they use values     !
 !   from other processors.  On the other hand, a sending buffer has to be      !
@@ -147,17 +147,17 @@
           if(c2  > 0) then
             if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
               n_buff_sub = n_buff_sub+1
-              BuSeIn(n_buff_sub)=new_c(c1)  ! buffer send index 
-              BuReIn(n_buff_sub)=c2        ! important for coordinate
-              BufPos(n_buff_sub)=-n_bnd_cells_sub-n_buff_sub
+              buf_send_ind(n_buff_sub)=new_c(c1)  ! buffer send index 
+              buf_recv_ind(n_buff_sub)=c2         ! important for coordinate
+              buf_pos(n_buff_sub)=-n_bnd_cells_sub-n_buff_sub
 
               new_f(s)=n_faces_sub+n_buff_sub
             end if
             if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
               n_buff_sub = n_buff_sub+1
-              BuSeIn(n_buff_sub)=new_c(c2)  ! buffer send index
-              BuReIn(n_buff_sub)=c1        ! important for coordinate
-              BufPos(n_buff_sub)=-n_bnd_cells_sub-n_buff_sub
+              buf_send_ind(n_buff_sub)=new_c(c2)  ! buffer send index
+              buf_recv_ind(n_buff_sub)=c1         ! important for coordinate
+              buf_pos(n_buff_sub)=-n_bnd_cells_sub-n_buff_sub
 
               new_f(s)=n_faces_sub+n_buff_sub
             end if
@@ -171,16 +171,16 @@
           if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
             n_buff_sub = n_buff_sub+1
             NCFsub = NCFsub+1
-            BuSeIn(n_buff_sub)=new_c(c1) ! buffer send index 
-            BuReIn(n_buff_sub)=c2 
-            BufPos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
+            buf_send_ind(n_buff_sub)=new_c(c1) ! buffer send index 
+            buf_recv_ind(n_buff_sub)=c2 
+            buf_pos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
           if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
             n_buff_sub = n_buff_sub+1
             NCFsub = NCFsub+1
-            BuSeIn(n_buff_sub)=new_c(c2) ! buffer send index
-            BuReIn(n_buff_sub)=c1 
-            BufPos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
+            buf_send_ind(n_buff_sub)=new_c(c2) ! buffer send index
+            buf_recv_ind(n_buff_sub)=c1 
+            buf_pos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
         end do    ! through sides
         nbb_e(subo)=n_buff_sub
@@ -194,7 +194,7 @@
         write(9,'(I8)')  nbb_e(subo)-nbb_s(subo)+1 
         write(9,'(A37)') '# Local number in a buffer and index:'
         do b=nbb_s(subo),nbb_e(subo)
-          write(9,'(2I8)') b-nbb_s(subo)+1, BuSeIn(b) 
+          write(9,'(2I8)') b-nbb_s(subo)+1, buf_send_ind(b) 
         end do
       end if 
 

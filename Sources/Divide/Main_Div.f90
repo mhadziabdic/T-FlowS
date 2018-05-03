@@ -6,7 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use Name_Mod, only: problem_name
   use gen_mod 
-  use div_mod
+  use Div_Mod
   use Tokenizer_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
@@ -65,7 +65,7 @@
   read(*,*)  n_sub_tot
   n_sub = n_sub_tot      ! Needed for EpsPar
 
-  allocate (subNC(n_sub))
+  allocate (sub_n_cells(n_sub))
 
   print *, '#==============================='
   print *, '# Algorythm for decomposition:'
@@ -84,7 +84,7 @@
   end if
 
   n_sub=1
-  subNC(n_sub) = grid % n_cells
+  sub_n_cells(n_sub) = grid % n_cells
 
   !----------------------------------!
   !   Find the number of divisions   !
@@ -105,7 +105,7 @@
   end do     
 
   do j = 1, n_sub
-    print *, '# Processor:', j, ' cells:', subNC(j)
+    print *, '# Processor:', j, ' cells:', sub_n_cells(j)
   end do
 
   call Create_Buffers_And_Save(grid)

@@ -125,7 +125,7 @@
   ! Buffer boundary cell centers
   do s = 1, n_buf_cells_sub
     count=count+1
-    iwork(count,1) = grid % material(BuReIn(s))
+    iwork(count,1) = grid % material(buf_recv_ind(s))
   end do
   write(9) (iwork(c,1), c=1,count)
                       
@@ -167,17 +167,17 @@
     end if
   end do 
 
-  ! n_buf_cells_sub buffer faces (copy faces here, avoid them with BufPos) 
+  ! n_buf_cells_sub buffer faces (copy faces here, avoid them with buf_pos) 
   do s = 1, n_buf_cells_sub
-    if(BufPos(s)  < 0) then         ! normal buffer (non-copy) 
+    if(buf_pos(s) < 0) then             ! normal buffer (non-copy) 
       count=count+1 
-      iwork(count,0) = BuReIn(s)    ! old cell number
-      iwork(count,1) = BuSeIn(s)    ! new cell number
-      iwork(count,2) = BufPos(s)    ! position in the buffer
+      iwork(count,0) = buf_recv_ind(s)  ! old cell number
+      iwork(count,1) = buf_send_ind(s)  ! new cell number
+      iwork(count,2) = buf_pos(s)       ! position in the buffer
     end if
   end do 
 
-!!write(9) (iwork(s,0), s=1,count) why is it OK to neglect this?
+ !write(9) (iwork(s,0), s=1,count) why is it OK to neglect this?
   write(9) (iwork(s,1), s=1,count)
   write(9) (iwork(s,2), s=1,count)
 
@@ -196,12 +196,12 @@
       if(grid % bnd_cond % copy_c(c) /= 0) then
         if(proces(grid % bnd_cond % copy_c(c)) /= sub) then
           do b=1,n_buf_cells_sub
-            if(BuReIn(b) == grid % bnd_cond % copy_c(c)) then
-              print *, BufPos(b) 
+            if(buf_recv_ind(b) == grid % bnd_cond % copy_c(c)) then
+              print *, buf_pos(b) 
               print *, grid % xc(grid % bnd_cond % copy_c(c)),  &
                        grid % yc(grid % bnd_cond % copy_c(c)),  &
                        grid % zc(grid % bnd_cond % copy_c(c))  
-              iwork(count,2)=-BufPos(b) ! - sign, copy buffer
+              iwork(count,2)=-buf_pos(b) ! - sign, copy buffer
             end if
           end do
         endif
@@ -296,9 +296,9 @@
     ! Buffer boundary cell centers
     do s = 1, n_buf_cells_sub
       count=count+1
-      if(var ==  1) work(count) = grid % xc(BuReIn(s))
-      if(var ==  2) work(count) = grid % yc(BuReIn(s))
-      if(var ==  3) work(count) = grid % zc(BuReIn(s))
+      if(var ==  1) work(count) = grid % xc(buf_recv_ind(s))
+      if(var ==  2) work(count) = grid % yc(buf_recv_ind(s))
+      if(var ==  3) work(count) = grid % zc(buf_recv_ind(s))
     end do
     write(9) (work(c), c=1,count)
   end do
@@ -363,10 +363,12 @@
     end if 
   end do
 
-  ! From n_faces_sub+1 to n_faces_sub + n_buf_cells_sub (think: are they in right order ?)
+  ! From n_faces_sub+1 to n_faces_sub + n_buf_cells_sub 
+  ! (think: are they in right order ?)
   do subo = 1, n_sub
     do s = 1, grid % n_faces
-      if(new_f(s)  > n_faces_sub .and. new_f(s) <= n_faces_sub+n_buf_cells_sub) then
+      if(new_f(s)  > n_faces_sub .and.  &
+         new_f(s) <= n_faces_sub + n_buf_cells_sub) then
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
         if(c2  > 0) then

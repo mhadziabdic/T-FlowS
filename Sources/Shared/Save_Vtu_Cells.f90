@@ -4,7 +4,7 @@
 ! Writes: name.vtu, name.faces.vtu, name.shadow.vtu                            !
 !----------------------------------[Modules]-----------------------------------!
   use gen_mod, only: new_n, new_c
-  use div_mod, only: n_sub
+  use Div_Mod, only: n_sub
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none

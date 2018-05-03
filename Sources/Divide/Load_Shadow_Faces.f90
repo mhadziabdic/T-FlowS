@@ -6,7 +6,7 @@
 !----------------------------------[Modules]-----------------------------------!
   use Name_Mod, only: problem_name
   use gen_mod 
-  use div_mod
+  use Div_Mod
   use Grid_Mod
 !------------------------------------------------------------------------------!
   implicit none

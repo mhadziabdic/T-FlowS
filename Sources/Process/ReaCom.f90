@@ -1,7 +1,11 @@
 !==============================================================================!
   subroutine ReaCom(grid, restar)
 !------------------------------------------------------------------------------!
-!   Reads second part of T-FlowS.cmn file.                                     ! 
+!   This subroutine used to read the second part of T-FlowS.cmn file.          ! 
+!   Now, with T-FlowS.cmn file gone, it is pretty much oboslete and candidate  !
+!   for deletion.  At the moment, it is merely defining monitoring points and  !
+!   initializes constants in turbulence models.                                !
+!   The latter is clearly miss-placed here.                                    !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Name_Mod, only: problem_name
@@ -91,113 +95,26 @@
     print *, 'Calling for turbulence model'
   call Control_Mod_Turbulence_Model(.true.)
 
-  if(turbulence_model == K_EPS .or.  &
-     turbulence_model == HYBRID_PITM) then
-    Ce1 = 1.44
-    Ce2 = 1.92
-    Cmu = 0.09
-    Cmu25 = sqrt(sqrt(Cmu))
-    Cmu75 = Cmu25**3
-    kappa = 0.41
-    Elog  = 8.342
-    Kin % sigma = 1.0
-    Eps % sigma = 1.3
-!    if(MODE == LRe) then
-!      Ce1 = 1.55
-!      Ce2 = 2.0
-!    end if
+  if(turbulence_model == K_EPS) then
+    call Constants_K_Eps()
   endif
 
   if(turbulence_model == REYNOLDS_STRESS_MODEL) then
-    Ce1   = 1.44
-    Ce2   = 1.83
-    Ce3   = 0.55
-    CmuD  = 0.21
-    Cmu25 = sqrt(sqrt(Cmu))
-    Cmu75 = Cmu25**3
-    Cl    = 0.161
-    Ct    = 6.0
-    Cni   = 80.0
-    kin % sigma = 1.0
-    eps % sigma = 1.15
-    uu % sigma = 1.0
-    vv % sigma = 1.0
-    ww % sigma = 1.0
-    uv % sigma = 1.0
-    uw % sigma = 1.0
-    vw % sigma = 1.0
-    g1    = 3.4
-    g1_star = 1.8
-    g2    = 4.2
-    g3    = 0.8
-    g3_star = 1.3
-    g4    = 1.25
-    g5    = 0.4
+    call Constants_Reynolds_Stress()
   endif
 
   if(turbulence_model == HANJALIC_JAKIRLIC) then
-    Ce1   = 1.44
-    Ce2   = 1.83
-    Ce3   = 0.55
-    CmuD  = 0.21
-    Cmu25 = sqrt(sqrt(Cmu))
-    Cmu75 = Cmu25**3
-    Cl    = 0.161
-    Ct    = 6.0
-    Cni   = 80.0
-    kin % sigma = 1.0
-    eps % sigma = 1.0 !1.15
-    uu % sigma = 1.0
-    vv % sigma = 1.0
-    ww % sigma = 1.0
-    uv % sigma = 1.0
-    uw % sigma = 1.0
-    vw % sigma = 1.0
-    g1    = 3.4
-    g1_star = 1.8
-    g2    = 4.2
-    g3    = 0.8
-    g3_star = 1.3
-    g4    = 1.25
-    g5    = 0.4
+    call Constants_Hanjalic_Jakirlic()
   endif
 
   if(turbulence_model == K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
-    Ce1   = 1.4
-    Ce2   = 1.9
-    Cmu   = 0.09
-    CmuD  = 0.22
-    Cmu25 = sqrt(sqrt(Cmu))
-    Cmu75 = Cmu25**3
-    kappa = 0.41
-    Elog  = 8.342
-    Cl    = 0.36
-    Ct    = 6.0
-    Cni   = 85.0
-    alpha = 0.012
-    cf1   = 0.697
-    cf2   = 4.4
-    cf3   = 1.6
-    Cf_1  = 1.4
-    Cf_2  = 0.3
-    Lim   = 11.0
-    kin  % sigma = 1.0
-    eps  % sigma = 1.3
-    zeta % sigma = 1.2
+    call Constants_K_Eps_Zeta_F()
   endif
 
   if(turbulence_model == SPALART_ALLMARAS .or.  &
      turbulence_model == DES_SPALART) then
-    kappa  = 0.41
-    Cb1    = 0.1355
-    Cb2    = 0.622
-    Cvis1  = 7.1
-    Cw2    = 0.3
-    Cw3    = 2.0
-    VIS % sigma = 2.0/3.0
-    Cw1    = Cb1/kappa**2.0 + (1+Cb2)/VIS % sigma
-    SIGMAv = 2.0/3.0
+    call Constants_Spalart_Allmaras()
   end if
 
   ! Wall velocity

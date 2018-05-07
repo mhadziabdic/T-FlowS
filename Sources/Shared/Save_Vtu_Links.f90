@@ -1,5 +1,11 @@
 !==============================================================================!
-  subroutine Save_Vtu_Links(grid, sub, NNsub, NCsub, NSsub, NBCsub, NBFsub) 
+  subroutine Save_Vtu_Links(grid,             &
+                            sub,              &  ! subdomain
+                            n_nodes_sub,      &  ! number of nodes in the sub. 
+                            n_cells_sub,      &  ! number of cells in the sub. 
+                            n_faces_sub,      &  ! number of faces in the sub.
+                            n_bnd_cells_sub,  &  ! number of bnd. cells in sub
+                            n_buf_cells_sub)     ! number of buf. cells in sub
 !------------------------------------------------------------------------------!
 !   Creates the file "name.ln.vtu" to check the cell connections.              !
 !                                                                              !
@@ -17,7 +23,8 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: sub, NNsub, NCsub, NSsub, NBCsub, NBFsub
+  integer         :: sub, n_nodes_sub, n_cells_sub, n_faces_sub,  &
+                          n_bnd_cells_sub, n_buf_cells_sub
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: n, c, c1, c2, s, offset
   integer           :: nf_sub_non_per, nf_sub_per
@@ -56,9 +63,10 @@
   write(9,'(a,a)') IN_1, '<UnstructuredGrid>'
   write(9,'(a,a,i0.0,a,i0.0,a)')   &
                    IN_2, '<Piece NumberOfPoints="',               &
-                          NNsub + NCsub + NBCsub + NBFsub,        &
+                          n_nodes_sub + n_cells_sub +             &
+                          n_bnd_cells_sub + n_buf_cells_sub,      &
                          '" NumberOfCells ="',                    &
-                          NCsub + NSsub + NBFsub, '">'  ! + NBFsub
+                          n_cells_sub + n_faces_sub + n_buf_cells_sub, '">' 
   !-----------!
   !   Nodes   !
   !-----------!
@@ -77,7 +85,7 @@
     if(new_c(c) /= 0) write(9, '(a,1pe15.7,1pe15.7,1pe15.7)')                &
                                 IN_5, grid % xc(c), grid % yc(c), grid % zc(c)
   end do
-  do c = 1,NBFsub
+  do c = 1,n_buf_cells_sub
     write(9, '(a,1pe15.7,1pe15.7,1pe15.7)') IN_5,  &
                grid % xc(buf_recv_ind(c)),         &
                grid % yc(buf_recv_ind(c)),         &
@@ -144,7 +152,7 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
 
-    if( (new_f(s) > 0) .and. (new_f(s) <= NSsub) ) then
+    if( (new_f(s) > 0) .and. (new_f(s) <= n_faces_sub) ) then
 
       if( (grid % sx(s) * (grid % xc(c2)-grid % xc(c1) ) +  &
            grid % sy(s) * (grid % yc(c2)-grid % yc(c1) ) +  &
@@ -155,9 +163,11 @@
         c1 = new_c(grid % faces_c(1,s))
         c2 = new_c(grid % faces_c(2,s))
         if( c2  > 0 ) then
-          write(9,'(a,2i9)') IN_5, NNsub+c1-1, NNsub+c2-1
+          write(9,'(a,2i9)') IN_5, n_nodes_sub + c1 - 1,  & 
+                                   n_nodes_sub + c2 - 1
         else
-          write(9,'(a,2i9)') IN_5, NNsub+c1-1, NNsub+NCsub-c2-1
+          write(9,'(a,2i9)') IN_5, n_nodes_sub + c1 - 1,  &
+                                   n_nodes_sub + n_cells_sub - c2 - 1
         end if
       end if
 
@@ -170,7 +180,7 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
 
-    if( (new_f(s) > 0) .and. (new_f(s) <= NSsub) ) then
+    if( (new_f(s) > 0) .and. (new_f(s) <= n_faces_sub) ) then
 
       if( (grid % sx(s) * (grid % xc(c2)-grid % xc(c1) ) +  &
            grid % sy(s) * (grid % yc(c2)-grid % yc(c1) ) +  &
@@ -181,9 +191,11 @@
         c1 = new_c(grid % faces_c(1,s))
         c2 = new_c(grid % faces_c(2,s))
         if( c2  > 0 ) then
-          write(9,'(a,2i9)') IN_5, NNsub+c1-1, NNsub+c2-1                                
+          write(9,'(a,2i9)') IN_5, n_nodes_sub + c1 - 1,  &
+                                   n_nodes_sub + c2 - 1                                
         else
-          write(9,'(a,2i9)') IN_5, NNsub+c1-1, NNsub+NCsub-c2-1
+          write(9,'(a,2i9)') IN_5, n_nodes_sub + c1 - 1,  &
+                                   n_nodes_sub + n_cells_sub - c2 - 1
         end if
       end if
 
@@ -191,19 +203,21 @@
   end do  
 
   ! Interprocessor links
-  do c = 1, NBFsub
+  do c = 1, n_buf_cells_sub
     c1 = buf_send_ind(c) 
-    write(9,'(a,2i9)') IN_5, NNsub+c1-1, NNsub+NCsub+NBCsub+c-1
+    write(9,'(a,2i9)') IN_5, n_nodes_sub + c1 - 1, &
+                             n_nodes_sub + n_cells_sub + n_bnd_cells_sub + c - 1
   end do  
 
   write(9,'(a,a)') IN_4, '</DataArray>'
 
   print '(a38,i7)', '# Non-periodic links    :            ', nf_sub_non_per
   print '(a38,i7)', '# Periodic links        :            ', nf_sub_per
-  print '(a38,i7)', '# Inter-processor links :            ', NBFsub
+  print '(a38,i7)', '# Inter-processor links :            ', n_buf_cells_sub
 
   ! Now write all cells' offsets
-  write(9,'(a,a)') IN_4, '<DataArray type="Int32" Name="offsets" format="ascii">'
+  write(9,'(a,a)') IN_4, '<DataArray type="Int32" Name="offsets" ' // & 
+                         'format="ascii">'
   offset = 0
   do c = 1, grid % n_cells
     if(new_c(c) /= 0) then
@@ -219,7 +233,7 @@
     offset = offset + 2
     write(9,'(a,i9)') IN_5, offset
   end do
-  do c = 1, NBFsub
+  do c = 1, n_buf_cells_sub
     offset = offset + 2
     write(9,'(a,i9)') IN_5, offset
   end do
@@ -242,7 +256,7 @@
   do c = 1, nf_sub_per
     write(9,'(a,i9)') IN_5, VTK_LINE
   end do
-  do c = 1, NBFsub
+  do c = 1, n_buf_cells_sub
     write(9,'(a,i9)') IN_5, VTK_LINE
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'
@@ -252,8 +266,8 @@
   !   Link types   !
   !----------------!
   write(9,'(a,a)') IN_3, '<CellData Scalars="scalars" vectors="velocity">'
-  write(9,'(a,a)') IN_4, '<DataArray type="UInt8" ' // & '
-                         Name="link type" format="ascii">'
+  write(9,'(a,a)') IN_4, '<DataArray type="UInt8" ' // & 
+                         'Name="link type" format="ascii">'
   do c = 1, grid % n_cells
     if(new_c(c) /= 0) then
       write(9,'(a,i9)') IN_5, 0
@@ -265,7 +279,7 @@
   do c = 1, nf_sub_per
     write(9,'(a,i9)') IN_5, 2
   end do
-  do c = 1, NBFsub
+  do c = 1, n_buf_cells_sub
     write(9,'(a,i9)') IN_5, 3
   end do
   write(9,'(a,a)') IN_4, '</DataArray>'

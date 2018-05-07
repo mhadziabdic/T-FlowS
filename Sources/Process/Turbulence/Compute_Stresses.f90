@@ -258,16 +258,6 @@
          +phiy_f*grid % dy(s)                      &
          +phiz_f*grid % dz(s))*a0
 
-    ! This is yet another crude approximation:
-    ! a0 is calculated approximatelly
-    !    if( StateMat(material(c1))==FLUID .and.  &  ! 2mat
-    !        StateMat(material(c2))==SOLID        &  ! 2mat
-    !        .or.                                 &  ! 2mat 
-    !        StateMat(material(c1))==SOLID .and.  &  ! 2mat
-    !        StateMat(material(c2))==FLUID ) then    ! 2mat
-    !      a0 = a0 + a0                              ! 2mat
-    !    end if                                      ! 2mat
-
     ! Straight diffusion part 
     if(ini == 1) then
       if(c2  > 0) then
@@ -335,45 +325,45 @@
   !------------------------------!
   if(turbulence_model_variant /= HYBRID) then
     if(phi % name == 'EPS') then
-      CmuD = 0.18        
+      c_mu_d = 0.18        
     else
-      CmuD = 0.22
+      c_mu_d = 0.22
     end if 
     if(turbulence_model == HANJALIC_JAKIRLIC) then        
       do c=1,grid % n_cells
-        u1uj_phij(c) = CmuD / phi % Sigma * Kin % n(c) / Eps % n(c)  &
-                     * (  uu % n(c) * phi_x(c)                       &
-                        + uv % n(c) * phi_y(c)                       &
-                        + uw % n(c) * phi_z(c))                      &
+        u1uj_phij(c) = c_mu_d / phi % sigma * kin % n(c) / eps % n(c)  &
+                     * (  uu % n(c) * phi_x(c)                         &
+                        + uv % n(c) * phi_y(c)                         &
+                        + uw % n(c) * phi_z(c))                        &
                      - viscosity * phi_x(c)
 
-        u2uj_phij(c) = CmuD / phi % Sigma * Kin % n(c) / Eps % n(c)  &
-                     * (  uv % n(c) * phi_x(c)                       &
-                        + vv % n(c) * phi_y(c)                       &
-                        + vw % n(c) * phi_z(c))                      &
+        u2uj_phij(c) = c_mu_d / phi % sigma * kin % n(c) / eps % n(c)  &
+                     * (  uv % n(c) * phi_x(c)                         &
+                        + vv % n(c) * phi_y(c)                         &
+                        + vw % n(c) * phi_z(c))                        &
                      - viscosity * phi_y(c)
 
-        u3uj_phij(c) = CmuD / phi % Sigma * Kin % n(c) / Eps % n(c)  &
-                     * (  uw % n(c) * phi_x(c)                       &
-                        + vw % n(c) * phi_y(c)                       &
-                        + ww % n(c) * phi_z(c))                      &
+        u3uj_phij(c) = c_mu_d / phi % sigma * kin % n(c) / eps % n(c)  &
+                     * (  uw % n(c) * phi_x(c)                         &
+                        + vw % n(c) * phi_y(c)                         &
+                        + ww % n(c) * phi_z(c))                        &
                      - viscosity * phi_z(c)
       end do
     else if(turbulence_model == REYNOLDS_STRESS_MODEL) then
       do c=1,grid % n_cells
-        u1uj_phij(c) = CmuD / phi % Sigma * Tsc(c)  &
-                     * (  uu % n(c) * phi_x(c)      &
-                        + uv % n(c) * phi_y(c)      &
+        u1uj_phij(c) = c_mu_d / phi % sigma * t_scale(c)  &
+                     * (  uu % n(c) * phi_x(c)            &
+                        + uv % n(c) * phi_y(c)            &
                         + uw % n(c) * phi_z(c)) 
 
-        u2uj_phij(c) = CmuD / phi % Sigma * Tsc(c)  &
-                     * (  uv % n(c) * phi_x(c)      &
-                        + vv % n(c) * phi_y(c)      &
+        u2uj_phij(c) = c_mu_d / phi % sigma * t_scale(c)  &
+                     * (  uv % n(c) * phi_x(c)            &
+                        + vv % n(c) * phi_y(c)            &
                         + vw % n(c) * phi_z(c)) 
 
-        u3uj_phij(c) = CmuD / phi % Sigma * Tsc(c)  &
-                     * (  uw % n(c) * phi_x(c)      &
-                        + vw % n(c) * phi_y(c)      &
+        u3uj_phij(c) = c_mu_d / phi % sigma * t_scale(c)  &
+                     * (  uw % n(c) * phi_x(c)            &
+                        + vw % n(c) * phi_y(c)            &
                         + ww % n(c) * phi_z(c)) 
       end do
     end if
@@ -403,18 +393,18 @@
         phiy_f = fw(s)*phi_y(c1) + (1.0-fw(s))*phi_y(c2)
         phiz_f = fw(s)*phi_z(c1) + (1.0-fw(s))*phi_z(c2)
         Fex = vis_eff * (  phix_f * grid % sx(s)  &
-                        + phiy_f * grid % sy(s)  &
-                        + phiz_f * grid % sz(s))
+                         + phiy_f * grid % sy(s)  &
+                         + phiz_f * grid % sz(s))
         a0 = vis_eff * f_coef(s)
         Fim = (   phix_f * grid % dx(s)      &
                 + phiy_f * grid % dy(s)      &
                 + phiz_f * grid % dz(s)) * a0
 
-        b(c1) = b(c1)                                          &
+        b(c1) = b(c1)                                            &
               - vis_eff * (phi % n(c2) - phi%n(c1)) * f_coef(s)  &
               - Fex + Fim
         if(c2  > 0) then
-          b(c2) = b(c2)                                          &
+          b(c2) = b(c2)                                            &
                 + vis_eff * (phi % n(c2) - phi%n(c1)) * f_coef(s)  &
                 + Fex - Fim
         end if

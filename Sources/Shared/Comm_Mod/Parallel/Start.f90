@@ -8,13 +8,13 @@
   integer :: error
 !==============================================================================!
 
-  CALL Mpi_Init(error)
+  call Mpi_Init(error)
 
   ! Get number of processors
-  CALL Mpi_Comm_Size(MPI_COMM_WORLD, n_proc, error) 
+  call Mpi_Comm_Size(MPI_COMM_WORLD, n_proc, error) 
 
   ! Get current processor number
-  CALL Mpi_Comm_Rank(MPI_COMM_WORLD, this_proc, error)
+  call Mpi_Comm_Rank(MPI_COMM_WORLD, this_proc, error)
 
   ! Use Fortran counting - from 1
   this_proc = this_proc + 1

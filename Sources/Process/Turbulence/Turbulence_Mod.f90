@@ -14,17 +14,16 @@
 
   ! Parameters describing turbulence model choice
   integer, parameter :: K_EPS                 = 30011
-  integer, parameter :: K_EPS_ZETA_F          = 30029
-  integer, parameter :: HYBRID_K_EPS_ZETA_F   = 30047
-  integer, parameter :: HYBRID_PITM           = 30059
-  integer, parameter :: LES                   = 30071
-  integer, parameter :: DNS                   = 30089
-  integer, parameter :: DES_SPALART           = 30091
-  integer, parameter :: SPALART_ALLMARAS      = 30097  
-  integer, parameter :: HANJALIC_JAKIRLIC     = 30103
-  integer, parameter :: REYNOLDS_STRESS_MODEL = 30109
+  integer, parameter :: K_EPS_ZETA_F          = 30013
+  integer, parameter :: HYBRID_K_EPS_ZETA_F   = 30029
+  integer, parameter :: LES                   = 30047
+  integer, parameter :: DNS                   = 30059
+  integer, parameter :: DES_SPALART           = 30071
+  integer, parameter :: SPALART_ALLMARAS      = 30089  
+  integer, parameter :: HANJALIC_JAKIRLIC     = 30091
+  integer, parameter :: REYNOLDS_STRESS_MODEL = 30097
 
-  ! Varibale holing turbulence model variant
+  ! Variable holding turbulence model variant
   integer :: turbulence_model_variant
 
   ! Turbulence model variants

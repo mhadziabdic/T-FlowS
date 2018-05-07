@@ -145,8 +145,8 @@
                + capacity*vis_t(c1)/Prt
         if(turbulence_model == K_EPS_ZETA_F .or.  &
            turbulence_model == K_EPS) then
-          y_pl = max(Cmu25 * sqrt(kin%n(c1)) * grid % wall_dist(c1)/viscosity,0.12)
-          u_plus = log(y_pl*Elog) / (kappa + TINY) + TINY
+          y_pl = max(c_mu25 * sqrt(kin % n(c1)) * grid % wall_dist(c1) / viscosity, 0.12)
+          u_plus = log(y_pl * e_log) / (kappa + TINY) + TINY
           Prmol = viscosity / conductivity
           beta = 9.24 * ((Prmol/Prt)**0.75 - 1.0)  &
                      * (1.0 + 0.28 * exp(-0.007*Prmol/Prt))

@@ -125,8 +125,7 @@
   
   if(turbulence_model == K_EPS               .or.  &
      turbulence_model == K_EPS_ZETA_F        .or.  &
-     turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
-     turbulence_model == HYBRID_PITM) then 
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
     read(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     read(9) (kin % o(c),    c = 1, grid % n_cells)
     read(9) (kin % a(c),    c = 1, grid % n_cells)
@@ -166,8 +165,8 @@
     read(9) (f22 % c(c),    c = 1, grid % n_cells)
     read(9) (f22 % c_o(c),  c = 1, grid % n_cells)
  
-    read(9) (Tsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    read(9) (Lsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (t_scale(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    read(9) (l_scale(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if 
 
   if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &

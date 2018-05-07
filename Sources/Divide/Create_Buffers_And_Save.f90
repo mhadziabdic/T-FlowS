@@ -15,9 +15,11 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: b, c, n, s, c1, c2, sub, subo, ln
   integer              :: n_nodes_sub, n_cells_sub, n_faces_sub,  &
-                          n_bnd_cells_sub, n_buff_sub, NCSsub, NCFsub
-  character(len=80)    :: name_out
-  integer,allocatable  :: side_cell(:,:)
+                          n_bnd_cells_sub, n_buff_sub, NCSsub, n_copy_sub
+  character(len=80)    :: name_out, ext
+  integer, allocatable :: side_cell(:,:)
+  integer, allocatable :: map_to_proc(:)
+  integer, allocatable :: map_to_cell(:)
 !==============================================================================!
 !   Each subdomain needs two buffers: a send buffer and a receive buffer.      !
 !   A receive buffer will be stored as aditional boundary cells for each       !
@@ -39,6 +41,9 @@
   allocate (nbb_s(0:n_sub))
   allocate (nbb_e(0:n_sub))
 
+  allocate (map_to_proc(-grid % n_bnd_cells:grid % n_cells));  map_to_proc = 0 
+  allocate (map_to_cell(-grid % n_bnd_cells:grid % n_cells));  map_to_cell = 0
+
   !-------------------------------!
   !                               !
   !   Browse through subdomains   !
@@ -50,11 +55,11 @@
     open(9, file=name_out)
     print *, '# Creating the file: ', trim(name_out)
 
-    write(9,'(A20)') '#------------------#'
-    write(9,'(A20)') '#                  #'
-    write(9,'(A20)') '#  Buffer indexes  #'
-    write(9,'(A20)') '#                  #'
-    write(9,'(A20)') '#------------------#'
+    write(9,'(a20)') '#------------------#'
+    write(9,'(a20)') '#                  #'
+    write(9,'(a20)') '#  Buffer indexes  #'
+    write(9,'(a20)') '#                  #'
+    write(9,'(a20)') '#------------------#'
 
     ! Cells
     n_cells_sub = 0     ! number of cells in subdomain
@@ -63,8 +68,13 @@
     end do
     do c = 1, grid % n_cells
       if(proces(c) == sub) then
-        n_cells_sub=n_cells_sub+1
-        new_c(c)=n_cells_sub
+
+        n_cells_sub = n_cells_sub + 1  ! increase the number of cells in sub.
+        new_c(c)    = n_cells_sub      ! assign new (local) cell number 
+
+        map_to_proc(c) = proces(c)  ! map to processor
+        map_to_cell(c) = new_c (c)  ! map to (local) cell
+
       end if
     end do
 
@@ -109,8 +119,12 @@
         if( proces(c1) == sub ) then
           n_faces_sub =n_faces_sub+1
           new_f(s)=n_faces_sub        ! new number for the side
-          n_bnd_cells_sub=n_bnd_cells_sub+1
-          new_c(c2)=-n_bnd_cells_sub  ! new number for the boundary cell
+
+          n_bnd_cells_sub =  n_bnd_cells_sub + 1  ! increase n. of bnd. cells
+          new_c(c2)       = -n_bnd_cells_sub      ! new loc. number of bnd. cell
+
+          map_to_proc(c2) = proces(c2)  ! map to processor
+          map_to_cell(c2) = new_c (c2)  ! map to (local) cell
         end if
       end if 
     end do
@@ -133,7 +147,7 @@
     !   Create buffers   !
     !--------------------!
     n_buff_sub = 0
-    NCFsub = 0
+    n_copy_sub = 0
     write(9,'(A30)') '# Number of physical boundary cells:'
     write(9,'(I8)')  n_bnd_cells_sub   
     do subo=1,n_sub
@@ -170,14 +184,14 @@
           c2=grid % bnd_cond % copy_s(2,s) 
           if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
             n_buff_sub = n_buff_sub+1
-            NCFsub = NCFsub+1
+            n_copy_sub = n_copy_sub+1
             buf_send_ind(n_buff_sub)=new_c(c1) ! buffer send index 
             buf_recv_ind(n_buff_sub)=c2 
             buf_pos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
           if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
             n_buff_sub = n_buff_sub+1
-            NCFsub = NCFsub+1
+            n_copy_sub = n_copy_sub+1
             buf_send_ind(n_buff_sub)=new_c(c2) ! buffer send index
             buf_recv_ind(n_buff_sub)=c1 
             buf_pos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
@@ -207,7 +221,7 @@
                       n_faces_sub,       &
                       n_bnd_cells_sub,   &
                       n_buff_sub,        &
-                      NCFsub)
+                      n_copy_sub)
 
     call Save_Vtu_Cells(grid,         &
                         sub,          &
@@ -227,9 +241,9 @@
                       n_cells_sub)
 
     print *, '# Test:'
-    print *, '# n_nodes_sub   =', n_nodes_sub
-    print *, '# n_cells_sub   =', n_cells_sub
-    print *, '# n_faces_sub   =', n_faces_sub
+    print *, '# n_nodes_sub     =', n_nodes_sub
+    print *, '# n_cells_sub     =', n_cells_sub
+    print *, '# n_faces_sub     =', n_faces_sub
     print *, '# n_bnd_cells_sub =', n_bnd_cells_sub
 
     print *, '#=====================================' 
@@ -314,5 +328,21 @@
 
   call Save_Vtu_Cells(grid, 0, grid % n_nodes, grid % n_cells)
   call Save_Vtu_Faces(grid)
+
+  !-----------------------!
+  !                       !
+  !   Save cell mapping   !
+  !                       !
+  !-----------------------!
+  write(ext,'(a4,i5.5)') '.map', n_sub
+  call Name_File(0, name_out, ext)
+  open(9, file=name_out)
+  print *, '# Creating the file: ', trim(name_out)
+  write(9,*) '# These mappings are created in the hope they ' //  &
+             'will give us a hint how to implement MPI I/O'
+  do c = 1, grid % n_cells
+    write(9,'(3i9)'), c, map_to_proc(c), map_to_cell(c)
+  end do
+  close(9)
 
   end subroutine

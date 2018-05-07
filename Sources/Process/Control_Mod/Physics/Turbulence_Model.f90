@@ -9,7 +9,6 @@
                             K_EPS,                 &
                             K_EPS_ZETA_F,          &
                             HYBRID_K_EPS_ZETA_F,   &
-                            HYBRID_PITM,           &
                             LES,                   &
                             DNS,                   &
                             DES_SPALART,           &
@@ -38,8 +37,6 @@
       turbulence_model = K_EPS_ZETA_F
     case('HYBRID_K_EPS_ZETA_F')   
       turbulence_model = HYBRID_K_EPS_ZETA_F
-    case('HYBRID_PITM')           
-      turbulence_model = HYBRID_PITM
     case('LES')                   
       turbulence_model = LES
     case('DNS')                   

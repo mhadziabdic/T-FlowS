@@ -77,30 +77,30 @@
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
   write(9)     0.0,    0.0,    0.0,    0.0,    0.0,    0.0
 
-  write(9) (U % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
-  write(9) (V % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
-  write(9) (W % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
-  write(9) (U % o(c),  c = 1, grid % n_cells)
-  write(9) (V % o(c),  c = 1, grid % n_cells)
-  write(9) (W % o(c),  c = 1, grid % n_cells)
+  write(9) (u % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
+  write(9) (v % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
+  write(9) (w % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
+  write(9) (u % o(c),  c = 1, grid % n_cells)
+  write(9) (v % o(c),  c = 1, grid % n_cells)
+  write(9) (w % o(c),  c = 1, grid % n_cells)
 
-  write(9) (U % a(c),    c = 1, grid % n_cells)
-  write(9) (V % a(c),    c = 1, grid % n_cells)
-  write(9) (W % a(c),    c = 1, grid % n_cells)
-  write(9) (U % a_o(c),  c = 1, grid % n_cells)
-  write(9) (V % a_o(c),  c = 1, grid % n_cells)
-  write(9) (W % a_o(c),  c = 1, grid % n_cells)
+  write(9) (u % a(c),    c = 1, grid % n_cells)
+  write(9) (v % a(c),    c = 1, grid % n_cells)
+  write(9) (w % a(c),    c = 1, grid % n_cells)
+  write(9) (u % a_o(c),  c = 1, grid % n_cells)
+  write(9) (v % a_o(c),  c = 1, grid % n_cells)
+  write(9) (w % a_o(c),  c = 1, grid % n_cells)
 
-  write(9) (U % d_o(c),  c = 1, grid % n_cells)
-  write(9) (V % d_o(c),  c = 1, grid % n_cells)
-  write(9) (W % d_o(c),  c = 1, grid % n_cells)
+  write(9) (u % d_o(c),  c = 1, grid % n_cells)
+  write(9) (v % d_o(c),  c = 1, grid % n_cells)
+  write(9) (w % d_o(c),  c = 1, grid % n_cells)
 
-  write(9) (U % c(c),    c = 1, grid % n_cells)
-  write(9) (V % c(c),    c = 1, grid % n_cells)
-  write(9) (W % c(c),    c = 1, grid % n_cells)
-  write(9) (U % c_o(c),  c = 1, grid % n_cells)
-  write(9) (V % c_o(c),  c = 1, grid % n_cells)
-  write(9) (W % c_o(c),  c = 1, grid % n_cells)
+  write(9) (u % c(c),    c = 1, grid % n_cells)
+  write(9) (v % c(c),    c = 1, grid % n_cells)
+  write(9) (w % c(c),    c = 1, grid % n_cells)
+  write(9) (u % c_o(c),  c = 1, grid % n_cells)
+  write(9) (v % c_o(c),  c = 1, grid % n_cells)
+  write(9) (w % c_o(c),  c = 1, grid % n_cells)
 
   write(9) (P % n(c),   c = -grid % n_bnd_cells,grid % n_cells)
   write(9) (PP % n(c),  c = -grid % n_bnd_cells,grid % n_cells)
@@ -134,8 +134,7 @@
 
   if(turbulence_model == K_EPS    .or.  &
      turbulence_model == K_EPS_ZETA_F     .or.  &
-     turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
-     turbulence_model == HYBRID_PITM) then 
+     turbulence_model == HYBRID_K_EPS_ZETA_F) then
     write(9) (kin % n(c),    c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (kin % o(c),    c = 1, grid % n_cells)
     write(9) (kin % a(c),    c = 1, grid % n_cells)
@@ -175,8 +174,8 @@
     write(9) (f22 % c(c),    c = 1, grid % n_cells)
     write(9) (f22 % c_o(c),  c = 1, grid % n_cells)
  
-    write(9) (Tsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (Lsc(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (t_scale(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (l_scale(c),  c = -grid % n_bnd_cells,grid % n_cells)
   end if 
 
   if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
@@ -278,19 +277,18 @@
   if(turbulence_model         == DNS                 .or.  &
      turbulence_model         == LES                 .or.  &
      turbulence_model         == HYBRID_K_EPS_ZETA_F .or.  &
-     turbulence_model         == HYBRID_PITM         .or.  &
      turbulence_model         == DES_SPALART         .or.  &
      turbulence_model_variant == URANS) then
-    write(9) (U % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (V % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (W % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (u % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (v % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
+    write(9) (w % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (uu % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (vv % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (ww % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (uv % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (uw % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
     write(9) (vw % mean(c), c = -grid % n_bnd_cells,grid % n_cells)
-    write(9) (P % mean(c),  c = 1, grid % n_cells)
+    write(9) (p % mean(c),  c = 1, grid % n_cells)
 
     if(heat_transfer == YES) then
       write(9) (t % mean(c),  c = -grid % n_bnd_cells,grid % n_cells)
@@ -308,8 +306,7 @@
       write(9) (c_dyn_mean(c), c = 1, grid % n_cells)
   end if
  
-  if(turbulence_model == HYBRID_PITM .or.  &
-     turbulence_model == DES_SPALART) then
+  if(turbulence_model == DES_SPALART) then
     write(9) (vis_t_mean(c), c = 1, grid % n_cells)
   end if
 

@@ -69,13 +69,13 @@
            density * eps % n(c)/(kin % n(c) + TINY) * grid % vol(c)
 
       if (buoyancy == YES) then 
-        buoyBeta(c) = 1.0
-        Gbuoy(c) = -buoyBeta(c) * (grav_x * ut % n(c) +  &
-                                   grav_y * vt % n(c) +  &
-                                   grav_z * wt % n(c)) * density
-        b(c) = b(c) + max(0.0, Gbuoy(c) * grid % vol(c))
+        buoy_beta(c) = 1.0
+        g_buoy(c) = -buoy_beta(c) * (grav_x * ut % n(c) +  &
+                                     grav_y * vt % n(c) +  &
+                                     grav_z * wt % n(c)) * density
+        b(c) = b(c) + max(0.0, g_buoy(c) * grid % vol(c))
         A % val(A % dia(c)) = A % val(A % dia(c))  &
-                     + max(0.0,-Gbuoy(c)*grid % vol(c) / (kin % n(c) + TINY))
+                  + max(0.0,-g_buoy(c) * grid % vol(c) / (kin % n(c) + TINY))
       end if
     end do
   end if
@@ -110,14 +110,14 @@
           if (ROUGH.eq.NO) then
             ! kg * m / s^2 !
             tau_wall(c1) = density*kappa*u_tau(c1)*u_tan  &
-                         /(log(Elog*y_plus(c1)))
-            p_kin(c1) = tau_wall(c1)*u_tau(c1)/ &
-              (kappa*grid % wall_dist(c1))/density
+                         /(log(e_log*y_plus(c1)))
+            p_kin(c1) = tau_wall(c1)*u_tau(c1)  &
+                      / (kappa*grid % wall_dist(c1)) / density
           else if (ROUGH.eq.YES) then
             tau_wall(c1) = density*kappa*u_tau(c1)*u_tan  &
                            /(log((grid % wall_dist(c1)+Zo)/Zo))
             p_kin(c1) = tau_wall(c1)*u_tau(c1) / &
-              (kappa*(grid % wall_dist(c1)+Zo))/density
+              (kappa*(grid % wall_dist(c1)+Zo)) / density
             kin % n(c2) = tau_wall(c1) / 0.09**0.5
           end if
 

@@ -41,7 +41,7 @@
 !     eps            [m^3/s^2]                                                 !
 !     vi2            [m^2/s^2]                                                 !
 !     f22            [-]                                                       !
-!     Lsc            [m]                                                       !
+!     l_scale        [m]                                                       !
 !                                                                              !
 !------------------------------------------------------------------------------!
 
@@ -50,9 +50,9 @@
   ! Source term f22hg
   do c = 1, grid % n_cells
     f22hg = 1.0
-    Sor11 = grid % vol(c)/Lsc(c)**2
+    Sor11 = grid % vol(c)/l_scale(c)**2
     A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11     
-    b(c) = b(c) + f22hg*grid % vol(c)/Lsc(c)**2
+    b(c) = b(c) + f22hg*grid % vol(c)/l_scale(c)**2
   end do
 
   ! Source term

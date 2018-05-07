@@ -6,7 +6,7 @@
 !------------------------------------------------------------------------------! 
 !                           2                                                  !
 !       eps              eps                                                   !
-!   Ce1 --- Gk - Ce2 rho ---                                                   !
+!   c_1e --- Gk - c_2e rho ---                                                   !
 !        K                K                                                    !
 !                                                                              !
 !   assigns epsilon from the wall function:                                    !
@@ -39,11 +39,11 @@
 
       ! Positive contribution:
       b(c) = b(c) & 
-           + Ce1 * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)
+           + c_1e * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)
     
       ! Negative contribution:
       A % val(A % dia(c)) = A % val(A % dia(c)) &
-           + Ce2 * density * eps % n(c) / kin % n(c) * grid % vol(c)
+           + c_2e * density * eps % n(c) / kin % n(c) * grid % vol(c)
     end do 
 
     !--------------------------------------------!
@@ -60,10 +60,10 @@
 
           ! This will fix the value of eps in the first cell
           if(ROUGH==NO) then
-            eps % n(c1) = Cmu75 * (kin % n(c1))**1.5   &
+            eps % n(c1) = c_mu75 * (kin % n(c1))**1.5   &
                         / (kappa*grid % wall_dist(c1))
           else if(ROUGH==YES) then
-            eps % n(c1) = Cmu75*(kin%n(c1))**1.5  &
+            eps % n(c1) = c_mu75*(kin % n(c1))**1.5  &
                         / (kappa*(grid % wall_dist(c1)+Zo))
           end if
           do j=A % row(c1), A % row(c1+1) -1
@@ -90,7 +90,7 @@
 
       ! Positive contribution:
       b(c) = b(c) & 
-           + Ce1 * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)        & 
+           + c_1e * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)        & 
            + 2.0 * viscosity * vis_t(c) * &
            (shear_x(c)**2 + shear_y(c)**2 + shear_z(c)**2) * grid % vol(c)
     
@@ -98,7 +98,7 @@
       Ret = kin % n(c)*kin % n(c)/(viscosity*eps % n(c))
       Fmu = 1.0 - 0.3*exp(-(Ret*Ret))
       A % val(A % dia(c)) = A % val(A % dia(c))  &
-      + Fmu * Ce2 * density * eps % n(c) / kin % n(c) * grid % vol(c)        
+                 + Fmu * c_2e * density * eps % n(c) / kin % n(c) * grid % vol(c)
 
        ! Yap correction
        L1 = kin % n(c)**1.5/eps % n(c)
@@ -125,48 +125,5 @@
       end if    ! c2 < 0
     end do
   end if
-
-  if(turbulence_model == HYBRID_PITM) then
-    do c = 1, grid % n_cells
-
-      ! Positive contribution:
-      b(c) = b(c) &
-           + Ce1 * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)
-
-      Lf = grid % vol(c)**ONE_THIRD
-
-      ! Negative contribution:
-      Ret = kin % n(c)*kin % n(c)/(viscosity*eps % n(c))
-      yStar = (viscosity * eps % n(c))**0.25 * grid % wall_dist(c) / viscosity
-      Fmu = (1.0 - exp(-yStar/3.1))**2*(1.0 - 0.25*exp(-(Ret/6.)*(Ret/6.)))
-      Fmu = min(Fmu,1.0)
-
-      Ce2 =  1.5 + 0.4/(1.0 + 2.4*(0.41*grid % wall_dist(c)/Lf)**TWO_THIRDS)
-
-      A % val(A % dia(c)) = A % val(A % dia(c))            &
-                         + (Ce1 + (Ce2 - Ce1) * Fmu )      &
-                         * density * eps % n(c)  &
-                         / kin % n(c) * grid % vol(c)
-
-    end do
-
-    !-----------------------------------!
-    !   Boundary condition fo epsilon   !
-    !-----------------------------------!
-    do s = 1, grid % n_faces
-      c1=grid % faces_c(1,s)
-      c2=grid % faces_c(2,s)
-
-      if(c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
-
-          eps % n(c2) = 2.0 * viscosity * kin % n(c1)  &
-                      / (grid % wall_dist(c1)*grid % wall_dist(c1))
-
-        end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
-      end if    ! c2 < 0
-    end do
-  end if        ! end if mode = stan
 
   end subroutine

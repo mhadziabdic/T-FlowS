@@ -28,29 +28,29 @@
       !---------------------------------!
       !   Compute the production term   !
       !---------------------------------!
-      x_rat  = VIS % n(c)/viscosity
-      f_v1   = x_rat**3/(x_rat**3 + Cvis1**3)
+      x_rat  = vis % n(c)/viscosity
+      f_v1   = x_rat**3/(x_rat**3 + c_v1**3)
       f_v2   = 1.0 - x_rat/(1.0 + x_rat*f_v1)
-      ss     = vort(c) + VIS % n(c)*f_v2/(kappa**2*grid % wall_dist(c)**2)
-      prod_v = Cb1 * density * ss * VIS % n(c)
+      ss     = vort(c) + vis % n(c)*f_v2/(kappa**2*grid % wall_dist(c)**2)
+      prod_v = c_b1 * density * ss * vis % n(c)
       b(c)   = b(c) + prod_v * grid % vol(c)
 
       !----------------------------------!
       !   Compute the destruction term   !
       !----------------------------------!
-      r      = VIS % n(c)/(ss * kappa**2 * grid % wall_dist(c)**2)
-      gg     = r + Cw2*(r**6 - r)
-      f_w    = gg*((1.0 + Cw3**6)/(gg**6 + Cw3**6))**(1.0/6.0)
-      dist_v = Cw1* density * f_w * (VIS % n(c)/grid % wall_dist(c)**2)
+      r      = vis % n(c)/(ss * kappa**2 * grid % wall_dist(c)**2)
+      gg     = r + c_w2*(r**6 - r)
+      f_w    = gg*((1.0 + c_w3**6)/(gg**6 + c_w3**6))**(1.0/6.0)
+      dist_v = c_w1* density * f_w * (vis % n(c)/grid % wall_dist(c)**2)
       A % val(A % dia(c)) = A % val(A % dia(c)) + dist_v * grid % vol(c)
  
       !--------------------------------------------!
       !   Compute the first-order diffusion term   !
       !--------------------------------------------!
-      Dif   = Cb2                                  &
+      Dif   = c_b2                                 &
             * density                              &
             * (phi_x(c) + phi_y(c) + phi_z(c))**2  &
-            / SIGMAv
+            / vis % sigma
       b(c)  = b(c) + Dif * grid % vol(c)
     end do
 
@@ -63,29 +63,29 @@
       !---------------------------------!
       !   Compute the production term   !
       !---------------------------------!
-      x_rat  = VIS % n(c)/viscosity
-      f_v1   = x_rat**3/(x_rat**3 + Cvis1**3)
+      x_rat  = vis % n(c)/viscosity
+      f_v1   = x_rat**3/(x_rat**3 + c_v1**3)
       f_v2   = 1.0 - x_rat/(1.0 + x_rat*f_v1)
-      ss     = vort(c) + VIS % n(c)*f_v2/(kappa**2*dist**2)
-      prod_v = Cb1 * density * ss * VIS % n(c)
+      ss     = vort(c) + vis % n(c)*f_v2/(kappa**2*dist**2)
+      prod_v = c_b1 * density * ss * vis % n(c)
       b(c)   = b(c) + prod_v * grid % vol(c)
       
       !-----------------------------------!
       !   Compute the destruction  term   !
       !-----------------------------------!
-      r      = VIS % n(c)/(ss * kappa**2 * dist**2)
-      gg     = r + Cw2*(r**6 - r)
-      f_w    = gg*((1.0 + Cw3**6)/(gg**6 + Cw3**6))**(1.0/6.0)
-      dist_v = Cw1* density * f_w * (VIS % n(c)/dist**2)
+      r      = vis % n(c)/(ss * kappa**2 * dist**2)
+      gg     = r + c_w2*(r**6 - r)
+      f_w    = gg*((1.0 + c_w3**6)/(gg**6 + c_w3**6))**(1.0/6.0)
+      dist_v = c_w1* density * f_w * (vis % n(c)/dist**2)
       A % val(A % dia(c)) = A % val(A % dia(c)) + dist_v * grid % vol(c)
 
       !--------------------------------------------!
       !   Compute the first-order diffusion term   !
       !--------------------------------------------!
-      Dif   = Cb2                                  &
+      Dif   = c_b2                                 &
             * density                              &
             * (phi_x(c) + phi_y(c) + phi_z(c))**2  &
-            / SIGMAv
+            / vis % sigma
       b(c)  = b(c) + Dif * grid % vol(c)
     end do 
   end if

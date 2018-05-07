@@ -21,7 +21,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, c1, c2, s 
-  real              :: UtotSq, Unor, UnorSq, Utan
+  real              :: u_tot2, u_nor, u_nor2, u_tan
 !==============================================================================!
 
   !-----------------------------------------------!
@@ -37,44 +37,44 @@
            Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
 
           ! Compute tangential velocity component
-          UtotSq = u % n(c1) * u % n(c1) &
-                 + v % n(c1) * v % n(c1) &
+          u_tot2 = u % n(c1) * u % n(c1)   &
+                 + v % n(c1) * v % n(c1)   &
                  + w % n(c1) * w % n(c1)
-          Unor = ( u % n(c1) * grid % sx(s)     &
-                 + v % n(c1) * grid % sy(s)     &
-                 + w % n(c1) * grid % sz(s) )   &
-                 / sqrt(  grid % sx(s)*grid % sx(s)    &
-                        + grid % sy(s)*grid % sy(s)    &
-                        + grid % sz(s)*grid % sz(s))
-          UnorSq = Unor*Unor
+          u_nor = ( u % n(c1) * grid % sx(s)     &
+                  + v % n(c1) * grid % sy(s)     &
+                  + w % n(c1) * grid % sz(s) )   &
+                  / sqrt(  grid % sx(s)*grid % sx(s)    &
+                         + grid % sy(s)*grid % sy(s)    &
+                         + grid % sz(s)*grid % sz(s))
+          u_nor2 = u_nor*u_nor
 
-          if(UtotSq  >  UnorSq) then
-            Utan = sqrt(UtotSq - UnorSq)
+          if(u_tot2  >  u_nor2) then
+            u_tan = sqrt(u_tot2 - u_nor2)
           else
-            Utan = TINY
+            u_tan = TINY
           end if
 
           ! Compute nondimensional wall distance and wall-shear stress
           if(ROUGH == NO) then
-            y_plus(c1) = sqrt(kin % n(c1)) * Cmu25 * grid % wall_dist(c1)  &
+            y_plus(c1) = sqrt(kin % n(c1)) * c_mu25 * grid % wall_dist(c1)  &
                     / viscosity
-            tau_wall(c1) = abs(density                   &
-                        * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan &
-                        / (log(Elog*y_plus(c1))))  
+            tau_wall(c1) = abs(density                                 &
+                         * kappa * sqrt(kin % n(c1)) * c_mu25 * u_tan  &
+                         / (log(e_log*y_plus(c1))))  
 
             ! Compute production in the first wall cell 
-            p_kin(c1) = tau_wall(c1) * Cmu25 * sqrt(kin % n(c1)) &
-                   / (kappa*grid % wall_dist(c1))
+            p_kin(c1) = tau_wall(c1) * c_mu25 * sqrt(kin % n(c1))  &
+                      / (kappa*grid % wall_dist(c1))
 
           else if(ROUGH==YES) then
-            y_plus(c1) = sqrt(kin % n(c1)) * Cmu25 * (grid % wall_dist(c1)+Zo)  &
-                    / viscosity
-            tau_wall(c1) = abs(density                     &
-                        * kappa * sqrt(kin % n(c1)) * Cmu25 * Utan   &
-                        / (log((grid % wall_dist(c1)+Zo)/Zo)))  
+            y_plus(c1) = sqrt(kin % n(c1)) * c_mu25 * (grid % wall_dist(c1)+Zo)  &
+                       / viscosity
+            tau_wall(c1) = abs(density                                  &
+                         * kappa * sqrt(kin % n(c1)) * c_mu25 * u_tan   &
+                         / (log((grid % wall_dist(c1)+Zo)/Zo)))  
 
-            p_kin(c1) = tau_wall(c1) * Cmu25 * sqrt(kin % n(c1)) &
-                   / (kappa*(grid % wall_dist(c1)+Zo))
+            p_kin(c1) = tau_wall(c1) * c_mu25 * sqrt(kin % n(c1))  &
+                      / (kappa*(grid % wall_dist(c1)+Zo))
             kin % n(c2) = tau_wall(c1)/0.09**0.5
           end if  
 
@@ -93,12 +93,12 @@
       if(.not. grid % cell_near_wall(c)) then
 
         ! Production:
-        p_kin(c)= vis_t(c) * shear(c)*shear(c)
+        p_kin(c)= vis_t(c) * shear(c)**2
         b(c) = b(c) + p_kin(c) * grid % vol(c)
       end if
 
       ! Dissipation:
-      A % val(A % dia(c)) = A % val(A % dia(c))                          &
+      A % val(A % dia(c)) = A % val(A % dia(c))                &
                           + density * eps % n(c) / kin % n(c)  &
                           * grid % vol(c)
     end do
@@ -134,21 +134,6 @@
                                              + kin_y(c)**2     &
                                              + kin_z(c)**2 )   &
                            * grid % vol(c) / (kin % n(c) + TINY)          
-    end do
-  end if
-
-  if(turbulence_model == HYBRID_PITM) then
-    do c = 1, grid % n_cells
-
-      ! Production:
-      p_kin(c)= vis_t(c) * shear(c) * shear(c)
-      b(c) = b(c) + p_kin(c) * grid % vol(c)
-
-      ! Dissipation:
-      A % val(A % dia(c)) = A % val(A % dia(c))      &
-                          + density                  &
-                          * eps % n(c) / kin % n(c)  &
-                          * grid % vol(c)
     end do
   end if
 

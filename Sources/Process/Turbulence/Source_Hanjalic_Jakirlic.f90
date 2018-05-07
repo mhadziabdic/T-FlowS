@@ -60,8 +60,8 @@
 
   do c = 1, grid % n_cells
     kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), 1.0e-7)
-    Lsc(c)=  (kin % n(c))**1.5/eps % n(c)
-    Tsc(c)=  kin % n(c)/eps % n(c)
+    l_scale(c)=  (kin % n(c))**1.5/eps % n(c)
+    t_scale(c)=  kin % n(c)/eps % n(c)
   end do
 
   call Grad_Mod_For_Phi(grid, kin % n, 1, kin_x, .true.)  ! dK/dx
@@ -315,9 +315,9 @@
   end do  ! i
   end if                               
 
-  call Grad_Mod_For_Phi(grid, Lsc, 1, l_sc_x,.true.) 
-  call Grad_Mod_For_Phi(grid, Lsc, 2, l_sc_y,.true.) 
-  call Grad_Mod_For_Phi(grid, Lsc, 3, l_sc_z,.true.) 
+  call Grad_Mod_For_Phi(grid, l_scale, 1, l_sc_x,.true.) 
+  call Grad_Mod_For_Phi(grid, l_scale, 2, l_sc_y,.true.) 
+  call Grad_Mod_For_Phi(grid, l_scale, 3, l_sc_z,.true.) 
 
   r13 = ONE_THIRD
   r23 = TWO_THIRDS
@@ -417,7 +417,7 @@
     end do
      
     Ret= (kin % n(c)*kin % n(c))/(viscosity*Eps_tot(c)+tiny)
-    Feps = 1.0 - ((Ce2-1.4)/Ce2)*exp(-(Ret/6.0)**2.0)
+    Feps = 1.0 - ((c_2e-1.4)/c_2e)*exp(-(Ret/6.0)**2.0)
     ff2=min((Ret/150)**1.5, 1.0)
     fd=1.0/(1.0+0.1*Ret)
     FF1=min(0.6, AA2)
@@ -564,9 +564,9 @@
 !==============================================================================================================================!
     ! Epsilon equation
     else if(name_phi == 'EPS') then 
-      Feps = 1.0 - ((Ce2-1.4)/Ce2) * exp(-(Ret/6.0)**2)
+      Feps = 1.0 - ((c_2e-1.4)/c_2e) * exp(-(Ret/6.0)**2)
       Eps1 = 1.44 * p_kin(c) * eps % n(c) / kin % n(c)
-      Eps2 = Ce2*Feps*eps%n(c)/kin%n(c)
+      Eps2 = c_2e*Feps*eps%n(c)/kin%n(c)
       b(c) = b(c) + max(Eps1 + Diss1(c),0.0)*grid % vol(c) 
      
       A % val(A % dia(c)) =  A % val(A % dia(c)) + Eps2*grid % vol(c)
@@ -583,8 +583,8 @@
     call Grad_Mod_For_Phi(grid, kin_e, 3, kin_z, .true.)             ! dK/dz
     do c = 1, grid % n_cells
       Ret  = (kin % n(c)**2) / (viscosity*eps % n(c) + TINY)
-      Feps = 1.0 - ((Ce2-1.4)/Ce2) * exp(-(Ret/6.0)**2)
-      b(c) = b(c) + (Ce2 * Feps * eps % n(c) / kin % n(c)                 &
+      Feps = 1.0 - ((c_2e-1.4)/c_2e) * exp(-(Ret/6.0)**2)
+      b(c) = b(c) + (c_2e * Feps * eps % n(c) / kin % n(c)                 &
                      * (viscosity*(kin_x(c)**2 + kin_y(c)**2 + kin_z(c)**2)))  &
                   * grid % vol(c)
     end do

@@ -25,7 +25,7 @@
 !      int( f22hg*dV ),                                                        !
 !  where f22hg - f22hg homogenious is placed in a source coefficients b(c)     !
 !                                                                              !
-!      f22hg = (1.0 - Cv_1)*(vi2(c)/kin(c) - 2.0/3.0)/Tsc(c)     &             !
+!      f22hg = (1.0 - Cv_1)*(vi2(c)/kin(c) - 2.0/3.0)/t_scale(c)     &         !
 !              + 2.0*Cv2*p_kin(c)/(3.0*kin(c))                                 !
 !                                                                              !
 !    int( f22*dV ); this term is placed in a diagonal of coefficient matrix    !
@@ -33,12 +33,12 @@
 !                                                                              !
 !  Dimensions of certain variables                                             !
 !                                                                              !
-!     Tsc            [s]                                                       !
+!     t_scale        [s]                                                       !
 !     kin            [m^2/s^2]                                                 !
 !     eps            [m^3/s^2]                                                 !
 !     vi2            [m^2/s^2]                                                 !
 !     f22            [-]                                                       !
-!     Lsc            [m]                                                       !
+!     l_scale        [m]                                                       !
 !------------------------------------------------------------------------------!
 
   call Time_And_Length_Scale(grid)
@@ -47,17 +47,17 @@
  if(turbulence_model == K_EPS_ZETA_F .or.  &
     turbulence_model == HYBRID_K_EPS_ZETA_F) then 
    do c = 1, grid % n_cells
-     f22hg = (1.0 - Cf_1 - 0.65 * p_kin(c)  &
+     f22hg = (1.0 - c_f1 - 0.65 * p_kin(c)  &
            / (eps  % n(c) + TINY))          &
            * (zeta % n(c) - TWO_THIRDS)     &
-           / (Tsc(c) + TINY)                &
+           / (t_scale(c) + TINY)                &
            + 0.0085 * p_kin(c) / (kin % n(c) + TINY)
-     b(c) = b(c) + f22hg * grid % vol(c) / (Lsc(c)**2 + TINY) 
+     b(c) = b(c) + f22hg * grid % vol(c) / (l_scale(c)**2 + TINY) 
    end do
 
    ! Source term f22hg
    do c = 1, grid % n_cells
-     sor_11 = grid % vol(c)/(Lsc(c)**2 + TINY)
+     sor_11 = grid % vol(c)/(l_scale(c)**2 + TINY)
      A % val(A % dia(c)) = A % val(A % dia(c)) + sor_11 
    end do
 

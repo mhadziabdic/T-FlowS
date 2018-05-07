@@ -17,14 +17,14 @@
   type(Grid_Type) :: grid
 !----------------------------------[Locals]------------------------------------!
   integer :: c, s, c1, c2,j 
-  real    :: Esor, Ce_11, EBF
+  real    :: Esor, c_11e, EBF
   real    :: EpsWall, EpsHom
   real    :: y_pl
 !==============================================================================!
 !   In dissipation of turbulent kinetic energy equation exist two              !
 !   source terms which have form:                                              !
 !                                                                              !
-!    int( density ((Cv_e1 * p_kin - Cv_11 eps) / Tsc) * dV                     !
+!    int( density ((Cv_e1 * p_kin - Cv_11 eps) / t_scale) * dV                 !
 !                                                                              !
 !   First, positive , source term is solved and added to source  coefficient   !
 !   b(c) on right hand side.  Second, negative, source term is added to main   !
@@ -38,12 +38,12 @@
   if(turbulence_model == K_EPS_ZETA_F .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
     do c = 1, grid % n_cells 
-      Esor = grid % vol(c)/(Tsc(c)+TINY)
-      Ce_11 = Ce1*(1.0 + alpha * ( 1.0/(zeta % n(c)+TINY) ))    
-      b(c) = b(c) + Ce_11*p_kin(c)*Esor*density
+      Esor = grid % vol(c)/(t_scale(c)+TINY)
+      c_11e = c_1e*(1.0 + alpha * ( 1.0/(zeta % n(c)+TINY) ))    
+      b(c) = b(c) + c_11e*p_kin(c)*Esor*density
  
       ! Fill in a diagonal of coefficient matrix
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*density
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + c_2e*Esor*density
     end do                   
   end if
 
@@ -61,16 +61,16 @@
           Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
 
         EpsWall = 2.0 * viscosity/density * kin % n(c1) / grid % wall_dist(c1)**2
-        EpsHom = Cmu75 * kin % n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
-        u_tau(c1) = Cmu25 * kin % n(c1)**0.5
+        EpsHom = c_mu75 * kin % n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
+        u_tau(c1) = c_mu25 * kin % n(c1)**0.5
 
-        y_pl = Cmu25 * sqrt(kin % n(c1)) * grid % wall_dist(c1) / &
+        y_pl = c_mu25 * sqrt(kin % n(c1)) * grid % wall_dist(c1) / &
           (viscosity/density)  + TINY ! standard
         EBF = 0.001*y_pl**4.0/(1.0 + y_pl)
         eps % n(c1) = EpsWall * exp(-1.0 * EBF) + EpsHom * exp(-1.0 / EBF)
         
         if(ROUGH == YES) then
-          eps % n(c1) = Cmu75 * kin % n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
+          eps % n(c1) = c_mu75 * kin % n(c1)**1.5 / (grid % wall_dist(c1) * kappa)
         end if
 
         ! Adjusting coefficient to fix eps value in near wall calls

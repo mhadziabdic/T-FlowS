@@ -2,7 +2,7 @@
   subroutine Source_Ebm(grid, name_phi)
 !------------------------------------------------------------------------------!
 !   Calculate source terms for transport equations for Re stresses and         !
-!   dissipation for 'EBM'.                                                       !  
+!   dissipation for 'EBM'.                                                     !  
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Const_Mod
@@ -24,7 +24,7 @@
   real    :: b11, b22, b33, b12, b13, b21, b31, b23, b32
   real    :: s11, s22, s33, s12, s13, s21, s31, s23, s32
   real    :: v11, v22, v33, v12, v13, v21, v31, v23, v32
-  real    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, Ce11, uu_nn
+  real    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, c_1e1, uu_nn
   real    :: diss_wall, diss_hom, r13
 !==============================================================================!
 
@@ -265,15 +265,15 @@
 
     ! eps equation
     else if(name_phi == 'EPS') then
-      Esor = grid % vol(c)/max(Tsc(c),1.0e-12)
+      Esor = grid % vol(c)/max(t_scale(c),1.0e-12)
 !
-!     Ce11 = Ce1*(1.0 + 0.03*(1. - f22%n(c)*f22%n(c))*sqrt(kin%n(c)/max(uu_nn,1.e-12)))  
+!     c_1e1 = c_1e*(1.0 + 0.03*(1. - f22%n(c)*f22%n(c))*sqrt(kin%n(c)/max(uu_nn,1.e-12)))  
 !
-      Ce11 = Ce1*(1.0 + 0.1*(1.0-f22%n(c)**3.0)*p_kin(c)/eps%n(c))  
-      b(c) = b(c) + Ce11*p_kin(c)*Esor 
+      c_1e1 = c_1e*(1.0 + 0.1*(1.0-f22%n(c)**3.0)*p_kin(c)/eps%n(c))  
+      b(c) = b(c) + c_1e1*p_kin(c)*Esor 
 
       ! Fill in a diagonal of coefficient matrix
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + Ce2*Esor*density
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + c_2e*Esor*density
     end if
   end do
 

@@ -104,9 +104,9 @@
     call Var_Mod_Allocate_Solution('EPS', eps, grid)
 
     ! Time scale, length scale and production
-    allocate(Tsc(-grid % n_bnd_cells:grid % n_cells));     Tsc = 0.0
-    allocate(Lsc(-grid % n_bnd_cells:grid % n_cells));     Lsc = 0.0
-    allocate(p_kin(-grid % n_bnd_cells:grid % n_cells));   p_kin  = 0.0
+    allocate(t_scale(-grid % n_bnd_cells:grid % n_cells));  t_scale = 0.0
+    allocate(l_scale(-grid % n_bnd_cells:grid % n_cells));  l_scale = 0.0
+    allocate(p_kin  (-grid % n_bnd_cells:grid % n_cells));  p_kin   = 0.0
 
     if(turbulence_model == REYNOLDS_STRESS_MODEL) then
       call Var_Mod_Allocate_Solution('F22', f22, grid)
@@ -126,9 +126,7 @@
   end if  ! turbulence_model == 'EBM' or 'HJ'
 
   ! Variables for Rans models
-  if(turbulence_model == K_EPS .or.  &
-     turbulence_model == HYBRID_PITM) then
-
+  if(turbulence_model == K_EPS) then
     call Var_Mod_Allocate_Solution('KIN', kin, grid)
     call Var_Mod_Allocate_Solution('EPS', eps, grid)
 
@@ -149,8 +147,8 @@
     call Var_Mod_Allocate_Solution('ZETA', zeta, grid)
     call Var_Mod_Allocate_Solution('F22',  f22,  grid)
 
-    allocate(Tsc       (-grid % n_bnd_cells:grid % n_cells));  Tsc        = 0.0
-    allocate(Lsc       (-grid % n_bnd_cells:grid % n_cells));  Lsc        = 0.0
+    allocate(t_scale   (-grid % n_bnd_cells:grid % n_cells));  t_scale    = 0.0
+    allocate(l_scale   (-grid % n_bnd_cells:grid % n_cells));  l_scale    = 0.0
     allocate(u_tau     (-grid % n_bnd_cells:grid % n_cells));  u_tau      = 0.0
     allocate(u_tau_mean(-grid % n_bnd_cells:grid % n_cells));  u_tau_mean = 0.0
     allocate(p_kin     (-grid % n_bnd_cells:grid % n_cells));  p_kin      = 0.0
@@ -165,12 +163,12 @@
     if(buoyancy == YES) then
       call Var_Mod_Allocate_Solution('TT', tt, grid)
       call Var_Mod_Allocate_Statistics(tt)
-      allocate(Gbuoy(-grid % n_bnd_cells:grid % n_cells));     Gbuoy   =0.  ! XXXXX 6 Jun 2014
-      allocate(buoyBeta(-grid % n_bnd_cells:grid % n_cells));  buoyBeta=0.  ! XXXXX 5 Jul 2014
-      allocate(Pbuoy(-grid % n_bnd_cells:grid % n_cells));     Pbuoy   =0.  ! XXXXX 5 Jul 2014
-      allocate(kin%mean(-grid % n_bnd_cells:grid % n_cells));  kin%mean=0.  ! XXXXX 5 Jul 2014
-      allocate(eps%mean(-grid % n_bnd_cells:grid % n_cells));  eps%mean=0.  ! XXXXX 5 Jul 2014
-      allocate(Ptt(-grid % n_bnd_cells:grid % n_cells));       Ptt     =0.
+      allocate(g_buoy   (-grid % n_bnd_cells:grid % n_cells));  g_buoy     = 0.0
+      allocate(buoy_beta(-grid % n_bnd_cells:grid % n_cells));  buoy_beta  = 0.0
+      allocate(p_buoy   (-grid % n_bnd_cells:grid % n_cells));  p_buoy     = 0.0
+      allocate(kin%mean (-grid % n_bnd_cells:grid % n_cells));  kin % mean = 0.0
+      allocate(eps%mean (-grid % n_bnd_cells:grid % n_cells));  eps % mean = 0.0
+      allocate(Ptt      (-grid % n_bnd_cells:grid % n_cells));  Ptt        = 0.0
     end if
   end if
 
@@ -359,8 +357,7 @@
     end if
   end if
 
-  if(turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
-     turbulence_model == HYBRID_PITM) then
+  if(turbulence_model == HYBRID_K_EPS_ZETA_F) then
     allocate(uu % mean(-grid % n_bnd_cells:grid % n_cells)); uu % mean=0.
     allocate(vv % mean(-grid % n_bnd_cells:grid % n_cells)); vv % mean=0.
     allocate(ww % mean(-grid % n_bnd_cells:grid % n_cells)); ww % mean=0.
@@ -368,8 +365,8 @@
     allocate(uw % mean(-grid % n_bnd_cells:grid % n_cells)); uw % mean=0.
     allocate(vw % mean(-grid % n_bnd_cells:grid % n_cells)); vw % mean=0.
 
-    allocate(vis_t_mean(grid % n_cells)); vis_t_mean = 0.0
-    allocate(shear_mean(grid % n_cells));  shear_mean=0.
+    allocate(vis_t_mean(grid % n_cells));  vis_t_mean = 0.0
+    allocate(shear_mean(grid % n_cells));  shear_mean = 0.0
     if(heat_transfer == YES) then
       allocate(t  % mean(-grid % n_bnd_cells:grid % n_cells)); t  % mean=0.
       allocate(tt % mean(-grid % n_bnd_cells:grid % n_cells)); tt % mean=0.

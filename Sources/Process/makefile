@@ -181,7 +181,7 @@ SRC_MOD += Info_Mod.f90		\
 # Sources for modules in sub-directories
 SRC_MOD += Turbulence_Mod.f90	\
            les_mod.f90		\
-           rans_mod.f90		\
+           Rans_Mod.f90		\
 
 # User_Mod should be here
 SRC_MOD += User_Mod.f90

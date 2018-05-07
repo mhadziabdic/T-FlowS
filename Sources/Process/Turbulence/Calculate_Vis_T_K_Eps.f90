@@ -6,8 +6,8 @@
 !   In the domain:                                                             !
 !   ~~~~~~~~~~~~~~                                                             !
 !   For k-eps model :                                                          !
-!                        2                                                     !
-!   vis_t = Cmu * rho * k  * eps                                               ! 
+!                         2                                                    !
+!   vis_t = c_mu * rho * k  * eps                                              ! 
 !                                                                              !
 !   On the boundary (wall viscosity):                                          !
 !   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                           !
@@ -48,13 +48,13 @@
     do c = 1, grid % n_cells 
       re_t = kin % n(c)**2 / (viscosity * eps % n(c))
       f_mu = exp(-3.4/(1.0 + 0.02*re_t)**2) 
-      vis_t(c) = f_mu * Cmu * density * kin % n(c)**2 / eps % n(c)
+      vis_t(c) = f_mu * c_mu * density * kin % n(c)**2 / eps % n(c)
     end do
 
   ! High-Re varaint
   else
     do c = 1, grid % n_cells
-      vis_t(c) = Cmu * density * kin % n(c)**2 / (eps % n(c) + TINY)
+      vis_t(c) = c_mu * density * kin % n(c)**2 / (eps % n(c) + TINY)
     end do
     if(ROUGH == NO) then
       do s = 1, grid % n_faces
@@ -66,7 +66,7 @@
             ck = sqrt(tau_wall(c1))
             y_plus(c1) = density * ck * grid % wall_dist(c1) / viscosity 
             vis_wall(c1) = y_plus(c1) * viscosity *kappa  &
-                         / log(Elog * y_plus(c1))
+                         / log(e_log * y_plus(c1))
           end if
         end if
       end do
@@ -103,26 +103,6 @@
     end do
   end if
   
-  !-----------------------!
-  !   Hybrid PTIM model   !
-  !-----------------------!
-  if(turbulence_model == HYBRID_PITM) then
-    do c = 1, grid % n_cells
-      re_t = kin % n(c)*kin % n(c)/(viscosity*eps % n(c))
-
-      y_star = (viscosity * eps % n(c))**0.25 * grid % wall_dist(c)/viscosity
-
-      f_mu = (1.0 - exp(-y_star/14.0))**2.0*(1.0                              &
-           + 5.0*exp(-(re_t/200.0)*(re_t/200.0))/re_t**0.75)
-
-
-      f_mu = f_mu / ( 1.0 + exp(-y_star/5.0)**1.5/0.06 )
-      f_mu = min(1.0,f_mu)
-
-      vis_t(c) = f_mu * Cmu * density * kin%n(c) * kin%n(c) / eps % n(c)
-    end do
-  end if
-
   call Comm_Mod_Exchange(grid, vis_t)  
 
   end subroutine

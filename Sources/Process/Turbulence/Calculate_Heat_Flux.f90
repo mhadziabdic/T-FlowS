@@ -60,15 +60,15 @@
                    * (1.0 - exp(-5.165*( viscosity/(vis_t(c)+1.0e-12) )))  &
                  )
 
-      ut % n(c) =  -0.22*Tsc(c) * (uu % n(c) * t_x(c) +  &
-                                   uv % n(c) * t_y(c) +  &
-                                   uw % n(c) * t_z(c))
-      vt % n(c) =  -0.22*Tsc(c) * (uv % n(c) * t_x(c) +  &
-                                   vv % n(c) * t_y(c) +  &
-                                   vw % n(c) * t_z(c))
-      wt % n(c) =  -0.22*Tsc(c) * (uw % n(c) * t_x(c) +  &
-                                   vw % n(c) * t_y(c) +  &
-                                   ww % n(c) * t_z(c))
+      ut % n(c) =  -0.22*t_scale(c) * (uu % n(c) * t_x(c) +  &
+                                       uv % n(c) * t_y(c) +  &
+                                       uw % n(c) * t_z(c))
+      vt % n(c) =  -0.22*t_scale(c) * (uv % n(c) * t_x(c) +  &
+                                       vv % n(c) * t_y(c) +  &
+                                       vw % n(c) * t_z(c))
+      wt % n(c) =  -0.22*t_scale(c) * (uw % n(c) * t_x(c) +  &
+                                       vw % n(c) * t_y(c) +  &
+                                       ww % n(c) * t_z(c))
 
     end do
   end if
@@ -80,10 +80,10 @@
     vt % n(c) = max(-0.01 * t_ref, vt % n(c))
     wt % n(c) = min( 0.01 * t_ref, wt % n(c))
     wt % n(c) = max(-0.01 * t_ref, wt % n(c))
-    Pbuoy(c) = -beta*(  grav_x * ut % n(c)  &
-                      + grav_y * vt % n(c)  &
-                      + grav_z * wt % n(c))
-    Pbuoy(c) = max(Pbuoy(c),0.0)
+    p_buoy(c) = -beta*(  grav_x * ut % n(c)  &
+                       + grav_y * vt % n(c)  &
+                       + grav_z * wt % n(c))
+    p_buoy(c) = max(p_buoy(c),0.0)
   end if
 
   end subroutine

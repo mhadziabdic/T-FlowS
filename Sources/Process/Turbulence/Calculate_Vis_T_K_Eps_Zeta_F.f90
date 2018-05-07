@@ -27,11 +27,11 @@
 
   if(turbulence_model == K_EPS_ZETA_F) then
     do c = 1, grid % n_cells
-      vis_t(c) = CmuD * zeta % n(c) * kin % n(c) * Tsc(c) * density
+      vis_t(c) = c_mu_d * zeta % n(c) * kin % n(c) * t_scale(c) * density
     end do
   else if(turbulence_model == HYBRID_K_EPS_ZETA_F) then
     do c = 1, grid % n_cells
-      vis_t(c) = CmuD * zeta % n(c) * kin % n(c) * Tsc(c)
+      vis_t(c) = c_mu_d * zeta % n(c) * kin % n(c) * t_scale(c)
       vis_t_eff(c) = max(vis_t(c), vis_t_sgs(c))
     end do
     call Comm_Mod_Exchange(grid, vis_t_eff)  
@@ -50,7 +50,7 @@
       if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
          Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
 
-        u_tau(c1)  = Cmu**0.25*kin%n(c1)**0.5
+        u_tau(c1)  = c_mu**0.25 * kin%n(c1)**0.5
 
         if(ROUGH == YES) then
           y_plus(c1) = (grid % wall_dist(c1)+Zo)*u_tau(c1)/kin_visc
@@ -58,10 +58,10 @@
           y_plus(c1) = grid % wall_dist(c1)*u_tau(c1)/kin_visc 
         end if
 
-        g_blend  = 0.01*y_plus(c1)**4.0/(1.0+5.0*y_plus(c1))
+        g_blend  = 0.01*y_plus(c1)**4 / (1.0 + 5.0*y_plus(c1))
 
-        y_pl = max(y_plus(c1),0.13)  
-        u_plus = log(y_pl*Elog)/kappa
+        y_pl   = max(y_plus(c1), 0.13)  
+        u_plus = log(y_pl*e_log)/kappa
    
         if(y_pl < 3.0) then
           ! kg / (m * s) !

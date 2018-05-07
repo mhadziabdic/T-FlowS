@@ -282,12 +282,11 @@
 
       ! Temperature
       if(heat_transfer == YES) then
-        call Compute_Temperature(grid, dt, ini, T)
+        call Compute_Temperature(grid, dt, ini, t)
       end if
 
       ! Rans models
-      if(turbulence_model == K_EPS .or.  &
-         turbulence_model == HYBRID_PITM) then
+      if(turbulence_model == K_EPS) then 
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
@@ -402,10 +401,10 @@
       if(Cm(i)  > 0) then
         if(heat_transfer == NO) then
           write(10+i,'(I9,4E16.6)')                    &
-           n, u % n(Cm(i)), v%n(Cm(i)), w%n(Cm(i)), P%n(Cm(i))
+           n, u % n(Cm(i)), v%n(Cm(i)), w%n(Cm(i)), p%n(Cm(i))
         else
           write(10+i,'(I9,5E16.6)')                    &
-           n, u % n(Cm(i)), v%n(Cm(i)), w%n(Cm(i)), P%n(Cm(i)), T%n(Cm(i))
+           n, u % n(Cm(i)), v%n(Cm(i)), w%n(Cm(i)), p%n(Cm(i)), t%n(Cm(i))
         end if
       end if
     end do

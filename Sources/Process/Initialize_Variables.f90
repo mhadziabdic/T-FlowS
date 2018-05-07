@@ -21,16 +21,21 @@
   integer :: Key_Ind
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: i, c, c1, c2, m, s, n, found, nks, nvs
-  integer :: n_wall, n_inflow, n_outflow, n_symmetry, n_heated_wall, n_convect
+  integer           :: n_wall, n_inflow, n_outflow, n_symmetry, n_heated_wall, &
+                       n_convect
   character(len=80) :: keys(128)
+  character(len=80) :: keys_file(128)
   real              :: vals(0:128) ! Note that they start from zero!
   real              :: s_tot
+
+  integer           :: n_points, k
+  real, allocatable :: prof(:,:), x(:), y(:), z(:), dist(:)
 
   ! Default values for initial conditions 
   real, parameter   :: u_def   = 0.0,  v_def   = 0.0,  w_def    = 0.0
   real, parameter   :: p_def   = 0.0,  t_def   = 0.0,  q_def    = 0.0
   real, parameter   :: kin_def = 0.0,  eps_def = 0.0,  f22_def  = 0.0
-  real, parameter   :: vis_def = 0.0,  v2_def  = 0.0,  zeta_def = 0.0
+  real, parameter   :: vis_def = 0.0,  zeta_def = 0.0
   real, parameter   :: uu_def  = 0.0,  vv_def  = 0.0,  ww_def   = 0.0
   real, parameter   :: uv_def  = 0.0,  uw_def  = 0.0,  vw_def   = 0.0
 !==============================================================================!
@@ -39,125 +44,240 @@
   if(this_proc < 2) print *, 'grid % n_materials: ', grid % n_materials
 
   ! Found the line where boundary condition defintion is defined
-  call Control_Mod_Position_At_One_Key('INITIAL_CONDITION',       &
-                                       found,                     &
+  call Control_Mod_Position_At_One_Key('INITIAL_CONDITION', &
+                                       found,               &
                                        .true.)
 
   ! Found the section with intial condions
   if(found == YES) then
     if(this_proc < 2) print *, 'FOUND INITIAL CONDITIONS'
-    call Control_Mod_Read_Strings_On('VARIABLES', keys,    nks, .true.)
-    call Control_Mod_Read_Real_Array_On('VALUES', vals(1), nvs, .true.)
 
-    ! Check validity of the input
-    if(nks .eq. 0 .or. nvs .eq. 0 .and. this_proc < 2) then
-      print '(2a)', '# Critical, for initial condition: ',        &
-                    ' no values or variables have been provided' 
-      stop
-    end if
-    if(nks .ne. nvs .and. this_proc < 2) then
-      print '(2a)', '# Critical for initial conditions, number of values ',  &
-                    ' is not the same as number of provided variable names' 
-      stop
-    end if
- 
-    ! Input is valid, turn keys to upper case
-    do i = 1, nks
-      call To_Upper_Case(keys(i))
-    end do
+    call Control_Mod_Read_Strings_On('VARIABLES', keys, nks, .true.)
 
-    do n = 1, grid % n_materials
-      do c = 1, grid % n_cells
+      ! Input is valid, turn keys to upper case
+      do i = 1, nks
+        call To_Upper_Case(keys(i))
+      end do
 
-        u % mean(c) = 0.0
-        v % mean(c) = 0.0
-        w % mean(c) = 0.0
+    ! Check if there is file specified
+    call Control_Mod_Read_Strings_On('FILE', keys_file, nvs, .true.)
 
-        vals(0) = u_def;  u % n(c) = vals(Key_Ind('U', keys, nks))
-        vals(0) = v_def;  v % n(c) = vals(Key_Ind('V', keys, nks))
-        vals(0) = w_def;  w % n(c) = vals(Key_Ind('W', keys, nks))
+    ! File was specified
+    if(nvs == 1) then
 
-        u % o(c)  = u % n(c)
-        u % oo(c) = u % n(c)
-        v % o(c)  = v % n(c)
-        v % oo(c) = v % n(c)
-        w % o(c)  = w % n(c)
-        w % oo(c) = w % n(c)
+      if(this_proc < 2) &
+        print *, '# Values specified in the file: ', trim(keys_file(nvs))
 
-        if(heat_transfer == YES) then
-          vals(0) = t_def;  t % n(c) = vals(Key_Ind('T', keys, nks))
-          t % o(c)  = t % n(c)
-          t % oo(c) = t % n(c)
-          Tinf      = t % n(c)
-        end if 
+      !-----------------------------------------------!
+      !   Initial conditions is prescribed in a file  !
+      !-----------------------------------------------!
 
-        if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
-           turbulence_model == HANJALIC_JAKIRLIC) then
-          vals(0) = uu_def;  uu  % n(c) = vals(Key_Ind('UU',  keys, nks))
-          vals(0) = vv_def;  vv  % n(c) = vals(Key_Ind('VV',  keys, nks))
-          vals(0) = ww_def;  ww  % n(c) = vals(Key_Ind('WW',  keys, nks))
-          vals(0) = uv_def;  uv  % n(c) = vals(Key_Ind('UV',  keys, nks))
-          vals(0) = uw_def;  uw  % n(c) = vals(Key_Ind('UW',  keys, nks))
-          vals(0) = vw_def;  vw  % n(c) = vals(Key_Ind('VW',  keys, nks))
-          vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
-          uu % o(c)  = uu % n(c)
-          uu % oo(c) = uu % n(c)
-          vv % o(c)  = vv % n(c)
-          vv % oo(c) = vv % n(c)
-          ww % o(c)  = ww % n(c)
-          ww % oo(c) = ww % n(c)
-          uv % o(c)  = uv % n(c)
-          uv % oo(c) = uv % n(c)
-          uw % o(c)  = uw % n(c)
-          uw % oo(c) = uw % n(c)
-          vw % o(c)  = vw % n(c)
-          vw % oo(c) = vw % n(c)
-          if(turbulence_model == REYNOLDS_STRESS_MODEL) then
-            vals(0) = f22_def; f22 % n(c) = vals(Key_Ind('F22', keys, nks))
-            f22 % o(c)  = f22 % n(c)
-            f22 % oo(c) = f22 % n(c)
+      open(9, file = keys_file(1))
+      if(this_proc < 2) print *, '# Reading the file: ', trim(keys_file(1))
+
+      ! number of points
+      call Tokenizer_Mod_Read_Line(9)
+
+      read(line % tokens(1),*) n_points
+
+      if(this_proc < 2) print '(A,I0,2A)', " # Reading ", nks, &
+        " columns in file " , trim(keys_file(1))
+
+      allocate(prof(n_points, 0:nks)); prof = 0.
+      allocate(x(n_points)); x = 0.
+      allocate(y(n_points)); y = 0.
+      allocate(z(n_points)); z = 0.
+      allocate(dist(n_points)); dist = 0.
+
+      ! Read the entire profile file
+      do m = 1, n_points
+        call Tokenizer_Mod_Read_Line(9)
+        do i = 1, nks
+          read(line % tokens(i), *) prof(m, i)
+        end do
+      end do
+      close(9)
+
+      ! A plane is defined
+      if(keys(1) == 'X' .and. keys(2) == 'Y' .or.  &
+         keys(1) == 'X' .and. keys(2) == 'Z' .or.  &
+         keys(1) == 'Y' .and. keys(2) == 'Z') then    
+
+        ! Set the closest point
+        do c = 1, grid % n_cells
+
+          i=Key_Ind('X', keys, nks); x = prof(:,i)
+          i=Key_Ind('Y', keys, nks); y = prof(:,i)
+          i=Key_Ind('Z', keys, nks); z = prof(:,i)
+
+          ! do no waste time on sqrt((r-r0)^2) -> use (r-r0)^2
+          if(keys(1) == 'Y' .and. keys(2) == 'Z') then
+            dist(:) = (y(:)-grid % yc(c))**2 + (z(:)-grid % zc(c))**2
+          else if(keys(1) == 'X' .and. keys(2) == 'Z') then
+            dist(:) = (x(:)-grid % xc(c))**2 + (z(:)-grid % zc(c))**2
+          else if(keys(1) == 'X' .and. keys(2) == 'Y') then
+            dist(:) = (x(:)-grid % xc(c))**2 + (y(:)-grid % yc(c))**2
           end if
-        end if
-  
-        if(turbulence_model == K_EPS .or.  &
-           turbulence_model == HYBRID_PITM) then
-          vals(0) = kin_def; kin % n(c) = vals(Key_Ind('KIN', keys, nks))
-          vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
-          kin % o(c)  = kin % n(c)
-          kin % oo(c) = kin % n(c)
-          eps % o(c)  = eps % n(c)
-          eps % oo(c) = eps % n(c)
-          u_tau(c)  = 0.047
-          y_plus(c) = 30.0
-        end if
-  
-        if(turbulence_model == K_EPS_ZETA_F  .or.  & 
-           turbulence_model == HYBRID_K_EPS_ZETA_F) then
-          vals(0) = kin_def;  kin  % n(c) = vals(Key_Ind('KIN',  keys, nks))
-          vals(0) = eps_def;  eps  % n(c) = vals(Key_Ind('EPS',  keys, nks))
-          vals(0) = zeta_def; zeta % n(c) = vals(Key_Ind('ZETA', keys, nks))
-          vals(0) = f22_def;  f22  % n(c) = vals(Key_Ind('F22',  keys, nks))
-          kin  % o(c)  = kin  % n(c)
-          kin  % oo(c) = kin  % n(c)
-          eps  % o(c)  = eps  % n(c)
-          eps  % oo(c) = eps  % n(c)
-          zeta % o(c)  = zeta % n(c)
-          zeta % oo(c) = zeta % n(c)
-          f22  % o(c)  = f22  % n(c)
-          f22  % oo(c) = f22  % n(c)
-          u_tau(c)  = 0.047
-          y_plus(c) = 30.0
-        end if
-  
-        if(turbulence_model == SPALART_ALLMARAS .or.  &
-           turbulence_model == DES_SPALART) then      
-          vals(0) = vis_def; vis % n(c) = vals(Key_Ind('VIS', keys, nks))
-          vis % o(c)  = vis % n(c)
-          vis % oo(c) = vis % n(c)
-        end if
 
-      end do   ! through cells
-    end do   !end do n=1,grid % n_materials
+          ! Store closest point in k
+          k = minloc(dist, dim = 1)
+
+          i=Key_Ind('U',keys,nks);prof(k,0)=u_def;u%n(c)=prof(k,i)
+          i=Key_Ind('V',keys,nks);prof(k,0)=v_def;v%n(c)=prof(k,i)
+          i=Key_Ind('W',keys,nks);prof(k,0)=w_def;w%n(c)=prof(k,i)
+
+          if(heat_transfer == YES) then
+            i=Key_Ind('T',keys,nks);prof(k,0)=t_def;t%n(c)=prof(k,i)
+          end if
+
+          if(turbulence_model == K_EPS) then
+            i=Key_Ind('KIN',keys,nks);prof(k,0)=kin_def; kin%n(c)=prof(k,i)
+            i=Key_Ind('EPS',keys,nks);prof(k,0)=eps_def; eps%n(c)=prof(k,i)
+          end if
+
+          if(turbulence_model == K_EPS_ZETA_F) then
+            i=Key_Ind('KIN', keys,nks);prof(k,0)=kin_def; kin%n(c)=prof(k,i)
+            i=Key_Ind('EPS', keys,nks);prof(k,0)=eps_def; eps%n(c)=prof(k,i)
+            i=Key_Ind('ZETA',keys,nks);prof(k,0)=zeta_def;zeta%n(c)=prof(k,i)
+            i=Key_Ind('F22', keys,nks);prof(k,0)=f22_def; f22%n(c)=prof(k,i)
+          end if
+
+          if(turbulence_model == DES_SPALART) then
+            i=Key_Ind('VIS',keys,nks); prof(k,0)=vis_def; vis%n(c)=prof(k,i)
+          end if
+
+          if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+            i=Key_Ind('UU', keys,nks);prof(k,0)=uu_def; uu %n(c)=prof(k,i)
+            i=Key_Ind('VV', keys,nks);prof(k,0)=vv_def; vv %n(c)=prof(k,i)
+            i=Key_Ind('WW', keys,nks);prof(k,0)=ww_def; ww %n(c)=prof(k,i)
+            i=Key_Ind('UV', keys,nks);prof(k,0)=uv_def; uv %n(c)=prof(k,i)
+            i=Key_Ind('UW', keys,nks);prof(k,0)=uw_def; uw %n(c)=prof(k,i)
+            i=Key_Ind('VW', keys,nks);prof(k,0)=vw_def; vw %n(c)=prof(k,i)
+            i=Key_Ind('F22',keys,nks);prof(k,0)=f22_def;f22%n(c)=prof(k,i)
+            i=Key_Ind('EPS',keys,nks);prof(k,0)=eps_def;eps%n(c)=prof(k,i)
+          end if        
+
+        end do ! c = 1, grid % n_cells
+
+      end if
+
+    !--------------------------------------------------------------------------
+    ! File was not specified
+    else
+
+      call Control_Mod_Read_Real_Array_On('VALUES', vals(1), nvs, .true.)
+
+      ! Check validity of the input
+      if(nks .eq. 0 .or. nvs .eq. 0 .and. this_proc < 2) then
+        print '(2a)', '# Critical, for initial condition: ',        &
+                      ' no values or variables have been provided' 
+        stop
+      end if
+      if(nks .ne. nvs .and. this_proc < 2) then
+        print '(2a)', '# Critical for initial conditions, number of values ',  &
+                      ' is not the same as number of provided variable names' 
+        stop
+      end if
+   
+      ! Input is valid, turn keys to upper case
+      do i = 1, nks
+        call To_Upper_Case(keys(i))
+      end do
+
+      do n = 1, grid % n_materials
+        do c = 1, grid % n_cells
+
+          u % mean(c) = 0.0
+          v % mean(c) = 0.0
+          w % mean(c) = 0.0
+
+          vals(0) = u_def;  u % n(c) = vals(Key_Ind('U', keys, nks))
+          vals(0) = v_def;  v % n(c) = vals(Key_Ind('V', keys, nks))
+          vals(0) = w_def;  w % n(c) = vals(Key_Ind('W', keys, nks))
+
+          u % o(c)  = u % n(c)
+          u % oo(c) = u % n(c)
+          v % o(c)  = v % n(c)
+          v % oo(c) = v % n(c)
+          w % o(c)  = w % n(c)
+          w % oo(c) = w % n(c)
+
+          if(heat_transfer == YES) then
+            vals(0) = t_def;  t % n(c) = vals(Key_Ind('T', keys, nks))
+            t % o(c)  = t % n(c)
+            t % oo(c) = t % n(c)
+            Tinf      = t % n(c)
+          end if 
+
+          if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+             turbulence_model == HANJALIC_JAKIRLIC) then
+            vals(0) = uu_def;  uu  % n(c) = vals(Key_Ind('UU',  keys, nks))
+            vals(0) = vv_def;  vv  % n(c) = vals(Key_Ind('VV',  keys, nks))
+            vals(0) = ww_def;  ww  % n(c) = vals(Key_Ind('WW',  keys, nks))
+            vals(0) = uv_def;  uv  % n(c) = vals(Key_Ind('UV',  keys, nks))
+            vals(0) = uw_def;  uw  % n(c) = vals(Key_Ind('UW',  keys, nks))
+            vals(0) = vw_def;  vw  % n(c) = vals(Key_Ind('VW',  keys, nks))
+            vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
+            uu % o(c)  = uu % n(c)
+            uu % oo(c) = uu % n(c)
+            vv % o(c)  = vv % n(c)
+            vv % oo(c) = vv % n(c)
+            ww % o(c)  = ww % n(c)
+            ww % oo(c) = ww % n(c)
+            uv % o(c)  = uv % n(c)
+            uv % oo(c) = uv % n(c)
+            uw % o(c)  = uw % n(c)
+            uw % oo(c) = uw % n(c)
+            vw % o(c)  = vw % n(c)
+            vw % oo(c) = vw % n(c)
+            if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+              vals(0) = f22_def; f22 % n(c) = vals(Key_Ind('F22', keys, nks))
+              f22 % o(c)  = f22 % n(c)
+              f22 % oo(c) = f22 % n(c)
+            end if
+          end if
+    
+          if(turbulence_model == K_EPS .or.  &
+             turbulence_model == HYBRID_PITM) then
+            vals(0) = kin_def; kin % n(c) = vals(Key_Ind('KIN', keys, nks))
+            vals(0) = eps_def; eps % n(c) = vals(Key_Ind('EPS', keys, nks))
+            kin % o(c)  = kin % n(c)
+            kin % oo(c) = kin % n(c)
+            eps % o(c)  = eps % n(c)
+            eps % oo(c) = eps % n(c)
+            u_tau(c)  = 0.047
+            y_plus(c) = 30.0
+          end if
+    
+          if(turbulence_model == K_EPS_ZETA_F  .or.  & 
+             turbulence_model == HYBRID_K_EPS_ZETA_F) then
+            vals(0) = kin_def;  kin  % n(c) = vals(Key_Ind('KIN',  keys, nks))
+            vals(0) = eps_def;  eps  % n(c) = vals(Key_Ind('EPS',  keys, nks))
+            vals(0) = zeta_def; zeta % n(c) = vals(Key_Ind('ZETA', keys, nks))
+            vals(0) = f22_def;  f22  % n(c) = vals(Key_Ind('F22',  keys, nks))
+            kin  % o(c)  = kin  % n(c)
+            kin  % oo(c) = kin  % n(c)
+            eps  % o(c)  = eps  % n(c)
+            eps  % oo(c) = eps  % n(c)
+            zeta % o(c)  = zeta % n(c)
+            zeta % oo(c) = zeta % n(c)
+            f22  % o(c)  = f22  % n(c)
+            f22  % oo(c) = f22  % n(c)
+            u_tau(c)  = 0.047
+            y_plus(c) = 30.0
+          end if
+    
+          if(turbulence_model == SPALART_ALLMARAS .or.  &
+             turbulence_model == DES_SPALART) then      
+            vals(0) = vis_def; vis % n(c) = vals(Key_Ind('VIS', keys, nks))
+            vis % o(c)  = vis % n(c)
+            vis % oo(c) = vis % n(c)
+          end if
+
+        end do ! through cells
+      end do ! end do n = 1,grid % n_materials
+
+    end if
 
   end if
 
@@ -251,4 +371,10 @@
     print *, '# Variables initialized !'
   end if
 
+
+  deallocate(prof)
+  deallocate(x)
+  deallocate(y)
+  deallocate(z)
+  deallocate(dist)
   end subroutine

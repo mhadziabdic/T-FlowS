@@ -27,10 +27,10 @@
 BUILD_MPI=true
 
 # build cgnstools? [-> cgnsview]
-CGNS_TOOLS=false
+CGNS_TOOLS=true
 
 # build latest cgns lib, overwise build 3.2.1 version
-BUILD_LATEST_CGNS=false
+BUILD_LATEST_CGNS=true
 
 # folder structure
 CGNS_DIR=$PWD                     # this is top dir for this lib
@@ -224,7 +224,7 @@ function build_cgns_lib_latest {
 	rm -rf cgns
 
 #------ parallel CGNS with HDF5
-	
+
 	# configure
 	cd $SRC_DIR/CGNS/; rm -rf .git; cd src/
 
@@ -278,14 +278,14 @@ if [ $CGNS_TOOLS == true ]; then
 	--enable-lfs \
 	--enable-64bit \
 	--disable-shared \
-	--disable-debug
+	--disable-debug \
 	--enable-cgnstools \
 	--with-tcl=$INSTALL_DIR/TCL \
 	--with-tk=$INSTALL_DIR/TK \
 	--datarootdir=$INSTALL_DIR/cgnslib_latest_linux_64_hdf5_seq/tcl_scripts
 
 else # no cgns GUI tools
-	
+
 	# configure
 	cd $SRC_DIR/CGNS/; rm -rf .git; cd src/
 
@@ -353,7 +353,7 @@ function build_cgns_lib_3.2.1 {
 	rm -r CGNS-3.2.1/
 
 #------ parallel CGNS with HDF5
-	
+
 	# configure
 	cd $SRC_DIR/CGNS/; rm -rf .git; cd src/
 
@@ -373,7 +373,7 @@ function build_cgns_lib_3.2.1 {
 	--disable-debug \
 	--enable-parallel \
 	--with-mpi=$INSTALL_DIR/MPICH/bin/
-    
+
     # fix a bug in 3.2.1 makefile
 	sed -i -e "s%-L$INSTALL_DIR/MPICH/lib\ -l%-L$INSTALL_DIR/MPICH/lib\ -l mpi%g" make.defs
 	sed -i -e "s%$INSTALL_DIR/MPICH/bin/mpiexec%$INSTALL_DIR/MPICH/bin/mpiexec  -n \$\${NPROCS:=4}%g" make.defs
@@ -419,7 +419,7 @@ if [ $CGNS_TOOLS == true ]; then
 	--with-tk=$INSTALL_DIR/TK
 
 else # no cgns GUI tools
-	
+
 	# configure
 	cd $SRC_DIR/CGNS/; rm -rf .git; cd src/
 

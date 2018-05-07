@@ -462,8 +462,8 @@ make install
 
 cd $CGNS_DIR
 
-echo ------------------------------------------------------------------------------------------
-echo parallel   CNGS with HDF5 is now installed in $INSTALL_DIR/cgnslib_3.2.1_linux_64_hdf5_par
+echo ---------------------------------------------------------------------------
+echo parallel CNGS with HDF5 is now installed in $INSTALL_DIR/cgnslib_3.2.1_linux_64_hdf5_par
 echo sequential CNGS with HDF5 is now installed in $INSTALL_DIR/cgnslib_3.2.1_linux_64_hff5_seq
 echo sequential CNGS with ADF5 is now installed in $INSTALL_DIR/cgnslib_3.2.1_linux_64_adf5_seq
 if [ $CGNS_TOOLS == true ]; then
@@ -471,7 +471,7 @@ echo CNGS tools are installed in $INSTALL_DIR/cgnslib_3.2.1_linux_64_hdf5_seq/bi
 echo You can make relative links to them for convinience
 fi
 echo you can safely remove $SRC_DIR/ folder with its content
-echo ------------------------------------------------------------------------------------------
+echo ---------------------------------------------------------------------------
 }
 
 #--------- script with functions defined above

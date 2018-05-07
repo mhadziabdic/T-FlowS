@@ -48,11 +48,11 @@
   ! Fetch received parameters
   select case (coord_id)
     case (1)
-      coordinates = grid % xn
+      coordinates = grid % xn(1:grid % n_nodes)
     case (2)
-      coordinates = grid % yn
+      coordinates = grid % yn(1:grid % n_nodes)
     case (3)
-      coordinates = grid % zn
+      coordinates = grid % zn(1:grid % n_nodes)
   end select
 
   call Cgp_Coord_Write_F(file_id,     & !(in )

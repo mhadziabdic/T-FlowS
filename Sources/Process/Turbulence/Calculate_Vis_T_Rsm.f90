@@ -7,6 +7,7 @@
 !   stability of computation.                                                  !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
+  use Const_Mod
   use Flow_Mod
   use Comm_Mod
   use les_mod
@@ -24,24 +25,24 @@
 
   call Calculate_shear_And_Vorticity(grid)
 
-  if(turbulence_model == HANJALIC_JAKIRLIC) then
-    do c=1, grid % n_cells
-      kin % n(c) = 0.5*max(uu%n(c)+vv%n(c)+ww%n(c),1.0e-12)
+  if(turbulence_model .eq. HANJALIC_JAKIRLIC) then
+    do c = 1, grid % n_cells
+      kin % n(c) = 0.5*max(uu % n(c)+vv % n(c)+ww % n(c), 1.0e-12)
 
-      cmu_mod = max(-(  uu % n(c) * u % x(c)  &
-                      + vv % n(c) * v % y(c)  &
-                      + ww % n(c) * w % z(c)  &
+      cmu_mod = max(-(  uu % n(c) * u % x(c)               &
+                      + vv % n(c) * v % y(c)               &
+                      + ww % n(c) * w % z(c)               &
                       + uv % n(c) * (v % x(c) + u % y(c))  &
                       + uw % n(c) * (u % z(c) + w % x(c))  &
                       + vw % n(c) * (v % z(c) + w % y(c))) &
-               / max(kin % n(c)**2 / eps_tot(c) * shear(c)**2, 1.0e-12), 0.0)
+               / max(kin % n(c)**2 / ( eps_tot(c) + TINY) * shear(c)**2, 1.0e-12), 0.0)
 
-      cmu_mod = min(0.12,cmu_mod) 
-      vis_t(c) = cmu_mod * density * kin % n(c)**2 / eps_tot(c)
+      cmu_mod = min(0.12, cmu_mod) 
+      vis_t(c) = cmu_mod * density * kin % n(c)**2 / ( eps_tot(c) + TINY)
     end do 
-  else if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+  else if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) then
     do c=1, grid % n_cells
-      kin % n(c) = 0.5*max(uu%n(c)+vv%n(c)+ww%n(c),1.0e-12)
+      kin % n(c) = 0.5*max(uu % n(c)+vv % n(c)+ww % n(c), 1.0e-12)
 
       cmu_mod = max(-(  uu % n(c) * u % x(c)  &
                       + vv % n(c) * v % y(c)  &

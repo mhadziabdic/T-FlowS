@@ -437,16 +437,16 @@
     !                                                     !
     !   Pdrop = dFlux/dt/A                                !
     !-----------------------------------------------------!
-    do m=1,grid % n_materials
-      if( bulk(m) % flux_x_o /=  0.0 ) then
+    do m = 1, grid % n_materials
+      if( abs(bulk(m) % flux_x_o) >= TINY ) then
         bulk(m) % p_drop_x = (bulk(m) % flux_x_o - bulk(m) % flux_x)  &
                            / (dt * bulk(m) % area_x + TINY)
       end if
-      if( bulk(m) % flux_y_o /=  0.0 ) then
+      if( abs(bulk(m) % flux_y_o) >= TINY ) then
         bulk(m) % p_drop_y = (bulk(m) % flux_y_o - bulk(m) % flux_y)  &
                            / (dt * bulk(m) % area_y + TINY)
       end if
-      if( bulk(m) % flux_z_o /=  0.0 ) then
+      if( abs(bulk(m) % flux_z_o) >= TINY ) then
         bulk(m) % p_drop_z = (bulk(m) % flux_z_o - bulk(m) % flux_z)  &
                            / (dt * bulk(m) % area_z + TINY)
       end if

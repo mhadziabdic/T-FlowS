@@ -33,6 +33,19 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
 #------------------------------------------------------------------------------#
+# make links
+#------------------------------------------------------------------------------#
+function make_links {
+  ln -rsf $BINA_DIR/* $TEST_DIR/Laminar/Backstep_Orthogonal/;
+  ln -rsf $BINA_DIR/* $TEST_DIR/Laminar/Backstep_Nonorthogonal/;
+  ln -rsf $BINA_DIR/* $TEST_DIR/Rans/Backstep_Re_26000_Rsm/;
+  ln -rsf $BINA_DIR/* $TEST_DIR/Rans/Backstep_Re_28000/;
+  ln -rsf $BINA_DIR/* $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function/;
+  ln -rsf $BINA_DIR/* $TEST_DIR/Rans/Channel_Re_Tau_590/;
+  ln -rsf $BINA_DIR/* $TEST_DIR/Rans/Impinging_Jet_2d_Distant_Re_23000/;
+  ln -rsf $BINA_DIR/* $TEST_DIR/Rans/Fuel_Bundle/;
+}
+#------------------------------------------------------------------------------#
 # generator tests
 #------------------------------------------------------------------------------#
 function generator_tests {
@@ -161,7 +174,8 @@ function processor_tests {
 #------------------------------------------------------------------------------#
 # actual script
 #------------------------------------------------------------------------------#
-generator_tests
+#generator_tests
+make_links
 convert_tests
 divide_tests
 processor_tests

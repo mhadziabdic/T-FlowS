@@ -53,7 +53,7 @@
     end do
     MresT=Mres(j)
     call Comm_Mod_Global_Min_Real(MresT)
-    if(MresT /= Mres(j)) then ! there is a cell which is nearer
+    if(abs(MresT - Mres(j)) <= TINY) then ! there is a cell which is nearer
       Cm(j) = 0               ! so erase this_proc monitoring point
     end if
   end do

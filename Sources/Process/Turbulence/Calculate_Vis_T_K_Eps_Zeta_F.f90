@@ -38,9 +38,9 @@
   end if
 
   ! kinematic viscosities
-  kin_visc   = viscosity/density
-  kin_visc_t = vis_t    /density
-  visc_ratio = vis_t    /viscosity
+  kin_visc      = viscosity   /density
+  kin_visc_t(:) = vis_t(:)    /density
+  visc_ratio(:) = vis_t(:)    /viscosity
 
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)

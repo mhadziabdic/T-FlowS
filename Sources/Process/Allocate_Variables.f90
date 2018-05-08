@@ -201,7 +201,7 @@
       allocate(v % filt(-grid % n_bnd_cells:grid % n_cells));  v % filt =0.
       allocate(w % filt(-grid % n_bnd_cells:grid % n_cells));  w % filt =0.
 
-      allocate(c_dyn(-grid % n_bnd_cells:grid % n_cells)); c_dyn = 0
+      allocate(c_dyn(-grid % n_bnd_cells:grid % n_cells)); c_dyn = 0.
       allocate(UUf(grid % n_cells));   UUf = 0.0
       allocate(VVf(grid % n_cells));   VVf = 0.0
       allocate(WWf(grid % n_cells));   WWf = 0.0
@@ -218,7 +218,7 @@
     end if
     allocate(shear_test(-grid % n_bnd_cells:grid % n_cells)); shear_test = 0.0
     allocate(kin_sgs   (-grid % n_bnd_cells:grid % n_cells)); kin_sgs=0.
-    allocate(c_dyn_mean(-grid % n_bnd_cells:grid % n_cells)); c_dyn_mean = 0
+    allocate(c_dyn_mean(-grid % n_bnd_cells:grid % n_cells)); c_dyn_mean = 0.
   end if
 
   if(turbulence_model == LES .or.  &

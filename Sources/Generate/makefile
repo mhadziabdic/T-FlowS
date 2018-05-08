@@ -49,7 +49,7 @@ ifeq ($(FORTRAN), gnu)
   ifeq ($(DEBUG),yes)
     OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g \
 			   -ffixed-line-length-80 -fcheck=all -fwhole-file -fbacktrace \
-			   -ffpe-trap=invalid,zero,overflow,underflow,inexact \
+			   -ffpe-trap=invalid,zero,overflow \
 			   -fimplicit-none -finit-real=nan \
 			   -Wall -Wextra -Waliasing -Wampersand -Warray-temporaries \
 			   -Wc-binding-type -Wcharacter-truncation -Wline-truncation \
@@ -190,7 +190,8 @@ $(DIR_OBJECT)/%.o: %.f90
 #   Note: Should not be modified.
 #-----------------------------------
 $(PROGRAM_FILE): $(OBJ) 
-	$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ) $(CGNS_LIB)
+	@echo Linking "\033[0;32m $(PROGRAM_FILE) \033[0m"
+	@$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ) $(CGNS_LIB)
 
 #---------------------------------------
 #   Explicit dependencies for modules

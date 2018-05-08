@@ -52,7 +52,7 @@
 
   end do 
 
-  shear = sqrt(2.0 * shear)
-  vort  = sqrt(2.0 * abs(vort))
+  shear(:) = sqrt(2.0 * shear(:))
+  vort(:)  = sqrt(2.0 * abs(vort(:)))
 
   end subroutine

@@ -105,9 +105,9 @@
         ! Set the closest point
         do c = 1, grid % n_cells
 
-          i=Key_Ind('X', keys, nks); x = prof(:,i)
-          i=Key_Ind('Y', keys, nks); y = prof(:,i)
-          i=Key_Ind('Z', keys, nks); z = prof(:,i)
+          i=Key_Ind('X', keys, nks); x(:) = prof(:,i)
+          i=Key_Ind('Y', keys, nks); y(:) = prof(:,i)
+          i=Key_Ind('Z', keys, nks); z(:) = prof(:,i)
 
           ! do no waste time on sqrt((r-r0)^2) -> use (r-r0)^2
           if(keys(1) .eq. 'Y' .and. keys(2) .eq. 'Z') then

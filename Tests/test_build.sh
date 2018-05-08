@@ -19,7 +19,6 @@ GENE_EXE=$BINA_DIR/Generate        # Generate ex
 CONV_EXE=$BINA_DIR/Convert         # Convert  ex
 DIVI_EXE=$BINA_DIR/Divide          # Divide   ex
 PROC_EXE=$BINA_DIR/Process         # Process  ex
-#CGNS_DIR=/home/l_palkin_e/Development/T-Flows-modern/Sources/Libraries/install_dir/cgnslib_latest_linux_64_hdf5_seq/bin/
 
 #-------------------------------------------------#
 #---------   READ ABOVE UP TO THIS ROW   ---------#

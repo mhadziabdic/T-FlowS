@@ -339,8 +339,8 @@
       call Name_File(n, name_out_9, '.vtu')
       write(8, '(a,a,a,a)') IN_2, '<Piece Source="', trim(name_out_9), '"/>'
     end do
-    write(8, '(a,a)'), IN_1, '</PUnstructuredGrid>'
-    write(8, '(a,a)'), IN_0, '</VTKFile>'
+    write(8, '(a,a)') IN_1, '</PUnstructuredGrid>'
+    write(8, '(a,a)') IN_0, '</VTKFile>'
     close(8)
   end if
   write(9,'(a,a)') IN_2, '</Piece>'

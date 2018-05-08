@@ -461,9 +461,9 @@
     ! Form the file name
     name_save = problem_name
     write(name_save(len_trim(problem_name)+1:                    &
-                    len_trim(problem_name)+3), '(a3)'),   '-ts'
+                    len_trim(problem_name)+3), '(a3)')   '-ts'
     write(name_save(len_trim(problem_name)+4:                    &
-                    len_trim(problem_name)+9), '(i6.6)'), n
+                    len_trim(problem_name)+9), '(i6.6)') n
 
     ! Is it time to save the restart file?
     if(save_now .or. exit_now .or. mod(n,bsi) == 0) then

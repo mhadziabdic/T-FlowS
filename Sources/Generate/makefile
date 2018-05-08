@@ -1,8 +1,8 @@
-#===================================================================================================
+#===============================================================================
 # 
 #   Generate Makefile   
 #   
-#---------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 #--------------------------
 #   Variable definitions
@@ -29,24 +29,36 @@ VPATH = $(DIR_SHARED):.
 PROGRAM_NAME = Generate
 PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
 
-$(info #==========================================================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                       )
-$(info #------------------------------------------------------------------------------------------)
-$(info # Usage:                                                                                   )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no> )
-$(info #------------------------------------------------------------------------------------------)
+$(info #=======================================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN))
+$(info #-----------------------------------------------------------------------)
+$(info # Usage:                                                                )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no>                    )
+$(info #        <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no>                          )
+$(info #-----------------------------------------------------------------------)
 
-#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 #   Compiler and linker options
-#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 #   Note: Changes only when support to a new Fortran compiler is added.
-#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 # Fortran == gnu
 ifeq ($(FORTRAN), gnu)
   FC = gfortran
   ifeq ($(DEBUG),yes)
-    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g -Wall -fcheck=all
+    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g \
+			   -ffixed-line-length-80 -fcheck=all -fwhole-file -fbacktrace \
+			   -ffpe-trap=invalid,zero,overflow,underflow,inexact \
+			   -fimplicit-none -finit-real=nan \
+			   -Wall -Wextra -Waliasing -Wampersand -Warray-temporaries \
+			   -Wc-binding-type -Wcharacter-truncation -Wline-truncation \
+			   -Wconversion -Wconversion-extra -Wintrinsics-std \
+			   -Wreal-q-constant -Wsurprising -Wtabs -Wunderflow \
+			   -Wintrinsic-shadow -Wunused-parameter -Walign-commons \
+			   -Wfunction-elimination -Wrealloc-lhs -Wrealloc-lhs-all \
+			   -Wcompare-reals -Wtarget-lifetime -Wpedantic \
+			   #-std=f2003 -Wimplicit-procedure -Wimplicit-interface
   else
     OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O3
   endif 
@@ -164,11 +176,13 @@ MOD = $(SRC_MOD_LOW:%.f90=$(DIR_MODULE)/%.mod)
 
 # Modules
 $(DIR_OBJECT)/%.o: %.f90 %/*.f90
-	$(FC) $(OPT_COMP) -c -o $@ $<
+	@echo FC $<
+	@$(FC) $(OPT_COMP) -c -o $@ $<
 
 # Functions
 $(DIR_OBJECT)/%.o: %.f90
-	$(FC) $(OPT_COMP) -c -o $@ $<
+	@echo FC $<
+	@$(FC) $(OPT_COMP) -c -o $@ $<
 
 #-----------------------------------
 #   Rule to build main program

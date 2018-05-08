@@ -23,11 +23,11 @@
 !==============================================================================!
 
   ! Allocate memory for additional arrays
-  allocate(x_node_new(grid % max_n_nodes));         x_node_new    = 0
-  allocate(y_node_new(grid % max_n_nodes));         y_node_new    = 0
-  allocate(z_node_new(grid % max_n_nodes));         z_node_new    = 0
+  allocate(x_node_new(grid % max_n_nodes));         x_node_new    = 0.
+  allocate(y_node_new(grid % max_n_nodes));         y_node_new    = 0.
+  allocate(z_node_new(grid % max_n_nodes));         z_node_new    = 0.
   allocate(node_to_nodes(grid % max_n_nodes,0:40)); node_to_nodes = 0
-  allocate(walln(grid % max_n_nodes));              walln         = 0
+  allocate(walln(grid % max_n_nodes));              walln         = 0.
 
   print *, '# Now smoothing the cells. This may take a while !' 
 

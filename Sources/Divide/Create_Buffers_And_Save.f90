@@ -117,8 +117,8 @@
         end if
       else ! c2 < 0
         if( proces(c1) == sub ) then
-          n_faces_sub =n_faces_sub+1
-          new_f(s)=n_faces_sub        ! new number for the side
+          n_faces_sub     = n_faces_sub + 1
+          new_f(s)        = n_faces_sub  ! new number for the side
 
           n_bnd_cells_sub =  n_bnd_cells_sub + 1  ! increase n. of bnd. cells
           new_c(c2)       = -n_bnd_cells_sub      ! new loc. number of bnd. cell

@@ -9,8 +9,8 @@
 !***************************************************************
 subroutine SORT2(A, MAX_VALUE, N)
 
-integer N, MAX_VALUE 
-real    A(MAX_VALUE)     !Table to be sorted
+integer :: N, MAX_VALUE 
+real    :: A(MAX_VALUE)     !Table to be sorted
 
 ! call sorting subroutine
   call SHELL(N,A)
@@ -33,8 +33,9 @@ end
 !*       be used for relatively large arrays.        * 
 !*****************************************************         
 subroutine SHELL(N,ARR)
-parameter(ALN2I=1./0.69314718,TINY=1.E-5)
-  real ARR(N)
+real, parameter :: ALN2I=1./0.69314718, TINY=1.E-5
+  integer:: n, i, j, k, l, m, nn, lognb2
+  real ARR(N), t
   LOGNB2=INT(ALOG(FLOAT(N))*ALN2I+TINY)
   m=n
   do nn=1,LOGNB2
@@ -57,7 +58,9 @@ end
 
 !write table of size N to standard output
 subroutine TWRIT(N,ARR)
-real ARR(N)
+  integer:: n, i
+  real ARR(N)
+
   print *,' '
   WRITE(*,10) (ARR(I),I=1,N)
   return

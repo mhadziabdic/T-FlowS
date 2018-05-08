@@ -31,7 +31,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, j
-  real              :: Ret, Fmu, L1, L2, YAP, yStar, Lf
+  real              :: Ret, Fmu, L1, L2, YAP
 !==============================================================================!
 
   if(turbulence_model_variant == HIGH_RE) then

@@ -73,8 +73,7 @@
                       0)
 
   ! I believe shadows are needed (only) for Fluent (TM) output
-  call Save_Shadows(grid, 0,         &
-                    grid % n_cells)
+  call Save_Shadows(grid, 0)
 
   ! Try to save in CGNS format, it might work
   call Save_Cgns_Cells(grid, 0) 

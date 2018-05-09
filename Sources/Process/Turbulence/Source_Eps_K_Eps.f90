@@ -31,7 +31,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, j
-  real              :: Ret, Fmu, L1, L2, YAP, yStar, Lf
+  real              :: re_t, f_mu, l1, l2, yap
 !==============================================================================!
 
   if(turbulence_model_variant == HIGH_RE) then
@@ -95,17 +95,17 @@
            (shear_x(c)**2 + shear_y(c)**2 + shear_z(c)**2) * grid % vol(c)
     
       ! Negative contribution:
-      Ret = kin % n(c)*kin % n(c)/(viscosity*eps % n(c))
-      Fmu = 1.0 - 0.3*exp(-(Ret*Ret))
+      re_t = kin % n(c)*kin % n(c)/(viscosity*eps % n(c))
+      f_mu = 1.0 - 0.3*exp(-(re_t*re_t))
       A % val(A % dia(c)) = A % val(A % dia(c))  &
-                 + Fmu * c_2e * density * eps % n(c) / kin % n(c) * grid % vol(c)
+               + f_mu * c_2e * density * eps % n(c) / kin % n(c) * grid % vol(c)
 
        ! Yap correction
-       L1 = kin % n(c)**1.5/eps % n(c)
-       L2 = 2.55 * grid % wall_dist(c)
-       YAP = 0.83 * eps % n(c) * eps % n(c)/kin % n(c)  &
-                  * max((L1/L2 - 1.0) * (L1/L2)**2, 0.0)
-       b(c) = b(c) + YAP * grid % vol(c) 
+       l1 = kin % n(c)**1.5/eps % n(c)
+       l2 = 2.55 * grid % wall_dist(c)
+       yap = 0.83 * eps % n(c) * eps % n(c)/kin % n(c)  &
+                  * max((l1/l2 - 1.0) * (l1/l2)**2, 0.0)
+       b(c) = b(c) + yap * grid % vol(c) 
     end do 
 
     !-----------------------------------!

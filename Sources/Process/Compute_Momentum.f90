@@ -120,7 +120,7 @@
   Fstress = 0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
-  do c=-grid % n_bnd_cells,-1
+  do c = -grid % n_bnd_cells, -1
     a % bou(c)=0.0
   end do
 
@@ -135,7 +135,7 @@
 
   ! Old values (o) and older than old (oo)
   if(ini == 1) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       ui % oo(c)  = ui % o(c)
       ui % o (c)  = ui % n(c)
       ui % a_oo(c) = ui % a_o(c)
@@ -158,7 +158,7 @@
   call Control_Mod_Blending_Coefficient_Momentum(blend)
   
   ! Compute phimax and phimin
-  do mat=1,grid % n_materials
+  do mat = 1, grid % n_materials
     if(adv_scheme .ne. CENTRAL) then
       call Calculate_Minimum_Maximum(grid, ui % n)  ! or ui % o ???
       goto 1  ! why on Earth this?
@@ -166,7 +166,7 @@
   end do
 
   ! New values
-1 do c=1,grid % n_cells
+1 do c = 1, grid % n_cells
     ui % a(c)    = 0.0
     ui % c(c)    = 0.0
   end do
@@ -174,7 +174,7 @@
   !----------------------------!
   !   Spatial Discretization   !
   !----------------------------!
-  do s=1,grid % n_faces
+  do s = 1, grid % n_faces
 
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s) 
@@ -196,7 +196,7 @@
         ui % a_o(c2)=ui % a_o(c2)+flux(s)*uis
       else
         ui % a_o(c1)=ui % a_o(c1)-flux(s)*uis
-      endif 
+      end if 
     end if
 
     if(c2  > 0) then
@@ -204,7 +204,7 @@
       ui % a(c2)=ui % a(c2)+flux(s)*uis
     else
       ui % a(c1)=ui % a(c1)-flux(s)*uis
-    endif 
+    end if 
 
     ! Store upwinded part of the advection term in "c"
     if(coupling .ne. 'PROJECTION') then
@@ -212,12 +212,12 @@
         ui % c(c1) = ui % c(c1)-flux(s)*ui % n(c2)
         if(c2  > 0) then
           ui % c(c2) = ui % c(c2)+flux(s)*ui % n(c2)
-        endif
+        end if
       else 
         ui % c(c1)=ui % c(c1)-flux(s)*ui % n(c1)
         if(c2  > 0) then
           ui % c(c2) = ui % c(c2)+flux(s)*ui % n(c1)
-        endif
+        end if
       end if
     end if 
   end do    ! through faces
@@ -228,27 +228,27 @@
 
   ! Adams-Bashforth scheeme for convective fluxes
   if(td_advection == ADAMS_BASHFORTH) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + (1.5*ui % a_o(c) - 0.5*ui % a_oo(c) - ui % c(c))
     end do  
-  endif
+  end if
   
   ! Crank-Nicholson scheeme for convective fluxes
   if(td_advection == CRANK_NICOLSON) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + (0.5 * ( ui % a(c) + ui % a_o(c) ) - ui % c(c))
     end do  
-  endif
+  end if
   
   ! Fully implicit treatment of convective fluxes 
   if(td_advection == FULLY_IMPLICIT) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + (ui % a(c) - ui % c(c))
     end do  
   end if     
           
   ! New values
-  do c=1,grid % n_cells
+  do c = 1, grid % n_cells
     ui % c(c) = 0.0
   end do
 
@@ -277,7 +277,7 @@
          Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
         VISeff = vis_wall(c1)
       end if
-    end if 
+    end if
   
     if( turbulence_model == K_EPS_ZETA_F     .or.  &
        (turbulence_model == K_EPS .and.            &
@@ -327,18 +327,18 @@
     uk_iS = fw(s)*uk_i(c1) + (1.0-fw(s))*uk_i(c2)
   
     ! total (exact) viscous stress 
-    Fex=VISeff*(      2.0*ui_iS   * Si(s)      &
-                  + (ui_jS+uj_iS) * Sj(s)      & 
-                  + (ui_kS+uk_iS) * Sk(s) )
+    Fex = VISeff*(      2.0*ui_iS  * Si(s)      &
+                   + (ui_jS+uj_iS) * Sj(s)      & 
+                   + (ui_kS+uk_iS) * Sk(s) )
   
     a0 = VISeff * f_coef(s)
   
     ! Implicit viscous stress
     ! this is a very crude approximation: f_coef is not
     ! corrected at interface between materials
-    Fim=(   ui_iS*Di(s)                &
-          + ui_jS*Dj(s)                &
-          + ui_kS*Dk(s))*a0
+    Fim = (   ui_iS*Di(s)                &
+            + ui_jS*Dj(s)                &
+            + ui_kS*Dk(s))*a0
   
     ! Straight diffusion part 
     if(ini == 1) then
@@ -374,7 +374,7 @@
       if(coupling .ne. 'PROJECTION') then
         a12 = a12  - min(flux(s), real(0.0)) 
         a21 = a21  + max(flux(s), real(0.0))
-      endif
+      end if
   
       ! Fill the system matrix
       if(c2  > 0) then
@@ -395,7 +395,7 @@
         else if(Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then  
           a % val(a % dia(c1)) = a % val(a % dia(c1)) + a12
           a % bou(c2) = -a12  ! cool parallel stuff
-        endif
+        end if
       end if     
     end if
   end do  ! through faces
@@ -437,7 +437,7 @@
   if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
      turbulence_model == HANJALIC_JAKIRLIC) then
     if(turbulence_model_variant /= HYBRID) then        
-      do s=1,grid % n_faces
+      do s = 1, grid % n_faces
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
 
@@ -469,14 +469,14 @@
 
   ! Adams-Bashfort scheeme for diffusion fluxes
   if(td_diffusion == ADAMS_BASHFORTH) then 
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + 1.5 * ui % d_o(c) - 0.5 * ui % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
   if(td_diffusion == CRANK_NICOLSON) then 
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + 0.5 * ui % d_o(c)
     end do  
   end if
@@ -486,21 +486,21 @@
 
   ! Adams-Bashfort scheeme for cross diffusion 
   if(td_cross_diff == ADAMS_BASHFORTH) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + 1.5 * ui % c_o(c) - 0.5 * ui % c_oo(c)
     end do 
   end if
 
   ! Crank-Nicholson scheme for cross difusive terms
   if(td_cross_diff == CRANK_NICOLSON) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + 0.5 * ui % c(c) + 0.5 * ui % c_o(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
   if(td_cross_diff == FULLY_IMPLICIT) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + ui % c(c)
     end do 
   end if
@@ -513,7 +513,7 @@
 
   ! Two time levels; linear interpolation
   if(td_inertia == LINEAR) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       a0 = density * grid % vol(c) / dt
       a % val(a % dia(c)) = a % val(a % dia(c)) + a0
       b(c) = b(c) + a0 * ui % o(c)
@@ -522,7 +522,7 @@
 
   ! Three time levels; parabolic interpolation
   if(td_inertia == PARABOLIC) then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       a0 = density * grid % vol(c) / dt
       a % val(a % dia(c)) = a % val(a % dia(c)) + 1.5 * a0
       b(c) = b(c) + 2.0 * a0 * ui % o(c) - 0.5 * a0 * ui % oo(c)
@@ -539,15 +539,15 @@
   !   Global pressure drop   !
   !--------------------------!
   if(ui % name == 'U') then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + bulk(grid % material(c)) % p_drop_x * grid % vol(c)
     end do
   else if(ui % name == 'V') then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + bulk(grid % material(c)) % p_drop_y * grid % vol(c)
     end do
   else if(ui % name == 'W') then
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
       b(c) = b(c) + bulk(grid % material(c)) % p_drop_z * grid % vol(c)
     end do
   end if
@@ -555,7 +555,7 @@
   !---------------------------------!
   !   Local pressure distribution   !
   !---------------------------------!
-  do c=1,grid % n_cells
+  do c = 1, grid % n_cells
     b(c) = b(c) - Hi(c) * grid % vol(c)
   end do
 
@@ -578,7 +578,7 @@
   if(coupling == 'SIMPLE')  &
     call Control_Mod_Simple_Underrelaxation_For_Momentum(urf)
 
-  do c=1,grid % n_cells
+  do c = 1, grid % n_cells
     a % sav(c) = a % val(a % dia(c))
     b(c) = b(c) + a % val(a % dia(c)) * (1.0 - urf)*ui % n(c) / urf
     a % val(a % dia(c)) = a % val(a % dia(c)) / urf
@@ -610,5 +610,17 @@
   end if
 
   call Comm_Mod_Exchange(grid, ui % n)
+
+
+!print *, "TEST123"
+!print *, "max(U % n)=",maxval(U % n)
+!print *, "max(V % n)=",maxval(V % n)
+!print *, "max(W % n)=",maxval(W % n)
+!print *, "max(vis_t/visc)=",maxval(vis_t/viscosity)
+!print *, "max(kin % n)=",maxval(kin % n)
+!print *, "max(eps % n)=",maxval(eps % n)
+!print *, "max(pkin % n)=",maxval(p_kin)
+!print *, "max(T % n)=",maxval(T % n)
+!call exit(1)
 
   end subroutine

@@ -55,6 +55,7 @@
 
   ! Get starting time
   call cpu_time(wall_time_start)
+  time =  0.
 
   !------------------------------!
   !   Start parallel execution   !
@@ -213,8 +214,9 @@
 
     call Convective_Outflow(grid, dt)
     if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
-       turbulence_model == HANJALIC_JAKIRLIC)       &
+       turbulence_model == HANJALIC_JAKIRLIC) then
       call Calculate_Vis_T_Rsm(grid)
+    end if
 
     !--------------------------!
     !   Inner-iteration loop   !

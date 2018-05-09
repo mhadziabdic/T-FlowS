@@ -86,18 +86,14 @@
   call Allocate_Memory(grid)
   call Load_Geo       (grid, this_proc)
   call Comm_Mod_Load_Buffers
+  call Comm_Mod_Load_Maps(grid)
+
   call Comm_Mod_Exchange(grid, grid % vol(-grid % n_bnd_cells))
 
   call Matrix_Mod_Topology(grid, A)
   call Matrix_Mod_Topology(grid, D)
 
   call Comm_Mod_Wait
-
-  !---------------!
-  !               !
-  !   Time loop   !
-  !               !
-  !---------------!
 
   ! Get the number of time steps from the control file
   call Control_Mod_Number_Of_Time_Steps(last_dt, verbose=.true.)
@@ -164,6 +160,10 @@
       write(*,'(a6,i2,a2,1pe12.3)') ' # Az(',m,')=', bulk(m) % area_z
     end do
   end if
+
+! call Save_Backup(grid, 0)
+call Load_Backup(grid, 0)
+goto 2
 
   !---------------!
   !               !
@@ -388,13 +388,13 @@
           if( u  % res <= simple_tol .and.  &
               v  % res <= simple_tol .and.  &
               w  % res <= simple_tol .and.  &
-              mass_res <= simple_tol ) goto 4
+              mass_res <= simple_tol ) goto 1
         endif
       endif
     end do
 
     ! End of the current time step
-4   call Info_Mod_Bulk_Print()
+1   call Info_Mod_Bulk_Print()
 
     ! Write the values in monitoring points
     do i=1,Nmon
@@ -469,6 +469,7 @@
     if(save_now .or. exit_now .or. mod(n,bsi) == 0) then
       call Comm_Mod_Wait
       call Save_Restart(grid, n, name_save)
+      call Save_Backup(grid, n)
     end if
 
     ! Is it time to save results for post-processing
@@ -509,6 +510,6 @@
   !----------------------------!
   !   End parallel execution   !
   !----------------------------!
-  call Comm_Mod_End
+2 call Comm_Mod_End
 
   end program

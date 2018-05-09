@@ -108,6 +108,7 @@
     print *, '# Processor:', j, ' cells:', sub_n_cells(j)
   end do
 
+  call Create_Maps(grid)
   call Create_Buffers_And_Save(grid)
 
   call Save_Com

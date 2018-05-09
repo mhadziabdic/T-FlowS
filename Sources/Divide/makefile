@@ -121,6 +121,7 @@ SRC_FUN = Approx.f90			\
 SRC_FUN += Allocate_Additional.f90	\
            Compute_Eigenvalues.f90	\
            Create_Buffers_And_Save.f90	\
+           Create_Maps.f90		\
            Factorize_Number.f90		\
            Inertia.f90			\
            Load_Cns.f90			\

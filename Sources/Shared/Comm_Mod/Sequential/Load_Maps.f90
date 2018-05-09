@@ -1,0 +1,37 @@
+!==============================================================================!
+  subroutine Comm_Mod_Load_Maps(grid)
+!------------------------------------------------------------------------------!
+!   Fill the cell map for sequential version.                                  !
+!------------------------------------------------------------------------------!
+!----------------------------------[Modules]-----------------------------------!
+  use Grid_Mod
+!------------------------------------------------------------------------------!
+  implicit none
+!---------------------------------[Arguments]----------------------------------!
+  type(Grid_Type) :: grid
+!-----------------------------------[Locals]-----------------------------------!
+  integer :: c
+!==============================================================================!
+
+  !---------------------------------------------------------------!
+  !   For sequential run, no need to read the map, just form it   !
+  !---------------------------------------------------------------!
+  nc_s = grid % n_cells
+  nb_s = grid % n_bnd_cells
+  nc_t = nc_s
+  nb_t = nb_s
+
+  allocate(cell_map    (nc_s))
+  allocate(bnd_cell_map(nb_s))
+
+  ! -1 is to start from zero, as needed by MPI functions
+  do c = 1, nc_t
+    cell_map(c) = c - 1
+  end do
+
+  ! -1 is to start from zero, as needed by MPI functions
+  do c = 1, nb_t
+    bnd_cell_map(c) = c - 1
+  end do
+
+  end subroutine

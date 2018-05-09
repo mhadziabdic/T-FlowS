@@ -23,14 +23,25 @@
   integer           :: c, c1, c2, s 
   real              :: u_tot2, u_nor, u_nor2, u_tan
 !==============================================================================!
+!   Dimensions:                                                                !
+!   Production    p_kin    [m^2/s^3]  | Rate-of-strain  shear     [1/s]        !
+!   Dissipation   eps % n  [m^2/s^3]  | Eddy visc.      vis_t     [m^2/s]      !
+!   Wall friction tau_wall [kg*m/s^2] | Turb. kin en.   kin % n   [m^2/s^2]    !
+!   Density       density  [kg/m^3]   | Kin visc.       viscosity [m^2/s]      !
+!   Cell volume   vol      [m^3]      | Length          lf        [m]          !
+!   left hand s.  A        [ks/s]     | right hand s.   b         [kg*m^2/s^3] !
+!------------------------------------------------------------------------------!
+!   p_kin = 2*vis_t S_ij S_ij                                                  !
+!   shear = sqrt(2 S_ij S_ij)                                                  !
+!------------------------------------------------------------------------------!
 
   !-----------------------------------------------!
   !  Compute the sources in the near wall cells   !
   !-----------------------------------------------!
   if(turbulence_model_variant == HIGH_RE) then
     do s = 1, grid % n_faces
-      c1=grid % faces_c(1,s)
-      c2=grid % faces_c(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
  
       if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
@@ -62,7 +73,7 @@
                          * kappa * sqrt(kin % n(c1)) * c_mu25 * u_tan  &
                          / (log(e_log*y_plus(c1))))  
 
-            ! Compute production in the first wall cell 
+            ! Production:
             p_kin(c1) = tau_wall(c1) * c_mu25 * sqrt(kin % n(c1))  &
                       / (kappa*grid % wall_dist(c1))
 
@@ -87,7 +98,7 @@
     !-----------------------------------------!
     !   Compute the sources in the interior   !
     !-----------------------------------------!
-    do c=1,grid % n_cells
+    do c = 1, grid % n_cells
 
       ! grid % cell_near_wall ensures not to put p_kin twice into the near wall cells
       if(.not. grid % cell_near_wall(c)) then
@@ -103,6 +114,19 @@
                           * grid % vol(c)
     end do
   end if    ! end if mode = wf 
+
+print *, "TEST123"
+print *, "max(U % n)=",maxval(U % n)
+print *, "max(V % n)=",maxval(V % n)
+print *, "max(W % n)=",maxval(W % n)
+print *, "max(vis_t/visc)=",maxval(vis_t/viscosity)
+print *, "max(kin % n)=",maxval(kin % n)
+print *, "max(eps % n)=",maxval(eps % n)
+print *, "max(p_kin)=",maxval(p_kin)
+print *, "max(b)=",maxval(b)
+print *, "max(tau_wall)=",maxval(tau_wall)
+print *, "max(T % n)=",maxval(T % n)
+call exit(1)
 
   !--------------------------------------------------------!
   !   Jones-Launder model and Launder-Sharma + Yap model   !

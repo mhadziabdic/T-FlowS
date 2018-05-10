@@ -95,18 +95,27 @@
     do c=-grid % n_bnd_cells,-1
       new_c(c)=0
     end do
+
+    ! Faces step 1/2: inside the domain
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)  
       c2 = grid % faces_c(2,s) 
-      if(c2  > 0) then
-        if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
+      if(c2 > 0) then
+        if( (proces(c1) == sub) .and. (proces(c2) == sub) ) then
           n_faces_sub=n_faces_sub+1
           new_f(s)=n_faces_sub
         end if
-      else ! c2 < 0
-        if( proces(c1) == sub ) then
-          n_faces_sub =n_faces_sub+1
-          new_f(s)=n_faces_sub        ! new number for the side
+      end if 
+    end do
+
+    ! Faces step 2/2: on the boundaries + bundary cells
+    do s = 1, grid % n_faces
+      c1 = grid % faces_c(1,s)  
+      c2 = grid % faces_c(2,s) 
+      if(c2 < 0) then
+        if( proces(c1) == sub )  then
+          n_faces_sub=n_faces_sub+1
+          new_f(s)=n_faces_sub
 
           n_bnd_cells_sub =  n_bnd_cells_sub + 1  ! increase n. of bnd. cells
           new_c(c2)       = -n_bnd_cells_sub      ! new loc. number of bnd. cell
@@ -172,14 +181,14 @@
             n_copy_sub = n_copy_sub+1
             buf_send_ind(n_buff_sub)=new_c(c1) ! buffer send index 
             buf_recv_ind(n_buff_sub)=c2 
-            buf_pos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
+            buf_pos(n_buff_sub)= -(-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
           if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
             n_buff_sub = n_buff_sub+1
             n_copy_sub = n_copy_sub+1
             buf_send_ind(n_buff_sub)=new_c(c2) ! buffer send index
             buf_recv_ind(n_buff_sub)=c1 
-            buf_pos(n_buff_sub)= - (-n_bnd_cells_sub-n_buff_sub) ! watch the sign
+            buf_pos(n_buff_sub)= -(-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
         end do    ! through sides
         nbb_e(subo)=n_buff_sub
@@ -236,8 +245,8 @@
     do subo=1,n_sub
       if(subo /= sub) then
         print '(a,i9,a,3i9)', ' # Connections with ', subo ,' : ',  &
-          nbb_e(subo)-nbb_s(subo)+1,                      &
-          n_bnd_cells_sub+nbb_s(subo),                   &
+          nbb_e(subo)-nbb_s(subo)+1,                                &
+          n_bnd_cells_sub+nbb_s(subo),                              &
           n_bnd_cells_sub+nbb_e(subo) 
       end if 
     end do ! for subo

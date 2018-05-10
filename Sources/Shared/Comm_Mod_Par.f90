@@ -20,17 +20,21 @@
   integer, allocatable :: buffer_index(:)
 
   ! Variables which follow are for backup saving to single file
-  integer                      :: nc_s  ! number of cells in subdomain
-  integer                      :: nb_s  ! number of bundary cells in subdoima
-  integer                      :: nf_s  ! number of faces in subdomain
-  integer                      :: nc_t  ! total number of cells 
-  integer                      :: nb_t  ! total number of bundary cells
-  integer                      :: nf_t  ! total number of faces
+  integer                      :: nc_s   ! number of cells in subdomain
+  integer                      :: nb_s   ! number of bundary cells in subdoima
+  integer                      :: nf_s   ! number of faces in subdomain
+  integer                      :: nbf_s  ! number of buffer faces in subdomain
+  integer                      :: nc_t   ! total number of cells 
+  integer                      :: nb_t   ! total number of bundary cells
+  integer                      :: nf_t   ! total number of faces
   integer(kind=4), allocatable :: cell_map(:)
-  integer(kind=4), allocatable :: face_map(:)
   integer(kind=4), allocatable :: bnd_cell_map(:)
+  integer(kind=4), allocatable :: face_map(:)
+  integer(kind=4), allocatable :: buf_face_map(:)
   integer                      :: cell_map_type
   integer                      :: bnd_cell_map_type
+  integer                      :: face_map_type
+  integer                      :: buf_face_map_type
 
   contains
 
@@ -51,12 +55,14 @@
   include 'Comm_Mod/Parallel/Read_Int.f90'
   include 'Comm_Mod/Parallel/Read_Bnd_Real.f90'
   include 'Comm_Mod/Parallel/Read_Cell_Real.f90'
+  include 'Comm_Mod/Parallel/Read_Face_Real.f90'
   include 'Comm_Mod/Parallel/Read_Text.f90'
   include 'Comm_Mod/Parallel/Start.f90'
   include 'Comm_Mod/Parallel/Wait.f90'
   include 'Comm_Mod/Parallel/Write_Int.f90'
   include 'Comm_Mod/Parallel/Write_Bnd_Real.f90'
   include 'Comm_Mod/Parallel/Write_Cell_Real.f90'
+  include 'Comm_Mod/Parallel/Write_Face_Real.f90'
   include 'Comm_Mod/Parallel/Write_Text.f90'
 
   end module

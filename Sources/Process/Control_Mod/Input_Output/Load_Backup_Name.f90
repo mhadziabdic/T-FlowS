@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Control_Mod_Save_Restart_Name(val, verbose)
+  subroutine Control_Mod_Load_Backup_Name(val, verbose)
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -7,7 +7,7 @@
   logical, optional :: verbose
 !==============================================================================!
 
-  call Control_Mod_Read_Char_Item('SAVE_RESTART_NAME', 'skip',  &
+  call Control_Mod_Read_Char_Item('LOAD_BACKUP_NAME', 'skip',  &
                                    val, verbose)
 
   end subroutine

@@ -7,7 +7,7 @@
 !==============================================================================!
 
   ! Gradient matrices for all cells
-  real,allocatable :: g(:,:)
+  real, allocatable :: g(:,:)
 
   ! Cells which are bad for calculation of gradients
   logical, allocatable :: bad_cells(:)

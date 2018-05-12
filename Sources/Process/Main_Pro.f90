@@ -98,15 +98,21 @@
   ! Get the number of time steps from the control file
   call Control_Mod_Number_Of_Time_Steps(last_dt, verbose=.true.)
   call Control_Mod_Starting_Time_Step_For_Statistics(n_stat, verbose=.true.)
+ 
+  call Allocate_Variables(grid)
+
+  call Load_Boundary_Conditions(grid, .false.)
+  call Load_Physical_Properties(grid)
+
+! name_save = problem_name
+! call Load_Backup(grid, first_dt, restar)
+! call Save_Backup(grid, 0, name_save)
+! goto 2
 
   ! First time step is one, unless read from restart otherwise
   first_dt = 0
-  call Load_Restart(grid, first_dt, restar)
-
-  if(restar) then
-    call Load_Boundary_Conditions(grid, .false.)
-    call Load_Physical_Properties(grid)
-  end if
+!@call Load_Restart(grid, first_dt, restar)
+  call Load_Backup(grid, first_dt, restar)
 
   ! Read command file (T-FlowS.cmn)
   call ReaCom(grid, restar)
@@ -120,7 +126,7 @@
   end if
 
   ! Interpolate between diff. meshes
-  call Load_Ini(grid)
+!@call Load_Ini(grid)
 
   ! Check if there are more materials
   multiple = .false.
@@ -132,12 +138,13 @@
   ! Loading data from previous computation
   !  if(this_proc<2)  &
   !    print *,'Reading data from previous computation on the same mesh'
-  call Load_Restart_Ini(grid)
+!@call Load_Restart_Ini(grid)
 
   ! Prepare ...
   call Calculate_Face_Geometry(grid)
   call Bulk_Mod_Monitoring_Planes_Areas(grid, bulk)
   call Grad_Mod_Find_Bad_Cells         (grid)
+
   if(turbulence_model == LES                 .and.  &
      turbulence_model_variant == SMAGORINSKY .and.  &
      .not. restar)                                  &
@@ -160,10 +167,6 @@
       write(*,'(a6,i2,a2,1pe12.3)') ' # Az(',m,')=', bulk(m) % area_z
     end do
   end if
-
-! call Save_Backup(grid, 0)
-call Load_Backup(grid, 0)
-goto 2
 
   !---------------!
   !               !
@@ -468,8 +471,8 @@ goto 2
     ! Is it time to save the restart file?
     if(save_now .or. exit_now .or. mod(n,bsi) == 0) then
       call Comm_Mod_Wait
-      call Save_Restart(grid, n, name_save)
-      call Save_Backup(grid, n)
+!@    call Save_Restart(grid, n, name_save)
+      call Save_Backup (grid, n, name_save)
     end if
 
     ! Is it time to save results for post-processing

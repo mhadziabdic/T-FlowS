@@ -13,7 +13,7 @@
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer              :: c, s, c1, c2, sub, subo, n_cells_sub, n_faces_sub,  &
-                          n_buf_faces_sub, n_bnd_cells_sub, NCSsub
+                          n_buf_sub, n_bnd_cells_sub, NCSsub
   character(len=80)    :: name_map
   integer, allocatable :: global_cell_ins(:)
   integer, allocatable :: global_cell_bnd(:)
@@ -48,7 +48,7 @@
 
     ! Faces & real boundary cells
     n_faces_sub     = 0  ! number of sides in subdomain
-    n_buf_faces_sub = 0  ! number of buffer faces
+    n_buf_sub       = 0  ! number of buffer faces (and cells)
     n_bnd_cells_sub = 0  ! number of real boundary cells in subdomain
     NCSsub = 0
 
@@ -79,25 +79,25 @@
       end if 
     end do
 
-    ! Faces 3/3: buffer faces
-    do subo = 1, n_sub
+    ! Faces 3/3: buffer faces; browse in the same was as for buffers!!!
+    do subo=1,n_sub
+      if(subo /= sub) then
 
-      if(subo .ne. sub) then
-
-      ! Faces inside the domain
-      do s = 1, grid % n_faces
-        c1 = grid % faces_c(1,s)  
-        c2 = grid % faces_c(2,s) 
-        if(c2  > 0) then
-          if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
-            n_buf_faces_sub=n_buf_faces_sub+1
-            global_face_buf(n_buf_faces_sub) = s  ! map to global cell number
-          end if
-        end if
-      end do
-
+        do s = 1, grid % n_faces
+          c1 = grid % faces_c(1,s)  
+          c2 = grid % faces_c(2,s) 
+          if(c2  > 0) then
+            if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
+              n_buf_sub=n_buf_sub+1
+              global_face_buf(n_buf_sub) = s  ! map to global face number
+            end if
+            if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
+              n_buf_sub=n_buf_sub+1
+              global_face_buf(n_buf_sub) = s  ! map to global face number
+            end if
+          end if  ! c2 > 0
+        end do    ! through sides
       end if
-
     end do
 
     !-----------------------!
@@ -105,7 +105,7 @@
     !-----------------------!
     
     ! First line are the number of boundary cells and cells
-    write(9, '(4i9)') n_cells_sub, n_bnd_cells_sub, n_faces_sub, n_buf_faces_sub
+    write(9, '(4i9)') n_cells_sub, n_bnd_cells_sub, n_faces_sub, n_buf_sub
 
     ! Extents are followed by mapping of the cells inside ...
     do c = 1, n_cells_sub
@@ -123,7 +123,7 @@
     end do
 
     ! ... and then followed by the buffer faces                 
-    do s = 1, n_buf_faces_sub          
+    do s = 1, n_buf_sub          
       write(9, '(i9)') global_face_buf(s)
     end do
 

@@ -1,24 +1,24 @@
 !======================================================================!
-  subroutine Sort_Int_By_Index(X,indx,N)
+  subroutine Sort_Int_By_Index(x, indx, n)
 !----------------------------------------------------------------------!
-!   Sorts int. array X according to indx.                              !
+!   Sorts int. array x according to indx.                              !
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
-  integer :: N,X(N),indx(N)
+  integer :: n, x(n), indx(n)
 !-------------------------------[Locals]-------------------------------!
   integer             :: i
   integer,allocatable :: work(:)
 !======================================================================!
 
-  allocate(work(N)); work=0
+  allocate(work(n)); work=0
 
-  do i=1,N
-    work(indx(i))=X(i)
+  do i=1,n
+    work(indx(i))=x(i)
   end do
 
-  do i=1,N
-    X(i)=work(i)
+  do i=1,n
+    x(i)=work(i)
   end do
 
   deallocate(work)

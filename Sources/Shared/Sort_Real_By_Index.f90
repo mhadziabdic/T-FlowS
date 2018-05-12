@@ -1,25 +1,25 @@
 !======================================================================!
-  subroutine Sort_Real_By_Index(X,indx,N)
+  subroutine Sort_Real_By_Index(x,indx,n)
 !----------------------------------------------------------------------!
-!   Sorts real array X according to indx.                              !
+!   Sorts real array x according to indx.                              !
 !----------------------------------------------------------------------!
   implicit none
 !-----------------------------[Arguments]------------------------------!
-  real    :: X(N)
-  integer :: N,indx(N)
+  real    :: x(n)
+  integer :: n, indx(n)
 !-------------------------------[Locals]-------------------------------!
   integer           :: i
   real, allocatable :: work(:)
 !======================================================================!
 
-  allocate(work(N)); work=0
+  allocate(work(n)); work=0
 
-  do i=1,N
-    work(indx(i))=X(i)
+  do i=1,n
+    work(indx(i))=x(i)
   end do
 
-  do i=1,N
-    X(i)=work(i)
+  do i=1,n
+    x(i)=work(i)
   end do
 
   deallocate(work)

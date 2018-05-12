@@ -30,7 +30,10 @@
   integer(kind=4), allocatable :: cell_map(:)
   integer(kind=4), allocatable :: bnd_cell_map(:)
   integer(kind=4), allocatable :: face_map(:)
-  integer(kind=4), allocatable :: buf_face_map(:)
+  integer(kind=4), allocatable :: buf_face_map(:)  ! buffer face map
+  integer(kind=4), allocatable :: buf_cell_map(:)  ! buffer cell map
+  integer(kind=4), allocatable :: buf_face_ord(:)  ! buffer face order
+  real, allocatable            :: buf_face_val(:)  ! buffer face values
   integer                      :: cell_map_type
   integer                      :: bnd_cell_map_type
   integer                      :: face_map_type

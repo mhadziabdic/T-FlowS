@@ -1,12 +1,12 @@
 !==============================================================================!
-  subroutine Comm_Mod_Write_Bnd_Real(fh, buffer, disp)
+  subroutine Comm_Mod_Write_Bnd_Real(fh, array, disp)
 !------------------------------------------------------------------------------!
 !   Write distributed boundary-cell-based array.                               !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer :: fh         ! file handle
-  real    :: buffer(:)
+  real    :: array(:)
   integer :: disp       ! displacement in bytes
 !-----------------------------------[Locals]-----------------------------------!
   integer :: error
@@ -24,7 +24,7 @@
 
   ! Write distributed boundary cell data 
   call Mpi_File_Write(fh,                 &
-                      buffer,             &
+                      array,              &
                       nb_s,               &   
                       MPI_DOUBLE,         &   
                       MPI_STATUS_IGNORE,  &

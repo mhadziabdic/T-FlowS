@@ -1,12 +1,12 @@
 !==============================================================================!
-  subroutine Comm_Mod_Read_Cell_Real(fh, buffer, disp)
+  subroutine Comm_Mod_Read_Cell_Real(fh, array, disp)
 !------------------------------------------------------------------------------!
 !   Sequential version of reading a "distributed" cell-based array.            !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer :: fh         ! file handle
-  real    :: buffer(:)
+  real    :: array(:)
   integer :: disp       ! displacement in bytes
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c
@@ -17,7 +17,7 @@
 
   ! Read "distributed" cell data 
   do c = 1, nc_t
-    read(fh) buffer(c)
+    read(fh) array(c)
   end do
 
   disp = disp + nc_t * SIZE_REAL

@@ -1,12 +1,12 @@
 !==============================================================================!
-  subroutine Comm_Mod_Read_Cell_Real(fh, buffer, disp)
+  subroutine Comm_Mod_Read_Cell_Real(fh, array, disp)
 !------------------------------------------------------------------------------!
 !   Read distributed cell-based array.                                         !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer :: fh         ! file handle
-  real    :: buffer(:)
+  real    :: array(:)
   integer :: disp       ! displacement
 !-----------------------------------[Locals]-----------------------------------!
   integer :: error
@@ -24,7 +24,7 @@
 
   ! Read distributed cell data 
   call Mpi_File_Read(fh,                 &
-                     buffer,             &
+                     array,              &
                      nc_s,               &   
                      MPI_DOUBLE,         &   
                      MPI_STATUS_IGNORE,  &

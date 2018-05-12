@@ -1,12 +1,12 @@
 !==============================================================================!
-  subroutine Comm_Mod_Read_Bnd_Real(fh, buffer, disp)
+  subroutine Comm_Mod_Read_Bnd_Real(fh, array, disp)
 !------------------------------------------------------------------------------!
 !   Read distributed boundary-cell-based array.                                !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer :: fh         ! file handle
-  real    :: buffer(:)
+  real    :: array(:)
   integer :: disp       ! displacement in bytes
 !-----------------------------------[Locals]-----------------------------------!
   integer :: error
@@ -24,7 +24,7 @@
 
   ! Read distributed boundary cell data 
   call Mpi_File_Read(fh,                 &
-                     buffer,             &
+                     array,              &
                      nb_s,               &   
                      MPI_DOUBLE,         &   
                      MPI_STATUS_IGNORE,  &

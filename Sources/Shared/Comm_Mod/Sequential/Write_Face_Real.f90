@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine Comm_Mod_Write_Bnd_Real(fh, array, disp)
+  subroutine Comm_Mod_Write_Face_Real(fh, array, disp)
 !------------------------------------------------------------------------------!
-!   Sequential version of writing a "distributed" boundary-cell-based array.   !
+!   Sequential version of writing a "distributed" face-based array.            !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -9,14 +9,14 @@
   real    :: array(:)
   integer :: disp       ! displacement in bytes
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c
+  integer :: s
 !==============================================================================!
 
-  ! Write "distributed" boundary cell data 
-  do c = 1, nb_t
-    write(9) array(c)
+  ! Write "distributed" face data 
+  do s = 1, nf_t
+    write(9) array(s)
   end do
 
-  disp = disp + nb_t * SIZE_REAL
+  disp = disp + nf_t * SIZE_REAL
 
   end subroutine

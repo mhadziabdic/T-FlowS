@@ -16,7 +16,9 @@
 !==============================================================================!
 
   !------------------------------------------------------------------------!
+  !                                                                        !
   !   For run with one processor, no needd to read the map, just form it   !
+  !                                                                        !
   !------------------------------------------------------------------------!
   if(n_proc < 2) then
 
@@ -48,7 +50,9 @@
     end do
   
   !-------------------------------------------------!
+  !                                                 !
   !   For parallel runs, you need to read the map   !
+  !                                                 !
   !-------------------------------------------------!
   else
 
@@ -56,9 +60,7 @@
     open(9, file=name_in)
     if(this_proc < 2) print *, '# Now reading the file:', name_in
 
-    !-----------------------!
-    !   Load cell mapping   !
-    !-----------------------!
+    ! Read map sizes
     read(9, '(4i9)') nc_s, nb_s, nf_s, nbf_s
 
     nc_t  = nc_s
@@ -72,8 +74,12 @@
     allocate(bnd_cell_map(nb_s));   bnd_cell_map = 1
     allocate(face_map    (nf_s));   face_map     = 1
     allocate(buf_face_map(nbf_s));  buf_face_map = 1 
+    allocate(buf_face_ord(nbf_s));  buf_face_ord = 0
+    allocate(buf_face_val(nbf_s));  buf_face_ord = 0.0
 
-    ! Read cell map
+    !-------------------!
+    !   Read cell map   !
+    !-------------------!
     do c = 1, nc_s
       read(9, '(i9)') cell_map(c)
     end do
@@ -81,7 +87,9 @@
     ! Correct cell mapping to start from zero
     cell_map = cell_map - 1
 
-    ! Read boundary cell map
+    !----------------------------!
+    !   Read boundary cell map   !
+    !----------------------------!
     do c = 1, nb_s
       read(9, '(i9)') bnd_cell_map(c)
     end do
@@ -89,7 +97,9 @@
     ! Correct boundary cell mapping to be positive and start from zero
     bnd_cell_map = bnd_cell_map + nb_t
 
-    ! Read face map
+    !-------------------!
+    !   Read face map   !
+    !-------------------!
     do s = 1, nf_s
       read(9, '(i9)') face_map(s)
     end do
@@ -97,13 +107,23 @@
     ! Correct cell mapping to start from zero
     face_map = face_map - 1
 
-    ! Read face map
+    !--------------------------!
+    !   Read buffer face map   !
+    !--------------------------!
     do s = 1, nbf_s
       read(9, '(i9)') buf_face_map(s)
     end do
 
     ! Correct cell mapping to start from zero
     buf_face_map = buf_face_map - 1
+
+    ! Sort buffer face map - important for MPI call, it can't 
+    ! handle maps which are not in increasing order :-(
+    do s = 1, nbf_s
+      buf_face_ord(s) = s
+    end do
+
+    call Sort_Short_Carry_Short(buf_face_map, buf_face_ord, nbf_s, 2)
 
     close(9)
 

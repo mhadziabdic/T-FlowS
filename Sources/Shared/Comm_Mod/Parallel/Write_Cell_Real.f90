@@ -1,12 +1,12 @@
 !==============================================================================!
-  subroutine Comm_Mod_Write_Cell_Real(fh, buffer, disp)
+  subroutine Comm_Mod_Write_Cell_Real(fh, array, disp)
 !------------------------------------------------------------------------------!
 !   Write distributed cell-based array.                                        !
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer :: fh         ! file handle
-  real    :: buffer(:)
+  real    :: array(:)
   integer :: disp       ! displacement
 !-----------------------------------[Locals]-----------------------------------!
   integer :: error
@@ -24,7 +24,7 @@
 
   ! Write distributed cell data 
   call Mpi_File_Write(fh,                 &
-                      buffer,             &
+                      array,              &
                       nc_s,               &   
                       MPI_DOUBLE,         &   
                       MPI_STATUS_IGNORE,  &

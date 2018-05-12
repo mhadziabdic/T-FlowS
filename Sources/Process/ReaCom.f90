@@ -89,8 +89,6 @@
     print *, 'Calling for gravitationa vector'
   call Control_Mod_Gravitational_Vector(grav_x, grav_y, grav_z)
 
-  if(.not. restar) call Allocate_Variables(grid)
-
   if(this_proc < 2) &
     print *, 'Calling for turbulence model'
   call Control_Mod_Turbulence_Model(.true.)

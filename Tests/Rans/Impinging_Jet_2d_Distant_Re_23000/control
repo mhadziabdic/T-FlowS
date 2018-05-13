@@ -3,12 +3,12 @@
  HEAT_TRANSFER    yes
 
  TIME_STEP               0.1
- NUMBER_OF_TIME_STEPS    4000
+ NUMBER_OF_TIME_STEPS    8000
 
 #------------------
 # Saving intervals
 #------------------
- RESULTS_SAVE_INTERVAL    100
+ RESULTS_SAVE_INTERVAL    500
  BACKUP_SAVE_INTERVAL    1000
 
 #-------------------
@@ -83,7 +83,7 @@
 #---------------------
   BOUNDARY_CONDITION    pipe_wall
     TYPE                heat_flux
-    VARIABLES           u     v     w     t     kin   eps      zeta    f22
+    VARIABLES           u     v     w     q     kin   eps      zeta    f22
     VALUES              0.0   0.0   0.0   0.0   0.0   1.0e-3   0.0   0.0
 
   BOUNDARY_CONDITION    symmetry_plane
@@ -98,7 +98,7 @@
 
   BOUNDARY_CONDITION    lower_wall
     TYPE                heat_flux
-    VARIABLES           u     v     w     t     kin   eps      zeta    f22
+    VARIABLES           u     v     w     q     kin   eps      zeta    f22
     VALUES              0.0   0.0   0.0   0.1   0.0   1.0e-3   0.0   0.0
 
   BOUNDARY_CONDITION    pipe_inlet

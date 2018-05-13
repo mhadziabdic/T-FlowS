@@ -60,6 +60,7 @@
   include 'Comm_Mod/Parallel/Read_Bnd_Real.f90'
   include 'Comm_Mod/Parallel/Read_Cell_Real.f90'
   include 'Comm_Mod/Parallel/Read_Face_Real.f90'
+  include 'Comm_Mod/Parallel/Read_Real.f90'
   include 'Comm_Mod/Parallel/Read_Text.f90'
   include 'Comm_Mod/Parallel/Start.f90'
   include 'Comm_Mod/Parallel/Wait.f90'
@@ -67,6 +68,7 @@
   include 'Comm_Mod/Parallel/Write_Bnd_Real.f90'
   include 'Comm_Mod/Parallel/Write_Cell_Real.f90'
   include 'Comm_Mod/Parallel/Write_Face_Real.f90'
+  include 'Comm_Mod/Parallel/Write_Real.f90'
   include 'Comm_Mod/Parallel/Write_Text.f90'
 
   end module

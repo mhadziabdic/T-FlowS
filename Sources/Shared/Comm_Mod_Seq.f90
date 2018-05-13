@@ -28,6 +28,8 @@
   integer :: nb_t   ! total number of bundary cells
   integer :: nf_t   ! total number of faces
 
+  real, allocatable :: buf_face_sgn(:)  ! buffer face sign  
+
   contains
 
   include 'Comm_Mod/Sequential/Allocate_Memory.f90'
@@ -48,6 +50,7 @@
   include 'Comm_Mod/Sequential/Read_Bnd_Real.f90'
   include 'Comm_Mod/Sequential/Read_Cell_Real.f90'
   include 'Comm_Mod/Sequential/Read_Face_Real.f90'
+  include 'Comm_Mod/Sequential/Read_Real.f90'
   include 'Comm_Mod/Sequential/Read_Text.f90'
   include 'Comm_Mod/Sequential/Start.f90'
   include 'Comm_Mod/Sequential/Wait.f90'
@@ -55,6 +58,7 @@
   include 'Comm_Mod/Sequential/Write_Bnd_Real.f90'
   include 'Comm_Mod/Sequential/Write_Cell_Real.f90'
   include 'Comm_Mod/Sequential/Write_Face_Real.f90'
+  include 'Comm_Mod/Sequential/Write_Real.f90'
   include 'Comm_Mod/Sequential/Write_Text.f90'
 
   end module

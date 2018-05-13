@@ -111,9 +111,9 @@
             tm_p(i) = tm_p(i) + t % n(c2) 
             v1_p(i) = v1_p(i) + grid % zc(c1)
             v2_p(i) = v2_p(i) + sqrt(tau_wall(c1))
-            v3_p(i) = v3_p(i) + (Cmu**0.25 * Kin % n(c1)**0.5) 
-            v4_p(i) = v4_p(i) + Kin % n(c1)
-            v5_p(i) = v5_p(i) + Eps % n(c1)
+            v3_p(i) = v3_p(i) + (c_mu**0.25 * kin % n(c1)**0.5) 
+            v4_p(i) = v4_p(i) + kin % n(c1)
+            v5_p(i) = v5_p(i) + eps % n(c1)
             v6_p(i) = v6_p(i) + t % q(c2)
             n_count(i)= n_count(i) + 1
           end if

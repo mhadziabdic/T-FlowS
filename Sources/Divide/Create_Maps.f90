@@ -93,7 +93,7 @@
             end if
             if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
               n_buf_sub=n_buf_sub+1
-              global_face_buf(n_buf_sub) = s  ! map to global face number
+              global_face_buf(n_buf_sub) = -s  ! map to global face number
             end if
           end if  ! c2 > 0
         end do    ! through sides

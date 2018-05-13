@@ -76,6 +76,7 @@
     allocate(buf_face_map(nbf_s));  buf_face_map = 1 
     allocate(buf_face_ord(nbf_s));  buf_face_ord = 0
     allocate(buf_face_val(nbf_s));  buf_face_ord = 0.0
+    allocate(buf_face_sgn(nbf_s));  buf_face_sgn = 0.0
 
     !-------------------!
     !   Read cell map   !
@@ -112,6 +113,12 @@
     !--------------------------!
     do s = 1, nbf_s
       read(9, '(i9)') buf_face_map(s)
+      if(buf_face_map(s) < 0) then
+        buf_face_sgn(s) = -1.0
+        buf_face_map(s) = -buf_face_map(s)
+      else
+        buf_face_sgn(s) =  1.0
+      end if
     end do
 
     ! Correct cell mapping to start from zero

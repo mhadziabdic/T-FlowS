@@ -12,7 +12,6 @@
 ! use Tokenizer_Mod
   use Grid_Mod
   use Control_Mod
-  use Work_Mod,    only: phi => r_cell_01
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -131,14 +130,10 @@
   call Comm_Mod_Read_Face_Real(fh, flux( 1: nf_s + nbf_s), disp)
 
   ! Fix signs for the face fluxes back
-  do c = 1, grid % n_cells
-    phi(c) = cell_map(c)  ! holds global cell numbah I trully hope
-  end do
-  call Comm_Mod_Exchange(grid, phi)
   do s = nf_s + 1, nf_s + nbf_s
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if(phi(c1) > phi(c2)) flux(s) = -flux(s)
+    flux(s) = flux(s) * buf_face_sgn(s-nf_s)
   end do
 
 !TEST  do s = 1, nf_s

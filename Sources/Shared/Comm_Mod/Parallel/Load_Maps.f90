@@ -33,6 +33,7 @@
     allocate(cell_map    (nc_s))
     allocate(bnd_cell_map(nb_s))
     allocate(face_map    (nf_s))
+    allocate(buf_face_map(nbf_s))
 
     ! -1 is to start from zero, as needed by MPI functions
     do c = 1, nc_t

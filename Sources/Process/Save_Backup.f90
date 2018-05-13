@@ -4,12 +4,11 @@
 !   Writes backup files. name.backup                                          !
 !----------------------------------[Modules]-----------------------------------!
   use Name_Mod, only: problem_name
-! use Const_Mod
+  use Const_Mod
   use Flow_Mod
 ! use les_mod
   use Comm_Mod
 ! use rans_mod
-! use Tokenizer_Mod
   use Grid_Mod
 ! use Control_Mod
 !------------------------------------------------------------------------------!
@@ -20,7 +19,7 @@
   character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: name_out, store_name, vn
-  integer           :: fh, error, vs, disp, s, c1, c2, c
+  integer           :: fh, error, vs, d, s, c
 !==============================================================================!
 
   store_name = problem_name
@@ -36,26 +35,16 @@
   ! Create new types
   call Comm_Mod_Create_New_Types()
 
-  disp = 0
+  ! Initialize displacement
+  d = 0
 
   !-----------------------------------------------------------------------!
   !   Save cell-centre coordinates.  Could be useful for interpolations   !
   !-----------------------------------------------------------------------! 
-  vn = 'x_coordinate';            call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = (nc_t + nb_t) * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Cell_Real(fh, grid % xc( 1: nc_s), disp)
-  call Comm_Mod_Write_Bnd_Real (fh, grid % xc(-nb_s:-1), disp)
-
-  vn = 'y_coordinate';            call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = (nc_t + nb_t) * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Cell_Real(fh, grid % yc( 1: nc_s), disp)
-  call Comm_Mod_Write_Bnd_Real (fh, grid % yc(-nb_s:-1), disp)
-
-  vn = 'z_coordinate';            call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = (nc_t + nb_t) * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Cell_Real(fh, grid % zc( 1: nc_s), disp)
-  call Comm_Mod_Write_Bnd_Real (fh, grid % zc(-nb_s:-1), disp)
-
+  call Write_Backup_3_Cell_Bnd(fh, d, 'coordinates',   & 
+                               grid % xc(-nb_s:nc_s),  &
+                               grid % yc(-nb_s:nc_s),  &
+                               grid % zc(-nb_s:nc_s))
   !---------------!
   !               !
   !   Save data   !
@@ -63,62 +52,57 @@
   !---------------! 
 
   ! Time
-  vn = 'time_step'; call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = SIZE_INT;    call Comm_Mod_Write_Int (fh, vs, disp)
-  vs = time_step;   call Comm_Mod_Write_Int (fh, vs, disp)
+  call Write_Backup_1_Int(fh, d, 'time_step', time_step)
 
-  ! Velocity 
-  vn = 'velocity';                    call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = 3 * (nc_t + nb_t) * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Cell_Real(fh, u % n( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, v % n( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, w % n( 1: nc_s), disp)
-  call Comm_Mod_Write_Bnd_Real (fh, u % n(-nb_s:-1), disp)
-  call Comm_Mod_Write_Bnd_Real (fh, v % n(-nb_s:-1), disp)
-  call Comm_Mod_Write_Bnd_Real (fh, w % n(-nb_s:-1), disp)
-
-  vn = 'velocity_old';       call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = 3 * nc_t * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Cell_Real(fh, u % o( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, v % o( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, w % o( 1: nc_s), disp)
-
-  vn = 'velocity_advection'; call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = 3 * nc_t * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Cell_Real(fh, u % a( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, v % a( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, w % a( 1: nc_s), disp)
-
-  vn = 'velocity_advection_old'; call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = 3 * nc_t * SIZE_REAL;     call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Cell_Real(fh, u % a_o( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, v % a_o( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, w % a_o( 1: nc_s), disp)
-
-  vn = 'velocity_diffusion_old'; call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = 3 * nc_t * SIZE_REAL;     call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Cell_Real(fh, u % d_o( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, v % d_o( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, w % d_o( 1: nc_s), disp)
-
-  ! Pressure
-  vn = 'pressure';                    call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = 2 * (nc_t + nb_t) * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Cell_Real(fh, p  % n( 1: nc_s), disp)
-  call Comm_Mod_Write_Cell_Real(fh, pp % n( 1: nc_s), disp)
-  call Comm_Mod_Write_Bnd_Real (fh, p  % n(-nb_s:-1), disp)
-  call Comm_Mod_Write_Bnd_Real (fh, pp % n(-nb_s:-1), disp)
+  !--------------!
+  !   Velocity   !
+  !--------------!
+  call Write_Backup_3_Cell_Bnd(fh, d, 'vel',      u % n(-nb_s:nc_s),  &
+                                                  v % n(-nb_s:nc_s),  &
+                                                  w % n(-nb_s:nc_s))
+  call Write_Backup_3_Cell(fh, d, 'vel_old',      u % o  (1:nc_s),    &
+                                                  v % o  (1:nc_s),    &
+                                                  w % o  (1:nc_s))
+  call Write_Backup_3_Cell(fh, d, 'vel_adv',      u % a  (1:nc_s),    &
+                                                  v % a  (1:nc_s),    &
+                                                  w % a  (1:nc_s))
+  call Write_Backup_3_Cell(fh, d, 'vel_adv_old',  u % a_o(1:nc_s),    &
+                                                  v % a_o(1:nc_s),    &
+                                                  w % a_o(1:nc_s))
+  call Write_Backup_3_Cell(fh, d, 'vel_diff_old', u % d_o(1:nc_s),    &
+                                                  v % d_o(1:nc_s),    &
+                                                  w % d_o(1:nc_s))
+  !--------------------------------------!
+  !   Pressure and pressure correction   !
+  !--------------------------------------!
+  call Write_Backup_1_Cell_Bnd(fh, d, 'press',       p  % n(-nb_s:nc_s))
+  call Write_Backup_1_Cell_Bnd(fh, d, 'press_corr',  pp % n(-nb_s:nc_s))
 
   !----------------------------------------------------!
   !   Mass flow rates (ask Egor if name is correct?)   !
   !----------------------------------------------------!
+  call Write_Backup_1_Face(fh, d, 'mass_flow_rate', flux(1:nf_s+nbf_s))
 
-  ! Change the sign of flux where necessary
-  do s = nf_s + 1, nf_s + nbf_s
-    c1 = grid % faces_c(1,s)
-    c2 = grid % faces_c(2,s)
-    flux(s) = flux(s) * buf_face_sgn(s-nf_s)
-  end do
+  !--------------!
+  !   Etnhalpy   !
+  !--------------!
+  if(heat_transfer == YES) then
+    call Write_Backup_1_Cell_Bnd(fh, d, 'temp',      t  % n(-nb_s:nc_s))
+    call Write_Backup_1_Cell_Bnd(fh, d, 'heat_flux', t  % q(-nb_s:nc_s))
+    call Write_Backup_1_Cell(fh, d, 'temp_old',      t  % o  (1:nc_s))
+    call Write_Backup_1_Cell(fh, d, 'temp_adv',      t  % a  (1:nc_s))
+    call Write_Backup_1_Cell(fh, d, 'temp_adv_old',  t  % a_o(1:nc_s))
+    call Write_Backup_1_Cell(fh, d, 'temp_diff_old', t  % d_o(1:nc_s))
+    call Write_Backup_1_Cell(fh, d, 'temp_cros',     t  % c  (1:nc_s))
+    call Write_Backup_1_Cell(fh, d, 'temp_cros_old', t  % c_o(1:nc_s))
+  end if
+
+  ! Close backup file
+  call Comm_Mod_Close_File(fh)
+
+  problem_name = store_name
+
+  end subroutine
 
 !TEST  ! Test face buffers
 !TEST  do s = 1, grid % n_faces
@@ -127,22 +111,3 @@
 !TEST                    1.0 * grid % zf(s)
 !TEST    print '(a6,i4.4,a4,f18.3)', ' flux(', s, ') = ', flux(s)
 !TEST  end do
-
-  ! Perform the actual saving
-  vn = 'mass_flow_rate';   call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = (nf_t) * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
-  call Comm_Mod_Write_Face_Real(fh, flux( 1: nf_s + nbf_s), disp)
-
-  ! Fix signs for the face fluxes back
-  do s = nf_s + 1, nf_s + nbf_s
-    c1 = grid % faces_c(1,s)
-    c2 = grid % faces_c(2,s)
-    flux(s) = flux(s) * buf_face_sgn(s-nf_s)
-  end do
-
-  ! Close backup file
-  call Comm_Mod_Close_File(fh)
-
-  problem_name = store_name
-
-  end subroutine

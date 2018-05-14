@@ -26,7 +26,7 @@
   allocate (b(grid % n_cells));  b=0.
 
   ! Working arrays
-  call Work_Mod_Allocate_Real_Cells(grid, 20)
+  call Work_Mod_Allocate_Real_Cells(grid, 30)
   call Work_Mod_Allocate_Real_Faces(grid,  1)
   call Work_Mod_Allocate_Real_Nodes(grid,  1)
 

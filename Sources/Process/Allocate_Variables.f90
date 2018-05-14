@@ -110,6 +110,7 @@
 
     if(turbulence_model == REYNOLDS_STRESS_MODEL) then
       call Var_Mod_Allocate_Solution('F22', f22, grid)
+      call Var_Mod_Allocate_Gradients(f22)
     else
       call Var_Mod_Allocate_New_Only('F22', f22, grid)
     end if

@@ -2,7 +2,10 @@
   subroutine Source_Ebm(grid, name_phi)
 !------------------------------------------------------------------------------!
 !   Calculate source terms for transport equations for Re stresses and         !
-!   dissipation for 'EBM'.                                                     !  
+!   dissipation for 'EBM'.                                                     !
+!   Following paper "Recent progress in the development of                     !
+!   the Elliptic Blending Reynolds-stress model"                               !
+!   DOI: doi.org/10.1016/j.ijheatfluidflow.2014.09.002                         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Const_Mod
@@ -10,9 +13,34 @@
   use rans_mod
   use Grid_Mod
   use Grad_Mod
-  use Work_Mod, only: f22_x => r_cell_01,  &
-                      f22_y => r_cell_02,  &
-                      f22_z => r_cell_03
+  use Work_Mod, only: n1n1                  => r_cell_01, &
+                      n2n2                  => r_cell_02, &
+                      n3n3                  => r_cell_03, &
+                      n1n2                  => r_cell_04, &
+                      n1n3                  => r_cell_05, &
+                      n2n3                  => r_cell_06, &
+                      mag_f22               => r_cell_07, &
+                      eps_2_k               => r_cell_08, &
+                      alpha3                => r_cell_09, &
+                      b11                   => r_cell_10, &
+                      b22                   => r_cell_11, &
+                      b33                   => r_cell_12, &
+                      b12                   => r_cell_13, &
+                      b13                   => r_cell_14, &
+                      b23                   => r_cell_15, &
+                      s11                   => r_cell_16, &
+                      s22                   => r_cell_17, &
+                      s33                   => r_cell_18, &
+                      s12                   => r_cell_19, &
+                      s13                   => r_cell_20, &
+                      s23                   => r_cell_21, &
+                      v12                   => r_cell_22, &
+                      v13                   => r_cell_23, &
+                      v23                   => r_cell_24, &
+                      b_kl_b_kl_sq          => r_cell_25, &
+                      b_lm_s_lm             => r_cell_26, &
+                      u_k_u_l_n_k_n_l       => r_cell_27, &
+                      term_c3_1             => r_cell_28
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -20,276 +48,307 @@
   character(len=*) :: name_phi
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, s, c1, c2
-  real    :: prod, diss, phi_hom, phi_wall, mag, phi_tot, Esor
-  real    :: b11, b22, b33, b12, b13, b21, b31, b23, b32
-  real    :: s11, s22, s33, s12, s13, s21, s31, s23, s32
-  real    :: v11, v22, v33, v12, v13, v21, v31, v23, v32
-  real    :: n1, n2, n3, b_mn_b_mn, b_lk_s_lk, c_1e1, uu_nn
-  real    :: diss_wall, diss_hom, r13
+  real    :: prod_and_coriolis, phi_hom, phi_wall, Esor
+  real    :: c_1e1
+  real    :: stress
 !==============================================================================!
-
-  call Grad_Mod_For_Phi(grid, f22 % n, 1, f22_x, .true.)             ! df22/dx
-  call Grad_Mod_For_Phi(grid, f22 % n, 2, f22_y, .true.)             ! df22/dy
-  call Grad_Mod_For_Phi(grid, f22 % n, 3, f22_z, .true.)             ! df22/dz
+!   Dimensions:                                                                !
+!   Production    p_kin    [m^2/s^3]   | Rate-of-strain  shear     [1/s]       !
+!   Dissipation   eps % n  [m^2/s^3]   | Turb. visc.     vis_t     [kg/(m*s)]  !
+!   Wall shear s. tau_wall [kg/(m*s^2)]| Dyn visc.       viscosity [kg/(m*s)]  !
+!   Density       density  [kg/m^3]    | Turb. kin en.   kin % n   [m^2/s^2]   !
+!   Cell volume   vol      [m^3]       | Length          lf        [m]         !
+!   left hand s.  A        [kg/s]      | right hand s.   b         [kg*m^2/s^4]!
+!------------------------------------------------------------------------------!
+!------------------------------------------------------------------------------!
 
   call Time_And_Length_Scale(grid)
 
-  r13 = ONE_THIRD
+  ! no need to compute this for EPS -> can be improved
+  kin % n(1:) = max(0.5*(uu % n(1:) + vv % n(1:) + ww % n(1:)), TINY)
+  ! P_k = 0.5 P_ii = - u_i u_k dU_i/dx_k
+  p_kin(1:) = max(-( uu % n(1:) * u % x(1:)  &
+                   + uv % n(1:) * u % y(1:)  &
+                   + uw % n(1:) * u % z(1:)  &
+                   + uv % n(1:) * v % x(1:)  &
+                   + vv % n(1:) * v % y(1:)  &
+                   + vw % n(1:) * v % z(1:)  &
+                   + uw % n(1:) * w % x(1:)  &
+                   + vw % n(1:) * w % y(1:)  &
+                   + ww % n(1:) * w % z(1:)), TINY)
+
+  ! |df22/x_j|
+  mag_f22(1:) = max( f22 % x(1:)**2. + f22 % y(1:)**2. + f22 % z(1:)**2., TINY )
+
+  ! formula C.9 (n_i never appears individually, only as n_i * n_j)
+  n1n1(1:) = f22 % x(1:)**2.         / mag_f22(1:)
+  n2n2(1:) = f22 % y(1:)**2.         / mag_f22(1:)
+  n3n3(1:) = f22 % z(1:)**2.         / mag_f22(1:)
+  n1n2(1:) = f22 % x(1:)*f22 % y(1:) / mag_f22(1:)
+  n1n3(1:) = f22 % x(1:)*f22 % z(1:) / mag_f22(1:)
+  n2n3(1:) = f22 % y(1:)*f22 % z(1:) / mag_f22(1:)
+
+  ! frequently used expressions
+  alpha3(1:)  = f22 % n(1:)**3.
+  eps_2_k(1:) = eps % n(1:) / kin % n(1:)
+
+  ! formula C.4
+  b11(1:) = uu % n(1:)/(2.*kin % n(1:)) - ONE_THIRD 
+  b22(1:) = vv % n(1:)/(2.*kin % n(1:)) - ONE_THIRD
+  b33(1:) = ww % n(1:)/(2.*kin % n(1:)) - ONE_THIRD
+  b12(1:) = uv % n(1:)/(2.*kin % n(1:))   
+  b13(1:) = uw % n(1:)/(2.*kin % n(1:))    
+  b23(1:) = vw % n(1:)/(2.*kin % n(1:))    
+
+  ! formula C.5
+  s11(1:) = u % x(1:) 
+  s22(1:) = v % y(1:) 
+  s33(1:) = w % z(1:) 
+  s12(1:) = 0.5*(u % y(1:) + v % x(1:))
+  s13(1:) = 0.5*(u % z(1:) + w % x(1:))
+  s23(1:) = 0.5*(v % z(1:) + w % y(1:))
+
+  ! formula C.6
+  v12(1:) = 0.5*(u % y(1:) - v % x(1:)) - omega_z
+  !v21 = -v12
+  v13(1:) = 0.5*(u % z(1:) - w % x(1:)) + omega_y
+  !v31 = -v13
+  v23(1:) = 0.5*(v % z(1:) - w % y(1:)) - omega_x
+  !v32 = -v23
+
+  ! (C.3 1st term without "-" and *b_ij)
+  term_c3_1(1:) = g1*eps % n(1:) + g1_star*p_kin(1:)
+
+  ! for formula C.3 (b_kl_b_kl never appears without sqrt)
+  b_kl_b_kl_sq(1:) = sqrt(b11(1:)**2. + b22(1:)**2. + b33(1:)**2. &
+    + 2.*(b12(1:)**2. + b13(1:)**2. + b23(1:)**2.))
+
+  ! for formula C.3
+  b_lm_s_lm(1:) = b11(1:)*s11(1:) + b22(1:)*s22(1:) + b33(1:)*s33(1:) &
+    + 2.*(b12(1:)*s12(1:) + b13(1:)*s13(1:) + b23(1:)*s23(1:))
+
+  ! for formula C.7
+  u_k_u_l_n_k_n_l(1:) = uu % n(1:)*n1n1(1:) + vv % n(1:)*n2n2(1:) &
+    + ww % n(1:)*n3n3(1:) + 2.*uv % n(1:)*n1n2(1:) + 2.*uw % n(1:)*n1n3(1:) &
+    + 2.*vw % n(1:)*n2n3(1:)
+
   do  c = 1, grid % n_cells
-    kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), 1.0e-12)
-    p_kin(c)   = max(-(  uu % n(c) * u % x(c)  &
-                       + uv % n(c) * u % y(c)  &
-                       + uw % n(c) * u % z(c)  &
-                       + uv % n(c) * v % x(c)  &
-                       + vv % n(c) * v % y(c)  &
-                       + vw % n(c) * v % z(c)  &
-                       + uw % n(c) * w % x(c)  &
-                       + vw % n(c) * w % y(c)  &
-                       + ww % n(c) * w % z(c)), 1.0e-12)                
-  
-    mag = max(1.0e-12, sqrt(  f22_x(c)**2 + f22_y(c)**2 + f22_z(c)**2))       
-    n1 = f22_x(c) / mag 
-    n2 = f22_y(c) / mag 
-    n3 = f22_z(c) / mag 
+!------------------------------------------------------------------------------!
+!   uu stress
+!------------------------------------------------------------------------------!
+    if (name_phi == 'UU') then
+      ! useful vars
+      stress = max(uu % n(c), TINY)
 
-    b11 = uu % n(c)/(2.0*kin % n(c)) - r13 
-    b22 = vv % n(c)/(2.0*kin % n(c)) - r13
-    b33 = ww % n(c)/(2.0*kin % n(c)) - r13
-    b12 = uv % n(c)/(2.0*kin % n(c))   
-    b21 = b12
-    b13 = uw % n(c)/(2.0*kin % n(c))    
-    b31 = b13
-    b23 = vw % n(c)/(2.0*kin % n(c))    
-    b32 = b23
-    
-    s11 = u % x(c) 
-    s22 = v % y(c) 
-    s33 = w % z(c) 
-    s12 = 0.5*(u % y(c)+v % x(c)) 
-    s21 = s12
-    s13 = 0.5*(u % z(c)+w % x(c)) 
-    s31 = s13 
-    s23 = 0.5*(v % z(c)+w % y(c)) 
-    s32 = s23 
-
-    v11 = 0.0
-    v22 = 0.0
-    v33 = 0.0
-    v12 = 0.5*(u % y(c)-v % x(c)) - omega_z
-    v21 = -v12 + omega_z
-    v13 = 0.5*(u % z(c)-w % x(c)) + omega_y
-    v31 = -v13 - omega_y
-    v23 = 0.5*(v % z(c)-w % y(c)) - omega_x
-    v32 = -v23 + omega_x
-
-    b_mn_b_mn = b11*b11 + b22*b22 + b33*b33 + 2.0*(b12*b12+b13*b13+b23*b23)
-    b_lk_s_lk = b11*s11 + b22*s22 + b33*s33 + 2.0*(b12*s12+b13*s13+b23*s23)
-    uu_nn     = (uu % n(c)*n1*n1+uv % n(c)*n1*n2+uw % n(c)*n1*n3 &
-               + uv % n(c)*n2*n1+vv % n(c)*n2*n2+vw % n(c)*n2*n3 &
-               + uw % n(c)*n3*n1+vw % n(c)*n3*n2+ww % n(c)*n3*n3)
-
-
-    ! uu stress
-    if(name_phi == 'UU') then
-      phi_wall = -5.0*eps % n(c)/kin % n(c) * &
-                 (-uu % n(c)+2.0*uu % n(c)*n1*n1 + 2.0*uv % n(c)*n1*n2 + 2.0*uw % n(c)*n1*n3 &
-                 - 0.5*(n1*n1+1.0)*uu_nn)
-
-      phi_hom = -g1*eps % n(c)*(-r13) - g1_star*p_kin(c)*(-r13) +  &
-                 (g3-g3_star*sqrt(b_mn_b_mn))*kin % n(c)*s11 + &
-                 g4*kin%n(c)*(2.0*(b11*s11+b12*s12+b13*s13)-2.0/3.0 * b_lk_s_lk) +&
-                 g5*kin%n(c)*(2.0*(b11*v11+b12*v12+b13*v13))
-
-
-      prod = -2.0*(uu%n(c)*u % x(c) + uv % n(c)*u % y(c) + uw % n(c)*u % z(c))  &
-             -2.0*omega_y*2.0*uw%n(c) + 2.0*omega_z*2.0*uv%n(c)   
-
-
-      diss_wall = uu % n(c)/kin % n(c) * eps % n(c) 
-      diss_hom  = 2.0/3.0 * eps % n(c)
-
-      b(c) = b(c) + (max(prod,0.0) + (1.0-f22 % n(c)*f22 % n(c))*phi_wall +&
-             f22 % n(c)*f22 % n(c)*(phi_hom))*grid % vol(c)
-
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + (max(-prod,0.0)/max(uu%n(c),1.0e-12) + (1.0-f22%n(c)*f22%n(c))*&
-                      6.0*eps%n(c)/kin%n(c) +&         
-                      f22%n(c)*f22%n(c)*(diss_hom/max(uu%n(c),1.0e-12)+g1*eps%n(c)/(2.0*kin%n(c))&
-                      +g1_star*p_kin(c)/(2.0*kin%n(c))))*grid % vol(c)
-
-    ! vv stress
-    else if(name_phi == 'VV') then
-      phi_wall = -5.0*eps % n(c)/kin % n(c) * &
-                 (-vv % n(c)+2.0*uv % n(c)*n2*n1 + 2.0*vv % n(c)*n2*n2 + 2.0*vw % n(c)*n2*n3 &
-                 - 0.5*(n2*n2+1.0)*uu_nn)
-
-      phi_hom =  -g1*eps % n(c)*(-r13) - g1_star*p_kin(c)*(-r13) +  &
-                  (g3-g3_star*sqrt(b_mn_b_mn))*kin % n(c)*s22 + &
-                 g4*kin%n(c)*(2.0*(b21*s21+b22*s22+b23*s23)-2.0/3.0 * b_lk_s_lk) +&
-                 g5*kin%n(c)*(2.0*(b21*v21+b22*v22+b23*v23))
-
-      prod = -2.0*(uv % n(c)*v % x(c) + vv%n(c)*v % y(c) + vw % n(c)*v % z(c))  &
-             +2.0*omega_x*2.0*vw%n(c) - 2.0*omega_z*2.0*uw%n(c)   
-
-
-      phi_tot = (1.0-f22 % n(c)*f22 % n(c))*phi_wall &
-               + f22 % n(c)*f22 % n(c)*phi_hom 
-
-      diss_wall = vv % n(c)/kin % n(c) * eps % n(c) 
-      diss_hom  = 2.0/3.0 * eps % n(c)
-
-      b(c) = b(c) + (max(prod,0.0) + (1.0-f22 % n(c)*f22 % n(c))*phi_wall +&
-             f22 % n(c)*f22 % n(c)*(phi_hom))*grid % vol(c)
-
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + (max(-prod,0.0)/max(vv%n(c),1.0e-12) + (1.0-f22%n(c)*f22%n(c))*&
-                      6.0*eps%n(c)/kin%n(c) &         
-                    + f22%n(c)*f22%n(c)*(diss_hom/max(vv%n(c),1.0e-12)+g1*eps%n(c)/(2.0*kin%n(c))&
-                    +g1_star*p_kin(c)/(2.0*kin%n(c))))*grid % vol(c)
-
-    ! ww stress
-    else if(name_phi == 'WW') then
-      phi_wall = -5.0*eps % n(c)/kin % n(c) * &
-                 (-ww % n(c)+2.0*uw % n(c)*n3*n1 + 2.0*vw % n(c)*n3*n2 + 2.0*ww % n(c)*n3*n3 &
-                 - 0.5*(n3*n3+1.0)*uu_nn)
-
-      phi_hom = -g1*eps % n(c)*(-r13) - g1_star*p_kin(c)*(-r13) +  &
-                 (g3-g3_star*sqrt(b_mn_b_mn))*kin % n(c)*s33 + &
-                 g4*kin%n(c)*(2.0*(b31*s31+b32*s32+b33*s33)-2.0/3.0 * b_lk_s_lk) +&
-                 g5*kin%n(c)*(2.0*(b31*v31+b32*v32+b33*v33))
-
-      prod = -2.0*(uw % n(c)*w % x(c) + vw % n(c)*w % y(c) + ww%n(c)*w % z(c))  &
-             -2.0*omega_x*2.0*vw%n(c) + 2.0*omega_y*2.0*uw%n(c) 
-
-      phi_tot = (1.0-f22 % n(c)*f22 % n(c))*phi_wall &
-               + f22 % n(c)*f22 % n(c)*phi_hom 
-
-      diss_wall = vv % n(c)/kin % n(c) * eps % n(c) 
-      diss_hom  = 2.0/3.0 * eps % n(c)
-
-      b(c) = b(c) + (max(prod,0.0) + (1.0-f22 % n(c)*f22 % n(c))*phi_wall +&
-             f22 % n(c)*f22 % n(c)*(phi_hom))*grid % vol(c)
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + (max(-prod,0.0)/max(ww%n(c),1.0e-12)+(1.0-f22%n(c)*f22%n(c))*&
-                      6.0*eps%n(c)/kin%n(c)          &
-                    + f22%n(c)*f22%n(c)*(diss_hom/max(ww%n(c),1.0e-12)+g1*eps%n(c)/(2.0*kin%n(c))&
-                    +g1_star*p_kin(c)/(2.0*kin%n(c))))*grid % vol(c)
-
-    ! uv stress
-    else if(name_phi == 'UV') then
-      phi_wall = -5.0*eps % n(c)/kin % n(c) * &
-                 (-uv % n(c)+uu % n(c)*n2*n1 + uv % n(c)*n2*n2 + uw % n(c)*n2*n3 + &
-                  uv % n(c)*n1*n1 + vv % n(c)*n1*n2 + vw % n(c)*n1*n3   &
-                 - 0.5*n1*n2*uu_nn)
-
-      phi_hom = &
-                 (g3-g3_star*sqrt(b_mn_b_mn))*kin % n(c)*s12 + &
-                 g4*kin%n(c)*(b11*s21+b12*s22+b13*s23 + &
-                              b21*s11+b22*s12+b23*s13) +&
-                 g5*kin%n(c)*(b11*v21+b12*v22+b13*v23 + &
-                              b21*v11+b22*v12+b23*v13)
- 
-      prod = -(uu % n(c)*v % x(c) + uw % n(c)*v % z(c) + uv%n(c)*(v % y(c)+u % x(c)) +&
-               vv % n(c)*u % y(c) + vw % n(c)*u % z(c)) &
-             +2.0*omega_x*uw%n(c) - 2.0*omega_y*vw%n(c) + 2.0*omega_z*(vv%n(c)-uu%n(c))  
-
-      phi_tot = (1.0-f22 % n(c)*f22 % n(c))*phi_wall &
-               + f22 % n(c)*f22 % n(c)*phi_hom 
+      ! formula C.7
+      phi_wall = - 5.*eps_2_k(c) * (  &
+        2.*uu % n(c)*n1n1(c) + 2.*uv % n(c)*n1n2(c) + 2.*uw % n(c)*n1n3(c) &
+        - 0.5*u_k_u_l_n_k_n_l(c)*(n1n1(c) + 1.) &
+        - stress) ! this term is substracted in A later
       
-      diss_wall = uv % n(c)/kin % n(c) * eps % n(c) 
- 
-      b(c) = b(c) + (prod + (1.0-f22 % n(c)*f22 % n(c))*phi_wall +&
-             f22 % n(c)*f22 % n(c)*(phi_hom))*grid % vol(c)
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
-                      6.0*eps%n(c)/kin%n(c)&
-                    + f22%n(c)*f22%n(c)*( &
-                    +g1*eps%n(c)/(2.0*kin%n(c))+g1_star*p_kin(c)/(2.0*kin%n(c))))*grid % vol(c)
+      ! formula C.3 
+      phi_hom = term_c3_1(c) * ONE_THIRD +  &
+        (g3 - g3_star*b_kl_b_kl_sq(c))*kin % n(c)*s11(c) + &
+        (g4*(2.*(b11(c)*s11(c)+b12(c)*s12(c)+b13(c)*s13(c)) &
+          - TWO_THIRDS*b_lm_s_lm(c)) + &
+         g5*(2.*(              b12(c)*v12(c)+b13(c)*v13(c))))*kin % n(c)
 
+      ! P_11 + G_11 (formula C.1) + goes to right hand s. if > 0, on left if < 0
+      prod_and_coriolis = &
+        -2.*(uu % n(c)*u % x(c) + uv % n(c)*u % y(c) + uw % n(c)*u % z(c)) &
+        -2.*omega_y*2.*uw % n(c) + 2.*omega_z*2.*uv % n(c) ! did not check
 
-    ! uw stress
-    else if(name_phi == 'UW') then
-      phi_wall = -5.0*eps % n(c)/kin % n(c) * &
-                 (-uw % n(c)+uu % n(c)*n3*n1 + uv % n(c)*n3*n2 + uw % n(c)*n3*n3 + &
-                  uw % n(c)*n1*n1 + vw % n(c)*n1*n2 + ww % n(c)*n1*n3   &
-                 - 0.5*n1*n3*uu_nn)
+      ! left hand side (C.11 delta_ij)
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + grid % vol(c) * &
+        TWO_THIRDS * alpha3(c) * eps % n(c) / stress
+!------------------------------------------------------------------------------!
+!   vv stress
+!------------------------------------------------------------------------------!
+    elseif (name_phi == 'VV') then
 
+      ! useful vars
+      stress = max(vv % n(c), TINY)
+
+      ! formula C.7
+      phi_wall = - 5.*eps_2_k(c) * (  &
+        2.*uv % n(c)*n1n2(c) + 2.*vv % n(c)*n2n2(c) + 2.*vw % n(c)*n2n3(c)&
+        - 0.5*u_k_u_l_n_k_n_l(c)*(n2n2(c) + 1.) &
+        - stress) ! this term is substracted in A later
+
+      ! formula C.3 
+      phi_hom = term_c3_1(c) * ONE_THIRD +  &
+        (g3 - g3_star*b_kl_b_kl_sq(c))*kin % n(c)*s22(c) + &
+        (g4*(2.*( b12(c)*s12(c)+b22(c)*s22(c)+b23(c)*s23(c)) &
+          - TWO_THIRDS*b_lm_s_lm(c)) + &
+         g5*(2.*(-b12(c)*v12(c)+              b23(c)*v23(c))))*kin % n(c)
+
+      ! P_22 + G_22 (formula C.1) + goes to right hand s. if > 0, on left if < 0
+      prod_and_coriolis = &
+        -2.*(uv % n(c)*v % x(c) + vv % n(c)*v % y(c) + vw % n(c)*v % z(c)) &
+        -2.*omega_x*2.*vw % n(c) + 2.*omega_z*2.*uw % n(c)! did not check
+
+      ! left hand side (C.11 delta_ij)
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + grid % vol(c) * &
+        TWO_THIRDS * alpha3(c) * eps % n(c) / stress
+!------------------------------------------------------------------------------!
+!   ww stress
+!------------------------------------------------------------------------------!
+    elseif (name_phi == 'WW') then
+
+      ! useful vars
+      stress = max(ww % n(c), TINY)
+
+      ! formula C.7
+      phi_wall = - 5.*eps_2_k(c) * (  &
+        2.*uw % n(c)*n1n3(c) + 2.*vw % n(c)*n2n3(c) + 2.*ww % n(c)*n3n3(c)&
+        - 0.5*u_k_u_l_n_k_n_l(c)*(n3n3(c) + 1.) &
+        - stress) ! this term is substracted in A later
+
+      ! formula C.3 
+      phi_hom = term_c3_1(c) * ONE_THIRD +  &
+        (g3 - g3_star*b_kl_b_kl_sq(c))*kin % n(c)*s33(c) + &
+        (g4*(2.*( b13(c)*s13(c)+b23(c)*s23(c)+b33(c)*s33(c)) &
+          - TWO_THIRDS*b_lm_s_lm(c)) + &
+         g5*(2.*(-b13(c)*v13(c)-b23(c)*v23(c)        )))*kin % n(c)
+
+      ! P_33 + G_33 (formula C.1) + goes to right hand s. if > 0, on left if < 0
+      prod_and_coriolis = &
+        -2.*(uw % n(c)*w % x(c) + vw % n(c)*w % y(c) + ww % n(c)*w % z(c)) &
+        -2.*omega_x*2.*vw % n(c) + 2.*omega_y*2.*uw % n(c)  ! did not check
+
+      ! left hand side (C.11 delta_ij)
+      A % val(A % dia(c)) =  A % val(A % dia(c)) + grid % vol(c) * &
+        TWO_THIRDS * alpha3(c) * eps % n(c) / stress
+!------------------------------------------------------------------------------!
+!   uv stress
+!------------------------------------------------------------------------------!
+    elseif (name_phi == 'UV') then
+
+      ! useful vars
+      stress = max(uv % n(c), TINY)
+
+      ! formula C.7
+      phi_wall = - 5.*eps_2_k(c) * (  &
+        uu % n(c)*n1n2(c) + uv % n(c)*n2n2(c) + uw % n(c)*n2n3(c) +  &
+        uv % n(c)*n1n1(c) + vv % n(c)*n1n2(c) + vw % n(c)*n1n3(c)&
+        - 0.5*u_k_u_l_n_k_n_l(c)*n1n2(c) &
+        - stress) ! this term is substracted in A later
+
+      ! formula C.3 
       phi_hom = &
-                 (g3-g3_star*sqrt(b_mn_b_mn))*kin % n(c)*s13 + &
-                 g4*kin%n(c)*(b11*s31+b12*s32+b13*s33 + &
-                              b31*s11+b32*s12+b33*s13) +&
-                 g5*kin%n(c)*(b11*v31+b12*v32+b13*v33 + &
-                              b31*v11+b32*v12+b33*v13)
+        (g3 - g3_star*b_kl_b_kl_sq(c))*kin % n(c)*s12(c) + &
+        (g4*(b11(c)*s12(c)+b12(c)*s22(c)+b13(c)*s23(c)  + &
+             b12(c)*s11(c)+b22(c)*s12(c)+b23(c)*s13(c)) + &
+         g5*(b11(c)*v12(c)+              b13(c)*v23(c)  + &
+                           b22(c)*v12(c)+b23(c)*v13(c)))*kin % n(c)
 
-      prod = -(uu % n(c)*w % x(c) + uv % n(c)*w % y(c)+ uw%n(c)*(w % z(c)+u % x(c)) +&
-               vw % n(c)*u % y(c) + ww % n(c)*u % z(c)) & 
-             -2.0*omega_x*uv%n(c)-2.0*omega_y*(ww%n(c)-uu%n(c))+2.0*omega_z*vw%n(c)   
+      ! P_12 + G_12 (formula C.1) + goes to right hand s. if > 0, on left if < 0
+      prod_and_coriolis = &
+        - uu % n(c)*v % x(c) - uv%n(c)*(v % y(c)+u % x(c)) - uw % n(c)*v % z(c)&
+        - vv % n(c)*u % y(c) - vw % n(c)*u % z(c) &
+        ! did not check
+        + 2.*omega_x*uw%n(c)-2.*omega_y*vw%n(c)+2.*omega_z*(vv%n(c)-uu%n(c))
+!------------------------------------------------------------------------------!
+!   uw stress
+!------------------------------------------------------------------------------!
+    elseif (name_phi == 'UW') then
 
-      phi_tot = (1.0-f22 % n(c)*f22 % n(c))*phi_wall &
-               + f22 % n(c)*f22 % n(c)*phi_hom 
+      ! useful vars
+      stress = max(uw % n(c), TINY)
 
-      diss_wall = uw % n(c)/kin % n(c) * eps % n(c) 
+      ! formula C.7
+      phi_wall = - 5.*eps_2_k(c) * (  &
+        uu % n(c)*n1n3(c) + uv % n(c)*n2n3(c) + uw % n(c)*n3n3(c)+ &
+        uw % n(c)*n1n1(c)+ vw % n(c)*n1n2(c) + ww % n(c)*n1n3(c) &
+        - 0.5*u_k_u_l_n_k_n_l(c)*n1n3(c) &
+        - stress) ! this term is substracted in A later
 
-      b(c) = b(c) + (prod + (1.0-f22 % n(c)*f22 % n(c))*phi_wall +&
-             f22 % n(c)*f22 % n(c)*(phi_hom))*grid % vol(c)
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
-                      6.0*eps%n(c)/kin%n(c)&           
-                    + f22%n(c)*f22%n(c)*(&
-                    +g1*eps%n(c)/(2.0*kin%n(c))+g1_star*p_kin(c)/(2.0*kin%n(c))))*grid % vol(c)
-
-    ! vw stress
-    else if(name_phi == 'VW') then
-      phi_wall = -5.0*eps % n(c)/kin % n(c) * &
-                 (-vw % n(c)+uv % n(c)*n3*n1 + vv % n(c)*n3*n2 + vw % n(c)*n3*n3 + &
-                             uw % n(c)*n2*n1 + vw % n(c)*n2*n2 + ww % n(c)*n2*n3   &
-                 - 0.5*n2*n3*uu_nn)
-
+      ! formula C.3 
       phi_hom = &
-                 (g3-g3_star*sqrt(b_mn_b_mn))*kin % n(c)*s23 + &
-                 g4*kin%n(c)*(b21*s31+b22*s32+b23*s33 + &
-                              b31*s21+b32*s22+b33*s23) +&
-                 g5*kin%n(c)*(b21*v31+b22*v32+b23*v33 + &
-                              b31*v21+b32*v22+b33*v23)
+        (g3 - g3_star*b_kl_b_kl_sq(c))*kin % n(c)*s13(c) + &
+        (g4*(b11(c)*s13(c)+b12(c)*s23(c)+b13(c)*s33(c) + &
+             b13(c)*s11(c)+b23(c)*s12(c)+b33(c)*s13(c)) + &
+         g5*(b11(c)*v13(c)+b12(c)*v23(c)+       &
+                           b23(c)*v12(c)+b33(c)*v13(c)))*kin % n(c)
 
-      prod = -(uv % n(c)*w % x(c) + vv % n(c)*w % y(c)+ vw%n(c)*(w % z(c)+v % y(c))+&
-               uw % n(c)*v % x(c) + ww % n(c)*v % z(c))  &
-             -2.0*omega_x*(vw%n(c)-ww%n(c))+2.0*omega_y*uv%n(c)-2.0*omega_z*uw%n(c)   
+      ! P_12 + G_12 (formula C.1) + goes to right hand s. if > 0, on left if < 0
+      prod_and_coriolis = &
+        - uu % n(c)*w % x(c) - uv%n(c)*w % y(c) - uw % n(c)*(w % z(c)+u % x(c))&
+        - vw % n(c)*u % y(c) - ww % n(c)*u % z(c) &
+        ! did not check
+        - 2.*omega_x*uv % n(c) - 2.*omega_y * &
+        (ww % n(c) - uu % n(c)) + 2.*omega_z*vw % n(c)
+!------------------------------------------------------------------------------!
+!   vw stress
+!------------------------------------------------------------------------------!
+    elseif (name_phi == 'VW') then
 
-      phi_tot = (1.0-f22 % n(c)*f22 % n(c))*phi_wall &
-               + f22 % n(c)*f22 % n(c)*phi_hom 
+      ! useful vars
+      stress = max(vw % n(c), TINY)
 
-      diss = (1.0 - f22 % n(c)*f22 % n(c)) * vw % n(c)/kin % n(c) * eps % n(c) 
+      ! formula C.7
+      phi_wall = - 5.*eps_2_k(c) * (  &
+        vw % n(c) + uv % n(c)*n1n3(c) + vv % n(c)*n2n3(c) + vw % n(c)*n3n3(c) + &
+        uw % n(c)*n1n2(c) + vw % n(c)*n2n2(c) + ww % n(c)*n2n3(c) &
+        - 0.5*u_k_u_l_n_k_n_l(c)*n2n3(c) &
+        - stress) ! this term is substracted in A later
 
-      b(c) = b(c) + (prod + (1.0-f22 % n(c)*f22 % n(c))*phi_wall +&
-             f22 % n(c)*f22 % n(c)*(phi_hom))*grid % vol(c)
-      A % val(A % dia(c)) =  A % val(A % dia(c)) + ((1.0-f22%n(c)*f22%n(c))*&
-                      6.0*eps%n(c)/kin%n(c) &           
-                    + f22%n(c)*f22%n(c)*(&
-                    +g1*eps%n(c)/(2.0*kin%n(c))+g1_star*p_kin(c)/(2.0*kin%n(c))))*grid % vol(c)
+      ! formula C.3 
+      phi_hom = &
+        (g3 - g3_star*b_kl_b_kl_sq(c))*kin % n(c)*s23(c) + &
+        (g4*(b12(c)*s13(c)+b22(c)*s23(c)+b23(c)*s33(c) + &
+             b13(c)*s12(c)+b23(c)*s22(c)+b33(c)*s23(c)) + &
+         g5*(b12(c)*v13(c)+b22(c)*v23(c)+       &
+             b13(c)*v12(c)+              b33(c)*v23(c)))*kin % n(c)
 
-    ! eps equation
-    else if(name_phi == 'EPS') then
-      Esor = grid % vol(c)/max(t_scale(c),1.0e-12)
-!
-!     c_1e1 = c_1e*(1.0 + 0.03*(1. - f22%n(c)*f22%n(c))*sqrt(kin%n(c)/max(uu_nn,1.e-12)))  
-!
-      c_1e1 = c_1e*(1.0 + 0.1*(1.0-f22%n(c)**3.0)*p_kin(c)/eps%n(c))  
-      b(c) = b(c) + c_1e1*p_kin(c)*Esor 
+      ! P_12 + G_12 (formula C.1) + goes to right hand s. if > 0, on left if < 0
+      prod_and_coriolis = &
+        - uu % n(c)*w % x(c) - uv%n(c)*w % y(c) - uw % n(c)*(w % z(c)+u % x(c))&
+        - vw % n(c)*u % y(c) - ww % n(c)*u % z(c) &
+        ! did not check
+        - 2.*omega_x*(vw % n(c)-ww % n(c)) &
+        + 2.*omega_y*uv % n(c) - 2.*omega_z*uw % n(c)
+!------------------------------------------------------------------------------!
+!   repeating part for all stresses 
+!------------------------------------------------------------------------------!
+    ! formula C.1
+    b(c) = b(c) + grid % vol(c) * ( & !
+      max(prod_and_coriolis,0.) & ! P_ij + G_ij
+      + (1. - alpha3(c))*phi_wall + alpha3(c)*phi_hom & ! C.2
+      )
+    ! left hand side
+    A % val(A % dia(c)) =  A % val(A % dia(c)) + grid % vol(c) * (  &
+      + term_c3_1(c)/(2.*kin % n(c)) & ! from C.3 and C.4 1st terms
+      - min(prod_and_coriolis,0.)/stress +  & ! (P_11 + G_11) / uu
+      6.*(1. - alpha3(c))*eps_2_k(c) & ! C.11/uu
+      )
+!------------------------------------------------------------------------------!
+!   eps 
+!------------------------------------------------------------------------------!
+    else if (name_phi == 'EPS') then
+      Esor = grid % vol(c)/max(t_scale(c),TINY)
+      c_1e1 = c_1e * (1. + 0.1*(1.-alpha3(c))*p_kin(c)/(eps % n(c)+TINY))
+      b(c) = b(c) + c_1e1*density*p_kin(c)*Esor 
 
       ! Fill in a diagonal of coefficient matrix
       A % val(A % dia(c)) =  A % val(A % dia(c)) + c_2e*Esor*density
-    end if
+    end if 
   end do
 
-  if(name_phi == 'EPS') then
+  if (name_phi == 'EPS') then
     do s = 1, grid % n_faces
-      c1=grid % faces_c(1,s)
-      c2=grid % faces_c(2,s)
+      c1 = grid % faces_c(1,s)
+      c2 = grid % faces_c(2,s)
 
       ! Calculate values of dissipation on wall
-      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
-          eps%n(c2) = viscosity*(uu%n(c1)+vv%n(c1)+ww%n(c1))/grid % wall_dist(c1)**2
-        end if   ! end if of BC=wall
-      end if    ! end if of c2<0
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER ) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
+          eps % n(c2) = (viscosity/density)*&
+            (uu % n(c1) + vv % n(c1) + ww % n(c1))/grid % wall_dist(c1)**2.
+        end if ! end if of BC=wall
+      end if   ! end if of c2<0
     end do
-  end if
+  end if ! name_phi == 'EPS'
 
   end subroutine

@@ -288,7 +288,7 @@
       end if
 
       ! Rans models
-      if(turbulence_model == K_EPS) then 
+      if(turbulence_model == K_EPS) then
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)

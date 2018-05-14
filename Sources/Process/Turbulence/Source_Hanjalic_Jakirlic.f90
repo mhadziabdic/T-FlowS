@@ -52,17 +52,26 @@
   real    :: VAR2_11, VAR2_22, VAR2_33, VAR2_12, VAR2_13, VAR2_23
   real    :: P11, P22, P33, P12, P13, P23, Eps1, Eps2
 !==============================================================================!
+!   Dimensions:                                                                !
+!   Production    p_kin    [m^2/s^3]   | Rate-of-strain  shear     [1/s]       !
+!   Dissipation   eps % n  [m^2/s^3]   | Turb. visc.     vis_t     [kg/(m*s)]  !
+!   Wall shear s. tau_wall [kg/(m*s^2)]| Dyn visc.       viscosity [kg/(m*s)]  !
+!   Density       density  [kg/m^3]    | Turb. kin en.   kin % n   [m^2/s^2]   !
+!   Cell volume   vol      [m^3]       | Length          lf        [m]         !
+!   left hand s.  A        [kg/s]      | right hand s.   b         [kg*m^2/s^3]!
+!   Wall visc.    vis_wall [kg/(m*s)]  |                                       !
+!   Thermal cap.  capacity[m^2/(s^2*K)]| Therm. conductivity     [kg*m/(s^3*K)]!
+!------------------------------------------------------------------------------!
+! but dens > 1 mod. not applied here yet
 
   diss1 = 0.0
 
   EE = 0.5
   AA = 0.5
 
-  do c = 1, grid % n_cells
-    kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), 1.0e-7)
-    l_scale(c)=  (kin % n(c))**1.5/eps % n(c)
-    t_scale(c)=  kin % n(c)/eps % n(c)
-  end do
+  kin % n(1:) = max(0.5*(uu % n(1:) + vv % n(1:) + ww % n(1:)), TINY)
+  l_scale(1:)=  kin % n(1:)**1.5/(eps % n(1:)+TINY)
+  t_scale(1:)=  kin % n(1:)/(eps % n(1:)+TINY)
 
   call Grad_Mod_For_Phi(grid, kin % n, 1, kin_x, .true.)  ! dK/dx
   call Grad_Mod_For_Phi(grid, kin % n, 2, kin_y, .true.)  ! dK/dy
@@ -72,9 +81,8 @@
   call Grad_Mod_For_Phi(grid, kin_y, 2, kin_yy, .true.)  ! d^2 K / dy^2
   call Grad_Mod_For_Phi(grid, kin_z, 3, kin_zz, .true.)  ! d^2 K / dz^2
 
-  do c = 1, grid % n_cells
-    Eps_tot(c) = max(eps % n(c) + 0.5 * viscosity * (kin_xx(c) + kin_yy(c) + kin_zz(c)), TINY)
-  end do
+  Eps_tot(1:) = max(eps % n(1:) + &
+    0.5 * viscosity * (kin_xx(1:) + kin_yy(1:) + kin_zz(1:)), TINY)
 
 ! !---------------------------------------------------!
 ! !   Below is one of versions of Hanjalic-Jakirlic   !

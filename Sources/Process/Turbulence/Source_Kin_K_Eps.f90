@@ -38,7 +38,7 @@
 !------------------------------------------------------------------------------!
 
   kin_sq(:) = sqrt(kin % n(:))
-  kin_visc = viscosity/density
+  kin_visc = viscosity / density
 
   !-----------------------------------------------!
   !  Compute the sources in the near wall cells   !
@@ -82,9 +82,9 @@
                       / (kappa*grid % wall_dist(c1))
 
           else if(ROUGH .eq. YES) then
-            y_plus(c1) = c_mu25*kin_sq(c1) * (grid % wall_dist(c1)+Zo) &
+            y_plus(c1) = c_mu25*kin_sq(c1) * (grid % wall_dist(c1)+Zo)  &
              / kin_visc
-            tau_wall(c1) = abs(c_mu25*kappa*density * kin_sq(c1) * u_tan   &
+            tau_wall(c1) = abs(c_mu25*kappa*density * kin_sq(c1) * u_tan  &
                          / (log((grid % wall_dist(c1)+Zo)/Zo)))
 
             p_kin(c1) = tau_wall(c1)/density * c_mu25 * kin_sq(c1)  &

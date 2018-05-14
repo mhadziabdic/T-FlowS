@@ -31,15 +31,14 @@
 !   Cell volume   vol      [m^3]       | Length          lf        [m]         !
 !   left hand s.  A        [kg/s]      | right hand s.   b         [kg*m^2/s^4]!
 !------------------------------------------------------------------------------!
+  kin_visc = viscosity/density
+
   t1(1:) = kin % n(1:)/(eps % n(1:) + TINY)
   t2(1:) = c_t*sqrt(kin_visc/(eps % n(1:) + TINY))
-  t3(1:) = 0.6/(sqrt(3.0)*c_mu_d * zeta % n(1:) * shear(1:) + TINY)
 
   l1(1:) = kin % n(1:)**1.5/(eps % n(1:) + TINY)
   l2(1:) = Cni*(kin_visc**3/(eps % n(1:) + TINY))**0.25
-  l3(1:) = sqrt(kin % n(1:)/3.0)/(c_mu_d * zeta % n(1:) * shear(1:) + TINY)
-
-  kin_visc = viscosity/density
+  
 
   if(turbulence_model .eq. K_EPS_ZETA_F .or.  &
      turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
@@ -47,6 +46,8 @@
       t_scale(1:) =     max(t1(1:),t2(1:))
       l_scale(1:) = c_l*max(l1(1:),l2(1:))
     else
+      t3(1:) = 0.6/(sqrt(3.0)*c_mu_d * zeta % n(1:) * shear(1:) + TINY)
+      l3(1:) = sqrt(kin % n(1:)/3.0)/(c_mu_d * zeta % n(1:) * shear(1:) + TINY)
       t_scale(1:) =     max(min(t1(1:),t3(1:)),t2(1:))
       l_scale(1:) = c_l*max(min(l1(1:),l3(1:)),l2(1:))
     end if

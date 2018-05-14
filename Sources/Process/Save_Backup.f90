@@ -8,7 +8,7 @@
   use Flow_Mod
 ! use les_mod
   use Comm_Mod
-! use rans_mod
+  use Rans_Mod
   use Grid_Mod
 ! use Control_Mod
 !------------------------------------------------------------------------------!
@@ -124,7 +124,7 @@
     call Write_Backup_1_Cell_Bnd(fh, d, 'p_kin',    p_kin   (-nb_s:nc_s))
     call Write_Backup_1_Cell_Bnd(fh, d, 'u_tau',    u_tau   (-nb_s:nc_s))
     call Write_Backup_1_Cell_Bnd(fh, d, 'y_plus',   y_plus  (-nb_s:nc_s))
-    call Write_Backup_1_Cell_Bnd(fh, d, 'vis_wall', vis_plus(-nb_s:nc_s))
+    call Write_Backup_1_Cell_Bnd(fh, d, 'vis_wall', vis_wall(-nb_s:nc_s))
     call Write_Backup_1_Cell    (fh, d, 'tau_wall', tau_wall  (1:nc_s))
   end if
 

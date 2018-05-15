@@ -4,6 +4,7 @@
 !   Purpose: Solve transport equation for scalar (such as temperature)         !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
+  use Const_Mod
   use Flow_Mod
   use rans_mod
   use Comm_Mod
@@ -66,8 +67,8 @@
 !
 !  Dimensions of certain variables:
 !
-!     Cp     [J/kg K]
-!     lambda [W/m K]
+!     Cp     [J/kg K] (heat capacity)
+!     lambda [W/m K] (heat conductivity)
 !
 !     A      [kg/s]
 !     T      [K]
@@ -90,9 +91,7 @@
   end do
   A % val = 0.0
 
-  do c = 1, grid % n_cells
-    b(c)=0.0
-  end do
+  b(:) = 0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
   ! (I just coppied this from NewUVW.f90. I don't have a clue if it
@@ -256,10 +255,10 @@
      
     if(turbulence_model /= LES .or.  &
        turbulence_model /= DNS) then
-      Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(viscosity+1.0e-12)) - 0.0441*                  &
-            (vis_t(c1)/(viscosity+1.0e-12))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c1)+1.0e-12) ))) )
-      Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(viscosity+1.0e-12)) - 0.0441*                  &
-           (vis_t(c2)/(viscosity+1.0e-12))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c2)+1.0e-12) ))) )
+      Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(viscosity+TINY)) - 0.0441*                  &
+            (vis_t(c1)/(viscosity+TINY))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c1)+TINY) ))) )
+      Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(viscosity+TINY)) - 0.0441*                  &
+           (vis_t(c2)/(viscosity+TINY))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c2)+TINY) ))) )
       Prt = fw(s)*Prt1 + (1.0-fw(s))*Prt2
     end if
 
@@ -547,10 +546,10 @@
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
 
-        Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(viscosity+1.0e-12)) - 0.0441*                  &
-              (vis_t(c1)/(viscosity+1.0e-12))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c1)+1.0e-12) ))) )
-        Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(viscosity+1.0e-12)) - 0.0441*                  &
-              (vis_t(c2)/(viscosity+1.0e-12))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c2)+1.0e-12) ))) )
+        Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(viscosity+TINY)) - 0.0441*                  &
+              (vis_t(c1)/(viscosity+TINY))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c1)+TINY) ))) )
+        Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(viscosity+TINY)) - 0.0441*                  &
+              (vis_t(c2)/(viscosity+TINY))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c2)+TINY) ))) )
 
         Prt = fw(s)*Prt1 + (1.0-fw(s))*Prt2
         if(c2 > 0 .or.  &

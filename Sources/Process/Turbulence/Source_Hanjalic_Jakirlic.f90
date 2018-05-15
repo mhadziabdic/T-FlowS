@@ -52,17 +52,26 @@
   real    :: VAR2_11, VAR2_22, VAR2_33, VAR2_12, VAR2_13, VAR2_23
   real    :: P11, P22, P33, P12, P13, P23, Eps1, Eps2
 !==============================================================================!
+!   Dimensions:                                                                !
+!   Production    p_kin    [m^2/s^3]   | Rate-of-strain  shear     [1/s]       !
+!   Dissipation   eps % n  [m^2/s^3]   | Turb. visc.     vis_t     [kg/(m*s)]  !
+!   Wall shear s. tau_wall [kg/(m*s^2)]| Dyn visc.       viscosity [kg/(m*s)]  !
+!   Density       density  [kg/m^3]    | Turb. kin en.   kin % n   [m^2/s^2]   !
+!   Cell volume   vol      [m^3]       | Length          lf        [m]         !
+!   left hand s.  A        [kg/s]      | right hand s.   b         [kg*m^2/s^3]!
+!   Wall visc.    vis_wall [kg/(m*s)]  |                                       !
+!   Thermal cap.  capacity[m^2/(s^2*K)]| Therm. conductivity     [kg*m/(s^3*K)]!
+!------------------------------------------------------------------------------!
+! but dens > 1 mod. not applied here yet
 
   diss1 = 0.0
 
   EE = 0.5
   AA = 0.5
 
-  do c = 1, grid % n_cells
-    kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), 1.0e-7)
-    l_scale(c)=  (kin % n(c))**1.5/eps % n(c)
-    t_scale(c)=  kin % n(c)/eps % n(c)
-  end do
+  kin % n(1:) = max(0.5*(uu % n(1:) + vv % n(1:) + ww % n(1:)), TINY)
+  l_scale(1:)=  kin % n(1:)**1.5/(eps % n(1:)+TINY)
+  t_scale(1:)=  kin % n(1:)/(eps % n(1:)+TINY)
 
   call Grad_Mod_For_Phi(grid, kin % n, 1, kin_x, .true.)  ! dK/dx
   call Grad_Mod_For_Phi(grid, kin % n, 2, kin_y, .true.)  ! dK/dy
@@ -72,15 +81,14 @@
   call Grad_Mod_For_Phi(grid, kin_y, 2, kin_yy, .true.)  ! d^2 K / dy^2
   call Grad_Mod_For_Phi(grid, kin_z, 3, kin_zz, .true.)  ! d^2 K / dz^2
 
-  do c = 1, grid % n_cells
-    Eps_tot(c) = eps % n(c) + 0.5 * viscosity * (kin_xx(c) + kin_yy(c) + kin_zz(c))
-  end do
+  Eps_tot(1:) = max(eps % n(1:) + &
+    0.5 * viscosity * (kin_xx(1:) + kin_yy(1:) + kin_zz(1:)), TINY)
 
 ! !---------------------------------------------------!
 ! !   Below is one of versions of Hanjalic-Jakirlic   !
 ! !      model that required much more memory         !
 ! !---------------------------------------------------!
-! if(name_phi == "23") then
+! if(name_phi .eq. "23") then
 !   call Grad_Mod_For_Phi(grid, uu % n, 1, VAR3x, .true.) ! duu/dx  
 !   call Grad_Mod_For_Phi(grid, uu % n, 2, VAR3y, .true.) ! duu/dy  
 !   call Grad_Mod_For_Phi(grid, uu % n, 3, VAR3z, .true.) ! duu/dz  
@@ -217,9 +225,9 @@
 !   end do
 ! end if
 
-  if(name_phi == 'EPS') then
+  if(name_phi .eq. 'EPS') then
   do i=1,3
-    if(i == 1) then
+    if(i .eq. 1) then
       call Grad_Mod_For_Phi(grid, U % x, 1, ui_xx, .true.)  ! d2U/dxdx
       call Grad_Mod_For_Phi(grid, U % x, 2, ui_xy, .true.)  ! d2U/dxdy
       call Grad_Mod_For_Phi(grid, U % x, 3, ui_xz, .true.)  ! d2U/dxdz
@@ -227,7 +235,7 @@
       call Grad_Mod_For_Phi(grid, U % y, 3, ui_yz, .true.)  ! d2U/dydz
       call Grad_Mod_For_Phi(grid, U % z, 3, ui_zz, .true.)  ! d2U/dzdz
     end if
-    if(i == 2) then
+    if(i .eq. 2) then
       call Grad_Mod_For_Phi(grid, V % x, 1, ui_xx, .true.)  ! d2V/dxdx
       call Grad_Mod_For_Phi(grid, V % x, 2, ui_xy, .true.)  ! d2V/dxdy
       call Grad_Mod_For_Phi(grid, V % x, 3, ui_xz, .true.)  ! d2V/dxdz
@@ -235,7 +243,7 @@
       call Grad_Mod_For_Phi(grid, V % y, 3, ui_yz, .true.)  ! d2V/dydz
       call Grad_Mod_For_Phi(grid, V % z, 3, ui_zz, .true.)  ! d2V/dzdz
     end if
-    if(i == 3) then
+    if(i .eq. 3) then
       call Grad_Mod_For_Phi(grid, W % x, 1, ui_xx, .true.)  ! d2W/dxdx
       call Grad_Mod_For_Phi(grid, W % x, 2, ui_xy, .true.)  ! d2W/dxdy
       call Grad_Mod_For_Phi(grid, W % x, 3, ui_xz, .true.)  ! d2W/dxdz
@@ -245,7 +253,7 @@
     end if
 
     do c = 1, grid % n_cells
-      if(i == 1) then
+      if(i .eq. 1) then
         Uxx = ui_xx(c)
         Uxy = ui_xy(c)
         Uyx = Uxy
@@ -267,7 +275,7 @@
                 vw % n(c)*(Uzx*Uyx+Uzy*Uyy+Uzz*Uyz)+  &
                 ww % n(c)*(Uzx*Uzx+Uzy*Uzy+Uzz*Uzz))
       end if
-      if(i == 2) then
+      if(i .eq. 2) then
         Uxx = ui_xx(c)
         Uxy = ui_xy(c)
         Uyx = Uxy
@@ -289,7 +297,7 @@
                 vw % n(c)*(Uzx*Uyx+Uzy*Uyy+Uzz*Uyz)+  &
                 ww % n(c)*(Uzx*Uzx+Uzy*Uzy+Uzz*Uzz))
       end if
-      if(i == 3) then
+      if(i .eq. 3) then
         Uxx = ui_xx(c)
         Uxy = ui_xy(c)
         Uyx = Uxy
@@ -416,9 +424,9 @@
       fss=1.0-(AA**0.5*EE**2.0)
     end do
      
-    Ret= (kin % n(c)*kin % n(c))/(viscosity*Eps_tot(c)+tiny)
+    Ret= (kin % n(c)**2.)/(viscosity*eps_tot(c) + TINY)
     Feps = 1.0 - ((c_2e-1.4)/c_2e)*exp(-(Ret/6.0)**2.0)
-    ff2=min((Ret/150)**1.5, 1.0)
+    ff2 = min((Ret/150)**1.5, 1.0)
     fd=1.0/(1.0+0.1*Ret)
     FF1=min(0.6, AA2)
     CC=2.5*AA*FF1**0.25*ff2
@@ -513,57 +521,57 @@
                              VAR2_12*n3*n1+VAR2_22*n3*n2+VAR2_23*n3*n3))
 
     ! uu stress
-    if(name_phi == 'UU') then
-!==============================================================================================================================!
+    if(name_phi .eq. 'UU') then
+!==============================================================================!
       b(c) = b(c) + (max(P11,0.0)+CC1*eps%n(c)*r23+max(VAR2_11,0.0)+max(VAR1w_11,0.0)+max(VAR2w_11,0.0))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*3.0*n1*n1 + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P11,0.0)+max(-VAR2_11,0.0)+max(-VAR1w_11,0.0)+max(-VAR2w_11,0.0) + &
                       (1.0-fss)*r23*eps%n(c))/max(uu%n(c),1.0e-10)*grid % vol(c) 
-!==============================================================================================================================!
+!==============================================================================!
     ! vv stress
-    else if(name_phi == 'VV') then
-!==============================================================================================================================!
+    else if(name_phi .eq. 'VV') then
+!==============================================================================!
       b(c) = b(c) + (max(P22,0.0)+CC1*eps%n(c)*r23+max(VAR2_22,0.0)+max(VAR1w_22,0.0)+max(VAR2w_22,0.0))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*3.0*n2*n2 + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P22,0.0)+max(-VAR2_22,0.0)+max(-VAR1w_22,0.0)+max(-VAR2w_22,0.0)+ &
                       (1.0-fss)*r23*eps%n(c))/max(vv%n(c),1.0e-10)*grid % vol(c) 
-!==============================================================================================================================!
+!==============================================================================!
     ! ww stress
-    else if(name_phi == 'WW') then
-!==============================================================================================================================!
+    else if(name_phi .eq. 'WW') then
+!==============================================================================!
       b(c) = b(c) + (max(P33,0.0)+CC1*eps%n(c)*r23+max(VAR2_33,0.0)+max(VAR1w_33,0.0)+max(VAR2w_33,0.0))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*3.0*n3*n3 + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c))+(max(-P33,0.0)+max(-VAR2_33,0.0)+max(-VAR1w_33,0.0)+max(-VAR2w_33,0.0)+ &
                       (1.0-fss)*r23*eps%n(c))/max(ww%n(c),1.0e-10)*grid % vol(c) 
-!==============================================================================================================================!
-!==============================================================================================================================!
+!==============================================================================!
+!==============================================================================!
     ! uv stress
-    else if(name_phi == 'UV') then
+    else if(name_phi .eq. 'UV') then
       b(c) = b(c) + (P12 + VAR2_12 + VAR1w_12 + VAR2w_12)*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*1.5*(n1*n1+n2*n2) + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
-!==============================================================================================================================!
-!==============================================================================================================================!
+!==============================================================================!
+!==============================================================================!
     ! uw stress
-    else if(name_phi == 'UW') then
+    else if(name_phi .eq. 'UW') then
       b(c) = b(c) + (P13 + VAR2_13 + VAR1w_13 + VAR2w_13)*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*1.5*(n1*n1+n3*n3) + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
 
-!==============================================================================================================================!
-!==============================================================================================================================!
+!==============================================================================!
+!==============================================================================!
     ! vw stress
-    else if(name_phi == 'VW') then
+    else if(name_phi .eq. 'VW') then
       b(c) = b(c) + (P23 + VAR2_23 + VAR1w_23 + VAR2w_23)*grid % vol(c) 
       A % val(A % dia(c)) = A % val(A % dia(c)) + (CC1*eps%n(c)/kin%n(c)+C1W*f_w*eps%n(c)/kin%n(c)*1.5*(n2*n2+n3*n3) + &
                       fss*eps%n(c)/kin%n(c))*grid % vol(c) 
-!==============================================================================================================================!
-!==============================================================================================================================!
+!==============================================================================!
+!==============================================================================!
     ! Epsilon equation
-    else if(name_phi == 'EPS') then 
+    else if(name_phi .eq. 'EPS') then 
       Feps = 1.0 - ((c_2e-1.4)/c_2e) * exp(-(Ret/6.0)**2)
       Eps1 = 1.44 * p_kin(c) * eps % n(c) / kin % n(c)
       Eps2 = c_2e*Feps*eps%n(c)/kin%n(c)
@@ -577,7 +585,7 @@
     kin_e(c) = sqrt( 0.5 * (uu % n(c) + vv % n(c) + ww % n(c)) )    
   end do 
 
-  if(name_phi == 'EPS') then
+  if(name_phi .eq. 'EPS') then
     call Grad_Mod_For_Phi(grid, kin_e, 1, kin_x, .true.)             ! dK/dx
     call Grad_Mod_For_Phi(grid, kin_e, 2, kin_y, .true.)             ! dK/dy
     call Grad_Mod_For_Phi(grid, kin_e, 3, kin_z, .true.)             ! dK/dz
@@ -590,16 +598,17 @@
     end do
   end if
 
-  if(name_phi == 'EPS') then
+  if(name_phi .eq. 'EPS') then
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
 
       ! Calculate a values of dissipation  on wall
-      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-           Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
-          eps%n(c2) = viscosity*(kin_x(c)**2 + kin_y(c)**2 + kin_z(c)**2)
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER ) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
+           Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
+          ! HOTFIXED IT (c->c2) - CHECK IT
+          eps % n(c2) = viscosity*(kin_x(c2)**2 + kin_y(c2)**2 + kin_z(c2)**2)
         end if   ! end if of BC=wall
       end if    ! end if of c2<0
     end do

@@ -4,9 +4,10 @@
 !   Sorts real array x and make same interchanges in integer arr. y.           !
 !   It was downladed from nist and then slightly modified.                     !
 !------------------------------------------------------------------------------!
-      dimension il(21), iu(21)
-      real      x(n), t,  tt
-      integer   y(n), ty, tty
+      integer                :: n, i, j, k, m, l, nn, kflag, ij, kk
+      integer,dimension(1:21):: il, iu
+      real                   :: x(n), t,  tt, r
+      integer                :: y(n), ty, tty
 !==============================================================================!
 
       nn = n

@@ -12,17 +12,19 @@
   use Tokenizer_Mod
   use Grid_Mod
   use Control_Mod
-  use Work_Mod, only: v2_calc => r_cell_01,  &
-                      uu_mean => r_cell_02,  &
-                      vv_mean => r_cell_03,  &
-                      ww_mean => r_cell_04,  &
-                      uv_mean => r_cell_05,  &
-                      uw_mean => r_cell_06,  &
-                      vw_mean => r_cell_07,  &
-                      tt_mean => r_cell_08,  &
-                      ut_mean => r_cell_09,  &
-                      vt_mean => r_cell_10,  &
-                      wt_mean => r_cell_11
+  use Work_Mod, only: v2_calc   => r_cell_01,  &
+                      uu_mean   => r_cell_02,  &
+                      vv_mean   => r_cell_03,  &
+                      ww_mean   => r_cell_04,  &
+                      uv_mean   => r_cell_05,  &
+                      uw_mean   => r_cell_06,  &
+                      vw_mean   => r_cell_07,  &
+                      tt_mean   => r_cell_08,  &
+                      ut_mean   => r_cell_09,  &
+                      vt_mean   => r_cell_10,  &
+                      wt_mean   => r_cell_11,  &
+                      kin_vis_t => r_cell_12
+
 !------------------------------------------------------------------------------!
   implicit none
 !--------------------------------[Arguments]-----------------------------------!
@@ -265,8 +267,9 @@
      turbulence_model == LES                    .or.  &
      turbulence_model == DES_SPALART            .or.  &
      turbulence_model == SPALART_ALLMARAS) then
+    kin_vis_t(1:grid % n_cells) = vis_t(1:grid % n_cells)/viscosity
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "VIS_T_to_VIS", &
-      vis_t(1:grid % n_cells)/viscosity)
+      kin_vis_t(1))
   end if
 
   ! Reynolds stress models
@@ -339,8 +342,8 @@
       call Name_File(n, name_out_9, '.vtu')
       write(8, '(a,a,a,a)') IN_2, '<Piece Source="', trim(name_out_9), '"/>'
     end do
-    write(8, '(a,a)'), IN_1, '</PUnstructuredGrid>'
-    write(8, '(a,a)'), IN_0, '</VTKFile>'
+    write(8, '(a,a)') IN_1, '</PUnstructuredGrid>'
+    write(8, '(a,a)') IN_0, '</VTKFile>'
     close(8)
   end if
   write(9,'(a,a)') IN_2, '</Piece>'

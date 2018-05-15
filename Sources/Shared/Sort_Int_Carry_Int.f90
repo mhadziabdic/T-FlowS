@@ -1,11 +1,15 @@
 !==============================================================================!
-      subroutine Sort_Int_Carry_Int(x, y, n, kflag)
+  subroutine Sort_Int_Carry_Int(x, y, n, kflag)
+!------------------------------------------------------------------------------!
+  implicit  none    
 !------------------------------------------------------------------------------!
 !   Sorts int. array x and makes the same changes in int. array y.             !
 !   It was downladed from nist and then slightly modified.                     !
 !------------------------------------------------------------------------------!
-      dimension il(21), iu(21)
-      integer   x(n), y(n), t, tt, ty, tty
+  integer:: n
+  integer, dimension (1:21) :: il, iu
+  integer:: x(n), y(n), t, tt, ty, tty, kflag, i, j, kk, m, nn, l, ij, k
+  real   :: r
 !==============================================================================!
 
       nn = n

@@ -4,8 +4,10 @@
 !   Sorts short integer array x and makes the same changes in int. array y.    !
 !   It was downladed from nist and then slightly modified.                     !
 !------------------------------------------------------------------------------!
-      dimension       il(21), iu(21)
-      integer(kind=4) x(n), y(n), t, tt, ty, tty
+      integer                :: n, i, ij, j, k, kk, l, m, nn, kflag
+      integer, dimension(21) :: il, iu
+      integer(kind=4)        :: x(n), y(n), t, tt, ty, tty
+      real                   :: r
 !==============================================================================!
 
       nn = n

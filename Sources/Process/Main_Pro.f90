@@ -55,6 +55,7 @@
 
   ! Get starting time
   call cpu_time(wall_time_start)
+  time =  0.
 
   !------------------------------!
   !   Start parallel execution   !
@@ -216,8 +217,9 @@
 
     call Convective_Outflow(grid, dt)
     if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
-       turbulence_model == HANJALIC_JAKIRLIC)       &
+       turbulence_model == HANJALIC_JAKIRLIC) then
       call Calculate_Vis_T_Rsm(grid)
+    end if
 
     !--------------------------!
     !   Inner-iteration loop   !
@@ -289,7 +291,7 @@
       end if
 
       ! Rans models
-      if(turbulence_model == K_EPS) then 
+      if(turbulence_model == K_EPS) then
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
@@ -400,7 +402,7 @@
 1   call Info_Mod_Bulk_Print()
 
     ! Write the values in monitoring points
-    do i=1,Nmon
+    do i = 1, Nmon
       if(Cm(i)  > 0) then
         if(heat_transfer == NO) then
           write(10+i,'(I9,4E16.6)')                    &
@@ -412,7 +414,7 @@
       end if
     end do
 
-   if(PIPE==YES.or.JET==YES) then
+   if(PIPE .eq. YES .or. JET .eq. YES) then
      call CalcMn_Cylind(grid, n_stat, n)  !  calculate mean values
    else
      call Calculate_Mean(grid, n_stat, n)  !  calculate mean values
@@ -440,16 +442,16 @@
     !                                                     !
     !   Pdrop = dFlux/dt/A                                !
     !-----------------------------------------------------!
-    do m=1,grid % n_materials
-      if( bulk(m) % flux_x_o /=  0.0 ) then
+    do m = 1, grid % n_materials
+      if( abs(bulk(m) % flux_x_o) >= TINY ) then
         bulk(m) % p_drop_x = (bulk(m) % flux_x_o - bulk(m) % flux_x)  &
                            / (dt * bulk(m) % area_x + TINY)
       end if
-      if( bulk(m) % flux_y_o /=  0.0 ) then
+      if( abs(bulk(m) % flux_y_o) >= TINY ) then
         bulk(m) % p_drop_y = (bulk(m) % flux_y_o - bulk(m) % flux_y)  &
                            / (dt * bulk(m) % area_y + TINY)
       end if
-      if( bulk(m) % flux_z_o /=  0.0 ) then
+      if( abs(bulk(m) % flux_z_o) >= TINY ) then
         bulk(m) % p_drop_z = (bulk(m) % flux_z_o - bulk(m) % flux_z)  &
                            / (dt * bulk(m) % area_z + TINY)
       end if
@@ -464,9 +466,9 @@
     ! Form the file name
     name_save = problem_name
     write(name_save(len_trim(problem_name)+1:                    &
-                    len_trim(problem_name)+3), '(a3)'),   '-ts'
+                    len_trim(problem_name)+3), '(a3)')   '-ts'
     write(name_save(len_trim(problem_name)+4:                    &
-                    len_trim(problem_name)+9), '(i6.6)'), n
+                    len_trim(problem_name)+9), '(i6.6)') n
 
     ! Is it time to save the restart file?
     if(save_now .or. exit_now .or. mod(n,bsi) == 0) then
@@ -498,6 +500,20 @@
 
   if(this_proc < 2) then
     open(9, file='stop')
+if (n > 2) then
+  print *, "TEST123"
+  print *, "max(U % n)=",maxval(U % n)
+  print *, "max(V % n)=",maxval(V % n)
+  print *, "max(W % n)=",maxval(W % n)
+  print *, "max(vis_t/visc)=",maxval(vis_t/viscosity)
+  print *, "max(kin % n)=",maxval(kin % n)
+  print *, "max(eps % n)=",maxval(eps % n)
+  print *, "max(p_kin)=",maxval(p_kin)
+  print *, "max(b)=",maxval(b),"*", density
+  print *, "max(tau_wall)=",maxval(tau_wall),"*", density
+  print *, "max(T % n)=",maxval(T % n)
+  call exit(1)
+end if
     close(9)
   end if
 
@@ -513,6 +529,6 @@
   !----------------------------!
   !   End parallel execution   !
   !----------------------------!
-2 call Comm_Mod_End
+  call Comm_Mod_End
 
   end program

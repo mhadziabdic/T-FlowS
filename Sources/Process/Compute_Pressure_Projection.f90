@@ -155,7 +155,7 @@
   !-------------------------------!
   urf = 1.0
 
-  p % n  =  p % n  +  urf  *  pp % n
+  p % n(:)  =  p % n(:)   +  urf  *  pp % n(:) 
 
   !----------------------------------!
   !   Normalize the pressure field   !
@@ -166,7 +166,7 @@
   call Comm_Mod_Global_Max_Real(p_max) 
   call Comm_Mod_Global_Min_Real(p_min) 
 
-  p % n  =  p % n  -  0.5 * (p_max + p_min)
+  p % n(:)   =  p % n(:)   -  0.5 * (p_max + p_min)
 
   call Comm_Mod_Exchange(grid, pp % n) 
 

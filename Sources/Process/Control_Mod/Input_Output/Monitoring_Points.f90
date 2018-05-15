@@ -25,7 +25,7 @@
   do n = 1, n_points
     write(point_name, '(a,i3.3)') 'MONITORING_POINT_', n
 
-    def = 0  ! don't have a better idea what to set
+    def = 0.  ! don't have a better idea what to set
     call Control_Mod_Read_Real_Array(point_name, 3, def, xyz, verbose)
   end do
 

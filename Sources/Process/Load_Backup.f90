@@ -3,7 +3,6 @@
 !------------------------------------------------------------------------------!
 !   Read backup files. name.backup                                             !
 !----------------------------------[Modules]-----------------------------------!
-  use Name_Mod, only: problem_name
   use Const_Mod
   use Flow_Mod
 ! use les_mod
@@ -18,8 +17,8 @@
   integer         :: time_step
   logical         :: restart 
 !-----------------------------------[Locals]-----------------------------------!
-  character(len=80) :: name_in, vn, answer
-  integer           :: fh, error, vs, d, c, s
+  character(len=80) :: name_in, answer
+  integer           :: fh,d
 !==============================================================================!
 
   ! Full name is specified in control file

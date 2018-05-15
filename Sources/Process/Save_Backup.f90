@@ -18,8 +18,8 @@
   integer          :: time_step
   character(len=*) :: name_save
 !-----------------------------------[Locals]-----------------------------------!
-  character(len=80) :: name_out, store_name, vn
-  integer           :: fh, error, vs, d, s, c
+  character(len=80) :: name_out, store_name
+  integer           :: fh, d
 !==============================================================================!
 
   store_name = problem_name
@@ -87,14 +87,14 @@
   !   Etnhalpy   !
   !--------------!
   if(heat_transfer == YES) then
-    call Write_Backup_1_Cell_Bnd(fh, d, 'temp',      t  % n(-nb_s:nc_s))
-    call Write_Backup_1_Cell_Bnd(fh, d, 'heat_flux', t  % q(-nb_s:nc_s))
-    call Write_Backup_1_Cell(fh, d, 'temp_old',      t  % o  (1:nc_s))
-    call Write_Backup_1_Cell(fh, d, 'temp_adv',      t  % a  (1:nc_s))
-    call Write_Backup_1_Cell(fh, d, 'temp_adv_old',  t  % a_o(1:nc_s))
-    call Write_Backup_1_Cell(fh, d, 'temp_diff_old', t  % d_o(1:nc_s))
-    call Write_Backup_1_Cell(fh, d, 'temp_cros',     t  % c  (1:nc_s))
-    call Write_Backup_1_Cell(fh, d, 'temp_cros_old', t  % c_o(1:nc_s))
+    call Write_Backup_1_Cell_Bnd(fh, d, 'temp',          t  % n(-nb_s:nc_s))
+    call Write_Backup_1_Cell_Bnd(fh, d, 'heat_flux',     t  % q(-nb_s:-1))
+    call Write_Backup_1_Cell    (fh, d, 'temp_old',      t  % o  (1:nc_s))
+    call Write_Backup_1_Cell    (fh, d, 'temp_adv',      t  % a  (1:nc_s))
+    call Write_Backup_1_Cell    (fh, d, 'temp_adv_old',  t  % a_o(1:nc_s))
+    call Write_Backup_1_Cell    (fh, d, 'temp_diff_old', t  % d_o(1:nc_s))
+    call Write_Backup_1_Cell    (fh, d, 'temp_cros',     t  % c  (1:nc_s))
+    call Write_Backup_1_Cell    (fh, d, 'temp_cros_old', t  % c_o(1:nc_s))
   end if
 
   !-----------------------!

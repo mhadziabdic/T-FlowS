@@ -479,7 +479,11 @@
   end if
 
   if(turbulence_model == REYNOLDS_STRESS_MODEL) then 
-    call Source_Ebm              (grid, phi % name)
+    call Grad_Mod_For_Phi(grid, f22 % n, 1, f22 % x, .true.) ! df22/dx
+    call Grad_Mod_For_Phi(grid, f22 % n, 2, f22 % y, .true.) ! df22/dy
+    call Grad_Mod_For_Phi(grid, f22 % n, 3, f22 % z, .true.) ! df22/dz
+
+    call Source_EBM              (grid, phi % name)
   else
     call Source_Hanjalic_Jakirlic(grid, phi % name)        
   end if                

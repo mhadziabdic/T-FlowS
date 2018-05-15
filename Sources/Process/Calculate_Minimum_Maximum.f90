@@ -16,8 +16,8 @@
   integer :: c1, c2, s
 !==============================================================================!
 
-  phi_max = phi 
-  phi_min = phi 
+  phi_max(:) = phi(:)
+  phi_min(:) = phi(:)
 
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)

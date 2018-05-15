@@ -207,8 +207,8 @@
     end do
 
     ! Footer
-    write(9, '(a)'), IN_1, '</PUnstructuredGrid>'
-    write(9, '(a)'), IN_0, '</VTKFile>'
+    write(9, '(a)') IN_1, '</PUnstructuredGrid>'
+    write(9, '(a)') IN_0, '</VTKFile>'
 
     close(9)
 

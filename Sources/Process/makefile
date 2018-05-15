@@ -1,8 +1,8 @@
-#===============================================================================================================
+#===============================================================================
 #
 #   Process Makefile
 #
-#---------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 #--------------------------
 #   Variable definitions
@@ -35,31 +35,45 @@ VPATH = $(DIR_SHARED):$(DIR_MODELS):.
 PROGRAM_NAME = Process
 PROGRAM_FILE = $(DIR_BINARY)/$(PROGRAM_NAME)
 
-$(info #=======================================================================================================)
-$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                                                    )
-$(info #-------------------------------------------------------------------------------------------------------)
-$(info # Usage:                                                                                                )
-$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <MPI=yes/no>  <DIR_CASE=relative_path_to_case> ... )
-$(info #        ... <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no>                                                      )   
-$(info #                                                                                                       )
-$(info # Examples:                                                                                             )
-$(info #   make                            for sequential version with gnu compiler                            )
-$(info #   make MPI=yes                    for parallel version with gnu compiler                              )
-$(info #   make FORTRAN=intel MPI=yes      for parallel version with intel compiler                            )
-$(info #   make MPI=yes CGNS_ADF5=yes      for parallel version with CGNS/ADF5 support                         )
-$(info #-------------------------------------------------------------------------------------------------------)
+$(info #=======================================================================)
+$(info # Compiling $(PROGRAM_NAME) with compiler $(FORTRAN)                    )
+$(info #-----------------------------------------------------------------------)
+$(info # Usage:                                                                )
+$(info #   make <FORTRAN=gnu/intel/portland> <DEBUG=yes/no> <MPI=yes/no>       )
+$(info #        <CGNS_ADF5=yes/no> <CGNS_HDF5=yes/no>                          )
+$(info #        <DIR_CASE=relative_path_to_case>                               )
+$(info #                                                                       )
+$(info # Examples:                                                             )
+$(info # make                       for sequential version with gnu compiler   )
+$(info # make MPI=yes               for parallel version with gnu compiler     )
+$(info # make FORTRAN=intel MPI=yes for parallel version with intel compiler   )
+$(info # make MPI=yes CGNS_HDF5=yes for parallel version with CGNS/ADF5 support)
+$(info #-----------------------------------------------------------------------)
 
-#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 #   Compiler and linker options
-#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 #   Note: Changes only when support to a new Fortran compiler is added.
-#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 # Fortran == gnu
 ifeq ($(FORTRAN), gnu)
   FC = gfortran
   ifeq ($(DEBUG),yes)
-    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g -Wall -fcheck=all -ffixed-line-length-80
+    OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O0 -g \
+			   -ffixed-line-length-80 -fcheck=all -fwhole-file -fbacktrace \
+			   -ffpe-trap=invalid,zero,overflow \
+			   -fimplicit-none -finit-real=nan \
+			   -Wall -Wextra -Waliasing -Wampersand -Warray-temporaries \
+			   -Wc-binding-type -Wcharacter-truncation -Wline-truncation \
+			   -Wconversion -Wconversion-extra -Wintrinsics-std \
+			   -Wreal-q-constant -Wsurprising -Wtabs -Wunderflow \
+			   -Wintrinsic-shadow -Wunused-parameter -Walign-commons \
+			   -Wfunction-elimination -Wrealloc-lhs -Wrealloc-lhs-all \
+			   -Wcompare-reals -Wtarget-lifetime -Wpedantic \
+			   #-std=f2003 -Wimplicit-procedure -Wimplicit-interface
+
+			   
   else
     OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O3
   endif
@@ -103,13 +117,13 @@ endif
 ifeq ($(CGNS_HDF5), yes)
   ifeq ($(MPI), yes)
     DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Include
-    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Lib/libcgns.a	\
-                  ../Libraries/Hdf5_Par/Lib/libhdf5.a				\
+    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Par/Lib/libcgns.a \
+                  ../Libraries/Hdf5_Par/Lib/libhdf5.a \
                   -Wl,--no-as-needed -ldl -lz
   else
     DIR_CGNS_H  = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Include
-    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a	\
-                  ../Libraries/Hdf5_Seq/Lib/libhdf5.a				\
+    CGNS_LIB    = ../Libraries/Cgnslib_3.2.1_Linux_64_Hdf5_Seq/Lib/libcgns.a \
+                  ../Libraries/Hdf5_Seq/Lib/libhdf5.a \
                   -Wl,--no-as-needed -ldl -lz
   endif
 endif
@@ -202,15 +216,15 @@ STEP_A  = $(subst $(DIR_MODELS),,$(SRC_RAW)) # remove directory name
 SRC_FUN = $(subst /,,$(STEP_A))              # remove last slash
 
 # Add files from "Shared" directory, but one by one, to avoid clutter
-SRC_FUN += Distance.f90 		\
-           Load_Geo.f90 		\
-           Name_File.f90		\
+SRC_FUN += Distance.f90 			\
+           Load_Geo.f90 			\
+           Name_File.f90			\
            Sort_Int_Carry_Int.f90	\
            Sort_Short_Carry_Short.f90	\
            Sort_Real_Carry_Int.f90	\
            Sort_Short_By_Index.f90	\
-           Approx.f90	 		\
-           Swap_Int.f90			\
+           Approx.f90				\
+           Swap_Int.f90				\
            To_Upper_Case.f90
 
 #-------------------------------------------
@@ -255,11 +269,13 @@ MOD = $(SRC_MOD_LOW:%.f90=$(DIR_MODULE)/%.mod)
 
 # Modules
 $(DIR_OBJECT)/%.o: %.f90 %/*.f90
-	$(FC) $(OPT_COMP) -c -o $@ $<
+	@echo FC $<
+	@$(FC) $(OPT_COMP) -c -o $@ $<
 
 # Functions
 $(DIR_OBJECT)/%.o: %.f90
-	$(FC) $(OPT_COMP) -c -o $@ $<
+	@echo FC $<
+	@$(FC) $(OPT_COMP) -c -o $@ $<
 
 #-----------------------------------
 #   Rule to build main program
@@ -267,7 +283,8 @@ $(DIR_OBJECT)/%.o: %.f90
 #   Note: Should not be modified.
 #-----------------------------------
 $(PROGRAM_FILE): $(OBJ)
-	$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ) $(CGNS_LIB)
+	@echo Linking "\033[0;32m $(PROGRAM_FILE) \033[0m"
+	@$(FC) $(OPT_LINK) -o $(PROGRAM_FILE) $(OBJ) $(CGNS_LIB)
 
 #---------------------------------------
 #   Explicit dependencies for modules

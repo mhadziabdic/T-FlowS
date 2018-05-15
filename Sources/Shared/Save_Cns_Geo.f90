@@ -41,7 +41,7 @@
   upper_bound = max(grid % n_cells*8, grid % n_faces*4)
 
   allocate(iwork(lower_bound:upper_bound, 0:2));  iwork=0
-  allocate(work(grid % n_faces));                 work=0
+  allocate(work(grid % n_faces));                 work=0.
 
   !----------------------!
   !                      !

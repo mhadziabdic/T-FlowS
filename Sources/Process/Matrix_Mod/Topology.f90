@@ -46,9 +46,9 @@
     n = n + stencw(c)
   end do   
   matrix % nonzeros = n + 1
-  allocate(matrix % val(n+1)); matrix % val=0 ! it reffers to matrix % row+1 
-  allocate(matrix % col(n+1)); matrix % col=0 ! it reffers to matrix % row+1 
-  allocate(matrix % mir(n+1)); matrix % mir=0 ! it reffers to matrix % row+1 
+  allocate(matrix % val(n+1)); matrix % val = 0. ! it reffers to matrix % row+1 
+  allocate(matrix % col(n+1)); matrix % col = 0  ! it reffers to matrix % row+1 
+  allocate(matrix % mir(n+1)); matrix % mir = 0  ! it reffers to matrix % row+1 
 
   ! Form matrix % row and diagonal only formation of matrix % col
   matrix % row(1)=1

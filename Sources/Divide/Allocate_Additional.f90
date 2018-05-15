@@ -28,7 +28,7 @@
   allocate (iin(-grid % n_bnd_cells:grid % n_cells));  iin = 0
   allocate (criter(grid % n_cells));  criter=0
 
-  allocate (proces      (grid % n_cells));  proces       = 0
+  allocate (proces      (-grid % n_bnd_cells:grid % n_cells));  proces       = 0
   allocate (buf_send_ind(grid % n_faces));  buf_send_ind = 0
   allocate (buf_recv_ind(grid % n_faces));  buf_recv_ind = 0
   allocate (buf_pos     (grid % n_faces));  buf_pos      = 0

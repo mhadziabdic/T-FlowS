@@ -13,34 +13,7 @@
   use rans_mod
   use Grid_Mod
   use Grad_Mod
-  use Work_Mod, only: n1n1                  => r_cell_01, &
-                      n2n2                  => r_cell_02, &
-                      n3n3                  => r_cell_03, &
-                      n1n2                  => r_cell_04, &
-                      n1n3                  => r_cell_05, &
-                      n2n3                  => r_cell_06, &
-                      mag_f22               => r_cell_07, &
-                      eps_2_k               => r_cell_08, &
-                      alpha3                => r_cell_09, &
-                      b11                   => r_cell_10, &
-                      b22                   => r_cell_11, &
-                      b33                   => r_cell_12, &
-                      b12                   => r_cell_13, &
-                      b13                   => r_cell_14, &
-                      b23                   => r_cell_15, &
-                      s11                   => r_cell_16, &
-                      s22                   => r_cell_17, &
-                      s33                   => r_cell_18, &
-                      s12                   => r_cell_19, &
-                      s13                   => r_cell_20, &
-                      s23                   => r_cell_21, &
-                      v12                   => r_cell_22, &
-                      v13                   => r_cell_23, &
-                      v23                   => r_cell_24, &
-                      b_kl_b_kl_sq          => r_cell_25, &
-                      b_lm_s_lm             => r_cell_26, &
-                      u_k_u_l_n_k_n_l       => r_cell_27, &
-                      term_c3_1             => r_cell_28
+
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -51,6 +24,12 @@
   real    :: prod_and_coriolis, phi_hom, phi_wall, Esor
   real    :: c_1e1
   real    :: stress
+  real    :: eps_2_k, alpha3
+  real    :: n1n1, n2n2, n3n3, n1n2, n1n3, n2n3, mag_f22
+  real    :: b11, b22, b33, b12, b13, b23
+  real    :: s11, s22, s33, s12, s13, s23
+  real    :: v12, v13, v23
+  real    :: b_kl_b_kl_sq, b_lm_s_lm, u_k_u_l_n_k_n_l, term_c3_1
 !==============================================================================!
 !   Dimensions:                                                                !
 !   Production P_ujj, p_kin  [m^2/s^3] | Rate-of-strain  sij       [1/s]       !
@@ -83,59 +62,59 @@
                      + ww % n(c) * w % z(c)), TINY)
 
     ! |df22/x_j|
-    mag_f22(c) = max( f22 % x(c)**2. + f22 % y(c)**2. + f22 % z(c)**2., TINY )
+    mag_f22 = max( f22 % x(c)**2. + f22 % y(c)**2. + f22 % z(c)**2., TINY )
 
     ! formula C.9 (n_i never appears individually, only as n_i * n_j)
-    n1n1(c) = f22 % x(c)**2.        / mag_f22(c)
-    n2n2(c) = f22 % y(c)**2.        / mag_f22(c)
-    n3n3(c) = f22 % z(c)**2.        / mag_f22(c)
-    n1n2(c) = f22 % x(c)*f22 % y(c) / mag_f22(c)
-    n1n3(c) = f22 % x(c)*f22 % z(c) / mag_f22(c)
-    n2n3(c) = f22 % y(c)*f22 % z(c) / mag_f22(c)
+    n1n1 = f22 % x(c)**2.        / mag_f22
+    n2n2 = f22 % y(c)**2.        / mag_f22
+    n3n3 = f22 % z(c)**2.        / mag_f22
+    n1n2 = f22 % x(c)*f22 % y(c) / mag_f22
+    n1n3 = f22 % x(c)*f22 % z(c) / mag_f22
+    n2n3 = f22 % y(c)*f22 % z(c) / mag_f22
 
     ! frequently used expressions
-    alpha3(c)  = f22 % n(c)**3.
-    eps_2_k(c) = eps % n(c) / kin % n(c)
+    alpha3  = f22 % n(c)**3.
+    eps_2_k = eps % n(c) / kin % n(c)
 
     ! formula C.4
-    b11(c) = uu % n(c)/(2.*kin % n(c)) - ONE_THIRD 
-    b22(c) = vv % n(c)/(2.*kin % n(c)) - ONE_THIRD
-    b33(c) = ww % n(c)/(2.*kin % n(c)) - ONE_THIRD
-    b12(c) = uv % n(c)/(2.*kin % n(c))   
-    b13(c) = uw % n(c)/(2.*kin % n(c))    
-    b23(c) = vw % n(c)/(2.*kin % n(c))
+    b11 = uu % n(c)/(2.*kin % n(c)) - ONE_THIRD 
+    b22 = vv % n(c)/(2.*kin % n(c)) - ONE_THIRD
+    b33 = ww % n(c)/(2.*kin % n(c)) - ONE_THIRD
+    b12 = uv % n(c)/(2.*kin % n(c))   
+    b13 = uw % n(c)/(2.*kin % n(c))    
+    b23 = vw % n(c)/(2.*kin % n(c))
 
     ! formula C.5
-    s11(c) = u % x(c) 
-    s22(c) = v % y(c) 
-    s33(c) = w % z(c) 
-    s12(c) = 0.5*(u % y(c) + v % x(c))
-    s13(c) = 0.5*(u % z(c) + w % x(c))
-    s23(c) = 0.5*(v % z(c) + w % y(c))
+    s11 = u % x(c) 
+    s22 = v % y(c) 
+    s33 = w % z(c) 
+    s12 = 0.5*(u % y(c) + v % x(c))
+    s13 = 0.5*(u % z(c) + w % x(c))
+    s23 = 0.5*(v % z(c) + w % y(c))
 
     ! formula C.6
-    v12(c) = 0.5*(u % y(c) - v % x(c)) - omega_z
+    v12 = 0.5*(u % y(c) - v % x(c)) - omega_z
     !v21 = -v12
-    v13(c) = 0.5*(u % z(c) - w % x(c)) + omega_y
+    v13 = 0.5*(u % z(c) - w % x(c)) + omega_y
     !v31 = -v13
-    v23(c) = 0.5*(v % z(c) - w % y(c)) - omega_x
+    v23 = 0.5*(v % z(c) - w % y(c)) - omega_x
     !v32 = -v23
 
     ! (C.3 1st term without "-" and *b_ij)
-    term_c3_1(c) = g1*eps % n(c) + g1_star*p_kin(c)
+    term_c3_1 = g1*eps % n(c) + g1_star*p_kin(c)
 
     ! for formula C.3 (b_kl_b_kl never appears without sqrt)
-    b_kl_b_kl_sq(c) = sqrt(b11(c)**2. + b22(c)**2. + b33(c)**2. &
-      + 2.*(b12(c)**2. + b13(c)**2. + b23(c)**2.))
+    b_kl_b_kl_sq = sqrt(b11**2. + b22**2. + b33**2. &
+      + 2.*(b12**2. + b13**2. + b23**2.))
 
     ! for formula C.3
-    b_lm_s_lm(c) = b11(c)*s11(c) + b22(c)*s22(c) + b33(c)*s33(c) &
-      + 2.*(b12(c)*s12(c) + b13(c)*s13(c) + b23(c)*s23(c))
+    b_lm_s_lm = b11*s11 + b22*s22 + b33*s33 &
+      + 2.*(b12*s12 + b13*s13 + b23*s23)
 
     ! for formula C.7
-    u_k_u_l_n_k_n_l(c) = uu % n(c)*n1n1(c) + vv % n(c)*n2n2(c) &
-      + ww % n(c)*n3n3(c) + 2.*uv % n(c)*n1n2(c) + 2.*uw % n(c)*n1n3(c) &
-      + 2.*vw % n(c)*n2n3(c)
+    u_k_u_l_n_k_n_l = uu % n(c)*n1n1 + vv % n(c)*n2n2 &
+      + ww % n(c)*n3n3 + 2.*uv % n(c)*n1n2 + 2.*uw % n(c)*n1n3 &
+      + 2.*vw % n(c)*n2n3
 
     !---------------!
     !   uu stress   !
@@ -145,17 +124,16 @@
       stress = max(uu % n(c), TINY)
 
       ! formula C.7
-      phi_wall = - 5.*eps_2_k(c) * (                                       &
-        2.*uu % n(c)*n1n1(c) + 2.*uv % n(c)*n1n2(c) + 2.*uw % n(c)*n1n3(c) &
-        - 0.5*u_k_u_l_n_k_n_l(c)*(n1n1(c) + 1.)                            &
+      phi_wall = - 5.*eps_2_k * (                                 &
+        2.*uu % n(c)*n1n1 + 2.*uv % n(c)*n1n2 + 2.*uw % n(c)*n1n3 &
+        - 0.5*u_k_u_l_n_k_n_l*(n1n1 + 1.)                         &
         - stress) ! this extra term is substracted from A later
       
       ! formula C.3 (without C4 1st term)
-      phi_hom = term_c3_1(c) * ONE_THIRD +                      &
-        ((g3 - g3_star*b_kl_b_kl_sq(c))*s11(c) +                &
-        g4*(2.*( b11(c)*s11(c) + b12(c)*s12(c) + b13(c)*s13(c)) &
-          - TWO_THIRDS*b_lm_s_lm(c) ) +                         &
-        g5*(2.*(                 b12(c)*v12(c) + b13(c)*v13(c))))*kin % n(c)
+      phi_hom = term_c3_1 * ONE_THIRD +                                  &
+        ((g3 - g3_star*b_kl_b_kl_sq)*s11 +                               &
+        g4*(2.*( b11*s11 + b12*s12 + b13*s13) - TWO_THIRDS*b_lm_s_lm ) + &
+        g5*(2.*(           b12*v12 + b13*v13)))*kin % n(c)
 
       ! P_11 + G_11 (formula C.1)
       prod_and_coriolis = &
@@ -164,7 +142,7 @@
 
       ! left hand side (C.11 delta_ij)
       A % val(A % dia(c)) =  A % val(A % dia(c)) + grid % vol(c) * &
-        TWO_THIRDS * alpha3(c) * eps % n(c) / stress
+        TWO_THIRDS * alpha3 * eps % n(c) / stress
 
     !---------------!
     !   vv stress   !
@@ -175,17 +153,16 @@
       stress = max(vv % n(c), TINY)
 
       ! formula C.7
-      phi_wall = - 5.*eps_2_k(c) * (                                      &
-        2.*uv % n(c)*n1n2(c) + 2.*vv % n(c)*n2n2(c) + 2.*vw % n(c)*n2n3(c)&
-        - 0.5*u_k_u_l_n_k_n_l(c)*(n2n2(c) + 1.)                           &
+      phi_wall = - 5.*eps_2_k * (                                 &
+        2.*uv % n(c)*n1n2 + 2.*vv % n(c)*n2n2 + 2.*vw % n(c)*n2n3 &
+        - 0.5*u_k_u_l_n_k_n_l*(n2n2 + 1.)                         &
         - stress) ! this extra term is substracted from A later
 
       ! formula C.3 (without C4 1st term)
-      phi_hom = term_c3_1(c) * ONE_THIRD +                      &
-        ((g3 - g3_star*b_kl_b_kl_sq(c))*s22(c) +                &
-        g4*(2.*( b12(c)*s12(c) + b22(c)*s22(c) + b23(c)*s23(c)) &
-          - TWO_THIRDS*b_lm_s_lm(c) ) +                         &
-        g5*(2.*(-b12(c)*v12(c)        +          b23(c)*v23(c))))*kin % n(c)
+      phi_hom = term_c3_1 * ONE_THIRD +                                  &
+        ((g3 - g3_star*b_kl_b_kl_sq)*s22 +                               &
+        g4*(2.*( b12*s12 + b22*s22 + b23*s23) - TWO_THIRDS*b_lm_s_lm ) + &
+        g5*(2.*(-b12*v12           + b23*v23)))*kin % n(c)
 
       ! P_22 + G_22 (formula C.1)
       prod_and_coriolis = &
@@ -194,7 +171,7 @@
 
       ! left hand side (C.11 delta_ij)
       A % val(A % dia(c)) =  A % val(A % dia(c)) + grid % vol(c) * &
-        TWO_THIRDS * alpha3(c) * eps % n(c) / stress
+        TWO_THIRDS * alpha3 * eps % n(c) / stress
     !---------------!
     !   ww stress   !
     !---------------!
@@ -204,17 +181,16 @@
       stress = max(ww % n(c), TINY)
 
       ! formula C.7
-      phi_wall = - 5.*eps_2_k(c) * (                                      &
-        2.*uw % n(c)*n1n3(c) + 2.*vw % n(c)*n2n3(c) + 2.*ww % n(c)*n3n3(c)&
-        - 0.5*u_k_u_l_n_k_n_l(c)*(n3n3(c) + 1.)                           &
+      phi_wall = - 5.*eps_2_k * (                                 &
+        2.*uw % n(c)*n1n3 + 2.*vw % n(c)*n2n3 + 2.*ww % n(c)*n3n3 &
+        - 0.5*u_k_u_l_n_k_n_l*(n3n3 + 1.)                         &
         - stress) ! this extra term is substracted from A later
 
       ! formula C.3 (without C4 1st term)
-      phi_hom = term_c3_1(c) * ONE_THIRD +                       &
-        ((g3 - g3_star*b_kl_b_kl_sq(c))*s33(c) +                 &
-        g4*(2.*( b13(c)*s13(c) + b23(c)*s23(c) + b33(c)*s33(c))  &
-          - TWO_THIRDS*b_lm_s_lm(c)) +                           &
-        g5*(2.*(-b13(c)*v13(c) - b23(c)*v23(c)        )))*kin % n(c)
+      phi_hom = term_c3_1 * ONE_THIRD +                                 &
+        ((g3 - g3_star*b_kl_b_kl_sq)*s33 +                              &
+        g4*(2.*( b13*s13 + b23*s23 + b33*s33) - TWO_THIRDS*b_lm_s_lm) + &
+        g5*(2.*(-b13*v13 - b23*v23           )))*kin % n(c)
 
       ! P_33 + G_33 (formula C.1)
       prod_and_coriolis = &
@@ -223,7 +199,7 @@
 
       ! left hand side (C.11 delta_ij)
       A % val(A % dia(c)) =  A % val(A % dia(c)) + grid % vol(c) * &
-        TWO_THIRDS * alpha3(c) * eps % n(c) / stress
+        TWO_THIRDS * alpha3 * eps % n(c) / stress
     !---------------!
     !   uv stress   !
     !---------------!
@@ -233,19 +209,19 @@
       stress = max(uv % n(c), TINY)
 
       ! formula C.7
-      phi_wall = - 5.*eps_2_k(c) * (                                 &
-        uu % n(c)*n1n2(c) + uv % n(c)*n2n2(c) + uw % n(c)*n2n3(c) +  &
-        uv % n(c)*n1n1(c) + vv % n(c)*n1n2(c) + vw % n(c)*n1n3(c)    &
-        - 0.5*u_k_u_l_n_k_n_l(c)*n1n2(c)                             &
+      phi_wall = - 5.*eps_2_k * (                           &
+        uu % n(c)*n1n2 + uv % n(c)*n2n2 + uw % n(c)*n2n3 +  &
+        uv % n(c)*n1n1 + vv % n(c)*n1n2 + vw % n(c)*n1n3    &
+        - 0.5*u_k_u_l_n_k_n_l*n1n2                          &
         - stress) ! this extra term is substracted from A later
 
       ! formula C.3 (without C4 1st term)
       phi_hom = &
-        ((g3 - g3_star*b_kl_b_kl_sq(c))*s12(c) +               &
-        g4*( b11(c)*s12(c) + b12(c)*s22(c) + b13(c)*s23(c)  +  &
-             b12(c)*s11(c) + b22(c)*s12(c) + b23(c)*s13(c)) +  &
-        g5*(-b11(c)*v12(c)                 + b13(c)*v23(c)  +  &
-                             b22(c)*v12(c) + b23(c)*v13(c)))*kin % n(c)
+        ((g3 - g3_star*b_kl_b_kl_sq)*s12  +  &
+        g4*( b11*s12 + b12*s22 + b13*s23  +  &
+             b12*s11 + b22*s12 + b23*s13) +  &
+        g5*(-b11*v12           + b13*v23  +  &
+                       b22*v12 + b23*v13))*kin % n(c)
 
       ! P_12 + G_12 (formula C.1)
       prod_and_coriolis = &
@@ -261,19 +237,19 @@
       stress = max(uw % n(c), TINY)
 
       ! formula C.7
-      phi_wall = - 5.*eps_2_k(c) * (                               &
-        uu % n(c)*n1n3(c) + uv % n(c)*n2n3(c) + uw % n(c)*n3n3(c)+ &
-        uw % n(c)*n1n1(c) + vw % n(c)*n1n2(c) + ww % n(c)*n1n3(c)  &
-        - 0.5*u_k_u_l_n_k_n_l(c)*n1n3(c)                           &
+      phi_wall = - 5.*eps_2_k * (                               &
+        uu % n(c)*n1n3 + uv % n(c)*n2n3 + uw % n(c)*n3n3+ &
+        uw % n(c)*n1n1 + vw % n(c)*n1n2 + ww % n(c)*n1n3  &
+        - 0.5*u_k_u_l_n_k_n_l*n1n3                           &
         - stress) ! this extra term is substracted from A later
 
       ! formula C.3 (without C4 1st term)
       phi_hom = &
-        ((g3 - g3_star*b_kl_b_kl_sq(c))*s13(c) +               &
-        g4*( b11(c)*s13(c) + b12(c)*s23(c) + b13(c)*s33(c)  +  &
-             b13(c)*s11(c) + b23(c)*s12(c) + b33(c)*s13(c)) +  &
-        g5*(-b11(c)*v13(c) - b12(c)*v23(c) +                   &
-                             b23(c)*v12(c) + b33(c)*v13(c)))*kin % n(c)
+        ((g3 - g3_star*b_kl_b_kl_sq)*s13  +  &
+        g4*( b11*s13 + b12*s23 + b13*s33  +  &
+             b13*s11 + b23*s12 + b33*s13) +  &
+        g5*(-b11*v13 - b12*v23 +             &
+                       b23*v12 + b33*v13))*kin % n(c)
 
       ! P_12 + G_12 (formula C.1)
       prod_and_coriolis = &
@@ -290,19 +266,19 @@
       stress = max(vw % n(c), TINY)
 
       ! formula C.7
-      phi_wall = - 5.*eps_2_k(c) * (                                &
-        uv % n(c)*n1n3(c) + vv % n(c)*n2n3(c) + vw % n(c)*n3n3(c) + &
-        uw % n(c)*n1n2(c) + vw % n(c)*n2n2(c) + ww % n(c)*n2n3(c)   &
-        - 0.5*u_k_u_l_n_k_n_l(c)*n2n3(c)                            &
+      phi_wall = - 5.*eps_2_k * (                          &
+        uv % n(c)*n1n3 + vv % n(c)*n2n3 + vw % n(c)*n3n3 + &
+        uw % n(c)*n1n2 + vw % n(c)*n2n2 + ww % n(c)*n2n3   &
+        - 0.5*u_k_u_l_n_k_n_l*n2n3                         &
         - stress) ! this extra term is substracted from A later
 
       ! formula C.3 (without C4 1st term)
       phi_hom = &
-        ((g3 - g3_star*b_kl_b_kl_sq(c))*s23(c) +              &
-        g4*( b12(c)*s13(c) + b22(c)*s23(c) + b23(c)*s33(c)  + &
-             b13(c)*s12(c) + b23(c)*s22(c) + b33(c)*s23(c)) + &
-        g5*(-b12(c)*v13(c) - b22(c)*v23(c)                    &
-            -b13(c)*v12(c) +                 b33(c)*v23(c)))*kin % n(c)
+        ((g3 - g3_star*b_kl_b_kl_sq)*s23  + &
+        g4*( b12*s13 + b22*s23 + b23*s33  + &
+             b13*s12 + b23*s22 + b33*s23) + &
+        g5*(-b12*v13 - b22*v23              &
+            -b13*v12 +           b33*v23))*kin % n(c)
 
       ! P_12 + G_12 (formula C.1)
       prod_and_coriolis = &
@@ -316,20 +292,20 @@
     ! formula C.1
     b(c) = b(c) + grid % vol(c) * ( & !
       max(prod_and_coriolis,0.) & ! P_ij + G_ij, if > 0.
-      + (1. - alpha3(c))*phi_wall + alpha3(c)*phi_hom & ! C.2
+      + (1. - alpha3)*phi_wall + alpha3*phi_hom & ! C.2
       )
     ! left hand side
     A % val(A % dia(c)) =  A % val(A % dia(c)) + grid % vol(c) * (  &
-      + term_c3_1(c)/(2.*kin % n(c)) & ! from C.3 and C.4 1st terms
+      + term_c3_1/(2.*kin % n(c)) & ! from C.3 and C.4 1st terms
       - min(prod_and_coriolis,0.)/stress +  & ! (P_ij + G_ij) / u_iu_j, if < 0
-      6.*(1. - alpha3(c))*eps_2_k(c) & ! substracting extra term from phi_wall
+      6.*(1. - alpha3)*eps_2_k & ! substracting extra term from phi_wall
       )
     !---------!
     !   eps   !
     !---------!
     else if (name_phi == 'EPS') then
       Esor = grid % vol(c)/max(t_scale(c),TINY)
-      c_1e1 = c_1e * (1. + 0.1*(1.-alpha3(c))*p_kin(c)/(eps % n(c)+TINY))
+      c_1e1 = c_1e * (1. + 0.1*(1.-alpha3)*p_kin(c)/(eps % n(c)+TINY))
       b(c) = b(c) + c_1e1*density*p_kin(c)*Esor
 
       ! Fill in a diagonal of coefficient matrix

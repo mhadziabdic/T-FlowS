@@ -92,7 +92,7 @@
   !--------------!
   if(heat_transfer == YES) then
     call Read_Backup_1_Cell_Bnd(fh, d, 'temp',      t  % n(-nb_s:nc_s))
-    call Read_Backup_1_Cell_Bnd(fh, d, 'heat_flux', t  % q(-nb_s:nc_s))
+    call Read_Backup_1_Cell_Bnd(fh, d, 'heat_flux', t  % q(-nb_s:-1))
     call Read_Backup_1_Cell(fh, d, 'temp_old',      t  % o  (1:nc_s))
     call Read_Backup_1_Cell(fh, d, 'temp_adv',      t  % a  (1:nc_s))
     call Read_Backup_1_Cell(fh, d, 'temp_adv_old',  t  % a_o(1:nc_s))

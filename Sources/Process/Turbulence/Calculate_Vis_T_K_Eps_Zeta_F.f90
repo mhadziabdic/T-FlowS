@@ -38,18 +38,19 @@
 
   call Time_And_Length_Scale(grid)
 
+  ! c = 1, grid % n_cells
   if(turbulence_model == K_EPS_ZETA_F) then
-    vis_t(1:) = c_mu_d * density * zeta % n(1:) * kin % n(1:) * t_scale(1:)
+    vis_t(:) = c_mu_d * density * zeta % n(:) * kin % n(:) * t_scale(:)
   else if(turbulence_model == HYBRID_K_EPS_ZETA_F) then
-    vis_t(1:)     = c_mu_d * zeta % n(1:) * kin % n(1:) * t_scale(1:)
-    vis_t_eff(1:) = max(vis_t(1:), vis_t_sgs(1:))
+    vis_t(:)     = c_mu_d * zeta % n(:) * kin % n(:) * t_scale(:)
+    vis_t_eff(:) = max(vis_t(:), vis_t_sgs(:))
     call Comm_Mod_Exchange(grid, vis_t_eff)
   end if
 
   ! kinematic viscosities
-  kin_visc       = viscosity / density
-  kin_visc_t(1:) = vis_t(1:) / density
-  visc_ratio(1:) = vis_t(1:) / viscosity
+  kin_visc      = viscosity / density
+  kin_visc_t(:) = vis_t(:) / density
+  visc_ratio(:) = vis_t(:) / viscosity
 
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)

@@ -36,8 +36,10 @@
 !------------------------------------------------------------------------------!
 
   ! Production source:
-  p_kin(1:) = vis_t(1:)/density * shear(1:) * shear(1:)
-  b(1:)     = b(1:) + density * p_kin(1:) * grid % vol(1:)
+  do c = 1, grid % n_cells
+    p_kin(c) = vis_t(c)/density * shear(c)**2.
+    b(c)     = b(c) + density * p_kin(c) * grid % vol(c)
+  end do
 
   if(turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
     do c = 1, grid % n_cells

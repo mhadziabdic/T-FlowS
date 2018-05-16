@@ -43,7 +43,7 @@
   real              :: vis_tS
   character(len=80) :: precond
   integer           :: adv_scheme  ! space discratization advection (scheme)
-  real              :: blend         ! blending coeff (1.0 central; 0.0 upwind)
+  real              :: blend         ! blending coeff (1.0 central; 0. upwind)
   integer           :: td_inertia    ! time-disretization for inerita  
   integer           :: td_advection  ! time-disretization for advection
   integer           :: td_diffusion  ! time-disretization for diffusion 
@@ -61,13 +61,13 @@
 !                                                                              !
 !------------------------------------------------------------------------------!
 
-  a % val = 0.0
+  a % val = 0.
 
-  b=0.0
+  b(:) = 0.
 
   ! This is important for "copy" boundary conditions. Find out why !
   do c = -grid % n_bnd_cells,-1
-    a % bou(c)=0.0
+    a % bou(c) = 0.
   end do
 
   !-------------------------------------! 
@@ -80,14 +80,14 @@
   call Control_Mod_Time_Integration_For_Cross_Diffusion(td_cross_diff)
 
   ! Old values (o) and older than old (oo)
-  if(ini == 1) then
+  if(ini .eq. 1) then
     do c = 1, grid % n_cells
       phi % oo(c)   = phi % o(c)
       phi % o (c)   = phi % n(c)
       phi % a_oo(c) = phi % a_o(c)
-      phi % a_o (c) = 0.0 
+      phi % a_o (c) = 0. 
       phi % d_oo(c) = phi % d_o(c)
-      phi % d_o (c) = 0.0 
+      phi % d_o (c) = 0. 
       phi % c_oo(c) = phi % c_o(c)
       phi % c_o (c) = phi % c(c) 
     end do
@@ -118,8 +118,8 @@
 
   ! New values
 1 do c = 1, grid % n_cells
-    phi % a(c)    = 0.0
-    phi % c(c)    = 0.0
+    phi % a(c)    = 0.
+    phi % c(c)    = 0.
   end do
 
   !----------------------------!
@@ -127,12 +127,12 @@
   !----------------------------!
   do s = 1, grid % n_faces
 
-    c1=grid % faces_c(1,s)
-    c2=grid % faces_c(2,s) 
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s) 
 
     ! Velocities on "orthogonal" cell centers 
     if(c2 > 0 .or.  &
-       c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
+       c2 < 0.and.Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. BUFFER) then
       phis =        grid % f(s)  * phi % n(c1)   &
            + (1.0 - grid % f(s)) * phi % n(c2)
 
@@ -145,7 +145,7 @@
       end if 
 
       ! Compute advection term
-      if(ini == 1) then 
+      if(ini .eq. 1) then 
         if(c2  > 0) then
           phi % a_o(c1) = phi % a_o(c1) - flux(s)*phis
           phi % a_o(c2) = phi % a_o(c2) + flux(s)*phis
@@ -180,29 +180,29 @@
   !-----------------------------!
 
   ! Adams-Bashforth scheeme for convective fluxes
-  if(td_advection == ADAMS_BASHFORTH) then
-    do c=1,grid % n_cells
+  if(td_advection .eq. ADAMS_BASHFORTH) then
+    do c = 1, grid % n_cells
       b(c) = b(c) + (1.5 * phi % a_o(c) - 0.5 * phi % a_oo(c) - phi % c(c))
     end do  
   endif
 
   ! Crank-Nicholson scheeme for convective fluxes
-  if(td_advection == CRANK_NICOLSON) then
+  if(td_advection .eq. CRANK_NICOLSON) then
     do c = 1, grid % n_cells
       b(c) = b(c) + (0.5 * ( phi % a(c) + phi % a_o(c) ) - phi % c(c))
     end do  
   endif
 
   ! Fully implicit treatment of convective fluxes 
-  if(td_advection == FULLY_IMPLICIT) then
-    do c=1,grid % n_cells
+  if(td_advection .eq. FULLY_IMPLICIT) then
+    do c = 1, grid % n_cells
       b(c) = b(c) + (phi % a(c) - phi % c(c))
     end do  
   end if     
             
   ! New values
   do c = 1, grid % n_cells
-    phi % c(c) = 0.0
+    phi % c(c) = 0.
   end do
   
   !------------------!
@@ -216,25 +216,25 @@
   !----------------------------!
   do s = 1, grid % n_faces       
 
-    c1=grid % faces_c(1,s)
-    c2=grid % faces_c(2,s)   
+    c1 = grid % faces_c(1,s)
+    c2 = grid % faces_c(2,s)   
 
     ! vis_tur is used to make diaginal element more dominant.
     ! This contribution is later substracted.
     vis_tS = fw(s)*vis_t(c1) + (1.0-fw(s))*vis_t(c2)
 
-    if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+    if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) then
       vis_eff = viscosity + vis_tS 
-    else if(turbulence_model == HANJALIC_JAKIRLIC .and.  &
-            turbulence_model_variant /= HYBRID) then
+    else if(turbulence_model .eq. HANJALIC_JAKIRLIC .and.  &
+            turbulence_model_variant .ne. HYBRID) then
       vis_eff = 1.5*viscosity 
-    else if(turbulence_model == HANJALIC_JAKIRLIC .and.  &
-            turbulence_model_variant == HYBRID) then
+    else if(turbulence_model .eq. HANJALIC_JAKIRLIC .and.  &
+            turbulence_model_variant .eq. HYBRID) then
       vis_eff = viscosity 
     end if
 
-    if(turbulence_model == HANJALIC_JAKIRLIC) then
-      if(turbulence_model_variant == HYBRID) then
+    if(turbulence_model .eq. HANJALIC_JAKIRLIC) then
+      if(turbulence_model_variant .eq. HYBRID) then
         vis_eff = vis_eff + vis_tS
       end if
     end if
@@ -259,12 +259,12 @@
          +phiz_f*grid % dz(s))*a0
 
     ! Straight diffusion part 
-    if(ini == 1) then
+    if(ini .eq. 1) then
       if(c2  > 0) then
         phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*a0   
         phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*a0    
       else
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2) /= SYMMETRY) then
+        if(Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. SYMMETRY) then
           phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*a0   
         end if 
       end if 
@@ -277,21 +277,21 @@
     end if 
 
     ! Compute coefficients for the sysytem matrix
-    if( (td_diffusion == CRANK_NICOLSON) .or.  &
-        (td_diffusion == FULLY_IMPLICIT) ) then  
+    if( (td_diffusion .eq. CRANK_NICOLSON) .or.  &
+        (td_diffusion .eq. FULLY_IMPLICIT) ) then  
 
-      if(td_diffusion == CRANK_NICOLSON) then
+      if(td_diffusion .eq. CRANK_NICOLSON) then
         a12 = 0.5 * a0 
         a21 = 0.5 * a0 
       end if
 
-      if(td_diffusion == FULLY_IMPLICIT) then
+      if(td_diffusion .eq. FULLY_IMPLICIT) then
         a12 = a0 
         a21 = a0 
       end if
 
-      a12 = a12  - min(flux(s), real(0.0)) 
-      a21 = a21  + max(flux(s), real(0.0))
+      a12 = a12  - min(flux(s), 0.) 
+      a21 = a21  + max(flux(s), 0.)
 
       ! Fill the system matrix
       if(c2  > 0) then
@@ -304,13 +304,13 @@
         ! Outflow is not included because it was causing problems     
         ! Convect is commented because for turbulent scalars convect 
         ! outflow is treated as classic outflow.
-        if((Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW).or.                     &
-           (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL).or.                       &
-!!!        (Grid_Mod_Bnd_Cond_Type(grid,c2) == CONVECT).or.                    &
-           (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) ) then                                
+        if((Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. INFLOW).or.                     &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL).or.                       &
+!!!        (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. CONVECT).or.                    &
+           (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) ) then                                
           a % val(a % dia(c1)) = a % val(a % dia(c1)) + a12
           b(c1) = b(c1) + a12 * phi % n(c2)
-        else if( Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER ) then  
+        else if( Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. BUFFER ) then  
           a % val(a % dia(c1)) = a % val(a % dia(c1)) + a12
           a % bou(c2) = - a12  ! cool parallel stuff
         endif
@@ -323,14 +323,14 @@
   !------------------------------!
   !   Turbulent diffusion term   !
   !------------------------------!
-  if(turbulence_model_variant /= HYBRID) then
-    if(phi % name == 'EPS') then
+  if(turbulence_model_variant .ne. HYBRID) then
+    if(phi % name .eq. 'EPS') then
       c_mu_d = 0.18        
     else
       c_mu_d = 0.22
     end if 
-    if(turbulence_model == HANJALIC_JAKIRLIC) then        
-      do c=1,grid % n_cells
+    if(turbulence_model .eq. HANJALIC_JAKIRLIC) then        
+      do c = 1, grid % n_cells
         u1uj_phij(c) = c_mu_d / phi % sigma * kin % n(c) / eps % n(c)  &
                      * (  uu % n(c) * phi_x(c)                         &
                         + uv % n(c) * phi_y(c)                         &
@@ -349,8 +349,8 @@
                         + ww % n(c) * phi_z(c))                        &
                      - viscosity * phi_z(c)
       end do
-    else if(turbulence_model == REYNOLDS_STRESS_MODEL) then
-      do c=1,grid % n_cells
+    else if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) then
+      do c = 1, grid % n_cells
         u1uj_phij(c) = c_mu_d / phi % sigma * t_scale(c)  &
                      * (  uu % n(c) * phi_x(c)            &
                         + uv % n(c) * phi_y(c)            &
@@ -380,12 +380,12 @@
     !------------------------------------------------------------------!
     !   Here we clean up transport equation from the false diffusion   !
     !------------------------------------------------------------------!
-    if(turbulence_model == REYNOLDS_STRESS_MODEL .and.  &
-       turbulence_model_variant /= HYBRID) then
+    if(turbulence_model .eq. REYNOLDS_STRESS_MODEL .and.  &
+       turbulence_model_variant .ne. HYBRID) then
       do s = 1, grid % n_faces
 
-        c1=grid % faces_c(1,s)
-        c2=grid % faces_c(2,s)
+        c1 = grid % faces_c(1,s)
+        c2 = grid % faces_c(2,s)
 
         vis_eff = (fw(s)*vis_t(c1)+(1.0-fw(s))*vis_t(c2)) 
 
@@ -417,15 +417,15 @@
   !---------------------------------!
 
   ! Adams-Bashfort scheeme for diffusion fluxes
-  if(td_diffusion == ADAMS_BASHFORTH) then 
-    do c=1,grid % n_cells
+  if(td_diffusion .eq. ADAMS_BASHFORTH) then 
+    do c = 1, grid % n_cells
       b(c) = b(c) + 1.5 * phi % d_o(c) - 0.5 * phi % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
-  if(td_diffusion == CRANK_NICOLSON) then 
-    do c=1,grid % n_cells
+  if(td_diffusion .eq. CRANK_NICOLSON) then 
+    do c = 1, grid % n_cells
       b(c) = b(c) + 0.5 * phi % d_o(c)
     end do  
   end if
@@ -434,22 +434,22 @@
   !  is handled via the linear system of equations 
 
   ! Adams-Bashfort scheeme for cross diffusion 
-  if(td_cross_diff == ADAMS_BASHFORTH) then
-    do c=1,grid % n_cells
+  if(td_cross_diff .eq. ADAMS_BASHFORTH) then
+    do c = 1, grid % n_cells
       b(c) = b(c) + 1.5 * phi % c_o(c) - 0.5 * phi % c_oo(c)
     end do 
   end if
     
   ! Crank-Nicholson scheme for cross difusive terms
-  if(td_cross_diff == CRANK_NICOLSON) then
-    do c=1,grid % n_cells
+  if(td_cross_diff .eq. CRANK_NICOLSON) then
+    do c = 1, grid % n_cells
       b(c) = b(c) + 0.5 * phi % c(c) + 0.5 * phi % c_o(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
-  if(td_cross_diff == FULLY_IMPLICIT) then
-    do c=1,grid % n_cells
+  if(td_cross_diff .eq. FULLY_IMPLICIT) then
+    do c = 1, grid % n_cells
       b(c) = b(c) + phi % c(c) 
     end do 
   end if
@@ -461,8 +461,8 @@
   !--------------------!
 
   ! Two time levels; Linear interpolation
-  if(td_inertia == LINEAR) then
-    do c=1,grid % n_cells
+  if(td_inertia .eq. LINEAR) then
+    do c = 1, grid % n_cells
       a0 = density*grid % vol(c)/dt
       a % val(a % dia(c)) = a % val(a % dia(c)) + a0
       b(c) = b(c) + a0 * phi % o(c)
@@ -470,15 +470,15 @@
   end if
 
   ! Three time levels; parabolic interpolation
-  if(td_inertia == PARABOLIC) then
-    do c=1,grid % n_cells
+  if(td_inertia .eq. PARABOLIC) then
+    do c = 1, grid % n_cells
       a0 = density*grid % vol(c)/dt
       a % val(a % dia(c)) = a % val(a % dia(c)) + 1.5 * a0
       b(c) = b(c) + 2.0*a0 * phi % o(c) - 0.5*a0 * phi % oo(c)
     end do
   end if
 
-  if(turbulence_model == REYNOLDS_STRESS_MODEL) then 
+  if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) then 
     call Grad_Mod_For_Phi(grid, f22 % n, 1, f22 % x, .true.) ! df22/dx
     call Grad_Mod_For_Phi(grid, f22 % n, 2, f22 % y, .true.) ! df22/dy
     call Grad_Mod_For_Phi(grid, f22 % n, 3, f22 % z, .true.) ! df22/dz
@@ -498,7 +498,7 @@
   urf = 1.0
   call Control_Mod_Simple_Underrelaxation_For_Turbulence(urf)
 
-  do c=1,grid % n_cells
+  do c = 1, grid % n_cells
     b(c) = b(c) + a % val(a % dia(c)) * (1.0 - urf)*phi % n(c) / urf
     a % val(a % dia(c)) = a % val(a % dia(c)) / urf
 !?????? Asave(c) = a % val(a % dia(c)) ??????
@@ -517,36 +517,36 @@
 
   call Cg(a, phi % n, b, precond, niter, tol, ini_res, phi % res)
 
-  if( phi % name == 'UU' )   &
+  if( phi % name .eq. 'UU' )   &
     call Info_Mod_Iter_Fill_At(3, 1, phi % name, niter, phi % res)
-  if( phi % name == 'VV' )   &
+  if( phi % name .eq. 'VV' )   &
     call Info_Mod_Iter_Fill_At(3, 2, phi % name, niter, phi % res)
-  if( phi % name == 'WW' )   &
+  if( phi % name .eq. 'WW' )   &
     call Info_Mod_Iter_Fill_At(3, 3, phi % name, niter, phi % res)
-  if( phi % name == 'UV' )   &
+  if( phi % name .eq. 'UV' )   &
     call Info_Mod_Iter_Fill_At(4, 1, phi % name, niter, phi % res)
-  if( phi % name == 'UW' )   &
+  if( phi % name .eq. 'UW' )   &
     call Info_Mod_Iter_Fill_At(4, 2, phi % name, niter, phi % res)
-  if( phi % name == 'VW' )   &
+  if( phi % name .eq. 'VW' )   &
     call Info_Mod_Iter_Fill_At(4, 3, phi % name, niter, phi % res)
-  if( phi % name == 'EPS' )  &
+  if( phi % name .eq. 'EPS' )  &
     call Info_Mod_Iter_Fill_At(4, 4, phi % name, niter, phi % res)
 
-  if(phi % name == 'EPS') then
+  if(phi % name .eq. 'EPS') then
     do c= 1, grid % n_cells
       phi % n(c) = phi % n(c) 
-     if( phi % n(c) < 0.0) then
+     if( phi % n(c) < 0.) then
        phi % n(c) = phi % o(c)
      end if
     end do
   end if
 
-  if(phi % name == 'UU' .or.  &
-     phi % name == 'VV' .or.  &
-     phi % name == 'WW') then
+  if(phi % name .eq. 'UU' .or.  &
+     phi % name .eq. 'VV' .or.  &
+     phi % name .eq. 'WW') then
     do c = 1, grid % n_cells
       phi % n(c) = phi % n(c) 
-      if(phi % n(c) < 0.0) then
+      if(phi % n(c) < 0.) then
         phi % n(c) = phi % o(c)
       end if
     end do

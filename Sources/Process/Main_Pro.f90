@@ -500,20 +500,21 @@
 
   if(this_proc < 2) then
     open(9, file='stop')
-if (n > 2) then
-  print *, "TEST123"
-  print *, "max(U % n)=",maxval(U % n)
-  print *, "max(V % n)=",maxval(V % n)
-  print *, "max(W % n)=",maxval(W % n)
-  print *, "max(vis_t/visc)=",maxval(vis_t/viscosity)
-  print *, "max(kin % n)=",maxval(kin % n)
-  print *, "max(eps % n)=",maxval(eps % n)
-  print *, "max(p_kin)=",maxval(p_kin)
-  print *, "max(b)=",maxval(b),"*", density
-  print *, "max(tau_wall)=",maxval(tau_wall),"*", density
-  print *, "max(T % n)=",maxval(T % n)
-  call exit(1)
-end if
+! useful for testing
+!if (n > 2) then
+!  print *, "TEST123"
+!  print *, "max(U % n)=",maxval(U % n)
+!  print *, "max(V % n)=",maxval(V % n)
+!  print *, "max(W % n)=",maxval(W % n)
+!  print *, "max(vis_t/visc)=",maxval(vis_t/viscosity)
+!  print *, "max(kin % n)=",maxval(kin % n)
+!  print *, "max(eps % n)=",maxval(eps % n)
+!  print *, "max(p_kin)=",maxval(p_kin)
+!  print *, "max(b)=",maxval(b),"*", density
+!  print *, "max(tau_wall)=",maxval(tau_wall),"*", density
+!  print *, "max(T % n)=",maxval(T % n)
+!  call exit(1)
+!end if
     close(9)
   end if
 

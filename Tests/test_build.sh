@@ -83,7 +83,7 @@ function convert_tests {
   # unpacking geometry
   cd $TEST_DIR/Rans/Channel_Re_Tau_590;                    tar -zxvf chan.tar.gz
   cd $TEST_DIR/Rans/Impinging_Jet_2d_Distant_Re_23000;      tar -zxvf jet.tar.gz
-  cd $TEST_DIR/Rans/Fuel_Bundle;           tar -zxvf subflow_LowRe_medium.tar.gz
+  cd $TEST_DIR/Rans/Fuel_Bundle;                  tar -zxvf subflow_LowRe.tar.gz
 
   #-- seq, no cgns
   cd $CONV_DIR; make clean

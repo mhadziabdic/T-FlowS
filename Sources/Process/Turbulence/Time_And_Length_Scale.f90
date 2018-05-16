@@ -11,17 +11,19 @@
   use rans_mod
   use Grid_Mod
   use Control_Mod
-  use Work_Mod, only: t1 => r_cell_01,  &  ! [s]
-                      t2 => r_cell_02,  &  ! [s]
-                      t3 => r_cell_03,  &  ! [s]
-                      l1 => r_cell_04,  &  ! [m]
-                      l2 => r_cell_05,  &  ! [m]
-                      l3 => r_cell_06      ! [m]
+  use Work_Mod, only: t1    => r_cell_01,  &  ! [s]
+                      t2    => r_cell_02,  &  ! [s]
+                      t3    => r_cell_03,  &  ! [s]
+                      l1    => r_cell_04,  &  ! [m]
+                      l2    => r_cell_05,  &  ! [m]
+                      l3    => r_cell_06,  &  ! [m]
+                      eps_l => r_cell_07      ! [m]
 !------------------------------------------------------------------------------!
   implicit none
   type(Grid_Type) :: grid
 !----------------------------------[Locals]------------------------------------!
   real    :: kin_visc   ! kinematic viscosity [m^2/s]
+  integer :: c
 !==============================================================================!
 !   Dimensions:                                                                !
 !   Production    p_kin    [m^2/s^3]   | Rate-of-strain  shear     [1/s]       !
@@ -32,29 +34,33 @@
 !   left hand s.  A        [kg/s]      | right hand s.   b         [kg*m^2/s^4]!
 !------------------------------------------------------------------------------!
   kin_visc = viscosity/density
+  eps_l(1:grid % n_cells) = eps % n(1:grid % n_cells) + TINY ! limited eps % n
 
-  t1(1:) = kin % n(1:)/(eps % n(1:) + TINY)
-  t2(1:) = c_t*sqrt(kin_visc/(eps % n(1:) + TINY))
+  do c = 1, grid % n_cells
+    t1(c) = kin % n(c)/eps_l(c)
+    t2(c) = c_t*sqrt(kin_visc/eps_l(c))
 
-  l1(1:) = kin % n(1:)**1.5/(eps % n(1:) + TINY)
-  l2(1:) = Cni*(kin_visc**3/(eps % n(1:) + TINY))**0.25
-  
-
+    l1(c) = kin % n(c)**1.5/eps_l(c)
+    l2(c) = Cni*(kin_visc**3./eps_l(c))**0.25
+  end do
+    
   if(turbulence_model .eq. K_EPS_ZETA_F .or.  &
      turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
     if(ROUGH .eq. YES) then
-      t_scale(1:) =     max(t1(1:),t2(1:))
-      l_scale(1:) = c_l*max(l1(1:),l2(1:))
+      t_scale(:) =     max(t1(:),t2(:))
+      l_scale(:) = c_l*max(l1(:),l2(:))
     else
-      t3(1:) = 0.6/(sqrt(3.0)*c_mu_d * zeta % n(1:) * shear(1:) + TINY)
-      l3(1:) = sqrt(kin % n(1:)/3.0)/(c_mu_d * zeta % n(1:) * shear(1:) + TINY)
-      t_scale(1:) =     max(min(t1(1:),t3(1:)),t2(1:))
-      l_scale(1:) = c_l*max(min(l1(1:),l3(1:)),l2(1:))
+      do c = 1, grid % n_cells
+        t3(c) = 0.6/(sqrt(3.0)*c_mu_d * zeta % n(c) * shear(c) + TINY)
+        l3(c) = sqrt(kin % n(c)/3.0)/(c_mu_d * zeta % n(c) * shear(c) + TINY)
+      end do
+      t_scale(:) =     max(min(t1(:),t3(:)),t2(:))
+      l_scale(:) = c_l*max(min(l1(:),l3(:)),l2(:))
     end if
   else if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) then
-    kin % n(1:) = max(0.5*(uu % n(1:) + vv % n(1:) + ww % n(1:)), TINY)
-    t_scale(1:) =     max(t1(1:),t2(1:))
-    l_scale(1:) = c_l*max(l1(1:),l2(1:))
+    kin % n(:) = max(0.5*(uu % n(:) + vv % n(:) + ww % n(:)), TINY)
+    t_scale(:) =     max(t1(:),t2(:))
+    l_scale(:) = c_l*max(l1(:),l2(:))
   end if
 
   end subroutine

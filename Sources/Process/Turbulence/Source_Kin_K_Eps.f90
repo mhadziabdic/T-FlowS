@@ -122,11 +122,11 @@
   !--------------------------------------------------------!
   if(turbulence_model_variant .eq. LOW_RE) then
 
-    p_kin(1:) = vis_t(1:)/density * shear(1:)**2
-    ! Production:
-    b(1:) = b(1:) + density * p_kin(1:) * grid % vol(1:)
-
     do c = 1, grid % n_cells
+      p_kin(c) = vis_t(c)/density * shear(c)**2
+      ! Production:
+      b(c) = b(c) + density * p_kin(c) * grid % vol(c)
+
       ! Dissipation:
       A % val(A % dia(c)) = A % val(A % dia(c)) + &
         density * eps % n(c)/(kin % n(c)+TINY)*grid % vol(c)

@@ -21,7 +21,7 @@
   use les_mod
   use rans_mod
   use Grid_Mod
-  use Work_Mod, only: Re_t => r_cell_01,  &
+  use Work_Mod, only: re_t => r_cell_01,  &
                       f_mu => r_cell_02
 
 !------------------------------------------------------------------------------!
@@ -29,7 +29,7 @@
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: c1, c2, s
+  integer :: c1, c2, s, c
   real    :: pr_turb, pr_mol
   real    :: kin_visc ![m^2/s]
 !==============================================================================!
@@ -52,17 +52,22 @@
   !---------------------!
   !   k-epsilon model   !
   !---------------------!
-  Re_t    = 0.
+  re_t    = 0.
   f_mu    = 0.
   y_plus  = 0.
   pr_turb = 0.9
 
-  vis_t(1:) = c_mu * density * kin % n(1:)**2 / (eps % n(1:) + TINY)
+  do c = 1, grid % n_cells
+    vis_t(c) = c_mu * density * kin % n(c)**2. / (eps % n(c) + TINY)
+  end do
+
   ! Low-Re varaint
   if(turbulence_model_variant == LOW_RE) then
-    Re_t(1:) = kin % n(1:)**2 / (kin_visc * eps % n(1:) + TINY)
-    f_mu(1:) = exp(-3.4/(1.0 + 0.02*Re_t(1:))**2)
-    vis_t(1:) = f_mu(1:) * vis_t(1:)
+    do c = 1, grid % n_cells
+      re_t(c) = kin % n(c)**2. / (kin_visc * eps % n(c) + TINY)
+      f_mu(c) = exp(-3.4/(1.0 + 0.02*re_t(c))**2.)
+      vis_t(c) = f_mu(c) * vis_t(c)
+    end do
   ! High-Re varaint
   else
     if(ROUGH == NO) then

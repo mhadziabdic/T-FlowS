@@ -41,17 +41,17 @@
 !   shear = sqrt(2 S_ij S_ij)                                                  !
 !------------------------------------------------------------------------------!
 
-  ! For to HIGH_RE and LOW_RE
-  ! Positive contribution:
-  b(1:) = b(1:) + &
-    c_1e * density * eps % n(1:) / kin % n(1:) * p_kin(1:) * grid % vol(1:)
-  do c = 1, grid % n_cells
+  if(turbulence_model_variant .eq. HIGH_RE) then
+    do c = 1, grid % n_cells
+      ! Positive contribution:
+      b(c) = b(c) + &
+        c_1e * density * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c)
+
       ! Negative contribution:
       A % val(A % dia(c)) = A % val(A % dia(c)) &
            + c_2e * density * eps % n(c) / kin % n(c) * grid % vol(c)
-  end do
+    end do
 
-  if(turbulence_model_variant .eq. HIGH_RE) then
     !--------------------------------------------!
     !   Cut-off the wall influence in order to   !
     !   impose the boundary condition for EPS    !
@@ -95,10 +95,13 @@
    call Grad_Mod_For_Phi(grid, shear, 2, shear_y, .true.)  ! dW/dy
    call Grad_Mod_For_Phi(grid, shear, 3, shear_z, .true.)  ! dV/dz
 
-    ! Positive contribution:
-    b(1:) = b(1:) + 2.0 * viscosity * vis_t(1:) / density * &
-         (shear_x(1:)**2 + shear_y(1:)**2 + shear_z(1:)**2) * grid % vol(1:)
     do c = 1, grid % n_cells
+      ! Positive contribution:
+      b(c) = b(c) + &
+        c_1e * density * eps % n(c) / kin % n(c) * p_kin(c) * grid % vol(c) &
+        + 2.0 * viscosity * vis_t(c) / density * &
+           (shear_x(c)**2. + shear_y(c)**2. + shear_z(c)**2.) * grid % vol(c)
+
       ! Negative contribution:
       re_t = kin % n(c)**2./((viscosity/density)*eps % n(c))
       f_mu = 1.0 - 0.3*exp(-(re_t**2.))
@@ -109,7 +112,7 @@
        l1 = kin % n(c)**1.5/eps % n(c)
        l2 = 2.55 * grid % wall_dist(c)
        yap = 0.83 * eps % n(c)**2./kin % n(c)  &
-                  * max((l1/l2 - 1.0) * (l1/l2)**2, 0.0)
+                  * max((l1/l2 - 1.0) * (l1/l2)**2., 0.0)
        b(c) = b(c) + yap * density* grid % vol(c)
     end do
 

@@ -69,9 +69,11 @@
   EE = 0.5
   AA = 0.5
 
-  kin % n(1:) = max(0.5*(uu % n(1:) + vv % n(1:) + ww % n(1:)), TINY)
-  l_scale(1:)=  kin % n(1:)**1.5/(eps % n(1:)+TINY)
-  t_scale(1:)=  kin % n(1:)/(eps % n(1:)+TINY)
+  do c = 1, grid % n_cells
+    kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), TINY)
+    l_scale(c) = kin % n(c)**1.5/(eps % n(c)+TINY)
+    t_scale(c) = kin % n(c)/(eps % n(c)+TINY)
+  end do
 
   call Grad_Mod_For_Phi(grid, kin % n, 1, kin_x, .true.)  ! dK/dx
   call Grad_Mod_For_Phi(grid, kin % n, 2, kin_y, .true.)  ! dK/dy
@@ -81,8 +83,10 @@
   call Grad_Mod_For_Phi(grid, kin_y, 2, kin_yy, .true.)  ! d^2 K / dy^2
   call Grad_Mod_For_Phi(grid, kin_z, 3, kin_zz, .true.)  ! d^2 K / dz^2
 
-  Eps_tot(1:) = max(eps % n(1:) + &
-    0.5 * viscosity * (kin_xx(1:) + kin_yy(1:) + kin_zz(1:)), TINY)
+  do c = 1, grid % n_cells
+    Eps_tot(c) = max(eps % n(c) + &
+      0.5 * viscosity * (kin_xx(c) + kin_yy(c) + kin_zz(c)), TINY)
+  end do
 
 ! !---------------------------------------------------!
 ! !   Below is one of versions of Hanjalic-Jakirlic   !

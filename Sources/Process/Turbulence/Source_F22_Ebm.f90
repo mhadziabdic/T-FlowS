@@ -49,19 +49,19 @@
 
   ! Source term f22hg
   do c = 1, grid % n_cells
-    f22hg = 1.0
-    Sor11 = grid % vol(c)/l_scale(c)**2
+    f22hg = 1.
+    Sor11 = grid % vol(c)/l_scale(c)**2.
     A % val(A % dia(c)) = A % val(A % dia(c)) + Sor11     
-    b(c) = b(c) + f22hg*grid % vol(c)/l_scale(c)**2
+    b(c) = b(c) + f22hg*grid % vol(c)/l_scale(c)**2.
   end do
 
   ! Source term
   do s = 1, grid % n_faces
     c1=grid % faces_c(1,s)
     c2=grid % faces_c(2,s)
-    if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER ) then
-      if(Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL .or.  &
-         Grid_Mod_Bnd_Cond_Type(grid,c2)==WALLFL) then
+    if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER ) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
 
           f22 % n(c2) = 0.0
 

@@ -14,7 +14,7 @@
   real             :: com1(-nb_s:-1)
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: vn
-  integer           :: vs, loop, disp_loop
+  integer           :: vs, disp_loop
 !==============================================================================!
 
   disp_loop = 0
@@ -22,7 +22,7 @@
   !--------------------------------------------------------!
   !   Browse the entire file until you find the variable   !
   !--------------------------------------------------------!
-  do loop = 1, MAX_VARS_BACKUP
+  do
 
     call Comm_Mod_Read_Text(fh, vn, disp_loop)  ! variable name
     call Comm_Mod_Read_Int (fh, vs, disp_loop)  ! variable size  

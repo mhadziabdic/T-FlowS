@@ -23,8 +23,8 @@
   end do
 
   ! Perform the actual saving
-  vn = var_name;           call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = (nf_t) * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
+  vn = var_name;         call Comm_Mod_Write_Text(fh, vn, disp)
+  vs = nf_t * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
 
   call Comm_Mod_Write_Face_Real(fh, fcom1(1:nf_s+nbf_s), disp)
 

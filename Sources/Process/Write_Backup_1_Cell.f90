@@ -17,8 +17,8 @@
 !==============================================================================!
 
   ! Vector with boundaries
-  vn = var_name;                  call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = (nc_t + nb_t) * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
+  vn = var_name;         call Comm_Mod_Write_Text(fh, vn, disp)
+  vs = nc_t * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
 
   call Comm_Mod_Write_Cell_Real(fh, com1(1:nc_s),   disp)
 

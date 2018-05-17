@@ -16,6 +16,8 @@
   integer           :: vs  ! variable size
 !==============================================================================!
 
+  if(this_proc < 2) print *, '# Writing variable: ', trim(var_name)
+
   ! Just store one named integer
   vn = var_name;  call Comm_Mod_Write_Text(fh, vn, disp)
   vs = SIZE_INT;  call Comm_Mod_Write_Int (fh, vs, disp)

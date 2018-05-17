@@ -17,6 +17,8 @@
   integer           :: vs  ! variable size
 !==============================================================================!
 
+  if(this_proc < 2) print *, '# Writing variable: ', trim(var_name)
+
   ! Change the sign of fcom1 where necessary
   do s = nf_s + 1, nf_s + nbf_s
     fcom1(s) = fcom1(s) * buf_face_sgn(s-nf_s)

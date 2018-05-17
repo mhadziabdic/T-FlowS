@@ -442,14 +442,14 @@
       if(c2 < 0) then
         if(grid % bnd_cond % color(c2) == color_per) then
           c = c + 1
-          if(dir==1) b_coor(c) = grid % xf(s)*1000000.0   &
-                               + grid % yf(s)*10000.0     &
+          if(dir==1) b_coor(c) = grid % xf(s)*100000000.0  &
+                               + grid % yf(s)*10000.0      &
                                + grid % zf(s)
-          if(dir==2) b_coor(c) = grid % yf(s)*1000000.0   &
-                               + grid % xf(s)*10000.0     &
+          if(dir==2) b_coor(c) = grid % yf(s)*100000000.0  &
+                               + grid % xf(s)*10000.0      &
                                + grid % zf(s)
-          if(dir==3) b_coor(c) = grid % zf(s)*1000000.0   & 
-                               + grid % xf(s)*10000.0     &
+          if(dir==3) b_coor(c) = grid % zf(s)*100000000.0  & 
+                               + grid % xf(s)*10000.0      &
                                + grid % yf(s)
           b_face(c) = s
         end if
@@ -582,10 +582,10 @@
                            + p_k*(grid % zf(ss)))  &
                         / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
                     if((Det) > (per_max)) then
-!                     print *, '# Warning!  Potentially a bug in ...'
-!                     print *, '# ... Compute_Geometry, line 580'
-!                     print *, '# Contact developers, and if you ... '
-!                     print *, '# ... are one of them, fix it!'   
+                      print *, '# Warning!  Potentially a bug in ...'
+                      print *, '# ... Compute_Geometry, line 580'
+                      print *, '# Contact developers, and if you ... '
+                      print *, '# ... are one of them, fix it!'   
                       if(abs((grid % xf(ss) - grid % xf(s))) < tol .and.  &
                          abs((grid % yf(ss) - grid % yf(s))) < tol) then
                         mm = hh + c_max/2 

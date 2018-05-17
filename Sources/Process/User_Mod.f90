@@ -15,6 +15,7 @@
   contains
 
   include 'User_Mod/Allocate.f90'
+  include 'User_Mod/Before_Exit.f90'
   include 'User_Mod/Initialize.f90'
   include 'User_Mod/Force.f90'
   include 'User_Mod/Save_Results.f90'

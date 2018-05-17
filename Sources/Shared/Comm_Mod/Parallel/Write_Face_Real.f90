@@ -49,8 +49,11 @@
                          error)
 
   ! Write distributed face data 
+  do s = 1, nf_s
+    face_val(s) = array( face_ord(s) )
+  end do
   call Mpi_File_Write(fh,                 &
-                      array,             &
+                      face_val,           &
                       nf_s,               &   
                       MPI_DOUBLE,         &   
                       MPI_STATUS_IGNORE,  &

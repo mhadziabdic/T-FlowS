@@ -50,11 +50,14 @@
 
   ! Read distributed face data 
   call Mpi_File_Read(fh,                 &
-                     array,              &
+                     face_val,           &
                      nf_s,               &   
                      MPI_DOUBLE,         &   
                      MPI_STATUS_IGNORE,  &
                      error)
+  do s = 1, nf_s
+    array(s) = face_val(face_ord(s))
+  end do
 
   disp = disp + nf_t * SIZE_REAL
 

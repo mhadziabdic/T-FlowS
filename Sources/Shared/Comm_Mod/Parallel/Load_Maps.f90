@@ -71,12 +71,14 @@
     call Comm_Mod_Global_Sum_Int(nb_t)
     call Comm_Mod_Global_Sum_Int(nf_t)
 
-    allocate(cell_map    (nc_s));   cell_map     = 1       
-    allocate(bnd_cell_map(nb_s));   bnd_cell_map = 1
-    allocate(face_map    (nf_s));   face_map     = 1
-    allocate(buf_face_map(nbf_s));  buf_face_map = 1 
+    allocate(cell_map    (nc_s));   cell_map     = 0       
+    allocate(bnd_cell_map(nb_s));   bnd_cell_map = 0
+    allocate(face_map    (nf_s));   face_map     = 0
+    allocate(face_ord    (nf_s));   face_ord     = 0
+    allocate(face_val    (nf_s));   face_val     = 0.0
+    allocate(buf_face_map(nbf_s));  buf_face_map = 0 
     allocate(buf_face_ord(nbf_s));  buf_face_ord = 0
-    allocate(buf_face_val(nbf_s));  buf_face_ord = 0.0
+    allocate(buf_face_val(nbf_s));  buf_face_val = 0.0
     allocate(buf_face_sgn(nbf_s));  buf_face_sgn = 0.0
 
     !-------------------!
@@ -108,6 +110,14 @@
 
     ! Correct cell mapping to start from zero
     face_map = face_map - 1
+
+    ! Sort face map - important for MPI call, it can't 
+    ! handle maps which are not in increasing order :-(
+    do s = 1, nf_s
+      face_ord(s) = s
+    end do
+
+    call Sort_Short_Carry_Short(face_map, face_ord, nf_s, 2)
 
     !--------------------------!
     !   Read buffer face map   !

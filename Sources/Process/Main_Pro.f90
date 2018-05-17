@@ -188,6 +188,9 @@
 
     time = time + dt
 
+    ! Begining of time steo
+    call User_Mod_Begining_Of_Time_Step(grid, n, time)
+
     ! Start info boxes.
     call Info_Mod_Time_Start()
     call Info_Mod_Iter_Start()
@@ -496,6 +499,9 @@
       close(9, status='delete')
     end if
 
+    ! Just before the end of time step
+    call User_Mod_End_Of_Time_Step(grid, n, time)
+
   end do ! n, number of time steps
 
   if(this_proc < 2) then
@@ -512,9 +518,7 @@
     if(Cm(n) > 0) close(10 + n)
   end do
 
-  !------------------------------------------!
-  !   Make the final call to user function   !
-  !------------------------------------------!
+  ! Make the final call to user function
   call User_Mod_Before_Exit(grid)
 
   !----------------------------!

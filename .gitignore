@@ -16,14 +16,9 @@
 *.shadow
 *-monit.*
 *.7z
-*.1D
+*.backup
 *.1d
 convert_ascii_2_binary.scr
 convert_binary_2_ascii.scr
 Binaries/
-*.map00002
 stop
-Convert
-Divide
-Process
-Generate

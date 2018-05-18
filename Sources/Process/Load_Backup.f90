@@ -31,8 +31,6 @@
     return 
   end if
 
-  restart = .true.
-
   ! Open backup file
   call Comm_Mod_Open_File_Read(fh, name_in)
 
@@ -62,21 +60,9 @@
   !--------------!
   !   Velocity   !
   !--------------!
-  call Read_Backup_3_Cell_Bnd(fh, d, 'vel',      u % n(-nb_s:nc_s),  &
-                                                 v % n(-nb_s:nc_s),  &
-                                                 w % n(-nb_s:nc_s))
-  call Read_Backup_3_Cell(fh, d, 'vel_old',      u % o  (1:nc_s),    &
-                                                 v % o  (1:nc_s),    &
-                                                 w % o  (1:nc_s))
-  call Read_Backup_3_Cell(fh, d, 'vel_adv',      u % a  (1:nc_s),    &
-                                                 v % a  (1:nc_s),    &
-                                                 w % a  (1:nc_s))
-  call Read_Backup_3_Cell(fh, d, 'vel_adv_old',  u % a_o(1:nc_s),    &
-                                                 v % a_o(1:nc_s),    &
-                                                 w % a_o(1:nc_s))
-  call Read_Backup_3_Cell(fh, d, 'vel_diff_old', u % d_o(1:nc_s),    &
-                                                 v % d_o(1:nc_s),    &
-                                                 w % d_o(1:nc_s))
+  call Read_Backup_1_Variable(fh, d, 'u_velocity', u)
+  call Read_Backup_1_Variable(fh, d, 'v_velocity', v)
+  call Read_Backup_1_Variable(fh, d, 'w_velocity', w)
 
   !--------------------------------------!
   !   Pressure and pressure correction   !
@@ -93,14 +79,7 @@
   !   Etnhalpy   !
   !--------------!
   if(heat_transfer == YES) then
-    call Read_Backup_1_Cell_Bnd(fh, d, 'temp',      t  % n(-nb_s:nc_s))
-    call Read_Backup_1_Bnd (fh, d, 'heat_flux',     t  % q(-nb_s:-1))
-    call Read_Backup_1_Cell(fh, d, 'temp_old',      t  % o  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'temp_adv',      t  % a  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'temp_adv_old',  t  % a_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'temp_diff_old', t  % d_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'temp_cros',     t  % c  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'temp_cros_old', t  % c_o(1:nc_s))
+    call Read_Backup_1_Variable(fh, d, 'temp', t)
   end if
 
   !-----------------------!
@@ -110,50 +89,26 @@
      turbulence_model == K_EPS_ZETA_F     .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
 
-    ! k
-    call Read_Backup_1_Cell_Bnd(fh, d, 'kin',      kin % n(-nb_s:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'kin_old',      kin % o  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'kin_adv',      kin % a  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'kin_adv_old',  kin % a_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'kin_dif_old',  kin % d_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'kin_cros',     kin % c  (1:nc_s))
+    ! K and epsilon
+    call Read_Backup_1_Variable(fh, d, 'kin', kin)
+    call Read_Backup_1_Variable(fh, d, 'eps', eps)
 
-    ! eps
-    call Read_Backup_1_Cell_Bnd(fh, d, 'eps',      eps % n(-nb_s:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'eps_old',      eps % o  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'eps_adv',      eps % a  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'eps_adv_old',  eps % a_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'eps_dif_old',  eps % d_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'eps_cros',     eps % c  (1:nc_s))
-
-    ! other turbulent quantities
+    ! Other turbulent quantities
     call Read_Backup_1_Cell_Bnd(fh, d, 'p_kin',    p_kin   (-nb_s:nc_s))
     call Read_Backup_1_Cell_Bnd(fh, d, 'u_tau',    u_tau   (-nb_s:nc_s))
     call Read_Backup_1_Cell_Bnd(fh, d, 'y_plus',   y_plus  (-nb_s:nc_s))
     call Read_Backup_1_Cell_Bnd(fh, d, 'vis_wall', vis_wall(-nb_s:nc_s))
-    call Read_Backup_1_Cell    (fh, d, 'tau_wall', tau_wall  (1:nc_s))
+    call Read_Backup_1_Cell    (fh, d, 'tau_wall', tau_wall  (1:nc_s)  )
   end if
 
   if(turbulence_model == K_EPS_ZETA_F     .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
 
-    ! Zeta
-    call Read_Backup_1_Cell_Bnd(fh, d, 'zeta',     zeta % n(-nb_s:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'zeta_old',     zeta % o  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'zeta_adv',     zeta % a  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'zeta_adv_old', zeta % a_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'zeta_dif_old', zeta % d_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'zeta_cros',    zeta % c  (1:nc_s))
+    ! Zeta and f22
+    call Read_Backup_1_Variable(fh, d, 'zeta', zeta)
+    call Read_Backup_1_Variable(fh, d, 'f22',  f22)
 
-    ! F22
-    call Read_Backup_1_Cell_Bnd(fh, d, 'f22',      f22 % n(-nb_s:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'f22_old',      f22 % o  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'f22_adv',      f22 % a  (1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'f22_adv_old',  f22 % a_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'f22_dif_old',  f22 % d_o(1:nc_s))
-    call Read_Backup_1_Cell(fh, d, 'f22_cros',     f22 % c  (1:nc_s))
-
-    ! Time and lenght scale
+    ! Other turbulent quantities
     call Read_Backup_1_Cell_Bnd(fh, d, 't_scale',  t_scale(-nb_s:nc_s))
     call Read_Backup_1_Cell_Bnd(fh, d, 'l_scale',  l_scale(-nb_s:nc_s))
   end if 

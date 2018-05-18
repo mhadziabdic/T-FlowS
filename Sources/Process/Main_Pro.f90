@@ -188,8 +188,8 @@
 
     time = time + dt
 
-    ! Begining of time steo
-    call User_Mod_Begining_Of_Time_Step(grid, n, time)
+    ! Beginning of time steo
+    call User_Mod_Beginning_Of_Time_Step(grid, n, time)
 
     ! Start info boxes.
     call Info_Mod_Time_Start()
@@ -275,18 +275,18 @@
       if(coupling == 'PROJECTION') then
         call Comm_Mod_Exchange(grid, A % sav)
         call Balance_Mass(grid)
-        call Compute_Pressure_Fractional(grid, dt)
+        call Compute_Pressure_Fractional(grid, dt, ini)
       endif
       if(coupling == 'SIMPLE') then
         call Comm_Mod_Exchange(grid, A % sav)
         call Balance_Mass(grid)
-        call Compute_Pressure_Simple(grid)
+        call Compute_Pressure_Simple(grid, dt, ini)
       end if
 
       call Grad_Mod_For_P(grid,  pp % n, p % x, p % y, p % z)
 
       call Bulk_Mod_Compute_Fluxes(grid, bulk, flux)
-      mass_res = Correct_Velocity(grid, dt) !  project the velocities
+      mass_res = Correct_Velocity(grid, dt, ini) !  project the velocities
 
       ! Temperature
       if(heat_transfer == YES) then

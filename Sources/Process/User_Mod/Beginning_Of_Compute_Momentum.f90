@@ -1,16 +1,17 @@
 !==============================================================================!
-  subroutine User_Mod_End_Of_Time_Step(grid, n, time)
+  subroutine User_Mod_Beginning_Of_Compute_Momentum(grid, dt, ini)
 !------------------------------------------------------------------------------!
-!   This function is called at the end of time step.                           !
+!   This function is called at the beginning of Compute_Momentum function.     !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Grid_Mod
+  use Flow_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: n     ! time step
-  real            :: time  ! physical time
+  real            :: dt    ! time step    
+  integer         :: ini   ! inner itteration
 !==============================================================================!
 
   end subroutine

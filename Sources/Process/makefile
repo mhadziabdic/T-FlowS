@@ -306,5 +306,3 @@ $(DIR_OBJECT)/Cgns_Mod.o:   $(DIR_OBJECT)/Grid_Mod.o
 #---------------------
 clean:
 	rm -f $(DIR_OBJECT)/*.o $(DIR_MODULE)/*.mod $(PROGRAM_FILE)
-	rm -f $(DIR_USER)/*.f90
-	git checkout $(DIR_USER)

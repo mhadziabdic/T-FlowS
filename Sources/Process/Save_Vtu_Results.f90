@@ -12,6 +12,7 @@
   use Tokenizer_Mod
   use Grid_Mod
   use Control_Mod
+  use User_Mod
   use Work_Mod, only: v2_calc   => r_cell_01,  &
                       uu_mean   => r_cell_02,  &
                       vv_mean   => r_cell_03,  &
@@ -24,7 +25,6 @@
                       vt_mean   => r_cell_10,  &
                       wt_mean   => r_cell_11,  &
                       kin_vis_t => r_cell_12
-
 !------------------------------------------------------------------------------!
   implicit none
 !--------------------------------[Arguments]-----------------------------------!
@@ -321,6 +321,12 @@
   ! Wall distance and delta, important for all models
   call Save_Vtu_Scalar(grid, IN_4, IN_5, "WALL_DIST",  grid % wall_dist(1))
   call Save_Vtu_Scalar(grid, IN_4, IN_5, "CELL_DELTA", grid % delta(1))
+
+
+  !-----------------------!
+  !   Save user scalars   !
+  !-----------------------!
+  call User_Mod_Save_Vtu_Results(grid)
 
   !----------------------!
   !                      !

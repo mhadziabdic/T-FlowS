@@ -31,6 +31,8 @@
     return 
   end if
 
+  restart = .true.
+
   ! Open backup file
   call Comm_Mod_Open_File_Read(fh, name_in)
 

@@ -1,16 +1,18 @@
 !==============================================================================!
-  subroutine User_Mod_Begining_Of_Time_Step(grid, n, time)
+  subroutine Control_Mod_Number_Of_User_Arrays(val, verbose)
 !------------------------------------------------------------------------------!
-!   This function is called at the beginning of time step.                     !
+!   Reading stuff related to user scalars                                      !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
-  use Grid_Mod
+  use User_Mod, only: n_user_arrays  
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
-  type(Grid_Type) :: grid
-  integer         :: n     ! time step
-  real            :: time  ! physical time
-!------------------------------------------------------------------------------!
+  integer           :: val
+  logical, optional :: verbose
+!==============================================================================!
+
+  call Control_Mod_Read_Int_Item('NUMBER_OF_USER_ARRAYS', 0, &
+                                  val, verbose)
 
   end subroutine

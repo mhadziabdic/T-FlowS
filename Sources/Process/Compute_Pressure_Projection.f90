@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Compute_Pressure_Fractional(grid)
+  subroutine Compute_Pressure_Fractional(grid, dt, ini)
 !------------------------------------------------------------------------------!
 !   Forms and solves pressure equation for the fractional step method.         !
 !------------------------------------------------------------------------------!
@@ -10,10 +10,13 @@
   use Info_Mod
   use Solvers_Mod,  only: Bicg, Cg, Cgs
   use Control_Mod
+  use User_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
+  real            :: dt
+  integer         :: ini
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, niter
   real              :: p_max, p_min
@@ -44,6 +47,9 @@
 !     flux           [kg/s]
 !   
 !------------------------------------------------------------------------------!
+
+  ! User function
+  call User_Mod_Beginning_Of_Compute_Pressure(grid, dt, ini)
 
   ! Initialize matrix and source term
   a % val = 0.0
@@ -169,5 +175,8 @@
   p % n(:)   =  p % n(:)   -  0.5 * (p_max + p_min)
 
   call Comm_Mod_Exchange(grid, pp % n) 
+
+  ! User function
+  call User_Mod_End_Of_Compute_Pressure(grid, dt, ini)
 
   end subroutine

@@ -1,5 +1,5 @@
 !==============================================================================!
-  real function Correct_Velocity(grid, dt)
+  real function Correct_Velocity(grid, dt, ini)
 !------------------------------------------------------------------------------!
 !   Corrects the velocities, and mass fluxes on the cell faces.                !
 !------------------------------------------------------------------------------!
@@ -12,17 +12,22 @@
   use Bulk_Mod
   use Info_Mod
   use Control_Mod
+  use User_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
   real            :: dt
+  integer         :: ini
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: c, c1, c2, s, m
   real              :: cfl_max(256), pe_max(256)
   real              :: cfl_t, pe_t, mass_err
   character(len=80) :: coupling
 !==============================================================================!
+
+  ! User function
+  call User_Mod_Beginning_Of_Correct_Velocity(grid, dt, ini)
 
   call Control_Mod_Pressure_Momentum_Coupling(coupling)
 
@@ -155,5 +160,8 @@
                           bulk(m) % p_drop_z)
 
   Correct_Velocity = mass_err ! /(velmax+TINY)
+
+  ! User function
+  call User_Mod_End_Of_Correct_Velocity(grid, dt, ini)
 
   end function

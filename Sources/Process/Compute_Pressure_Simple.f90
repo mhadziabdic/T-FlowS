@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Compute_Pressure_Simple(grid)
+  subroutine Compute_Pressure_Simple(grid, dt, ini)
 !------------------------------------------------------------------------------!
 !   Forms and solves pressure equation for the S.I.M.p.L.E. method.            !
 !------------------------------------------------------------------------------!
@@ -10,10 +10,13 @@
   use Info_Mod
   use Solvers_Mod,  only: Bicg, Cg, Cgs
   use Control_Mod
+  use User_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
+  real            :: dt
+  integer         :: ini
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, niter
   real              :: u_f, v_f, w_f, a12, fs
@@ -44,6 +47,9 @@
 !     flux           [kg/s]
 !   
 !------------------------------------------------------------------------------!
+
+  ! User function
+  call User_Mod_Beginning_Of_Compute_Pressure(grid, dt, ini)
 
   ! Initialize matrix and right hand side
   a % val = 0.0
@@ -203,5 +209,8 @@
   ! p % n = p % n - 0.5*(p_max+p_min)
  
   call Comm_Mod_Exchange(grid, pp % n)
+
+  ! User function
+  call User_Mod_End_Of_Compute_Pressure(grid, dt, ini)
 
   end subroutine

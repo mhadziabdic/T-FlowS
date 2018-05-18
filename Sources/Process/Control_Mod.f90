@@ -75,6 +75,7 @@
 
     ! User scalars
     include 'Control_Mod/User/Number_Of_User_Scalars.f90'
+    include 'Control_Mod/User/Number_Of_User_Arrays.f90'
 
   !--------------!
   !   Numerics   !
@@ -119,5 +120,5 @@
     include 'Control_Mod/Numerics/Tolerance_For_Turbulence_Solver.f90'
     include 'Control_Mod/Numerics/Tolerance_For_Simple_Algorithm.f90'
     include 'Control_Mod/Numerics/Preconditioner_For_System_Matrix.f90'
-
+ 
   end module

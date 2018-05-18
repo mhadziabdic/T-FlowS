@@ -25,8 +25,8 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
-  integer         :: ini
   real            :: dt
+  integer         :: ini
   type(Var_Type)  :: ui
   real            :: ui_i(-grid % n_bnd_cells:grid % n_cells),  &
                      ui_j(-grid % n_bnd_cells:grid % n_cells),  &
@@ -114,6 +114,9 @@
 !     cu*, cv*, cw*  [kgm/s^2]   [N]
 !     Wall visc.      vis_wall [kg/(m*s)]
 !==============================================================================!
+
+  ! User function
+  call User_Mod_Beginning_Of_Compute_Momentum(grid, dt, ini)
 
   b = 0.0
   a % val = 0.0
@@ -610,5 +613,8 @@
   end if
 
   call Comm_Mod_Exchange(grid, ui % n)
+
+  ! User function
+  call User_Mod_End_Of_Compute_Momentum(grid, dt, ini)
 
   end subroutine

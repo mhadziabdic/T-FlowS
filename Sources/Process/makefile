@@ -178,8 +178,10 @@ SRC_MOD = Const_Mod.f90		\
 # Conditional support for MPI communication
 ifeq ($(MPI), yes) 
   SRC_MOD += Comm_Mod_Par.f90
+  COMM_OBJ = Comm_Mod_Par.o
 else
   SRC_MOD += Comm_Mod_Seq.f90
+  COMM_OBJ = Comm_Mod_Seq.o
 endif
 
 # Sources for modules in the local directory
@@ -216,15 +218,15 @@ STEP_A  = $(subst $(DIR_MODELS),,$(SRC_RAW)) # remove directory name
 SRC_FUN = $(subst /,,$(STEP_A))              # remove last slash
 
 # Add files from "Shared" directory, but one by one, to avoid clutter
-SRC_FUN += Distance.f90 			\
-           Load_Geo.f90 			\
-           Name_File.f90			\
+SRC_FUN += Distance.f90 		\
+           Load_Geo.f90 		\
+           Name_File.f90		\
            Sort_Int_Carry_Int.f90	\
            Sort_Short_Carry_Short.f90	\
            Sort_Real_Carry_Int.f90	\
            Sort_Short_By_Index.f90	\
-           Approx.f90				\
-           Swap_Int.f90				\
+           Approx.f90			\
+           Swap_Int.f90			\
            To_Upper_Case.f90
 
 #-------------------------------------------
@@ -292,14 +294,62 @@ $(PROGRAM_FILE): $(OBJ)
 #   These should be inserted by
 #   hand for tuning of dependencies.
 #---------------------------------------
-$(DIR_OBJECT)/all_mod.o:    $(DIR_OBJECT)/allp_mod.o
-$(DIR_OBJECT)/Grid_Mod.o:   $(DIR_OBJECT)/Bnd_Cond_Mod.o	\
-                            $(DIR_OBJECT)/Material_Mod.o
-$(DIR_OBJECT)/Domain_Mod.o: $(DIR_OBJECT)/Point_Mod.o		\
-                            $(DIR_OBJECT)/Line_Mod.o		\
-                            $(DIR_OBJECT)/Block_Mod.o		\
-                            $(DIR_OBJECT)/Region_Mod.o
-$(DIR_OBJECT)/Cgns_Mod.o:   $(DIR_OBJECT)/Grid_Mod.o
+# Bulk_Mod.o is just one file, doesn't need explicit dependencies
+$(DIR_OBJECT)/Cgns_Mod_Seq.o:	$(DIR_OBJECT)/Grid_Mod.o		\
+				$(DIR_OBJECT)/Work_Mod.o		\
+				$(DIR_SHARED)/Cgns_Mod/*.f90		\
+				$(DIR_SHARED)/Cgns_Mod/Sequential/*.f90
+$(DIR_OBJECT)/Cgns_Mod_Par.o:	$(DIR_OBJECT)/$(COMM_OBJ)		\
+				$(DIR_OBJECT)/Grid_Mod.o		\
+				$(DIR_OBJECT)/Work_Mod.o		\
+				$(DIR_SHARED)/Cgns_Mod/*.f90		\
+				$(DIR_SHARED)/Cgns_Mod/Parallel/*.f90
+$(DIR_OBJECT)/Comm_Mod_Seq.o:	$(DIR_OBJECT)/Grid_Mod.o		\
+				$(DIR_SHARED)/Comm_Mod/Sequential/*.f90
+$(DIR_OBJECT)/Comm_Mod_Par.o:	$(DIR_OBJECT)/Grid_Mod.o		\
+				$(DIR_OBJECT)/Tokenizer_Mod.o		\
+				$(DIR_SHARED)/Comm_Mod/Parallel/*.f90
+# Const_Mod.o is just one file, doesn't need explicit dependencies
+$(DIR_OBJECT)/Control_Mod.o:	$(DIR_OBJECT)/$(COMM_OBJ)	\
+				$(DIR_OBJECT)/Const_Mod.o	\
+				$(DIR_OBJECT)/Flow_Mod.o	\
+				$(DIR_OBJECT)/Numerics_Mod.o	\
+				$(DIR_OBJECT)/Tokenizer_Mod.o	\
+				$(DIR_OBJECT)/Turbulence_Mod.o	\
+				$(DIR_OBJECT)/User_Mod.o	\
+				Control_Mod/*/*.f90
+# Flow_Mod.o is just one file, doesn't need explicit dependencies
+$(DIR_OBJECT)/Grad_Mod.o:	$(DIR_OBJECT)/$(COMM_OBJ)	\
+				$(DIR_OBJECT)/Const_Mod.o	\
+				$(DIR_OBJECT)/Grid_Mod.o	\
+				$(DIR_OBJECT)/Work_Mod.o	\
+				$(DIR_OBJECT)/Material_Mod.o	\
+				Grad_Mod/*.f90
+$(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Bnd_Cond_Mod.o	\
+				$(DIR_OBJECT)/Material_Mod.o	\
+				$(DIR_SHARED)/Grid_Mod/*.f90
+$(DIR_OBJECT)/Info_Mod.o:	$(DIR_OBJECT)/$(COMM_OBJ)	\
+				Info_Mod/*.f90
+$(DIR_OBJECT)/les_mod.o:	$(DIR_OBJECT)/Turbulence_Mod.o
+$(DIR_OBJECT)/Matrix_Mod.o:	$(DIR_OBJECT)/$(COMM_OBJ)	\
+				$(DIR_OBJECT)/Grid_Mod.o	\
+				Matrix_Mod/*.f90
+# Name_Mod.o is just one file, doesn't need explicit dependencies
+# Numerics_Mod.o is just one file, doesn't need explicit dependencies
+$(DIR_OBJECT)/Rans_Mod.o:	$(DIR_OBJECT)/Turbulence_Mod.o
+$(DIR_OBJECT)/Solvers_Mod.o:	$(DIR_OBJECT)/$(COMM_OBJ)	\
+				$(DIR_OBJECT)/Const_Mod.o	\
+				$(DIR_OBJECT)/Matrix_Mod.o	\
+				$(DIR_OBJECT)/Work_Mod.o	\
+				Solvers_Mod/*.f90
+# Tokenizer_Mod.o is just one file, doesn't need explicit dependencies
+$(DIR_OBJECT)/Turbulence_Mod.o:	$(DIR_OBJECT)/Var_Mod.o
+$(DIR_OBJECT)/User_Mod.o:	$(DIR_OBJECT)/Grid_Mod.o	\
+				$(DIR_OBJECT)/Flow_Mod.o
+$(DIR_OBJECT)/Var_Mod.o:	$(DIR_OBJECT)/Grid_Mod.o	\
+				Var_Mod/*.f90
+$(DIR_OBJECT)/Work_Mod.o:	$(DIR_OBJECT)/Grid_Mod.o	\
+				$(DIR_SHARED)/Work_Mod/*.f90
 
 #---------------------
 #   Explicit target.

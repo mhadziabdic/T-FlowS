@@ -4,7 +4,7 @@
 *.cns
 *.geo
 *.buf
-*.gmv
+*.map
 *.real
 *.mod
 *.cgns

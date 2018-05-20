@@ -1,7 +1,7 @@
 !==============================================================================!
   subroutine Grad_Mod_Find_Bad_Cells(grid)
 !------------------------------------------------------------------------------!
-!   Searches for cells which are "bad" for calculation of pressure gradients.  !                                                         !
+!   Searches for cells which are "bad" for calculation of pressure gradients.  !
 !                                                                              !
 !   Practically, these are the tetrahedronal cells with two faces on the       !
 !   boundary and two in the domain.                                            ! 

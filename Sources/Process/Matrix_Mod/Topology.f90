@@ -4,10 +4,6 @@
 !   Determines the topology of the system matrix.                              !
 !   It relies only on SideC structure. Try to keep it that way.                !
 !------------------------------------------------------------------------------!
-!----------------------------------[Modules]-----------------------------------!
-  use Comm_Mod, only: this_proc
-  use Grid_Mod
-!------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type), target :: grid

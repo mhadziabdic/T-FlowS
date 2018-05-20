@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Write_Backup_1_Cell_Bnd(fh, disp, var_name, com1)
+  subroutine Write_Backup_Face(fh, disp, var_name, fcom1)
 !------------------------------------------------------------------------------!
 !   Writes a vector variable with boundary cells to backup file.               !
 !----------------------------------[Modules]-----------------------------------!
@@ -10,19 +10,30 @@
 !---------------------------------[Arguments]----------------------------------!
   integer          :: fh, disp
   character(len=*) :: var_name
-  real             :: com1(-nb_s:nc_s)
+  real             :: fcom1(1:nf_s+nbf_s)
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: vn
+  integer           :: s
   integer           :: vs  ! variable size
 !==============================================================================!
 
   if(this_proc < 2) print *, '# Writing variable: ', trim(var_name)
 
-  ! Vector with boundaries
-  vn = var_name;                  call Comm_Mod_Write_Text(fh, vn, disp)
-  vs = (nc_t + nb_t) * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
+  ! Change the sign of fcom1 where necessary
+  do s = nf_s + 1, nf_s + nbf_s
+    fcom1(s) = fcom1(s) * buf_face_sgn(s-nf_s)
+  end do
 
-  call Comm_Mod_Write_Cell_Real(fh, com1(1:nc_s),   disp)
-  call Comm_Mod_Write_Bnd_Real (fh, com1(-nb_s:-1), disp)
+  ! Perform the actual saving
+  vn = var_name;         call Comm_Mod_Write_Text(fh, vn, disp)
+  vs = nf_t * SIZE_REAL; call Comm_Mod_Write_Int (fh, vs, disp)
+
+  call Comm_Mod_Write_Face_Real(fh, fcom1(1:nf_s+nbf_s), disp)
+
+  ! Fix signs for the face fcom1 back
+  do s = nf_s + 1, nf_s + nbf_s
+    fcom1(s) = fcom1(s) * buf_face_sgn(s-nf_s)
+  end do
+
 
   end subroutine

@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine Read_Backup_1_Cell(fh, disp, var_name, com1)
+  subroutine Read_Backup_Int(fh, disp, var_name, var_value)
 !------------------------------------------------------------------------------!
-!   Reads a vector variable with boundary cells from a backup file.            !
+!   Reads a single named integer variable from backup file.                    !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Comm_Mod
@@ -11,7 +11,7 @@
 !---------------------------------[Arguments]----------------------------------!
   integer          :: fh, disp
   character(len=*) :: var_name
-  real             :: com1(1:nc_s)
+  integer          :: var_value
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: vn
   integer           :: vs, disp_loop
@@ -25,12 +25,12 @@
   do
 
     call Comm_Mod_Read_Text(fh, vn, disp_loop)  ! variable name
-    call Comm_Mod_Read_Int (fh, vs, disp_loop)  ! variable size  
+    call Comm_Mod_Read_Int (fh, vs, disp_loop)  ! variable offset
 
     ! If variable is found, read it and retrun
     if(vn == var_name) then
       if(this_proc < 2) print *, '# Reading variable: ', trim(vn)
-      call Comm_Mod_Read_Cell_Real(fh, com1(1:nc_s),   disp_loop)
+      call Comm_Mod_Read_Int (fh, var_value, disp_loop)
       disp = disp_loop
       return
 

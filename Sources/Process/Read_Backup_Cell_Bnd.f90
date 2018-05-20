@@ -1,18 +1,17 @@
 !==============================================================================!
-  subroutine Read_Backup_1_Variable(fh, disp, var_name, var1)
+  subroutine Read_Backup_Cell_Bnd(fh, disp, var_name, com1)
 !------------------------------------------------------------------------------!
 !   Reads a vector variable with boundary cells from a backup file.            !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Comm_Mod
   use Grid_Mod
-  use Var_Mod
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   integer          :: fh, disp
   character(len=*) :: var_name
-  type(Var_Type)   :: var1
+  real             :: com1(-nb_s:nc_s)
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: vn
   integer           :: vs, disp_loop
@@ -31,14 +30,8 @@
     ! If variable is found, read it and retrun
     if(vn == var_name) then
       if(this_proc < 2) print *, '# Reading variable: ', trim(vn)
-      call Comm_Mod_Read_Cell_Real(fh, var1 % n(1:nc_s),   disp_loop)
-      call Comm_Mod_Read_Bnd_Real (fh, var1 % n(-nb_s:-1), disp_loop)
-      call Comm_Mod_Read_Cell_Real(fh, var1 % o  (1:nc_s), disp)
-      call Comm_Mod_Read_Cell_Real(fh, var1 % a  (1:nc_s), disp)
-      call Comm_Mod_Read_Cell_Real(fh, var1 % a_o(1:nc_s), disp)
-      call Comm_Mod_Read_Cell_Real(fh, var1 % c  (1:nc_s), disp)
-      call Comm_Mod_Read_Cell_Real(fh, var1 % c_o(1:nc_s), disp)
-      call Comm_Mod_Read_Cell_Real(fh, var1 % d_o(1:nc_s), disp)
+      call Comm_Mod_Read_Cell_Real(fh, com1(1:nc_s),   disp_loop)
+      call Comm_Mod_Read_Bnd_Real (fh, com1(-nb_s:-1), disp_loop)
       disp = disp_loop
       return
 

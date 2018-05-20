@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Write_Backup_1_Variable(fh, disp, var_name, var1)
+  subroutine Write_Backup_Variable(fh, disp, var_name, var1)
 !------------------------------------------------------------------------------!
 !   Writes a whole variable cells to backup file.                              !
 !----------------------------------[Modules]-----------------------------------!

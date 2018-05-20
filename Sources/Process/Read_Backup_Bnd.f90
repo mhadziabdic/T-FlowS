@@ -1,7 +1,7 @@
 !==============================================================================!
-  subroutine Read_Backup_3_Cell(fh, disp, var_name, com1, com2, com3)
+  subroutine Read_Backup_Bnd(fh, disp, var_name, com1)
 !------------------------------------------------------------------------------!
-!   Reads a vector variable without boundary cells from backup file.           !
+!   Reads a vector variable with boundary cells from a backup file.            !
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Comm_Mod
@@ -11,7 +11,7 @@
 !---------------------------------[Arguments]----------------------------------!
   integer          :: fh, disp
   character(len=*) :: var_name
-  real             :: com1(1:nc_s), com2(1:nc_s), com3(1:nc_s)
+  real             :: com1(-nb_s:-1)
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: vn
   integer           :: vs, disp_loop
@@ -25,22 +25,19 @@
   do
 
     call Comm_Mod_Read_Text(fh, vn, disp_loop)  ! variable name
-    call Comm_Mod_Read_Int (fh, vs, disp_loop)  ! variable offset
+    call Comm_Mod_Read_Int (fh, vs, disp_loop)  ! variable size  
 
     ! If variable is found, read it and retrun
     if(vn == var_name) then
       if(this_proc < 2) print *, '# Reading variable: ', trim(vn)
-      call Comm_Mod_Read_Cell_Real(fh, com1(1:nc_s), disp_loop)
-      call Comm_Mod_Read_Cell_Real(fh, com2(1:nc_s), disp_loop)
-      call Comm_Mod_Read_Cell_Real(fh, com3(1:nc_s), disp_loop)
+      call Comm_Mod_Read_Bnd_Real (fh, com1(-nb_s:-1), disp_loop)
       disp = disp_loop
       return
-    
+
     ! If variable not found, advance the offset only
     else
       disp_loop = disp_loop + vs
     end if
-
 
   end do
 

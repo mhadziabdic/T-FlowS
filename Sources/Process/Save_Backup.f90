@@ -41,10 +41,10 @@
   !-----------------------------------------------------------------------!
   !   Save cell-centre coordinates.  Could be useful for interpolations   !
   !-----------------------------------------------------------------------! 
-  call Write_Backup_3_Cell_Bnd(fh, d, 'coordinates',   & 
-                               grid % xc(-nb_s:nc_s),  &
-                               grid % yc(-nb_s:nc_s),  &
-                               grid % zc(-nb_s:nc_s))
+  call Write_Backup_Cell_Bnd(fh, d, 'x_coordinates', grid % xc(-nb_s:nc_s))
+  call Write_Backup_Cell_Bnd(fh, d, 'y_coordinates', grid % yc(-nb_s:nc_s))
+  call Write_Backup_Cell_Bnd(fh, d, 'z_coordinates', grid % zc(-nb_s:nc_s))
+
   !---------------!
   !               !
   !   Save data   !
@@ -52,34 +52,34 @@
   !---------------! 
 
   ! Time step
-  call Write_Backup_1_Int(fh, d, 'time_step', time_step)
+  call Write_Backup_Int(fh, d, 'time_step', time_step)
 
   ! Number of processors
-  call Write_Backup_1_Int(fh, d, 'n_proc', n_proc)
+  call Write_Backup_Int(fh, d, 'n_proc', n_proc)
 
   !--------------!
   !   Velocity   !
   !--------------!
-  call Write_Backup_1_Variable(fh, d, 'u_velocity', u)
-  call Write_Backup_1_Variable(fh, d, 'v_velocity', v)
-  call Write_Backup_1_Variable(fh, d, 'w_velocity', w)
+  call Write_Backup_Variable(fh, d, 'u_velocity', u)
+  call Write_Backup_Variable(fh, d, 'v_velocity', v)
+  call Write_Backup_Variable(fh, d, 'w_velocity', w)
 
   !--------------------------------------!
   !   Pressure and pressure correction   !
   !--------------------------------------!
-  call Write_Backup_1_Cell_Bnd(fh, d, 'press',       p  % n(-nb_s:nc_s))
-  call Write_Backup_1_Cell_Bnd(fh, d, 'press_corr',  pp % n(-nb_s:nc_s))
+  call Write_Backup_Cell_Bnd(fh, d, 'press',       p  % n(-nb_s:nc_s))
+  call Write_Backup_Cell_Bnd(fh, d, 'press_corr',  pp % n(-nb_s:nc_s))
 
   !----------------------------------------------------!
   !   Mass flow rates (ask Egor if name is correct?)   !
   !----------------------------------------------------!
-  call Write_Backup_1_Face(fh, d, 'mass_flow_rate', flux(1:nf_s+nbf_s))
+  call Write_Backup_Face(fh, d, 'mass_flow_rate', flux(1:nf_s+nbf_s))
 
   !--------------!
   !   Etnhalpy   !
   !--------------!
   if(heat_transfer == YES) then
-    call Write_Backup_1_Variable(fh, d, 'temp', t)
+    call Write_Backup_Variable(fh, d, 'temp', t)
   end if
 
   !-----------------------!
@@ -90,27 +90,27 @@
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
 
     ! K and epsilon
-    call Write_Backup_1_Variable(fh, d, 'kin', kin)
-    call Write_Backup_1_Variable(fh, d, 'eps', eps)
+    call Write_Backup_Variable(fh, d, 'kin', kin)
+    call Write_Backup_Variable(fh, d, 'eps', eps)
 
     ! Other turbulent quantities
-    call Write_Backup_1_Cell_Bnd(fh, d, 'p_kin',    p_kin   (-nb_s:nc_s))
-    call Write_Backup_1_Cell_Bnd(fh, d, 'u_tau',    u_tau   (-nb_s:nc_s))
-    call Write_Backup_1_Cell_Bnd(fh, d, 'y_plus',   y_plus  (-nb_s:nc_s))
-    call Write_Backup_1_Cell_Bnd(fh, d, 'vis_wall', vis_wall(-nb_s:nc_s))
-    call Write_Backup_1_Cell    (fh, d, 'tau_wall', tau_wall  (1:nc_s))
+    call Write_Backup_Cell_Bnd(fh, d, 'p_kin',    p_kin   (-nb_s:nc_s))
+    call Write_Backup_Cell_Bnd(fh, d, 'u_tau',    u_tau   (-nb_s:nc_s))
+    call Write_Backup_Cell_Bnd(fh, d, 'y_plus',   y_plus  (-nb_s:nc_s))
+    call Write_Backup_Cell_Bnd(fh, d, 'vis_wall', vis_wall(-nb_s:nc_s))
+    call Write_Backup_Cell    (fh, d, 'tau_wall', tau_wall  (1:nc_s))
   end if
 
   if(turbulence_model == K_EPS_ZETA_F     .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
 
     ! Zeta and f22
-    call Write_Backup_1_Variable(fh, d, 'zeta', zeta)
-    call Write_Backup_1_Variable(fh, d, 'f22',  f22)
+    call Write_Backup_Variable(fh, d, 'zeta', zeta)
+    call Write_Backup_Variable(fh, d, 'f22',  f22)
 
     ! Other turbulent quantities
-    call Write_Backup_1_Cell_Bnd(fh, d, 't_scale',  t_scale(-nb_s:nc_s))
-    call Write_Backup_1_Cell_Bnd(fh, d, 'l_scale',  l_scale(-nb_s:nc_s))
+    call Write_Backup_Cell_Bnd(fh, d, 't_scale',  t_scale(-nb_s:nc_s))
+    call Write_Backup_Cell_Bnd(fh, d, 'l_scale',  l_scale(-nb_s:nc_s))
   end if 
 
   ! Close backup file

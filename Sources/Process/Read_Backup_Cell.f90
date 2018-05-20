@@ -1,5 +1,5 @@
 !==============================================================================!
-  subroutine Read_Backup_1_Face(fh, disp, var_name, fcom1)
+  subroutine Read_Backup_Cell(fh, disp, var_name, com1)
 !------------------------------------------------------------------------------!
 !   Reads a vector variable with boundary cells from a backup file.            !
 !------------------------------------------------------------------------------!
@@ -11,10 +11,9 @@
 !---------------------------------[Arguments]----------------------------------!
   integer          :: fh, disp
   character(len=*) :: var_name
-  real             :: fcom1(1:nf_s+nbf_s)
+  real             :: com1(1:nc_s)
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: vn
-  integer           :: s
   integer           :: vs, disp_loop
 !==============================================================================!
 
@@ -31,14 +30,8 @@
     ! If variable is found, read it and retrun
     if(vn == var_name) then
       if(this_proc < 2) print *, '# Reading variable: ', trim(vn)
-      call Comm_Mod_Read_Face_Real(fh, fcom1(1:nf_s+nbf_s), disp_loop)
+      call Comm_Mod_Read_Cell_Real(fh, com1(1:nc_s),   disp_loop)
       disp = disp_loop
-
-      ! Fix signs for the face fcom1es back
-      do s = nf_s + 1, nf_s + nbf_s
-        fcom1(s) = fcom1(s) * buf_face_sgn(s-nf_s)
-      end do
-
       return
 
     ! If variable not found, advance the offset only

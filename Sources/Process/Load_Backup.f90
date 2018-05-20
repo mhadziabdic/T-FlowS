@@ -9,6 +9,7 @@
   use Comm_Mod
   use Rans_Mod
   use Grid_Mod
+  use Grad_Mod
   use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -18,7 +19,8 @@
   logical         :: restart 
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: name_in, answer
-  integer           :: fh,d
+  integer           :: fh, d, s, c1, c2  
+  real              :: fs
 !==============================================================================!
 
   ! Full name is specified in control file
@@ -55,31 +57,32 @@
   !---------------! 
 
   ! Time step
-  call Read_Backup_1_Int(fh, d, 'time_step', time_step)
+  call Read_Backup_Int(fh, d, 'time_step', time_step)
 
   !--------------!
   !   Velocity   !
   !--------------!
-  call Read_Backup_1_Variable(fh, d, 'u_velocity', u)
-  call Read_Backup_1_Variable(fh, d, 'v_velocity', v)
-  call Read_Backup_1_Variable(fh, d, 'w_velocity', w)
+  call Read_Backup_Variable(fh, d, 'u_velocity', u)
+  call Read_Backup_Variable(fh, d, 'v_velocity', v)
+  call Read_Backup_Variable(fh, d, 'w_velocity', w)
 
   !--------------------------------------!
   !   Pressure and pressure correction   !
   !--------------------------------------!
-  call Read_Backup_1_Cell_Bnd(fh, d, 'press',       p  % n(-nb_s:nc_s))
-  call Read_Backup_1_Cell_Bnd(fh, d, 'press_corr',  pp % n(-nb_s:nc_s))
+  call Read_Backup_Cell_Bnd(fh, d, 'press',       p  % n(-nb_s:nc_s))
+  call Read_Backup_Cell_Bnd(fh, d, 'press_corr',  pp % n(-nb_s:nc_s))
 
   !----------------------------------------------------!
   !   Mass flow rates (ask Egor if name is correct?)   !
   !----------------------------------------------------!
-  call Read_Backup_1_Face(fh, d, 'mass_flow_rate', flux(1:nf_s+nbf_s))
+  call Read_Backup_Face(fh, d, 'mass_flow_rate', flux(1:nf_s+nbf_s))
+  call Calculate_Mass_Flow_Rate(grid)
 
   !--------------!
   !   Etnhalpy   !
   !--------------!
   if(heat_transfer == YES) then
-    call Read_Backup_1_Variable(fh, d, 'temp', t)
+    call Read_Backup_Variable(fh, d, 'temp', t)
   end if
 
   !-----------------------!
@@ -90,27 +93,27 @@
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
 
     ! K and epsilon
-    call Read_Backup_1_Variable(fh, d, 'kin', kin)
-    call Read_Backup_1_Variable(fh, d, 'eps', eps)
+    call Read_Backup_Variable(fh, d, 'kin', kin)
+    call Read_Backup_Variable(fh, d, 'eps', eps)
 
     ! Other turbulent quantities
-    call Read_Backup_1_Cell_Bnd(fh, d, 'p_kin',    p_kin   (-nb_s:nc_s))
-    call Read_Backup_1_Cell_Bnd(fh, d, 'u_tau',    u_tau   (-nb_s:nc_s))
-    call Read_Backup_1_Cell_Bnd(fh, d, 'y_plus',   y_plus  (-nb_s:nc_s))
-    call Read_Backup_1_Cell_Bnd(fh, d, 'vis_wall', vis_wall(-nb_s:nc_s))
-    call Read_Backup_1_Cell    (fh, d, 'tau_wall', tau_wall  (1:nc_s)  )
+    call Read_Backup_Cell_Bnd(fh, d, 'p_kin',    p_kin   (-nb_s:nc_s))
+    call Read_Backup_Cell_Bnd(fh, d, 'u_tau',    u_tau   (-nb_s:nc_s))
+    call Read_Backup_Cell_Bnd(fh, d, 'y_plus',   y_plus  (-nb_s:nc_s))
+    call Read_Backup_Cell_Bnd(fh, d, 'vis_wall', vis_wall(-nb_s:nc_s))
+    call Read_Backup_Cell    (fh, d, 'tau_wall', tau_wall  (1:nc_s)  )
   end if
 
   if(turbulence_model == K_EPS_ZETA_F     .or.  &
      turbulence_model == HYBRID_K_EPS_ZETA_F) then
 
     ! Zeta and f22
-    call Read_Backup_1_Variable(fh, d, 'zeta', zeta)
-    call Read_Backup_1_Variable(fh, d, 'f22',  f22)
+    call Read_Backup_Variable(fh, d, 'zeta', zeta)
+    call Read_Backup_Variable(fh, d, 'f22',  f22)
 
     ! Other turbulent quantities
-    call Read_Backup_1_Cell_Bnd(fh, d, 't_scale',  t_scale(-nb_s:nc_s))
-    call Read_Backup_1_Cell_Bnd(fh, d, 'l_scale',  l_scale(-nb_s:nc_s))
+    call Read_Backup_Cell_Bnd(fh, d, 't_scale',  t_scale(-nb_s:nc_s))
+    call Read_Backup_Cell_Bnd(fh, d, 'l_scale',  l_scale(-nb_s:nc_s))
   end if 
 
   ! Close backup file

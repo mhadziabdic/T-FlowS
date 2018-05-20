@@ -230,7 +230,7 @@ $(DIR_OBJECT)/Grid_Mod.o:	$(DIR_OBJECT)/Bnd_Cond_Mod.o		\
 				$(DIR_OBJECT)/Material_Mod.o		\
 				$(DIR_SHARED)/Grid_Mod/*.f90
 # Name_Mod.o is just one file, doesn't need explicit dependencies
-# Region_Mod.o is just one file, doesn't need explicit dependencies
+# Tokenizer_Mod.o is just one file, doesn't need explicit dependencies
 
 #---------------------
 #   Explicit target.

@@ -61,6 +61,9 @@
   real, allocatable :: shear(:)
   real, allocatable :: tau_wall(:)
 
+  ! Turbulent viscosity
+  real,allocatable :: vis_t(:)
+
   ! Wall viscosity (wall function approuch)
   real, allocatable :: vis_wall(:)
   real, allocatable :: con_wall(:)
@@ -72,4 +75,7 @@
   real,allocatable :: u_tau(:)
   real,allocatable :: u_tau_mean(:)
 
+  ! Turbulent Prandtl and Schmidt numbers
+  real :: pr_t, sc_t
+ 
   end module 

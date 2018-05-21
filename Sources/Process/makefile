@@ -210,14 +210,9 @@ SRC_MOD += Control_Mod.f90
 #---------------
 
 # Sources for all functions are obtained by a shell command
-SRC_RAW =  $(shell ls -1 *.f90 | grep -v -i _Mod | grep -v -i Save_Cgns)
-SRC_RAW += $(shell ls -1 $(DIR_MODELS)/*.f90 | grep -v -i _Mod)
+SRC_FUN =  $(shell ls -1 *.f90 | grep -v -i _Mod | grep -v -i Save_Cgns)
+SRC_FUN += $(shell ls -1 $(DIR_MODELS)/*.f90 | xargs -n1 basename | grep -v -i _Mod)
 
-# Remove directory names
-STEP_A  = $(subst $(DIR_MODELS),,$(SRC_RAW)) # remove directory name
-SRC_FUN = $(subst /,,$(STEP_A))              # remove last slash
-
-# Add files from "Shared" directory, but one by one, to avoid clutter
 SRC_FUN += Distance.f90 		\
            Load_Geo.f90 		\
            Name_File.f90		\

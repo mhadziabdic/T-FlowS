@@ -137,8 +137,8 @@ SRC_MOD += Point_Mod.f90		\
 #---------------
 
 # Sources for all functions are obtained by a shell command
-SRC_FUN_WITH_DIR = $(shell ls -1 $(DIR_SHARED)/*.f90 *.f90 | grep -v -i _Mod | grep -v -i Save_Cgns)
-SRC_FUN = $(subst $(DIR_SHARED)/, ,$(SRC_FUN_WITH_DIR))
+SRC_FUN =  $(shell ls -1 *.f90 | grep -v -i _Mod | grep -v -i Save_Cgns)
+SRC_FUN += $(shell ls -1 $(DIR_SHARED)/*.f90 | xargs -n1 basename | grep -v -i _Mod)
 
 #-------------------------------------------
 #   Conditional inclusion of CGNS support 

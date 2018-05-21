@@ -11,6 +11,19 @@
   use rans_mod
   use Grid_Mod
   use Grad_Mod
+  use Work_Mod, only: uu_f       => r_cell_01,  &
+                      vv_f       => r_cell_02,  &
+                      ww_f       => r_cell_03,  &
+                      uv_f       => r_cell_04,  &
+                      uw_f       => r_cell_05,  &
+                      vw_f       => r_cell_06,  &
+                      m_11_f     => r_cell_07,  &
+                      m_22_f     => r_cell_08,  &
+                      m_33_f     => r_cell_09,  &
+                      m_12_f     => r_cell_10,  &
+                      m_13_f     => r_cell_11,  &
+                      m_23_f     => r_cell_12,  &
+                      shear_test => r_cell_13   
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
@@ -129,19 +142,19 @@
     v % filt(c) = v_a / vol_e
     w % filt(c) = w_a / vol_e
 
-    UUf(c)  = uu_a / vol_e
-    VVf(c)  = vv_a / vol_e
-    WWf(c)  = ww_a / vol_e
-    UVf(c)  = uv_a / vol_e
-    UWf(c)  = uw_a / vol_e
-    VWf(c)  = vw_a / vol_e
+    uu_f(c)  = uu_a / vol_e
+    vv_f(c)  = vv_a / vol_e
+    ww_f(c)  = ww_a / vol_e
+    uv_f(c)  = uv_a / vol_e
+    uw_f(c)  = uw_a / vol_e
+    vw_f(c)  = vw_a / vol_e
   
-    M11f(c) = m_11_a / vol_e 
-    M22f(c) = m_22_a / vol_e 
-    M33f(c) = m_33_a / vol_e 
-    M12f(c) = m_12_a / vol_e 
-    M13f(c) = m_13_a / vol_e 
-    M23f(c) = m_23_a / vol_e 
+    m_11_f(c) = m_11_a / vol_e 
+    m_22_f(c) = m_22_a / vol_e 
+    m_33_f(c) = m_33_a / vol_e 
+    m_12_f(c) = m_12_a / vol_e 
+    m_13_f(c) = m_13_a / vol_e 
+    m_23_f(c) = m_23_a / vol_e 
   end do
 
   call Grad_Mod_For_Phi(grid, u % filt, 1, u % x, .true.)  ! dU/dx
@@ -165,38 +178,25 @@
                          0.5*(u % z(c) + w % x(c))*(u % z(c) + w % x(c)) +   &
                          0.5*(v % x(c) + u % y(c))*(v % x(c) + u % y(c))))
 
-    l_11 = UUf(c) - u % filt(c) * u % filt(c) 
-    l_22 = VVf(c) - v % filt(c) * v % filt(c) 
-    l_33 = WWf(c) - w % filt(c) * w % filt(c) 
-    l_12 = UVf(c) - u % filt(c) * v % filt(c) 
-    l_13 = UWf(c) - u % filt(c) * w % filt(c) 
-    l_23 = VWf(c) - v % filt(c) * w % filt(c) 
+    l_11 = uu_f(c) - u % filt(c) * u % filt(c) 
+    l_22 = vv_f(c) - v % filt(c) * v % filt(c) 
+    l_33 = ww_f(c) - w % filt(c) * w % filt(c) 
+    l_12 = uv_f(c) - u % filt(c) * v % filt(c) 
+    l_13 = uw_f(c) - u % filt(c) * w % filt(c) 
+    l_23 = vw_f(c) - v % filt(c) * w % filt(c) 
 
-    m_11 = l_f * l_f * shear_test(c) * u % x(c)       &
-         - l_g * l_g * M11f(c) 
-    m_22 = l_f * l_f * shear_test(c) * v % y(c)       &
-         - l_g * l_g * M22f(c) 
-    m_33 = l_f * l_f * shear_test(c) * w % z(c)       &
-         - l_g * l_g * M33f(c) 
+    m_11 = l_f**2 * shear_test(c) * u % x(c) - l_g**2 * m_11_f(c) 
+    m_22 = l_f**2 * shear_test(c) * v % y(c) - l_g**2 * m_22_f(c) 
+    m_33 = l_f**2 * shear_test(c) * w % z(c) - l_g**2 * m_33_f(c) 
 
-    m_12 = l_f * l_f * shear_test(c)                &
-         * 0.5 * (u % y(c) + v % x(c)) - l_g * l_g * M12f(c)
+    m_12 = l_f**2 * shear_test(c) * .5*(u % y(c)+v % x(c)) - l_g**2 * m_12_f(c)
+    m_13 = l_f**2 * shear_test(c) * .5*(u % z(c)+w % x(c)) - l_g**2 * m_13_f(c) 
+    m_23 = l_f**2 * shear_test(c) * .5*(v % z(c)+w % y(c)) - l_g**2 * m_23_f(c)  
 
-    m_13 = l_f * l_f * shear_test(c)                &
-         * 0.5 * (u % z(c) + w % x(c)) - l_g * l_g * M13f(c) 
-
-    m_23 = l_f * l_f * shear_test(c)                &
-         * 0.5 * (v % z(c) + w % y(c)) - l_g * l_g * M23f(c)  
-
-    m_dot_m = m_11 * m_11 + m_22 * m_22 + m_33 * m_33   & 
-            + 2.0 * m_12 * m_12                         &
-            + 2.0 * m_13 * m_13                         &
-            + 2.0 * m_23 * m_23 
+    m_dot_m = m_11**2 + m_22**2 + m_33**2 + 2.0 * (m_12**2 + m_13**2 + m_23**2) 
  
-    l_dot_m = l_11 * m_11 + l_22 * m_22 + l_33 * m_33   & 
-            + 2.0 * l_12 * m_12                         &
-            + 2.0 * l_13 * m_13                         &
-            + 2.0 * l_23 * m_23
+    l_dot_m =        l_11 * m_11 + l_22 * m_22 + l_33 * m_33   & 
+            + 2.0 * (l_12 * m_12 + l_13 * m_13 + l_23 * m_23)
 
     c_dyn(c)  =  -0.5 * l_dot_m / (m_dot_m + TINY) 
 

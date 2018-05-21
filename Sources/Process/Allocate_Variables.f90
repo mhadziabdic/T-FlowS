@@ -204,21 +204,7 @@
       allocate(w % filt(-grid % n_bnd_cells:grid % n_cells));  w % filt = 0.
 
       allocate(c_dyn(-grid % n_bnd_cells:grid % n_cells)); c_dyn = 0.
-      allocate(UUf(grid % n_cells));   UUf = 0.
-      allocate(VVf(grid % n_cells));   VVf = 0.
-      allocate(WWf(grid % n_cells));   WWf = 0.
-      allocate(UVf(grid % n_cells));   UVf = 0.
-      allocate(UWf(grid % n_cells));   UWf = 0.
-      allocate(VWf(grid % n_cells));   VWf = 0.
-
-      allocate(M11f(grid % n_cells));   M11f = 0.
-      allocate(M22f(grid % n_cells));   M22f = 0.
-      allocate(M33f(grid % n_cells));   M33f = 0.
-      allocate(M12f(grid % n_cells));   M12f = 0.
-      allocate(M13f(grid % n_cells));   M13f = 0.
-      allocate(M23f(grid % n_cells));   M23f = 0.
     end if
-    allocate(shear_test(-grid % n_bnd_cells:grid % n_cells)); shear_test = 0.
     allocate(kin_sgs   (-grid % n_bnd_cells:grid % n_cells)); kin_sgs= 0.
     allocate(c_dyn_mean(-grid % n_bnd_cells:grid % n_cells)); c_dyn_mean = 0.
   end if

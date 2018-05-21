@@ -15,11 +15,18 @@
 
     ! Create frame
     do i = 1, L_LINE, L_LINE-1
-      iter_info % line_lead (i:i) = '#'
-      do l = 1, MAX_INFO_LINES
-        iter_info % lines(l)(i:i) = '#'
+      iter_info % line_lead      (i:i) = '#'
+
+      ! For normal lines
+      do l = 1, 4
+        iter_info % lines(l)     (i:i) = '#'
       end do
-      iter_info % line_trail(i:i) = '#'
+
+      ! For user lines
+      do l = 1, MAX_USER_LINES
+        iter_info % lines_user(l)(i:i) = '#'
+      end do
+      iter_info % line_trail     (i:i) = '#'
     end do
 
     do i = 2, L_LINE-1
@@ -29,8 +36,15 @@
 
     ! Create separators (character must be length of L_BOX)
     do i = 2, L_LINE-L_BOX, L_BOX
-      do l = 1, MAX_INFO_LINES
-        write(iter_info % lines(l) (i:i+L_BOX-1), '(a21)') '|'
+
+      ! For normal lines
+      do l = 1, 4
+        write(iter_info % lines(l)      (i:i+L_BOX-1), '(a21)') '|'
+      end do
+
+      ! For user lines
+      do l = 1, MAX_USER_LINES
+        write(iter_info % lines_user(l) (i:i+L_BOX-1), '(a21)') '|'
       end do
       write(iter_info % line_lead (i+L_BOX-1 :  &
                                    i+L_BOX-1),   '(a1)') '+'

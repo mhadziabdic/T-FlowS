@@ -7,7 +7,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer, parameter :: L_LINE         =  85
   integer, parameter :: L_BOX          =  21
-  integer, parameter :: MAX_INFO_LINES = 256
+  integer, parameter :: MAX_USER_LINES = 256  
 !==============================================================================!
 
   !--------------------!
@@ -23,10 +23,11 @@
   !   Iter_Info type   !
   !--------------------!
   type Iter_Info_Type
-    integer               :: n_lines               = 0
-    character(len=L_LINE) :: line_lead             = ''
-    character(len=L_LINE) :: line_trail            = ''
-    character(len=L_LINE) :: lines(MAX_INFO_LINES) = ''
+    integer               :: n_user_lines              = 0
+    character(len=L_LINE) :: line_lead                 = ''
+    character(len=L_LINE) :: line_trail                = ''
+    character(len=L_LINE) :: lines(4)                  = ''
+    character(len=L_LINE) :: lines_user(MAX_USER_LINES) = ''
   end type
 
   !--------------------!
@@ -52,6 +53,7 @@
   include 'Info_Mod/Iter_Start.f90'
   include 'Info_Mod/Iter_Fill.f90'
   include 'Info_Mod/Iter_Fill_At.f90'
+  include 'Info_Mod/Iter_Fill_User_At.f90'
   include 'Info_Mod/Iter_Print.f90'
 
   include 'Info_Mod/Bulk_Start.f90'

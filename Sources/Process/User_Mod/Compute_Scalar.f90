@@ -633,9 +633,8 @@
   read(phi % name(3:4), *) ns  ! reterive the number of scalar 
   row = ceiling(ns/4)          ! will be 1 (scal. 1-4), 2 (scal. 5-8), etc.
   col = ns - (row-1)*4         ! will be in range 1 - 4
-  row = row + 4                ! row has to be increased for reserved variables
 
-  call Info_Mod_Iter_Fill_At(row, col, phi % name, niter, phi % res)
+  call Info_Mod_Iter_Fill_User_At(row, col, phi % name, niter, phi % res)
  
   call Comm_Mod_Exchange(grid, phi % n)
 

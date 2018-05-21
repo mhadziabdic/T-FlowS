@@ -91,7 +91,7 @@
         end if
 
         if(heat_transfer == YES) then
-          pr_t = Turbulent_Prandtl_Number(grid, c)
+          pr_t = Turbulent_Prandtl_Number(grid, c1)
           pr = viscosity * capacity / conductivity
           beta = 9.24 * ((pr/pr_t)**0.75 - 1.0) * &
             (1.0 + 0.28 * exp(-0.007*pr/pr_t))

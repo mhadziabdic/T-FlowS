@@ -41,7 +41,7 @@
      turbulence_model == DES_SPALART) then
 
     do c = 1, grid % n_cells
-      pr_t = Turbulent_Prandtl_Number(vis_t(c))
+      pr_t = Turbulent_Prandtl_Number(grid, c)
       ut % n(c) = -vis_t(c) / pr_t * t_x(c)
       vt % n(c) = -vis_t(c) / pr_t * t_y(c)
       wt % n(c) = -vis_t(c) / pr_t * t_z(c)

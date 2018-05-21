@@ -34,12 +34,8 @@
   real,allocatable :: vort(:)
   real,allocatable :: vort_mean(:)
 
-  ! Turbulent viscosity
-  real,allocatable :: vis_t(:)
+  ! Effective turbulent viscosity
   real,allocatable :: vis_t_eff(:)
- 
-  ! Turbulent conductivity (never used?)
-  ! real,allocatable :: con_t(:)
  
   ! Lenght and Time Scales
   real,allocatable :: l_scale(:)

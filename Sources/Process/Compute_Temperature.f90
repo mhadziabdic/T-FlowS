@@ -34,13 +34,14 @@
   type(Var_Type)  :: phi
 !----------------------------------[Calling]-----------------------------------!
   include "../Shared/Approx.int"
+  real :: Turbulent_Prandtl_Number
 !-----------------------------------[Locals]-----------------------------------! 
   integer           :: n, c, s, c1, c2, niter, mat
   real              :: A0, A12, A21
   real              :: ini_res, tol
   real              :: CONeff1, FUex1, FUim1, phixS1, phiyS1, phizS1
   real              :: CONeff2, FUex2, FUim2, phixS2, phiyS2, phizS2
-  real              :: Stot, phis, Prt, Prt1, Prt2
+  real              :: Stot, phis, pr_t1, pr_t2
   character(len=80) :: coupling   ! pressure-momentum coupling
   character(len=80) :: precond    ! preconditioner
   integer           :: adv_scheme  ! space-discretiztion of advection scheme)
@@ -246,7 +247,7 @@
   !----------------------------!
   !   Spatial discretization   !
   !----------------------------!
-  Prt = 0.9
+  call Control_Mod_Turbulent_Prandtl_Number(pr_t)  ! get default pr_t (0.9)
 
   do s = 1, grid % n_faces
 
@@ -255,11 +256,9 @@
      
     if(turbulence_model /= LES .or.  &
        turbulence_model /= DNS) then
-      Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(viscosity+TINY)) - 0.0441*                  &
-            (vis_t(c1)/(viscosity+TINY))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c1)+TINY) ))) )
-      Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(viscosity+TINY)) - 0.0441*                  &
-           (vis_t(c2)/(viscosity+TINY))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c2)+TINY) ))) )
-      Prt = fw(s)*Prt1 + (1.0-fw(s))*Prt2
+      pr_t1 = Turbulent_Prandtl_Number(grid, c1)
+      pr_t2 = Turbulent_Prandtl_Number(grid, c2)
+      pr_t  = fw(s) * pr_t1 + (1.0 - fw(s)) * pr_t2
     end if
 
     ! Gradients on the cell face 
@@ -273,9 +272,9 @@
         phiyS2 = phiyS1 
         phizS2 = phizS1 
         CONeff1 =      grid % f(s) * ( conductivity                 &
-                                     + capacity*vis_t(c1)/Prt )  &
+                                     + capacity*vis_t(c1)/pr_t )  &
                 + (1.-grid % f(s)) * ( conductivity                 &
-                                     + capacity*vis_t(c2)/Prt )
+                                     + capacity*vis_t(c2)/pr_t )
         CONeff2 = CONeff1 
       else 
         phixS1 = phi_x(c1) 
@@ -285,9 +284,9 @@
         phiyS2 = phi_y(c2) 
         phizS2 = phi_z(c2) 
         CONeff1 =   conductivity                 &
-                  + capacity*vis_t(c1)/Prt   
+                  + capacity*vis_t(c1)/pr_t   
         CONeff2 =   conductivity                 &
-                  + capacity*vis_t(c2)/Prt   
+                  + capacity*vis_t(c2)/pr_t   
       end if
     else
       phixS1 = phi_x(c1) 
@@ -297,7 +296,7 @@
       phiyS2 = phiyS1 
       phizS2 = phizS1 
       CONeff1 =   conductivity                 &
-                + capacity*vis_t(c1)/Prt   
+                + capacity*vis_t(c1)/pr_t   
       CONeff2 = CONeff1 
     endif
 
@@ -546,12 +545,10 @@
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)
 
-        Prt1 = 1.0/( 0.5882 + 0.228*(vis_t(c1)/(viscosity+TINY)) - 0.0441*                  &
-              (vis_t(c1)/(viscosity+TINY))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c1)+TINY) ))) )
-        Prt2 = 1.0/( 0.5882 + 0.228*(vis_t(c2)/(viscosity+TINY)) - 0.0441*                  &
-              (vis_t(c2)/(viscosity+TINY))**2.0*(1.0 - exp(-5.165*( viscosity/(vis_t(c2)+TINY) ))) )
+        pr_t1 = Turbulent_Prandtl_Number(grid, c1)
+        pr_t2 = Turbulent_Prandtl_Number(grid, c2)
+        pr_t  = fw(s) * pr_t1 + (1.0 - fw(s)) * pr_t2
 
-        Prt = fw(s)*Prt1 + (1.0-fw(s))*Prt2
         if(c2 > 0 .or.  &
            c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER) then
           phixS1 = fw(s)*phi_x(c1) + (1.0-fw(s))*phi_x(c2) 
@@ -560,8 +557,8 @@
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 
-          CONeff1 =       grid % f(s)  * (capacity*vis_t(c1)/Prt )  &
-                  + (1. - grid % f(s)) * (capacity*vis_t(c2)/Prt )
+          CONeff1 =       grid % f(s)  * (capacity*vis_t(c1)/pr_t )  &
+                  + (1. - grid % f(s)) * (capacity*vis_t(c2)/pr_t )
           CONeff2 = CONeff1 
         else
           phixS1 = phi_x(c1) 
@@ -570,7 +567,7 @@
           phixS2 = phixS1 
           phiyS2 = phiyS1 
           phizS2 = phizS1 
-          CONeff1 = capacity*vis_t(c1)/Prt   
+          CONeff1 = capacity*vis_t(c1)/pr_t   
           CONeff2 = CONeff1 
         endif
 

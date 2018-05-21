@@ -13,10 +13,12 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
+!---------------------------------[Calling]------------------------------------!
+  real :: Turbulent_Prandtl_Number
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c1, c2, s
-  real              :: qx, qy, qz, nx, ny, nz, Stot, CONeff, ebf, y_pl
-  real              :: Pr_mol, beta, u_plus, Prt
+  integer :: c1, c2, s
+  real    :: qx, qy, qz, nx, ny, nz, s_tot, con_t, ebf, y_pl
+  real    :: pr, beta, u_plus
 !==============================================================================!
 
   area  = 0.0
@@ -117,70 +119,66 @@
           uv % n(c2) = uv % n(c1)
           uw % n(c2) = uw % n(c1)
           vw % n(c2) = vw % n(c1)
-          if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) f22 % n(c2)= f22 % n(c1)
+          if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) f22 % n(c2) = f22 % n(c1)
         end if
       end if
 
       ! Is this good in general case, when q <> 0 ??? Check it.
       if(heat_transfer .eq. YES) then
-        Prt = 0.9
+        call Control_Mod_Turbulent_Prandtl_Number(pr_t)
         if(turbulence_model .ne. LES .or.  &
            turbulence_model .ne. DNS) then
-          Prt = 1.0                             &
-              / ( 0.5882 + 0.228*(vis_t(c1)     &
-              / (viscosity+TINY)) - 0.0441      &
-              * (vis_t(c1)/(viscosity+TINY))**2 &
-              * (1.0 - exp(-5.165*( viscosity/(vis_t(c1)+TINY) ))))
+          pr_t = Turbulent_Prandtl_Number(grid, c1)
         end if
-        Stot = sqrt(  grid % sx(s)*grid % sx(s)  &
-                    + grid % sy(s)*grid % sy(s)  &
-                    + grid % sz(s)*grid % sz(s))
-        nx = grid % sx(s)/Stot
-        ny = grid % sy(s)/Stot
-        nz = grid % sz(s)/Stot
+        s_tot = sqrt(  grid % sx(s)*grid % sx(s)  &
+                     + grid % sy(s)*grid % sy(s)  &
+                     + grid % sz(s)*grid % sz(s))
+        nx = grid % sx(s)/s_tot
+        ny = grid % sy(s)/s_tot
+        nz = grid % sz(s)/s_tot
         qx = t % q(c2) * nx
         qy = t % q(c2) * ny
         qz = t % q(c2) * nz
-        CONeff = conductivity                 &
-               + capacity*vis_t(c1)/Prt
+        con_t = conductivity                 &
+              + capacity*vis_t(c1) / pr_t
         if(turbulence_model .eq. K_EPS_ZETA_F .or.  &
            turbulence_model .eq. K_EPS) then
           y_pl = max(c_mu25 * sqrt(kin % n(c1)) * grid % wall_dist(c1) / &
             viscosity, 0.12)
           u_plus = log(y_pl * e_log) / kappa + TINY
-          Pr_mol = viscosity * capacity / conductivity
-          beta = 9.24 * ((Pr_mol/Prt)**0.75 - 1.0)  &
-                     * (1.0 + 0.28 * exp(-0.007*Pr_mol/Prt))
-          ebf = 0.01 * (Pr_mol*y_pl)**4.0          &
-                     / (1.0 + 5.0 * Pr_mol**3 * y_pl) + TINY
+          pr = viscosity * capacity / conductivity
+          beta = 9.24 * ((pr/pr_t)**0.75 - 1.0)  &
+                      * (1.0 + 0.28 * exp(-0.007*pr/pr_t))
+          ebf = 0.01 * (pr*y_pl)**4.0          &
+                     / (1.0 + 5.0 * pr**3 * y_pl) + TINY
           con_wall(c1) = y_pl * viscosity * capacity   &
-                      / (y_pl * Pr_mol * exp(-1.0 * ebf)    &
-                      + (u_plus + beta) * Prt * exp(-1.0 / ebf) + TINY)
+                       / (y_pl * pr * exp(-1.0 * ebf)  &
+                       + (u_plus + beta) * pr_t * exp(-1.0 / ebf) + TINY)
           if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
-            t% n(c2) = t % n(c1) + Prt / capacity  &
-                     * (  qx * grid % dx(s)                  &
-                        + qy * grid % dy(s)                  &
-                        + qz * grid % dz(s))                 &
-                     / con_wall(c1)
+            t % n(c2) = t % n(c1) + pr_t / capacity  &
+                      * (  qx * grid % dx(s)         &
+                         + qy * grid % dy(s)         &
+                         + qz * grid % dz(s))        &
+                      / con_wall(c1)
             Tflux = t % q(c2)
           else if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL) then
-            t % q(c2) = ( t % n(c2) - t % n(c1) ) * CONeff  &
-                      / (  nx * grid % dx(s)                &
-                         + ny * grid % dy(s)                &
+            t % q(c2) = ( t % n(c2) - t % n(c1) ) * con_t  &
+                      / (  nx * grid % dx(s)               &
+                         + ny * grid % dy(s)               &
                          + nz * grid % dz(s) )
             Tflux = t % q(c2)
           end if
         else
           if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
-            t% n(c2) = t % n(c1) + Prt / (CONeff + TINY)   &
-                    * (  qx * grid % dx(s)                 &
-                       + qy * grid % dy(s)                 &
-                       + qz * grid % dz(s) )
+            t % n(c2) = t % n(c1) + pr_t / (con_t + TINY)   &
+                      * (  qx * grid % dx(s)                &
+                         + qy * grid % dy(s)                &
+                         + qz * grid % dz(s) )
             Tflux = t % q(c2)
           else if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL) then
-            t % q(c2) = ( t % n(c2) - t % n(c1) ) * CONeff  &
-                      / (  nx * grid % dx(s)                &
-                         + ny * grid % dy(s)                &
+            t % q(c2) = ( t % n(c2) - t % n(c1) ) * con_t  &
+                      / (  nx * grid % dx(s)               &
+                         + ny * grid % dy(s)               &
                          + nz * grid % dz(s) )
             Tflux = t % q(c2)
           end if

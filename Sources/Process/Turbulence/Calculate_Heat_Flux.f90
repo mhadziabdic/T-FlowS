@@ -5,6 +5,7 @@
 !------------------------------------------------------------------------------!
 !----------------------------------[Modules]-----------------------------------!
   use Const_Mod
+  use Control_Mod
   use Grid_Mod
   use Grad_Mod
   use Flow_Mod 
@@ -16,21 +17,23 @@
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
+!---------------------------------[Calling]------------------------------------!
+  real :: Turbulent_Prandtl_Number
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c 
-  real    :: beta, pr, pr_t
+  real    :: beta, pr
 !==============================================================================!
 
   call Grad_Mod_For_Phi(grid, t % n, 1, t_x, .true.)
   call Grad_Mod_For_Phi(grid, t % n, 2, t_y, .true.)
   call Grad_Mod_For_Phi(grid, t % n, 3, t_z, .true.)
 
-!-------------------------------------------!
-!    Compute the sources in the interior    !
-!-------------------------------------------!
+  !-----------------------------------------!
+  !   Compute the sources in the interior   !
+  !-----------------------------------------!
+  call Control_Mod_Turbulent_Prandtl_Number(pr_t)
   pr   = 0.71  ! bad, hard coded
   beta = 1.0
-  pr_t = 0.9
 
   if(turbulence_model == K_EPS               .or.  &
      turbulence_model == K_EPS_ZETA_F        .or.  &
@@ -38,12 +41,7 @@
      turbulence_model == DES_SPALART) then
 
     do c = 1, grid % n_cells
-      pr_t = 1.0/(   0.5882                                                &
-                   + 0.228  * (vis_t(c)/(viscosity+1.0e-12))               &
-                   - 0.0441 * (vis_t(c)/(viscosity+1.0e-12))**2.0          & 
-                   * (1.0 - exp(-5.165*( viscosity/(vis_t(c)+1.0e-12) )))  &
-                 )
-
+      pr_t = Turbulent_Prandtl_Number(vis_t(c))
       ut % n(c) = -vis_t(c) / pr_t * t_x(c)
       vt % n(c) = -vis_t(c) / pr_t * t_y(c)
       wt % n(c) = -vis_t(c) / pr_t * t_z(c)
@@ -52,13 +50,6 @@
   else if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
           turbulence_model == HANJALIC_JAKIRLIC) then
     do c = 1, grid % n_cells
-
-      ! Pr_t computed but not used?
-      pr_t = 1.0/(   0.5882                                                &
-                   + 0.228  * (vis_t(c)/(viscosity+1.0e-12))               &
-                   - 0.0441 * (vis_t(c)/(viscosity+1.0e-12))**2.0          & 
-                   * (1.0 - exp(-5.165*( viscosity/(vis_t(c)+1.0e-12) )))  &
-                 )
 
       ut % n(c) =  -0.22*t_scale(c) * (uu % n(c) * t_x(c) +  &
                                        uv % n(c) * t_y(c) +  &

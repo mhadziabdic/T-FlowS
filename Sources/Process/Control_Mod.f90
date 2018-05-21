@@ -56,9 +56,11 @@
     include 'Control_Mod/Physics/Reference_Temperature.f90'
 
     ! Turbulence
+    include 'Control_Mod/Physics/Roughness_Coefficient.f90'
     include 'Control_Mod/Physics/Turbulence_Model.f90'
     include 'Control_Mod/Physics/Turbulence_Model_Variant.f90'
-    include 'Control_Mod/Physics/Roughness_Coefficient.f90'
+    include 'Control_Mod/Physics/Turbulent_Prandtl_Number.f90'
+    include 'Control_Mod/Physics/Turbulent_Schmidt_Number.f90'
 
     ! Other environmental conditions
     include 'Control_Mod/Physics/Angular_Velocity_Vector.f90'

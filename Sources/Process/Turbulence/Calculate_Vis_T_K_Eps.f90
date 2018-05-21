@@ -16,6 +16,7 @@
 !   vis_t = CmuD * rho * Tsc  * vv                                             !
 !----------------------------------[Modules]-----------------------------------!
   use Const_Mod
+  use Control_Mod
   use Flow_Mod
   use Comm_Mod
   use les_mod
@@ -23,14 +24,13 @@
   use Grid_Mod
   use Work_Mod, only: re_t => r_cell_01,  &
                       f_mu => r_cell_02
-
 !------------------------------------------------------------------------------!
   implicit none
 !---------------------------------[Arguments]----------------------------------!
   type(Grid_Type) :: grid
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c1, c2, s, c
-  real    :: pr_turb, pr_mol
+  real    :: pr
   real    :: kin_visc ![m^2/s]
 !==============================================================================!
 !   Dimensions:                                                                !
@@ -52,20 +52,20 @@
   !---------------------!
   !   k-epsilon model   !
   !---------------------!
+  call Control_Mod_Turbulent_Prandtl_Number(pr_t)
   re_t    = 0.
   f_mu    = 0.
   y_plus  = 0.
-  pr_turb = 0.9
 
   do c = 1, grid % n_cells
-    vis_t(c) = c_mu * density * kin % n(c)**2. / (eps % n(c) + TINY)
+    vis_t(c) = c_mu * density * kin % n(c)**2 / (eps % n(c) + TINY)
   end do
 
   ! Low-Re varaint
   if(turbulence_model_variant == LOW_RE) then
     do c = 1, grid % n_cells
       re_t(c) = kin % n(c)**2. / (kin_visc * eps % n(c) + TINY)
-      f_mu(c) = exp(-3.4/(1.0 + 0.02*re_t(c))**2.)
+      f_mu(c) = exp(-3.4/(1.0 + 0.02*re_t(c))**2)
       vis_t(c) = f_mu(c) * vis_t(c)
     end do
   ! High-Re varaint
@@ -110,8 +110,8 @@
       if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER) then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
-          pr_mol = viscosity * capacity / conductivity
-          con_wall(c1) = viscosity * capacity / pr_mol
+          pr = viscosity * capacity / conductivity
+          con_wall(c1) = viscosity * capacity / pr
         end if
       end if
     end do

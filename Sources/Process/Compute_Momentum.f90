@@ -43,11 +43,11 @@
   real            :: uuS, vvS, wwS, uvS, uwS, vwS
 !-----------------------------------[Locals]-----------------------------------!
   integer           :: s, c, c1, c2, niter, mat
-  real              :: Fex, Fim, Fstress
+  real              :: f_ex, f_im, f_stress
   real              :: uis
   real              :: a0, a12, a21
   real              :: ini_res, tol
-  real              :: VISeff, vis_tS
+  real              :: vis_eff, vis_tS
   real              :: ui_iS,ui_jS,ui_kS,uj_iS,uk_iS
   character(len=80) :: coupling
   character(len=80) :: precond
@@ -120,7 +120,7 @@
 
   b = 0.0
   a % val = 0.0
-  Fstress = 0.0
+  f_stress = 0.0
 
   ! This is important for "copy" boundary conditions. Find out why !
   do c = -grid % n_bnd_cells, -1
@@ -269,16 +269,16 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
 
-    VISeff = fw(s)*vis_t(c1)+(1.0-fw(s))*vis_t(c2) + viscosity
+    vis_eff = fw(s)*vis_t(c1)+(1.0-fw(s))*vis_t(c2) + viscosity
 
     if(turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
-      VISeff = fw(s)*vis_t_eff(c1)+(1.0-fw(s))*vis_t_eff(c2) + viscosity
+      vis_eff = fw(s)*vis_t_eff(c1)+(1.0-fw(s))*vis_t_eff(c2) + viscosity
     end if
 
     if(c2 < 0 .and. turbulence_model .eq. LES) then
       if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
          Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
-        VISeff = vis_wall(c1)
+        vis_eff = vis_wall(c1)
       end if
     end if
 
@@ -289,7 +289,7 @@
       if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER) then
         if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
            Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
-          VISeff = vis_wall(c1)
+          vis_eff = vis_wall(c1)
         end if
       end if
     end if
@@ -302,23 +302,23 @@
           uuS = fw(s)*uu % n(c1)+(1.0-fw(s))*uu % n(c2)
           uvS = fw(s)*uv % n(c1)+(1.0-fw(s))*uv % n(c2)
           uwS = fw(s)*uw % n(c1)+(1.0-fw(s))*uw % n(c2)
-          Fstress = - (  uuS * grid % sx(s)  &
-                       + uvS * grid % sy(s)  &
-                       + uwS * grid % sz(s) )
+          f_stress = - (  uuS * grid % sx(s)  &
+                        + uvS * grid % sy(s)  &
+                        + uwS * grid % sz(s) )
         else if(ui % name .eq. 'V') then
           uvS = fw(s)*uv % n(c1)+(1.0-fw(s))*uv % n(c2)
           vvS = fw(s)*vv % n(c1)+(1.0-fw(s))*vv % n(c2)
           vwS = fw(s)*vw % n(c1)+(1.0-fw(s))*vw % n(c2)
-          Fstress =  - (  uvS * grid % sx(s)  &
-                        + vvS * grid % sy(s)  &
-                        + vwS * grid % sz(s) )
+          f_stress =  - (  uvS * grid % sx(s)  &
+                         + vvS * grid % sy(s)  &
+                         + vwS * grid % sz(s) )
         else if(ui % name .eq. 'W') then
           uwS = fw(s)*uw % n(c1)+(1.0-fw(s))*uw % n(c2)
           vwS = fw(s)*vw % n(c1)+(1.0-fw(s))*vw % n(c2)
           wwS = fw(s)*ww % n(c1)+(1.0-fw(s))*ww % n(c2)
-          Fstress =  - (  uwS * grid % sx(s)  &
-                        + vwS * grid % sy(s)  &
-                        + wwS * grid % sz(s) )
+          f_stress =  - (  uwS * grid % sx(s)  &
+                         + vwS * grid % sy(s)  &
+                         + wwS * grid % sz(s) )
         end if
       end if
     end if
@@ -330,18 +330,18 @@
     uk_iS = fw(s)*uk_i(c1) + (1.0-fw(s))*uk_i(c2)
 
     ! total (exact) viscous stress
-    Fex = VISeff*(      2.0*ui_iS  * Si(s)      &
-                   + (ui_jS+uj_iS) * Sj(s)      &
-                   + (ui_kS+uk_iS) * Sk(s) )
+    f_ex = vis_eff*(     2.0*ui_iS  * Si(s)      &
+                    + (ui_jS+uj_iS) * Sj(s)      &
+                    + (ui_kS+uk_iS) * Sk(s) )
 
-    a0 = VISeff * f_coef(s)
+    a0 = vis_eff * f_coef(s)
 
     ! Implicit viscous stress
     ! this is a very crude approximation: f_coef is not
     ! corrected at interface between materials
-    Fim = (   ui_iS*Di(s)                &
-            + ui_jS*Dj(s)                &
-            + ui_kS*Dk(s))*a0
+    f_im = (   ui_iS*Di(s)                &
+             + ui_jS*Dj(s)                &
+             + ui_kS*Dk(s))*a0
 
     ! Straight diffusion part
     if(ini .eq. 1) then
@@ -356,9 +356,9 @@
     end if
 
     ! Cross diffusion part
-    ui % c(c1) = ui % c(c1) + Fex - Fim + Fstress
+    ui % c(c1) = ui % c(c1) + f_ex - f_im + f_stress
     if(c2  > 0) then
-      ui % c(c2) = ui % c(c2) - Fex + Fim - Fstress
+      ui % c(c2) = ui % c(c2) - f_ex + f_im - f_stress
     end if
 
     ! Compute the coefficients for the sysytem matrix
@@ -446,7 +446,7 @@
 
         vis_tS = (fw(s)*vis_t(c1)+(1.0-fw(s))*vis_t(c2))
         a0 = f_coef(s)*vis_tS
-        VISeff = vis_tS
+        vis_eff = vis_tS
 
         ui_iS = fw(s)*ui_i(c1) + (1.0-fw(s))*ui_i(c2)
         ui_jS = fw(s)*ui_j(c1) + (1.0-fw(s))*ui_j(c2)
@@ -454,17 +454,19 @@
         uj_iS = fw(s)*uj_i(c1) + (1.0-fw(s))*uj_i(c2)
         uk_iS = fw(s)*uk_i(c1) + (1.0-fw(s))*uk_i(c2)
 
-        Fex=VISeff*( 2.0*ui_iS       *Si(s) &
-                      + (ui_jS+uj_iS)*Sj(s) &
-                      + (ui_kS+uk_iS)*Sk(s) )
+        f_ex = vis_eff*( 2.0*ui_iS       *Si(s) &
+                          + (ui_jS+uj_iS)*Sj(s) &
+                          + (ui_kS+uk_iS)*Sk(s) )
 
-        Fim=( ui_iS*Di(s)  &
-             +ui_jS*Dj(s)  &
-             +ui_kS*Dk(s))*VISeff*f_coef(s)
+        f_im = (  ui_iS*Di(s)  &
+                + ui_jS*Dj(s)  &
+                + ui_kS*Dk(s))*vis_eff*f_coef(s)
 
-        b(c1) = b(c1)   - VISeff*(ui%n(c2)-ui%n(c1))*f_coef(s) - Fex + Fim
+        b(c1) = b(c1) - vis_eff * (ui % n(c2) -ui % n(c1)) * f_coef(s)  &
+              - f_ex + f_im
         if(c2  > 0) then
-          b(c2) = b(c2) + VISeff*(ui%n(c2)-ui%n(c1))*f_coef(s) + Fex - Fim
+          b(c2) = b(c2) + vis_eff * (ui % n(c2) -ui % n(c1)) * f_coef(s)  &
+                + f_ex - f_im
         end if
       end do
     end if

@@ -22,7 +22,7 @@
   implicit none
   type(Grid_Type) :: grid
 !----------------------------------[Locals]------------------------------------!
-  real    :: kin_visc   ! kinematic viscosity [m^2/s]
+  real    :: kin_vis   ! kinematic viscosity [m^2/s]
   integer :: c
 !==============================================================================!
 !   Dimensions:                                                                !
@@ -33,34 +33,43 @@
 !   Cell volume   vol      [m^3]       | Length          lf        [m]         !
 !   left hand s.  A        [kg/s]      | right hand s.   b         [kg*m^2/s^4]!
 !------------------------------------------------------------------------------!
-  kin_visc = viscosity/density
+
+  kin_vis = viscosity/density
   eps_l(1:grid % n_cells) = eps % n(1:grid % n_cells) + TINY ! limited eps % n
 
   do c = 1, grid % n_cells
     t1(c) = kin % n(c)/eps_l(c)
-    t2(c) = c_t*sqrt(kin_visc/eps_l(c))
+    t2(c) = c_t*sqrt(kin_vis/eps_l(c))
 
     l1(c) = kin % n(c)**1.5/eps_l(c)
-    l2(c) = Cni*(kin_visc**3./eps_l(c))**0.25
+    l2(c) = Cni*(kin_vis**3./eps_l(c))**0.25
   end do
     
   if(turbulence_model .eq. K_EPS_ZETA_F .or.  &
      turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
+
     if(ROUGH .eq. YES) then
-      t_scale(:) =     max(t1(:),t2(:))
-      l_scale(:) = c_l*max(l1(:),l2(:))
+      do c = 1, grid % n_cells
+        t_scale(c) =     max(t1(c),t2(c))
+        l_scale(c) = c_l*max(l1(c),l2(c))
+      end do
     else
       do c = 1, grid % n_cells
         t3(c) = 0.6/(sqrt(3.0)*c_mu_d * zeta % n(c) * shear(c) + TINY)
         l3(c) = sqrt(kin % n(c)/3.0)/(c_mu_d * zeta % n(c) * shear(c) + TINY)
       end do
-      t_scale(:) =     max(min(t1(:),t3(:)),t2(:))
-      l_scale(:) = c_l*max(min(l1(:),l3(:)),l2(:))
+      do c = 1, grid % n_cells
+        t_scale(c) =     max(min(t1(c),t3(c)),t2(c))
+        l_scale(c) = c_l*max(min(l1(c),l3(c)),l2(c))
+      end do
     end if
+
   else if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) then
-    kin % n(:) = max(0.5*(uu % n(:) + vv % n(:) + ww % n(:)), TINY)
-    t_scale(:) =     max(t1(:),t2(:))
-    l_scale(:) = c_l*max(l1(:),l2(:))
+    do c = 1, grid % n_cells
+      kin % n(c) = max(0.5*(uu % n(c) + vv % n(c) + ww % n(c)), TINY)
+      t_scale(c) =     max(t1(c),t2(c))
+      l_scale(c) = c_l*max(l1(c),l2(c))
+    end do
   end if
 
   end subroutine

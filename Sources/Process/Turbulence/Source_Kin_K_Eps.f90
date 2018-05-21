@@ -23,7 +23,7 @@
 !-----------------------------------[Locals]-----------------------------------!
   integer :: c, c1, c2, s
   real    :: u_tot2, u_nor, u_nor2, u_tan
-  real    :: kin_visc ![m^2/s]
+  real    :: kin_vis ![m^2/s]
 !==============================================================================!
 !   Dimensions:                                                                !
 !   Production    p_kin    [m^2/s^3]   | Rate-of-strain  shear     [1/s]       !
@@ -37,8 +37,11 @@
 !   shear = sqrt(2 S_ij S_ij)                                                  !
 !------------------------------------------------------------------------------!
 
-  kin_sq(:) = sqrt(kin % n(:))
-  kin_visc = viscosity / density
+  do c = 1, grid % n_cells
+    kin_sq(c) = sqrt(kin % n(c))
+  end do
+
+  kin_vis = viscosity / density
 
   !-----------------------------------------------!
   !  Compute the sources in the near wall cells   !
@@ -73,7 +76,7 @@
           ! Compute nondimensional wall distance and wall-shear stress
           if(ROUGH .eq. NO) then
             y_plus(c1) = c_mu25 * kin_sq(c1) * grid % wall_dist(c1)  &
-                    / kin_visc
+                    / kin_vis
             tau_wall(c1) = abs(c_mu25*kappa*density* kin_sq(c1) * u_tan  &
                          / (log(e_log*y_plus(c1))))
 
@@ -83,7 +86,7 @@
 
           else if(ROUGH .eq. YES) then
             y_plus(c1) = c_mu25*kin_sq(c1) * (grid % wall_dist(c1)+Zo)  &
-             / kin_visc
+             / kin_vis
             tau_wall(c1) = abs(c_mu25*kappa*density * kin_sq(c1) * u_tan  &
                          / (log((grid % wall_dist(c1)+Zo)/Zo)))
 

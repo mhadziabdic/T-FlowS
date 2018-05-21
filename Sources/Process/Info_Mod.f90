@@ -1,12 +1,13 @@
 !==============================================================================!
   module Info_Mod
 !------------------------------------------------------------------------------!
-!   Mass fluxes, bulk velocities and pressure drops (for each material)        !
+!   Data types and functions for printing info boxes.                          !
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer, parameter :: L_LINE = 85
-  integer, parameter :: L_BOX  = 21
+  integer, parameter :: L_LINE         =  85
+  integer, parameter :: L_BOX          =  21
+  integer, parameter :: MAX_INFO_LINES = 256
 !==============================================================================!
 
   !--------------------!
@@ -22,9 +23,10 @@
   !   Iter_Info type   !
   !--------------------!
   type Iter_Info_Type
-    character(len=L_LINE) :: line_lead  = ''
-    character(len=L_LINE) :: line_trail = ''
-    character(len=L_LINE) :: lines(4)   = ''
+    integer               :: n_lines               = 0
+    character(len=L_LINE) :: line_lead             = ''
+    character(len=L_LINE) :: line_trail            = ''
+    character(len=L_LINE) :: lines(MAX_INFO_LINES) = ''
   end type
 
   !--------------------!

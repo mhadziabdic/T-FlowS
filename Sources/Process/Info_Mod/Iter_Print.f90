@@ -18,7 +18,7 @@
 
     ! Print only lines which have colon in the first column :-)
     print '(a87)', iter_info % lines(1)
-    do i=2,4
+    do i = 2, iter_info % n_lines
       tmp = iter_info % lines(i)
       if( tmp(7:7) == ':') print '(a87)', iter_info % lines(i)
     end do

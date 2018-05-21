@@ -8,7 +8,7 @@
 !------------------------------------------------------------------------------!
   implicit none
 !-----------------------------------[Locals]-----------------------------------!
-  integer :: i
+  integer :: i, l
 !==============================================================================!
 
   if (this_proc < 2) then
@@ -16,10 +16,9 @@
     ! Create frame
     do i = 1, L_LINE, L_LINE-1
       iter_info % line_lead (i:i) = '#'
-      iter_info % lines(1)  (i:i) = '#'
-      iter_info % lines(2)  (i:i) = '#'
-      iter_info % lines(3)  (i:i) = '#'
-      iter_info % lines(4)  (i:i) = '#'
+      do l = 1, MAX_INFO_LINES
+        iter_info % lines(l)(i:i) = '#'
+      end do
       iter_info % line_trail(i:i) = '#'
     end do
 
@@ -30,10 +29,9 @@
 
     ! Create separators (character must be length of L_BOX)
     do i = 2, L_LINE-L_BOX, L_BOX
-      write(iter_info % lines(1) (i:i+L_BOX-1), '(a21)') '|'
-      write(iter_info % lines(2) (i:i+L_BOX-1), '(a21)') '|'
-      write(iter_info % lines(3) (i:i+L_BOX-1), '(a21)') '|'
-      write(iter_info % lines(4) (i:i+L_BOX-1), '(a21)') '|'
+      do l = 1, MAX_INFO_LINES
+        write(iter_info % lines(l) (i:i+L_BOX-1), '(a21)') '|'
+      end do
       write(iter_info % line_lead (i+L_BOX-1 :  &
                                    i+L_BOX-1),   '(a1)') '+'
       write(iter_info % line_trail(i+L_BOX-1 :  &

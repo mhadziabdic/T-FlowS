@@ -23,6 +23,7 @@
   include 'User_Mod/Beginning_Of_Compute_Momentum.f90'
   include 'User_Mod/Beginning_Of_Compute_Pressure.f90'
   include 'User_Mod/Beginning_Of_Correct_Velocity.f90'
+  include 'User_Mod/Compute_Scalar.f90'
   include 'User_Mod/End_Of_Compute_Momentum.f90'
   include 'User_Mod/End_Of_Compute_Pressure.f90'
   include 'User_Mod/End_Of_Correct_Velocity.f90'

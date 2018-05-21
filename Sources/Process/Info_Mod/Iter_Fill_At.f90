@@ -11,14 +11,18 @@
   integer          :: r         ! row
   integer          :: c         ! column
   character(len=*) :: name_var
-  integer          :: n_iter
+  integer          :: n_iter    ! number of iterations
   real             :: res       
 !==============================================================================!
 
   if (this_proc < 2) then
 
+    ! Update the number of lines you'll have to print in the end
+    iter_info % n_lines = max(iter_info % n_lines, r)
+
     ! Normal variables
-    if(n_iter >= 0) then
+    if(n_iter > -1) then  ! if n_iter .eq. -1, iterations won't be written
+                          ! (that's useful for mass residual)
       write(iter_info % lines(r)((c-1)*L_BOX+ 3 :  &
                                  (c-1)*L_BOX+ 6),  '(a4)')  name_var
       write(iter_info % lines(r)((c-1)*L_BOX+ 7 :  &

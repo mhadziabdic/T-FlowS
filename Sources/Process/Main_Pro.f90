@@ -24,7 +24,7 @@
 !---------------------------------[Calling]------------------------------------!
   real :: Correct_Velocity
 !----------------------------------[Locals]------------------------------------!
-  integer           :: i, m, n
+  integer           :: i, m, n, us
   real              :: mass_res, wall_time_start, wall_time_current
   character(len=80) :: name_save
   logical           :: restar, multiple, save_now, exit_now
@@ -292,6 +292,11 @@
       if(heat_transfer == YES) then
         call Compute_Temperature(grid, dt, ini, t)
       end if
+
+      ! User scalars
+      do us = 1, n_user_scalars
+        call User_Mod_Compute_Scalar(grid, dt, ini, user_scalar(us))
+      end do
 
       ! Rans models
       if(turbulence_model == K_EPS) then

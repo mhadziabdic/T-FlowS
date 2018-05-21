@@ -199,11 +199,11 @@ SRC_MOD += Turbulence_Mod.f90	\
            les_mod.f90		\
            Rans_Mod.f90		\
 
-# User_Mod should be here
-SRC_MOD += User_Mod.f90
-
 # Control_Mod should be last since it reads for other modules
 SRC_MOD += Control_Mod.f90
+
+# but User_Mod should come after Control mod
+SRC_MOD += User_Mod.f90
 
 #---------------
 #   Functions   
@@ -311,7 +311,6 @@ $(DIR_OBJECT)/Control_Mod.o:	$(DIR_OBJECT)/$(COMM_OBJ)	\
 				$(DIR_OBJECT)/Numerics_Mod.o	\
 				$(DIR_OBJECT)/Tokenizer_Mod.o	\
 				$(DIR_OBJECT)/Turbulence_Mod.o	\
-				$(DIR_OBJECT)/User_Mod.o	\
 				Control_Mod/*/*.f90
 # Flow_Mod.o is just one file, doesn't need explicit dependencies
 $(DIR_OBJECT)/Grad_Mod.o:	$(DIR_OBJECT)/$(COMM_OBJ)	\

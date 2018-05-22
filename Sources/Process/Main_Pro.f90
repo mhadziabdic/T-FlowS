@@ -91,8 +91,8 @@
 
   call Comm_Mod_Exchange(grid, grid % vol(-grid % n_bnd_cells))
 
-  call Matrix_Mod_Topology(grid, A)
-  call Matrix_Mod_Topology(grid, D)
+  call Matrix_Mod_Topology(grid, a)
+  call Matrix_Mod_Topology(grid, d)
 
   call Comm_Mod_Wait
 
@@ -273,12 +273,12 @@
                   p % z,   u % z,   v % z)      ! dP/dz, dU/dz, dV/dz
 
       if(coupling == 'PROJECTION') then
-        call Comm_Mod_Exchange(grid, A % sav)
+        call Comm_Mod_Exchange(grid, a % sav)
         call Balance_Mass(grid)
         call Compute_Pressure_Fractional(grid, dt, ini)
       endif
       if(coupling == 'SIMPLE') then
-        call Comm_Mod_Exchange(grid, A % sav)
+        call Comm_Mod_Exchange(grid, a % sav)
         call Balance_Mass(grid)
         call Compute_Pressure_Simple(grid, dt, ini)
       end if

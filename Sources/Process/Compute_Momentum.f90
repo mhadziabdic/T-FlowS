@@ -567,7 +567,7 @@
   !----------------------------------------!
   !   All other terms defined by the user  !
   !----------------------------------------!
-  if(heat_transfer .eq. YES) call User_Mod_Force(grid, ui, a, b)
+  call User_Mod_Force(grid, ui, a, b)
 
   !-----------------------------------!
   !                                   !

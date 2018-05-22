@@ -61,8 +61,10 @@
                          
     ! Close to the wall, however, there is inversion. It takes
     ! the value from inside as the representative for the face.
-    if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
-      fw(s) = 1.0     
+    if(c2 < 0) then
+      if (Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER) then
+        fw(s) = 1.
+      end if
     end if           
   end do            
 
@@ -77,8 +79,8 @@
     c2 = grid % faces_c(2,s)
 
     if(c2 < 0) then
-      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
-         Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
         grid % cell_near_wall(c1) = .true.  
       end if
     end if 

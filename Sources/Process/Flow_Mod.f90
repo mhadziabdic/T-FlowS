@@ -41,7 +41,7 @@
   real,allocatable :: fw(:)      ! weight factors for the fluid phase
 
   ! Right hand side for velocity and pressure equations 
-  type(Matrix_Type) :: A  ! system matrix for all variables
+  type(Matrix_Type) :: a  ! system matrix for all variables
   real, allocatable :: b(:)
 
   real,allocatable :: phi_face(:)

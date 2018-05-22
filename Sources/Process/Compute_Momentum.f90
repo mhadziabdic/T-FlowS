@@ -286,10 +286,12 @@
        (turbulence_model .eq. K_EPS .and.            &
         turbulence_model_variant .eq. HIGH_RE) .or.  &
         turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
-      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER) then
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
-           Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
-          vis_eff = vis_wall(c1)
+      if(c2 < 0) then
+        if (Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER) then
+          if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
+             Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
+            vis_eff = vis_wall(c1)
+          end if
         end if
       end if
     end if

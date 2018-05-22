@@ -15,6 +15,8 @@
   type(Var_Type), allocatable :: user_scalar(:)
   real, allocatable           :: user_array(:,:)
 
+  character(len=4)            :: c_name = 'C_00'
+
   contains
 
   include 'User_Mod/Allocate.f90'

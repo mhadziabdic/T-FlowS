@@ -40,17 +40,6 @@
   integer           :: bsi, rsi    ! backup and results save interval
   real              :: simple_tol  ! tolerance for SIMPLE algorithm
   character(len=80) :: coupling    ! pressure velocity coupling
-!--------------------------------[Interfaces]----------------------------------!
-  interface
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-    subroutine UserProbe2D(namAut)
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - !
-      use Name_Mod
-      use Flow_Mod
-      implicit none
-      character, optional :: namAut*(*)
-    end subroutine
-  end interface
 !==============================================================================!
 
   ! Get starting time

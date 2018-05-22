@@ -9,6 +9,7 @@
   use Comm_Mod, only: this_proc
   use Tokenizer_Mod
   use Grid_Mod
+  use User_Mod
   use Control_Mod
 !------------------------------------------------------------------------------!
   implicit none
@@ -19,7 +20,7 @@
   real    :: Distance
   integer :: Key_Ind
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, m, k, i, n, n_points, nks, nvs, found
+  integer           :: c, m, k, i, n, n_points, nks, nvs, found, us
   character(len=80) :: name_prof(128)
   real              :: wi, dist_min, x, y, z, xp, dist
   real, allocatable :: prof(:,:)
@@ -29,12 +30,13 @@
   real              :: vals(0:128)     ! Note that they start from zero!
 
   ! Default values for boundary conditions
-  real, parameter   :: u_def   = 0.0,  v_def    = 0.0,  w_def   = 0.0
-  real, parameter   :: p_def   = 0.0,  t_def    = 0.0,  q_def   = 0.0
-  real, parameter   :: kin_def = 0.0,  eps_def  = 0.0,  f22_def = 0.0
-  real, parameter   :: vis_def = 0.0,  zeta_def = 0.0
-  real, parameter   :: uu_def  = 0.0,  vv_def   = 0.0,  ww_def  = 0.0
-  real, parameter   :: uv_def  = 0.0,  uw_def   = 0.0,  vw_def  = 0.0
+  real, parameter :: u_def   = 0.0,  v_def    = 0.0,  w_def   = 0.0
+  real, parameter :: p_def   = 0.0,  t_def    = 0.0,  q_def   = 0.0
+  real, parameter :: kin_def = 0.0,  eps_def  = 0.0,  f22_def = 0.0
+  real, parameter :: vis_def = 0.0,  zeta_def = 0.0
+  real, parameter :: uu_def  = 0.0,  vv_def   = 0.0,  ww_def  = 0.0
+  real, parameter :: uv_def  = 0.0,  uw_def   = 0.0,  vw_def  = 0.0
+  real, parameter :: c_def   = 0.0
 !==============================================================================!
 
   !-----------------------------------!
@@ -133,7 +135,7 @@
     else if( bc_type == 'OUTFLOW') then 
       grid % bnd_cond % type(n) = OUTFLOW
     else if( bc_type == 'SYMMETRY') then 
-      grid % bnd_cond % type(n)=SYMMETRY
+      grid % bnd_cond % type(n) = SYMMETRY
     else if( bc_type == 'HEAT_FLUX') then 
       grid % bnd_cond % type(n) = WALLFL
     else if( bc_type == 'CONVECTIVE') then 
@@ -160,11 +162,20 @@
           ! otherwise, just the ypTeBC remains set.
           if(in_out) then
 
+            ! For velocity and pressure
             vals(0) = u_def;  u % n(c) = vals(Key_Ind('U', keys, nks))
             vals(0) = v_def;  v % n(c) = vals(Key_Ind('V', keys, nks))
             vals(0) = w_def;  w % n(c) = vals(Key_Ind('W', keys, nks))
             vals(0) = p_def;  p % n(c) = vals(Key_Ind('P', keys, nks))
 
+            ! For user scalars
+            do us = 1, n_user_scalars
+              write(c_name(3:4),'(i2.2)') us  ! set variable name
+              vals(0) = c_def   
+              user_scalar(us) % n(c) = vals(Key_Ind(c_name, keys, nks))
+            end do
+
+            ! For temperature
             if(heat_transfer == YES) then
               if(grid % bnd_cond % type(n) .eq. WALLFL) then
                 vals(0) = q_def;  t % q(c) = vals(Key_Ind('Q', keys, nks))
@@ -173,6 +184,7 @@
               endif
             end if  ! for heat_transfer == YES
 
+            ! For turbulence models
             if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
                turbulence_model == HANJALIC_JAKIRLIC) then
               vals(0) = uu_def;  uu  % n(c) = vals(Key_Ind('UU',  keys, nks))
@@ -271,24 +283,47 @@
 
               end do
 
+              ! For velocity and pressure
               i=Key_Ind('U',keys,nks); prof(k,0) = u_def; u % n(c) = prof(k,i)
               i=Key_Ind('V',keys,nks); prof(k,0) = v_def; v % n(c) = prof(k,i)
               i=Key_Ind('W',keys,nks); prof(k,0) = w_def; w % n(c) = prof(k,i)
+              i=Key_Ind('P',keys,nks); prof(k,0) = p_def; p % n(c) = prof(k,i)
 
+              ! For user scalars
+              do us = 1, n_user_scalars
+                write(c_name(3:4),'(i2.2)') us  ! set variable name
+                i = Key_Ind(c_name, keys, nks)
+                prof(k,0) = c_def
+                user_scalar(us) % n(c) = prof(k,i)
+              end do
+
+              ! For temperature
               if(heat_transfer == YES) then
                 i=Key_Ind('T',keys,nks); prof(k,0)=t_def; t%n(c)=prof(k,i)
               end if
 
+              ! For turbulence models
               if(turbulence_model == K_EPS) then
                 i=Key_Ind('KIN',keys,nks); prof(k,0)=kin_def; kin%n(c)=prof(k,i)
                 i=Key_Ind('EPS',keys,nks); prof(k,0)=eps_def; eps%n(c)=prof(k,i)
               end if
 
               if(turbulence_model == K_EPS_ZETA_F) then
-                i=Key_Ind('KIN',  keys, nks); prof(k,0) = kin_def;  kin  % n(c) = prof(k,i)
-                i=Key_Ind('EPS',  keys, nks); prof(k,0) = eps_def;  eps  % n(c) = prof(k,i)
-                i=Key_Ind('ZETA', keys, nks); prof(k,0) = zeta_def; zeta % n(c) = prof(k,i)
-                i=Key_Ind('F22',  keys, nks); prof(k,0) = f22_def;  f22  % n(c) = prof(k,i)
+                i = Key_Ind('KIN',  keys, nks)
+                prof(k,0) = kin_def
+                kin % n(c) = prof(k, i)
+
+                i = Key_Ind('EPS',  keys, nks)
+                prof(k,0) = eps_def
+                eps % n(c) = prof(k, i)
+
+                i = Key_Ind('ZETA', keys, nks)
+                prof(k,0) = zeta_def
+                zeta % n(c) = prof(k, i)
+
+                i = Key_Ind('F22',  keys, nks)
+                prof(k,0) = f22_def
+                f22 % n(c) = prof(k, i)
               end if
 
               if(turbulence_model == DES_SPALART) then
@@ -361,13 +396,27 @@
 
                 ! Interpolate the profiles     
                 if(here) then
+
+                  ! For velocity and pressure
                   i = Key_Ind('U',keys,nks); 
                   u % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
                   i = Key_Ind('V',keys,nks); 
                   v % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
                   i = Key_Ind('W',keys,nks); 
                   w % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+                  i = Key_Ind('P',keys,nks); 
+                  p % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
 
+                  ! For user scalars
+                  do us = 1, n_user_scalars
+                    prof(m,   0) = c_def 
+                    prof(m+1, 0) = c_def
+                    write(c_name(3:4),'(i2.2)') us  ! set variable name
+                    i = Key_Ind(c_name, keys, nks)
+                    user_scalar(us) % n(c) = wi*prof(m,i) + (1.-wi)*prof(m+1,i)
+                  end do
+
+                  ! For temperature
                   if(heat_transfer == YES) then
                     prof(m,   0) = t_def 
                     prof(m+1, 0) = t_def
@@ -375,6 +424,7 @@
                     t % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
                   end if
 
+                  ! For turbulence models
                   if(turbulence_model == K_EPS) then
                     prof(m,   0) = kin_def 
                     prof(m+1, 0) = kin_def

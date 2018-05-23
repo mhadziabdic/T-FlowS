@@ -106,7 +106,7 @@ endif
 # It seems that for all supported compilers ("gnu", "intel"
 # or "portland") command to compile in parallel is "mpif90"
 ifeq ($(MPI), yes)
-  FC = /home/l_palkin_e/Development/T-Flows-modern/Sources/Libraries/install_dir/MPICH/bin/mpif90
+  FC = mpif90
 endif
 
 # If compiling with CGNS, add path to include directory

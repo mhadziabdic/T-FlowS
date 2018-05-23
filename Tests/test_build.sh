@@ -123,113 +123,92 @@ function divide_tests {
   cd $TEST_DIR/Rans/Fuel_Bundle;                          $DIVI_EXE < divide.scr
 }
 #------------------------------------------------------------------------------#
-# processor tests
+# processor test
 #------------------------------------------------------------------------------#
-function processor_tests {
+function processor_test {
   # $1 = CGNS_HDF5 = yes
+  # $2 = test_dir
 
   #-- seq, no cgns
   cd $PROC_DIR; make clean
   make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=no
-  cd $TEST_DIR/Rans/Channel_Re_Tau_590/;
+  cd $2;
   cp control control.backup
 
   #----------------------------------#
   # np=1, MPI=no, backup=no
   #----------------------------------#
+  echo "np=1, MPI=no, backup=no"
   line="$(grep -ni "NUMBER_OF_TIME_STEPS"       control | cut -d: -f1)"
-  awk -v var="$line" 'NR==var {$2=30}1'    control > .control.tmp
+  awk -v var="$line" 'NR==var {$2=30}1'     control > .control.tmp
   line="$(grep -ni "BACKUP_SAVE_INTERVAL"  .control.tmp | cut -d: -f1)"
   awk -v var="$line" 'NR==var {$2=10}1'    .control.tmp > control
   $PROC_EXE
   #----------------------------------#
   # np=1, MPI=no, backup=(from np=1)
   #----------------------------------#
+  echo "np=1, MPI=no, backup=(from np=1)"
   sed -e  's/#LOAD_BACKUP_NAME/LOAD_BACKUP_NAME/g' .control.tmp > control
   $PROC_EXE
   #----------------------------------#
   # np=1, MPI=yes, backup=(from np=1)
   #----------------------------------#
+  echo "np=1, MPI=yes, backup=(from np=1)"
   cd $PROC_DIR; make clean
   make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=yes
-  cd $TEST_DIR/Rans/Channel_Re_Tau_590/;
+  cd $2;
   mpirun -np 1 $PROC_EXE
   #----------------------------------#
   # np=2, MPI=yes, backup=(from np=1)
   #----------------------------------#
+  echo "np=2, MPI=yes, backup=(from np=1)"
   mpirun -np 2 $PROC_EXE
   #----------------------------------#
   # np=2, MPI=yes, backup=(from np=2)
   #----------------------------------#
+  echo "np=2, MPI=yes, backup=(from np=2)"
   line="$(grep -ni "BACKUP_SAVE_INTERVAL"  .control.tmp | cut -d: -f1)"
   awk -v var="$line" 'NR==var {$2=20}1'    .control.tmp > control
   mpirun -np 2 $PROC_EXE
   #----------------------------------#
   # np=2, MPI=yes, backup=no
   #----------------------------------#
+  echo "np=2, MPI=yes, backup=no"
   sed -e  's/LOAD_BACKUP_NAME/#LOAD_BACKUP_NAME/g' .control.tmp > control
   mpirun -np 2 $PROC_EXE
   #----------------------------------#
   # np=2, MPI=yes, backup=(from np=2)
   #----------------------------------#
+  echo "np=2, MPI=yes, backup=(from np=2)"
   sed -e  's/#LOAD_BACKUP_NAME/LOAD_BACKUP_NAME/g' .control.tmp > control
   mpirun -np 2 $PROC_EXE
   #----------------------------------#
   # np=1, MPI=no, backup=(from np=2)
   #----------------------------------#
+  echo "np=1, MPI=yes, backup=(from np=2)"
   cd $PROC_DIR; make clean
   make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=no
-  cd $TEST_DIR/Rans/Channel_Re_Tau_590/;
+  cd $2;
   $PROC_EXE
 
   cp control.backup control
-
-#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-#  cd $TEST_DIR/Rans/Backstep_Re_28000;
-#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
-
-#  #-- seq, cgns(adf5)
-#  cd $PROC_DIR; make clean
-#  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_ADF5=yes MPI=no
-#  cd $TEST_DIR/Laminar/Backstep_Orthogonal
-#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-#  cd $TEST_DIR/Rans/Backstep_Re_28000;
-#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
-
-#  #-- seq, cgns(hdf5)
-#  cd $PROC_DIR; make clean
-#  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=yes MPI=no
-#  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
-#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-#  cd $TEST_DIR/Rans/Backstep_Re_28000;
-#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
-
-#  #-- par, no cgns
-#  cd $PROC_DIR; make clean
-#  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=yes
-#  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
-#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-#  cd $TEST_DIR/Rans/Backstep_Re_28000;
-#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
-
-#  #-- par, cgns(hdf5)
-#  cd $PROC_DIR; make clean
-#  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=yes MPI=yes
-#  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
-#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-#  cd $TEST_DIR/Rans/Backstep_Re_28000;
-#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
+}
+#------------------------------------------------------------------------------#
+# processor tests
+#------------------------------------------------------------------------------#
+function processor_tests {
+  #-- Backstep_Orthogonal
+  processor_test no  $TEST_DIR/Laminar/Backstep_Orthogonal
+  processor_test yes $TEST_DIR/Laminar/Backstep_Orthogonal
+  #-- Backstep_Orthogonal
+  processor_test no  $TEST_DIR/Rans/Channel_Re_Tau_590
+  processor_test yes $TEST_DIR/Rans/Channel_Re_Tau_590
 }
 #------------------------------------------------------------------------------#
 # actual script
 #------------------------------------------------------------------------------#
-#make_links
-#generator_tests
-#convert_tests
-#divide_tests
-processor_tests yes
+make_links
+generator_tests
+convert_tests
+divide_tests
+processor_tests

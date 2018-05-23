@@ -123,26 +123,24 @@ function divide_tests {
   cd $TEST_DIR/Rans/Fuel_Bundle;                          $DIVI_EXE < divide.scr
 }
 #------------------------------------------------------------------------------#
-# processor test
+# backup test
 #------------------------------------------------------------------------------#
-function processor_test {
+function backup_test {
   # $1 = CGNS_HDF5 = yes
   # $2 = test_dir
-
-  #-- seq, no cgns
-  cd $PROC_DIR; make clean
-  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=no
-  cd $2;
-  cp control control.backup
 
   #----------------------------------#
   # np=1, MPI=no, backup=no
   #----------------------------------#
   echo "np=1, MPI=no, backup=no"
+  cd $PROC_DIR; make clean
+  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=no
+  cd $2;
+  cp control control.backup
   line="$(grep -ni "NUMBER_OF_TIME_STEPS"       control | cut -d: -f1)"
-  awk -v var="$line" 'NR==var {$2=30}1'     control > .control.tmp
+  awk -v var="$line" 'NR==var {$2=3}1'     control > .control.tmp
   line="$(grep -ni "BACKUP_SAVE_INTERVAL"  .control.tmp | cut -d: -f1)"
-  awk -v var="$line" 'NR==var {$2=10}1'    .control.tmp > control
+  awk -v var="$line" 'NR==var {$2=1}1'     .control.tmp > control
   $PROC_EXE
   #----------------------------------#
   # np=1, MPI=no, backup=(from np=1)
@@ -168,7 +166,7 @@ function processor_test {
   #----------------------------------#
   echo "np=2, MPI=yes, backup=(from np=2)"
   line="$(grep -ni "BACKUP_SAVE_INTERVAL"  .control.tmp | cut -d: -f1)"
-  awk -v var="$line" 'NR==var {$2=20}1'    .control.tmp > control
+  awk -v var="$line" 'NR==var {$2=2}1'    .control.tmp > control
   mpirun -np 2 $PROC_EXE
   #----------------------------------#
   # np=2, MPI=yes, backup=no
@@ -192,17 +190,18 @@ function processor_test {
   $PROC_EXE
 
   cp control.backup control
+  rm control.backup .control.tmp
 }
 #------------------------------------------------------------------------------#
-# processor tests
+# backup tests
 #------------------------------------------------------------------------------#
 function processor_tests {
   #-- Backstep_Orthogonal
-  processor_test no  $TEST_DIR/Laminar/Backstep_Orthogonal
-  processor_test yes $TEST_DIR/Laminar/Backstep_Orthogonal
+  backup_test no  $TEST_DIR/Laminar/Backstep_Orthogonal
+  backup_test yes $TEST_DIR/Laminar/Backstep_Orthogonal
   #-- Backstep_Orthogonal
-  processor_test no  $TEST_DIR/Rans/Channel_Re_Tau_590
-  processor_test yes $TEST_DIR/Rans/Channel_Re_Tau_590
+  backup_test no  $TEST_DIR/Rans/Channel_Re_Tau_590
+  backup_test yes $TEST_DIR/Rans/Channel_Re_Tau_590
 }
 #------------------------------------------------------------------------------#
 # actual script

@@ -57,7 +57,7 @@ ifeq ($(FORTRAN), gnu)
 			   -Wreal-q-constant -Wsurprising -Wtabs -Wunderflow \
 			   -Wintrinsic-shadow -Wunused-parameter -Walign-commons \
 			   -Wfunction-elimination -Wrealloc-lhs -Wrealloc-lhs-all \
-			   -Wcompare-reals -Wtarget-lifetime -Wpedantic \
+			   -Wcompare-reals -Wtarget-lifetime -Wpedantic -fstack-check \
 			   #-std=f2003 -Wimplicit-procedure -Wimplicit-interface
   else
     OPT_COMP = -J $(DIR_MODULE) -fdefault-real-8 -fdefault-integer-8 -O3
@@ -69,9 +69,10 @@ endif
 ifeq ($(FORTRAN), intel)
   FC = ifort
   ifeq ($(DEBUG),yes)
-    OPT_COMP = -module $(DIR_MODULE) -r8 -O0 -warn all -check all -debug all
+    OPT_COMP = -module $(DIR_MODULE) -r8 -i8 -O0 -g -warn all -check all \
+               -debug all -fpe-all=0 -traceback
   else
-    OPT_COMP = -module $(DIR_MODULE) -r8 -O3
+    OPT_COMP = -module $(DIR_MODULE) -r8 -i8 -O3
   endif
   OPT_LINK = $(OPT_COMP)
 endif 
@@ -80,9 +81,9 @@ endif
 ifeq ($(FORTRAN), portland)
   FC = pgfortran
   ifeq ($(DEBUG),yes)
-    OPT_COMP = -module $(DIR_MODULE) -r8 -O0
+    OPT_COMP = -module $(DIR_MODULE) -r8 -i8 -O0 -g
   else
-    OPT_COMP = -module $(DIR_MODULE) -r8 -O3
+    OPT_COMP = -module $(DIR_MODULE) -r8 -i8 -O3
   endif
   OPT_LINK = $(OPT_COMP)
 endif 

@@ -81,9 +81,9 @@ function generator_tests {
 #------------------------------------------------------------------------------#
 function convert_tests {
   # unpacking geometry
-  cd $TEST_DIR/Rans/Channel_Re_Tau_590;                    tar -zxvf chan.tar.gz
-  cd $TEST_DIR/Rans/Impinging_Jet_2d_Distant_Re_23000;      tar -zxvf jet.tar.gz
-  cd $TEST_DIR/Rans/Fuel_Bundle;                  tar -zxvf subflow_LowRe.tar.gz
+  cd $TEST_DIR/Rans/Channel_Re_Tau_590;                 tar -zxvf    chan.tar.gz
+  cd $TEST_DIR/Rans/Impinging_Jet_2d_Distant_Re_23000;  tar -zxvf     jet.tar.gz
+  cd $TEST_DIR/Rans/Fuel_Bundle;                        tar -zxvf subflow.tar.gz
 
   #-- seq, no cgns
   cd $CONV_DIR; make clean
@@ -126,56 +126,110 @@ function divide_tests {
 # processor tests
 #------------------------------------------------------------------------------#
 function processor_tests {
+  # $1 = CGNS_HDF5 = yes
+
   #-- seq, no cgns
   cd $PROC_DIR; make clean
-  make FORTRAN=$FCOMP DEBUG=$DEBUG MPI=no
-  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
-  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-  cd $TEST_DIR/Rans/Backstep_Re_28000;
-  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
+  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=no
+  cd $TEST_DIR/Rans/Channel_Re_Tau_590/;
+  cp control control.backup
 
-  #-- seq, cgns(adf5)
+  #----------------------------------#
+  # np=1, MPI=no, backup=no
+  #----------------------------------#
+  line="$(grep -ni "NUMBER_OF_TIME_STEPS"       control | cut -d: -f1)"
+  awk -v var="$line" 'NR==var {$2=30}1'    control > .control.tmp
+  line="$(grep -ni "BACKUP_SAVE_INTERVAL"  .control.tmp | cut -d: -f1)"
+  awk -v var="$line" 'NR==var {$2=10}1'    .control.tmp > control
+  $PROC_EXE
+  #----------------------------------#
+  # np=1, MPI=no, backup=(from np=1)
+  #----------------------------------#
+  sed -e  's/#LOAD_BACKUP_NAME/LOAD_BACKUP_NAME/g' .control.tmp > control
+  $PROC_EXE
+  #----------------------------------#
+  # np=1, MPI=yes, backup=(from np=1)
+  #----------------------------------#
   cd $PROC_DIR; make clean
-  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_ADF5=yes MPI=no
-  cd $TEST_DIR/Laminar/Backstep_Orthogonal
-  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-  cd $TEST_DIR/Rans/Backstep_Re_28000;
-  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
+  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=yes
+  cd $TEST_DIR/Rans/Channel_Re_Tau_590/;
+  mpirun -np 1 $PROC_EXE
+  #----------------------------------#
+  # np=2, MPI=yes, backup=(from np=1)
+  #----------------------------------#
+  mpirun -np 2 $PROC_EXE
+  #----------------------------------#
+  # np=2, MPI=yes, backup=(from np=2)
+  #----------------------------------#
+  line="$(grep -ni "BACKUP_SAVE_INTERVAL"  .control.tmp | cut -d: -f1)"
+  awk -v var="$line" 'NR==var {$2=20}1'    .control.tmp > control
+  mpirun -np 2 $PROC_EXE
+  #----------------------------------#
+  # np=2, MPI=yes, backup=no
+  #----------------------------------#
+  sed -e  's/LOAD_BACKUP_NAME/#LOAD_BACKUP_NAME/g' .control.tmp > control
+  mpirun -np 2 $PROC_EXE
+  #----------------------------------#
+  # np=2, MPI=yes, backup=(from np=2)
+  #----------------------------------#
+  sed -e  's/#LOAD_BACKUP_NAME/LOAD_BACKUP_NAME/g' .control.tmp > control
+  mpirun -np 2 $PROC_EXE
+  #----------------------------------#
+  # np=1, MPI=no, backup=(from np=2)
+  #----------------------------------#
+  cd $PROC_DIR; make clean
+  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=no
+  cd $TEST_DIR/Rans/Channel_Re_Tau_590/;
+  $PROC_EXE
 
-  #-- seq, cgns(hdf5)
-  cd $PROC_DIR; make clean
-  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=yes MPI=no
-  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
-  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-  cd $TEST_DIR/Rans/Backstep_Re_28000;
-  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
+  cp control.backup control
 
-  #-- par, no cgns
-  cd $PROC_DIR; make clean
-  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=no MPI=yes
-  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
-  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-  cd $TEST_DIR/Rans/Backstep_Re_28000;
-  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
+#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
+#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
+#  cd $TEST_DIR/Rans/Backstep_Re_28000;
+#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
 
-  #-- par, cgns(hdf5)
-  cd $PROC_DIR; make clean
-  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=yes MPI=yes
-  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
-  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
-  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
-  cd $TEST_DIR/Rans/Backstep_Re_28000;
-  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
+#  #-- seq, cgns(adf5)
+#  cd $PROC_DIR; make clean
+#  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_ADF5=yes MPI=no
+#  cd $TEST_DIR/Laminar/Backstep_Orthogonal
+#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
+#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
+#  cd $TEST_DIR/Rans/Backstep_Re_28000;
+#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
+
+#  #-- seq, cgns(hdf5)
+#  cd $PROC_DIR; make clean
+#  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=yes MPI=no
+#  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
+#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
+#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
+#  cd $TEST_DIR/Rans/Backstep_Re_28000;
+#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
+
+#  #-- par, no cgns
+#  cd $PROC_DIR; make clean
+#  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=$1 MPI=yes
+#  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
+#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
+#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
+#  cd $TEST_DIR/Rans/Backstep_Re_28000;
+#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
+
+#  #-- par, cgns(hdf5)
+#  cd $PROC_DIR; make clean
+#  make FORTRAN=$FCOMP DEBUG=$DEBUG CGNS_HDF5=yes MPI=yes
+#  cd $TEST_DIR/Laminar/Backstep_Orthogonal;
+#  cd $TEST_DIR/Laminar/Backstep_Nonorthogonal;
+#  cd $TEST_DIR/Rans/Backstep_Re_26000_Rsm;
+#  cd $TEST_DIR/Rans/Backstep_Re_28000;
+#  cd $TEST_DIR/Rans/Channel_Re_Tau_590_Wall_Function;
 }
 #------------------------------------------------------------------------------#
 # actual script
 #------------------------------------------------------------------------------#
-generator_tests
-make_links
-convert_tests
-divide_tests
-processor_tests
+#make_links
+#generator_tests
+#convert_tests
+#divide_tests
+processor_tests yes

@@ -61,7 +61,7 @@
   call Name_File(0, name_out_8, '.pvtu')
   call Name_File(this_proc, name_out_9, '.vtu')
 
-  if(n_proc > 1 .and. this_proc == 1) then
+  if(n_proc > 1 .and. this_proc .eq. 1) then
     open(8, file=name_out_8)
     print *, '# Creating file: ', trim(name_out_8)
   end if
@@ -73,7 +73,7 @@
   !   Header   !
   !            !
   !------------!
-  if(n_proc > 1 .and. this_proc == 1)  then
+  if(n_proc > 1 .and. this_proc .eq. 1)  then
     write(8,'(a,a)') IN_0, '<?xml version="1.0"?>'
     write(8,'(a,a)') IN_0, '<VTKFile type="PUnstructuredGrid">'
     write(8,'(a,a)') IN_1, '<PUnstructuredGrid GhostLevel="0">'
@@ -97,7 +97,7 @@
   !-----------!
   !   Nodes   !
   !-----------!
-  if(n_proc > 1 .and. this_proc == 1)  then
+  if(n_proc > 1 .and. this_proc .eq. 1)  then
     write(8,'(a,a)') IN_3, '<PPoints>'
     write(8,'(a,a)') IN_4, '<PDataArray type="Float32" NumberOfComponents=' // &
                            '"3" format="ascii"/>'
@@ -123,25 +123,25 @@
                          ' format="ascii">'
 
   do c = 1, grid % n_cells
-    if(grid % cells_n_nodes(c) == 8) then
+    if(grid % cells_n_nodes(c) .eq. 8) then
       write(9,'(a,8i9)')                                &
         IN_5,                                           &
         grid % cells_n(1,c)-1, grid % cells_n(2,c)-1,   &
         grid % cells_n(4,c)-1, grid % cells_n(3,c)-1,   &
         grid % cells_n(5,c)-1, grid % cells_n(6,c)-1,   &
         grid % cells_n(8,c)-1, grid % cells_n(7,c)-1
-    else if(grid % cells_n_nodes(c) == 6) then
+    else if(grid % cells_n_nodes(c) .eq. 6) then
       write(9,'(a,6i9)')                                &
         IN_5,                                           &
         grid % cells_n(1,c)-1, grid % cells_n(2,c)-1,   &
         grid % cells_n(3,c)-1, grid % cells_n(4,c)-1,   &
         grid % cells_n(5,c)-1, grid % cells_n(6,c)-1
-    else if(grid % cells_n_nodes(c) == 4) then
+    else if(grid % cells_n_nodes(c) .eq. 4) then
       write(9,'(a,4i9)')                                &
         IN_5,                                           &
         grid % cells_n(1,c)-1, grid % cells_n(2,c)-1,   &
         grid % cells_n(3,c)-1, grid % cells_n(4,c)-1
-    else if(grid % cells_n_nodes(c) == 5) then
+    else if(grid % cells_n_nodes(c) .eq. 5) then
       write(9,'(a,5i9)')                                &
         IN_5,                                           &
         grid % cells_n(5,c)-1, grid % cells_n(1,c)-1,   &
@@ -168,13 +168,13 @@
   ! Now write all cells' types
   write(9,'(a,a)') IN_4, '<DataArray type="UInt8" Name="types" format="ascii">'
   do c = 1, grid % n_cells
-    if(grid % cells_n_nodes(c) == 8) then
+    if(grid % cells_n_nodes(c) .eq. 8) then
       write(9,'(a,i9)') IN_5, VTK_HEXAHEDRON
-    else if(grid % cells_n_nodes(c) == 6) then
+    else if(grid % cells_n_nodes(c) .eq. 6) then
       write(9,'(a,i9)') IN_5, VTK_WEDGE
-    else if(grid % cells_n_nodes(c) == 4) then
+    else if(grid % cells_n_nodes(c) .eq. 4) then
       write(9,'(a,i9)') IN_5, VTK_TETRA
-    else if(grid % cells_n_nodes(c) == 5) then
+    else if(grid % cells_n_nodes(c) .eq. 5) then
       write(9,'(a,i9)') IN_5, VTK_PYRAMID
     else
       print *, '# Unsupported cell type with ',  &
@@ -191,7 +191,7 @@
   !   Results and other cell data   !
   !                                 !
   !---------------------------------!
-  if(n_proc > 1 .and. this_proc == 1)  then
+  if(n_proc > 1 .and. this_proc .eq. 1)  then
     write(8,'(a,a)') IN_3, '<PCellData Scalars="scalars" vectors="velocity">'
   end if
   write(9,'(a,a)') IN_3, '<CellData Scalars="scalars" vectors="velocity">'
@@ -199,7 +199,7 @@
   !---------------!
   !   Materials   !
   !---------------!
-  if(n_proc > 1 .and. this_proc == 1)  then
+  if(n_proc > 1 .and. this_proc .eq. 1)  then
     write(8,'(a,a)') IN_3, '<PDataArray type="UInt8" Name="materials"' //  &
                            ' format="ascii"/>'
   end if
@@ -223,7 +223,7 @@
   !-----------------!
   !   Temperature   !
   !-----------------!
-  if(heat_transfer == YES) then
+  if(heat_transfer .eq. YES) then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, t % name, t % n(1))
   end if
 
@@ -232,19 +232,19 @@
   !--------------------------!
 
   ! Save kin and eps
-  if(turbulence_model == K_EPS                  .or.  &
-     turbulence_model == K_EPS_ZETA_F           .or.  &
-     turbulence_model == HYBRID_K_EPS_ZETA_F    .or.  &
-     turbulence_model == REYNOLDS_STRESS_MODEL  .or.  &
-     turbulence_model == HANJALIC_JAKIRLIC  ) then
+  if(turbulence_model .eq. K_EPS                  .or.  &
+     turbulence_model .eq. K_EPS_ZETA_F           .or.  &
+     turbulence_model .eq. HYBRID_K_EPS_ZETA_F    .or.  &
+     turbulence_model .eq. REYNOLDS_STRESS_MODEL  .or.  &
+     turbulence_model .eq. HANJALIC_JAKIRLIC  ) then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, kin % name, kin % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, eps % name, eps % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "P_KIN", p_kin(1))
   end if
 
   ! Save zeta and f22
-  if(turbulence_model == K_EPS_ZETA_F  .or.  &
-     turbulence_model == HYBRID_K_EPS_ZETA_F) then
+  if(turbulence_model .eq. K_EPS_ZETA_F  .or.  &
+     turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
     do c = 1, grid % n_cells
       v2_calc(c) = kin % n(c) * zeta % n(c)
     end do
@@ -254,27 +254,27 @@
   end if
 
   ! Save vis and vis_t
-  if(turbulence_model == DES_SPALART .or.  &
-     turbulence_model == SPALART_ALLMARAS) then
+  if(turbulence_model .eq. DES_SPALART .or.  &
+     turbulence_model .eq. SPALART_ALLMARAS) then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, vis % name, vis % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "VORT", vort(1))
   end if
-  if(turbulence_model == K_EPS                  .or.  &
-     turbulence_model == K_EPS_ZETA_F           .or.  &
-     turbulence_model == HYBRID_K_EPS_ZETA_F    .or.  &
-     turbulence_model == REYNOLDS_STRESS_MODEL  .or.  &
-     turbulence_model == HANJALIC_JAKIRLIC      .or.  &
-     turbulence_model == LES                    .or.  &
-     turbulence_model == DES_SPALART            .or.  &
-     turbulence_model == SPALART_ALLMARAS) then
+  if(turbulence_model .eq. K_EPS                  .or.  &
+     turbulence_model .eq. K_EPS_ZETA_F           .or.  &
+     turbulence_model .eq. HYBRID_K_EPS_ZETA_F    .or.  &
+     turbulence_model .eq. REYNOLDS_STRESS_MODEL  .or.  &
+     turbulence_model .eq. HANJALIC_JAKIRLIC      .or.  &
+     turbulence_model .eq. LES                    .or.  &
+     turbulence_model .eq. DES_SPALART            .or.  &
+     turbulence_model .eq. SPALART_ALLMARAS) then
     kin_vis_t(1:grid % n_cells) = vis_t(1:grid % n_cells)/viscosity
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "VIS_T_to_VIS", &
       kin_vis_t(1))
   end if
 
   ! Reynolds stress models
-  if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
-     turbulence_model == HANJALIC_JAKIRLIC) then
+  if(turbulence_model .eq. REYNOLDS_STRESS_MODEL .or.  &
+     turbulence_model .eq. HANJALIC_JAKIRLIC) then
     call Save_Vtu_Scalar(grid, IN_4, IN_5, uu % name, uu % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, vv % name, vv % n(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, ww % name, ww % n(1))
@@ -284,8 +284,8 @@
   end if
 
   ! Statistics for large-scale simulations of turbulence
-  if(turbulence_model == LES .or.  &
-     turbulence_model == DES_SPALART) then
+  if(turbulence_model .eq. LES .or.  &
+     turbulence_model .eq. DES_SPALART) then
     call Save_Vtu_Vector(grid, IN_4, IN_5, "UVW_MEAN",  &
                                 u % mean(1), v % mean(1), w % mean(1))
     uu_mean = uu % mean(c) - u % mean(c) * u % mean(c)
@@ -300,7 +300,7 @@
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "UV_MEAN", uv_mean(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "UW_MEAN", uw_mean(1))
     call Save_Vtu_Scalar(grid, IN_4, IN_5, "VW_MEAN", vw_mean(1))
-    if(heat_transfer == YES) then
+    if(heat_transfer .eq. YES) then
       call Save_Vtu_Scalar(grid, IN_4, IN_5, "T_MEAN", t % mean(1))
       tt_mean = tt % mean(c) - t % mean(c) * t % mean(c)
       ut_mean = ut % mean(c) - u % mean(c) * t % mean(c)
@@ -333,7 +333,7 @@
   !   End of cell data   !
   !                      !
   !----------------------!
-  if(n_proc > 1 .and. this_proc == 1) then
+  if(n_proc > 1 .and. this_proc .eq. 1) then
     write(8,'(a,a)') IN_3, '</PCellData>'
    end if
   write(9,'(a,a)') IN_3, '</CellData>'
@@ -343,7 +343,7 @@
   !   Footer   !
   !            !
   !------------!
-  if(n_proc > 1 .and. this_proc == 1) then
+  if(n_proc > 1 .and. this_proc .eq. 1) then
     do n = 1, n_proc
       call Name_File(n, name_out_9, '.vtu')
       write(8, '(a,a,a,a)') IN_2, '<Piece Source="', trim(name_out_9), '"/>'

@@ -60,7 +60,7 @@
       new_c(c)=0
     end do
     do c = 1, grid % n_cells
-      if(proces(c) == sub) then
+      if(proces(c) .eq. sub) then
         n_cells_sub = n_cells_sub + 1     ! increase the number of cells in sub.
         new_c(c)    = n_cells_sub         ! assign new (local) cell number 
       end if
@@ -72,14 +72,14 @@
       new_n(n)=0
     end do
     do c = 1, grid % n_cells
-      if(proces(c) == sub) then
+      if(proces(c) .eq. sub) then
         do ln = 1, grid % cells_n_nodes(c)
           new_n(grid % cells_n(ln,c))=-1
         end do
       end if
     end do
     do n = 1, grid % n_nodes
-      if(new_n(n) == -1) then
+      if(new_n(n) .eq. -1) then
         n_nodes_sub=n_nodes_sub+1
         new_n(n)=n_nodes_sub
       end if
@@ -101,7 +101,7 @@
       c1 = grid % faces_c(1,s)  
       c2 = grid % faces_c(2,s) 
       if(c2 > 0) then
-        if( (proces(c1) == sub) .and. (proces(c2) == sub) ) then
+        if( (proces(c1) .eq. sub) .and. (proces(c2) .eq. sub) ) then
           n_faces_sub=n_faces_sub+1
           new_f(s)=n_faces_sub
         end if
@@ -113,7 +113,7 @@
       c1 = grid % faces_c(1,s)  
       c2 = grid % faces_c(2,s) 
       if(c2 < 0) then
-        if( proces(c1) == sub )  then
+        if( proces(c1) .eq. sub )  then
           n_faces_sub=n_faces_sub+1
           new_f(s)=n_faces_sub
 
@@ -126,7 +126,7 @@
     do s = 1, grid % n_copy
       c1=grid % bnd_cond % copy_s(1,s)
       c2=grid % bnd_cond % copy_s(2,s)
-      if( (proces(c1) == sub).and.(proces(c2) == sub) ) then
+      if( (proces(c1) .eq. sub).and.(proces(c2) .eq. sub) ) then
         NCSsub=NCSsub+1
       end if
     end do
@@ -153,7 +153,7 @@
           c1 = grid % faces_c(1,s)  
           c2 = grid % faces_c(2,s) 
           if(c2  > 0) then
-            if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
+            if( (proces(c1) .eq. sub).and.(proces(c2) .eq. subo) ) then
               n_buff_sub = n_buff_sub+1
               buf_send_ind(n_buff_sub)=new_c(c1)  ! buffer send index 
               buf_recv_ind(n_buff_sub)=c2         ! important for coordinate
@@ -161,7 +161,7 @@
 
               new_f(s)=n_faces_sub+n_buff_sub
             end if
-            if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
+            if( (proces(c2) .eq. sub).and.(proces(c1) .eq. subo) ) then
               n_buff_sub = n_buff_sub+1
               buf_send_ind(n_buff_sub)=new_c(c2)  ! buffer send index
               buf_recv_ind(n_buff_sub)=c1         ! important for coordinate
@@ -176,14 +176,14 @@
         do s = 1, grid % n_copy
           c1=grid % bnd_cond % copy_s(1,s)  
           c2=grid % bnd_cond % copy_s(2,s) 
-          if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
+          if( (proces(c1) .eq. sub).and.(proces(c2) .eq. subo) ) then
             n_buff_sub = n_buff_sub+1
             n_copy_sub = n_copy_sub+1
             buf_send_ind(n_buff_sub)=new_c(c1) ! buffer send index 
             buf_recv_ind(n_buff_sub)=c2 
             buf_pos(n_buff_sub)= -(-n_bnd_cells_sub-n_buff_sub) ! watch the sign
           end if
-          if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
+          if( (proces(c2) .eq. sub).and.(proces(c1) .eq. subo) ) then
             n_buff_sub = n_buff_sub+1
             n_copy_sub = n_copy_sub+1
             buf_send_ind(n_buff_sub)=new_c(c2) ! buffer send index
@@ -274,7 +274,7 @@
   n_cells_sub = 0     ! number of cells renumbered
   do sub = 1, n_sub
     do c = 1, grid % n_cells
-      if(proces(c) == sub) then
+      if(proces(c) .eq. sub) then
         n_cells_sub=n_cells_sub+1
         new_c(c)=n_cells_sub
       end if
@@ -286,7 +286,7 @@
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
-      if(proces(c1) == sub) then
+      if(proces(c1) .eq. sub) then
         n_faces_sub=n_faces_sub+1
         new_f(s)=n_faces_sub
       end if

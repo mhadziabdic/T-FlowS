@@ -20,7 +20,7 @@
   i=0
   do j=1,15
 
-1   if( mod(number,primes(j)) == 0 ) then
+1   if( mod(number,primes(j)) .eq. 0 ) then
       number = number/primes(j)
       i = i + 1
       factrs(i) = primes(j)

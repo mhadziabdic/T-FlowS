@@ -40,7 +40,7 @@
     ! Cells
     n_cells_sub = 0     ! number of cells in subdomain
     do c = 1, grid % n_cells
-      if(proces(c) == sub) then
+      if(proces(c) .eq. sub) then
         n_cells_sub = n_cells_sub + 1     ! increase the number of cells in sub.
         global_cell_ins(n_cells_sub) = c  ! map to global cell number
       end if
@@ -57,7 +57,7 @@
       c1 = grid % faces_c(1,s)  
       c2 = grid % faces_c(2,s) 
       if(c2 > 0) then
-        if( (proces(c1) == sub) .and. (proces(c2) == sub) ) then
+        if( (proces(c1) .eq. sub) .and. (proces(c2) .eq. sub) ) then
           n_faces_sub = n_faces_sub+1
           global_face_all(n_faces_sub) = s  ! map to global cell number
         end if
@@ -69,7 +69,7 @@
       c1 = grid % faces_c(1,s)  
       c2 = grid % faces_c(2,s) 
       if(c2 < 0) then
-        if( proces(c1) == sub )  then
+        if( proces(c1) .eq. sub )  then
           n_faces_sub=n_faces_sub+1
           global_face_all(n_faces_sub) = s  ! map to global cell number
 
@@ -87,11 +87,11 @@
           c1 = grid % faces_c(1,s)  
           c2 = grid % faces_c(2,s) 
           if(c2  > 0) then
-            if( (proces(c1) == sub).and.(proces(c2) == subo) ) then
+            if( (proces(c1) .eq. sub).and.(proces(c2) .eq. subo) ) then
               n_buf_sub=n_buf_sub+1
               global_face_buf(n_buf_sub) = s  ! map to global face number
             end if
-            if( (proces(c2) == sub).and.(proces(c1) == subo) ) then
+            if( (proces(c2) .eq. sub).and.(proces(c1) .eq. subo) ) then
               n_buf_sub=n_buf_sub+1
               global_face_buf(n_buf_sub) = -s  ! map to global face number
             end if

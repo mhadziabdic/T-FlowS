@@ -24,14 +24,14 @@
   !-----------------------------------------! 
   !   Find the smallest moment of inertia   !
   !-----------------------------------------! 
-  if(division_algorithm == INERTIAL) then
+  if(division_algorithm .eq. INERTIAL) then
     call Inertia(grid, sub)
   end if
 
   !----------------------------------------------! 
   !   Find the largest dimension of the domain   !
   !----------------------------------------------! 
-  if(division_algorithm == COORDINATE) then
+  if(division_algorithm .eq. COORDINATE) then
     xmax=-HUGE
     ymax=-HUGE
     zmax=-HUGE
@@ -39,7 +39,7 @@
     ymin=+HUGE
     zmin=+HUGE
     do c = 1, grid % n_cells
-      if(proces(c) == sub) then
+      if(proces(c) .eq. sub) then
         xmax=max(xmax, grid % xc(c))
         ymax=max(ymax, grid % yc(c))
         zmax=max(zmax, grid % zc(c))
@@ -53,9 +53,9 @@
     delz = zmax - zmin
 
     dxyz = max(delx,dely,delz)
-    if(delz == dxyz) dir='z'
-    if(dely == dxyz) dir='y'
-    if(delx == dxyz) dir='x'
+    if(delz .eq. dxyz) dir='z'
+    if(dely .eq. dxyz) dir='y'
+    if(delx .eq. dxyz) dir='x'
   end if
 
   do j = 1, n_parts-1
@@ -65,12 +65,12 @@
     !------------------------!
     !   Fill the subdomain   !
     !------------------------!
-    if(division_algorithm==COORDINATE) then
+    if(division_algorithm .eq. COORDINATE) then
 
-      if(dir == 'x') then
+      if(dir .eq. 'x') then
         do c = 1, grid % n_cells
           ic=ix(c)
-          if(proces(ic) == sub) then
+          if(proces(ic) .eq. sub) then
             proces(ic) = n_sub+j
             n_filled = n_filled + 1
             if(n_filled >= sub_n_cells(sub)/(n_parts-j+1)) goto 2 
@@ -78,10 +78,10 @@
         end do
       end if
 
-      if(dir == 'y') then
+      if(dir .eq. 'y') then
         do c = 1, grid % n_cells
           ic=iy(c)
-          if(proces(ic) == sub) then
+          if(proces(ic) .eq. sub) then
             proces(ic) = n_sub+j
             n_filled = n_filled + 1
             if(n_filled >= sub_n_cells(sub)/(n_parts-j+1)) goto 2 
@@ -89,10 +89,10 @@
         end do
       end if
 
-      if(dir == 'z') then
+      if(dir .eq. 'z') then
         do c = 1, grid % n_cells
           ic=iz(c)
-          if(proces(ic) == sub) then
+          if(proces(ic) .eq. sub) then
             proces(ic) = n_sub+j
             n_filled = n_filled + 1
             if(n_filled >= sub_n_cells(sub)/(n_parts-j+1)) goto 2 
@@ -101,10 +101,10 @@
       end if
     end if
 
-    if(division_algorithm==INERTIAL) then
+    if(division_algorithm .eq. INERTIAL) then
       do c = 1, grid % n_cells
         ic=iin(c)
-        if(proces(ic) == sub) then
+        if(proces(ic) .eq. sub) then
           proces(ic) = n_sub+j
           n_filled = n_filled + 1
           if(n_filled >= sub_n_cells(sub)/(n_parts-j+1)) goto 2 

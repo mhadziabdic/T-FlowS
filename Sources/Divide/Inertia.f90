@@ -23,7 +23,7 @@
   zm = 0.0
   n_cells_sub=0
   do i=1,grid % n_cells
-    if(proces(i)==sub) then
+    if(proces(i) .eq. sub) then
       xm = xm + grid % xc(i)
       ym = ym + grid % yc(i)
       zm = zm + grid % zc(i)
@@ -38,7 +38,7 @@
 
   i_matrix = 0.
   do i=1,grid % n_cells
-    if(proces(i)==sub) then
+    if(proces(i) .eq. sub) then
       i_matrix(1,1) = i_matrix(1,1) + (grid % yc(i)-ym)**2  &
                                     + (grid % zc(i)-zm)**2
       i_matrix(2,2) = i_matrix(2,2) + (grid % xc(i)-xm)**2  &
@@ -63,15 +63,15 @@
   print *, '  ', (v(2,i), i=1,3)
   print *, '  ', (v(3,i), i=1,3)
 
-  if(min(d(1),d(2),d(3)) == d(1)) then
+  if(min(d(1),d(2),d(3)) .eq. d(1)) then
     d_max(1) = v(1,1)
     d_max(2) = v(2,1)
     d_max(3) = v(3,1)
-  else if(min(d(1),d(2),d(3)) == d(2)) then
+  else if(min(d(1),d(2),d(3)) .eq. d(2)) then
     d_max(1) = v(1,2)
     d_max(2) = v(2,2)
     d_max(3) = v(3,2)
-  else if(min(d(1),d(2),d(3)) == d(3)) then
+  else if(min(d(1),d(2),d(3)) .eq. d(3)) then
     d_max(1) = v(1,3)
     d_max(2) = v(2,3)
     d_max(3) = v(3,3)

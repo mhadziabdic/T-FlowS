@@ -74,9 +74,9 @@
   print *, '#-------------------------------'
   read(*,*) answer
   call To_Upper_Case(answer)
-  if(answer == 'COO') then
+  if(answer .eq. 'COO') then
     division_algorithm = COORDINATE
-  else if(answer == 'INE') then
+  else if(answer .eq. 'INE') then
     division_algorithm = INERTIAL
   else
     print *, '# Error in input. Exiting!' 

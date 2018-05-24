@@ -20,14 +20,20 @@
   real    :: Distance
   integer :: Key_Ind
 !-----------------------------------[Locals]-----------------------------------!
-  integer           :: c, m, k, i, n, n_points, nks, nvs, found, us
+  integer           :: c, m, l, k, i, n, n_points, nks, nvs, found, us
+! integer           :: grid_bnd_type
   character(len=80) :: name_prof(128)
   real              :: wi, dist_min, x, y, z, xp, dist
   real, allocatable :: prof(:,:)
   logical           :: here
-  character(len=80) :: bc_type
+  character(len=80) :: bc_type, dumms
   character(len=80) :: keys(128)
-  real              :: vals(0:128)     ! Note that they start from zero!
+  real              :: vals(0:128)           ! note that they start from zero!
+  integer           :: types_per_color(128)  ! how many types in each color
+  character(len=80) :: types_names(128)      ! name of each type
+  logical           :: types_file(128)       ! type specified in a file?
+  integer           :: c_types               ! counter types
+  character(len=4)  :: q_name = 'Q_00'
 
   ! Default values for boundary conditions
   real, parameter :: u_def   = 0.0,  v_def    = 0.0,  w_def   = 0.0
@@ -50,117 +56,139 @@
     end if
   end do
 
-  !------------------------------------------------!
-  !                                                !
-  !   Read boundary conditions from control file   !
-  !                                                !
-  !------------------------------------------------!
-  do n = 1, grid % n_bnd_cond
+  !----------------------------------------------------------------!
+  !   Count number of types per boundary condition, total number   !
+  !        of types specified, and also extract their names        !
+  !----------------------------------------------------------------!
+  types_per_color(:) = 0
+  types_file(:)      = .false.
+  c_types            = 0 
 
-    ! Find the line where boundary condition defintion is defined
+  do n = 1, grid % n_bnd_cond
     call Control_Mod_Position_At_Two_Keys('BOUNDARY_CONDITION',       &
                                           grid % bnd_cond % name(n),  &
                                           found,                      &
-                                          .true.)
-
-    !---------------------------------------!
-    !   Boundary condition has been found   !
-    !---------------------------------------!
+                                          .false.)
     if(found == YES) then 
+1     continue
 
-      call Control_Mod_Read_Char_Item_On('TYPE', 'WALL', bc_type, .true.)
-      call To_Upper_Case(bc_type)
+      ! Try to read next 'TYPE' in the control file
+      call Control_Mod_Read_Char_Item_On('TYPE', 'VOID', bc_type, .false.) 
 
-      call Control_Mod_Read_Strings_On('VARIABLES', keys, nks, .true.)
+      ! Get out of the loop if you fail
+      if(bc_type .eq. 'VOID') goto 2
 
-      ! Try to see if there is file specified
-      call Control_Mod_Read_Strings_On('FILE', name_prof, nvs, .true.)
+      ! Skip following two lines
+      call Control_Mod_Read_Char_Item_On('VARIABLES', 'VOID', dumms, .false.) 
+      call Control_Mod_Read_Char_Item_On('VALUES',    'VOID', dumms, .false.) 
 
-      ! File was specified
-      if(nvs == 1) then
-        if(this_proc < 2) &
-          print *, '# Values specified in the file: ', trim(name_prof(nvs))
+      types_per_color(n) = types_per_color(n) + 1
+      c_types = c_types + 1
+      types_names(c_types) = bc_type
 
-      ! If file was not specified, so must have been the values
-      else if(nvs == 0) then 
-        if(this_proc < 2) &
-          print *, '# Values are not specified in a file'
-
-        ! Go back to key and read all sections before values
-        call Control_Mod_Position_At_Two_Keys('BOUNDARY_CONDITION',       &
-                                              grid % bnd_cond % name(n),  &
-                                              found,                      &
-                                             .true.)
-        call Control_Mod_Read_Char_Item_On('TYPE', 'WALL', bc_type, .true.)
-        call To_Upper_Case(bc_type)
-        call Control_Mod_Read_Strings_On('VARIABLES', keys,    nks, .false.)
-        call Control_Mod_Read_Real_Array_On('VALUES', vals(1), nvs, .false.)
-
-        ! Check validity of the input
-        ! if(nks .eq. 0 .or. nvs .eq. 0) then
-        !   print '(3a)', '# Critical, for boundary condition ',        &
-        !                 trim(grid % bnd_cond % name(n)),              &
-        !                 ' no values or variables have been provided' 
-        !   stop
-        ! end if
-        if(nks .ne. nvs) then
-          print '(3a)', '# Critical, number of values for boundary condition ',  &
-                        trim(grid % bnd_cond % name(n)),                         &
-                        ' is not the same as number of provided variable names' 
-          stop
-        end if
- 
+      ! If dumms is 'VOID', it didn't find 'VALUES' 
+      ! meaning that the keyword 'FILE' was specified
+      if(dumms .eq. 'VOID') then
+        types_file(c_types) = .true.
       end if
 
-      ! Input is valid, turn keys to upper case
+      goto 1
+    end if
+
+2 continue 
+
+  end do
+
+  c_types = 0 
+  do n = 1, grid % n_bnd_cond
+    do l = 1, types_per_color(n) 
+      c_types = c_types + 1
+      print *, 'TYPE NAME: ', types_names(c_types)
+      if( types_file(c_types) ) then
+        print *, 'SPECIFIED IN A FILE'
+      else
+        print *, 'SPECIFIED BY VALUES'
+      end if
+    end do
+  end do
+
+  !------------------------------------------------!
+  !                                                !
+  !                                                !
+  !   Read boundary conditions from control file   !
+  !                                                !
+  !                                                !
+  !------------------------------------------------!
+  c_types = 0 
+
+  do n = 1, grid % n_bnd_cond
+
+    ! Position yourself well
+    call Control_Mod_Position_At_Two_Keys('BOUNDARY_CONDITION',       &
+                                          grid % bnd_cond % name(n),  &
+                                          found,                      &
+                                          .false.)
+    do l = 1, types_per_color(n) 
+
+      ! Update the counter
+      c_types = c_types + 1
+
+      !---------------------------------------------!
+      !                                             !
+      !   Read first line which is common for all   !
+      !                                             !
+      !---------------------------------------------!
+      call Control_Mod_Read_Char_Item_On ('TYPE', 'WALL',  bc_type, .false.) 
+      call To_Upper_Case(bc_type)
+
+      ! Copy boundary conditions which were given for the grid
+      if( bc_type == 'INFLOW') then 
+        grid % bnd_cond % type(n) = INFLOW
+        PER_BC = NO
+      else if( bc_type == 'WALL') then 
+        grid % bnd_cond % type(n) = WALL
+      else if( bc_type == 'OUTFLOW') then 
+        grid % bnd_cond % type(n) = OUTFLOW
+      else if( bc_type == 'SYMMETRY') then 
+        grid % bnd_cond % type(n) = SYMMETRY
+      else if( bc_type == 'HEAT_FLUX') then 
+        grid % bnd_cond % type(n) = WALLFL
+      else if( bc_type == 'CONVECTIVE') then 
+        grid % bnd_cond % type(n) = CONVECT
+      else if( bc_type == 'PRESSURE') then 
+        grid % bnd_cond % type(n) = PRESSURE
+      else
+        if(this_proc < 2)  &
+          print *, '# Load_Boundary_Conditions: '//          &
+                   '# Unknown boundary condition type: ',  &
+                   bc_type
+        stop  
+      end if
+
+      !----------------------------------------------!
+      !                                              !
+      !   Read second line which is common for all   !
+      !                                              !
+      !----------------------------------------------!
+      call Control_Mod_Read_Strings_On('VARIABLES', keys, nks, .false.) 
       do i = 1, nks
         call To_Upper_Case(keys(i))
       end do
 
-    !-------------------------------------------!
-    !   Boundary condition has not been found   !
-    !-------------------------------------------!
-    else   
-      print '(3a)', '# Critical, boundary condition ',  &
-                      trim(grid % bnd_cond % name(n)),                         &
-                      ' has not been found.  Exiting!' 
-      stop
-    end if
-    
-    if( bc_type == 'INFLOW') then 
-      grid % bnd_cond % type(n) = INFLOW
-      PER_BC = NO
-    else if( bc_type == 'WALL') then 
-      grid % bnd_cond % type(n) = WALL
-    else if( bc_type == 'OUTFLOW') then 
-      grid % bnd_cond % type(n) = OUTFLOW
-    else if( bc_type == 'SYMMETRY') then 
-      grid % bnd_cond % type(n) = SYMMETRY
-    else if( bc_type == 'HEAT_FLUX') then 
-      grid % bnd_cond % type(n) = WALLFL
-    else if( bc_type == 'CONVECTIVE') then 
-      grid % bnd_cond % type(n) = CONVECT
-    else if( bc_type == 'PRESSURE') then 
-      grid % bnd_cond % type(n) = PRESSURE
-    else
-      if(this_proc < 2)  &
-        print *, '# Load_Boundary_Conditions: '//          &
-                   '# Unknown boundary condition type: ',  &
-                   bc_type
-      stop  
-    end if
+      !---------------------------------------------!
+      !                                             !
+      !   Boundary values are specified in a list   !
+      !                                             !
+      !---------------------------------------------!
+      if( .not. types_file(c_types) ) then
+        call Control_Mod_Read_Real_Array_On('VALUES', vals(1), nvs, .false.) 
 
-    !------------------------------------------------------!
-    !   Boundary condition is given by a single constant   !
-    !------------------------------------------------------!
-    if(nks == nvs) then 
-
-      do c = -1,-grid % n_bnd_cells,-1
-        if(grid % bnd_cond % color(c) == n) then
-
-          ! If in_out is set to true, set boundary values,
-          ! otherwise, just the ypTeBC remains set.
-          if(in_out) then
+        !--------------------------------------------------!
+        !   Distribute boundary values to boundary cells   !
+        !--------------------------------------------------!
+         
+        do c = -1,-grid % n_bnd_cells,-1
+          if(grid % bnd_cond % color(c) .eq. n .and. in_out) then
 
             ! For velocity and pressure
             vals(0) = u_def;  u % n(c) = vals(Key_Ind('U', keys, nks))
@@ -168,21 +196,27 @@
             vals(0) = w_def;  w % n(c) = vals(Key_Ind('W', keys, nks))
             vals(0) = p_def;  p % n(c) = vals(Key_Ind('P', keys, nks))
 
-            ! For user scalars
-            do us = 1, n_user_scalars
-              write(c_name(3:4),'(i2.2)') us  ! set variable name
-              vals(0) = c_def   
-              user_scalar(us) % n(c) = vals(Key_Ind(c_name, keys, nks))
-            end do
-
-            ! For temperature
+            ! Temperature
             if(heat_transfer == YES) then
-              if(grid % bnd_cond % type(n) .eq. WALLFL) then
+              if(bc_type .eq. 'HEAT_FLUX') then
                 vals(0) = q_def;  t % q(c) = vals(Key_Ind('Q', keys, nks))
               else
                 vals(0) = t_def;  t % n(c) = vals(Key_Ind('T', keys, nks))
-              endif
-            end if  ! for heat_transfer == YES
+              end if
+            end if
+
+            ! For user scalars
+            do us = 1, n_user_scalars
+              if(bc_type .eq. 'HEAT_FLUX') then
+                write(q_name(3:4),'(i2.2)') us  
+                vals(0) = q_def   
+                user_scalar(us) % q(c) = vals(Key_Ind(q_name, keys, nks))
+              else
+                write(c_name(3:4),'(i2.2)') us  
+                vals(0) = c_def   
+                user_scalar(us) % n(c) = vals(Key_Ind(c_name, keys, nks))
+              end if
+            end do
 
             ! For turbulence models
             if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
@@ -219,41 +253,47 @@
               vals(0) = vis_def; vis % n(c) = vals(Key_Ind('VIS', keys, nks))
             end if
           end if ! in_out
-
-        end if 
-      end do
-
-    !------------------------------------------------!
-    !   Boundary condition is prescribed in a file   !
-    !------------------------------------------------!
-    else
-
-      open(9, file=name_prof(1))
-      if(this_proc < 2) print *, '# Reading the file: ', trim(name_prof(1))
-      call Tokenizer_Mod_Read_Line(9)
-      read(line % tokens(1),*) n_points  ! number of points
-
-      allocate(prof(n_points, 0:nks))
-
-      ! Read the entire profile file
-      do m = 1, n_points
-        call Tokenizer_Mod_Read_Line(9)
-        do i = 1, nks
-          read(line % tokens(i), *) prof(m, i) 
         end do
-      end do
-      close(9)
 
-      ! A plane is defined
-      if(keys(1) == 'X' .and. keys(2) == 'Y' .or.  &
-         keys(1) == 'X' .and. keys(2) == 'Z' .or.  &
-         keys(1) == 'Y' .and. keys(2) == 'Z') then       
+      !---------------------------------------------!
+      !                                             !
+      !   Boundary values are specified in a file   !
+      !                                             !
+      !---------------------------------------------!
+      else
+        call Control_Mod_Read_Strings_On('FILE', name_prof, nvs, .false.) 
 
-        ! Set the closest point
-        do c = -1,-grid % n_bnd_cells,-1
-          if(grid % bnd_cond % color(c) == n) then
+        open(9, file=name_prof(1))
+        if(this_proc < 2) print *, '# Reading the file: ', trim(name_prof(1))
+        call Tokenizer_Mod_Read_Line(9)
+        read(line % tokens(1),*) n_points  ! number of points
 
-            if(in_out) then  ! if true set boundary values, otherwise just type
+        allocate(prof(n_points, 0:nks))
+
+        !----------------------------------!
+        !   Read the entire profile file   !
+        !----------------------------------!
+        do m = 1, n_points
+          call Tokenizer_Mod_Read_Line(9)
+          do i = 1, nks
+            read(line % tokens(i), *) prof(m, i) 
+          end do
+        end do
+        close(9)
+
+        !------------------------!
+        !   A plane is defined   !
+        !------------------------!
+        if(keys(1) == 'X' .and. keys(2) == 'Y' .or.  &
+           keys(1) == 'X' .and. keys(2) == 'Z' .or.  &
+           keys(1) == 'Y' .and. keys(2) == 'Z') then       
+
+          ! Set the closest point
+          do c = -1,-grid % n_bnd_cells,-1
+
+            ! if in_out true set boundary values, otherwise just type
+            if(grid % bnd_cond % color(c) == n .and. in_out) then
+
               dist_min = HUGE
               do m = 1, n_points
 
@@ -289,18 +329,29 @@
               i=Key_Ind('W',keys,nks); prof(k,0) = w_def; w % n(c) = prof(k,i)
               i=Key_Ind('P',keys,nks); prof(k,0) = p_def; p % n(c) = prof(k,i)
 
-              ! For user scalars
-              do us = 1, n_user_scalars
-                write(c_name(3:4),'(i2.2)') us  ! set variable name
-                i = Key_Ind(c_name, keys, nks)
-                prof(k,0) = c_def
-                user_scalar(us) % n(c) = prof(k,i)
-              end do
-
               ! For temperature
               if(heat_transfer == YES) then
-                i=Key_Ind('T',keys,nks); prof(k,0)=t_def; t%n(c)=prof(k,i)
+                if(bc_type .eq. 'HEAT_FLUX') then
+                  i=Key_Ind('Q',keys,nks); prof(k,0) = q_def; t % q(c)=prof(k,i)
+                else
+                  i=Key_Ind('T',keys,nks); prof(k,0) = t_def; t % n(c)=prof(k,i)
+                end if
               end if
+
+              ! For user scalars
+              do us = 1, n_user_scalars
+                if(bc_type .eq. 'HEAT_FLUX') then
+                  write(q_name(3:4),'(i2.2)') us  ! set user scalar name
+                  i = Key_Ind(q_name, keys, nks)
+                  prof(k,0) = q_def
+                  user_scalar(us) % q(c) = prof(k,i)
+                else
+                  write(c_name(3:4),'(i2.2)') us  ! set user scalar name
+                  i = Key_Ind(c_name, keys, nks)
+                  prof(k,0) = c_def
+                  user_scalar(us) % n(c) = prof(k,i)
+                end if
+              end do
 
               ! For turbulence models
               if(turbulence_model == K_EPS) then
@@ -326,33 +377,40 @@
                 f22 % n(c) = prof(k, i)
               end if
 
-              if(turbulence_model == DES_SPALART) then
+              if(turbulence_model == SPALART_ALLMARAS .or.  &
+                 turbulence_model == DES_SPALART) then
                 i=Key_Ind('VIS',keys,nks); prof(k,0)=vis_def; vis%n(c)=prof(k,i)
               end if
 
-              if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+              if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+                 turbulence_model == HANJALIC_JAKIRLIC) then
                 i=Key_Ind('UU', keys,nks); prof(k,0)=uu_def;  uu %n(c)=prof(k,i)
                 i=Key_Ind('VV', keys,nks); prof(k,0)=vv_def;  vv %n(c)=prof(k,i)
                 i=Key_Ind('WW', keys,nks); prof(k,0)=ww_def;  ww %n(c)=prof(k,i)
                 i=Key_Ind('UV', keys,nks); prof(k,0)=uv_def;  uv %n(c)=prof(k,i)
                 i=Key_Ind('UW', keys,nks); prof(k,0)=uw_def;  uw %n(c)=prof(k,i)
                 i=Key_Ind('VW', keys,nks); prof(k,0)=vw_def;  vw %n(c)=prof(k,i)
-                i=Key_Ind('F22',keys,nks); prof(k,0)=f22_def; f22%n(c)=prof(k,i)
                 i=Key_Ind('EPS',keys,nks); prof(k,0)=eps_def; eps%n(c)=prof(k,i)
-              end if        
-            end if    !end if(in_out)
-          end if      !end if(grid % bnd_cond % color(c) == n)
-        end do        !end do c = -1,-grid % n_bnd_cells,-1
 
-      ! A plane is not defined
-      else  ! dir == "XPL" ...
+                if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+                  i = Key_Ind('F22', keys, nks); 
+                  prof(k,0) = f22_def; f22 % n(c) = prof(k,i)
+                end if
+              end if        
+            end if      !end if(grid % bnd_cond % color(c) == n .and. in_out)
+          end do        !end do c = -1,-grid % n_bnd_cells,-1
+
+        !----------------------------!
+        !   A plane is not defined   !
+        !----------------------------!
+        else  ! dir == "XPL" ...
            
-        do c = -1,-grid % n_bnd_cells,-1
-          if(grid % bnd_cond % color(c) == n) then
-          
+          do c = -1,-grid % n_bnd_cells,-1
+
             ! If in_out is set to true, set boundary values,
             ! otherwise, just the TypeBC remains set.
-            if(in_out) then
+            if(grid % bnd_cond % color(c) == n .and. in_out) then
+          
               do m = 1, n_points-1
                 here = .false. 
 
@@ -407,29 +465,46 @@
                   i = Key_Ind('P',keys,nks); 
                   p % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
 
-                  ! For user scalars
-                  do us = 1, n_user_scalars
-                    prof(m,   0) = c_def 
-                    prof(m+1, 0) = c_def
-                    write(c_name(3:4),'(i2.2)') us  ! set variable name
-                    i = Key_Ind(c_name, keys, nks)
-                    user_scalar(us) % n(c) = wi*prof(m,i) + (1.-wi)*prof(m+1,i)
-                  end do
-
                   ! For temperature
                   if(heat_transfer == YES) then
-                    prof(m,   0) = t_def 
-                    prof(m+1, 0) = t_def
-                    i = Key_Ind('T',keys,nks); 
-                    t % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+                    if(bc_type .eq. 'HEAT_FLUX') then
+                      prof(m,   0) = q_def 
+                      prof(m+1, 0) = q_def
+                      i = Key_Ind('Q',keys,nks); 
+                      t % q(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+                    else
+                      prof(m,   0) = t_def 
+                      prof(m+1, 0) = t_def
+                      i = Key_Ind('T',keys,nks); 
+                      t % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+                    end if
                   end if
+
+                  ! For user scalars
+                  do us = 1, n_user_scalars
+                    if(bc_type .eq. 'HEAT_FLUX') then
+                      prof(m,   0) = q_def 
+                      prof(m+1, 0) = q_def
+                      write(q_name(3:4),'(i2.2)') us  ! set variable name
+                      i = Key_Ind(q_name, keys, nks)
+                      user_scalar(us) % q(c) = wi*prof(m,i)+(1.-wi)*prof(m+1,i)
+                    else
+                      prof(m,   0) = c_def 
+                      prof(m+1, 0) = c_def
+                      write(c_name(3:4),'(i2.2)') us  ! set variable name
+                      i = Key_Ind(c_name, keys, nks)
+                      user_scalar(us) % n(c) = wi*prof(m,i)+(1.-wi)*prof(m+1,i)
+                    end if
+                  end do
 
                   ! For turbulence models
                   if(turbulence_model == K_EPS) then
+
                     prof(m,   0) = kin_def 
                     prof(m+1, 0) = kin_def
                     i = Key_Ind('KIN',keys,nks); 
                     kin % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
                     prof(m,   0) = eps_def 
                     prof(m+1, 0) = eps_def
                     i = Key_Ind('EPS',keys,nks); 
@@ -438,46 +513,89 @@
 
                   if(turbulence_model == K_EPS_ZETA_F  .or.  &
                      turbulence_model == HYBRID_K_EPS_ZETA_F) then
+
                     prof(m,   0) = kin_def 
                     prof(m+1, 0) = kin_def
                     i = Key_Ind('KIN',keys,nks); 
                     kin % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
                     prof(m,   0) = eps_def 
                     prof(m+1, 0) = eps_def
                     i = Key_Ind('EPS',keys,nks); 
                     eps % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
                     prof(m,   0) = zeta_def 
                     prof(m+1, 0) = zeta_def
                     i = Key_Ind('ZETA',keys,nks); 
                     zeta % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
                     prof(m,   0) = f22_def 
                     prof(m+1, 0) = f22_def
                     i = Key_Ind('F22',keys,nks); 
                     f22 % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
                   end if
 
-                  if(turbulence_model == SPALART_ALLMARAS) then
+                  if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
+                     turbulence_model == HANJALIC_JAKIRLIC) then
+
+                    prof(m,   0) = uu_def 
+                    prof(m+1, 0) = uu_def
+                    i = Key_Ind('UU',keys,nks); 
+                    uu % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
+                    prof(m,   0) = vv_def 
+                    prof(m+1, 0) = vv_def
+                    i = Key_Ind('VV',keys,nks); 
+                    vv % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
+                    prof(m,   0) = ww_def 
+                    prof(m+1, 0) = ww_def
+                    i = Key_Ind('WW',keys,nks); 
+                    ww % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
+                    prof(m,   0) = uv_def 
+                    prof(m+1, 0) = uv_def
+                    i = Key_Ind('UV',keys,nks); 
+                    uv % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
+                    prof(m,   0) = uw_def 
+                    prof(m+1, 0) = uw_def
+                    i = Key_Ind('UW',keys,nks); 
+                    uw % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
+                    prof(m,   0) = vw_def 
+                    prof(m+1, 0) = vw_def
+                    i = Key_Ind('VW',keys,nks); 
+                    vw % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
+                    prof(m,   0) = eps_def 
+                    prof(m+1, 0) = eps_def
+                    i = Key_Ind('EPS',keys,nks); 
+                    eps % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
+
+                    if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+                      i = Key_Ind('F22', keys, nks); 
+                      prof(k,0) = f22_def; f22 % n(c) = prof(k,i)
+                    end if
+                  end if        
+
+                  if(turbulence_model == SPALART_ALLMARAS .or.  &
+                     turbulence_model == DES_SPALART) then
                     prof(m,   0) = vis_def 
                     prof(m+1, 0) = vis_def
                     i = Key_Ind('VIS',keys,nks); 
                     vis % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
                   end if
 
-                  if(turbulence_model == DES_SPALART) then
-                    prof(m,   0) = vis_def 
-                    prof(m+1, 0) = vis_def
-                    i = Key_Ind('VIS',keys,nks); 
-                    vis % n(c) = wi * prof(m, i) + (1.-wi) * prof(m+1, i)
-                  end if
-
-                end if
-              end do
+                end if  ! (here)
+              end do  ! m = 1, n_points-1
             end if  ! if(in_out)
-          end if 
-        end do
-      end if
-      close(9)
-    end if
-  end do 
+          end do  ! c = -1,-grid % n_bnd_cells,-1
+        end if  ! plane is defined?
+        close(9)
+      end if  ! boundary defined in a file
+    end do
+
+  end do
 
   end subroutine

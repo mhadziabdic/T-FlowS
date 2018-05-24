@@ -39,12 +39,12 @@
   call Time_And_Length_Scale(grid)
 
   ! c = 1, grid % n_cells
-  if(turbulence_model == K_EPS_ZETA_F) then
+  if(turbulence_model .eq. K_EPS_ZETA_F) then
     do c = -grid % n_bnd_cells, grid % n_cells
       vis_t(c) = c_mu_d * density * zeta % n(c) * kin % n(c) * t_scale(c)
     end do
 
-  else if(turbulence_model == HYBRID_K_EPS_ZETA_F) then
+  else if(turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
     do c = -grid % n_bnd_cells, grid % n_cells
       vis_t(c)     = c_mu_d * zeta % n(c) * kin % n(c) * t_scale(c)
       vis_t_eff(c) = max(vis_t(c), vis_t_sgs(c))
@@ -66,9 +66,9 @@
 
         u_tau(c1)  = c_mu**0.25 * kin % n(c1)**0.5
 
-        if(ROUGH == YES) then
+        if(ROUGH .eq. YES) then
           y_plus(c1) = (grid % wall_dist(c1)+Zo)*u_tau(c1)/kin_vis
-        else if(ROUGH == NO) then
+        else if(ROUGH .eq. NO) then
           y_plus(c1) = grid % wall_dist(c1)*u_tau(c1)/kin_vis
         end if
 
@@ -84,13 +84,13 @@
             (y_pl*exp(-1.0*g_blend) + u_plus*exp(-1.0/g_blend) + TINY)
         end if
 
-        if(ROUGH == YES) then
+        if(ROUGH .eq. YES) then
           u_plus = log((grid % wall_dist(c1)+Zo)/Zo)/(kappa + TINY) + TINY
           vis_wall(c1) = min(y_pl*viscosity*kappa/ &
             log((grid % wall_dist(c1)+Zo)/Zo),1.0e+6*kin_vis)
         end if
 
-        if(heat_transfer == YES) then
+        if(heat_transfer .eq. YES) then
           pr_t = Turbulent_Prandtl_Number(grid, c1)
           pr = viscosity * capacity / conductivity
           beta = 9.24 * ((pr/pr_t)**0.75 - 1.0) * &

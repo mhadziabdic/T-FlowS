@@ -44,8 +44,8 @@
   call Time_And_Length_Scale(grid)
 
  ! Source term f22hg
- if(turbulence_model == K_EPS_ZETA_F .or.  &
-    turbulence_model == HYBRID_K_EPS_ZETA_F) then 
+ if(turbulence_model .eq. K_EPS_ZETA_F .or.  &
+    turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then 
    do c = 1, grid % n_cells
      f22hg = (1.0 - c_f1 - 0.65 * p_kin(c)  &
            / (eps  % n(c) + TINY))          &

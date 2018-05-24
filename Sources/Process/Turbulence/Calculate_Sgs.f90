@@ -37,13 +37,13 @@
   !   SGS terms   !
   !               !
   !---------------!
-  if(buoyancy == YES) then
+  if(buoyancy .eq. YES) then
     call Grad_Mod_For_Phi(grid, t % n, 1, t_x, .true.)  ! dT/dx
     call Grad_Mod_For_Phi(grid, t % n, 2, t_y, .true.)  ! dT/dy
     call Grad_Mod_For_Phi(grid, t % n, 3, t_z, .true.)  ! dT/dz
   end if 
  
-  if(turbulence_model_variant == SMAGORINSKY) then
+  if(turbulence_model_variant .eq. SMAGORINSKY) then
     do c = 1, grid % n_cells
       lf = grid % vol(c)**ONE_THIRD
 
@@ -67,8 +67,8 @@
               * shear(c) 
     end do
 
-  else if(turbulence_model_variant == DYNAMIC) then
-    if(buoyancy == YES) then  
+  else if(turbulence_model_variant .eq. DYNAMIC) then
+    if(buoyancy .eq. YES) then  
       do c = 1, grid % n_cells
         lf = grid % vol(c)**ONE_THIRD  
         vis_t(c) = density            &
@@ -87,7 +87,7 @@
       end do
     end if     
 
-  else if(turbulence_model_variant == WALE) then
+  else if(turbulence_model_variant .eq. WALE) then
     do c = 1, grid % n_cells
       lf = grid % vol(c)**ONE_THIRD    
       vis_t(c) = density           &
@@ -97,7 +97,7 @@
     end do
   end if
 
-  if(buoyancy == YES) then
+  if(buoyancy .eq. YES) then
     do c = 1, grid % n_cells
       nc2 = -(  grav_x * t_x(c)   &
               + grav_y * t_y(c)   &
@@ -139,8 +139,8 @@
       ny = grid % sy(s) / s_tot 
       nz = grid % sz(s) / s_tot 
 
-      if(Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL .or.  &
-         Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) then
+      if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
+         Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
 
         u_tot = sqrt(  u % n(c1) * u % n(c1)     &
                      + v % n(c1) * v % n(c1)     & 
@@ -176,7 +176,7 @@
         else 
           vis_wall(c1) = viscosity + fw(s)*vis_t(c1)+(1.0-fw(s))*vis_t(c2)
         endif
-      end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2)==WALL or WALLFL
+      end if  ! Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL or WALLFL
     end if    ! c2 < 0
   end do
 

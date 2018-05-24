@@ -35,10 +35,10 @@
   pr   = 0.71  ! bad, hard coded
   beta = 1.0
 
-  if(turbulence_model == K_EPS               .or.  &
-     turbulence_model == K_EPS_ZETA_F        .or.  &
-     turbulence_model == HYBRID_K_EPS_ZETA_F .or.  &
-     turbulence_model == DES_SPALART) then
+  if(turbulence_model .eq. K_EPS               .or.  &
+     turbulence_model .eq. K_EPS_ZETA_F        .or.  &
+     turbulence_model .eq. HYBRID_K_EPS_ZETA_F .or.  &
+     turbulence_model .eq. DES_SPALART) then
 
     do c = 1, grid % n_cells
       pr_t = Turbulent_Prandtl_Number(grid, c)
@@ -47,8 +47,8 @@
       wt % n(c) = -vis_t(c) / pr_t * t_z(c)
     end do
 
-  else if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
-          turbulence_model == HANJALIC_JAKIRLIC) then
+  else if(turbulence_model .eq. REYNOLDS_STRESS_MODEL .or.  &
+          turbulence_model .eq. HANJALIC_JAKIRLIC) then
     do c = 1, grid % n_cells
 
       ut % n(c) =  -0.22*t_scale(c) * (uu % n(c) * t_x(c) +  &
@@ -64,7 +64,7 @@
     end do
   end if
 
-  if(buoyancy == YES) then 
+  if(buoyancy .eq. YES) then 
     ut % n(c) = min( 0.01 * t_ref, ut % n(c))
     ut % n(c) = max(-0.01 * t_ref, ut % n(c))
     vt % n(c) = min( 0.01 * t_ref, vt % n(c))

@@ -73,7 +73,7 @@
   call Control_Mod_Time_Integration_For_Cross_Diffusion(td_cross_diff)
 
   ! Old values (o) and older than old (oo)
-  if(ini == 1) then
+  if(ini .eq. 1) then
     do c = 1, grid % n_cells
       phi % oo(c)   = phi % o(c)
       phi % o (c)   = phi % n(c)
@@ -128,7 +128,7 @@
           + phi_z_f * grid % dz(s)) * a0
 
     ! Straight diffusion part 
-    if(ini == 1) then
+    if(ini .eq. 1) then
       if(c2  > 0) then
         phi % d_o(c1) = phi % d_o(c1) + (phi % n(c2)-phi % n(c1))*a0   
         phi % d_o(c2) = phi % d_o(c2) - (phi % n(c2)-phi % n(c1))*a0    
@@ -146,15 +146,15 @@
     end if 
 
     ! Calculate the coefficients for the sysytem matrix
-    if( (td_diffusion == CRANK_NICOLSON) .or.  &
-        (td_diffusion == FULLY_IMPLICIT) ) then  
+    if( (td_diffusion .eq. CRANK_NICOLSON) .or.  &
+        (td_diffusion .eq. FULLY_IMPLICIT) ) then  
 
-      if(td_diffusion == CRANK_NICOLSON) then 
+      if(td_diffusion .eq. CRANK_NICOLSON) then 
         a12 = 0.5 * a0 
         a21 = 0.5 * a0 
       end if
 
-      if(td_diffusion == FULLY_IMPLICIT) then
+      if(td_diffusion .eq. FULLY_IMPLICIT) then
         a12 = a0 
         a21 = a0
       end if
@@ -167,14 +167,14 @@
         A % val(A % dia(c2))  = A % val(A % dia(c2))  + a21
       else if(c2  < 0) then
         ! Outflow is not included because it was causing problems  
-        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == INFLOW)) then                    
+        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. INFLOW)) then                    
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + a12
           b(c1) = b(c1) + a12 * phi % n(c2)
 
         else
 
-        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALL).or.                          &
-            (Grid_Mod_Bnd_Cond_Type(grid,c2) == WALLFL) ) then
+        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL).or.                          &
+            (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) ) then
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + a12
           !---------------------------------------------------------------!
           !   Source coefficient is filled in SourceF22.f90 in order to   !
@@ -182,7 +182,7 @@
           !   equation does not converge very well                        !
           !   b(c1) = b(c1) + a12 * phi % n(c2)                           !
           !---------------------------------------------------------------!
-        else if( Grid_Mod_Bnd_Cond_Type(grid,c2) == BUFFER ) then  
+        else if( Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. BUFFER ) then  
           A % val(A % dia(c1)) = A % val(A % dia(c1)) + a12
           A % bou(c2) = - a12  ! cool parallel stuff
         endif
@@ -197,14 +197,14 @@
   !-----------------------------!
 
   ! Adams-Bashfort scheeme for diffusion fluxes
-  if(td_diffusion == ADAMS_BASHFORTH) then 
+  if(td_diffusion .eq. ADAMS_BASHFORTH) then 
     do c = 1, grid % n_cells
       b(c) = b(c) + 1.5 * phi % d_o(c) - 0.5 * phi % d_oo(c)
     end do  
   end if
 
   ! Crank-Nicholson scheme for difusive terms
-  if(td_diffusion == CRANK_NICOLSON) then 
+  if(td_diffusion .eq. CRANK_NICOLSON) then 
     do c = 1, grid % n_cells
       b(c) = b(c) + 0.5 * phi % d_o(c)
     end do  
@@ -212,7 +212,7 @@
                  
 
   ! Adams-Bashfort scheeme for cross diffusion 
-  if(td_cross_diff == ADAMS_BASHFORTH) then
+  if(td_cross_diff .eq. ADAMS_BASHFORTH) then
     do c = 1, grid % n_cells
       b(c) = b(c) + 1.5 * phi % c_o(c) - 0.5 * phi % c_oo(c)
     end do 
@@ -222,14 +222,14 @@
   ! is handled via the linear system of equations 
 
   ! Crank-Nicholson scheme for cross difusive terms
-  if(td_cross_diff == CRANK_NICOLSON) then
+  if(td_cross_diff .eq. CRANK_NICOLSON) then
     do c = 1, grid % n_cells
       b(c) = b(c) + 0.5 * phi % c(c) + 0.5 * phi % c_o(c)
     end do 
   end if
 
   ! Fully implicit treatment for cross difusive terms
-  if(td_cross_diff == FULLY_IMPLICIT) then
+  if(td_cross_diff .eq. FULLY_IMPLICIT) then
     do c = 1, grid % n_cells
       b(c) = b(c) + phi % c(c)
     end do 
@@ -242,7 +242,7 @@
   !    before the under relaxation ?)   !
   !                                     !
   !-------------------------------------!
-  if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+  if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) then
     call Source_F22_Ebm(grid)
   else
     call Source_F22_K_Eps_Zeta_F(grid)

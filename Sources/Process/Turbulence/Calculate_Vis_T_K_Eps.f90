@@ -62,15 +62,16 @@
   end do
 
   ! Low-Re varaint
-  if(turbulence_model_variant == LOW_RE) then
+  if(turbulence_model_variant .eq. LOW_RE) then
     do c = 1, grid % n_cells
       re_t(c) = kin % n(c)**2. / (kin_visc * eps % n(c) + TINY)
       f_mu(c) = exp(-3.4/(1.0 + 0.02*re_t(c))**2)
       vis_t(c) = f_mu(c) * vis_t(c)
     end do
+
   ! High-Re varaint
   else
-    if(ROUGH == NO) then
+    if(ROUGH .eq. NO) then
       do s = 1, grid % n_faces
         c1 = grid % faces_c(1,s)
         c2 = grid % faces_c(2,s)

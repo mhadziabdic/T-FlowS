@@ -22,7 +22,7 @@
                        phi_z(-grid % n_bnd_cells:grid % n_cells)
 !==============================================================================!
 
-  if(turbulence_model == SPALART_ALLMARAS) then
+  if(turbulence_model .eq. SPALART_ALLMARAS) then
     do c = 1, grid % n_cells
 
       !---------------------------------!
@@ -54,7 +54,7 @@
       b(c)  = b(c) + Dif * grid % vol(c)
     end do
 
-  else if(turbulence_model == DES_SPALART) then
+  else if(turbulence_model .eq. DES_SPALART) then
     do c = 1, grid % n_cells
 
       ! What is 0.65 here?  A ghost number

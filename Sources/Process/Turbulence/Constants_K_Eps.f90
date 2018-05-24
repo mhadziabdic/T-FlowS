@@ -23,7 +23,7 @@
 
   kin % sigma = 1.0
   eps % sigma = 1.3
-! if(MODE == LRe) then
+! if(MODE .eq. LRe) then
 !      c_1e = 1.55
 !      c_2e = 2.0
 ! end if

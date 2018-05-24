@@ -29,8 +29,8 @@
 !   in order to increase stability of solver                                   !
 !------------------------------------------------------------------------------!
 
-  if(turbulence_model == K_EPS_ZETA_F .or.  &
-     turbulence_model == HYBRID_K_EPS_ZETA_F) then
+  if(turbulence_model .eq. K_EPS_ZETA_F .or.  &
+     turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
 
     ! Positive source term 
     ! The first option in treating the source is making computation very 

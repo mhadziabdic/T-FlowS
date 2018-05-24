@@ -119,7 +119,7 @@
     !---------------!
     !   uu stress   !
     !---------------!
-    if (name_phi == 'UU') then
+    if (name_phi .eq. 'UU') then
       ! limited stress
       stress = max(uu % n(c), TINY)
 
@@ -147,7 +147,7 @@
     !---------------!
     !   vv stress   !
     !---------------!
-    elseif (name_phi == 'VV') then
+    elseif (name_phi .eq. 'VV') then
 
       ! limited stress
       stress = max(vv % n(c), TINY)
@@ -175,7 +175,7 @@
     !---------------!
     !   ww stress   !
     !---------------!
-    elseif (name_phi == 'WW') then
+    elseif (name_phi .eq. 'WW') then
 
       ! limited stress
       stress = max(ww % n(c), TINY)
@@ -203,7 +203,7 @@
     !---------------!
     !   uv stress   !
     !---------------!
-    elseif (name_phi == 'UV') then
+    elseif (name_phi .eq. 'UV') then
 
       ! limited stress
       stress = max(uv % n(c), TINY)
@@ -231,7 +231,7 @@
     !---------------!
     !   uw stress   !
     !---------------!
-    elseif (name_phi == 'UW') then
+    elseif (name_phi .eq. 'UW') then
 
       ! limited stress
       stress = max(uw % n(c), TINY)
@@ -260,7 +260,7 @@
     !---------------!
     !   vw stress   !
     !---------------!
-    elseif (name_phi == 'VW') then
+    elseif (name_phi .eq. 'VW') then
 
       ! limited stress
       stress = max(vw % n(c), TINY)
@@ -303,7 +303,7 @@
     !---------!
     !   eps   !
     !---------!
-    else if (name_phi == 'EPS') then
+    else if (name_phi .eq. 'EPS') then
       Esor = grid % vol(c)/max(t_scale(c),TINY)
       c_1e1 = c_1e * (1. + 0.1*(1.-alpha3)*p_kin(c)/(eps % n(c)+TINY))
       b(c) = b(c) + c_1e1*density*p_kin(c)*Esor
@@ -313,7 +313,7 @@
     end if 
   end do
 
-  if (name_phi == 'EPS') then
+  if (name_phi .eq. 'EPS') then
     do s = 1, grid % n_faces
       c1 = grid % faces_c(1,s)
       c2 = grid % faces_c(2,s)
@@ -327,6 +327,6 @@
         end if ! end if of BC=wall
       end if   ! end if of c2<0
     end do
-  end if ! name_phi == 'EPS'
+  end if ! name_phi .eq. 'EPS'
 
   end subroutine

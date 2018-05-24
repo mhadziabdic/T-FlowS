@@ -135,8 +135,8 @@
   call Bulk_Mod_Monitoring_Planes_Areas(grid, bulk)
   call Grad_Mod_Find_Bad_Cells         (grid)
 
-  if(turbulence_model == LES                 .and.  &
-     turbulence_model_variant == SMAGORINSKY .and.  &
+  if(turbulence_model .eq. LES                 .and.  &
+     turbulence_model_variant .eq. SMAGORINSKY .and.  &
      .not. restar)                                  &
      call Find_Nearest_Wall_Cell(grid)
 
@@ -145,7 +145,7 @@
 
   ! Prepare matrix for fractional step method
   call Control_Mod_Pressure_Momentum_Coupling(coupling)
-  if(coupling == 'PROJECTION') then
+  if(coupling .eq. 'PROJECTION') then
     call Pressure_Matrix_Fractional(grid, dt)
   end if
 
@@ -190,33 +190,33 @@
     call Info_Mod_Time_Fill( n, time, (wall_time_current-wall_time_start) )
     call Info_Mod_Time_Print()
 
-    if(turbulence_model == DES_SPALART) then
+    if(turbulence_model .eq. DES_SPALART) then
       call Calculate_Shear_And_Vorticity(grid)
       call Calculate_Vorticity (grid)
     end if
 
-    if(turbulence_model == LES) then
+    if(turbulence_model .eq. LES) then
       call Calculate_Shear_And_Vorticity(grid)
-      if(turbulence_model_variant == DYNAMIC) call Calculate_Sgs_Dynamic(grid)
-      if(turbulence_model_variant == WALE)    call Calculate_Sgs_Wale(grid)
+      if(turbulence_model_variant .eq. DYNAMIC) call Calculate_Sgs_Dynamic(grid)
+      if(turbulence_model_variant .eq. WALE)    call Calculate_Sgs_Wale(grid)
       call Calculate_Sgs(grid)
     end if
 
-    If(turbulence_model == HYBRID_K_EPS_ZETA_F) then
+    If(turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
       call Calculate_Sgs_Dynamic(grid)
       call Calculate_Sgs_Hybrid(grid)
     end if
 
     call Convective_Outflow(grid, dt)
-    if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
-       turbulence_model == HANJALIC_JAKIRLIC) then
+    if(turbulence_model .eq. REYNOLDS_STRESS_MODEL .or.  &
+       turbulence_model .eq. HANJALIC_JAKIRLIC) then
       call Calculate_Vis_T_Rsm(grid)
     end if
 
     !--------------------------!
     !   Inner-iteration loop   !
     !--------------------------!
-    if(coupling == 'PROJECTION') then
+    if(coupling .eq. 'PROJECTION') then
       max_ini = 1
     else
       call Control_Mod_Max_Simple_Iterations(max_ini)
@@ -261,12 +261,12 @@
                   grid % dz,   grid % dx,   grid % dy, &
                   p % z,   u % z,   v % z)      ! dP/dz, dU/dz, dV/dz
 
-      if(coupling == 'PROJECTION') then
+      if(coupling .eq. 'PROJECTION') then
         call Comm_Mod_Exchange(grid, a % sav)
         call Balance_Mass(grid)
         call Compute_Pressure_Fractional(grid, dt, ini)
       endif
-      if(coupling == 'SIMPLE') then
+      if(coupling .eq. 'SIMPLE') then
         call Comm_Mod_Exchange(grid, a % sav)
         call Balance_Mass(grid)
         call Compute_Pressure_Simple(grid, dt, ini)
@@ -278,7 +278,7 @@
       mass_res = Correct_Velocity(grid, dt, ini) !  project the velocities
 
       ! Temperature
-      if(heat_transfer == YES) then
+      if(heat_transfer .eq. YES) then
         call Compute_Temperature(grid, dt, ini, t)
       end if
 
@@ -288,7 +288,7 @@
       end do
 
       ! Rans models
-      if(turbulence_model == K_EPS) then
+      if(turbulence_model .eq. K_EPS) then
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
@@ -300,13 +300,13 @@
 
         call Calculate_Vis_T_K_Eps(grid)
 
-        if(heat_transfer == YES) then
+        if(heat_transfer .eq. YES) then
           call Calculate_Heat_Flux(grid)
         end if
       end if
 
-      if(turbulence_model == K_EPS_ZETA_F     .or.  &
-         turbulence_model == HYBRID_K_EPS_ZETA_F) then
+      if(turbulence_model .eq. K_EPS_ZETA_F     .or.  &
+         turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
         call Calculate_Shear_And_Vorticity(grid)
 
         call Compute_Turbulent(grid, dt, ini, kin, n)
@@ -318,18 +318,18 @@
 
         call Calculate_Vis_T_K_Eps_Zeta_F(grid)
 
-        if(heat_transfer == YES) then
+        if(heat_transfer .eq. YES) then
           call Calculate_Heat_Flux(grid)
         end if
       end if
 
-      if(turbulence_model == REYNOLDS_STRESS_MODEL .or.  &
-         turbulence_model == HANJALIC_JAKIRLIC) then
+      if(turbulence_model .eq. REYNOLDS_STRESS_MODEL .or.  &
+         turbulence_model .eq. HANJALIC_JAKIRLIC) then
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)
 
-        if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+        if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) then
           call Time_And_Length_Scale(grid)
         end if
 
@@ -353,7 +353,7 @@
         call Compute_Stresses(grid, dt, ini, uw)
         call Compute_Stresses(grid, dt, ini, vw)
 
-        if(turbulence_model == REYNOLDS_STRESS_MODEL) then
+        if(turbulence_model .eq. REYNOLDS_STRESS_MODEL) then
           call Compute_F22(grid, ini, f22)
         end if
 
@@ -361,13 +361,13 @@
 
         call Calculate_Vis_T_Rsm(grid)
 
-        if(heat_transfer == YES) then
+        if(heat_transfer .eq. YES) then
           call Calculate_Heat_Flux(grid)
         end if
       end if
 
-      if(turbulence_model == SPALART_ALLMARAS .or.  &
-         turbulence_model == DES_SPALART) then
+      if(turbulence_model .eq. SPALART_ALLMARAS .or.  &
+         turbulence_model .eq. DES_SPALART) then
         call Calculate_Shear_And_Vorticity(grid)
         call Calculate_Vorticity(grid)
 
@@ -385,7 +385,7 @@
       call Info_Mod_Iter_Print()
 
       if(ini >= min_ini) then
-        if(coupling == 'SIMPLE') then
+        if(coupling .eq. 'SIMPLE') then
           call Control_Mod_Tolerance_For_Simple_Algorithm(simple_tol)
           if( u  % res <= simple_tol .and.  &
               v  % res <= simple_tol .and.  &
@@ -401,7 +401,7 @@
     ! Write the values in monitoring points
     do i = 1, Nmon
       if(Cm(i)  > 0) then
-        if(heat_transfer == NO) then
+        if(heat_transfer .eq. NO) then
           write(10+i,'(I9,4E16.6)')                    &
            n, u % n(Cm(i)), v%n(Cm(i)), w%n(Cm(i)), p%n(Cm(i))
         else
@@ -468,14 +468,14 @@
                     len_trim(problem_name)+9), '(i6.6)') n
 
     ! Is it time to save the restart file?
-    if(save_now .or. exit_now .or. mod(n,bsi) == 0) then
+    if(save_now .or. exit_now .or. mod(n,bsi) .eq. 0) then
       call Comm_Mod_Wait
 !@    call Save_Restart(grid, n, name_save)
       call Save_Backup (grid, n, name_save)
     end if
 
     ! Is it time to save results for post-processing
-    if(save_now .or. exit_now .or. mod(n,rsi) == 0) then
+    if(save_now .or. exit_now .or. mod(n,rsi) .eq. 0) then
       call Comm_Mod_Wait
       call Save_Results(grid, name_save)
 

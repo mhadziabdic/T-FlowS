@@ -44,31 +44,31 @@
     do i=is,ie
       do j=js,je
         do k=ks,ke
-          if( ie /= is ) then
+          if( ie .ne. is ) then
             dt=1.0/(1.0*n)+(1.0*i-0.5*(1.0*n+1)) * ddt
             t=t+dt
             node = grid % n_nodes + (k-1)*ni*nj + (j-1)*ni + i+1
-            if( (i  < ie).and.(grid % xn(node) == HUGE) ) then 
+            if( (i  < ie).and.(grid % xn(node) .eq. HUGE) ) then 
               grid % xn(node) = x0 + t*delx
               grid % yn(node) = y0 + t*dely
               grid % zn(node) = z0 + t*delz
             endif
           end if 
-          if( je /= js ) then
+          if( je .ne. js ) then
             dt=1.0/(1.0*n)+(1.0*j-0.5*(1.0*n+1)) * ddt
             t=t+dt
             node = grid % n_nodes + (k-1)*ni*nj + (j-0)*ni + i 
-            if( (j  < je).and.(grid % xn(node) == HUGE) ) then 
+            if( (j  < je).and.(grid % xn(node) .eq. HUGE) ) then 
               grid % xn(node) = x0 + t*delx
               grid % yn(node) = y0 + t*dely
               grid % zn(node) = z0 + t*delz
             endif
           end if 
-          if( ke /= ks ) then
+          if( ke .ne. ks ) then
             dt=1.0/(1.0*n)+(1.0*k-0.5*(1.0*n+1)) * ddt
             t=t+dt
             node = grid % n_nodes + (k-0)*ni*nj + (j-1)*ni + i 
-            if( (k  < ke).and.(grid % xn(node) == HUGE) ) then 
+            if( (k  < ke).and.(grid % xn(node) .eq. HUGE) ) then 
               grid % xn(node) = x0 + t*delx
               grid % yn(node) = y0 + t*dely
               grid % zn(node) = z0 + t*delz
@@ -97,24 +97,24 @@
     do i=is,ie
       do j=js,je
         do k=ks,ke
-          if( ie /= is ) then
-            if(case == 1) xi = -1.0*(1.0*i)/(1.0*n)
-            if(case == 2) xi =  1.0 - 1.0*(1.0*i)/(1.0*n)
-            if(case == 3) xi = -1.0 + 2.0*(1.0*i)/(1.0*n)
+          if( ie .ne. is ) then
+            if(case .eq. 1) xi = -1.0*(1.0*i)/(1.0*n)
+            if(case .eq. 2) xi =  1.0 - 1.0*(1.0*i)/(1.0*n)
+            if(case .eq. 3) xi = -1.0 + 2.0*(1.0*i)/(1.0*n)
             node = grid % n_nodes + (k-1)*ni*nj + (j-1)*ni + i+1
-            if( (i  < ie).and.(grid % xn(node) == HUGE) ) then 
-              if    (case == 1) then
+            if( (i  < ie).and.(grid % xn(node) .eq. HUGE) ) then 
+              if    (case .eq. 1) then
                 grid % xn(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
                 grid % yn(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
                 grid % zn(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
-              elseif(case == 2) then
+              elseif(case .eq. 2) then
                 grid % xn(node) = x0  & 
                                 + delx - (tanh(xi*atanh(pr))/pr)*delx
                 grid % yn(node) = y0  &
                                 + dely - (tanh(xi*atanh(pr))/pr)*dely
                 grid % zn(node) = z0  &
                                 + delz - (tanh(xi*atanh(pr))/pr)*delz
-              elseif(case == 3) then
+              elseif(case .eq. 3) then
                 grid % xn(node) = x0  &
                                 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
                 grid % yn(node) = y0  &
@@ -124,24 +124,24 @@
               endif 
             endif
           end if 
-          if( je /= js ) then
-            if(case == 1) xi = -1.0*(1.0*j)/(1.0*n)
-            if(case == 2) xi =  1.0 - 1.0*(1.0*j)/(1.0*n)
-            if(case == 3) xi = -1.0 + 2.0*(1.0*j)/(1.0*n)
+          if( je .ne. js ) then
+            if(case .eq. 1) xi = -1.0*(1.0*j)/(1.0*n)
+            if(case .eq. 2) xi =  1.0 - 1.0*(1.0*j)/(1.0*n)
+            if(case .eq. 3) xi = -1.0 + 2.0*(1.0*j)/(1.0*n)
             node = grid % n_nodes + (k-1)*ni*nj + (j-0)*ni + i 
-            if( (j  < je).and.(grid % xn(node) == HUGE) ) then 
-              if    (case == 1) then
+            if( (j  < je).and.(grid % xn(node) .eq. HUGE) ) then 
+              if    (case .eq. 1) then
                 grid % xn(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
                 grid % yn(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
                 grid % zn(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
-              elseif(case == 2) then
+              elseif(case .eq. 2) then
                 grid % xn(node) = x0  &
                                 + delx - (tanh(xi*atanh(pr))/pr)*delx
                 grid % yn(node) = y0  &
                                 + dely - (tanh(xi*atanh(pr))/pr)*dely
                 grid % zn(node) = z0  &
                                 + delz - (tanh(xi*atanh(pr))/pr)*delz
-              elseif(case == 3) then
+              elseif(case .eq. 3) then
                 grid % xn(node) = x0  &
                                 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
                 grid % yn(node) = y0  &
@@ -151,24 +151,24 @@
               endif 
             endif
           end if 
-          if( ke /= ks ) then
-            if(case == 1) xi = -1.0*(1.0*k)/(1.0*n)
-            if(case == 2) xi =  1.0 - 1.0*(1.0*k)/(1.0*n)
-            if(case == 3) xi = -1.0 + 2.0*(1.0*k)/(1.0*n)
+          if( ke .ne. ks ) then
+            if(case .eq. 1) xi = -1.0*(1.0*k)/(1.0*n)
+            if(case .eq. 2) xi =  1.0 - 1.0*(1.0*k)/(1.0*n)
+            if(case .eq. 3) xi = -1.0 + 2.0*(1.0*k)/(1.0*n)
             node = grid % n_nodes + (k-0)*ni*nj + (j-1)*ni + i 
-            if( (k  < ke).and.(grid % xn(node) == HUGE) ) then 
-              if    (case == 1) then
+            if( (k  < ke).and.(grid % xn(node) .eq. HUGE) ) then 
+              if    (case .eq. 1) then
                 grid % xn(node) = x0 - (tanh(xi*atanh(pr))/pr)*delx
                 grid % yn(node) = y0 - (tanh(xi*atanh(pr))/pr)*dely
                 grid % yn(node) = z0 - (tanh(xi*atanh(pr))/pr)*delz
-              elseif(case == 2) then
+              elseif(case .eq. 2) then
                 grid % xn(node) = x0  &
                                 + delx - (tanh(xi*atanh(pr))/pr)*delx
                 grid % yn(node) = y0  &
                                 + dely - (tanh(xi*atanh(pr))/pr)*dely
                 grid % zn(node) = z0  &
                                 + delz - (tanh(xi*atanh(pr))/pr)*delz
-              elseif(case == 3) then
+              elseif(case .eq. 3) then
                 grid % xn(node) = x0  &
                                 + 0.5*(1.0+tanh(xi*atanh(pr))/pr)*delx
                 grid % yn(node) = y0  &

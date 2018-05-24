@@ -52,19 +52,19 @@
                     grid % zn(n5) + grid % zn(n6) +   &
                     grid % zn(n7) + grid % zn(n8))
 
-        if(refined_regions(lev,reg,0) == ELIPSOID) then
+        if(refined_regions(lev,reg,0) .eq. ELIPSOID) then
           if(  ( ((x1-x0)/x8)**2 +                                  &
                  ((y1-y0)/y8)**2 +                                  &
                  ((z1-z0)/z8)**2)  < 1.0 ) then
             cell_marked(c) = .true.
           end if
-        else if(refined_regions(lev,reg,0) == RECTANGLE) then 
+        else if(refined_regions(lev,reg,0) .eq. RECTANGLE) then 
           if( (x1  < x0) .and. (x0  < x8) .and.                     &
               (y1  < y0) .and. (y0  < y8) .and.                     &
               (z1  < z0) .and. (z0  < z8) ) then
             cell_marked(c) = .true.
           endif
-        else if(refined_regions(lev,reg,0) == PLANE) then 
+        else if(refined_regions(lev,reg,0) .eq. PLANE) then 
           if( (x0-x1)*x8+(y0-y1)*y8+(z0-z1)*z8   >  0.0 ) then
             cell_marked(c) = .true.
           endif

@@ -16,18 +16,18 @@
   check=0
 
   do n=1,twin_n(n1,0)
-    if(twin_n(n1,n) == n2) check=check+1
+    if(twin_n(n1,n) .eq. n2) check=check+1
   end do
 
   do n=1,twin_n(n2,0)
-    if(twin_n(n2,n) == n1) check=check+1
+    if(twin_n(n2,n) .eq. n1) check=check+1
   end do
 
-  if(check == 2) then
-    Are_Nodes_Twins = .TRUE.
+  if(check .eq. 2) then
+    Are_Nodes_Twins = .true.
     return
-  else if(check == 0) then
-    Are_Nodes_Twins = .FALSE.
+  else if(check .eq. 0) then
+    Are_Nodes_Twins = .false.
     return
   else
     print *, '# Are_Nodes_Twins:   Major trouble !    Stopping !'

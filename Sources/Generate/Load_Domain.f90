@@ -317,7 +317,7 @@
     dom % regions(n) % face=''
 
     call Tokenizer_Mod_Read_Line(9)
-    if(line % n_tokens == 7) then
+    if(line % n_tokens .eq. 7) then
       read(line % whole,*)  dum,            &  
                    dom % regions(n) % is,   &
                    dom % regions(n) % js,   &
@@ -325,7 +325,7 @@
                    dom % regions(n) % ie,   &
                    dom % regions(n) % je,   &
                    dom % regions(n) % ke   
-    else if(line % n_tokens == 2) then
+    else if(line % n_tokens .eq. 2) then
       read(line % tokens(1),*)       dum           
       read(line % tokens(2),'(A4)')  & 
            dom % regions(n) % face
@@ -337,7 +337,7 @@
     read(line % tokens(2), *) dom % regions(n) % name    
     call To_Upper_Case(dom % regions(n) % name)           
 
-    ! if( dom % blocks(b_cond(n,7)) % points(0) == -1 ) then
+    ! if( dom % blocks(b_cond(n,7)) % points(0) .eq. -1 ) then
     !   call Swap_Integers( dom % regions(n) % is,dom % regions(n) % js )
     !   call Swap_Integers( dom % regions(n) % ie,dom % regions(n) % je )
     ! end if
@@ -402,11 +402,11 @@
       call Tokenizer_Mod_Read_Line(9)
       read(line % tokens(3),*) answer
       call To_Upper_Case(answer)
-      if(answer == 'RECTANGLE') then
+      if(answer .eq. 'RECTANGLE') then
         refined_regions(l,n,0) = RECTANGLE
-      elseif(answer == 'ELIPSOID') then
+      elseif(answer .eq. 'ELIPSOID') then
         refined_regions(l,n,0) = ELIPSOID 
-      elseif(answer == 'PLANE') then
+      elseif(answer .eq. 'PLANE') then
         refined_regions(l,n,0) = PLANE
       else
         print *, 'Error in input file: ', answer 
@@ -442,32 +442,32 @@
     smooth_in_z(n) = .false.
     call Tokenizer_Mod_Read_Line(9)
     read(line % tokens(1), *) smooth_regions(n,0)  
-    if(line % n_tokens == 4) then   ! smoothing in three directions
+    if(line % n_tokens .eq. 4) then   ! smoothing in three directions
       smooth_in_x(n) = .true.
       smooth_in_y(n) = .true.
       smooth_in_z(n) = .true.
-    else if(line % n_tokens == 3) then
+    else if(line % n_tokens .eq. 3) then
       call To_Upper_Case(line % tokens(2))
       call To_Upper_Case(line % tokens(3))
-      if( line % tokens(2)  ==  'X' )  &
+      if( line % tokens(2) .eq. 'X' )  &
           smooth_in_x(n) = .true.
-      if( line % tokens(3)  ==  'X' )  &
+      if( line % tokens(3) .eq. 'X' )  &
           smooth_in_x(n) = .true.
-      if( line % tokens(2)  ==  'Y' )  &
+      if( line % tokens(2) .eq. 'Y' )  &
           smooth_in_y(n) = .true.
-      if( line % tokens(3)  ==  'Y' )  &
+      if( line % tokens(3) .eq. 'Y' )  &
           smooth_in_y(n) = .true.
-      if( line % tokens(2)  ==  'Z' )  &
+      if( line % tokens(2) .eq. 'Z' )  &
           smooth_in_z(n) = .true.
-      if( line % tokens(3)  ==  'Z' )  &
+      if( line % tokens(3) .eq. 'Z' )  &
           smooth_in_z(n) = .true.
-    else if(line % n_tokens == 2) then
+    else if(line % n_tokens .eq. 2) then
       call To_Upper_Case(line % tokens(2))
-      if( line % tokens(2)  ==  'X' )  &
+      if( line % tokens(2) .eq. 'X' )  &
           smooth_in_x(n) = .true.
-      if( line % tokens(2)  ==  'Y' )  &
+      if( line % tokens(2) .eq. 'Y' )  &
           smooth_in_y(n) = .true.
-      if( line % tokens(2)  ==  'Z' )  &
+      if( line % tokens(2) .eq. 'Z' )  &
           smooth_in_z(n) = .true.
     end if 
 

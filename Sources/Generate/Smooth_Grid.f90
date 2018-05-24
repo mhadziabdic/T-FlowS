@@ -46,7 +46,7 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if(c2 < 0 .or. grid % material(c1) /= grid % material(c2)) then 
+    if(c2 < 0 .or. grid % material(c1) .ne. grid % material(c2)) then 
       do n = 1, grid % faces_n_nodes(s)  ! for quadrilateral an triangular faces
         walln(grid % faces_n(n,s)) = 0.0
       end do
@@ -90,9 +90,9 @@
       n = grid % cells_n(i,c)      ! first cell
       do j = 1, 8                  ! through nodes of a cell 
         m = grid % cells_n(j,c)    ! second cell 
-        if(n /=  m) then 
+        if(n .ne.  m) then 
           do k=1,node_to_nodes(n,0)
-            if(node_to_nodes(n,k) == m) goto 10            
+            if(node_to_nodes(n,k) .eq. m) goto 10            
           end do
           node_to_nodes(n,0)=node_to_nodes(n,0)+1
           node_to_nodes(n,node_to_nodes(n,0)) = m

@@ -37,15 +37,15 @@
   n = grid % n_nodes + (k-1)*ni*nj + (j-1)*ni + i
 
   ! Node numbers at the block faces
-  n1 = grid % n_nodes + ( 1-1)*ni*nj + ( j-1)*ni + i     !  ->  k == 1
-  n2 = grid % n_nodes + ( k-1)*ni*nj + ( j-1)*ni + 1     !  ->  i == 1
-  n3 = grid % n_nodes + ( k-1)*ni*nj + ( 1-1)*ni + i     !  ->  j == 1
-  n4 = grid % n_nodes + ( k-1)*ni*nj + ( j-1)*ni + ni    !  ->  i == ni
-  n5 = grid % n_nodes + ( k-1)*ni*nj + (nj-1)*ni + i     !  ->  j == nj
-  n6 = grid % n_nodes + (nk-1)*ni*nj + ( j-1)*ni + i     !  ->  k == nk
+  n1 = grid % n_nodes + ( 1-1)*ni*nj + ( j-1)*ni + i     !  ->  k .eq. 1
+  n2 = grid % n_nodes + ( k-1)*ni*nj + ( j-1)*ni + 1     !  ->  i .eq. 1
+  n3 = grid % n_nodes + ( k-1)*ni*nj + ( 1-1)*ni + i     !  ->  j .eq. 1
+  n4 = grid % n_nodes + ( k-1)*ni*nj + ( j-1)*ni + ni    !  ->  i .eq. ni
+  n5 = grid % n_nodes + ( k-1)*ni*nj + (nj-1)*ni + i     !  ->  j .eq. nj
+  n6 = grid % n_nodes + (nk-1)*ni*nj + ( j-1)*ni + i     !  ->  k .eq. nk
 
   ! Face I
-  if(grid % xn(n1) == HUGE) then
+  if(grid % xn(n1) .eq. HUGE) then
     xf1=( ((ni-i)*xt(1) + (i-1)*xt(2)) * (nj-j) +                   &
           ((ni-i)*xt(3) + (i-1)*xt(4)) * (j-1)  ) /((ni-1)*(nj-1))
     yf1=( ((ni-i)*yt(1) + (i-1)*yt(2)) * (nj-j) +                   &
@@ -59,7 +59,7 @@
   end if
 
   ! Face VI
-  if(grid % xn(n6) == HUGE) then
+  if(grid % xn(n6) .eq. HUGE) then
     xf6=( ((ni-i)*xt(5) + (i-1)*xt(6)) * (nj-j) +                   &
           ((ni-i)*xt(7) + (i-1)*xt(8)) * (j-1)  ) /((ni-1)*(nj-1))
     yf6=( ((ni-i)*yt(5) + (i-1)*yt(6)) * (nj-j) +                   &
@@ -73,7 +73,7 @@
   endif
 
   ! Face III
-  if(grid % xn(n3) == HUGE) then
+  if(grid % xn(n3) .eq. HUGE) then
     xf3=( ((ni-i)*xt(1) + (i-1)*xt(2)) * (Nk-k) +                   &
           ((ni-i)*xt(5) + (i-1)*xt(6)) * (k-1)  ) /((ni-1)*(nk-1))
     yf3=( ((ni-i)*yt(1) + (i-1)*yt(2)) * (Nk-k) +                   &
@@ -87,7 +87,7 @@
   endif
 
   ! Face V
-  if(grid % xn(n5) == HUGE) then
+  if(grid % xn(n5) .eq. HUGE) then
     xf5=( ((ni-i)*xt(3) + (i-1)*xt(4)) * (Nk-k) +                   &
           ((ni-i)*xt(7) + (i-1)*xt(8)) * (k-1)  ) /((ni-1)*(nk-1))
     yf5=( ((ni-i)*yt(3) + (i-1)*yt(4)) * (Nk-k) +                   &
@@ -101,7 +101,7 @@
   endif
 
   ! Face II
-  if(grid % xn(n2) == HUGE) then
+  if(grid % xn(n2) .eq. HUGE) then
     xf2=( ((nj-j)*xt(1) + (j-1)*xt(3)) * (nk-k) +                   &
           ((nj-j)*xt(5) + (j-1)*xt(7)) * (k-1)  ) /((nj-1)*(nk-1))
     yf2=( ((nj-j)*yt(1) + (j-1)*yt(3)) * (nk-k) +                   &
@@ -115,7 +115,7 @@
   endif
 
   ! Face IV
-  if(grid % xn(n4) == HUGE) then
+  if(grid % xn(n4) .eq. HUGE) then
     xf4=( ((nj-j)*xt(2) + (j-1)*xt(4)) * (nk-k) +                   &
           ((nj-j)*xt(6) + (j-1)*xt(8)) * (k-1)  ) /((nj-1)*(nk-1))
     yf4=( ((nj-j)*yt(2) + (j-1)*yt(4)) * (nk-k) +                   &
@@ -128,7 +128,7 @@
     zf4 = grid % zn(n4)
   endif
 
-  if( grid % xn(n) == HUGE ) then
+  if( grid % xn(n) .eq. HUGE ) then
     grid % xn(n) = ( xf1*(nk-k) + xf6*(k-1) ) * wx16 / (nk-1)        &
                  + ( xf2*(ni-i) + xf4*(i-1) ) * wx24 / (ni-1)        &
                  + ( xf3*(nj-j) + xf5*(j-1) ) * wx35 / (nj-1) 

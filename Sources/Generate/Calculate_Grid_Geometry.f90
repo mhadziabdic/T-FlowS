@@ -188,7 +188,7 @@
       end do                       
 
       ! Cell side components
-      if( grid % faces_n_nodes(s)  ==  4 ) then
+      if( grid % faces_n_nodes(s) .eq. 4 ) then
         grid % sx(s)= 0.5 * ((local_y_node(2)-local_y_node(1))  &
                            * (local_z_node(2)+local_z_node(1))  &
                            + (local_y_node(3)-local_y_node(2))  &
@@ -213,7 +213,7 @@
                            * (local_y_node(3)+local_y_node(4))  &
                            + (local_x_node(1)-local_x_node(4))  & 
                            * (local_y_node(4)+local_y_node(1)) )
-      else if( grid % faces_n_nodes(s)  ==  3 ) then 
+      else if( grid % faces_n_nodes(s) .eq. 3 ) then 
         grid % sx(s)= 0.5 * ((local_y_node(2)-local_y_node(1))  &
                            * (local_z_node(2)+local_z_node(1))  & 
                            + (local_y_node(3)-local_y_node(2))  &
@@ -238,14 +238,14 @@
       end if
 
       ! Barycenters
-      if(grid % faces_n_nodes(s) == 4) then  
+      if(grid % faces_n_nodes(s) .eq. 4) then  
         grid % xf(s) = (   local_x_node(1)+local_x_node(2)          &
                          + local_x_node(3)+local_x_node(4) ) / 4.0
         grid % yf(s) = (   local_y_node(1)+local_y_node(2)          &
                          + local_y_node(3)+local_y_node(4) ) / 4.0
         grid % zf(s) = (   local_z_node(1)+local_z_node(2)          &
                          + local_z_node(3)+local_z_node(4) ) / 4.0
-      else if(grid % faces_n_nodes(s) == 3) then  
+      else if(grid % faces_n_nodes(s) .eq. 3) then  
         grid % xf(s) = (local_x_node(1)+local_x_node(2)+local_x_node(3)) / 3.0
         grid % yf(s) = (local_y_node(1)+local_y_node(2)+local_y_node(3)) / 3.0
         grid % zf(s) = (local_z_node(1)+local_z_node(2)+local_z_node(3)) / 3.0
@@ -306,7 +306,7 @@
           ! Find the coordinates of ...
           m = face_c_to_c(s,2)
 
-          if(grid % faces_n_nodes(s) == 4) then   
+          if(grid % faces_n_nodes(s) .eq. 4) then   
 
             ! Coordinates of the shadow face
             xs2=.25*(  grid % xn(grid % cells_n(f4n(m,1), c2))  &
@@ -353,7 +353,7 @@
             grid % xf(new_face_2) = xs2
             grid % yf(new_face_2) = ys2
             grid % zf(new_face_2) = zs2
-          else if(grid % faces_n_nodes(s) == 3) then  
+          else if(grid % faces_n_nodes(s) .eq. 3) then  
 
             ! Coordinates of the shadow face
             xs2 = ONE_THIRD * (grid % xn(grid % cells_n(f3n(m,1), c2))  &
@@ -446,7 +446,7 @@
                             local_x_node(2),local_y_node(2),local_z_node(2),   &
                             local_x_node(3),local_y_node(3),local_z_node(3),   &
                             x_cell_tmp,y_cell_tmp,z_cell_tmp)
-    if(grid % faces_n_nodes(s) == 4) then
+    if(grid % faces_n_nodes(s) .eq. 4) then
       grid % vol(c1) = grid % vol(c1)                                          &
                  + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
                               local_x_node(3),local_y_node(3),local_z_node(3), &
@@ -457,7 +457,7 @@
                               local_x_node(4),local_y_node(4),local_z_node(4), &
                               local_x_node(1),local_y_node(1),local_z_node(1), &
                               x_cell_tmp,y_cell_tmp,z_cell_tmp)
-    else if(grid % faces_n_nodes(s) == 3) then
+    else if(grid % faces_n_nodes(s) .eq. 3) then
       grid % vol(c1) = grid % vol(c1)                                          &
                  + Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),          &
                               local_x_node(3),local_y_node(3),local_z_node(3), &
@@ -482,7 +482,7 @@
                               local_x_node(2),local_y_node(2),local_z_node(2), &
                               local_x_node(3),local_y_node(3),local_z_node(3), &
                               x_cell_tmp,y_cell_tmp,z_cell_tmp)
-      if(grid % faces_n_nodes(s) == 4) then
+      if(grid % faces_n_nodes(s) .eq. 4) then
         grid % vol(c2) = grid % vol(c2)                                    &
                    - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),    &
                          local_x_node(3),local_y_node(3),local_z_node(3),  &
@@ -493,7 +493,7 @@
                          local_x_node(4),local_y_node(4),local_z_node(4),  &
                          local_x_node(1),local_y_node(1),local_z_node(1),  &
                          x_cell_tmp,y_cell_tmp,z_cell_tmp)
-      else if(grid % faces_n_nodes(s) == 3) then
+      else if(grid % faces_n_nodes(s) .eq. 3) then
         grid % vol(c2) = grid % vol(c2)                                    &
                    - Tet_Volume(grid % xf(s),grid % yf(s),grid % zf(s),    &
                          local_x_node(3),local_y_node(3),local_z_node(3),  &
@@ -534,7 +534,7 @@
     read(line % tokens(b), *) wall_colors(b)
   end do
  
-  if( (n_wall_colors.eq.1) .and. (wall_colors(1)==0) ) then
+  if( (n_wall_colors .eq. 1) .and. (wall_colors(1) .eq. 0) ) then
     grid % wall_dist = 1.0
     print *, '# Distance to the wall set to 1.0 everywhere !'
   else 
@@ -558,7 +558,7 @@
     end do
 
     do c = 1, grid % n_cells
-      grid % wall_dist(c)=sqrt(grid % wall_dist(c))
+      grid % wall_dist(c) = sqrt(grid % wall_dist(c))
     end do
 
     print *, '# Maximal distance to the wall: ',  &

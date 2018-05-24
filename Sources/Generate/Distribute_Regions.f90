@@ -61,22 +61,22 @@
     ke = ck
 
     ! Boundary conditions prescribed with mnemonics
-    if(dom % regions(n) % face == 'IMIN') then
+    if(dom % regions(n) % face .eq. 'IMIN') then
       ie=1 
       face = 5
-    else if(dom % regions(n) % face == 'IMAX') then 
+    else if(dom % regions(n) % face .eq. 'IMAX') then 
       is=ci
       face = 3
-    else if(dom % regions(n) % face == 'JMIN') then 
+    else if(dom % regions(n) % face .eq. 'JMIN') then 
       je=1
       face = 2
-    else if(dom % regions(n) % face == 'JMAX') then 
+    else if(dom % regions(n) % face .eq. 'JMAX') then 
       js=cj
       face = 4
-    else if(dom % regions(n) % face == 'KMIN') then 
+    else if(dom % regions(n) % face .eq. 'KMIN') then 
       ke=1
       face = 1
-    else if(dom % regions(n) % face == 'KMAX') then 
+    else if(dom % regions(n) % face .eq. 'KMAX') then 
       ks=ck
       face = 6
 
@@ -90,21 +90,21 @@
       je = dom % regions(n) % je
       ke = dom % regions(n) % ke
       face = 0
-      if( (is == ie).and.(is ==  1) ) face=5
-      if( (is == ie).and.(is == ci) ) face=3
-      if( (js == je).and.(js ==  1) ) face=2
-      if( (js == je).and.(js == cj) ) face=4
-      if( (ks == ke).and.(ks ==  1) ) face=1
-      if( (ks == ke).and.(ks == ck) ) face=6
+      if( (is .eq. ie).and.(is .eq.  1) ) face=5
+      if( (is .eq. ie).and.(is .eq. ci) ) face=3
+      if( (js .eq. je).and.(js .eq.  1) ) face=2
+      if( (js .eq. je).and.(js .eq. cj) ) face=4
+      if( (ks .eq. ke).and.(ks .eq.  1) ) face=1
+      if( (ks .eq. ke).and.(ks .eq. ck) ) face=6
     end if
 
     ! Store boundary condition 
-    if(face /= 0) then  
+    if(face .ne. 0) then  
 
       found = .false. 
       do r=1,n_bnd
-        if( grid % bnd_cond % name(r) ==   &
-            dom % regions(n) % name ) found = .TRUE.
+        if( grid % bnd_cond % name(r) .eq.   &
+            dom % regions(n) % name ) found = .true.
       end do
       if( .not. found) then
         n_bnd = n_bnd + 1
@@ -125,8 +125,8 @@
 
       found = .false. 
       do r=1,n_mat
-        if(grid % materials(r) % name ==  &
-           dom % regions(n) % name) found = .TRUE.
+        if(grid % materials(r) % name .eq.  &
+           dom % regions(n) % name) found = .true.
       end do
       if( .not. found) then
         n_mat = n_mat + 1

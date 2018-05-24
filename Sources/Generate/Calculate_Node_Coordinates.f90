@@ -102,110 +102,112 @@
                             dom % lines(l) % points(2),  &
                             b)
 
-      if(bl == b) then
+      if(bl .eq. b) then
 
-        do n=1,8
-          if( dom % lines(l) % points(1) == dom % blocks(b) % corners(n) ) l1=n
-          if( dom % lines(l) % points(2) == dom % blocks(b) % corners(n) ) l2=n
+        do n = 1, 8
+          if(      dom % lines(l)  % points(1)  &
+              .eq. dom % blocks(b) % corners(n) ) l1=n
+          if(      dom % lines(l)  % points(2)  &
+              .eq. dom % blocks(b) % corners(n) ) l2=n
         end do
 
         ! Line is defined in the +i direction
-        if     ( (l2-l1) == +1 ) then
+        if     ( (l2-l1) .eq. +1 ) then
           trans(1,1) = 0
           trans(1,2) =+1
           trans(2,2) = 0
           trans(3,2) = 0
-          if( (l1 == 1).or.(l1 == 5) ) then 
+          if( (l1 .eq. 1).or.(l1 .eq. 5) ) then 
             trans(2,1) =1
           else                         
             trans(2,1) =dom % blocks(b) % resolutions(2)
           endif
-          if( (l1 == 1).or.(l1 == 3) ) then
+          if( (l1 .eq. 1).or.(l1 .eq. 3) ) then
             trans(3,1) =1
           else                         
             trans(3,1) =dom % blocks(b) % resolutions(3)
           endif
 
         ! Line is defined in the -i direction
-        else if( (l2-l1) == -1 ) then
+        else if( (l2-l1) .eq. -1 ) then
           trans(1,1) =dom % blocks(b) % resolutions(1)+1   ! ni from block + 1
           trans(1,2) =-1
           trans(2,2) = 0
           trans(3,2) = 0
-          if( (l1 == 2).or.(l1 == 6) ) then
+          if( (l1 .eq. 2).or.(l1 .eq. 6) ) then
             trans(2,1) =1
           else                         
             trans(2,1) =dom % blocks(b) % resolutions(2)
           endif
-          if( (l1 == 2).or.(l1 == 4) ) then
+          if( (l1 .eq. 2).or.(l1 .eq. 4) ) then
             trans(3,1) =1
           else                         
             trans(3,1) =dom % blocks(b) % resolutions(3)
           endif
 
         ! Line is defined in the +j direction
-        else if( (l2-l1) == +2 ) then
+        else if( (l2-l1) .eq. +2 ) then
           trans(2,1) = 0
           trans(2,2) =+1
           trans(1,2) = 0
           trans(3,2) = 0 
-          if( (l1 == 1).or.(l1 == 5) ) then
+          if( (l1 .eq. 1).or.(l1 .eq. 5) ) then
             trans(1,1) =1
           else                         
             trans(1,1) =dom % blocks(b) % resolutions(1)
           endif
-          if( (l1 == 1).or.(l1 == 2) ) then
+          if( (l1 .eq. 1).or.(l1 .eq. 2) ) then
             trans(3,1) =1
           else                         
             trans(3,1) =dom % blocks(b) % resolutions(3)
           endif
 
         ! Line is defined in the -j direction
-        else if( (l2-l1) == -2 ) then
+        else if( (l2-l1) .eq. -2 ) then
           trans(2,1) =dom % blocks(b) % resolutions(2)+1   ! nj from block + 1
           trans(2,2) =-1
           trans(1,2) = 0
           trans(3,2) = 0 
-          if( (l1 == 3).or.(l1 == 7) ) then
+          if( (l1 .eq. 3).or.(l1 .eq. 7) ) then
             trans(1,1) =1
           else                         
             trans(1,1) =dom % blocks(b) % resolutions(1)
           endif
-          if( (l1 == 3).or.(l1 == 4) ) then
+          if( (l1 .eq. 3).or.(l1 .eq. 4) ) then
             trans(3,1) =1
           else                         
             trans(3,1) =dom % blocks(b) % resolutions(3)
           endif
 
         ! Line is defined in the +k direction
-        else if( (l2-l1) == +4 ) then
+        else if( (l2-l1) .eq. +4 ) then
           trans(3,1) = 0
           trans(3,2) =+1
           trans(1,2) = 0
           trans(2,2) = 0 
-          if( (l1 == 1).or.(l1 == 3) ) then
+          if( (l1 .eq. 1).or.(l1 .eq. 3) ) then
             trans(1,1) =1
           else                         
             trans(1,1) =dom % blocks(b) % resolutions(1)
           end if
-          if( (l1 == 1).or.(l1 == 2) ) then
+          if( (l1 .eq. 1).or.(l1 .eq. 2) ) then
             trans(2,1) =1
           else                         
             trans(2,1) =dom % blocks(b) % resolutions(2)
           endif
 
         ! Line is defined in the -k direction
-        else if( (l2-l1) == -4 ) then
+        else if( (l2-l1) .eq. -4 ) then
           trans(3,1) =dom % blocks(b) % resolutions(3) + 1  ! nk from block + 1
           trans(3,2) =-1
           trans(1,2) = 0
           trans(2,2) = 0 
-          if( (l1 == 5).or.(l1 == 7) ) then
+          if( (l1 .eq. 5).or.(l1 .eq. 7) ) then
             trans(1,1) =1
           else                         
             trans(1,1) =dom % blocks(b) % resolutions(1)
           endif
-          if( (l1 == 5).or.(l1 == 6) ) then
+          if( (l1 .eq. 5).or.(l1 .eq. 6) ) then
             trans(2,1) =1
           else                         
             trans(2,1) =dom % blocks(b) % resolutions(2)
@@ -451,19 +453,20 @@
           grid % cells_c(6,c) = c+ci*cj
 
           ! This value (-1) is also the default boundary marker
-          if(i == 1)  grid % cells_c(5,c) =-1
-          if(i == ci) grid % cells_c(3,c) =-1
-          if(j == 1)  grid % cells_c(2,c) =-1
-          if(j == cj) grid % cells_c(4,c) =-1
-          if(k == 1)  grid % cells_c(1,c) =-1
-          if(k == ck) grid % cells_c(6,c) =-1
+          if(i .eq. 1)  grid % cells_c(5,c) =-1
+          if(i .eq. ci) grid % cells_c(3,c) =-1
+          if(j .eq. 1)  grid % cells_c(2,c) =-1
+          if(j .eq. cj) grid % cells_c(4,c) =-1
+          if(k .eq. 1)  grid % cells_c(1,c) =-1
+          if(k .eq. ck) grid % cells_c(6,c) =-1
 
         end do
       end do
     end do
 
-    dom % blocks(b) % n_nodes = grid % n_nodes       ! old number of nodes, for fusion 
-    dom % blocks(b) % n_cells = grid % n_cells       ! old number of volumes, for fusion
+    ! Old number of nodes and cells
+    dom % blocks(b) % n_nodes = grid % n_nodes  
+    dom % blocks(b) % n_cells = grid % n_cells  
     grid % n_nodes = grid % n_nodes + ni*nj*nk
     grid % n_cells = grid % n_cells + ci*cj*ck
 

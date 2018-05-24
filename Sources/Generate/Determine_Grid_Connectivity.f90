@@ -54,19 +54,19 @@
   !---------------------------!
   grid % n_faces = 0     ! initialize the number of sides
   do pass = 1,3
-    if(pass == 2) WallFacFst = grid % n_faces+1
+    if(pass .eq. 2) WallFacFst = grid % n_faces+1
   do c1=1, grid % n_cells
     do m = 1, 24 ! through all the neighbouring cells
       c2=grid % cells_c(m,c1)
-      if( (pass == 1) .and.                             &
-          (c2>c1)     .and.                             &
-          (grid % material(c1) == grid % material(c2))  &
-          .or.                                          &
-          (pass == 2) .and.                             &
-          (c2>c1)     .and.                             &
-          (grid % material(c1) /= grid % material(c2))  &
-          .or.                                          &
-          (pass==3) .and.                               &
+      if( (pass .eq. 1) .and.                             &
+          (c2>c1)     .and.                               &
+          (grid % material(c1) .eq. grid % material(c2))  &
+          .or.                                            &
+          (pass .eq. 2) .and.                             &
+          (c2>c1)     .and.                               &
+          (grid % material(c1) .ne. grid % material(c2))    &
+          .or.                                            &
+          (pass.eq.3) .and.                               &
           (c2<0) ) then
         grid % n_faces=grid % n_faces+1
 
@@ -76,12 +76,12 @@
 
         ! Which is c2 neighbour of c1 and vice versa
         do c = 1,24
-          if(grid % cells_c(c,c1) == c2) then 
+          if(grid % cells_c(c,c1) .eq. c2) then 
             face_c_to_c(grid % n_faces,1) = c
           end if
 
           if(c2 > 0) then
-            if(grid % cells_c(c,c2) == c1) then 
+            if(grid % cells_c(c,c2) .eq. c1) then 
               face_c_to_c(grid % n_faces,2) = c
             end if 
           end if
@@ -144,13 +144,13 @@
   !   c2 = grid % faces_c(2,s)
   !   if(c2  < 0) then
   !     do i=1,6
-  !       if(grid % cells_c(i,c1)  ==  c2) then
-  !         if(i == 1) grid % faces_c(0,s) = grid % cells_c(6,c1)
-  !         if(i == 2) grid % faces_c(0,s) = grid % cells_c(4,c1)
-  !         if(i == 3) grid % faces_c(0,s) = grid % cells_c(5,c1)
-  !         if(i == 4) grid % faces_c(0,s) = grid % cells_c(2,c1)
-  !         if(i == 5) grid % faces_c(0,s) = grid % cells_c(3,c1)
-  !         if(i == 6) grid % faces_c(0,s) = grid % cells_c(1,c1)
+  !       if(grid % cells_c(i,c1) .eq. c2) then
+  !         if(i .eq. 1) grid % faces_c(0,s) = grid % cells_c(6,c1)
+  !         if(i .eq. 2) grid % faces_c(0,s) = grid % cells_c(4,c1)
+  !         if(i .eq. 3) grid % faces_c(0,s) = grid % cells_c(5,c1)
+  !         if(i .eq. 4) grid % faces_c(0,s) = grid % cells_c(2,c1)
+  !         if(i .eq. 5) grid % faces_c(0,s) = grid % cells_c(3,c1)
+  !         if(i .eq. 6) grid % faces_c(0,s) = grid % cells_c(1,c1)
   !       end if
   !     end do
   !   end if
@@ -162,9 +162,9 @@
   do s = 1, grid % n_faces
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
-    if(c2 < 0 .and. grid % bnd_cond % copy_c(c1) /= 0) then
-      if(grid % bnd_cond % color(c2) == copy_cond(1,0)) then
-        grid % bnd_cond % copy_c(c2) = grid % bnd_cond % copy_c(c1)
+    if(c2 < 0 .and. grid % bnd_cond % copy_c(c1) .ne. 0) then
+      if(grid % bnd_cond % color(c2) .eq. copy_cond(1,0)) then
+         grid % bnd_cond % copy_c(c2) = grid % bnd_cond % copy_c(c1)
       end if
     end if
   end do

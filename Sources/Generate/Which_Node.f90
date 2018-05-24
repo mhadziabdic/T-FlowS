@@ -24,7 +24,7 @@
 
   ! Try the node only 
   do i=1,8
-    if( grid % cells_n(i,c)  ==  n) then
+    if( grid % cells_n(i,c) .eq. n) then
       goto 1
     end if 
   end do     
@@ -32,7 +32,7 @@
   ! If it failed try his twins also
   do j=1,twin_n(n,0)
     do i=1,8
-      if( grid % cells_n(i,c)  ==  twin_n(n,j)) then
+      if( grid % cells_n(i,c) .eq. twin_n(n,j)) then
         goto 1
       end if 
     end do     

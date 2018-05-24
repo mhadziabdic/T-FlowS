@@ -35,7 +35,7 @@
   end do
 
   ! If number of dom % blocks is equal to one, there is nothing to do
-  if(size(dom % blocks) == 1) return 
+  if(size(dom % blocks) .eq. 1) return 
 
   ! Initialize the number of deleted nodes
   del=0
@@ -68,10 +68,10 @@
           n24 = dom % blocks(b2) % faces(f2, 4)
 
           ! Check if they are connected 
-          if( ((n11 == n21).and.(n13 == n23)) .or.  &
-              ((n11 == n24).and.(n13 == n22)) .or.  &
-              ((n11 == n23).and.(n13 == n21)) .or.  &
-              ((n11 == n22).and.(n13 == n24)) ) then
+          if( ((n11 .eq. n21).and.(n13 .eq. n23)) .or.  &
+              ((n11 .eq. n24).and.(n13 .eq. n22)) .or.  &
+              ((n11 .eq. n23).and.(n13 .eq. n21)) .or.  &
+              ((n11 .eq. n22).and.(n13 .eq. n24)) ) then
 
             ! Define generic surface (g1-g4 are in essence not needed)
             g1=n11
@@ -81,126 +81,126 @@
 
             ! Find local nodes (1-8) from blocks 1 and 2 on generic surface
             do n = 1, 8
-              if(dom % blocks(b1) % corners(n) == g1) l11=n
-              if(dom % blocks(b2) % corners(n) == g1) l21=n
-              if(dom % blocks(b1) % corners(n) == g2) l12=n
-              if(dom % blocks(b2) % corners(n) == g2) l22=n
-              if(dom % blocks(b1) % corners(n) == g3) l13=n
-              if(dom % blocks(b2) % corners(n) == g3) l23=n
-              if(dom % blocks(b1) % corners(n) == g4) l14=n
-              if(dom % blocks(b2) % corners(n) == g4) l24=n
+              if(dom % blocks(b1) % corners(n) .eq. g1) l11=n
+              if(dom % blocks(b2) % corners(n) .eq. g1) l21=n
+              if(dom % blocks(b1) % corners(n) .eq. g2) l12=n
+              if(dom % blocks(b2) % corners(n) .eq. g2) l22=n
+              if(dom % blocks(b1) % corners(n) .eq. g3) l13=n
+              if(dom % blocks(b2) % corners(n) .eq. g3) l23=n
+              if(dom % blocks(b1) % corners(n) .eq. g4) l14=n
+              if(dom % blocks(b2) % corners(n) .eq. g4) l24=n
             end do
 
             ! Direction ig, block 1
-            if((l14-l11) == +1) then
+            if((l14-l11) .eq. +1) then
               nig = dom % blocks(b1) % resolutions(1)       ! ni from block 1
               trans1(1,2)=+1
-            elseif((l14-l11) == +2) then
+            elseif((l14-l11) .eq. +2) then
               nig = dom % blocks(b1) % resolutions(2)       ! nj from block 1
               trans1(2,2)=+1
-            elseif((l14-l11) == +4) then 
+            elseif((l14-l11) .eq. +4) then 
               nig = dom % blocks(b1) % resolutions(3)       ! nk from block 1
               trans1(3,2)=+1
-            elseif((l14-l11) == -1) then 
+            elseif((l14-l11) .eq. -1) then 
               nig = dom % blocks(b1) % resolutions(1)       ! ni from block 1
               trans1(1,1)=nig
               trans1(1,2)=-1
-            elseif((l14-l11) == -2) then 
+            elseif((l14-l11) .eq. -2) then 
               nig = dom % blocks(b1) % resolutions(2)       ! nj from block 1
               trans1(2,1)=nig
               trans1(2,2)=-1
-            elseif((l14-l11) == -4) then 
+            elseif((l14-l11) .eq. -4) then 
               nig = dom % blocks(b1) % resolutions(3)       ! nk from block 1
               trans1(3,1)=nig
               trans1(3,2)=-1
             endif
 
             ! Direction jg, block 1 
-            if((l12-l11) == +1) then 
+            if((l12-l11) .eq. +1) then 
               njg = dom % blocks(b1) % resolutions(1)       ! ni from block 1
               trans1(1,3)=+1
-            elseif((l12-l11) == +2) then
+            elseif((l12-l11) .eq. +2) then
               njg = dom % blocks(b1) % resolutions(2)       ! nj from block 1
               trans1(2,3)=+1
-            elseif((l12-l11) == +4) then
+            elseif((l12-l11) .eq. +4) then
               njg = dom % blocks(b1) % resolutions(3)       ! nk from block 1
               trans1(3,3)=+1
-            elseif((l12-l11) == -1) then
+            elseif((l12-l11) .eq. -1) then
               njg = dom % blocks(b1) % resolutions(1)       ! ni from block 1
               trans1(1,1)=njg
               trans1(1,3)=-1
-            elseif((l12-l11) == -2) then
+            elseif((l12-l11) .eq. -2) then
               njg = dom % blocks(b1) % resolutions(2)       ! nj from block 1
               trans1(2,1)=njg
               trans1(2,3)=-1
-            elseif((l12-l11) == -4) then
+            elseif((l12-l11) .eq. -4) then
               njg = dom % blocks(b1) % resolutions(3)       ! nk from block 1
               trans1(3,1)=njg
               trans1(3,3)=-1
             endif
 
             ! Direction ig, block 2
-            if((l24-l21) == +1) then
+            if((l24-l21) .eq. +1) then
               nig = dom % blocks(b2) % resolutions(1)       ! ni from block 2
               trans2(1,2)=+1
-            elseif((l24-l21) == +2) then
+            elseif((l24-l21) .eq. +2) then
               nig = dom % blocks(b2) % resolutions(2)       ! nj from block 2
               trans2(2,2)=+1
-            elseif((l24-l21) == +4) then 
+            elseif((l24-l21) .eq. +4) then 
               nig = dom % blocks(b2) % resolutions(3)       ! nk from block 2
               trans2(3,2)=+1
-            elseif((l24-l21) == -1) then 
+            elseif((l24-l21) .eq. -1) then 
               nig = dom % blocks(b2) % resolutions(1)       ! ni from block 2
               trans2(1,1)=nig
               trans2(1,2)=-1
-            elseif((l24-l21) == -2) then 
+            elseif((l24-l21) .eq. -2) then 
               nig = dom % blocks(b2) % resolutions(2)       ! nj from block 2
               trans2(2,1)=nig
               trans2(2,2)=-1
-            elseif((l24-l21) == -4) then 
+            elseif((l24-l21) .eq. -4) then 
               nig = dom % blocks(b2) % resolutions(3)       ! nk from block 2
               trans2(3,1)=nig
               trans2(3,2)=-1
             endif
 
             ! Direction jg, block 2 
-            if((l22-l21) == +1) then 
+            if((l22-l21) .eq. +1) then 
               njg = dom % blocks(b2) % resolutions(1)       ! ni from block 2
               trans2(1,3)=+1
-            elseif((l22-l21) == +2) then
+            elseif((l22-l21) .eq. +2) then
               njg = dom % blocks(b2) % resolutions(2)       ! nj from block 2
               trans2(2,3)=+1
-            elseif((l22-l21) == +4) then
+            elseif((l22-l21) .eq. +4) then
               njg = dom % blocks(b2) % resolutions(3)       ! nk from block 2
               trans2(3,3)=+1
-            elseif((l22-l21) == -1) then
+            elseif((l22-l21) .eq. -1) then
               njg = dom % blocks(b2) % resolutions(1)       ! ni from block 2
               trans2(1,1)=njg
               trans2(1,3)=-1
-            elseif((l22-l21) == -2) then
+            elseif((l22-l21) .eq. -2) then
               njg = dom % blocks(b2) % resolutions(2)       ! nj from block 2
               trans2(2,1)=njg
               trans2(2,3)=-1
-            elseif((l22-l21) == -4) then
+            elseif((l22-l21) .eq. -4) then
               njg = dom % blocks(b2) % resolutions(3)       ! nk from block 2
               trans2(3,1)=njg
               trans2(3,3)=-1
             endif
 
             ! Set the constant directions
-            if(f1 == 1) trans1(3,1)=1
-            if(f1 == 2) trans1(2,1)=1
-            if(f1 == 3) trans1(1,1)=dom % blocks(b1) % resolutions(1)-1
-            if(f1 == 4) trans1(2,1)=dom % blocks(b1) % resolutions(2)-1
-            if(f1 == 5) trans1(1,1)=1
-            if(f1 == 6) trans1(3,1)=dom % blocks(b1) % resolutions(3)-1
+            if(f1 .eq. 1) trans1(3,1)=1
+            if(f1 .eq. 2) trans1(2,1)=1
+            if(f1 .eq. 3) trans1(1,1)=dom % blocks(b1) % resolutions(1)-1
+            if(f1 .eq. 4) trans1(2,1)=dom % blocks(b1) % resolutions(2)-1
+            if(f1 .eq. 5) trans1(1,1)=1
+            if(f1 .eq. 6) trans1(3,1)=dom % blocks(b1) % resolutions(3)-1
 
-            if(f2 == 1) trans2(3,1)=1
-            if(f2 == 2) trans2(2,1)=1
-            if(f2 == 3) trans2(1,1)=dom % blocks(b2) % resolutions(1)-1
-            if(f2 == 4) trans2(2,1)=dom % blocks(b2) % resolutions(2)-1
-            if(f2 == 5) trans2(1,1)=1
-            if(f2 == 6) trans2(3,1)=dom % blocks(b2) % resolutions(3)-1
+            if(f2 .eq. 1) trans2(3,1)=1
+            if(f2 .eq. 2) trans2(2,1)=1
+            if(f2 .eq. 3) trans2(1,1)=dom % blocks(b2) % resolutions(1)-1
+            if(f2 .eq. 4) trans2(2,1)=dom % blocks(b2) % resolutions(2)-1
+            if(f2 .eq. 5) trans2(1,1)=1
+            if(f2 .eq. 6) trans2(3,1)=dom % blocks(b2) % resolutions(3)-1
 
             ! Finally conect the two dom % blocks
             do jg=1,njg-1              ! through cells only
@@ -265,8 +265,8 @@
 
     ! Update node numbers
     do n=dom % blocks(b2) % n_nodes+1, dom % blocks(b2) % n_nodes+ni2*nj2*nk2
-      if(new_n(n) /= n) del=del+1
-      if(new_n(n) == n) new_n(n)=new_n(n)-del
+      if(new_n(n) .ne. n) del=del+1
+      if(new_n(n) .eq. n) new_n(n)=new_n(n)-del
     end do 
 
   end do          ! b2 

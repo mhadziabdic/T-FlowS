@@ -52,9 +52,9 @@
       do k = 1, 24
         if( grid % cells_c(k,i)  > 0 ) stencw=stencw+1
       end do
-      if(stencw  ==  j) numb=numb+1
+      if(stencw .eq. j) numb=numb+1
     end do
-    if(numb /= 0) then
+    if(numb .ne. 0) then
       print 6, '# Number of cells with ', j, ' neighbours: ', numb
     endif
   end do
@@ -63,9 +63,9 @@
   do j = 1, 8
     numb = 0
     do i = 1, grid % n_nodes
-      if(twin_n(i,0)  ==  j) numb=numb+1
+      if(twin_n(i,0) .eq. j) numb=numb+1
     end do
-    if(numb /= 0) then
+    if(numb .ne. 0) then
       print 6, '# Number of nodes with ', j, ' twins     : ', numb
     endif 
   end do

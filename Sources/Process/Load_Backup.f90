@@ -19,8 +19,7 @@
   logical         :: restart 
 !-----------------------------------[Locals]-----------------------------------!
   character(len=80) :: name_in, answer
-  integer           :: fh, d, s, c1, c2  
-  real              :: fs
+  integer           :: fh, d
 !==============================================================================!
 
   ! Full name is specified in control file

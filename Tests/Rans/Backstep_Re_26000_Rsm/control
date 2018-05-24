@@ -2,6 +2,9 @@ Problem name (this line is a comment)
 
  PROBLEM_NAME    backstep
  PROBLEM_TYPE    backstep
+ BACKUP_SAVE_INTERVAL 1000
+ STARTING_TIME_STEP_FOR_STATISTICS    2000000                                    
+ #LOAD_BACKUP_NAME   backstep-ts000001.backup 
 
   This line is a comment too, just like any which doesn't start with a keyword.
   Keywords are written all in upper case and ARE case sensitive!

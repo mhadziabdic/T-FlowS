@@ -192,7 +192,7 @@
 
     if(turbulence_model == DES_SPALART) then
       call Calculate_Shear_And_Vorticity(grid)
-      call Calculate_Vorticity (grid, u % n, v % n, w % n, vort)
+      call Calculate_Vorticity (grid)
     end if
 
     if(turbulence_model == LES) then
@@ -369,7 +369,7 @@
       if(turbulence_model == SPALART_ALLMARAS .or.  &
          turbulence_model == DES_SPALART) then
         call Calculate_Shear_And_Vorticity(grid)
-        call Calculate_Vorticity(grid, u % n, v % n, w % n, vort)
+        call Calculate_Vorticity(grid)
 
         ! Update the values at boundaries
         call Update_Boundary_Values(grid)

@@ -152,7 +152,7 @@
     end do                       
 
     ! Cell side components
-    if( grid % faces_n_nodes(s)  ==  4 ) then
+    if( grid % faces_n_nodes(s) .eq. 4 ) then
       grid % sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   &
                            +(yt(3)-yt(2))*(zt(2)+zt(3))   &
                            +(yt(4)-yt(3))*(zt(3)+zt(4))   &
@@ -165,7 +165,7 @@
                            +(xt(3)-xt(2))*(yt(2)+yt(3))   &
                            +(xt(4)-xt(3))*(yt(3)+yt(4))   &
                            +(xt(1)-xt(4))*(yt(4)+yt(1)) )
-    else if( grid % faces_n_nodes(s)  ==  3 ) then 
+    else if( grid % faces_n_nodes(s) .eq. 3 ) then 
       grid % sx(s)= 0.5 * ( (yt(2)-yt(1))*(zt(2)+zt(1))   & 
                            +(yt(3)-yt(2))*(zt(2)+zt(3))   &
                            +(yt(1)-yt(3))*(zt(3)+zt(1)) )
@@ -181,11 +181,11 @@
     end if
 
     ! Barycenters
-    if(grid % faces_n_nodes(s) == 4) then  
+    if(grid % faces_n_nodes(s) .eq. 4) then  
       grid % xf(s) = (xt(1)+xt(2)+xt(3)+xt(4))/4.0
       grid % yf(s) = (yt(1)+yt(2)+yt(3)+yt(4))/4.0
       grid % zf(s) = (zt(1)+zt(2)+zt(3)+zt(4))/4.0
-    else if(grid % faces_n_nodes(s) == 3) then  
+    else if(grid % faces_n_nodes(s) .eq. 3) then  
       grid % xf(s) = (xt(1)+xt(2)+xt(3))/3.0
       grid % yf(s) = (yt(1)+yt(2)+yt(3))/3.0
       grid % zf(s) = (zt(1)+zt(2)+zt(3))/3.0
@@ -224,7 +224,7 @@
       grid % xc(c2) = grid % xc(c1) + grid % sx(s)*t / sur_tot
       grid % yc(c2) = grid % yc(c1) + grid % sy(s)*t / sur_tot
       grid % zc(c2) = grid % zc(c1) + grid % sz(s)*t / sur_tot
-      if(bou_cen == 1) then
+      if(bou_cen .eq. 1) then
         grid % xc(c2) = grid % xf(s)
         grid % yc(c2) = grid % yf(s)
         grid % zc(c2) = grid % zf(s)
@@ -299,7 +299,7 @@
   call Tokenizer_Mod_Read_Line(5)
   answer = line % tokens(1)
   call To_Upper_Case(answer)
-  if( answer == 'SKIP' ) then
+  if( answer .eq. 'SKIP' ) then
     color_per = 0
     goto 1  
   end if
@@ -328,7 +328,7 @@
   call Tokenizer_Mod_Read_Line(5)
   answer = line % tokens(1)
   call To_Upper_Case(answer)
-  if( answer == 'SKIP' ) then
+  if( answer .eq. 'SKIP' ) then
     angle = 0.0
     rot_dir = 1
     option = 1
@@ -341,11 +341,11 @@
   !-------------------!
   !   With rotation   !
   !-------------------!
-  if(option == 2) then
+  if(option .eq. 2) then
 
     angle = angle * PI / 180.0
 
-    if(dir == 1) then
+    if(dir .eq. 1) then
       x_a = 0.0
       y_a = 0.0
       z_a = 0.0       
@@ -355,7 +355,7 @@
       x_c = 0.0
       y_c = 0.0
       z_c = 1.0       
-    else if(dir == 2) then
+    else if(dir .eq. 2) then
       x_a = 0.0
       y_a = 0.0
       z_a = 0.0       
@@ -365,7 +365,7 @@
       x_c = 0.0
       y_c = 0.0
       z_c = 1.0       
-    else if(dir == 3) then
+    else if(dir .eq. 3) then
       x_a = 0.0
       y_a = 0.0
       z_a = 0.0       
@@ -399,19 +399,19 @@
     do s = 1, grid % n_faces
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(grid % bnd_cond % color(c2) == color_per) then
+        if(grid % bnd_cond % color(c2) .eq. color_per) then
           if( Approx(angle, 0.0, 1.e-6) ) then
             xspr(s) = grid % xf(s)  
             yspr(s) = grid % yf(s)  
             zspr(s) = grid % zf(s)  
           else 
-            if(rot_dir==3) then
+            if(rot_dir .eq. 3) then
               xspr(s) = grid % xf(s)*cos(angle) + grid % yf(s)*sin(angle) 
               yspr(s) =-grid % xf(s)*sin(angle) + grid % yf(s)*cos(angle)
-            else if(rot_dir==2) then
+            else if(rot_dir .eq. 2) then
               xspr(s) = grid % xf(s)*cos(angle) + grid % zf(s)*sin(angle) 
               zspr(s) =-grid % xf(s)*sin(angle) + grid % zf(s)*cos(angle)
-            else if(rot_dir==1) then
+            else if(rot_dir .eq. 1) then
               yspr(s) = grid % yf(s)*cos(angle) + grid % zf(s)*sin(angle) 
               zspr(s) =-grid % yf(s)*sin(angle) + grid % zf(s)*cos(angle)
             end if
@@ -419,7 +419,7 @@
         end if
       end if
     end do
-  end if  ! for option == 1
+  end if  ! for option .eq. 1
 
   xmin = +HUGE
   ymin = +HUGE
@@ -436,21 +436,21 @@
   !-----------------!
   !   No rotation   !
   !-----------------!
-  if(option == 1) then 
+  if(option .eq. 1) then 
     do s=1,grid % n_faces
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(grid % bnd_cond % color(c2) == color_per) then
+        if(grid % bnd_cond % color(c2) .eq. color_per) then
           c = c + 1
-          if(dir==1) b_coor(c) = grid % xf(s)*100000000.0  &
-                               + grid % yf(s)*10000.0      &
-                               + grid % zf(s)
-          if(dir==2) b_coor(c) = grid % yf(s)*100000000.0  &
-                               + grid % xf(s)*10000.0      &
-                               + grid % zf(s)
-          if(dir==3) b_coor(c) = grid % zf(s)*100000000.0  & 
-                               + grid % xf(s)*10000.0      &
-                               + grid % yf(s)
+          if(dir .eq. 1) b_coor(c) = grid % xf(s)*100000000.0  &
+                                   + grid % yf(s)*10000.0      &
+                                   + grid % zf(s)
+          if(dir .eq. 2) b_coor(c) = grid % yf(s)*100000000.0  &
+                                   + grid % xf(s)*10000.0      &
+                                   + grid % zf(s)
+          if(dir .eq. 3) b_coor(c) = grid % zf(s)*100000000.0  & 
+                                   + grid % xf(s)*10000.0      &
+                                   + grid % yf(s)
           b_face(c) = s
         end if
       end if
@@ -461,12 +461,12 @@
   !-------------------!
   !   With rotation   !
   !-------------------!
-  if(option == 2) then 
+  if(option .eq. 2) then 
     c_max = 0
     do s=1,grid % n_faces
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(grid % bnd_cond % color(c2) == color_per) then
+        if(grid % bnd_cond % color(c2) .eq. color_per) then
           c_max = c_max + 1
         end if 
       end if 
@@ -486,7 +486,7 @@
     do s=1,grid % n_faces
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(grid % bnd_cond % color(c2) == color_per) then
+        if(grid % bnd_cond % color(c2) .eq. color_per) then
           Det = (  p_i*(grid % xf(s))  &
                  + p_j*(grid % yf(s))  &
                  + p_k*(grid % zf(s)))  &
@@ -502,14 +502,14 @@
 
       c2 = grid % faces_c(2,s)
       if(c2 < 0) then
-        if(grid % bnd_cond % color(c2) == color_per) then
+        if(grid % bnd_cond % color(c2) .eq. color_per) then
           c = c + 1
           Det = (  p_i*(grid % xf(s))   &
                  + p_j*(grid % yf(s))   &
                  + p_k*(grid % zf(s)))  &
               / sqrt(p_i*p_i + p_j*p_j + p_k*p_k)
 
-          if(dir==1) then
+          if(dir .eq. 1) then
             if((Det) < (per_max)) then
               hh = hh + 1
               b_coor(hh) = hh
@@ -517,7 +517,7 @@
               do ss=1,grid % n_faces
                 cc2 = grid % faces_c(2,ss)
                 if(cc2 < 0) then
-                  if(grid % bnd_cond % color(cc2) == color_per) then 
+                  if(grid % bnd_cond % color(cc2) .eq. color_per) then 
                     Det = (  p_i * (grid % xf(ss))   &
                            + p_j * (grid % yf(ss))   &
                            + p_k * (grid % zf(ss)))  &
@@ -537,7 +537,7 @@
             end if          
           end if
 
-          if(dir==2) then
+          if(dir .eq. 2) then
             if((Det) < (per_max)) then
               hh = hh + 1
               b_coor(hh) = hh
@@ -545,7 +545,7 @@
               do ss=1,grid % n_faces
                 cc2 = grid % faces_c(2,ss)
                 if(cc2 < 0) then
-                  if(grid % bnd_cond % color(cc2) == color_per) then 
+                  if(grid % bnd_cond % color(cc2) .eq. color_per) then 
 
                     Det = (  p_i * (grid % xf(ss))  &
                            + p_j * (grid % yf(ss))  &
@@ -568,7 +568,7 @@
             end if          
           end if
 
-          if(dir==3) then
+          if(dir .eq. 3) then
             if((Det) < (per_max)) then
               hh = hh + 1
               b_coor(hh) = hh
@@ -576,7 +576,7 @@
               do ss=1,grid % n_faces
                 cc2 = grid % faces_c(2,ss)
                 if(cc2 < 0) then
-                  if(grid % bnd_cond % color(cc2) == color_per) then
+                  if(grid % bnd_cond % color(cc2) .eq. color_per) then
                     Det = (  p_i*(grid % xf(ss))  &
                            + p_j*(grid % yf(ss))  &
                            + p_k*(grid % zf(ss)))  &
@@ -607,7 +607,7 @@
     print *,'Iterating search for periodic cells: ',  &
     'Target: ', c_max/2, 'Result: ',nnn, 'Tolerance: ',tol
 
-    if(nnn == c_max/2) then
+    if(nnn .eq. c_max/2) then
       continue
     else
       tol = tol*0.5 
@@ -620,7 +620,7 @@
     deallocate(zspr)
 
     call Sort_Real_Carry_Int(b_coor, b_face, c, 2)
-  end if  ! for option == 2
+  end if  ! for option .eq. 2
 
   do s = 1, c/2
     s1 = b_face(s)
@@ -699,7 +699,7 @@
         grid % n_sh = grid % n_sh + 2
 
         ! Find the coordinates of ...
-        if(grid % faces_n_nodes(s) == 4) then
+        if(grid % faces_n_nodes(s) .eq. 4) then
 
           ! Coordinates of the shadow face
           xs2=grid % xf(face_copy(s))
@@ -735,7 +735,7 @@
           grid % xf(new_face_2) = xs2
           grid % yf(new_face_2) = ys2
           grid % zf(new_face_2) = zs2
-        else if(grid % faces_n_nodes(s) == 3) then
+        else if(grid % faces_n_nodes(s) .eq. 3) then
 
           ! Coordinates of the shadow face
           xs2=grid % xf(face_copy(s))
@@ -937,12 +937,12 @@
     read(line % tokens(b), *) wall_colors(b)
   end do
  
-  if( (n_wall_colors.eq.1) .and. (wall_colors(1)==0) ) then
+  if( (n_wall_colors .eq. 1) .and. (wall_colors(1) .eq. 0) ) then
     grid % wall_dist = 1.0
     print *, '# Distance to the wall set to 1.0 everywhere !'
   else
     do c1 = 1, grid % n_cells
-      if(mod(c1,10000) == 0) then
+      if(mod(c1,10000) .eq. 0) then
         write(*,'(a2, f5.0, a14)') ' #', (100.*c1/(1.*grid % n_cells)),  &
                                    ' % complete...'
       endif

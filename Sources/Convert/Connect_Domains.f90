@@ -52,7 +52,7 @@
   call Tokenizer_Mod_Read_Line(5)
   read(line % tokens(1), *) answer
   call To_Upper_Case(answer)
-  if(answer == 'SKIP') then
+  if(answer .eq. 'SKIP') then
     return
   else 
     read(line % tokens(1), *) color_copy 
@@ -62,7 +62,7 @@
   !   X   !
   !-------! 
   do s1 = 1, grid % n_faces
-    if(mod(s1,100000)==0) then
+    if(mod(s1,100000) .eq. 0) then
       print *, ((ONE_THIRD*s1)/(1.0*grid % n_faces)) * 100, 'Complete'
     end if
     c11 = grid % faces_c(1,s1)
@@ -72,7 +72,7 @@
         c21 = grid % faces_c(1,s2)
         c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
-          if(grid % bnd_cond % color(c22) == color_copy) then
+          if(grid % bnd_cond % color(c22) .eq. color_copy) then
 
             yc_12 = 0.0
             zc_12 = 0.0
@@ -101,7 +101,7 @@
               if( abs(grid % xc(c11)-grid % xc(c22)) >  &
                   abs(grid % xc(c12)-grid % xc(c22))) c1 = c12
               grid % bnd_cond % copy_s(1, grid % n_copy) = c1
-              grid % bnd_cond % copy_s(2, grid % n_copy) = c21           !   inside the domain
+              grid % bnd_cond % copy_s(2, grid % n_copy) = c21  ! inside domain
               grid % bnd_cond % copy_c(c22) = c1
             end if
           end if
@@ -114,7 +114,7 @@
   !   Y   !
   !-------! 
   do s1 = 1, grid % n_faces
-    if(mod(s1,100000)==0) then
+    if(mod(s1,100000) .eq. 0) then
       print *, (ONE_THIRD + (ONE_THIRD*s1)  &
                / (1.0 * grid % n_faces)) * 100.0, 'Complete'
     end if
@@ -125,7 +125,7 @@
         c21 = grid % faces_c(1,s2)
         c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
-          if(grid % bnd_cond % color(c22) == color_copy) then
+          if(grid % bnd_cond % color(c22) .eq. color_copy) then
 
             xc_12 = 0.0
             zc_12 = 0.0
@@ -154,7 +154,7 @@
               if( abs(grid % yc(c11)-grid % yc(c22)) >  &
                   abs(grid % yc(c12)-grid % yc(c22))) c1 = c12
               grid % bnd_cond % copy_s(1, grid % n_copy) = c1
-              grid % bnd_cond % copy_s(2, grid % n_copy) = c21           !   inside the domain
+              grid % bnd_cond % copy_s(2, grid % n_copy) = c21  ! inside domain
               grid % bnd_cond % copy_c(c22) = c1
             end if
           end if
@@ -167,7 +167,7 @@
   !   Z   !
   !-------! 
   do s1 = 1, grid % n_faces
-    if(mod(s1,100000)==0) then
+    if(mod(s1,100000) .eq. 0) then
       print *, (TWO_THIRDS + (ONE_THIRD*s1)  &
                / (1.0*grid % n_faces)) * 100.0, 'Complete'
     end if
@@ -178,7 +178,7 @@
         c21 = grid % faces_c(1,s2)
         c22 = grid % faces_c(2,s2)
         if(c22 < 0) then
-          if(grid % bnd_cond % color(c22) == color_copy) then
+          if(grid % bnd_cond % color(c22) .eq. color_copy) then
 
             yc_12 = 0.0
             xc_12 = 0.0

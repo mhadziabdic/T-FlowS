@@ -49,7 +49,7 @@
   grid % n_bnd_cells = 0
   do 
     call Tokenizer_Mod_Read_Line(9)
-    if( line % tokens(1) == 'BOUNDARY' ) then
+    if( line % tokens(1) .eq. 'BOUNDARY' ) then
       do j = 1, n_bnd_sect
         if(j>1) call Tokenizer_Mod_Read_Line(9) ! BOUNDARY CONDITIONS
         call Tokenizer_Mod_Read_Line(9)

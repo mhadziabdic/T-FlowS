@@ -28,12 +28,12 @@
   l = len_trim(file_name)
   print *, '#==================================' // &
            '==================================='
-  if( file_name_up(l-2:l) == 'NEU' ) then
+  if( file_name_up(l-2:l) .eq. 'NEU' ) then
     print *, '# Based on the extension, you are' // &
              ' reading Gambit''s neutral file format'
     problem_name = file_name(1:l-4)
     extension = file_name_up(l-2:l)
-  else if( file_name_up(l-3:l) == 'CGNS' ) then
+  else if( file_name_up(l-3:l) .eq. 'CGNS' ) then
     print *, '# Based on the extension, you are' // &
              ' reading CGNS file format'
     problem_name = file_name(1:l-5)
@@ -48,10 +48,10 @@
   !----------------------------------------!
   !   Read the file and start conversion   !
   !----------------------------------------!
-  if (extension == 'NEU') then
+  if (extension .eq. 'NEU') then
     call Load_Neu (grid)
   end if
-  if (extension == 'CGNS') then
+  if (extension .eq. 'CGNS') then
     call Load_Cgns(grid)
   end if
 

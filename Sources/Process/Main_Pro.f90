@@ -24,7 +24,7 @@
 !---------------------------------[Calling]------------------------------------!
   real :: Correct_Velocity
 !----------------------------------[Locals]------------------------------------!
-  integer           :: i, m, n, us
+  integer           :: i, m, n, us, c
   real              :: mass_res, wall_time_start, wall_time_current
   character(len=80) :: name_save
   logical           :: restar, multiple, save_now, exit_now
@@ -94,14 +94,8 @@
   call Load_Boundary_Conditions(grid, .false.)
   call Load_Physical_Properties(grid)
 
-! name_save = problem_name
-! call Load_Backup(grid, first_dt, restar)
-! call Save_Backup(grid, 0, name_save)
-! goto 2
-
   ! First time step is one, unless read from restart otherwise
   first_dt = 0
-!@call Load_Restart(grid, first_dt, restar)
   call Load_Backup(grid, first_dt, restar)
 
   ! Read command file (T-FlowS.cmn)

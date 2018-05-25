@@ -253,8 +253,8 @@
     c1 = grid % faces_c(1,s)
     c2 = grid % faces_c(2,s)
      
-    if(turbulence_model /= LES .or.  &
-       turbulence_model /= DNS) then
+    if(turbulence_model .ne. LES .or.  &
+       turbulence_model .ne. DNS) then
       pr_t1 = Turbulent_Prandtl_Number(grid, c1)
       pr_t2 = Turbulent_Prandtl_Number(grid, c2)
       pr_t  = fw(s) * pr_t1 + (1.0 - fw(s)) * pr_t2
@@ -298,9 +298,9 @@
     if(turbulence_model .eq. K_EPS_ZETA_F  .or.  &
        turbulence_model .eq. K_EPS         .or.  &
        turbulence_model .eq. HYBRID_K_EPS_ZETA_F) then
-      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) /= BUFFER) then
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL .or.  &
-           Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
+      if(c2 < 0 .and. Grid_Mod_Bnd_Cond_Type(grid,c2) .ne. BUFFER) then
+        if(Var_Mod_Bnd_Cell_Type(phi,c2) .eq. WALL .or.  &
+           Var_Mod_Bnd_Cell_Type(phi,c2) .eq. WALLFL) then
           con_eff1 = con_wall(c1)
           con_eff2 = con_eff1
         end if
@@ -342,7 +342,7 @@
                         * f_coef(s)*(phi % n(c2) - phi_face(s))   
         end if
       else
-        if(Grid_Mod_Bnd_Cond_Type(grid,c2).ne.SYMMETRY) then 
+        if(Var_Mod_Bnd_Cell_Type(phi,c2) .ne. SYMMETRY) then 
           if(grid % material(c1) .eq. grid % material(c2)) then
             phi % d_o(c1) = phi % d_o(c1)  &
                 + con_eff1*f_coef(s)*(phi % n(c2) - phi % n(c1))   
@@ -404,9 +404,9 @@
 
         ! Outflow is included because of the flux 
         ! corrections which also affects velocities
-        if( (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. INFLOW) .or.  &
-            (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALL)   .or.  &
-            (Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. CONVECT) ) then    
+        if( (Var_Mod_Bnd_Cell_Type(phi,c2) .eq. INFLOW) .or.  &
+            (Var_Mod_Bnd_Cell_Type(phi,c2) .eq. WALL)   .or.  &
+            (Var_Mod_Bnd_Cell_Type(phi,c2) .eq. CONVECT) ) then    
           a % val(a % dia(c1)) = a % val(a % dia(c1)) + a12
           b(c1)  = b(c1)  + a12 * phi % n(c2)
 
@@ -421,7 +421,7 @@
           end if
 
         ! In case of wallflux 
-        else if(Grid_Mod_Bnd_Cond_Type(grid,c2) .eq. WALLFL) then
+        else if(Var_Mod_Bnd_Cell_Type(phi,c2) .eq. WALLFL) then
           s_tot  = sqrt(  grid % sx(s)*grid % sx(s)  &
                         + grid % sy(s)*grid % sy(s)  &
                         + grid % sz(s)*grid % sz(s))
@@ -513,7 +513,7 @@
 
   if(turbulence_model .eq. REYNOLDS_STRESS_MODEL .or.  &
      turbulence_model .eq. HANJALIC_JAKIRLIC) then
-    if(turbulence_model_variant /= HYBRID) then
+    if(turbulence_model_variant .ne. HYBRID) then
       do c = 1, grid % n_cells
         u1uj_phij(c) = -0.22*t_scale(c) *&
                    (uu%n(c)*phi_x(c)+uv%n(c)*phi_y(c)+uw%n(c)*phi_z(c))

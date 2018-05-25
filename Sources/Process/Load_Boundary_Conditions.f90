@@ -26,7 +26,8 @@
   real              :: wi, dist_min, x, y, z, xp, dist
   real, allocatable :: prof(:,:)
   logical           :: here
-  character(len=80) :: bc_type, dumms
+  character(len=80) :: bc_type_name, dumms
+  integer           :: bc_type_tag
   character(len=80) :: keys(128)
   real              :: vals(0:128)           ! note that they start from zero!
   integer           :: types_per_color(128)  ! how many types in each color
@@ -73,10 +74,10 @@
 1     continue
 
       ! Try to read next 'TYPE' in the control file
-      call Control_Mod_Read_Char_Item_On('TYPE', 'VOID', bc_type, .false.) 
+      call Control_Mod_Read_Char_Item_On('TYPE', 'VOID', bc_type_name, .false.) 
 
       ! Get out of the loop if you fail
-      if(bc_type .eq. 'VOID') goto 2
+      if(bc_type_name .eq. 'VOID') goto 2
 
       ! Skip following two lines
       call Control_Mod_Read_Char_Item_On('VARIABLES', 'VOID', dumms, .false.) 
@@ -84,7 +85,7 @@
 
       types_per_color(n) = types_per_color(n) + 1
       c_types = c_types + 1
-      types_names(c_types) = bc_type
+      types_names(c_types) = bc_type_name
 
       ! If dumms is 'VOID', it didn't find 'VALUES' 
       ! meaning that the keyword 'FILE' was specified
@@ -138,30 +139,37 @@
       !   Read first line which is common for all   !
       !                                             !
       !---------------------------------------------!
-      call Control_Mod_Read_Char_Item_On ('TYPE', 'WALL',  bc_type, .false.) 
-      call To_Upper_Case(bc_type)
+      call Control_Mod_Read_Char_Item_On ('TYPE', 'WALL',  bc_type_name, .false.) 
+      call To_Upper_Case(bc_type_name)
 
       ! Copy boundary conditions which were given for the grid
-      if( bc_type == 'INFLOW') then 
+      if( bc_type_name == 'INFLOW') then 
+        bc_type_tag = INFLOW
         grid % bnd_cond % type(n) = INFLOW
         PER_BC = NO
-      else if( bc_type == 'WALL') then 
+      else if( bc_type_name == 'WALL') then 
+        bc_type_tag = WALL
         grid % bnd_cond % type(n) = WALL
-      else if( bc_type == 'OUTFLOW') then 
+      else if( bc_type_name == 'OUTFLOW') then 
+        bc_type_tag = OUTFLOW
         grid % bnd_cond % type(n) = OUTFLOW
-      else if( bc_type == 'SYMMETRY') then 
+      else if( bc_type_name == 'SYMMETRY') then 
+        bc_type_tag = SYMMETRY
         grid % bnd_cond % type(n) = SYMMETRY
-      else if( bc_type == 'HEAT_FLUX') then 
+      else if( bc_type_name == 'HEAT_FLUX') then 
+        bc_type_tag = WALLFL  
         grid % bnd_cond % type(n) = WALLFL
-      else if( bc_type == 'CONVECTIVE') then 
+      else if( bc_type_name == 'CONVECTIVE') then 
+        bc_type_tag = CONVECT
         grid % bnd_cond % type(n) = CONVECT
-      else if( bc_type == 'PRESSURE') then 
+      else if( bc_type_name == 'PRESSURE') then 
+        bc_type_tag = PRESSURE  
         grid % bnd_cond % type(n) = PRESSURE
       else
         if(this_proc < 2)  &
           print *, '# Load_Boundary_Conditions: '//          &
                    '# Unknown boundary condition type: ',  &
-                   bc_type
+                   bc_type_name
         stop  
       end if
 
@@ -198,7 +206,8 @@
 
             ! Temperature
             if(heat_transfer == YES) then
-              if(bc_type .eq. 'HEAT_FLUX') then
+              t % bnd_cell_type(c) = bc_type_tag
+              if(bc_type_tag .eq. WALLFL) then
                 vals(0) = q_def;  t % q(c) = vals(Key_Ind('Q', keys, nks))
               else
                 vals(0) = t_def;  t % n(c) = vals(Key_Ind('T', keys, nks))
@@ -207,7 +216,8 @@
 
             ! For user scalars
             do us = 1, n_user_scalars
-              if(bc_type .eq. 'HEAT_FLUX') then
+              user_scalar(us) % bnd_cell_type(c) = bc_type_tag
+              if(bc_type_tag .eq. WALLFL) then
                 write(q_name(3:4),'(i2.2)') us  
                 vals(0) = q_def   
                 user_scalar(us) % q(c) = vals(Key_Ind(q_name, keys, nks))
@@ -331,16 +341,18 @@
 
               ! For temperature
               if(heat_transfer == YES) then
-                if(bc_type .eq. 'HEAT_FLUX') then
-                  i=Key_Ind('Q',keys,nks); prof(k,0) = q_def; t % q(c)=prof(k,i)
+                t % bnd_cell_type(c) = bc_type_tag
+                if(bc_type_tag .eq. WALLFL) then
+                  i=Key_Ind('Q',keys,nks); prof(k,0)=q_def; t % q(c)=prof(k,i)
                 else
-                  i=Key_Ind('T',keys,nks); prof(k,0) = t_def; t % n(c)=prof(k,i)
+                  i=Key_Ind('T',keys,nks); prof(k,0)=t_def; t % n(c)=prof(k,i)
                 end if
               end if
 
               ! For user scalars
               do us = 1, n_user_scalars
-                if(bc_type .eq. 'HEAT_FLUX') then
+                user_scalar(us) % bnd_cell_type(c) = bc_type_tag
+                if(bc_type_tag .eq. WALLFL) then
                   write(q_name(3:4),'(i2.2)') us  ! set user scalar name
                   i = Key_Ind(q_name, keys, nks)
                   prof(k,0) = q_def
@@ -467,7 +479,8 @@
 
                   ! For temperature
                   if(heat_transfer == YES) then
-                    if(bc_type .eq. 'HEAT_FLUX') then
+                    t % bnd_cell_type(c) = bc_type_tag
+                    if(bc_type_tag .eq. WALLFL) then
                       prof(m,   0) = q_def 
                       prof(m+1, 0) = q_def
                       i = Key_Ind('Q',keys,nks); 
@@ -482,7 +495,8 @@
 
                   ! For user scalars
                   do us = 1, n_user_scalars
-                    if(bc_type .eq. 'HEAT_FLUX') then
+                    user_scalar(us) % bnd_cell_type(c) = bc_type_tag
+                    if(bc_type_tag .eq. WALLFL) then
                       prof(m,   0) = q_def 
                       prof(m+1, 0) = q_def
                       write(q_name(3:4),'(i2.2)') us  ! set variable name

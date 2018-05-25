@@ -41,4 +41,9 @@
   ! Variable's boundary flux
   allocate (phi % q(-grid % n_bnd_cells: -1));  phi % q  = 0.
 
+  ! Boundary cell type (important for scalars, since they
+  ! can have different boundary conditions at the walls)
+  allocate (phi % bnd_cell_type(-grid % n_bnd_cells: -1))
+  phi % bnd_cell_type = 0
+
   end subroutine
